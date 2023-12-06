@@ -1,0 +1,67 @@
+{
+  "name": "vscode-demo-time",
+  "displayName": "vscode-demo-time",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.84.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [{
+        "command": "demo-time.start",
+        "title": "Start",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.startDemo",
+        "title": "Start a demo",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.copyToStep",
+        "title": "Copy to step",
+        "category": "Demo Time"
+      }
+    ],
+    "menus": {
+      "commandPalette": [{
+        "command": "demo-time.startDemo",
+        "when": "false"
+      }]
+    },
+    "views": {
+      "explorer": [{
+        "id": "demo-time",
+        "name": "Demo Time"
+      }]
+    },
+    "viewsWelcome": [{
+      "view": "demo-time",
+      "contents": "Hello and welcome to Demo Time!"
+    }]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsup",
+    "watch": "tsup --watch",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.3",
+    "@types/node": "18.x",
+    "@types/vscode": "^1.84.0",
+    "@typescript-eslint/eslint-plugin": "^6.9.0",
+    "@typescript-eslint/parser": "^6.9.0",
+    "@vscode/test-electron": "^2.3.6",
+    "eslint": "^8.52.0",
+    "glob": "^10.3.10",
+    "mocha": "^10.2.0",
+    "tsup": "^8.0.1",
+    "typescript": "^5.2.2"
+  }
+}

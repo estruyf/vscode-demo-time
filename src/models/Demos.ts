@@ -1,0 +1,20 @@
+import { Action } from ".";
+
+export interface Demos {
+  title: string;
+  description: string;
+  demos: Demo[];
+}
+
+export interface Demo {
+  title: string;
+  description: string;
+  steps: Step[];
+}
+
+export interface Step {
+  action: Action;
+  path: string;
+  content?: string;
+  position?: string | number;
+}

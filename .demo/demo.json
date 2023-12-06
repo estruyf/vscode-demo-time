@@ -1,0 +1,41 @@
+{
+  "title": "The demo of the demo",
+  "description": "This is a demo of the demo",
+  "demos": [{
+    "title": "Step 1",
+    "description": "This is step 1",
+    "steps": [{
+        "action": "create",
+        "path": "test.txt",
+        "content": "Test"
+      },
+      {
+        "action": "open",
+        "path": "test.txt"
+      },
+      {
+        "action": "insert",
+        "path": "test.txt",
+        "content": "Hello World",
+        "position": 1
+      },
+      {
+        "action": "delete",
+        "path": "test.txt",
+        "position": 1
+      },
+      {
+        "action": "insert",
+        "path": "test.txt",
+        "content": "Hello World \n Updated content",
+        "position": 1
+      },
+      {
+        "action": "replace",
+        "path": "test.txt",
+        "content": "Updated content!!!",
+        "position": 2
+      }
+    ]
+  }]
+}
