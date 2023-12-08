@@ -2,11 +2,12 @@
   "name": "vscode-demo-time",
   "displayName": "Demo Time!",
   "description": "A VS Code extension to help you during coding demos. Script it, run it, and you explain it!",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "preview": true,
   "publisher": "eliostruyf",
   "icon": "assets/demo-time-128x128.png",
-  "badges": [{
+  "badges": [
+    {
       "description": "version",
       "url": "https://img.shields.io/github/package-json/v/estruyf/vscode-demo-time?color=green&label=vscode-demo-time&style=flat-square",
       "href": "https://github.com/estruyf/vscode-demo-time"
@@ -38,7 +39,8 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [{
+    "commands": [
+      {
         "command": "demo-time.start",
         "title": "Start",
         "category": "Demo Time"
@@ -55,21 +57,27 @@
       }
     ],
     "menus": {
-      "commandPalette": [{
-        "command": "demo-time.startDemo",
-        "when": "false"
-      }]
+      "commandPalette": [
+        {
+          "command": "demo-time.startDemo",
+          "when": "false"
+        }
+      ]
     },
     "views": {
-      "explorer": [{
-        "id": "demo-time",
-        "name": "Demo Time"
-      }]
+      "explorer": [
+        {
+          "id": "demo-time",
+          "name": "Demo Time"
+        }
+      ]
     },
-    "viewsWelcome": [{
-      "view": "demo-time",
-      "contents": "Hello and welcome to Demo Time!"
-    }]
+    "viewsWelcome": [
+      {
+        "view": "demo-time",
+        "contents": "Hello and welcome to Demo Time!"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
