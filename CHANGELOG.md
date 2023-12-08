@@ -1,9 +1,9 @@
 # Change Log
 
-All notable changes to the "vscode-demo-time" extension will be documented in this file.
+## [0.0.2] - 2023-12-08
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+- Added the first logo
 
-## [Unreleased]
+## [0.0.1] - 2023-12-08
 
 - Initial release

@@ -5,6 +5,7 @@
   "version": "0.0.1",
   "preview": true,
   "publisher": "eliostruyf",
+  "icon": "assets/demo-time-128x128.png",
   "badges": [{
       "description": "version",
       "url": "https://img.shields.io/github/package-json/v/estruyf/vscode-demo-time?color=green&label=vscode-demo-time&style=flat-square",
