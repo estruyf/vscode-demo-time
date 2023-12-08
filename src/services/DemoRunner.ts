@@ -27,127 +27,6 @@ export class DemoRunner {
     subscriptions.push(
       commands.registerCommand(COMMAND.startDemo, DemoRunner.startDemo)
     );
-    subscriptions.push(
-      commands.registerCommand(COMMAND.copyToStep, DemoRunner.copy)
-    );
-  }
-
-  /**
-   * Copies the selected text and inserts it into the specified location in the demo file.
-   * If no text is selected, the function does nothing.
-   * The function prompts the user to choose whether to insert or delete the step.
-   * If the user chooses to insert a new step, they are prompted to enter the step title and description.
-   * If the user chooses to insert a step into an existing demo, they are prompted to select the demo.
-   * The modified demo file is saved after the step is added.
-   */
-  private static async copy() {
-    let demo: Demos = await FileProvider.getFile();
-    if (!demo) {
-      await FileProvider.createFile();
-      demo = await FileProvider.getFile();
-    }
-
-    const editor = window.activeTextEditor;
-    if (!editor) {
-      return;
-    }
-
-    const selection = editor.selection;
-    const text = editor.document.getText(selection);
-    if (!text) {
-      return;
-    }
-
-    const modifiedText = text.replace(/\r?\n/g, "\n");
-
-    const action = await window.showQuickPick(["Insert", "Delete"], {
-      title: "Demo time!",
-      placeHolder: "Where do you want to insert the step?",
-    });
-
-    if (!action) {
-      return;
-    }
-
-    const demoStep = await window.showQuickPick(["New step", "Insert step"], {
-      title: "Demo time!",
-      placeHolder: "Where do you want to insert the step?",
-    });
-
-    if (!demoStep) {
-      return;
-    }
-
-    const start = selection.start.line;
-    const end = selection.end.line;
-
-    let position: string | number = selection.start.line + 1;
-    if (action !== "Insert") {
-      position = start === end ? start + 1 : `${start + 1}:${end + 1}`;
-    }
-
-    const step: Step = {
-      action: action.toLowerCase() as Action,
-      path: editor.document.uri.path.replace(
-        Extension.getInstance().workspaceFolder?.uri.path || "",
-        ""
-      ),
-      position,
-    };
-
-    if (action === "Insert") {
-      step.content = modifiedText;
-    }
-
-    if (demoStep === "New step") {
-      const title = await window.showInputBox({
-        title: "Demo time!",
-        placeHolder: "Enter the step title",
-      });
-
-      if (!title) {
-        return;
-      }
-
-      const description = await window.showInputBox({
-        title: "Demo time!",
-        placeHolder: "Enter the step description",
-      });
-
-      if (!description) {
-        return;
-      }
-
-      demo.demos.push({
-        title,
-        description,
-        steps: [step],
-      });
-    } else {
-      const demoToEdit = await window.showQuickPick(
-        demo.demos.map((demo) => demo.title),
-        {
-          title: "Demo time!",
-          placeHolder: "Select a demo to add the step",
-        }
-      );
-
-      if (!demoToEdit) {
-        return;
-      }
-
-      const demoIndex = demo.demos.findIndex(
-        (demo) => demo.title === demoToEdit
-      );
-
-      if (demoIndex < 0) {
-        return;
-      }
-
-      demo.demos[demoIndex].steps.push(step);
-    }
-
-    await FileProvider.saveFile(JSON.stringify(demo, null, 2));
   }
 
   /**
@@ -156,12 +35,12 @@ export class DemoRunner {
    * @returns {Promise<void>} A promise that resolves when the demo runner has started.
    */
   private static async start(): Promise<void> {
-    const demo: Demos = await FileProvider.getFile();
-
-    if (!demo) {
+    const demoFile = await FileProvider.demoQuickPick();
+    if (!demoFile?.demo) {
       return;
     }
 
+    let demo = demoFile.demo;
     if (demo.demos.length <= 0) {
       return;
     }

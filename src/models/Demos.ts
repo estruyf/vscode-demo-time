@@ -1,5 +1,9 @@
 import { Action } from ".";
 
+export interface DemoFiles {
+  [filePath: string]: Demos;
+}
+
 export interface Demos {
   title: string;
   description: string;

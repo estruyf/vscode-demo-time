@@ -1,8 +1,33 @@
 {
   "name": "vscode-demo-time",
-  "displayName": "vscode-demo-time",
-  "description": "",
+  "displayName": "Demo Time!",
+  "description": "A VS Code extension to help you during coding demos. Script it, run it, and you explain it!",
   "version": "0.0.1",
+  "preview": true,
+  "publisher": "eliostruyf",
+  "badges": [{
+      "description": "version",
+      "url": "https://img.shields.io/github/package-json/v/estruyf/vscode-demo-time?color=green&label=vscode-demo-time&style=flat-square",
+      "href": "https://github.com/estruyf/vscode-demo-time"
+    },
+    {
+      "description": "Buy me a coffee",
+      "url": "https://img.shields.io/badge/Buy%20me%20a%20coffee-€%203-blue?logo=buy-me-a-coffee&style=flat-square",
+      "href": "https://www.buymeacoffee.com/zMeFRy9"
+    }
+  ],
+  "sponsor": {
+    "url": "https://github.com/sponsors/estruyf"
+  },
+  "license": "MIT",
+  "author": "Elio Struyf <elio@struyfconsulting.be> (https://www.eliostruyf.com)",
+  "bugs": {
+    "url": "https://github.com/estruyf/vscode-demo-time/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/estruyf/vscode-demo-time"
+  },
   "engines": {
     "vscode": "^1.84.0"
   },
@@ -23,8 +48,8 @@
         "category": "Demo Time"
       },
       {
-        "command": "demo-time.copyToStep",
-        "title": "Copy to step",
+        "command": "demo-time.addToStep",
+        "title": "Add as demo step",
         "category": "Demo Time"
       }
     ],

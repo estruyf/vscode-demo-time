@@ -1,0 +1,27 @@
+name: BETA Release
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: "Build and release"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: https://registry.npmjs.org/
+
+      - name: Install the dependencies
+        run: npm ci
+
+      - name: Publish
+        run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }} --baseImagesUrl https://raw.githubusercontent.com/estruyf/vscode-demo-time/dev
+
+      - name: Publish to open-vsx.org
+        run: npx ovsx publish -p ${{ secrets.OPEN_VSX_PAT }}

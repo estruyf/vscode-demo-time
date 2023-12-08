@@ -1,0 +1,123 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://elio.dev/demo-time.schema.json",
+  "title": "Demo Time - Schema",
+  "description": "The schema for the Demo Time - VSCode extension",
+  "lastModified": "2023-12-08",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "demos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "action": {
+                  "type": "string",
+                  "enum": ["create", "open", "insert", "highlight", "replace", "delete"]
+                },
+                "path": {
+                  "type": "string"
+                },
+                "content": {
+                  "type": "string"
+                },
+                "position": {
+                  "type": ["string", "number"]
+                }
+              },
+              "required": [
+                "action",
+                "path"
+              ],
+              "allOf": [{
+                "if": {
+                  "properties": {
+                    "action": {
+                      "const": "insert"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "content",
+                    "position"
+                  ]
+                }
+              }, {
+                "if": {
+                  "properties": {
+                    "action": {
+                      "const": "highlight"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "position"
+                  ]
+                }
+              }, {
+                "if": {
+                  "properties": {
+                    "action": {
+                      "const": "replace"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "content",
+                    "position"
+                  ]
+                }
+              }, {
+                "if": {
+                  "properties": {
+                    "action": {
+                      "const": "delete"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "position"
+                  ]
+                }
+              }],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "title",
+          "description",
+          "steps"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "title",
+    "description",
+    "demos"
+  ],
+  "additionalProperties": false
+}

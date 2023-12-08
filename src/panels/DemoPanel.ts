@@ -1,7 +1,7 @@
 import { ThemeColor, commands, window } from "vscode";
 import { ContextKeys } from "../constants/ContextKeys";
 import { FileProvider } from "../services/FileProvider";
-import { Demos } from "../models";
+import { DemoFiles, Demos } from "../models";
 import {
   ActionTreeItem,
   ActionTreeviewProvider,
@@ -22,58 +22,62 @@ export class DemoPanel {
    * @returns
    */
   private static async init() {
-    const demoJson = await FileProvider.getFile();
-    if (!demoJson) {
+    const demoFiles = await FileProvider.getFiles();
+    if (!demoFiles) {
       DemoPanel.showWelcome();
       return;
     }
 
-    DemoPanel.registerTreeview(demoJson);
+    DemoPanel.registerTreeview(demoFiles);
   }
 
   /**
    * Register all the treeviews
    */
-  private static registerTreeview(demos: Demos) {
-    if (!demos) {
+  private static registerTreeview(demoFiles: DemoFiles) {
+    if (!demoFiles) {
       return;
     }
 
     const accountCommands: ActionTreeItem[] = [];
 
-    accountCommands.push(
-      new ActionTreeItem(
-        demos.title,
-        demos.description,
-        { name: "folder", custom: false },
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        [
-          ...demos.demos.map((demo) => {
-            const hasExecuted = DemoRunner.ExecutedDemoSteps.includes(
-              demo.title
-            );
+    for (const path of Object.keys(demoFiles)) {
+      const demos = (demoFiles as any)[path] as Demos;
 
-            return new ActionTreeItem(
-              demo.title,
-              demo.description,
-              {
-                name: hasExecuted ? "pass-filled" : "run",
-                color: hasExecuted
-                  ? new ThemeColor("terminal.ansiGreen")
-                  : undefined,
-                custom: false,
-              },
-              undefined,
-              "demo-time.startDemo",
-              demo
-            );
-          }),
-        ]
-      )
-    );
+      accountCommands.push(
+        new ActionTreeItem(
+          demos.title,
+          path.split("/").pop() as string,
+          { name: "folder", custom: false },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          [
+            ...demos.demos.map((demo) => {
+              const hasExecuted = DemoRunner.ExecutedDemoSteps.includes(
+                demo.title
+              );
+
+              return new ActionTreeItem(
+                demo.title,
+                demo.description,
+                {
+                  name: hasExecuted ? "pass-filled" : "run",
+                  color: hasExecuted
+                    ? new ThemeColor("terminal.ansiGreen")
+                    : undefined,
+                  custom: false,
+                },
+                undefined,
+                "demo-time.startDemo",
+                demo
+              );
+            }),
+          ]
+        )
+      );
+    }
 
     window.registerTreeDataProvider(
       "demo-time",
