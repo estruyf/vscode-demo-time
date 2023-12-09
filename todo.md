@@ -1,11 +1,11 @@
 # TODO
 
-- Copy to step
-  - Ask to which demo to insert the code
-  - Add the position of the code
+- Add as demo step
   - Ask the action to perform
     - Replace
-    - Insert
-    - Delete
-- Support multiple demo files
-- Select/highlight text
+    - Highlight
+- Action `unselect` code
+- Action `waitForTimeout`
+- Action `waitForUserInput`
+- Demo file listener -> on update -> update panel
+- Allow code snippets as files instead of content in the JSON -> easier to edit/maintain
