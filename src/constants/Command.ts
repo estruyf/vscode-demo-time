@@ -5,5 +5,7 @@ export const COMMAND = {
   start: `${EXTENSION_NAME}.start`,
   startDemo: `${EXTENSION_NAME}.startDemo`,
   // Creator
+  initialize: `${EXTENSION_NAME}.initialize`,
+  openDemoFile: `${EXTENSION_NAME}.openDemoFile`,
   addToStep: `${EXTENSION_NAME}.addToStep`,
 };

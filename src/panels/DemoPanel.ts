@@ -44,6 +44,25 @@ export class DemoPanel {
     for (const path of Object.keys(demoFiles)) {
       const demos = (demoFiles as any)[path] as Demos;
 
+      const demoSteps = demos.demos.map((demo) => {
+        const hasExecuted = DemoRunner.ExecutedDemoSteps.includes(demo.title);
+
+        return new ActionTreeItem(
+          demo.title,
+          demo.description,
+          {
+            name: hasExecuted ? "pass-filled" : "run",
+            color: hasExecuted
+              ? new ThemeColor("terminal.ansiGreen")
+              : undefined,
+            custom: false,
+          },
+          undefined,
+          "demo-time.startDemo",
+          demo
+        );
+      });
+
       accountCommands.push(
         new ActionTreeItem(
           demos.title,
@@ -52,29 +71,18 @@ export class DemoPanel {
           undefined,
           undefined,
           undefined,
-          undefined,
-          [
-            ...demos.demos.map((demo) => {
-              const hasExecuted = DemoRunner.ExecutedDemoSteps.includes(
-                demo.title
-              );
-
-              return new ActionTreeItem(
-                demo.title,
-                demo.description,
-                {
-                  name: hasExecuted ? "pass-filled" : "run",
-                  color: hasExecuted
-                    ? new ThemeColor("terminal.ansiGreen")
-                    : undefined,
-                  custom: false,
-                },
-                undefined,
-                "demo-time.startDemo",
-                demo
-              );
-            }),
-          ]
+          "demo-time.file",
+          demoSteps.length > 0
+            ? demoSteps
+            : [
+                new ActionTreeItem(
+                  "No demo steps defined",
+                  "",
+                  undefined,
+                  undefined,
+                  undefined
+                ),
+              ]
         )
       );
     }

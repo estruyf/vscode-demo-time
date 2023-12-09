@@ -54,6 +54,17 @@
         "command": "demo-time.addToStep",
         "title": "Add as demo step",
         "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.initialize",
+        "title": "Initialize",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.openDemoFile",
+        "title": "Open demo file",
+        "category": "Demo Time",
+        "icon": "$(eye)"
       }
     ],
     "menus": {
@@ -61,21 +72,37 @@
         {
           "command": "demo-time.startDemo",
           "when": "false"
+        },
+        {
+          "command": "demo-time.initialize",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.openDemoFile",
+          "when": "false"
         }
-      ]
+      ],
+      "view/item/context": [
+				{
+					"command": "demo-time.openDemoFile",
+					"when": "view == demo-time && viewItem == demo-time.file",
+					"group": "inline@1"
+				}
+			]
     },
     "views": {
       "explorer": [
         {
           "id": "demo-time",
-          "name": "Demo Time"
+          "name": "Demo Time",
+          "icon": "assets/logo-small.svg"
         }
       ]
     },
     "viewsWelcome": [
       {
         "view": "demo-time",
-        "contents": "Hello and welcome to Demo Time!"
+        "contents": "Hello and welcome to Demo Time! You can use this extension to help you during coding demos.\n\nGet started creating a `.demo/demo.json` file in your workspace or by clicking on the initialize button.\n\n[Initialize](command:demo-time.initialize)"
       }
     ]
   },

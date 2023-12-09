@@ -1,9 +1,10 @@
-import { commands, window } from "vscode";
+import { Uri, commands, window } from "vscode";
 import { COMMAND } from "../constants";
 import { Action, DemoFiles, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import { FileProvider } from "./FileProvider";
 import { DemoPanel } from "../panels/DemoPanel";
+import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 
 export class DemoCreator {
   public static ExecutedDemoSteps: string[] = [];
@@ -12,8 +13,58 @@ export class DemoCreator {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
 
     subscriptions.push(
+      commands.registerCommand(COMMAND.initialize, DemoCreator.initialize)
+    );
+    subscriptions.push(
+      commands.registerCommand(COMMAND.openDemoFile, DemoCreator.openFile)
+    );
+    subscriptions.push(
       commands.registerCommand(COMMAND.addToStep, DemoCreator.copy)
     );
+  }
+
+  /**
+   * Initializes the demo by getting the demo files, creating a file if none exists,
+   * and showing the text document. It also updates the demo panel and displays an
+   * information message.
+   */
+  private static async initialize() {
+    const demoFiles = await FileProvider.getFiles();
+    let fileUri: Uri | undefined;
+    if (!demoFiles) {
+      fileUri = await FileProvider.createFile();
+    }
+
+    if (fileUri) {
+      await window.showTextDocument(fileUri);
+    }
+
+    window.showInformationMessage(
+      "Demo time is initialized, you can now start adding demo steps!"
+    );
+
+    DemoPanel.update();
+  }
+
+  private static async openFile(item: ActionTreeItem) {
+    if (!item || !item.description) {
+      return;
+    }
+
+    const demoFiles = await FileProvider.getFiles();
+    if (!demoFiles) {
+      return;
+    }
+
+    const demoFile = Object.keys(demoFiles).find((path) =>
+      path.endsWith(item.description as string)
+    );
+    if (!demoFile) {
+      return;
+    }
+
+    const fileUri = Uri.file(demoFile);
+    await window.showTextDocument(fileUri);
   }
 
   /**

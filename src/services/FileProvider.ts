@@ -85,7 +85,7 @@ export class FileProvider {
    * The file is created at `.demo/demo.json` with initial content.
    * @returns A promise that resolves when the file is created.
    */
-  public static async createFile() {
+  public static async createFile(): Promise<Uri | undefined> {
     const workspaceFolder = Extension.getInstance().workspaceFolder;
     if (!workspaceFolder) {
       return;
@@ -109,6 +109,8 @@ export class FileProvider {
 }`;
 
     await workspace.fs.writeFile(file, new TextEncoder().encode(content));
+
+    return file;
   }
 
   /**
