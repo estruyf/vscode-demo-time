@@ -1,6 +1,10 @@
 # Change Log
 
-## [0.0.3] - 2023-12-08
+## [0.0.4] - 2023-12-09
+
+- Changed logo and banner on VS Code Marketplace
+
+## [0.0.3] - 2023-12-09
 
 - Added small logo for the activity bar
 - Added welcome text with initialize command
