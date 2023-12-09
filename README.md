@@ -90,7 +90,7 @@ Here is an example demo:
 <br />
 
 <p align="center">
-  <a href="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Festruyf%2Fvscode-demo-time&labelColor=%2386836d&countColor=%232f4858">
-    <img src="https://visitorbadge.io/status?path=https%3A%2F%2Fgithub.com%2Festruyf%2Fvscode-demo-time" height="25px" alt="Front Matter visitors" />
+  <a href="https://visitorbadge.io/status?path=https%3A%2F%2Fgithub.com%2Festruyf%2Fvscode-demo-time">
+    <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Festruyf%2Fvscode-demo-time&labelColor=%2386836d&countColor=%232f4858" height="25px" alt="Front Matter visitors" />
   </a>
 </p>
