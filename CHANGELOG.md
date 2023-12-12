@@ -7,6 +7,7 @@
 - Added `waitForTimeout` action
 - Added `waitForInput` action
 - Added `contentPath` property to demo steps to allow code snippets as files instead of content in the JSON
+- `start` and `end` keywords for `position` property
 
 ## [0.0.4] - 2023-12-09
 

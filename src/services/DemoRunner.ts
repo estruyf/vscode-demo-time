@@ -159,7 +159,15 @@ export class DemoRunner {
       if (step.position) {
         if (typeof step.position === "string") {
           if (step.position.includes(":")) {
-            const [start, end] = step.position.split(":");
+            let [start, end] = step.position.split(":");
+
+            if (start === "start") {
+              start = "1";
+            }
+
+            if (end === "end") {
+              end = editor.lineCount.toString();
+            }
 
             let lastLine = new Position(Number(end) - 1, 0);
             try {

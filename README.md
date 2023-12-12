@@ -29,27 +29,213 @@ Currently the extension supports the following features:
 
 #### File actions
 
-- `create`: Create a new file
-- `open`: Open a file
+<table>
+  <tr>
+    <th>Action</th> 
+    <th>Description</td>
+    <th>Usage</td>
+  </tr>
+  <tr>
+    <td>
+      <code>create</code>
+    </td>
+    <td>
+      Create a new file
+    </td>
+    <td>
+    
+```json
+{
+  "action": "create",
+  "path": "<relative path to the file>",
+  "content": "<content of the file> (optional)",
+  "contentPath": "<relative path to the file in the .demo folder> (optional)"
+}
+```
+  </td>
+  </tr>
+  <tr>
+    <td>
+      <code>open</code>
+    </td>
+    <td>
+      Open a file
+    </td>
+    <td>
+    
+```json
+{
+  "action": "open",
+  "path": "<relative path to the file>"
+}
+```
+  </td>
+  </tr>
+</table>
 
 #### Code actions
 
-- `insert`: Insert code into a file
-- `highlight`: Select code in a file
-- `unselect`: Unselect code in a file
-- `replace`: Replace code in a file
-- `delete`: Delete code from a file
+<table>
+  <tr>
+    <th>Action</th> 
+    <th>Description</td>
+    <th>Usage</td>
+  </tr>
+  <tr>
+    <td>
+      <code>insert</code>
+    </td>
+    <td>
+      Insert code into a file
+    </td>
+    <td>
+    
+```json
+{
+  "action": "insert",
+  "path": "<relative path to the file>",
+  "position": "<line number> or <start line number>:<end line number>",
+  "content": "<content of the file> (optional)",
+  "contentPath": "<relative path to the file in the .demo folder> (optional)"
+}
+```
+  </td>
+  </tr>
+  <tr>
+    <td>
+      <code>replace</code>
+    </td>
+    <td>
+      Replace code in a file
+    </td>
+    <td>
+    
+```json
+{
+  "action": "replace",
+  "path": "<relative path to the file>",
+  "position": "<line number> or <start line number>:<end line number>",
+  "content": "<content of the file> (optional)",
+  "contentPath": "<relative path to the file in the .demo folder> (optional)"
+}
+```
+  </td>
+  </tr>
+  <tr>
+    <td>
+      <code>delete</code>
+    </td>
+    <td>
+      Delete code from a file
+    </td>
+    <td>
+    
+```json
+{
+  "action": "delete",
+  "path": "<relative path to the file>",
+  "position": "<line number> or <start line number>:<end line number>"
+}
+```
+  </td>
+  </tr>
+  <tr>
+    <td>
+      <code>highlight</code>
+    </td>
+    <td>
+      Highlight code in a file
+    </td>
+    <td>
+    
+```json
+{
+  "action": "highlight",
+  "path": "<relative path to the file>",
+  "position": "<line number> or <start line number>:<end line number>"
+}
+```
+  </td>
+  </tr>
+  <tr>
+    <td>
+      <code>unselect</code>
+    </td>
+    <td>
+      Unselect code in a file
+    </td>
+    <td>
+    
+```json
+{
+  "action": "unselect",
+  "path": "<relative path to the file>"
+}
+```
+  </td>
+  </tr>
+</table>
 
 #### Time actions
 
-- `waitForTimeout`: Wait for a specific amount of time
-- `waitForInput`: Wait until the user presses a key
+<table>
+  <tr>
+    <th>Action</th> 
+    <th>Description</td>
+    <th>Usage</td>
+  </tr>
+  <tr>
+    <td>
+      <code>waitForTimeout</code>
+    </td>
+    <td>
+      Wait for a specific amount of time
+    </td>
+    <td>
+    
+```json
+{
+  "action": "waitForTimeout",
+  "timeout": "<timeout in milliseconds>"
+}
+```
+  </td>
+  </tr>
+  <tr>
+    <td>
+      <code>waitForInput</code>
+    </td>
+    <td>
+      Wait until the user presses a key
+    </td>
+    <td>
+    
+```json
+{
+  "action": "waitForInput"
+}
+```
+  </td>
+  </tr>
+</table>
 
 ## Usage
 
 To use the extension, you need to create a `.demo` folder in your workspace. Once created, you can add a JSON file which contains the demo and its steps.
 
-### Tips on adding content
+### Tips 
+
+#### Position
+
+For the position you can use the following formats:
+
+- `number`: The line number
+- `number:number`: The start and end line number
+- The `start` and `end` keywords can also be used instead of the line numbers
+  - `start` will be replaced by the first line number
+  - `end` will be replaced by the last line number
+
+#### Adding content to a file
 
 When you want to insert content to a file, you can use the `content` or `contentPath` properties in the demo step.
 

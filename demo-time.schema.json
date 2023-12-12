@@ -61,6 +61,19 @@
                 "if": {
                   "properties": {
                     "action": {
+                      "enum": ["create", "open"]
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "path"
+                  ]
+                }
+              }, {
+                "if": {
+                  "properties": {
+                    "action": {
                       "enum": ["insert", "replace"]
                     }
                   }
