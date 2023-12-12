@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.5] - 2023-12-xx
+
+- Added listener for demo file changes
+- Added `unselect` action
+
 ## [0.0.4] - 2023-12-09
 
 - Changed logo and banner on VS Code Marketplace

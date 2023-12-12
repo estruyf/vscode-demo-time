@@ -104,6 +104,7 @@ export class DemoRunner {
       return;
     }
 
+    // Loop over all the demo steps and execute them.
     for (const step of demoSteps) {
       const fileUri = Uri.joinPath(workspaceFolder.uri, step.path);
       if (!fileUri) {
@@ -148,6 +149,14 @@ export class DemoRunner {
 
       if (step.action === "open") {
         await commands.executeCommand("vscode.open", fileUri);
+      }
+
+      if (step.action == "unselect") {
+        const crntPosition = textEditor.selection.active;
+        textEditor.selection = new Selection(
+          new Position(crntPosition.line, 0),
+          new Position(crntPosition.line, 0)
+        );
       }
 
       if (step.action === "highlight" && (crntRange || crntPosition)) {

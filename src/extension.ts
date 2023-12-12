@@ -3,6 +3,7 @@ import { Extension } from "./services/Extension";
 import { DemoPanel } from "./panels/DemoPanel";
 import { DemoRunner } from "./services/DemoRunner";
 import { DemoCreator } from "./services/DemoCreator";
+import { DemoListeners } from "./services/DemoListeners";
 
 export function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);
@@ -10,6 +11,7 @@ export function activate(context: vscode.ExtensionContext) {
   DemoPanel.register();
   DemoRunner.registerCommands();
   DemoCreator.registerCommands();
+  DemoListeners.register();
 
   console.log("Demo time is active!");
 }

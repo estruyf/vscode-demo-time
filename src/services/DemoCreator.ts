@@ -92,11 +92,7 @@ export class DemoCreator {
     }
 
     const selection = editor.selection;
-    const text = editor.document.getText(selection);
-    if (!text) {
-      return;
-    }
-
+    const text = editor.document.getText(selection) || "";
     const modifiedText = text.replace(/\r?\n/g, "\n");
 
     const demoFile = await FileProvider.demoQuickPick();
@@ -105,10 +101,13 @@ export class DemoCreator {
     }
     const { filePath, demo } = demoFile;
 
-    const action = await window.showQuickPick(["Insert", "Delete"], {
-      title: "Demo time!",
-      placeHolder: "What kind of action step do you want to perform?",
-    });
+    const action = await window.showQuickPick(
+      ["Insert", "Highlight", "Unselect", "Delete"],
+      {
+        title: "Demo time!",
+        placeHolder: "What kind of action step do you want to perform?",
+      }
+    );
 
     if (!action) {
       return;
@@ -130,7 +129,7 @@ export class DemoCreator {
     const end = selection.end.line;
 
     let position: string | number = selection.start.line + 1;
-    if (action !== "Insert") {
+    if (action !== "Insert" && action !== "Unselect") {
       position = start === end ? start + 1 : `${start + 1}:${end + 1}`;
     }
 
@@ -142,6 +141,11 @@ export class DemoCreator {
       ),
       position,
     };
+
+    // Unselect doesn't need the position
+    if (action === "Unselect") {
+      delete step.position;
+    }
 
     if (action === "Insert") {
       step.content = modifiedText;

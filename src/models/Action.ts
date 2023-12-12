@@ -1,8 +1,11 @@
 export type Action =
+  // File
   | "create"
-  | "delete"
   | "open"
+  // Code
   | "insert"
   | "highlight"
   | "replace"
-  | "remove";
+  | "unselect"
+  | "remove"
+  | "delete";
