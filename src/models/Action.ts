@@ -8,4 +8,7 @@ export type Action =
   | "replace"
   | "unselect"
   | "remove"
-  | "delete";
+  | "delete"
+  // Timeout
+  | "waitForTimeout"
+  | "waitForInput";

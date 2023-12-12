@@ -1,15 +1,28 @@
-# Demo Time
+<h1 align="center">
+  <img alt="Demo Time" src="./assets/demo-time.png">
+</h1>
 
-A Visual Studio Code extension that allows you to smoothly present coding demos within the editor.
+<h2 align="center">A Visual Studio Code extension which allows you to smoothly present coding demos within the editor.</h2>
 
-*WIP*
+<p align="center">
+  <a href="https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-demo-time" title="Check it out on the Visual Studio Marketplace">
+    <img src="https://vscode-marketplace-badge.vercel.app/api/badge/version/eliostruyf.vscode-demo-time" alt="Visual Studio Marketplace" style="display: inline-block" />
+  </a>
+
+  <img src="https://vscode-marketplace-badge.vercel.app/api/badge/installs/eliostruyf.vscode-demo-time" alt="Number of installs"  style="display: inline-block;margin-left:10px" />
+
+  <a href="https://github.com/sponsors/estruyf" title="Become a sponsor" style="margin-left:10px">
+    <img src="https://img.shields.io/github/sponsors/estruyf?color=%23CE2E7C&logo=github&style=flat" alt="Sponsor the project" style="display: inline-block" />
+  </a>
+</p>
 
 ## Features
 
 Currently the extension supports the following features:
 
 - Multiple demo files located in `.demo` folder
-- Demo Time panel to execute your demo steps
+- Support for code/snippet files in the `.demo` folder. These files can be referenced in the demo steps, instead of adding the code in the JSON file.
+- Explorer panel to execute your demo steps
 - Add new demo steps (execute the `Demo Time: Add as demo step` command)
 
 ### Supported demo steps
@@ -23,12 +36,27 @@ Currently the extension supports the following features:
 
 - `insert`: Insert code into a file
 - `highlight`: Select code in a file
+- `unselect`: Unselect code in a file
 - `replace`: Replace code in a file
 - `delete`: Delete code from a file
+
+#### Time actions
+
+- `waitForTimeout`: Wait for a specific amount of time
+- `waitForInput`: Wait until the user presses a key
 
 ## Usage
 
 To use the extension, you need to create a `.demo` folder in your workspace. Once created, you can add a JSON file which contains the demo and its steps.
+
+### Tips on adding content
+
+When you want to insert content to a file, you can use the `content` or `contentPath` properties in the demo step.
+
+| Property | Description |
+| --- | --- |
+| `content` | This property allows you to add the content directly in the JSON file, but this can make your JSON file quite big and it can be hard to read. |
+| `contentPath` | This property allows you to reference a file in the `.demo` folder. This way you can keep your JSON file clean and add the content in separate files. **Important**: the path is relative to the `.demo` folder. |
 
 ### Example
 

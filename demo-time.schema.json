@@ -3,7 +3,7 @@
   "$id": "https://elio.dev/demo-time.schema.json",
   "title": "Demo Time - Schema",
   "description": "The schema for the Demo Time - VSCode extension",
-  "lastModified": "2023-12-08",
+  "lastModified": "2023-12-12",
   "type": "object",
   "properties": {
     "title": {
@@ -30,33 +30,67 @@
               "properties": {
                 "action": {
                   "type": "string",
-                  "enum": ["create", "open", "insert", "highlight", "replace", "delete"]
+                  "enum": ["create", "open", "insert", "highlight", "unselect", "replace", "delete", "waitForTimeout", "waitForInput"],
+                  "title": "Action to perform"
                 },
                 "path": {
-                  "type": "string"
+                  "type": "string",
+                  "title": "Path to file"
                 },
                 "content": {
-                  "type": "string"
+                  "type": "string",
+                  "title": "Content to insert"
+                },
+                "contentPath": {
+                  "type": "string",
+                  "title": "Path to content to insert"
                 },
                 "position": {
-                  "type": ["string", "number"]
+                  "type": ["string", "number"],
+                  "title": "Position in the file. Can be line number or \"<start line>:<end line>\"."
+                },
+                "timeout": {
+                  "type": "number",
+                  "title": "Timeout in milliseconds"
                 }
               },
               "required": [
-                "action",
-                "path"
+                "action"
               ],
               "allOf": [{
                 "if": {
                   "properties": {
                     "action": {
-                      "const": "insert"
+                      "enum": ["insert", "replace"]
                     }
                   }
                 },
                 "then": {
                   "required": [
-                    "content",
+                    "path",
+                    "position"
+                  ],
+                  "oneOf": [{
+                    "required": [
+                      "content"
+                    ]
+                  }, {
+                    "required": [
+                      "contentPath"
+                    ]
+                  }]
+                }
+              }, {
+                "if": {
+                  "properties": {
+                    "action": {
+                      "const": "delete"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "path",
                     "position"
                   ]
                 }
@@ -70,6 +104,7 @@
                 },
                 "then": {
                   "required": [
+                    "path",
                     "position"
                   ]
                 }
@@ -77,14 +112,13 @@
                 "if": {
                   "properties": {
                     "action": {
-                      "const": "replace"
+                      "const": "unselect"
                     }
                   }
                 },
                 "then": {
                   "required": [
-                    "content",
-                    "position"
+                    "path"
                   ]
                 }
               }, {
@@ -97,6 +131,7 @@
                 },
                 "then": {
                   "required": [
+                    "path",
                     "position"
                   ]
                 }
@@ -118,6 +153,5 @@
     "title",
     "description",
     "demos"
-  ],
-  "additionalProperties": false
+  ]
 }

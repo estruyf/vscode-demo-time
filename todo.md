@@ -9,3 +9,4 @@
 - Action `waitForUserInput`
 - Demo file listener -> on update -> update panel
 - Allow code snippets as files instead of content in the JSON -> easier to edit/maintain
+- Report to output

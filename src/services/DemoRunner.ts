@@ -1,4 +1,4 @@
-import { COMMAND } from "../constants";
+import { COMMAND, General } from "../constants";
 import { Action, Demo, Demos, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import {
@@ -14,6 +14,7 @@ import {
 } from "vscode";
 import { FileProvider } from "./FileProvider";
 import { DemoPanel } from "../panels/DemoPanel";
+import { sleep } from "../utils";
 
 export class DemoRunner {
   public static ExecutedDemoSteps: string[] = [];
@@ -106,15 +107,45 @@ export class DemoRunner {
 
     // Loop over all the demo steps and execute them.
     for (const step of demoSteps) {
+      if (step.action === "waitForTimeout") {
+        await sleep(step.timeout || 1000);
+        continue;
+      } else if (step.action === "waitForInput") {
+        const answer = await window.showInputBox({
+          title: "Demo time!",
+          prompt: "Press any key to continue",
+          ignoreFocusOut: true,
+        });
+        if (answer === undefined) {
+          return;
+        }
+        continue;
+      }
+
       const fileUri = Uri.joinPath(workspaceFolder.uri, step.path);
       if (!fileUri) {
         continue;
       }
 
+      let content = step.content || "";
+      if (step.contentPath) {
+        const contentUri = Uri.joinPath(
+          workspaceFolder.uri,
+          General.demoFolder,
+          step.contentPath
+        );
+        if (!contentUri) {
+          continue;
+        }
+
+        const contentEditor = await workspace.openTextDocument(contentUri);
+        content = contentEditor.getText();
+      }
+
       if (step.action === "create") {
         await workspace.fs.writeFile(
           fileUri,
-          new Uint8Array(Buffer.from(step.content || ""))
+          new Uint8Array(Buffer.from(content))
         );
         continue;
       }
@@ -149,6 +180,7 @@ export class DemoRunner {
 
       if (step.action === "open") {
         await commands.executeCommand("vscode.open", fileUri);
+        continue;
       }
 
       if (step.action == "unselect") {
@@ -157,6 +189,7 @@ export class DemoRunner {
           new Position(crntPosition.line, 0),
           new Position(crntPosition.line, 0)
         );
+        continue;
       }
 
       if (step.action === "highlight" && (crntRange || crntPosition)) {
@@ -170,8 +203,10 @@ export class DemoRunner {
           const range = new Range(crntPosition, crntPosition);
           textEditor.selection = new Selection(range.start, range.end);
         }
+        continue;
       }
 
+      // Code actions
       if (step.action === "insert" && crntPosition) {
         if (!textEditor) {
           continue;
@@ -189,10 +224,10 @@ export class DemoRunner {
         const edit = new WorkspaceEdit();
 
         if (!lineContent) {
-          edit.insert(fileUri, crntPosition, step.content || "");
+          edit.insert(fileUri, crntPosition, content);
         } else {
           const line = editor.lineAt(crntPosition);
-          edit.replace(fileUri, line.range, step.content || "");
+          edit.replace(fileUri, line.range, content);
         }
 
         await workspace.applyEdit(edit);
@@ -206,10 +241,10 @@ export class DemoRunner {
         const edit = new WorkspaceEdit();
 
         if (crntRange) {
-          edit.replace(fileUri, crntRange, step.content || "");
+          edit.replace(fileUri, crntRange, content);
         } else if (crntPosition) {
           const line = editor.lineAt(crntPosition);
-          edit.replace(fileUri, line.range, step.content || "");
+          edit.replace(fileUri, line.range, content);
         }
 
         await workspace.applyEdit(edit);

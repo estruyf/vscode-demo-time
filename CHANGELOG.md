@@ -4,6 +4,9 @@
 
 - Added listener for demo file changes
 - Added `unselect` action
+- Added `waitForTimeout` action
+- Added `waitForInput` action
+- Added `contentPath` property to demo steps to allow code snippets as files instead of content in the JSON
 
 ## [0.0.4] - 2023-12-09
 

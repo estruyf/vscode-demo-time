@@ -20,5 +20,7 @@ export interface Step {
   action: Action;
   path: string;
   content?: string;
+  contentPath?: string;
   position?: string | number;
+  timeout?: number;
 }

@@ -1,6 +1,7 @@
 import { Uri, window, workspace } from "vscode";
 import { Extension } from "./Extension";
 import { DemoFiles, Demos } from "../models";
+import { General } from "../constants";
 
 export class FileProvider {
   /**
@@ -9,7 +10,7 @@ export class FileProvider {
    */
   public static async getFiles(): Promise<DemoFiles | null> {
     const files = await workspace.findFiles(
-      `.demo/*.json`,
+      `${General.demoFolder}/*.json`,
       `**/node_modules/**`
     );
 
@@ -92,7 +93,7 @@ export class FileProvider {
     }
 
     const files = await workspace.findFiles(
-      `.demo/demo.json`,
+      `${General.demoFolder}/demo.json`,
       `**/node_modules/**`
     );
 
@@ -100,7 +101,11 @@ export class FileProvider {
       return;
     }
 
-    const file = Uri.joinPath(workspaceFolder.uri, `.demo/demo.json`);
+    const file = Uri.joinPath(
+      workspaceFolder.uri,
+      General.demoFolder,
+      `demo.json`
+    );
     const content = `{
   "$schema": "https://elio.dev/demo-time.schema.json",
   "title": "Demo",

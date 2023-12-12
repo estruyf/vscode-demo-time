@@ -1,6 +1,7 @@
 import { TextDocument, Uri, workspace } from "vscode";
 import { parseWinPath } from "../utils";
 import { DemoPanel } from "../panels/DemoPanel";
+import { General } from "../constants";
 
 export class DemoListeners {
   public static register() {
@@ -19,7 +20,7 @@ export class DemoListeners {
 
     documents.forEach((file) => {
       const fileName = parseWinPath(file.path);
-      if (fileName.includes(".demo")) {
+      if (fileName.includes(General.demoFolder)) {
         shouldUpdate = true;
       }
     });
@@ -31,7 +32,7 @@ export class DemoListeners {
 
   private static checkToUpdate(document: TextDocument) {
     const fileName = parseWinPath(document.fileName);
-    if (fileName.includes(".demo")) {
+    if (fileName.includes(General.demoFolder)) {
       DemoPanel.update();
     }
   }
