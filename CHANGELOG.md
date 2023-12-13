@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.6] - 2023-12-12
+
+- Bring inserted or replaced lines into view
+- Set the position of the cursor after inserting or replacing text to the start position
+
 ## [0.0.5] - 2023-12-xx
 
 - Added listener for demo file changes
