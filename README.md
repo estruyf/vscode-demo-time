@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img alt="Demo Time" src="./assets/demo-time.png">
+  <img alt="Demo Time" src="./assets/demo-time-128x128.png">
 </h1>
 
 <h2 align="center">A Visual Studio Code extension which allows you to smoothly present coding demos within the editor.</h2>
