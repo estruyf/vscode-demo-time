@@ -1,5 +1,5 @@
 import { COMMAND, General } from "../constants";
-import { Action, Demo, Demos, Step, Subscription } from "../models";
+import { Demo, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import {
   Position,
@@ -8,7 +8,6 @@ import {
   Uri,
   WorkspaceEdit,
   commands,
-  env,
   window,
   workspace,
 } from "vscode";

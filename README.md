@@ -6,13 +6,13 @@
 
 <p align="center">
   <a href="https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-demo-time" title="Check it out on the Visual Studio Marketplace">
-    <img src="https://vscode-marketplace-badge.vercel.app/api/badge/version/eliostruyf.vscode-demo-time" alt="Visual Studio Marketplace" style="display: inline-block" />
+    <img src="https://vscode-marketplace-badge.vercel.app/api/badge/version/eliostruyf.vscode-demo-time?style=flat-square" alt="Visual Studio Marketplace" style="display: inline-block" />
   </a>
 
-  <img src="https://vscode-marketplace-badge.vercel.app/api/badge/installs/eliostruyf.vscode-demo-time" alt="Number of installs"  style="display: inline-block;margin-left:10px" />
+  <img src="https://vscode-marketplace-badge.vercel.app/api/badge/installs/eliostruyf.vscode-demo-time?style=flat-square" alt="Number of installs"  style="display: inline-block;margin-left:10px" />
 
   <a href="https://github.com/sponsors/estruyf" title="Become a sponsor" style="margin-left:10px">
-    <img src="https://img.shields.io/github/sponsors/estruyf?color=%23CE2E7C&logo=github&style=flat" alt="Sponsor the project" style="display: inline-block" />
+    <img src="https://img.shields.io/github/sponsors/estruyf?color=%23CE2E7C&logo=github&style=flat-square" alt="Sponsor the project" style="display: inline-block" />
   </a>
 </p>
 
@@ -31,7 +31,7 @@ Currently the extension supports the following features:
 
 <table>
   <tr>
-    <th>Action</th> 
+    <th>Action</th>
     <th>Description</td>
     <th>Usage</td>
   </tr>
@@ -43,7 +43,7 @@ Currently the extension supports the following features:
       Create a new file
     </td>
     <td>
-    
+
 ```json
 {
   "action": "create",
@@ -52,6 +52,7 @@ Currently the extension supports the following features:
   "contentPath": "<relative path to the file in the .demo folder> (optional)"
 }
 ```
+
   </td>
   </tr>
   <tr>
@@ -62,13 +63,14 @@ Currently the extension supports the following features:
       Open a file
     </td>
     <td>
-    
+
 ```json
 {
   "action": "open",
   "path": "<relative path to the file>"
 }
 ```
+
   </td>
   </tr>
 </table>
@@ -77,7 +79,7 @@ Currently the extension supports the following features:
 
 <table>
   <tr>
-    <th>Action</th> 
+    <th>Action</th>
     <th>Description</td>
     <th>Usage</td>
   </tr>
@@ -89,7 +91,7 @@ Currently the extension supports the following features:
       Insert code into a file
     </td>
     <td>
-    
+
 ```json
 {
   "action": "insert",
@@ -99,6 +101,7 @@ Currently the extension supports the following features:
   "contentPath": "<relative path to the file in the .demo folder> (optional)"
 }
 ```
+
   </td>
   </tr>
   <tr>
@@ -109,7 +112,7 @@ Currently the extension supports the following features:
       Replace code in a file
     </td>
     <td>
-    
+
 ```json
 {
   "action": "replace",
@@ -119,6 +122,7 @@ Currently the extension supports the following features:
   "contentPath": "<relative path to the file in the .demo folder> (optional)"
 }
 ```
+
   </td>
   </tr>
   <tr>
@@ -129,7 +133,7 @@ Currently the extension supports the following features:
       Delete code from a file
     </td>
     <td>
-    
+
 ```json
 {
   "action": "delete",
@@ -137,6 +141,7 @@ Currently the extension supports the following features:
   "position": "<line number> or <start line number>:<end line number>"
 }
 ```
+
   </td>
   </tr>
   <tr>
@@ -147,7 +152,7 @@ Currently the extension supports the following features:
       Highlight code in a file
     </td>
     <td>
-    
+
 ```json
 {
   "action": "highlight",
@@ -155,6 +160,7 @@ Currently the extension supports the following features:
   "position": "<line number> or <start line number>:<end line number>"
 }
 ```
+
   </td>
   </tr>
   <tr>
@@ -165,13 +171,14 @@ Currently the extension supports the following features:
       Unselect code in a file
     </td>
     <td>
-    
+
 ```json
 {
   "action": "unselect",
   "path": "<relative path to the file>"
 }
 ```
+
   </td>
   </tr>
 </table>
@@ -180,7 +187,7 @@ Currently the extension supports the following features:
 
 <table>
   <tr>
-    <th>Action</th> 
+    <th>Action</th>
     <th>Description</td>
     <th>Usage</td>
   </tr>
@@ -192,13 +199,14 @@ Currently the extension supports the following features:
       Wait for a specific amount of time
     </td>
     <td>
-    
+
 ```json
 {
   "action": "waitForTimeout",
   "timeout": "<timeout in milliseconds>"
 }
 ```
+
   </td>
   </tr>
   <tr>
@@ -209,12 +217,13 @@ Currently the extension supports the following features:
       Wait until the user presses a key
     </td>
     <td>
-    
+
 ```json
 {
   "action": "waitForInput"
 }
 ```
+
   </td>
   </tr>
 </table>
@@ -223,7 +232,7 @@ Currently the extension supports the following features:
 
 To use the extension, you need to create a `.demo` folder in your workspace. Once created, you can add a JSON file which contains the demo and its steps.
 
-### Tips 
+### Tips
 
 #### Position
 
@@ -305,6 +314,6 @@ Here is an example demo:
 
 <p align="center">
   <a href="https://visitorbadge.io/status?path=https%3A%2F%2Fgithub.com%2Festruyf%2Fvscode-demo-time">
-    <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Festruyf%2Fvscode-demo-time&labelColor=%2386836d&countColor=%232f4858" height="25px" alt="Front Matter visitors" />
+    <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Festruyf%2Fvscode-demo-time&labelColor=%23555555&countColor=%2397ca00" height="25px" alt="Front Matter visitors" />
   </a>
 </p>
