@@ -2,7 +2,7 @@
   "name": "vscode-demo-time",
   "displayName": "Demo Time!",
   "description": "A VS Code extension to help you during coding demos. Script it, run it, and you explain it!",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "preview": true,
   "publisher": "eliostruyf",
   "galleryBanner": {
