@@ -24,6 +24,8 @@ Currently the extension supports the following features:
 - Support for code/snippet files in the `.demo` folder. These files can be referenced in the demo steps, instead of adding the code in the JSON file.
 - Explorer panel to execute your demo steps
 - Add new demo steps (execute the `Demo Time: Add as demo step` command)
+- Run through the demo steps (execute the `Demo Time: Start` command)
+- Presentation mode which allows you to use a clicker to navigate through the demo steps
 
 ### Supported demo steps
 

@@ -1,4 +1,4 @@
-import { ThemeColor, commands, window } from "vscode";
+import { ThemeColor, TreeItem, TreeView, commands, window } from "vscode";
 import { ContextKeys } from "../constants/ContextKeys";
 import { FileProvider } from "../services/FileProvider";
 import { DemoFiles, Demos } from "../models";
@@ -7,12 +7,20 @@ import { DemoRunner } from "../services/DemoRunner";
 import { COMMAND } from "../constants";
 
 export class DemoPanel {
+  private static treeView: TreeView<TreeItem>;
+
   public static register() {
     DemoPanel.init();
   }
 
   public static update() {
     DemoPanel.init();
+  }
+
+  public static updateTitle(title: string) {
+    if (this.treeView) {
+      this.treeView.title = title;
+    }
   }
 
   /**
@@ -68,7 +76,11 @@ export class DemoPanel {
         new ActionTreeItem(
           demos.title,
           path.split("/").pop() as string,
-          { name: "folder", custom: false },
+          {
+            name: executingFile.filePath === path ? "play-circle" : "folder",
+            custom: false,
+            color: executingFile.filePath === path ? new ThemeColor("terminal.ansiGreen") : undefined,
+          },
           undefined,
           undefined,
           undefined,
@@ -80,7 +92,9 @@ export class DemoPanel {
       );
     }
 
-    window.registerTreeDataProvider("demo-time", new ActionTreeviewProvider(accountCommands));
+    this.treeView = window.createTreeView("demo-time", {
+      treeDataProvider: new ActionTreeviewProvider(accountCommands),
+    });
   }
 
   /**

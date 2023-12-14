@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.8] - 2023-12-14
+
+- Add a presentation mode which allows you to use a clicker to navigate through the demo steps
+
 ## [0.0.7] - 2023-12-14
 
 - Keep state of the demo steps for the workspace

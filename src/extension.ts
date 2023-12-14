@@ -5,7 +5,7 @@ import { DemoRunner } from "./services/DemoRunner";
 import { DemoCreator } from "./services/DemoCreator";
 import { DemoListeners } from "./services/DemoListeners";
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);
 
   DemoPanel.register();

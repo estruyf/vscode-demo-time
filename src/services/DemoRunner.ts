@@ -1,5 +1,5 @@
 import { COMMAND, General, StateKeys } from "../constants";
-import { Demo, DemoFileCache, Step, Subscription } from "../models";
+import { Action, Demo, DemoFileCache, Demos, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import {
   Position,
@@ -25,6 +25,8 @@ const DEFAULT_START_VALUE = {
 };
 
 export class DemoRunner {
+  private static isPresentationMode = false;
+
   /**
    * Registers the commands for the demo runner.
    */
@@ -32,6 +34,7 @@ export class DemoRunner {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
 
     subscriptions.push(commands.registerCommand(COMMAND.start, DemoRunner.start));
+    subscriptions.push(commands.registerCommand(COMMAND.togglePresentationMode, DemoRunner.togglePresentationMode));
     subscriptions.push(commands.registerCommand(COMMAND.runStep, DemoRunner.startDemo));
     subscriptions.push(commands.registerCommand(COMMAND.reset, DemoRunner.reset));
   }
@@ -59,12 +62,25 @@ export class DemoRunner {
     await ext.setState(StateKeys.executingDemoFile, demoFile);
   }
 
+  private static async togglePresentationMode(enable?: boolean): Promise<void> {
+    DemoRunner.isPresentationMode = typeof enable !== "undefined" ? enable : !DemoRunner.isPresentationMode;
+    await commands.executeCommand("setContext", "demo-time.presentation", DemoRunner.isPresentationMode);
+    if (DemoRunner.isPresentationMode) {
+      DemoPanel.updateTitle("Demo time (Presentation mode)");
+      await DemoRunner.getDemoFile();
+    } else {
+      DemoPanel.updateTitle("Demo time");
+    }
+    DemoPanel.update();
+  }
+
   /**
    * Resets the DemoRunner state by clearing the executing demo file path and demo array.
    */
-  private static reset(): void {
+  private static async reset(): Promise<void> {
     const ext = Extension.getInstance();
     ext.setState(StateKeys.executingDemoFile, Object.assign({}, DEFAULT_START_VALUE));
+    DemoRunner.togglePresentationMode(false);
     DemoPanel.update();
   }
 
@@ -73,40 +89,10 @@ export class DemoRunner {
    * @returns {Promise<void>} A promise that resolves when the demo runner has started.
    */
   private static async start(item: ActionTreeItem): Promise<void> {
-    let demos: Demo[] = [];
     const executingFile = await DemoRunner.getExecutedDemoFile();
 
-    // Check if started from the panel
-    if (item && item.description) {
-      const demoFiles = await FileProvider.getFiles();
-      if (!demoFiles) {
-        window.showErrorMessage("No demo files found");
-        return;
-      }
-
-      const demoFile = Object.keys(demoFiles).find((path) => path.endsWith(item.description as string));
-      if (!demoFile) {
-        window.showErrorMessage(`No demo file found with the name ${item.description}`);
-        return;
-      }
-
-      if (executingFile.filePath !== demoFile) {
-        executingFile.filePath = demoFile;
-        executingFile.demo = [];
-      }
-      demos = demoFiles[demoFile].demos;
-    }
-
-    if (!executingFile.filePath && !item) {
-      const demoFile = await FileProvider.demoQuickPick();
-      if (!demoFile?.demo) {
-        return;
-      }
-
-      executingFile.filePath = demoFile.filePath;
-      executingFile.demo = [];
-      demos = demoFile.demo.demos;
-    }
+    const demoFile = await DemoRunner.getDemoFile(item);
+    let demos: Demo[] = demoFile?.demo.demos || [];
 
     if (demos.length <= 0) {
       window.showWarningMessage("No demo steps found");
@@ -471,5 +457,77 @@ export class DemoRunner {
    */
   private static async saveFile(): Promise<void> {
     await commands.executeCommand("workbench.action.files.save");
+  }
+
+  /**
+   * Retrieves the demo file associated with the given ActionTreeItem.
+   * @param item The ActionTreeItem representing the demo file.
+   * @returns A Promise that resolves to an object containing the filePath and demo, or undefined if no demo file is found.
+   */
+  private static async getDemoFile(item?: ActionTreeItem): Promise<
+    | {
+        filePath: string;
+        demo: Demos;
+      }
+    | undefined
+  > {
+    const demoFiles = await FileProvider.getFiles();
+    const executingFile = await DemoRunner.getExecutedDemoFile();
+
+    if (item && item.description) {
+      if (!demoFiles) {
+        window.showErrorMessage("No demo files found");
+        return;
+      }
+
+      const demoFile = Object.keys(demoFiles).find((path) => path.endsWith(item.description as string));
+      if (!demoFile) {
+        window.showErrorMessage(`No demo file found with the name ${item.description}`);
+        return;
+      }
+
+      if (executingFile.filePath !== demoFile) {
+        executingFile.filePath = demoFile;
+        executingFile.demo = [];
+        await DemoRunner.setExecutedDemoFile(executingFile);
+      }
+      return {
+        filePath: demoFile,
+        demo: demoFiles[demoFile],
+      };
+    } else if (!executingFile.filePath && !item && demoFiles) {
+      let demoFilePath = undefined;
+      if (demoFiles && Object.keys(demoFiles).length === 1) {
+        demoFilePath = Object.keys(demoFiles)[0];
+      } else {
+        const demoFile = await FileProvider.demoQuickPick();
+        if (!demoFile?.demo) {
+          return;
+        }
+
+        demoFilePath = demoFile.filePath;
+      }
+
+      executingFile.filePath = demoFilePath;
+      executingFile.demo = [];
+      await DemoRunner.setExecutedDemoFile(executingFile);
+      return {
+        filePath: demoFilePath,
+        demo: demoFiles[demoFilePath],
+      };
+    } else if (executingFile.filePath && !item && demoFiles) {
+      const demoFile = demoFiles[executingFile.filePath];
+      if (!demoFile) {
+        window.showErrorMessage("No demo file found");
+        return;
+      }
+
+      return {
+        filePath: executingFile.filePath,
+        demo: demoFile,
+      };
+    }
+
+    return;
   }
 }
