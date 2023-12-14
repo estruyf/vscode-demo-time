@@ -1,5 +1,5 @@
-import { COMMAND, General } from "../constants";
-import { Demo, Step, Subscription } from "../models";
+import { COMMAND, General, StateKeys } from "../constants";
+import { Demo, DemoFileCache, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import {
   Position,
@@ -17,78 +17,155 @@ import {
 import { FileProvider } from "./FileProvider";
 import { DemoPanel } from "../panels/DemoPanel";
 import { sleep } from "../utils";
+import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
+
+const DEFAULT_START_VALUE = {
+  filePath: "",
+  demo: [],
+};
 
 export class DemoRunner {
-  public static ExecutedDemoSteps: string[] = [];
-
+  /**
+   * Registers the commands for the demo runner.
+   */
   public static registerCommands() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
 
     subscriptions.push(commands.registerCommand(COMMAND.start, DemoRunner.start));
-    subscriptions.push(commands.registerCommand(COMMAND.startDemo, DemoRunner.startDemo));
+    subscriptions.push(commands.registerCommand(COMMAND.runStep, DemoRunner.startDemo));
+    subscriptions.push(commands.registerCommand(COMMAND.reset, DemoRunner.reset));
+  }
+
+  /**
+   * Retrieves the executed demo file.
+   * @returns {Promise<DemoFileCache>} The executed demo file.
+   */
+  public static async getExecutedDemoFile(): Promise<DemoFileCache> {
+    const ext = Extension.getInstance();
+    const demoFile = ext.getState<DemoFileCache>(StateKeys.executingDemoFile);
+    if (!demoFile) {
+      return Object.assign({}, DEFAULT_START_VALUE);
+    }
+
+    return demoFile;
+  }
+
+  /**
+   * Sets the executed demo file in the extension state.
+   * @param demoFile - The demo file to be set as executed.
+   */
+  private static async setExecutedDemoFile(demoFile: DemoFileCache) {
+    const ext = Extension.getInstance();
+    await ext.setState(StateKeys.executingDemoFile, demoFile);
+  }
+
+  /**
+   * Resets the DemoRunner state by clearing the executing demo file path and demo array.
+   */
+  private static reset(): void {
+    const ext = Extension.getInstance();
+    ext.setState(StateKeys.executingDemoFile, Object.assign({}, DEFAULT_START_VALUE));
+    DemoPanel.update();
   }
 
   /**
    * Starts the demo runner.
-   *
    * @returns {Promise<void>} A promise that resolves when the demo runner has started.
    */
-  private static async start(): Promise<void> {
-    const demoFile = await FileProvider.demoQuickPick();
-    if (!demoFile?.demo) {
-      return;
-    }
+  private static async start(item: ActionTreeItem): Promise<void> {
+    let demos: Demo[] = [];
+    const executingFile = await DemoRunner.getExecutedDemoFile();
 
-    let demo = demoFile.demo;
-    if (demo.demos.length <= 0) {
-      return;
-    }
-
-    const demoToStart = await window.showQuickPick(
-      demo.demos.map((demo) => demo.title),
-      {
-        title: "Demo time!",
-        placeHolder: "Select a demo to start",
+    // Check if started from the panel
+    if (item && item.description) {
+      const demoFiles = await FileProvider.getFiles();
+      if (!demoFiles) {
+        window.showErrorMessage("No demo files found");
+        return;
       }
-    );
 
-    if (!demoToStart) {
+      const demoFile = Object.keys(demoFiles).find((path) => path.endsWith(item.description as string));
+      if (!demoFile) {
+        window.showErrorMessage(`No demo file found with the name ${item.description}`);
+        return;
+      }
+
+      if (executingFile.filePath !== demoFile) {
+        executingFile.filePath = demoFile;
+        executingFile.demo = [];
+      }
+      demos = demoFiles[demoFile].demos;
+    }
+
+    if (!executingFile.filePath && !item) {
+      const demoFile = await FileProvider.demoQuickPick();
+      if (!demoFile?.demo) {
+        return;
+      }
+
+      executingFile.filePath = demoFile.filePath;
+      executingFile.demo = [];
+      demos = demoFile.demo.demos;
+    }
+
+    if (demos.length <= 0) {
+      window.showWarningMessage("No demo steps found");
       return;
     }
 
-    const demoIndex = demo.demos.findIndex((demo) => demo.title === demoToStart);
+    // Get the first demo step to start
+    const demoIdxToRun = demos.findIndex((_, idx) => {
+      const hasExecuted = executingFile.demo.find((execDemo) => execDemo.idx === idx);
+      return !hasExecuted;
+    });
 
-    if (demoIndex < 0) {
+    if (demoIdxToRun < 0) {
+      window.showInformationMessage("All demo steps have been executed");
       return;
     }
 
-    const demoSteps = demo.demos[demoIndex].steps;
+    const demoToRun = demos[demoIdxToRun];
+    const demoSteps = demoToRun.steps;
     if (!demoSteps) {
       return;
     }
 
-    DemoRunner.ExecutedDemoSteps.push(demo.title);
+    executingFile.demo.push({
+      idx: demoIdxToRun,
+      title: demoToRun.title,
+    });
 
+    await DemoRunner.setExecutedDemoFile(executingFile);
     await DemoRunner.runSteps(demoSteps);
   }
 
   /**
-   * Starts the demo by running its steps.
-   * @param {Demo} demo - The demo to start.
-   * @returns {Promise<void>} - A promise that resolves when the demo is started.
+   * Starts the execution of a demo.
+   * @param demoToRun - The demo to run.
+   * @returns A promise that resolves when the demo execution is complete.
    */
-  private static async startDemo(demo: Demo): Promise<void> {
-    if (!demo) {
+  private static async startDemo(demoToRun: { filePath: string; idx: number; demo: Demo }): Promise<void> {
+    if (!demoToRun) {
       return;
     }
 
-    if (demo.steps.length <= 0) {
+    if (demoToRun.demo.steps.length <= 0) {
       return;
     }
 
-    DemoRunner.ExecutedDemoSteps.push(demo.title);
+    const executingFile = await DemoRunner.getExecutedDemoFile();
+    if (executingFile.filePath !== demoToRun.filePath) {
+      executingFile.filePath = demoToRun.filePath;
+      executingFile.demo = [];
+    }
 
-    await DemoRunner.runSteps(demo.steps);
+    executingFile.demo.push({
+      idx: demoToRun.idx,
+      title: demoToRun.demo.title,
+    });
+
+    await DemoRunner.setExecutedDemoFile(executingFile);
+    await DemoRunner.runSteps(demoToRun.demo.steps);
   }
 
   /**

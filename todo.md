@@ -11,3 +11,4 @@
 - Allow code snippets as files instead of content in the JSON -> easier to edit/maintain
 - Report to output
 - `start:end`
+- Reset the demo state

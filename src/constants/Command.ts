@@ -3,7 +3,8 @@ export const EXTENSION_NAME = "demo-time";
 export const COMMAND = {
   // Running the demo
   start: `${EXTENSION_NAME}.start`,
-  startDemo: `${EXTENSION_NAME}.startDemo`,
+  runStep: `${EXTENSION_NAME}.runStep`,
+  reset: `${EXTENSION_NAME}.reset`,
   // Creator
   initialize: `${EXTENSION_NAME}.initialize`,
   openDemoFile: `${EXTENSION_NAME}.openDemoFile`,

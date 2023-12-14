@@ -1,9 +1,4 @@
-import {
-  ExtensionContext,
-  ExtensionMode,
-  SecretStorage,
-  workspace,
-} from "vscode";
+import { ExtensionContext, ExtensionMode, SecretStorage, workspace } from "vscode";
 
 export class Extension {
   private static instance: Extension;
@@ -82,5 +77,24 @@ export class Extension {
     }
 
     return folders[0];
+  }
+
+  /**
+   * Retrieves the value associated with the specified key from the workspace state.
+   * @param key - The key of the value to retrieve.
+   * @returns The value associated with the specified key, or undefined if the key does not exist.
+   */
+  public getState<T>(key: string): T | undefined {
+    return this.ctx.workspaceState.get(key);
+  }
+
+  /**
+   * Sets the state of a key-value pair in the workspace state.
+   * @param key - The key of the state.
+   * @param value - The value to set for the state.
+   * @returns A promise that resolves when the state is updated.
+   */
+  public async setState(key: string, value: any) {
+    return await this.ctx.workspaceState.update(key, value);
   }
 }

@@ -1,11 +1,19 @@
 # Change Log
 
-## [0.0.6] - 2023-12-12
+## [0.0.7] - 2023-12-14
+
+- Keep state of the demo steps for the workspace
+- Added a `start` action on the demo file in the panel
+- The `demo-time.start` command now runs the next step
+- Added `reset` command
+- Added `reset` action to the view title
+
+## [0.0.6] - 2023-12-13
 
 - Bring inserted or replaced lines into view
 - Set the position of the cursor after inserting or replacing text to the start position
 
-## [0.0.5] - 2023-12-xx
+## [0.0.5] - 2023-12-12
 
 - Added listener for demo file changes
 - Added `unselect` action

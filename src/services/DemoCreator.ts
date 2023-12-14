@@ -12,15 +12,9 @@ export class DemoCreator {
   public static registerCommands() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
 
-    subscriptions.push(
-      commands.registerCommand(COMMAND.initialize, DemoCreator.initialize)
-    );
-    subscriptions.push(
-      commands.registerCommand(COMMAND.openDemoFile, DemoCreator.openFile)
-    );
-    subscriptions.push(
-      commands.registerCommand(COMMAND.addToStep, DemoCreator.copy)
-    );
+    subscriptions.push(commands.registerCommand(COMMAND.initialize, DemoCreator.initialize));
+    subscriptions.push(commands.registerCommand(COMMAND.openDemoFile, DemoCreator.openFile));
+    subscriptions.push(commands.registerCommand(COMMAND.addToStep, DemoCreator.copy));
   }
 
   /**
@@ -39,9 +33,7 @@ export class DemoCreator {
       await window.showTextDocument(fileUri);
     }
 
-    window.showInformationMessage(
-      "Demo time is initialized, you can now start adding demo steps!"
-    );
+    window.showInformationMessage("Demo time is initialized, you can now start adding demo steps!");
 
     DemoPanel.update();
   }
@@ -56,9 +48,7 @@ export class DemoCreator {
       return;
     }
 
-    const demoFile = Object.keys(demoFiles).find((path) =>
-      path.endsWith(item.description as string)
-    );
+    const demoFile = Object.keys(demoFiles).find((path) => path.endsWith(item.description as string));
     if (!demoFile) {
       return;
     }
@@ -101,25 +91,19 @@ export class DemoCreator {
     }
     const { filePath, demo } = demoFile;
 
-    const action = await window.showQuickPick(
-      ["Insert", "Highlight", "Unselect", "Delete"],
-      {
-        title: "Demo time!",
-        placeHolder: "What kind of action step do you want to perform?",
-      }
-    );
+    const action = await window.showQuickPick(["Insert", "Highlight", "Unselect", "Delete"], {
+      title: "Demo time!",
+      placeHolder: "What kind of action step do you want to perform?",
+    });
 
     if (!action) {
       return;
     }
 
-    const demoStep = await window.showQuickPick(
-      ["New demo step", "Insert in existing demo"],
-      {
-        title: "Demo time!",
-        placeHolder: "Where do you want to insert the step?",
-      }
-    );
+    const demoStep = await window.showQuickPick(["New demo step", "Insert in existing demo"], {
+      title: "Demo time!",
+      placeHolder: "Where do you want to insert the step?",
+    });
 
     if (!demoStep) {
       return;
@@ -135,10 +119,7 @@ export class DemoCreator {
 
     const step: Step = {
       action: action.toLowerCase() as Action,
-      path: editor.document.uri.path.replace(
-        Extension.getInstance().workspaceFolder?.uri.path || "",
-        ""
-      ),
+      path: editor.document.uri.path.replace(Extension.getInstance().workspaceFolder?.uri.path || "", ""),
       position,
     };
 
@@ -191,9 +172,7 @@ export class DemoCreator {
           return;
         }
 
-        const demoIndex = demo.demos.findIndex(
-          (demo) => demo.title === demoToEdit
-        );
+        const demoIndex = demo.demos.findIndex((demo) => demo.title === demoToEdit);
 
         if (demoIndex < 0) {
           return;

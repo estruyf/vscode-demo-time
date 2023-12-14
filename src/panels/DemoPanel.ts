@@ -2,11 +2,9 @@ import { ThemeColor, commands, window } from "vscode";
 import { ContextKeys } from "../constants/ContextKeys";
 import { FileProvider } from "../services/FileProvider";
 import { DemoFiles, Demos } from "../models";
-import {
-  ActionTreeItem,
-  ActionTreeviewProvider,
-} from "../providers/ActionTreeviewProvider";
+import { ActionTreeItem, ActionTreeviewProvider } from "../providers/ActionTreeviewProvider";
 import { DemoRunner } from "../services/DemoRunner";
+import { COMMAND } from "../constants";
 
 export class DemoPanel {
   public static register() {
@@ -34,7 +32,7 @@ export class DemoPanel {
   /**
    * Register all the treeviews
    */
-  private static registerTreeview(demoFiles: DemoFiles) {
+  private static async registerTreeview(demoFiles: DemoFiles) {
     if (!demoFiles) {
       return;
     }
@@ -43,23 +41,26 @@ export class DemoPanel {
 
     for (const path of Object.keys(demoFiles)) {
       const demos = (demoFiles as any)[path] as Demos;
+      const executingFile = await DemoRunner.getExecutedDemoFile();
 
-      const demoSteps = demos.demos.map((demo) => {
-        const hasExecuted = DemoRunner.ExecutedDemoSteps.includes(demo.title);
+      const demoSteps = demos.demos.map((demo, idx) => {
+        const hasExecuted = executingFile.demo.find((d) => d.title === demo.title);
 
         return new ActionTreeItem(
           demo.title,
           demo.description,
           {
             name: hasExecuted ? "pass-filled" : "run",
-            color: hasExecuted
-              ? new ThemeColor("terminal.ansiGreen")
-              : undefined,
+            color: hasExecuted ? new ThemeColor("terminal.ansiGreen") : undefined,
             custom: false,
           },
           undefined,
-          "demo-time.startDemo",
-          demo
+          COMMAND.runStep,
+          {
+            filePath: path,
+            idx: idx,
+            demo: demo,
+          }
         );
       });
 
@@ -74,23 +75,12 @@ export class DemoPanel {
           "demo-time.file",
           demoSteps.length > 0
             ? demoSteps
-            : [
-                new ActionTreeItem(
-                  "No demo steps defined",
-                  "",
-                  undefined,
-                  undefined,
-                  undefined
-                ),
-              ]
+            : [new ActionTreeItem("No demo steps defined", "", undefined, undefined, undefined)]
         )
       );
     }
 
-    window.registerTreeDataProvider(
-      "demo-time",
-      new ActionTreeviewProvider(accountCommands)
-    );
+    window.registerTreeDataProvider("demo-time", new ActionTreeviewProvider(accountCommands));
   }
 
   /**

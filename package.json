@@ -10,8 +10,7 @@
     "theme": "dark"
   },
   "icon": "assets/demo-time-128x128.png",
-  "badges": [
-    {
+  "badges": [{
       "description": "version",
       "url": "https://img.shields.io/github/package-json/v/estruyf/vscode-demo-time?color=green&label=vscode-demo-time&style=flat-square",
       "href": "https://github.com/estruyf/vscode-demo-time"
@@ -43,14 +42,14 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [
-      {
+    "commands": [{
         "command": "demo-time.start",
         "title": "Start",
-        "category": "Demo Time"
+        "category": "Demo Time",
+        "icon": "$(play)"
       },
       {
-        "command": "demo-time.startDemo",
+        "command": "demo-time.runStep",
         "title": "Start a demo",
         "category": "Demo Time"
       },
@@ -69,12 +68,17 @@
         "title": "Open demo file",
         "category": "Demo Time",
         "icon": "$(eye)"
+      },
+      {
+        "command": "demo-time.reset",
+        "title": "Reset",
+        "category": "Demo Time",
+        "icon": "$(refresh)"
       }
     ],
     "menus": {
-      "commandPalette": [
-        {
-          "command": "demo-time.startDemo",
+      "commandPalette": [{
+          "command": "demo-time.runStep",
           "when": "false"
         },
         {
@@ -86,29 +90,32 @@
           "when": "false"
         }
       ],
-      "view/item/context": [
-        {
-          "command": "demo-time.openDemoFile",
-          "when": "view == demo-time && viewItem == demo-time.file",
-          "group": "inline@1"
-        }
-      ]
+      "view/title": [{
+        "command": "demo-time.reset",
+        "when": "view == demo-time",
+        "group": "navigation@0"
+      }],
+      "view/item/context": [{
+        "command": "demo-time.start",
+        "when": "view == demo-time && viewItem == demo-time.file",
+        "group": "inline@1"
+      }, {
+        "command": "demo-time.openDemoFile",
+        "when": "view == demo-time && viewItem == demo-time.file",
+        "group": "inline@2"
+      }]
     },
     "views": {
-      "explorer": [
-        {
-          "id": "demo-time",
-          "name": "Demo Time",
-          "icon": "assets/logo-small.svg"
-        }
-      ]
+      "explorer": [{
+        "id": "demo-time",
+        "name": "Demo Time",
+        "icon": "assets/logo-small.svg"
+      }]
     },
-    "viewsWelcome": [
-      {
-        "view": "demo-time",
-        "contents": "Hello and welcome to Demo Time! You can use this extension to help you during coding demos.\n\nGet started creating a `.demo/demo.json` file in your workspace or by clicking on the initialize button.\n\n[Initialize](command:demo-time.initialize)"
-      }
-    ]
+    "viewsWelcome": [{
+      "view": "demo-time",
+      "contents": "Hello and welcome to Demo Time! You can use this extension to help you during coding demos.\n\nGet started creating a `.demo/demo.json` file in your workspace or by clicking on the initialize button.\n\n[Initialize](command:demo-time.initialize)"
+    }]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
