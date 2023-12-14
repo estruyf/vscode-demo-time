@@ -1,4 +1,5 @@
 import { ExtensionContext, ExtensionMode, SecretStorage, workspace } from "vscode";
+import { Config } from "../constants";
 
 export class Extension {
   private static instance: Extension;
@@ -96,5 +97,15 @@ export class Extension {
    */
   public async setState(key: string, value: any) {
     return await this.ctx.workspaceState.update(key, value);
+  }
+
+  /**
+   * Get a config setting
+   * @param key
+   * @returns
+   */
+  public getSetting<T>(key: string): T | undefined {
+    const extConfig = workspace.getConfiguration(Config.root);
+    return extConfig.get<T>(key);
   }
 }

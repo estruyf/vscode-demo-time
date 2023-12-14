@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.9] - 2023-12-14
+
+- Change the highlight behaviour to show a rectangle around the code instead of selecting the code
+- Added the `demo-time.highlightBorderColor` setting to change the border color of the highlight rectangle
+
 ## [0.0.8] - 2023-12-14
 
 - Add a presentation mode which allows you to use a clicker to navigate through the demo steps

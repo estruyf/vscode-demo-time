@@ -4,9 +4,12 @@ import { DemoPanel } from "./panels/DemoPanel";
 import { DemoRunner } from "./services/DemoRunner";
 import { DemoCreator } from "./services/DemoCreator";
 import { DemoListeners } from "./services/DemoListeners";
+import { DecoratorService } from "./services/DecoratorService";
 
 export async function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);
+
+  DecoratorService.register();
 
   DemoPanel.register();
   DemoRunner.registerCommands();

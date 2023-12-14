@@ -151,7 +151,9 @@ Currently the extension supports the following features:
       <code>highlight</code>
     </td>
     <td>
-      Highlight code in a file
+      Highlight code in a file. You can change the border color with the
+
+`demo-time.highlightBorderColor` setting.
     </td>
     <td>
 
@@ -233,6 +235,12 @@ Currently the extension supports the following features:
 ## Usage
 
 To use the extension, you need to create a `.demo` folder in your workspace. Once created, you can add a JSON file which contains the demo and its steps.
+
+## Settings
+
+| Setting | Description | Default |
+| --- | --- | --- |
+| `demo-time.highlightBorderColor` | The border color of the highlighted code | `rgba(255,0,0,0.5)` |
 
 ### Tips
 

@@ -1,18 +1,18 @@
 import { TextDocument, Uri, workspace } from "vscode";
 import { parseWinPath } from "../utils";
 import { DemoPanel } from "../panels/DemoPanel";
-import { General } from "../constants";
+import { Config, General } from "../constants";
+import { DecoratorService } from "./DecoratorService";
 
 export class DemoListeners {
   public static register() {
     workspace.onDidSaveTextDocument(DemoListeners.checkToUpdate);
+    workspace.onDidChangeConfiguration((e) => {
+      if (e.affectsConfiguration(Config.root)) DecoratorService.register();
+    });
 
-    workspace.onDidCreateFiles((e) =>
-      DemoListeners.checkMultipleToUpdate(e.files || [])
-    );
-    workspace.onDidDeleteFiles((e) =>
-      DemoListeners.checkMultipleToUpdate(e.files || [])
-    );
+    workspace.onDidCreateFiles((e) => DemoListeners.checkMultipleToUpdate(e.files || []));
+    workspace.onDidDeleteFiles((e) => DemoListeners.checkMultipleToUpdate(e.files || []));
   }
 
   private static checkMultipleToUpdate(documents: readonly Uri[]) {

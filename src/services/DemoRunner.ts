@@ -18,6 +18,7 @@ import { FileProvider } from "./FileProvider";
 import { DemoPanel } from "../panels/DemoPanel";
 import { sleep } from "../utils";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
+import { DecoratorService } from "./DecoratorService";
 
 const DEFAULT_START_VALUE = {
   filePath: "",
@@ -389,10 +390,10 @@ export class DemoRunner {
     }
 
     if (range) {
-      textEditor.selection = new Selection(range.start, range.end);
+      DecoratorService.hightlightLines(textEditor, range);
     } else if (position) {
       const range = new Range(position, position);
-      textEditor.selection = new Selection(range.start, range.end);
+      DecoratorService.hightlightLines(textEditor, range);
     }
   }
 
@@ -401,8 +402,7 @@ export class DemoRunner {
    * @param textEditor The text editor to perform the unselect operation on.
    */
   private static async unselect(textEditor: TextEditor): Promise<void> {
-    const crntPosition = textEditor.selection.active;
-    textEditor.selection = new Selection(new Position(crntPosition.line, 0), new Position(crntPosition.line, 0));
+    DecoratorService.unselect(textEditor);
   }
 
   /**
