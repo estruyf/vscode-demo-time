@@ -389,11 +389,13 @@ export class DemoRunner {
       return;
     }
 
+    if (!range && position) {
+      range = new Range(position, position);
+    }
+
     if (range) {
       DecoratorService.hightlightLines(textEditor, range);
-    } else if (position) {
-      const range = new Range(position, position);
-      DecoratorService.hightlightLines(textEditor, range);
+      textEditor.revealRange(range, TextEditorRevealType.InCenter);
     }
   }
 

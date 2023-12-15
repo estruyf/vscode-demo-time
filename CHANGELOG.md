@@ -1,9 +1,14 @@
 # Change Log
 
+## [0.0.10] - 2023-12-15
+
+- Reveal range when highlighting code
+- Added a zoom option to the highlight code action which can be enabled with the `demoTime.highlightZoomEnabled` setting
+
 ## [0.0.9] - 2023-12-14
 
 - Change the highlight behaviour to show a rectangle around the code instead of selecting the code
-- Added the `demo-time.highlightBorderColor` setting to change the border color of the highlight rectangle
+- Added the `demoTime.highlightBorderColor` setting to change the border color of the highlight rectangle
 
 ## [0.0.8] - 2023-12-14
 

@@ -46,10 +46,15 @@
     "configuration": {
       "title": "Demo Time",
       "properties": {
-        "demo-time.highlightBorderColor": {
+        "demoTime.highlightBorderColor": {
           "type": "string",
           "default": "rgba(255,0,0,0.5)",
           "description": "Color of the border when highlighting a step"
+        },
+        "demoTime.highlightZoomEnabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable code zoom when highlighting code"
         }
       }
     },

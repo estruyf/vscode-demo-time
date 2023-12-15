@@ -1,4 +1,4 @@
-import { Range, TextEditor, TextEditorDecorationType, window } from "vscode";
+import { DecorationRenderOptions, Range, TextEditor, TextEditorDecorationType, window } from "vscode";
 import { Extension } from "./Extension";
 import { Config } from "../constants";
 
@@ -9,22 +9,41 @@ export class DecoratorService {
   private static endBlockDecorator: TextEditorDecorationType;
 
   public static register() {
-    const borderColor = Extension.getInstance().getSetting<string>(Config.highlight.borderColor) || "rgba(255,0,0,0.5)";
+    const borderColor =
+      Extension.getInstance().getSetting<string>(Config.highlight.borderColor) || "rgba(255, 0, 0, 0.5)";
+    const zoomEnabled = Extension.getInstance().getSetting<boolean>(Config.highlight.zoom);
 
-    const genericStyles = {
+    const genericStyles: DecorationRenderOptions = {
       isWholeLine: true,
       borderColor,
-      borderStyle: "solid",
+      borderStyle: "solid;",
+      backgroundColor: "var(--vscode-editor-selectionBackground)",
     };
+
+    const zoomStyles: DecorationRenderOptions = {};
+    if (zoomEnabled) {
+      genericStyles.textDecoration = "none; zoom: 1.3;";
+      zoomStyles.textDecoration = "none; height: 5px; content: ' '; display: block;";
+    }
 
     DecoratorService.lineDecorator = window.createTextEditorDecorationType({
       ...genericStyles,
-      borderWidth: "2px",
+      borderWidth: zoomEnabled ? "2px; height: calc(100% + 10px) !important" : "2px;",
+      before: {
+        ...zoomStyles,
+      },
+      after: {
+        ...zoomStyles,
+      },
     });
 
     DecoratorService.startBlockDecorator = window.createTextEditorDecorationType({
       ...genericStyles,
+      textDecoration: "none;",
       borderWidth: "2px 2px 0 2px",
+      before: {
+        ...zoomStyles,
+      },
     });
 
     DecoratorService.betweenBlockDecorator = window.createTextEditorDecorationType({
@@ -34,7 +53,11 @@ export class DecoratorService {
 
     DecoratorService.endBlockDecorator = window.createTextEditorDecorationType({
       ...genericStyles,
-      borderWidth: "0 2px 2px 2px",
+      textDecoration: "none;",
+      borderWidth: zoomEnabled ? "0 2px 2px 2px; height: calc(100% + 5px) !important;" : "0 2px 2px 2px",
+      after: {
+        ...zoomStyles,
+      },
     });
   }
 

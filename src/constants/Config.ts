@@ -1,6 +1,7 @@
 export const Config = {
-  root: "demo-time",
+  root: "demoTime",
   highlight: {
     borderColor: "highlightBorderColor",
+    zoom: "highlightZoomEnabled",
   },
 };

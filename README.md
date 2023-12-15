@@ -153,7 +153,7 @@ Currently the extension supports the following features:
     <td>
       Highlight code in a file. You can change the border color with the
 
-`demo-time.highlightBorderColor` setting.
+`demoTime.highlightBorderColor` setting.
     </td>
     <td>
 
@@ -240,7 +240,8 @@ To use the extension, you need to create a `.demo` folder in your workspace. Onc
 
 | Setting | Description | Default |
 | --- | --- | --- |
-| `demo-time.highlightBorderColor` | The border color of the highlighted code | `rgba(255,0,0,0.5)` |
+| `demoTime.highlightBorderColor` | The border color of the highlighted code | `rgba(255,0,0,0.5)` |
+| `demoTime.highlightZoomEnabled` | Enable zooming when highlighting code | `false` |
 
 ### Tips
 
