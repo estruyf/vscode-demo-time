@@ -232,6 +232,63 @@ Currently the extension supports the following features:
   </tr>
 </table>
 
+#### VSCode actions
+
+<table>
+  <tr>
+    <th>Action</th>
+    <th>Description</td>
+    <th>Usage</td>
+  </tr>
+  <tr>
+    <td>
+      <code>executeVSCodeCommand</code>
+    </td>
+    <td>
+      Execute a VSCode command
+    </td>
+    <td>
+
+```json
+{
+  "action": "executeVSCodeCommand",
+  "command": "<command to execute>",
+  "args": "<arguments to pass to the command (optional)>"
+}
+```
+
+  </td>
+  </tr>
+</table>
+
+#### Terminal actions
+
+<table>
+  <tr>
+    <th>Action</th>
+    <th>Description</td>
+    <th>Usage</td>
+  </tr>
+  <tr>
+    <td>
+      <code>executeTerminalCommand</code>
+    </td>
+    <td>
+      Execute a command in the terminal
+    </td>
+    <td>
+
+```json
+{
+  "action": "executeTerminalCommand",
+  "command": "<command to execute>"
+}
+```
+
+  </td>
+  </tr>
+</table>
+
 ## Usage
 
 To use the extension, you need to create a `.demo` folder in your workspace. Once created, you can add a JSON file which contains the demo and its steps.

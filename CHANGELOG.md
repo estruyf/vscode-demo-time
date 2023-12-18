@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.11] - 2023-12-18
+
+- Added the `executeVSCodeCommand` action to execute a VS Code command
+- Added the `executeTerminalCommand` action to execute a shell command
+
 ## [0.0.10] - 2023-12-15
 
 - Reveal range when highlighting code

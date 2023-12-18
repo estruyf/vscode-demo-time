@@ -19,6 +19,7 @@ import { DemoPanel } from "../panels/DemoPanel";
 import { sleep } from "../utils";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DecoratorService } from "./DecoratorService";
+import { Notifications } from "./Notifications";
 
 const DEFAULT_START_VALUE = {
   filePath: "",
@@ -96,7 +97,7 @@ export class DemoRunner {
     let demos: Demo[] = demoFile?.demo.demos || [];
 
     if (demos.length <= 0) {
-      window.showWarningMessage("No demo steps found");
+      Notifications.error("No demo steps found");
       return;
     }
 
@@ -107,7 +108,7 @@ export class DemoRunner {
     });
 
     if (demoIdxToRun < 0) {
-      window.showInformationMessage("All demo steps have been executed");
+      Notifications.info("All demo steps have been executed");
       return;
     }
 
@@ -167,6 +168,11 @@ export class DemoRunner {
 
     // Loop over all the demo steps and execute them.
     for (const step of demoSteps) {
+      if (!step.action) {
+        continue;
+      }
+
+      // Wait for the specified timeout
       if (step.action === "waitForTimeout") {
         await sleep(step.timeout || 1000);
         continue;
@@ -179,6 +185,30 @@ export class DemoRunner {
         if (answer === undefined) {
           return;
         }
+        continue;
+      }
+
+      // Execute the specified VSCode command
+      if (step.action === "executeVSCodeCommand") {
+        if (!step.command) {
+          Notifications.error("No command specified");
+          continue;
+        }
+
+        await commands.executeCommand(step.command, step.args);
+        continue;
+      }
+
+      // Run the specified terminal command
+      if (step.action === "executeTerminalCommand") {
+        if (!step.command) {
+          Notifications.error("No command specified");
+          continue;
+        }
+
+        const terminal = window.activeTerminal || window.createTerminal();
+        terminal.show();
+        terminal.sendText(step.command);
         continue;
       }
 
@@ -478,13 +508,13 @@ export class DemoRunner {
 
     if (item && item.description) {
       if (!demoFiles) {
-        window.showErrorMessage("No demo files found");
+        Notifications.warning("No demo files found");
         return;
       }
 
       const demoFile = Object.keys(demoFiles).find((path) => path.endsWith(item.description as string));
       if (!demoFile) {
-        window.showErrorMessage(`No demo file found with the name ${item.description}`);
+        Notifications.warning(`No demo file found with the name ${item.description}`);
         return;
       }
 
@@ -520,7 +550,7 @@ export class DemoRunner {
     } else if (executingFile.filePath && !item && demoFiles) {
       const demoFile = demoFiles[executingFile.filePath];
       if (!demoFile) {
-        window.showErrorMessage("No demo file found");
+        Notifications.warning("No demo file found");
         return;
       }
 

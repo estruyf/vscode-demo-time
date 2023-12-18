@@ -10,4 +10,6 @@ export const COMMAND = {
   initialize: `${EXTENSION_NAME}.initialize`,
   openDemoFile: `${EXTENSION_NAME}.openDemoFile`,
   addToStep: `${EXTENSION_NAME}.addToStep`,
+  // Output
+  showOutputChannel: `${EXTENSION_NAME}.showOutputChannel`,
 };

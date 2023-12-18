@@ -11,4 +11,8 @@ export type Action =
   | "delete"
   // Timeout
   | "waitForTimeout"
-  | "waitForInput";
+  | "waitForInput"
+  // VSCode
+  | "executeVSCodeCommand"
+  // Terminal
+  | "executeTerminalCommand";
