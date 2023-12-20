@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.12] - 2023-12-20
+
+- `executeTerminalCommand` creates a specific terminal for Demo Time
+
 ## [0.0.11] - 2023-12-18
 
 - Added the `executeVSCodeCommand` action to execute a VS Code command

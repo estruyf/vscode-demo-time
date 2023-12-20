@@ -5,6 +5,7 @@ import {
   Position,
   Range,
   Selection,
+  Terminal,
   TextDocument,
   TextEditor,
   TextEditorRevealType,
@@ -28,6 +29,8 @@ const DEFAULT_START_VALUE = {
 
 export class DemoRunner {
   private static isPresentationMode = false;
+  private static terminal: Terminal | null;
+  private static readonly terminalName = "DemoTime";
 
   /**
    * Registers the commands for the demo runner.
@@ -201,14 +204,7 @@ export class DemoRunner {
 
       // Run the specified terminal command
       if (step.action === "executeTerminalCommand") {
-        if (!step.command) {
-          Notifications.error("No command specified");
-          continue;
-        }
-
-        const terminal = window.activeTerminal || window.createTerminal();
-        terminal.show();
-        terminal.sendText(step.command);
+        await DemoRunner.executeTerminalCommand(step.command);
         continue;
       }
 
@@ -435,6 +431,30 @@ export class DemoRunner {
    */
   private static async unselect(textEditor: TextEditor): Promise<void> {
     DecoratorService.unselect(textEditor);
+  }
+
+  /**
+   * Executes a terminal command.
+   * @param command - The command to be executed.
+   * @returns A promise that resolves when the command execution is complete.
+   */
+  private static async executeTerminalCommand(command?: string): Promise<void> {
+    if (!command) {
+      Notifications.error("No command specified");
+      return;
+    }
+
+    if (!DemoRunner.terminal) {
+      DemoRunner.terminal = window.createTerminal(DemoRunner.terminalName);
+      window.onDidCloseTerminal((term) => {
+        if (term.name === DemoRunner.terminalName) {
+          DemoRunner.terminal = null;
+        }
+      });
+    }
+
+    DemoRunner.terminal.show();
+    DemoRunner.terminal.sendText(command, true);
   }
 
   /**
