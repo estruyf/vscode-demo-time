@@ -15,6 +15,12 @@ export class DemoCreator {
     subscriptions.push(commands.registerCommand(COMMAND.initialize, DemoCreator.initialize));
     subscriptions.push(commands.registerCommand(COMMAND.openDemoFile, DemoCreator.openFile));
     subscriptions.push(commands.registerCommand(COMMAND.addToStep, DemoCreator.copy));
+    subscriptions.push(
+      commands.registerCommand(COMMAND.stepMoveUp, (item: ActionTreeItem) => DemoCreator.move(item, "up"))
+    );
+    subscriptions.push(
+      commands.registerCommand(COMMAND.stepMoveDown, (item: ActionTreeItem) => DemoCreator.move(item, "down"))
+    );
   }
 
   /**
@@ -38,22 +44,16 @@ export class DemoCreator {
     DemoPanel.update();
   }
 
+  /**
+   * Opens the file associated with the given ActionTreeItem.
+   * @param item The ActionTreeItem containing the demo file path.
+   */
   private static async openFile(item: ActionTreeItem) {
-    if (!item || !item.description) {
+    if (!item || !item.demoFilePath) {
       return;
     }
 
-    const demoFiles = await FileProvider.getFiles();
-    if (!demoFiles) {
-      return;
-    }
-
-    const demoFile = Object.keys(demoFiles).find((path) => path.endsWith(item.description as string));
-    if (!demoFile) {
-      return;
-    }
-
-    const fileUri = Uri.file(demoFile);
+    const fileUri = Uri.file(item.demoFilePath);
     await window.showTextDocument(fileUri);
   }
 
@@ -183,6 +183,43 @@ export class DemoCreator {
     }
 
     await FileProvider.saveFile(filePath, JSON.stringify(demo, null, 2));
+
+    // Trigger a refresh of the treeview
+    DemoPanel.update();
+  }
+
+  /**
+   * Moves the specified item in the action tree either up or down.
+   *
+   * @param item - The item to move.
+   * @param direction - The direction to move the item. Can be "up" or "down".
+   */
+  private static async move(item: ActionTreeItem, direction: "up" | "down") {
+    if (!item || !item.demoFilePath || typeof item.stepIndex === "undefined") {
+      return;
+    }
+
+    const demoFile = await FileProvider.getFile(Uri.file(item.demoFilePath));
+    if (!demoFile) {
+      return;
+    }
+
+    const steps = demoFile.demos;
+    const stepIndex = item.stepIndex;
+
+    if (direction === "up" && stepIndex === 0) {
+      return;
+    }
+
+    if (direction === "down" && stepIndex === steps.length - 1) {
+      return;
+    }
+
+    const stepToMove = steps[stepIndex];
+    steps.splice(stepIndex, 1);
+    steps.splice(direction === "up" ? stepIndex - 1 : stepIndex + 1, 0, stepToMove);
+
+    await FileProvider.saveFile(item.demoFilePath, JSON.stringify(demoFile, null, 2));
 
     // Trigger a refresh of the treeview
     DemoPanel.update();

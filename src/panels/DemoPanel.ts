@@ -5,6 +5,7 @@ import { DemoFiles, Demos } from "../models";
 import { ActionTreeItem, ActionTreeviewProvider } from "../providers/ActionTreeviewProvider";
 import { DemoRunner } from "../services/DemoRunner";
 import { COMMAND } from "../constants";
+import { parseWinPath } from "../utils";
 
 export class DemoPanel {
   private static treeView: TreeView<TreeItem>;
@@ -51,8 +52,15 @@ export class DemoPanel {
       const demos = (demoFiles as any)[path] as Demos;
       const executingFile = await DemoRunner.getExecutedDemoFile();
 
-      const demoSteps = demos.demos.map((demo, idx) => {
+      const demoSteps = demos.demos.map((demo, idx, allDemos) => {
         const hasExecuted = executingFile.demo.find((d) => d.title === demo.title);
+
+        let ctxValue = "demo-time.step";
+        if (idx === 0) {
+          ctxValue = "demo-time.firstStep";
+        } else if (idx === allDemos.length - 1) {
+          ctxValue = "demo-time.lastStep";
+        }
 
         return new ActionTreeItem(
           demo.title,
@@ -68,7 +76,11 @@ export class DemoPanel {
             filePath: path,
             idx: idx,
             demo: demo,
-          }
+          },
+          ctxValue,
+          undefined,
+          parseWinPath(path),
+          idx
         );
       });
 
@@ -87,7 +99,8 @@ export class DemoPanel {
           "demo-time.file",
           demoSteps.length > 0
             ? demoSteps
-            : [new ActionTreeItem("No demo steps defined", "", undefined, undefined, undefined)]
+            : [new ActionTreeItem("No demo steps defined", "", undefined, undefined, undefined)],
+          parseWinPath(path)
         )
       );
     }

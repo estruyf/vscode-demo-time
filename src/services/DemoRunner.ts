@@ -526,26 +526,26 @@ export class DemoRunner {
     const demoFiles = await FileProvider.getFiles();
     const executingFile = await DemoRunner.getExecutedDemoFile();
 
-    if (item && item.description) {
+    if (item && item.demoFilePath) {
       if (!demoFiles) {
         Notifications.warning("No demo files found");
         return;
       }
 
-      const demoFile = Object.keys(demoFiles).find((path) => path.endsWith(item.description as string));
+      const demoFile = await FileProvider.getFile(Uri.file(item.demoFilePath));
       if (!demoFile) {
         Notifications.warning(`No demo file found with the name ${item.description}`);
         return;
       }
 
-      if (executingFile.filePath !== demoFile) {
-        executingFile.filePath = demoFile;
+      if (executingFile.filePath !== item.demoFilePath) {
+        executingFile.filePath = item.demoFilePath;
         executingFile.demo = [];
         await DemoRunner.setExecutedDemoFile(executingFile);
       }
       return {
-        filePath: demoFile,
-        demo: demoFiles[demoFile],
+        filePath: item.demoFilePath,
+        demo: demoFile,
       };
     } else if (!executingFile.filePath && !item && demoFiles) {
       let demoFilePath = undefined;

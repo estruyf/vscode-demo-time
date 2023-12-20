@@ -5,14 +5,31 @@ import { General } from "../constants";
 
 export class FileProvider {
   /**
+   * Retrieves the content of a file as a JSON object.
+   * @param filePath - The path of the file to read.
+   * @returns A Promise that resolves to the JSON object representing the file content, or undefined if the file is empty or not valid JSON.
+   */
+  public static async getFile(filePath: Uri): Promise<Demos | undefined> {
+    const rawContent = await workspace.fs.readFile(filePath);
+    const content = new TextDecoder().decode(rawContent);
+    if (!content) {
+      return;
+    }
+
+    const json = JSON.parse(content);
+    if (!json) {
+      return;
+    }
+
+    return json;
+  }
+
+  /**
    * Retrieves the demo files from the workspace.
    * @returns A promise that resolves to an object containing the demo files, or null if no files are found.
    */
   public static async getFiles(): Promise<DemoFiles | null> {
-    const files = await workspace.findFiles(
-      `${General.demoFolder}/*.json`,
-      `**/node_modules/**`
-    );
+    const files = await workspace.findFiles(`${General.demoFolder}/*.json`, `**/node_modules/**`);
 
     if (files.length <= 0) {
       return null;
@@ -21,18 +38,12 @@ export class FileProvider {
     const demoFiles: DemoFiles = {};
 
     for (const file of files) {
-      const rawContent = await workspace.fs.readFile(file);
-      const content = new TextDecoder().decode(rawContent);
+      const content = await FileProvider.getFile(file);
       if (!content) {
         continue;
       }
 
-      const json = JSON.parse(content);
-      if (!json) {
-        continue;
-      }
-
-      demoFiles[file.path] = json;
+      demoFiles[file.path] = content;
     }
 
     return demoFiles;
@@ -42,9 +53,7 @@ export class FileProvider {
    * Retrieves a demo file using a quick pick dialog.
    * @returns The selected demo file, or undefined if no file was selected.
    */
-  public static async demoQuickPick(): Promise<
-    { filePath: string; demo: Demos } | undefined
-  > {
+  public static async demoQuickPick(): Promise<{ filePath: string; demo: Demos } | undefined> {
     const demoFiles = await FileProvider.getFiles();
     if (!demoFiles) {
       return;
@@ -66,9 +75,7 @@ export class FileProvider {
       return;
     }
 
-    const demoFilePath = Object.keys(demoFiles).find((path) =>
-      path.endsWith(demoFilePick.description as string)
-    );
+    const demoFilePath = Object.keys(demoFiles).find((path) => path.endsWith(demoFilePick.description as string));
 
     if (!demoFilePath) {
       return;
@@ -92,20 +99,13 @@ export class FileProvider {
       return;
     }
 
-    const files = await workspace.findFiles(
-      `${General.demoFolder}/demo.json`,
-      `**/node_modules/**`
-    );
+    const files = await workspace.findFiles(`${General.demoFolder}/demo.json`, `**/node_modules/**`);
 
     if (files.length > 0) {
       return;
     }
 
-    const file = Uri.joinPath(
-      workspaceFolder.uri,
-      General.demoFolder,
-      `demo.json`
-    );
+    const file = Uri.joinPath(workspaceFolder.uri, General.demoFolder, `demo.json`);
     const content = `{
   "$schema": "https://elio.dev/demo-time.schema.json",
   "title": "Demo",

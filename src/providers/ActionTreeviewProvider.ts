@@ -23,9 +23,7 @@ export class ActionTreeviewProvider implements TreeDataProvider<any> {
     return element;
   }
 
-  getChildren(
-    element?: ActionTreeItem | undefined
-  ): ProviderResult<TreeItem[]> {
+  getChildren(element?: ActionTreeItem | undefined): ProviderResult<TreeItem[]> {
     return element && (element as any).children
       ? Promise.resolve((element as any).children)
       : Promise.resolve(this.actions);
@@ -41,14 +39,11 @@ export class ActionTreeItem extends TreeItem {
     command?: any,
     args?: any,
     contextValue?: string,
-    private children?: ActionTreeItem[]
+    private children?: ActionTreeItem[],
+    public demoFilePath?: string,
+    public stepIndex?: number
   ) {
-    super(
-      label,
-      children
-        ? TreeItemCollapsibleState.Expanded
-        : TreeItemCollapsibleState.None
-    );
+    super(label, children ? TreeItemCollapsibleState.Expanded : TreeItemCollapsibleState.None);
 
     const ext = Extension.getInstance();
     const extPath = ext.extensionPath;
@@ -60,13 +55,7 @@ export class ActionTreeItem extends TreeItem {
       ? !image.custom
         ? new ThemeIcon(image.name, image.color)
         : {
-            light: join(
-              extPath,
-              "assets",
-              "icons",
-              "light",
-              `${image.name}.svg`
-            ),
+            light: join(extPath, "assets", "icons", "light", `${image.name}.svg`),
             dark: join(extPath, "assets", "icons", "dark", `${image.name}.svg`),
           }
       : undefined;

@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.13] - 2023-12-20
+
+- Added the step move up/down panel actions
+
 ## [0.0.12] - 2023-12-20
 
 - `executeTerminalCommand` creates a specific terminal for Demo Time
