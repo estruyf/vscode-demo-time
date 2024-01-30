@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.14] - 2024-01-30
+
+- Added the `showInfoMessage` action to show an info message in Visual Studio Code
+
 ## [0.0.13] - 2023-12-20
 
 - Added the step move up/down panel actions

@@ -202,6 +202,16 @@ export class DemoRunner {
         continue;
       }
 
+      if (step.action === "showInfoMessage") {
+        if (!step.message) {
+          Notifications.error("No message specified");
+          continue;
+        }
+
+        window.showInformationMessage(step.message);
+        continue;
+      }
+
       // Run the specified terminal command
       if (step.action === "executeTerminalCommand") {
         await DemoRunner.executeTerminalCommand(step.command);

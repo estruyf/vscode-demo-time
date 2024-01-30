@@ -25,5 +25,6 @@ export interface Step {
   position?: string | number;
   timeout?: number;
   command?: string;
+  message?: string;
   args?: any;
 }

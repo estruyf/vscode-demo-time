@@ -14,5 +14,6 @@ export type Action =
   | "waitForInput"
   // VSCode
   | "executeVSCodeCommand"
+  | "showInfoMessage"
   // Terminal
   | "executeTerminalCommand";

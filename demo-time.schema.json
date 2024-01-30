@@ -3,7 +3,7 @@
   "$id": "https://elio.dev/demo-time.schema.json",
   "title": "Demo Time - Schema",
   "description": "The schema for the Demo Time - VSCode extension",
-  "lastModified": "2023-12-18",
+  "lastModified": "2024-01-30",
   "type": "object",
   "properties": {
     "title": {
@@ -30,7 +30,7 @@
               "properties": {
                 "action": {
                   "type": "string",
-                  "enum": ["create", "open", "insert", "highlight", "unselect", "replace", "delete", "waitForTimeout", "waitForInput", "executeVSCodeCommand", "executeTerminalCommand"],
+                  "enum": ["create", "open", "insert", "highlight", "unselect", "replace", "delete", "waitForTimeout", "waitForInput", "executeVSCodeCommand", "showInfoMessage", "executeTerminalCommand"],
                   "title": "Action to perform"
                 },
                 "path": {
@@ -56,6 +56,10 @@
                 "command": {
                   "type": "string",
                   "title": "VSCode or Terminal command to execute"
+                },
+                "message": {
+                  "type": "string",
+                  "title": "The message for the notification"
                 },
                 "args": {
                   "type": ["object", "array", "string", "number", "boolean"],
@@ -167,6 +171,19 @@
                   "required": [
                     "path",
                     "position"
+                  ]
+                }
+              }, {
+                "if": {
+                  "properties": {
+                    "action": {
+                      "const": "showInfoMessage"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "message"
                   ]
                 }
               }],

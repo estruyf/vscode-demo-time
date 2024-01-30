@@ -259,6 +259,24 @@ Currently the extension supports the following features:
 
   </td>
   </tr>
+  <tr>
+    <td>
+      <code>showInfoMessage</code>
+    </td>
+    <td>
+      Show a notification in Visual Studio Code
+    </td>
+    <td>
+
+```json
+{
+  "action": "showInfoMessage",
+  "message": "<message>"
+}
+```
+
+  </td>
+  </tr>
 </table>
 
 #### Terminal actions
