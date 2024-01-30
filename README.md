@@ -16,6 +16,10 @@
   </a>
 </p>
 
+<p align="center">
+  <img alt="Demo Time" src="./assets/demotime.gif">
+</p>
+
 ## Features
 
 Currently the extension supports the following features:

@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.15] - 2024-01-30
+
+- Added gif to the README
+
 ## [0.0.14] - 2024-01-30
 
 - Added the `showInfoMessage` action to show an info message in Visual Studio Code
