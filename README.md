@@ -2,7 +2,7 @@
   <img alt="Demo Time" src="./assets/demo-time-128x128.png">
 </h1>
 
-<h2 align="center">A Visual Studio Code extension which allows you to smoothly present coding demos within the editor.</h2>
+<h2 align="center">Unlock a new dimension in presenting coding demos – effortlessly click through them as if they were presentation slides, thanks to this cutting-edge VSCode extension.</h2>
 
 <p align="center">
   <a href="https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-demo-time" title="Check it out on the Visual Studio Marketplace">

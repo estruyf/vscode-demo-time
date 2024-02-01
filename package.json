@@ -1,7 +1,7 @@
 {
   "name": "vscode-demo-time",
   "displayName": "Demo Time",
-  "description": "A VS Code extension to help you during coding demos. Script it, run it, and you explain it!",
+  "description": "Unlock a new dimension in presenting coding demos – effortlessly click through them as if they were presentation slides, thanks to this VSCode extension.",
   "version": "0.0.17",
   "preview": true,
   "publisher": "eliostruyf",

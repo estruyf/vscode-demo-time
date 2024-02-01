@@ -1,4 +1,11 @@
-import { DecorationRenderOptions, Range, TextEditor, TextEditorDecorationType, window } from "vscode";
+import {
+  DecorationRenderOptions,
+  Range,
+  TextEditor,
+  TextEditorDecorationType,
+  TextEditorSelectionChangeKind,
+  window,
+} from "vscode";
 import { Extension } from "./Extension";
 import { Config } from "../constants";
 
@@ -58,6 +65,13 @@ export class DecoratorService {
       after: {
         ...zoomStyles,
       },
+    });
+
+    // Remove the highlight when the user clicks in the editor
+    window.onDidChangeTextEditorSelection((e) => {
+      if (e.kind === TextEditorSelectionChangeKind.Mouse) {
+        DecoratorService.unselect(e.textEditor);
+      }
     });
   }
 
