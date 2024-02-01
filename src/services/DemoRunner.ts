@@ -223,6 +223,11 @@ export class DemoRunner {
         continue;
       }
 
+      if (step.action === "open") {
+        await commands.executeCommand("vscode.open", fileUri);
+        continue;
+      }
+
       let content = step.content || "";
       if (step.contentPath) {
         const contentUri = Uri.joinPath(workspaceFolder.uri, General.demoFolder, step.contentPath);
@@ -243,11 +248,6 @@ export class DemoRunner {
       const textEditor = await window.showTextDocument(editor);
 
       const { crntPosition, crntRange } = DemoRunner.getPositionAndRange(editor, step);
-
-      if (step.action === "open") {
-        await commands.executeCommand("vscode.open", fileUri);
-        continue;
-      }
 
       if (step.action == "unselect") {
         await DemoRunner.unselect(textEditor);

@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.16] - 2024-02-01
+
+- Move order of open command to be able to open binary files
+
 ## [0.0.15] - 2024-01-30
 
 - Added gif to the README
