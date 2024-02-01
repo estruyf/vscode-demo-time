@@ -46,14 +46,33 @@ export class DemoPanel {
       return;
     }
 
+    let demoKeys = Object.keys(demoFiles);
+    demoKeys = demoKeys.sort((aPath, bPath) => {
+      aPath = aPath.toLowerCase();
+      bPath = bPath.toLowerCase();
+
+      if (aPath < bPath) {
+        return -1;
+      }
+
+      if (aPath > bPath) {
+        return 1;
+      }
+
+      return 0;
+    });
+
     const accountCommands: ActionTreeItem[] = [];
 
-    for (const path of Object.keys(demoFiles)) {
+    for (const path of demoKeys) {
       const demos = (demoFiles as any)[path] as Demos;
       const executingFile = await DemoRunner.getExecutedDemoFile();
 
       const demoSteps = demos.demos.map((demo, idx, allDemos) => {
-        const hasExecuted = executingFile.demo.find((d) => d.title === demo.title);
+        let hasExecuted = false;
+        if (executingFile.filePath === path) {
+          hasExecuted = !!executingFile.demo.find((d) => d.title === demo.title);
+        }
 
         let ctxValue = "demo-time.step";
         if (idx === 0) {

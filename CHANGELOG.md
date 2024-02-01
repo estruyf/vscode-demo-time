@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.17] - 2024-02-01
+
+- Sort demo files by name
+- Fix issue where demos with the same name were all check when executed
+
 ## [0.0.16] - 2024-02-01
 
 - Move order of open command to be able to open binary files
