@@ -1,5 +1,5 @@
-import { COMMAND, General, StateKeys } from "../constants";
-import { Action, Demo, DemoFileCache, Demos, Step, Subscription } from "../models";
+import { COMMAND, StateKeys } from "../constants";
+import { Demo, DemoFileCache, Demos, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import {
   Position,
@@ -17,7 +17,7 @@ import {
 } from "vscode";
 import { FileProvider } from "./FileProvider";
 import { DemoPanel } from "../panels/DemoPanel";
-import { sleep } from "../utils";
+import { getFileContents, sleep } from "../utils";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DecoratorService } from "./DecoratorService";
 import { Notifications } from "./Notifications";
@@ -169,8 +169,34 @@ export class DemoRunner {
       return;
     }
 
+    // Replace the snippets in the demo steps
+    const stepsToExecute = [];
+    if (demoSteps.some((step) => step.action === "snippet")) {
+      for (const step of demoSteps) {
+        if (step.action === "snippet") {
+          let snippet = await getFileContents(workspaceFolder, step.contentPath);
+          if (!snippet) {
+            return;
+          }
+
+          const args = step.args || {};
+          for (const key in args) {
+            let regex = new RegExp(`{${key}}`, "g");
+            snippet = snippet.replace(regex, args[key]);
+          }
+
+          const newSteps = JSON.parse(snippet);
+          stepsToExecute.push(...newSteps);
+        } else {
+          stepsToExecute.push(step);
+        }
+      }
+    } else {
+      stepsToExecute.push(...demoSteps);
+    }
+
     // Loop over all the demo steps and execute them.
-    for (const step of demoSteps) {
+    for (const step of stepsToExecute) {
       if (!step.action) {
         continue;
       }
@@ -230,13 +256,11 @@ export class DemoRunner {
 
       let content = step.content || "";
       if (step.contentPath) {
-        const contentUri = Uri.joinPath(workspaceFolder.uri, General.demoFolder, step.contentPath);
-        if (!contentUri) {
+        const fileContent = await getFileContents(workspaceFolder, step.contentPath);
+        if (!fileContent) {
           continue;
         }
-
-        const contentEditor = await workspace.openTextDocument(contentUri);
-        content = contentEditor.getText();
+        content = fileContent;
       }
 
       if (step.action === "create") {

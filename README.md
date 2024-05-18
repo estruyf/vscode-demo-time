@@ -311,6 +311,38 @@ Currently the extension supports the following features:
   </tr>
 </table>
 
+#### Snippets
+
+<table>
+  <tr>
+    <th>Action</th>
+    <th>Description</td>
+    <th>Usage</td>
+  </tr>
+  <tr>
+    <td>
+      <code>snippet</code>
+    </td>
+    <td>
+      Use a snippet in which you can define multiple reusable steps
+    </td>
+    <td>
+
+```jsonc
+{
+  "action": "snippet",
+  "contentPath": "<relative path to the file in the .demo folder> (optional)"
+  "args": {
+    // Define the argument name in the snippet file with curly braces {argument name}
+    "<argument name>": "<argument value>"
+  }
+}
+```
+
+  </td>
+  </tr>
+</table>
+
 ## Usage
 
 To use the extension, you need to create a `.demo` folder in your workspace. Once created, you can add a JSON file which contains the demo and its steps.

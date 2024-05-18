@@ -16,4 +16,6 @@ export type Action =
   | "executeVSCodeCommand"
   | "showInfoMessage"
   // Terminal
-  | "executeTerminalCommand";
+  | "executeTerminalCommand"
+  // Extensibility
+  | "snippet";
