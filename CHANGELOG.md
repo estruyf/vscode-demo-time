@@ -1,8 +1,12 @@
 # Change Log
 
-## [0.0.18] - 2024-05-18
+## [0.0.19] - 2024-05-18
 
 - [#1](https://github.com/estruyf/vscode-demo-time/issues/1): Added the ability to use snippets/templates in the demo steps
+
+## [0.0.18] - 2024-02-01
+
+- Update the README
 
 ## [0.0.17] - 2024-02-01
 
