@@ -67,6 +67,13 @@ export class DemoRunner {
     await ext.setState(StateKeys.executingDemoFile, demoFile);
   }
 
+  /**
+   * Toggles the presentation mode for the demo runner.
+   * If `enable` parameter is provided, it sets the presentation mode to the specified value.
+   * If `enable` parameter is not provided, it toggles the presentation mode.
+   * @param enable - Optional. Specifies whether to enable or disable the presentation mode.
+   * @returns A promise that resolves when the presentation mode is toggled.
+   */
   private static async togglePresentationMode(enable?: boolean): Promise<void> {
     DemoRunner.isPresentationMode = typeof enable !== "undefined" ? enable : !DemoRunner.isPresentationMode;
     await commands.executeCommand("setContext", "demo-time.presentation", DemoRunner.isPresentationMode);

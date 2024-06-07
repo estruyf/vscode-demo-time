@@ -6,6 +6,7 @@ import { ActionTreeItem, ActionTreeviewProvider } from "../providers/ActionTreev
 import { DemoRunner } from "../services/DemoRunner";
 import { COMMAND } from "../constants";
 import { parseWinPath } from "../utils";
+import { DemoStatusBar } from "../services/DemoStatusBar";
 
 export class DemoPanel {
   private static treeView: TreeView<TreeItem>;
@@ -16,6 +17,7 @@ export class DemoPanel {
 
   public static update() {
     DemoPanel.init();
+    DemoStatusBar.update();
   }
 
   public static updateTitle(title: string) {

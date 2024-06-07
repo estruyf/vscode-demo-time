@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.20] - 2024-06-07
+
+- [#3](https://github.com/estruyf/vscode-demo-time/issues/3): Added a statusbar item to show the next step to execute
+
 ## [0.0.19] - 2024-05-18
 
 - [#1](https://github.com/estruyf/vscode-demo-time/issues/1): Added the ability to use snippets/templates in the demo steps

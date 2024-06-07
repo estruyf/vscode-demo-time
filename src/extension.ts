@@ -5,6 +5,7 @@ import { DemoRunner } from "./services/DemoRunner";
 import { DemoCreator } from "./services/DemoCreator";
 import { DemoListeners } from "./services/DemoListeners";
 import { DecoratorService } from "./services/DecoratorService";
+import { DemoStatusBar } from "./services/DemoStatusBar";
 
 export async function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);
@@ -15,6 +16,7 @@ export async function activate(context: vscode.ExtensionContext) {
   DemoRunner.registerCommands();
   DemoCreator.registerCommands();
   DemoListeners.register();
+  DemoStatusBar.register();
 
   console.log("Demo time is active!");
 }
