@@ -24,10 +24,19 @@ export class DemoStatusBar {
 
     if (demoFiles && executingFile.filePath) {
       const executingDemos = demoFiles[executingFile.filePath].demos;
-      // Fetch the first demo that hasn't been executed
-      const nextDemo = executingDemos.find((d) => {
-        return !executingFile.demo.find((ed) => ed.title === d.title);
+
+      const crntDemoIdx = executingDemos.findIndex((d) => {
+        return executingFile.demo.find((ed) => ed.title === d.title);
       });
+
+      // Check if exists and is the last demo
+      if (crntDemoIdx !== -1 && crntDemoIdx === executingDemos.length - 1) {
+        DemoStatusBar.statusBarItem.hide();
+        return;
+      }
+
+      // Get the next demo
+      const nextDemo = executingDemos[crntDemoIdx + 1];
 
       if (nextDemo) {
         DemoStatusBar.statusBarItem.text = `$(rocket) ${nextDemo.title}`;

@@ -22,6 +22,7 @@ import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DecoratorService } from "./DecoratorService";
 import { Notifications } from "./Notifications";
 import { parse as jsonParse } from "jsonc-parser";
+import { Logger } from "./Logger";
 
 const DEFAULT_START_VALUE = {
   filePath: "",
@@ -174,6 +175,7 @@ export class DemoRunner {
     }
 
     const id = args[0];
+    Logger.info(`Running demo with id: ${id}`);
 
     // Get all the demo files
     const demoFiles = await FileProvider.getFiles();
@@ -335,7 +337,7 @@ export class DemoRunner {
 
       const { crntPosition, crntRange } = DemoRunner.getPositionAndRange(editor, step);
 
-      if (step.action == "unselect") {
+      if (step.action === "unselect") {
         await DemoRunner.unselect(textEditor);
         continue;
       }

@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.23] - 2025-10-14
+
+- Show the correct next demo if started with the `demo-time.runById` command
+
 ## [0.0.22] - 2025-10-14
 
 - Added the `demo-time.runById` command to execute a specific demo step from VS Code. Useful for Slidev integration.
