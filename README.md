@@ -30,6 +30,7 @@ Currently the extension supports the following features:
 - Add new demo steps (execute the `Demo Time: Add as demo step` command)
 - Run through the demo steps (execute the `Demo Time: Start` command)
 - Presentation mode which allows you to use a clicker to navigate through the demo steps
+- Run a specific demo step from a command execution with the `demo-time.runById` command
 
 ### Supported demo steps
 

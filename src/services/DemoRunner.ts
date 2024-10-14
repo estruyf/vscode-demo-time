@@ -42,6 +42,7 @@ export class DemoRunner {
     subscriptions.push(commands.registerCommand(COMMAND.start, DemoRunner.start));
     subscriptions.push(commands.registerCommand(COMMAND.togglePresentationMode, DemoRunner.togglePresentationMode));
     subscriptions.push(commands.registerCommand(COMMAND.runStep, DemoRunner.startDemo));
+    subscriptions.push(commands.registerCommand(COMMAND.runById, DemoRunner.runById));
     subscriptions.push(commands.registerCommand(COMMAND.reset, DemoRunner.reset));
   }
 
@@ -165,6 +166,59 @@ export class DemoRunner {
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     await DemoRunner.runSteps(demoToRun.demo.steps);
+  }
+
+  private static async runById(...args: string[]): Promise<void> {
+    if (args.length <= 0) {
+      return;
+    }
+
+    const id = args[0];
+
+    // Get all the demo files
+    const demoFiles = await FileProvider.getFiles();
+    if (!demoFiles) {
+      return;
+    }
+
+    // Find the demo file that contains the specified id
+    let filePath = null;
+    let demo = null;
+    for (const crntFilePath in demoFiles) {
+      const demos = demoFiles[crntFilePath].demos;
+      const crntDemo = demos.find((demo) => demo.id === id);
+      if (crntDemo) {
+        filePath = crntFilePath;
+        break;
+      }
+    }
+
+    if (!filePath) {
+      Notifications.error("No demo found with the specified id");
+      return;
+    }
+
+    const executingFile = await DemoRunner.getExecutedDemoFile();
+    if (executingFile.filePath !== filePath) {
+      executingFile.filePath = filePath;
+      executingFile.demo = [];
+    }
+
+    // Get the demo idx
+    const demoIdx = demoFiles[filePath].demos.findIndex((demo) => demo.id === id);
+    if (demoIdx < 0) {
+      Notifications.error("No demo found with the specified id");
+      return;
+    }
+    const demoToRun = demoFiles[filePath].demos[demoIdx];
+
+    executingFile.demo.push({
+      idx: demoIdx,
+      title: demoToRun.title,
+    });
+
+    await DemoRunner.setExecutedDemoFile(executingFile);
+    await DemoRunner.runSteps(demoToRun.steps);
   }
 
   /**

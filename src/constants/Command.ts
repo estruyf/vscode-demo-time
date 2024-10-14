@@ -4,6 +4,7 @@ export const COMMAND = {
   // Running the demo
   start: `${EXTENSION_NAME}.start`,
   runStep: `${EXTENSION_NAME}.runStep`,
+  runById: `${EXTENSION_NAME}.runById`,
   togglePresentationMode: `${EXTENSION_NAME}.togglePresentationMode`,
   reset: `${EXTENSION_NAME}.reset`,
   // Creator
