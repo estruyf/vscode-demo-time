@@ -2,6 +2,7 @@ import { Uri, window, workspace } from "vscode";
 import { Extension } from "./Extension";
 import { DemoFiles, Demos } from "../models";
 import { General } from "../constants";
+import { parse as jsonParse } from "jsonc-parser";
 
 export class FileProvider {
   /**
@@ -16,7 +17,7 @@ export class FileProvider {
       return;
     }
 
-    const json = JSON.parse(content);
+    const json = jsonParse(content);
     if (!json) {
       return;
     }

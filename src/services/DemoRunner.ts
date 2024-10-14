@@ -21,6 +21,7 @@ import { getFileContents, sleep } from "../utils";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DecoratorService } from "./DecoratorService";
 import { Notifications } from "./Notifications";
+import { parse as jsonParse } from "jsonc-parser";
 
 const DEFAULT_START_VALUE = {
   filePath: "",
@@ -192,7 +193,7 @@ export class DemoRunner {
             snippet = snippet.replace(regex, args[key]);
           }
 
-          const newSteps = JSON.parse(snippet);
+          const newSteps = jsonParse(snippet);
           stepsToExecute.push(...newSteps);
         } else {
           stepsToExecute.push(step);

@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.21] - 2025-10-14
+
+- Add JSONC parser to support comments in the demo files
+
 ## [0.0.20] - 2024-06-07
 
 - [#3](https://github.com/estruyf/vscode-demo-time/issues/3): Added a statusbar item to show the next step to execute
