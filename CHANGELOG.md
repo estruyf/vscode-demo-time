@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.22] - 2025-10-14
+
+- Added the `demo-time.runById` command to execute a specific demo step from VS Code. Useful for Slidev integration.
+
 ## [0.0.21] - 2025-10-14
 
 - Add JSONC parser to support comments in the demo files
