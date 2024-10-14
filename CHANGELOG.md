@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.24] - 2025-10-14
+
+- Select by ID if present, otherwise select by title
+
 ## [0.0.23] - 2025-10-14
 
 - Show the correct next demo if started with the `demo-time.runById` command

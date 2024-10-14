@@ -134,6 +134,7 @@ export class DemoRunner {
     executingFile.demo.push({
       idx: demoIdxToRun,
       title: demoToRun.title,
+      id: demoToRun.id,
     });
 
     await DemoRunner.setExecutedDemoFile(executingFile);
@@ -163,6 +164,7 @@ export class DemoRunner {
     executingFile.demo.push({
       idx: demoToRun.idx,
       title: demoToRun.demo.title,
+      id: demoToRun.demo.id,
     });
 
     await DemoRunner.setExecutedDemoFile(executingFile);
@@ -217,6 +219,7 @@ export class DemoRunner {
     executingFile.demo.push({
       idx: demoIdx,
       title: demoToRun.title,
+      id: demoToRun.id,
     });
 
     await DemoRunner.setExecutedDemoFile(executingFile);
