@@ -15,4 +15,6 @@ export const COMMAND = {
   stepMoveDown: `${EXTENSION_NAME}.stepMoveDown`,
   // Output
   showOutputChannel: `${EXTENSION_NAME}.showOutputChannel`,
+  // Panel view
+  collapseAll: `${EXTENSION_NAME}.collapseAll`,
 };

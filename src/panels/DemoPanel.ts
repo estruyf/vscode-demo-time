@@ -1,18 +1,22 @@
 import { ThemeColor, TreeItem, TreeView, commands, window } from "vscode";
 import { ContextKeys } from "../constants/ContextKeys";
 import { FileProvider } from "../services/FileProvider";
-import { DemoFiles, Demos } from "../models";
+import { DemoFiles, Demos, Subscription } from "../models";
 import { ActionTreeItem, ActionTreeviewProvider } from "../providers/ActionTreeviewProvider";
 import { DemoRunner } from "../services/DemoRunner";
 import { COMMAND } from "../constants";
 import { parseWinPath } from "../utils";
 import { DemoStatusBar } from "../services/DemoStatusBar";
+import { Extension } from "../services/Extension";
 
 export class DemoPanel {
   private static treeView: TreeView<TreeItem>;
 
   public static register() {
     DemoPanel.init();
+
+    const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
+    subscriptions.push(commands.registerCommand(COMMAND.collapseAll, DemoPanel.collapseAll));
   }
 
   public static update() {
@@ -136,5 +140,14 @@ export class DemoPanel {
    */
   private static showWelcome() {
     commands.executeCommand("setContext", ContextKeys.showWelcome, true);
+  }
+
+  /**
+   * Collapses all items in the "demo-time" tree view.
+   *
+   * @private
+   */
+  private static collapseAll() {
+    commands.executeCommand("workbench.actions.treeView.demo-time.collapseAll");
   }
 }
