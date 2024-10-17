@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.26] - 2025-10-17
+
+- Support setting custom icons for the demo steps
+
 ## [0.0.25] - 2025-10-17
 
 - Add a collapse all button to the demo time panel

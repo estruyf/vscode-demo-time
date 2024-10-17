@@ -15,6 +15,12 @@ export interface Demo {
   title: string;
   description: string;
   steps: Step[];
+  icons?: Icons;
+}
+
+export interface Icons {
+  start: string;
+  end: string;
 }
 
 export interface Step {

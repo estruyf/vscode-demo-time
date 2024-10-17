@@ -87,11 +87,13 @@ export class DemoPanel {
           ctxValue = "demo-time.lastStep";
         }
 
+        const icons = demo.icons || { start: "run", end: "pass-filled" };
+
         return new ActionTreeItem(
           demo.title,
           demo.description,
           {
-            name: hasExecuted ? "pass-filled" : "run",
+            name: hasExecuted ? icons.end : icons.start,
             color: hasExecuted ? new ThemeColor("terminal.ansiGreen") : undefined,
             custom: false,
           },
