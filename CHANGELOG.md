@@ -1,8 +1,12 @@
 # Change Log
 
-## [0.0.24] - 2025-10-17
+## [0.0.25] - 2025-10-17
 
 - Add a collapse all button to the demo time panel
+
+## [0.0.24] - 2025-10-14
+
+- Select by ID if present, otherwise select by title
 
 ## [0.0.23] - 2025-10-14
 

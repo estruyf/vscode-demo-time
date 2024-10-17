@@ -77,7 +77,7 @@ export class DemoPanel {
       const demoSteps = demos.demos.map((demo, idx, allDemos) => {
         let hasExecuted = false;
         if (executingFile.filePath === path) {
-          hasExecuted = !!executingFile.demo.find((d) => d.title === demo.title);
+          hasExecuted = !!executingFile.demo.find((d) => (d.id ? d.id === demo.id : d.title === demo.title));
         }
 
         let ctxValue = "demo-time.step";

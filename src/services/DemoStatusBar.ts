@@ -24,10 +24,9 @@ export class DemoStatusBar {
 
     if (demoFiles && executingFile.filePath) {
       const executingDemos = demoFiles[executingFile.filePath].demos;
+      const lastDemo = executingFile.demo[executingFile.demo.length - 1];
 
-      const crntDemoIdx = executingDemos.findIndex((d) => {
-        return executingFile.demo.find((ed) => ed.title === d.title);
-      });
+      const crntDemoIdx = executingDemos.findIndex((d) => (d.id ? d.id === lastDemo.id : d.title === lastDemo.title));
 
       // Check if exists and is the last demo
       if (crntDemoIdx !== -1 && crntDemoIdx === executingDemos.length - 1) {
