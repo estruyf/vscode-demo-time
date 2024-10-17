@@ -87,7 +87,13 @@ export class DemoPanel {
           ctxValue = "demo-time.lastStep";
         }
 
-        const icons = demo.icons || { start: "run", end: "pass-filled" };
+        const icons = { start: "run", end: "pass-filled" };
+        if (demo.icons?.start) {
+          icons.start = demo.icons.start;
+        }
+        if (demo.icons?.end) {
+          icons.end = demo.icons.end;
+        }
 
         return new ActionTreeItem(
           demo.title,

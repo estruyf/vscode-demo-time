@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.27] - 2025-10-17
+
+- Optional start and end icons for the demo steps
+
 ## [0.0.26] - 2025-10-17
 
 - Support setting custom icons for the demo steps
