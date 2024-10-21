@@ -3,6 +3,8 @@
 ## [0.0.28] - 2025-10-21
 
 - Changed completed action icon color
+- [#4](https://github.com/estruyf/vscode-demo-time/issues/4): Added the option to show a clock
+- [#5](https://github.com/estruyf/vscode-demo-time/issues/5): Added the option to show a countdown timer
 
 ## [0.0.27] - 2025-10-17
 
