@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.28] - 2025-10-21
+
+- Changed completed action icon color
+
 ## [0.0.27] - 2025-10-17
 
 - Optional start and end icons for the demo steps

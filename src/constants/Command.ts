@@ -17,4 +17,7 @@ export const COMMAND = {
   showOutputChannel: `${EXTENSION_NAME}.showOutputChannel`,
   // Panel view
   collapseAll: `${EXTENSION_NAME}.collapseAll`,
+  // Countdown
+  startCountdown: `${EXTENSION_NAME}.startCountdown`,
+  resetCountdown: `${EXTENSION_NAME}.resetCountdown`,
 };

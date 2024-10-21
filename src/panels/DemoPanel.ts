@@ -100,7 +100,7 @@ export class DemoPanel {
           demo.description,
           {
             name: hasExecuted ? icons.end : icons.start,
-            color: hasExecuted ? new ThemeColor("terminal.ansiGreen") : undefined,
+            color: hasExecuted ? new ThemeColor("notebookStatusSuccessIcon.foreground") : undefined,
             custom: false,
           },
           undefined,
@@ -124,7 +124,7 @@ export class DemoPanel {
           {
             name: executingFile.filePath === path ? "play-circle" : "folder",
             custom: false,
-            color: executingFile.filePath === path ? new ThemeColor("terminal.ansiGreen") : undefined,
+            color: executingFile.filePath === path ? new ThemeColor("notebookStatusSuccessIcon.foreground") : undefined,
           },
           undefined,
           undefined,

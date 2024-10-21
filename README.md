@@ -354,6 +354,7 @@ To use the extension, you need to create a `.demo` folder in your workspace. Onc
 | --- | --- | --- |
 | `demoTime.highlightBorderColor` | The border color of the highlighted code | `rgba(255,0,0,0.5)` |
 | `demoTime.highlightZoomEnabled` | Enable zooming when highlighting code | `false` |
+| `demoTime.timer` | Count down timer for how long the session should last. If not set, it will not count down. The value is the number of minutes. | `null` |
 
 ### Tips
 

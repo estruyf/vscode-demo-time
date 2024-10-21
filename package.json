@@ -10,8 +10,7 @@
     "theme": "dark"
   },
   "icon": "assets/demo-time-128x128.png",
-  "badges": [
-    {
+  "badges": [{
       "description": "version",
       "url": "https://img.shields.io/github/package-json/v/estruyf/vscode-demo-time?color=green&label=vscode-demo-time&style=flat-square",
       "href": "https://github.com/estruyf/vscode-demo-time"
@@ -48,6 +47,22 @@
     }
   },
   "contributes": {
+    "icons": {
+      "dt-clock": {
+        "description": "Demo Time - clock",
+        "default": {
+          "fontPath": "assets/demo-time.woff",
+          "fontCharacter": "\\e94e"
+        }
+      },
+      "dt-timer": {
+        "description": "Demo Time - timer",
+        "default": {
+          "fontPath": "assets/demo-time.woff",
+          "fontCharacter": "\\e952"
+        }
+      }
+    },
     "configuration": {
       "title": "Demo Time",
       "properties": {
@@ -60,11 +75,20 @@
           "type": "boolean",
           "default": false,
           "description": "Enable code zoom when highlighting code"
+        },
+        "demoTime.timer": {
+          "type": "number",
+          "default": null,
+          "description": "Count down timer for how long the session should last. If not set, it will not count down. The value is the number of minutes."
+        },
+        "demoTime.showClock": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show a clock in the status bar"
         }
       }
     },
-    "commands": [
-      {
+    "commands": [{
         "command": "demo-time.start",
         "title": "Start",
         "category": "Demo Time",
@@ -122,11 +146,21 @@
         "command": "demo-time.collapseAll",
         "title": "Collapse all",
         "icon": "$(collapse-all)"
+      },
+      {
+        "command": "demo-time.startCountdown",
+        "title": "Start countdown",
+        "category": "Demo Time",
+        "icon": "$(dt-timer)"
+      },
+      {
+        "command": "demo-time.resetCountdown",
+        "title": "Reset countdown",
+        "category": "Demo Time"
       }
     ],
     "menus": {
-      "commandPalette": [
-        {
+      "commandPalette": [{
           "command": "demo-time.runById",
           "when": "false"
         },
@@ -155,8 +189,7 @@
           "when": "false"
         }
       ],
-      "view/title": [
-        {
+      "view/title": [{
           "command": "demo-time.togglePresentationMode",
           "when": "view == demo-time && !config.demoTime.presentationMode",
           "group": "navigation@0"
@@ -170,10 +203,14 @@
           "command": "demo-time.collapseAll",
           "when": "view == demo-time",
           "group": "navigation@2"
+        },
+        {
+          "command": "demo-time.startCountdown",
+          "when": "view == demo-time && demo-time.countdown == false",
+          "group": "navigation@-1"
         }
       ],
-      "view/item/context": [
-        {
+      "view/item/context": [{
           "command": "demo-time.start",
           "when": "view == demo-time && viewItem == demo-time.file",
           "group": "inline@1"
@@ -196,27 +233,21 @@
       ]
     },
     "views": {
-      "explorer": [
-        {
-          "id": "demo-time",
-          "name": "Demo Time",
-          "icon": "assets/logo-small.svg"
-        }
-      ]
+      "explorer": [{
+        "id": "demo-time",
+        "name": "Demo Time",
+        "icon": "assets/logo-small.svg"
+      }]
     },
-    "viewsWelcome": [
-      {
-        "view": "demo-time",
-        "contents": "Hello and welcome to Demo Time! You can use this extension to help you during coding demos.\n\nGet started creating a `.demo/demo.json` file in your workspace or by clicking on the initialize button.\n\n[Initialize](command:demo-time.initialize)"
-      }
-    ],
-    "keybindings": [
-      {
-        "command": "demo-time.start",
-        "key": "right",
-        "when": "demo-time.presentation"
-      }
-    ]
+    "viewsWelcome": [{
+      "view": "demo-time",
+      "contents": "Hello and welcome to Demo Time! You can use this extension to help you during coding demos.\n\nGet started creating a `.demo/demo.json` file in your workspace or by clicking on the initialize button.\n\n[Initialize](command:demo-time.initialize)"
+    }],
+    "keybindings": [{
+      "command": "demo-time.start",
+      "key": "right",
+      "when": "demo-time.presentation"
+    }]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

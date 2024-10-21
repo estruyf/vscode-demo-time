@@ -4,4 +4,8 @@ export const Config = {
     borderColor: "highlightBorderColor",
     zoom: "highlightZoomEnabled",
   },
+  clock: {
+    show: "showClock",
+    timer: "timer",
+  },
 };
