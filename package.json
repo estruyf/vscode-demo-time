@@ -10,8 +10,7 @@
     "theme": "dark"
   },
   "icon": "assets/demo-time-128x128.png",
-  "badges": [
-    {
+  "badges": [{
       "description": "version",
       "url": "https://img.shields.io/github/package-json/v/estruyf/vscode-demo-time?color=green&label=vscode-demo-time&style=flat-square",
       "href": "https://github.com/estruyf/vscode-demo-time"
@@ -89,8 +88,7 @@
         }
       }
     },
-    "commands": [
-      {
+    "commands": [{
         "command": "demo-time.start",
         "title": "Start",
         "category": "Demo Time",
@@ -162,8 +160,7 @@
       }
     ],
     "menus": {
-      "commandPalette": [
-        {
+      "commandPalette": [{
           "command": "demo-time.runById",
           "when": "false"
         },
@@ -192,8 +189,7 @@
           "when": "false"
         }
       ],
-      "view/title": [
-        {
+      "view/title": [{
           "command": "demo-time.togglePresentationMode",
           "when": "view == demo-time && !config.demoTime.presentationMode",
           "group": "navigation@0"
@@ -214,8 +210,7 @@
           "group": "navigation@-1"
         }
       ],
-      "view/item/context": [
-        {
+      "view/item/context": [{
           "command": "demo-time.start",
           "when": "view == demo-time && viewItem == demo-time.file",
           "group": "inline@1"
@@ -238,31 +233,25 @@
       ]
     },
     "views": {
-      "explorer": [
-        {
-          "id": "demo-time",
-          "name": "Demo Time",
-          "icon": "assets/logo-small.svg"
-        }
-      ]
+      "explorer": [{
+        "id": "demo-time",
+        "name": "Demo Time",
+        "icon": "assets/logo-small.svg"
+      }]
     },
-    "viewsWelcome": [
-      {
-        "view": "demo-time",
-        "contents": "Hello and welcome to Demo Time! You can use this extension to help you during coding demos.\n\nGet started creating a `.demo/demo.json` file in your workspace or by clicking on the initialize button.\n\n[Initialize](command:demo-time.initialize)"
-      }
-    ],
-    "keybindings": [
-      {
-        "command": "demo-time.start",
-        "key": "right",
-        "when": "demo-time.presentation"
-      }
-    ]
+    "viewsWelcome": [{
+      "view": "demo-time",
+      "contents": "Hello and welcome to Demo Time! You can use this extension to help you during coding demos.\n\nGet started creating a `.demo/demo.json` file in your workspace or by clicking on the initialize button.\n\n[Initialize](command:demo-time.initialize)"
+    }],
+    "keybindings": [{
+      "command": "demo-time.start",
+      "key": "right",
+      "when": "demo-time.presentation"
+    }]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "tsup",
+    "compile": "tsup --minify",
     "watch": "tsup --watch",
     "lint": "eslint src --ext ts"
   },
