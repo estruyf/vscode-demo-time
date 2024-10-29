@@ -1,4 +1,4 @@
-import { COMMAND, StateKeys } from "../constants";
+import { COMMAND, Config, StateKeys } from "../constants";
 import { Demo, DemoFileCache, Demos, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import {
@@ -17,7 +17,7 @@ import {
 } from "vscode";
 import { FileProvider } from "./FileProvider";
 import { DemoPanel } from "../panels/DemoPanel";
-import { getFileContents, sleep } from "../utils";
+import { getFileContents, insertContent, insertLineByLine, replaceContent, sleep } from "../utils";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DecoratorService } from "./DecoratorService";
 import { Notifications } from "./Notifications";
@@ -400,18 +400,28 @@ export class DemoRunner {
       // do nothing
     }
 
-    const edit = new WorkspaceEdit();
+    const lineSpeed = Extension.getInstance().getSetting<number>(Config.insert.speed) || 0;
 
     let range = new Range(position, position);
     if (!lineContent) {
-      edit.insert(fileUri, position, content);
+      // Insert the content at the specified position
+      if (!lineSpeed) {
+        await insertContent(fileUri, position, content);
+      } else {
+        await insertLineByLine(fileUri, editor.lineAt(position), content, lineSpeed);
+      }
     } else {
-      const line = editor.lineAt(position);
-      range = line.range;
-      edit.replace(fileUri, line.range, content);
+      if (!lineSpeed) {
+        const line = editor.lineAt(position);
+        range = line.range;
+        await replaceContent(fileUri, line.range, content);
+      } else {
+        const line = editor.lineAt(position);
+        range = line.range;
+        await replaceContent(fileUri, line.range, "");
+        await insertLineByLine(fileUri, line, content, lineSpeed);
+      }
     }
-
-    await workspace.applyEdit(edit);
 
     if (textEditor) {
       textEditor.revealRange(range, TextEditorRevealType.InCenter);
@@ -444,17 +454,35 @@ export class DemoRunner {
       return;
     }
 
-    const edit = new WorkspaceEdit();
+    const lineSpeed = Extension.getInstance().getSetting<number>(Config.insert.speed) || 0;
 
     if (range) {
-      edit.replace(fileUri, range, content);
-    } else if (position) {
-      const line = editor.lineAt(position);
-      range = line.range;
-      edit.replace(fileUri, line.range, content);
-    }
+      if (!lineSpeed) {
+        await replaceContent(fileUri, range, content);
+      } else {
+        const startLine = editor.lineAt(range.start);
+        const endLine = editor.lineAt(range.end);
+        const start = new Position(startLine.lineNumber, 0);
+        const end = new Position(endLine.lineNumber, endLine.text.length);
 
-    await workspace.applyEdit(edit);
+        await replaceContent(fileUri, new Range(start, end), "");
+        await insertLineByLine(fileUri, startLine, content, lineSpeed);
+      }
+    } else if (position) {
+      if (!lineSpeed) {
+        const line = editor.lineAt(position);
+        range = line.range;
+
+        await replaceContent(fileUri, line.range, content);
+      } else {
+        const line = editor.lineAt(position);
+        range = line.range;
+
+        await replaceContent(fileUri, line.range, "");
+
+        await insertLineByLine(fileUri, line, content, lineSpeed);
+      }
+    }
 
     if (textEditor && range) {
       textEditor.revealRange(range, TextEditorRevealType.InCenter);

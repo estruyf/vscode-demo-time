@@ -356,6 +356,7 @@ To use the extension, you need to create a `.demo` folder in your workspace. Onc
 | `demoTime.highlightZoomEnabled` | Enable zooming when highlighting code | `false` |
 | `demoTime.showClock` | Show a clock in the status bar | `true` |
 | `demoTime.timer` | Count down timer for how long the session should last. If not set, it will not count down. The value is the number of minutes. | `null` |
+| `demoTime.insertLineSpeed` | The speed in milliseconds for inserting lines. If you set it to `0`, it will insert its content immediately. | `25` |
 
 ### Tips
 

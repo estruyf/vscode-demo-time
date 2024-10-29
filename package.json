@@ -85,6 +85,11 @@
           "type": "boolean",
           "default": true,
           "description": "Show a clock in the status bar"
+        },
+        "demoTime.insertLineSpeed": {
+          "type": "number",
+          "default": 25,
+          "description": "The time out between inserting lines of code (in milliseconds)"
         }
       }
     },

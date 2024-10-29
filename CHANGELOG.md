@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.29] - 2025-10-29
+
+- Implement a line-by-line insert/replace action
+- Configure the line-by-line insert/replace speed with the `demoTime.insertLineSpeed` setting
+
 ## [0.0.28] - 2025-10-21
 
 - Changed completed action icon color

@@ -8,4 +8,7 @@ export const Config = {
     show: "showClock",
     timer: "timer",
   },
+  insert: {
+    speed: "insertLineSpeed",
+  },
 };
