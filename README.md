@@ -105,7 +105,8 @@ Currently the extension supports the following features:
   "path": "<relative path to the file>",
   "position": "<line number> or <start line number>:<end line number>",
   "content": "<content of the file> (optional)",
-  "contentPath": "<relative path to the file in the .demo folder> (optional)"
+  "contentPath": "<relative path to the file in the .demo folder> (optional)",
+  "lineInsertionDelay": "<delay in milliseconds to insert each line> (optional)"
 }
 ```
 
@@ -126,7 +127,8 @@ Currently the extension supports the following features:
   "path": "<relative path to the file>",
   "position": "<line number> or <start line number>:<end line number>",
   "content": "<content of the file> (optional)",
-  "contentPath": "<relative path to the file in the .demo folder> (optional)"
+  "contentPath": "<relative path to the file in the .demo folder> (optional)",
+  "lineInsertionDelay": "<delay in milliseconds to insert each line> (optional)"
 }
 ```
 
@@ -434,6 +436,8 @@ Here is an example demo:
   ]
 }
 ```
+
+> You can also explore a comprehensive example in this GitHub repository: [presentation-github-actions with Demo Time](https://github.com/estruyf/presentation-github-actions).
 
 <br />
 <br />

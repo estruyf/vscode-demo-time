@@ -17,7 +17,14 @@ import {
 } from "vscode";
 import { FileProvider } from "./FileProvider";
 import { DemoPanel } from "../panels/DemoPanel";
-import { getFileContents, insertContent, insertLineByLine, replaceContent, sleep } from "../utils";
+import {
+  getFileContents,
+  getLineInsertionSpeed,
+  insertContent,
+  insertLineByLine,
+  replaceContent,
+  sleep,
+} from "../utils";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DecoratorService } from "./DecoratorService";
 import { Notifications } from "./Notifications";
@@ -352,12 +359,20 @@ export class DemoRunner {
 
       // Code actions
       if (step.action === "insert") {
-        await DemoRunner.insert(textEditor, editor, fileUri, content, crntPosition);
+        await DemoRunner.insert(textEditor, editor, fileUri, content, crntPosition, step.lineInsertionDelay);
         continue;
       }
 
       if (step.action === "replace") {
-        await DemoRunner.replace(textEditor, editor, fileUri, content, crntRange, crntPosition);
+        await DemoRunner.replace(
+          textEditor,
+          editor,
+          fileUri,
+          content,
+          crntRange,
+          crntPosition,
+          step.lineInsertionDelay
+        );
         continue;
       }
 
@@ -385,7 +400,8 @@ export class DemoRunner {
     editor: TextDocument,
     fileUri: Uri,
     content: string,
-    position: Position | undefined
+    position: Position | undefined,
+    lineInsertionDelay?: number
   ): Promise<void> {
     if (!position) {
       return;
@@ -400,7 +416,7 @@ export class DemoRunner {
       // do nothing
     }
 
-    const lineSpeed = Extension.getInstance().getSetting<number>(Config.insert.speed) || 0;
+    const lineSpeed = getLineInsertionSpeed(lineInsertionDelay);
 
     let range = new Range(position, position);
     if (!lineContent) {
@@ -448,13 +464,14 @@ export class DemoRunner {
     fileUri: Uri,
     content: string,
     range: Range | undefined,
-    position: Position | undefined
+    position: Position | undefined,
+    lineInsertionDelay?: number
   ): Promise<void> {
     if (!range && !position) {
       return;
     }
 
-    const lineSpeed = Extension.getInstance().getSetting<number>(Config.insert.speed) || 0;
+    const lineSpeed = getLineInsertionSpeed(lineInsertionDelay);
 
     if (range) {
       if (!lineSpeed) {

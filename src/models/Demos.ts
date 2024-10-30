@@ -34,4 +34,5 @@ export interface Step {
   command?: string;
   message?: string;
   args?: any;
+  lineInsertionDelay?: number;
 }

@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.30] - 2025-10-30
+
+- Updated the line insertion deplay setting to `demoTime.lineInsertionDelay`
+- Added the `lineInsertionDelay` property to the demo step schema so that you can define it per insert/replace step
+
 ## [0.0.29] - 2025-10-29
 
 - Implement a line-by-line insert/replace action

@@ -9,6 +9,6 @@ export const Config = {
     timer: "timer",
   },
   insert: {
-    speed: "insertLineSpeed",
+    speed: "lineInsertionDelay",
   },
 };

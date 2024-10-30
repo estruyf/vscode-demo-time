@@ -1,3 +1,4 @@
+export * from "./getLineInsertionSpeed";
 export * from "./getfileContents";
 export * from "./insertContent";
 export * from "./insertLineByLine";
