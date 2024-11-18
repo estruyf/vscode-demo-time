@@ -1,4 +1,4 @@
-import { COMMAND, Config, StateKeys } from "../constants";
+import { COMMAND, StateKeys } from "../constants";
 import { Demo, DemoFileCache, Demos, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import {
@@ -20,6 +20,7 @@ import { DemoPanel } from "../panels/DemoPanel";
 import {
   getFileContents,
   getLineInsertionSpeed,
+  getLineRange,
   insertContent,
   insertLineByLine,
   replaceContent,
@@ -424,7 +425,13 @@ export class DemoRunner {
       if (!lineSpeed) {
         await insertContent(fileUri, position, content);
       } else {
-        await insertLineByLine(fileUri, editor.lineAt(position), content, lineSpeed);
+        const lineRange = getLineRange(editor, position);
+        if (!lineRange) {
+          Logger.error("Line range not found");
+          return;
+        }
+        textEditor.revealRange(lineRange, TextEditorRevealType.InCenter);
+        await insertLineByLine(fileUri, lineRange.start.line, content, lineSpeed);
       }
     } else {
       if (!lineSpeed) {
@@ -432,10 +439,14 @@ export class DemoRunner {
         range = line.range;
         await replaceContent(fileUri, line.range, content);
       } else {
-        const line = editor.lineAt(position);
-        range = line.range;
-        await replaceContent(fileUri, line.range, "");
-        await insertLineByLine(fileUri, line, content, lineSpeed);
+        const range = getLineRange(editor, position);
+        if (!range) {
+          Logger.error("Line range not found");
+          return;
+        }
+        await replaceContent(fileUri, range, "");
+        textEditor.revealRange(range, TextEditorRevealType.InCenter);
+        await insertLineByLine(fileUri, range.start.line, content, lineSpeed);
       }
     }
 
@@ -483,7 +494,9 @@ export class DemoRunner {
         const end = new Position(endLine.lineNumber, endLine.text.length);
 
         await replaceContent(fileUri, new Range(start, end), "");
-        await insertLineByLine(fileUri, startLine, content, lineSpeed);
+
+        textEditor.revealRange(new Range(start, end), TextEditorRevealType.InCenter);
+        await insertLineByLine(fileUri, startLine.lineNumber, content, lineSpeed);
       }
     } else if (position) {
       if (!lineSpeed) {
@@ -492,12 +505,17 @@ export class DemoRunner {
 
         await replaceContent(fileUri, line.range, content);
       } else {
-        const line = editor.lineAt(position);
-        range = line.range;
+        range = getLineRange(editor, position);
 
-        await replaceContent(fileUri, line.range, "");
+        if (!range) {
+          Logger.error("Line range not found");
+          return;
+        }
 
-        await insertLineByLine(fileUri, line, content, lineSpeed);
+        await replaceContent(fileUri, range, "");
+
+        textEditor.revealRange(range, TextEditorRevealType.InCenter);
+        await insertLineByLine(fileUri, range.start.line, content, lineSpeed);
       }
     }
 

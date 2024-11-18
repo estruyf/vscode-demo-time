@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.32] - 2025-11-20
+
+- Improved line by line insertion
+
 ## [0.0.31] - 2025-11-20
 
 - Disable line insertion delay by default

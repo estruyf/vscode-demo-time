@@ -1,19 +1,20 @@
-import { Position, TextLine, Uri } from "vscode";
+import { Position, Uri } from "vscode";
 import { sleep } from "./sleep";
 import { insertContent } from ".";
 
-export const insertLineByLine = async (fileUri: Uri, startLine: TextLine, content: string, speed: number) => {
+export const insertLineByLine = async (fileUri: Uri, stateLineNr: number, content: string, speed: number) => {
   const lines = content.split("\n");
   const totalLines = lines.length;
   const lastLine = lines[totalLines - 1];
 
-  let crntPosition = new Position(startLine.lineNumber, 0);
-  for (let i = 0; i < totalLines; i++) {
-    let lineContent = lines[i];
+  let crntPosition = new Position(stateLineNr, 0);
+  let i = 0;
+  for await (const line of lines) {
+    let lineContent = line;
 
     if (totalLines > 1) {
       if (i === totalLines - 1 && lastLine.trim() === "") {
-        lineContent = `\n`;
+        lineContent = ``;
       } else if (i < totalLines - 1) {
         lineContent = `${lineContent}\n`;
       } else {
@@ -25,5 +26,6 @@ export const insertLineByLine = async (fileUri: Uri, startLine: TextLine, conten
 
     crntPosition = new Position(crntPosition.line + 1, 0);
     await sleep(speed);
+    ++i;
   }
 };
