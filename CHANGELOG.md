@@ -3,6 +3,7 @@
 ## [0.0.32] - 2025-11-20
 
 - Improved line by line insertion
+- Added an action to show the demo step in the demo file
 
 ## [0.0.31] - 2025-11-20
 

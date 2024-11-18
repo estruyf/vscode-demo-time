@@ -566,7 +566,7 @@ export class DemoRunner {
    * @param range - The range to highlight. If not provided, the position will be used to create a range.
    * @param position - The position to highlight. If not provided, the range will be used to set the selection.
    */
-  private static async highlight(
+  public static async highlight(
     textEditor: TextEditor,
     range: Range | undefined,
     position: Position | undefined

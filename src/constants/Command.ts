@@ -13,6 +13,7 @@ export const COMMAND = {
   addToStep: `${EXTENSION_NAME}.addToStep`,
   stepMoveUp: `${EXTENSION_NAME}.stepMoveUp`,
   stepMoveDown: `${EXTENSION_NAME}.stepMoveDown`,
+  viewStep: `${EXTENSION_NAME}.viewStep`,
   // Output
   showOutputChannel: `${EXTENSION_NAME}.showOutputChannel`,
   // Panel view

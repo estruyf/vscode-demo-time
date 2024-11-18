@@ -1,10 +1,11 @@
 import { Uri, commands, window } from "vscode";
 import { COMMAND } from "../constants";
-import { Action, DemoFiles, Step, Subscription } from "../models";
+import { Action, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import { FileProvider } from "./FileProvider";
 import { DemoPanel } from "../panels/DemoPanel";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
+import { DemoRunner } from "./DemoRunner";
 
 export class DemoCreator {
   public static ExecutedDemoSteps: string[] = [];
@@ -20,6 +21,9 @@ export class DemoCreator {
     );
     subscriptions.push(
       commands.registerCommand(COMMAND.stepMoveDown, (item: ActionTreeItem) => DemoCreator.move(item, "down"))
+    );
+    subscriptions.push(
+      commands.registerCommand(COMMAND.viewStep, (item: ActionTreeItem) => DemoCreator.openFile(item, true))
     );
   }
 
@@ -48,13 +52,33 @@ export class DemoCreator {
    * Opens the file associated with the given ActionTreeItem.
    * @param item The ActionTreeItem containing the demo file path.
    */
-  private static async openFile(item: ActionTreeItem) {
+  private static async openFile(item: ActionTreeItem, isDemoStep: boolean) {
     if (!item || !item.demoFilePath) {
       return;
     }
 
     const fileUri = Uri.file(item.demoFilePath);
     await window.showTextDocument(fileUri);
+
+    if (!isDemoStep) {
+      return;
+    }
+
+    // Find the line number of the step
+    const editor = window.activeTextEditor;
+    if (!editor) {
+      return;
+    }
+
+    const text = editor.document.getText();
+    const lines = text.split("\n");
+    const matches = lines.filter((line) => line.includes(item.label as string));
+    if (matches.length === 0) {
+      return;
+    }
+
+    const lineNr = lines.indexOf(matches[0]);
+    await DemoRunner.highlight(editor, editor.document.lineAt(lineNr).range, undefined);
   }
 
   /**
