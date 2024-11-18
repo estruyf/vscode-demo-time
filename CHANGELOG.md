@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.31] - 2025-11-20
+
+- Disable line insertion delay by default
+
 ## [0.0.30] - 2025-10-30
 
 - Updated the line insertion deplay setting to `demoTime.lineInsertionDelay`
