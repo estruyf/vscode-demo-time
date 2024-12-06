@@ -3,7 +3,7 @@
   "$id": "https://elio.dev/demo-time.schema.json",
   "title": "Demo Time - Schema",
   "description": "The schema for the Demo Time - VSCode extension",
-  "lastModified": "2024-01-30",
+  "lastModified": "2024-12-06",
   "type": "object",
   "properties": {
     "title": {
@@ -17,11 +17,30 @@
       "items": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string"
+          },
           "title": {
             "type": "string"
           },
           "description": {
             "type": "string"
+          },
+          "icons": {
+            "type": "object",
+            "properties": {
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "start",
+              "end"
+            ],
+            "description": "Provide the icon name of the VS Code codicon for the start and end of the demo"
           },
           "steps": {
             "type": "array",
@@ -30,7 +49,7 @@
               "properties": {
                 "action": {
                   "type": "string",
-                  "enum": ["create", "open", "markdownPreview", "insert", "highlight", "unselect", "replace", "delete", "waitForTimeout", "waitForInput", "executeVSCodeCommand", "showInfoMessage", "executeTerminalCommand"],
+                  "enum": ["create", "open", "markdownPreview", "insert", "highlight", "unselect", "replace", "delete", "waitForTimeout", "waitForInput", "executeVSCodeCommand", "showInfoMessage", "executeTerminalCommand", "snippet"],
                   "title": "Action to perform"
                 },
                 "path": {
@@ -61,9 +80,13 @@
                   "type": "string",
                   "title": "The message for the notification"
                 },
+                "lineInsertionDelay": {
+                  "type": "number",
+                  "title": "Speed in milliseconds to insert each line. If not defined, the \"demoTime.lineInsertionDelay\" setting will be used. To turn off the line insertion effect, set it to 0."
+                },
                 "args": {
                   "type": ["object", "array", "string", "number", "boolean"],
-                  "title": "Arguments to pass to the command for VSCode"
+                  "title": "Arguments to pass to the command for VSCode or placeholder names for your snippet"
                 }
               },
               "required": [
@@ -117,6 +140,19 @@
                       "contentPath"
                     ]
                   }]
+                }
+              }, {
+                "if": {
+                  "properties": {
+                    "action": {
+                      "const": "snippet"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "contentPath"
+                  ]
                 }
               }, {
                 "if": {
