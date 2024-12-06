@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.33] - 2025-12-06
+
+- New `markdownPreview` action to open a markdown preview
+- Added `path` property support for the `executeVSCodeCommand` action
+
 ## [0.0.32] - 2025-11-20
 
 - Improved line by line insertion

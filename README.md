@@ -80,6 +80,24 @@ Currently the extension supports the following features:
 
   </td>
   </tr>
+  <tr>
+    <td>
+      <code>markdownPreview</code>
+    </td>
+    <td>
+      Preview a Markdown file
+    </td>
+    <td>
+
+```json
+{
+  "action": "markdownPreview",
+  "path": "<relative path to the file>"
+}
+```
+
+  </td>
+  </tr>
 </table>
 
 #### Code actions
@@ -260,7 +278,8 @@ Currently the extension supports the following features:
 {
   "action": "executeVSCodeCommand",
   "command": "<command to execute>",
-  "args": "<arguments to pass to the command (optional)>"
+  "args": "<arguments to pass to the command (optional)>",
+  "path": "<relative path to the file (optional, when defined, the args property is ignored.)>"
 }
 ```
 

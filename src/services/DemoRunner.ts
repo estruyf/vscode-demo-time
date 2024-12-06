@@ -245,7 +245,7 @@ export class DemoRunner {
     }
 
     // Replace the snippets in the demo steps
-    const stepsToExecute = [];
+    const stepsToExecute: Step[] = [];
     if (demoSteps.some((step) => step.action === "snippet")) {
       for (const step of demoSteps) {
         if (step.action === "snippet") {
@@ -292,10 +292,17 @@ export class DemoRunner {
         continue;
       }
 
+      const fileUri = step.path ? Uri.joinPath(workspaceFolder.uri, step.path) : undefined;
+
       // Execute the specified VSCode command
       if (step.action === "executeVSCodeCommand") {
         if (!step.command) {
           Notifications.error("No command specified");
+          continue;
+        }
+
+        if (fileUri) {
+          await commands.executeCommand(step.command, fileUri);
           continue;
         }
 
@@ -319,13 +326,17 @@ export class DemoRunner {
         continue;
       }
 
-      const fileUri = Uri.joinPath(workspaceFolder.uri, step.path);
       if (!fileUri) {
         continue;
       }
 
       if (step.action === "open") {
         await commands.executeCommand("vscode.open", fileUri);
+        continue;
+      }
+
+      if (step.action === "markdownPreview") {
+        await commands.executeCommand("markdown.showPreview", fileUri);
         continue;
       }
 

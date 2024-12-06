@@ -2,6 +2,8 @@ export type Action =
   // File
   | "create"
   | "open"
+  // Markdown
+  | "markdownPreview"
   // Code
   | "insert"
   | "highlight"
