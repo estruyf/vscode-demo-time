@@ -1,0 +1,17 @@
+[
+  {
+    "action": "unselect",
+    "path": "{MAIN_FILE}"
+  },
+  {
+    "action": "insert",
+    "path": "{MAIN_FILE}",
+    "contentPath": "{CONTENT_PATH}",
+    "position": "{CONTENT_POSITION}"
+  },
+  {
+    "action": "highlight",
+    "path": "{MAIN_FILE}",
+    "position": "{HIGHLIGHT_POSITION}"
+  }
+]

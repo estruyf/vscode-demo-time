@@ -365,6 +365,47 @@ Currently the extension supports the following features:
   </tr>
 </table>
 
+##### Snippet example
+
+In the demo file, you can reference a snippet file. The snippet file can contain multiple steps which can be reused in multiple demos.
+
+```json
+{
+  "action": "snippet",
+  "contentPath": "./snippets/insert_and_highlight.json",
+  "args": {
+    "MAIN_FILE": "sample.json",
+    "CONTENT_PATH": "content.txt",
+    "CONTENT_POSITION": "3",
+    "HIGHLIGHT_POSITION": "4"
+  }
+}
+```
+
+> The `contentPath` property its value is relative to the `.demo` folder. So, in the example above, the snippet file is located in the `.demo/snippets` folder.
+
+In the `insert_and_highlight.json` file, you can define the steps you want to execute.
+
+```json
+[
+  {
+    "action": "unselect",
+    "path": "{MAIN_FILE}"
+  },
+  {
+    "action": "insert",
+    "path": "{MAIN_FILE}",
+    "contentPath": "{CONTENT_PATH}",
+    "position": "{CONTENT_POSITION}"
+  },
+  {
+    "action": "highlight",
+    "path": "{MAIN_FILE}",
+    "position": "{HIGHLIGHT_POSITION}"
+  }
+]
+```
+
 ## Usage
 
 To use the extension, you need to create a `.demo` folder in your workspace. Once created, you can add a JSON file which contains the demo and its steps.
@@ -407,56 +448,50 @@ Here is an example demo:
 ```json
 {
   "$schema": "https://elio.dev/demo-time.schema.json",
-  "title": "Playwright demo",
-  "description": "Playwright demo for Microsoft 365",
-  "demos": [{
-      "title": "Login to Microsoft 365",
-      "description": "Login to Microsoft 365 using Playwright",
-      "steps": [{
-          "action": "create",
-          "path": "/tests/login.setup.ts",
-          "content": "import { test as setup } from \"@playwright/test\";\nimport { existsSync } from \"fs\";\n\nconst authFile = \"playwright/.auth/user.json\";\n\n// More info: https://playwright.dev/docs/auth\n\nsetup(\"authenticate\", async ({ page }) => {\n  // Check if the auth file exists\n  if (existsSync(authFile)) {\n    return;\n  }\n\n  await page.goto(process.env.SP_DEV_PAGE_URL || \"\");\n\n  page.locator(\"input[type=email]\").fill(process.env.SP_DEV_USERNAME || \"\");\n\n  await page.getByRole(\"button\", { name: \"Next\" }).click();\n\n  page.locator(\"input[type=password]\").fill(process.env.SP_DEV_PASSWORD || \"\");\n\n  await Promise.all([\n    await page.locator(\"input[type=submit][value='Sign in']\").click(),\n    await page.locator(\"input[type=submit][value='Yes']\").click(),\n    await page.waitForURL(process.env.SP_DEV_PAGE_URL || \"\"),\n  ]);\n\n  await page.context().storageState({ path: authFile });\n});"
-        },
-        {
-          "action": "open",
-          "path": "/tests/login.setup.ts"
-        }
-      ]
-    },
+  "title": "Sample demo",
+  "description": "This is a sample demo configuration to show the capabilities of the extension.",
+  "demos": [
     {
-      "title": "First SharePoint tests",
-      "description": "Create the first SharePoint tests",
-      "steps": [{
+      "title": "Step 1",
+      "description": "This is step 1",
+      "steps": [
+        {
           "action": "create",
-          "path": "/tests/pages/sharepoint.spec.ts",
-          "content": "import { test, expect, Page } from \"@playwright/test\";\n\n// test.describe.configure({ mode: \"serial\" });\n\ntest.describe(`Validate sticker inventory`, () => {\n  let page: Page;\n\n  test.beforeAll(async ({ browser }) => {\n    page = await browser.newPage();\n    await page.goto(process.env.SP_DEV_PAGE_URL || \"\", {\n      waitUntil: \"domcontentloaded\",\n    });\n\n    await page\n      .locator(\n        `div[data-sp-web-part-id=\"0e05b9af-5e56-4570-8b3e-9d679f8b2fcf\"]`\n      )\n      .waitFor();\n  });\n\n  test(`Check if webpart is rendered`, async () => {\n    const webpart = page.locator(\n      `div[data-sp-web-part-id=\"0e05b9af-5e56-4570-8b3e-9d679f8b2fcf\"]`\n    );\n    await expect(webpart).toBeVisible();\n  });\n\n  test.afterAll(async () => {\n    await page.close();\n  });\n});"
+          "path": "sample.json",
+          "content": "{\n  \"firstName\": \"Elio\",\n  \"lastName\": \"Struyf\"\n}"
         },
         {
           "action": "open",
-          "path": "/tests/pages/sharepoint.spec.ts"
+          "path": "sample.json"
         },
         {
           "action": "highlight",
-          "path": "/tests/pages/sharepoint.spec.ts",
-          "position": "21:26"
+          "path": "sample.json",
+          "position": "2:3"
         }
       ]
     },
     {
-      "title": "Check the amounts",
-      "description": "Check the amounts of the stickers",
-      "steps": [{
-        "action": "insert",
-        "path": "/tests/pages/sharepoint.spec.ts",
-        "position": 27,
-        "content": "\n  test(`Check if there are 7 stickers`, async () => {\n    const stickers = page.getByTestId(`sticker_inventory__overview__sticker`);\n    await expect(stickers).toHaveCount(7);\n  });\n"
-      }]
+      "title": "Step 2",
+      "description": "This is step 2",
+      "steps": [
+        {
+          "action": "snippet",
+          "contentPath": "./snippets/insert_and_highlight.json",
+          "args": {
+            "MAIN_FILE": "sample.json",
+            "CONTENT_PATH": "content.txt",
+            "CONTENT_POSITION": "3",
+            "HIGHLIGHT_POSITION": "4"
+          }
+        }
+      ]
     }
   ]
 }
 ```
 
-> You can also explore a comprehensive example in this GitHub repository: [presentation-github-actions with Demo Time](https://github.com/estruyf/presentation-github-actions).
+> You can also explore a comprehensive example in the following GitHub Repositories: [presentation-github-actions with Demo Time](https://github.com/estruyf/presentation-github-actions) - [presentation-m365-playwright-github-actions](https://github.com/estruyf/presentation-m365-playwright-github-actions).
 
 <br />
 <br />
