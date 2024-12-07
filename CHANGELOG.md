@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.35] - 2025-12-07
+
+- Updated the README with snippets information
+
 ## [0.0.34] - 2025-12-07
 
 - Added browser extension support
