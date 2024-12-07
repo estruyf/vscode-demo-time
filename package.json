@@ -42,6 +42,7 @@
   ],
   "activationEvents": [],
   "main": "./out/extension.js",
+  "browser": "./out/extension.js",
   "configurationDefaults": {
     "files.associations": {
       "**/.demo/*.json": "jsonc"

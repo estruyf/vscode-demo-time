@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.34] - 2025-12-07
+
+- Added browser extension support
+
 ## [0.0.33] - 2025-12-06
 
 - New `markdownPreview` action to open a markdown preview
