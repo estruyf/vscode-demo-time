@@ -1,4 +1,5 @@
 {
+  "$schema": "https://elio.dev/demo-time.schema.json",
   "title": "The demo of the demo",
   "description": "This is a demo of the demo",
   "demos": [{

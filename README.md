@@ -24,17 +24,18 @@
 
 Currently the extension supports the following features:
 
-- Multiple demo files located in `.demo` folder
+- Multiple demo files located in `.demo` folder.
 - Support for code/snippet files in the `.demo` folder. These files can be referenced in the demo steps, instead of adding the code in the JSON file.
-- Explorer panel to execute your demo steps
-- Add new demo steps (execute the `Demo Time: Add as demo step` command)
-- Run through the demo steps (execute the `Demo Time: Start` command)
-- Presentation mode which allows you to use a clicker to navigate through the demo steps
-- Run a specific demo step from a command execution with the `demo-time.runById` command
+- Explorer panel to execute your demo steps.
+- Add new demo steps (execute the `Demo Time: Add as demo step` command).
+- Run through the demo steps (execute the `Demo Time: Start` command).
+- Presentation mode which allows you to use a clicker to navigate through the demo steps.
+- Run a specific demo step from a command execution with the `demo-time.runById` command.
+- Place your variables in a `variables.json` file in the `.demo` folder. You can reference these variables like `{variable_name}` in your demo steps.
 
-### Supported demo steps
+## Supported demo step actions
 
-#### File actions
+### File actions
 
 <table>
   <tr>
@@ -100,7 +101,7 @@ Currently the extension supports the following features:
   </tr>
 </table>
 
-#### Code actions
+### Code actions
 
 <table>
   <tr>
@@ -212,7 +213,7 @@ Currently the extension supports the following features:
   </tr>
 </table>
 
-#### Setting actions
+### Setting actions
 
 <table>
   <tr>
@@ -243,7 +244,7 @@ Currently the extension supports the following features:
   </tr>
 </table>
 
-##### Setting update example
+#### Setting update example
 
 Here is an example of how you can hide the activity and status bar in Visual Studio Code.
 
@@ -283,7 +284,7 @@ To reset the settings, you can use the following steps:
 }
 ```
 
-#### Time actions
+### Time actions
 
 <table>
   <tr>
@@ -328,7 +329,7 @@ To reset the settings, you can use the following steps:
   </tr>
 </table>
 
-#### VSCode actions
+### VS Code actions
 
 <table>
   <tr>
@@ -376,7 +377,7 @@ To reset the settings, you can use the following steps:
   </tr>
 </table>
 
-#### Terminal actions
+### Terminal actions
 
 <table>
   <tr>
@@ -404,7 +405,7 @@ To reset the settings, you can use the following steps:
   </tr>
 </table>
 
-#### Snippets
+### Snippets
 
 <table>
   <tr>
@@ -436,7 +437,7 @@ To reset the settings, you can use the following steps:
   </tr>
 </table>
 
-##### Snippet example
+#### Snippet example
 
 In the demo file, you can reference a snippet file. The snippet file can contain multiple steps which can be reused in multiple demos.
 
@@ -454,6 +455,8 @@ In the demo file, you can reference a snippet file. The snippet file can contain
 ```
 
 > The `contentPath` property its value is relative to the `.demo` folder. So, in the example above, the snippet file is located in the `.demo/snippets` folder.
+
+> In the `args` property, you can define the arguments/variables which you want to use in the snippet file. In the snippet file, you can reference these arguments with curly braces `{argument name}`.
 
 In the `insert_and_highlight.json` file, you can define the steps you want to execute.
 
@@ -481,6 +484,37 @@ In the `insert_and_highlight.json` file, you can define the steps you want to ex
 
 To use the extension, you need to create a `.demo` folder in your workspace. Once created, you can add a JSON file which contains the demo and its steps.
 
+```json
+{
+  "$schema": "https://elio.dev/demo-time.schema.json",
+  "title": "<title>",
+  "description": "<description>",
+  "demos": []
+}
+```
+
+### Working with variables
+
+You can define variables in a `variables.json` file in the `.demo` folder. You can reference these variables in your demo steps by using curly braces `{variable_name}`.
+
+#### Example variables file
+
+```json
+{
+  "SLIDES_URL": "http://localhost:3030"
+}
+```
+
+#### Example demo step
+
+```json
+{
+  "action": "executeVSCodeCommand",
+  "command": "simpleBrowser.show",
+  "args": "{SLIDES_URL}"
+}
+```
+
 ## Settings
 
 | Setting | Description | Default |
@@ -491,9 +525,9 @@ To use the extension, you need to create a `.demo` folder in your workspace. Onc
 | `demoTime.timer` | Count down timer for how long the session should last. If not set, it will not count down. The value is the number of minutes. | `null` |
 | `demoTime.insertLineSpeed` | The speed in milliseconds for inserting lines. If you set it to `0`, it will insert its content immediately. | `25` |
 
-### Tips
+## Tips and tricks
 
-#### Position
+### Position
 
 For the position you can use the following formats:
 
@@ -503,7 +537,7 @@ For the position you can use the following formats:
   - `start` will be replaced by the first line number
   - `end` will be replaced by the last line number
 
-#### Adding content to a file
+### Adding content to a file
 
 When you want to insert content to a file, you can use the `content` or `contentPath` properties in the demo step.
 
@@ -512,7 +546,7 @@ When you want to insert content to a file, you can use the `content` or `content
 | `content` | This property allows you to add the content directly in the JSON file, but this can make your JSON file quite big and it can be hard to read. |
 | `contentPath` | This property allows you to reference a file in the `.demo` folder. This way you can keep your JSON file clean and add the content in separate files. **Important**: the path is relative to the `.demo` folder. |
 
-### Example
+### Example demo file
 
 Here is an example demo:
 

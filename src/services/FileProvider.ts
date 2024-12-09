@@ -30,11 +30,14 @@ export class FileProvider {
    * @returns A promise that resolves to an object containing the demo files, or null if no files are found.
    */
   public static async getFiles(): Promise<DemoFiles | null> {
-    const files = await workspace.findFiles(`${General.demoFolder}/*.json`, `**/node_modules/**`);
+    let files = await workspace.findFiles(`${General.demoFolder}/*.json`, `**/node_modules/**`);
 
     if (files.length <= 0) {
       return null;
     }
+
+    // Exclude the constants file
+    files = files.filter((file) => !file.path.endsWith(General.variablesFile));
 
     const demoFiles: DemoFiles = {};
 

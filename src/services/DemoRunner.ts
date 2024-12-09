@@ -19,6 +19,7 @@ import {
 import { FileProvider } from "./FileProvider";
 import { DemoPanel } from "../panels/DemoPanel";
 import {
+  getVariables,
   getFileContents,
   getLineInsertionSpeed,
   getLineRange,
@@ -32,6 +33,7 @@ import { DecoratorService } from "./DecoratorService";
 import { Notifications } from "./Notifications";
 import { parse as jsonParse } from "jsonc-parser";
 import { Logger } from "./Logger";
+import { insertVariables } from "../utils/insertVariables";
 
 const DEFAULT_START_VALUE = {
   filePath: "",
@@ -245,6 +247,13 @@ export class DemoRunner {
       return;
     }
 
+    let variables = await getVariables(workspaceFolder);
+    if (variables && Object.keys(variables)) {
+      let tempSteps = JSON.stringify(demoSteps);
+      tempSteps = insertVariables(tempSteps, variables);
+      demoSteps = jsonParse(tempSteps);
+    }
+
     // Replace the snippets in the demo steps
     const stepsToExecute: Step[] = [];
     if (demoSteps.some((step) => step.action === "snippet")) {
@@ -255,10 +264,13 @@ export class DemoRunner {
             return;
           }
 
+          // Replace the argument variables in the snippet
           const args = step.args || {};
-          for (const key in args) {
-            let regex = new RegExp(`{${key}}`, "g");
-            snippet = snippet.replace(regex, args[key]);
+          snippet = insertVariables(snippet, args);
+
+          // Replace the variables in the snippet
+          if (variables && Object.keys(variables)) {
+            snippet = insertVariables(snippet, variables);
           }
 
           const newSteps = jsonParse(snippet);
