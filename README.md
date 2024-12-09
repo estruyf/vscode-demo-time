@@ -459,7 +459,7 @@ To reset the settings, you can use the following steps:
   </tr>
 </table>
 
-> You can find examples of snippets in the [snippets](https://github.com/estruyf/vscode-demo-time/tree/dev/snippets/README.md) folder.
+> You can find examples of snippets in the [snippets](https://github.com/estruyf/vscode-demo-time/tree/dev/snippets) folder.
 
 #### Snippet example
 
