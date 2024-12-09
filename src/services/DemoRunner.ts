@@ -2,6 +2,7 @@ import { COMMAND, StateKeys } from "../constants";
 import { Demo, DemoFileCache, Demos, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import {
+  ConfigurationTarget,
   Position,
   Range,
   Selection,
@@ -289,6 +290,17 @@ export class DemoRunner {
         if (answer === undefined) {
           return;
         }
+        continue;
+      }
+
+      // Update settings
+      if (step.action === "setSetting") {
+        if (!step.setting || !step.setting.key || !step.setting.value) {
+          Notifications.error("No setting or value specified");
+          continue;
+        }
+
+        await workspace.getConfiguration().update(step.args.setting, step.args.value === null ? undefined : step.args.value, ConfigurationTarget.Workspace);
         continue;
       }
 

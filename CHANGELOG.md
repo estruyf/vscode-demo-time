@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.35] - 2025-12-09
+
+- Added the `setSetting` action to update a setting value
+
 ## [0.0.35] - 2025-12-07
 
 - Updated the README with snippets information

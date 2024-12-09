@@ -212,6 +212,77 @@ Currently the extension supports the following features:
   </tr>
 </table>
 
+#### Settings actions
+
+<table>
+  <tr>
+    <th>Action</th>
+    <th>Description</td>
+    <th>Usage</td>
+  </tr>
+  <tr>
+    <td>
+      <code>setSetting</code>
+    </td>
+    <td>
+      Update a setting in Visual Studio Code
+    </td>
+    <td>
+
+```json
+{
+  "action": "setSetting",
+  "setting": {
+    "key": "<setting key>",
+    "value": "<value>"
+  }
+}
+```
+
+  </td>
+  </tr>
+</table>
+
+##### Setting update example
+
+Here is an example of how you can hide the activity and status bar in Visual Studio Code.
+
+```json
+{
+  "action": "setSetting",
+  "args": {
+    "setting": "workbench.statusBar.visible",
+    "value": false
+  }
+}, 
+{
+  "action": "setSetting",
+  "args": {
+    "setting": "workbench.activityBar.location",
+    "value": "hidden"
+  }
+}
+```
+
+To reset the settings, you can use the following steps:
+
+```json
+{
+  "action": "setSetting",
+  "setting": {
+    "key": "workbench.statusBar.visible",
+    "value": null
+  }
+}, 
+{
+  "action": "setSetting",
+  "setting": {
+    "key": "workbench.activityBar.location",
+    "value": null
+  }
+}
+```
+
 #### Time actions
 
 <table>

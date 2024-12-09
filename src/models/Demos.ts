@@ -35,4 +35,10 @@ export interface Step {
   message?: string;
   args?: any;
   lineInsertionDelay?: number;
+  setting: Setting;
+}
+
+export interface Setting {
+  key: string;
+  value: string | number | boolean | object | null;
 }

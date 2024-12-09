@@ -9,8 +9,9 @@ export type Action =
   | "highlight"
   | "replace"
   | "unselect"
-  | "remove"
   | "delete"
+  // Settings
+  | "setSetting"
   // Timeout
   | "waitForTimeout"
   | "waitForInput"
