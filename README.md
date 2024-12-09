@@ -614,7 +614,9 @@ You can also explore a comprehensive example in the following GitHub Repositorie
 
 If you enjoy my work and find them useful, consider sponsor me and the ecosystem to help Open Source sustainable. Thank you!
 
-<iframe src="https://github.com/sponsors/estruyf/card" title="Sponsor Elio Struyf" height="225" width="600" style="border: 0;"></iframe>
+<a href="https://github.com/sponsors/estruyf" title="Sponsor Elio Struyf" target="_blank">
+  <img src="https://img.shields.io/badge/Sponsor-Elio%20Struyf%20%E2%9D%A4-%23fe8e86?logo=GitHub" alt="Sponsor @maheshj01" />
+</a>
 
 <br />
 <br />
