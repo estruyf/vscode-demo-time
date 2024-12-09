@@ -459,6 +459,8 @@ To reset the settings, you can use the following steps:
   </tr>
 </table>
 
+> You can find examples of snippets in the [snippets](https://github.com/estruyf/vscode-demo-time/tree/dev/snippets/README.md) folder.
+
 #### Snippet example
 
 In the demo file, you can reference a snippet file. The snippet file can contain multiple steps which can be reused in multiple demos.

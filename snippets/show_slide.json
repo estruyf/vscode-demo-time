@@ -1,0 +1,23 @@
+[{
+  "action": "executeVSCodeCommand",
+  "command": "workbench.action.closeSidebar"
+}, {
+  "action": "executeVSCodeCommand",
+  "command": "workbench.action.closePanel"
+}, {
+  "action": "setSetting",
+  "args": {
+    "setting": "workbench.statusBar.visible",
+    "value": false
+  }
+}, {
+  "action": "setSetting",
+  "args": {
+    "setting": "workbench.activityBar.location",
+    "value": "hidden"
+  }
+}, {
+  "action": "executeVSCodeCommand",
+  "command": "simpleBrowser.show",
+  "args": "{SLIDES_URL}"
+}]

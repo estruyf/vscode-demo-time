@@ -1,0 +1,16 @@
+[{
+  "action": "setSetting",
+  "args": {
+    "setting": "workbench.statusBar.visible",
+    "value": null
+  }
+}, {
+  "action": "setSetting",
+  "args": {
+    "setting": "workbench.activityBar.location",
+    "value": null
+  }
+}, {
+  "action": "executeVSCodeCommand",
+  "command": "workbench.action.toggleSidebarVisibility"
+}]
