@@ -22,18 +22,40 @@
 
 ## Features
 
-Currently the extension supports the following features:
+Currently, the extension supports the following features:
 
-- Multiple demo files located in `.demo` folder.
-- Support for code/snippet files in the `.demo` folder. These files can be referenced in the demo steps, instead of adding the code in the JSON file.
-- Explorer panel to execute your demo steps.
-- Add new demo steps (execute the `Demo Time: Add as demo step` command).
-- Run through the demo steps (execute the `Demo Time: Start` command).
-- Presentation mode which allows you to use a clicker to navigate through the demo steps.
-- Run a specific demo step from a command execution with the `demo-time.runById` command.
-- Place your variables in a `variables.json` file in the `.demo` folder. You can reference these variables like `{variable_name}` in your demo steps.
+- Multiple demo files located in the `.demo` folder.
+- Support for code/snippet files in the `.demo` folder, allowing you to define multiple reusable steps.
+- Explorer panel to execute your demo steps (you can move it to the activity bar).
+- Run through the demo steps by executing the `Demo Time: Start` command.
+- Presentation mode that allows you to use a **clicker** to navigate through the demo steps.
+- Run a specific demo step from a command execution using the `demo-time.runById` command.
+- Place your variables in a `variables.json` file in the `.demo` folder and reference them like `{variable_name}` in your demo steps.
 
-## Supported demo step actions
+## Usage
+
+To use the extension, you need to create a `.demo` folder in your workspace. Once created, you can add a JSON file which contains the demo and its steps.
+
+```json
+{
+  "$schema": "https://elio.dev/demo-time.schema.json",
+  "title": "<title>",
+  "description": "<description>",
+  "demos": []
+}
+```
+
+Add your demos to the `demos` array. Each demo can consist of multiple steps.
+
+```json
+{
+  "title": "<title>",
+  "description": "<description>",
+  "steps": []
+}
+```
+
+## Demo steps
 
 ### File actions
 
@@ -480,18 +502,17 @@ In the `insert_and_highlight.json` file, you can define the steps you want to ex
 ]
 ```
 
-## Usage
+## Settings
 
-To use the extension, you need to create a `.demo` folder in your workspace. Once created, you can add a JSON file which contains the demo and its steps.
+| Setting | Description | Default |
+| --- | --- | --- |
+| `demoTime.highlightBorderColor` | The border color of the highlighted code | `rgba(255,0,0,0.5)` |
+| `demoTime.highlightZoomEnabled` | Enable zooming when highlighting code | `false` |
+| `demoTime.showClock` | Show a clock in the status bar | `true` |
+| `demoTime.timer` | Count down timer for how long the session should last. If not set, it will not count down. The value is the number of minutes. | `null` |
+| `demoTime.insertLineSpeed` | The speed in milliseconds for inserting lines. If you set it to `0`, it will insert its content immediately. | `25` |
 
-```json
-{
-  "$schema": "https://elio.dev/demo-time.schema.json",
-  "title": "<title>",
-  "description": "<description>",
-  "demos": []
-}
-```
+## Tips and tricks
 
 ### Working with variables
 
@@ -514,18 +535,6 @@ You can define variables in a `variables.json` file in the `.demo` folder. You c
   "args": "{SLIDES_URL}"
 }
 ```
-
-## Settings
-
-| Setting | Description | Default |
-| --- | --- | --- |
-| `demoTime.highlightBorderColor` | The border color of the highlighted code | `rgba(255,0,0,0.5)` |
-| `demoTime.highlightZoomEnabled` | Enable zooming when highlighting code | `false` |
-| `demoTime.showClock` | Show a clock in the status bar | `true` |
-| `demoTime.timer` | Count down timer for how long the session should last. If not set, it will not count down. The value is the number of minutes. | `null` |
-| `demoTime.insertLineSpeed` | The speed in milliseconds for inserting lines. If you set it to `0`, it will insert its content immediately. | `25` |
-
-## Tips and tricks
 
 ### Position
 
@@ -596,7 +605,16 @@ Here is an example demo:
 }
 ```
 
-> You can also explore a comprehensive example in the following GitHub Repositories: [presentation-github-actions with Demo Time](https://github.com/estruyf/presentation-github-actions) - [presentation-m365-playwright-github-actions](https://github.com/estruyf/presentation-m365-playwright-github-actions).
+You can also explore a comprehensive example in the following GitHub Repositories:
+
+- [presentation-github-actions](https://github.com/estruyf/presentation-github-actions) 
+- [presentation-m365-playwright-github-actions](https://github.com/estruyf/presentation-m365-playwright-github-actions)
+
+## Support
+
+If you enjoy my work and find them useful, consider sponsor me and the ecosystem to help Open Source sustainable. Thank you!
+
+<iframe src="https://github.com/sponsors/estruyf/card" title="Sponsor Elio Struyf" height="225" width="600" style="border: 0;"></iframe>
 
 <br />
 <br />
