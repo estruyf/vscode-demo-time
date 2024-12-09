@@ -4,6 +4,7 @@ import { FileProvider } from "./FileProvider";
 import { COMMAND, Config } from "../constants";
 import { Subscription } from "../models";
 import { Extension } from "./Extension";
+import { getNextDemoFile } from "../utils";
 
 export class DemoStatusBar {
   private static statusBarItem: StatusBarItem;
@@ -34,15 +35,23 @@ export class DemoStatusBar {
     const executingFile = await DemoRunner.getExecutedDemoFile();
 
     if (demoFiles && executingFile.filePath) {
-      const executingDemos = demoFiles[executingFile.filePath].demos;
+      let executingDemos = demoFiles[executingFile.filePath].demos;
       const lastDemo = executingFile.demo[executingFile.demo.length - 1];
 
-      const crntDemoIdx = executingDemos.findIndex((d) => (d.id ? d.id === lastDemo.id : d.title === lastDemo.title));
+      let crntDemoIdx = executingDemos.findIndex((d) => (d.id ? d.id === lastDemo.id : d.title === lastDemo.title));
 
       // Check if exists and is the last demo
       if (crntDemoIdx !== -1 && crntDemoIdx === executingDemos.length - 1) {
-        DemoStatusBar.statusBarItem.hide();
-        return;
+        // Check if there is a next demo file
+        const nextFile = await getNextDemoFile(executingFile);
+        if (!nextFile) {
+          DemoStatusBar.statusBarItem.hide();
+          return;
+        }
+
+        // Reset the current demo index + set the next demos
+        crntDemoIdx = -1;
+        executingDemos = nextFile.demo.demos;
       }
 
       // Get the next demo

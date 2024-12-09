@@ -27,6 +27,7 @@ import {
   insertLineByLine,
   replaceContent,
   sleep,
+  getNextDemoFile,
 } from "../utils";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DecoratorService } from "./DecoratorService";
@@ -114,7 +115,7 @@ export class DemoRunner {
    * Starts the demo runner.
    * @returns {Promise<void>} A promise that resolves when the demo runner has started.
    */
-  private static async start(item: ActionTreeItem): Promise<void> {
+  private static async start(item: ActionTreeItem | { demoFilePath: string; description: string; }): Promise<void> {
     const executingFile = await DemoRunner.getExecutedDemoFile();
 
     const demoFile = await DemoRunner.getDemoFile(item);
@@ -126,26 +127,39 @@ export class DemoRunner {
     }
 
     // Get the first demo step to start
-    const demoIdxToRun = demos.findIndex((_, idx) => {
-      const hasExecuted = executingFile.demo.find((execDemo) => execDemo.idx === idx);
-      return !hasExecuted;
-    });
+    const lastDemo = executingFile.demo[executingFile.demo.length - 1] || 0;
+    const demoIdxToRun = demos.findIndex((d) => (d.id ? d.id === lastDemo.id : d.title === lastDemo.title));
+    const nextDemo = demos[demoIdxToRun + 1];
 
-    if (demoIdxToRun < 0) {
-      Notifications.info("All demo steps have been executed");
+    if (!nextDemo) {
+      // Check if there is a next demo file
+      const nextFile = await getNextDemoFile(demoFile);
+      if (!nextFile) {
+        Notifications.info("All demo steps have been executed");
+        return;
+      }
+
+      // Set the current executing file to the next file
+      executingFile.filePath = nextFile.filePath;
+      executingFile.demo = [];
+      await DemoRunner.setExecutedDemoFile(executingFile);
+      // Start the next demo file
+      DemoRunner.start({
+        demoFilePath: nextFile.filePath,
+        description: nextFile.filePath.split("/").pop(),
+      });
       return;
     }
 
-    const demoToRun = demos[demoIdxToRun];
-    const demoSteps = demoToRun.steps;
+    const demoSteps = nextDemo.steps;
     if (!demoSteps) {
       return;
     }
 
     executingFile.demo.push({
       idx: demoIdxToRun,
-      title: demoToRun.title,
-      id: demoToRun.id,
+      title: nextDemo.title,
+      id: nextDemo.id,
     });
 
     await DemoRunner.setExecutedDemoFile(executingFile);

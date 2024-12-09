@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.38] - 2025-12-09
+
+- Continue with the first demo step in the next demo file if the current demo file is completed
+
 ## [0.0.37] - 2025-12-09
 
 - [#2](https://github.com/estruyf/vscode-demo-time/issues/2): Added the ability to have a `variables.json` file to store variables/constants that can be used in the demo steps

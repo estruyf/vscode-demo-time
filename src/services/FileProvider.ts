@@ -63,7 +63,8 @@ export class FileProvider {
       return;
     }
 
-    const demoFileOptions = Object.keys(demoFiles).map((path) => {
+    const files = Object.keys(demoFiles).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    const demoFileOptions = files.map((path) => {
       return {
         label: (demoFiles as any)[path].title,
         description: path.split("/").pop(),
