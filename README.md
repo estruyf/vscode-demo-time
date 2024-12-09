@@ -212,7 +212,7 @@ Currently the extension supports the following features:
   </tr>
 </table>
 
-#### Settings actions
+#### Setting actions
 
 <table>
   <tr>
