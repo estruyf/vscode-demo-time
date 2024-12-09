@@ -1,11 +1,11 @@
 # Change Log
 
-## [0.0.36] - 2025-12-09
+## [0.0.37] - 2025-12-09
 
 - [#2](https://github.com/estruyf/vscode-demo-time/issues/2): Added the ability to have a `variables.json` file to store variables/constants that can be used in the demo steps
 - Added example snippets to the project
 
-## [0.0.35] - 2025-12-09
+## [0.0.36] - 2025-12-09
 
 - Added the `setSetting` action to update a setting value
 
