@@ -14,17 +14,35 @@ export class DecoratorService {
   private static startBlockDecorator: TextEditorDecorationType;
   private static betweenBlockDecorator: TextEditorDecorationType;
   private static endBlockDecorator: TextEditorDecorationType;
+  private static blurDecorator: TextEditorDecorationType;
 
   public static register() {
     const borderColor =
       Extension.getInstance().getSetting<string>(Config.highlight.borderColor) || "rgba(255, 0, 0, 0.5)";
+    const background = Extension.getInstance().getSetting<string>(Config.highlight.background) || "var(--vscode-editor-selectionBackground)";
     const zoomEnabled = Extension.getInstance().getSetting<boolean>(Config.highlight.zoom);
+
+    let blur = Extension.getInstance().getSetting<number>(Config.highlight.blur) || 0;
+    if (blur < 0) {
+      blur = 0;
+    }
+
+    let opacity = Extension.getInstance().getSetting<number>(Config.highlight.opacity) || 1;
+    if (opacity < 0) {
+      opacity = 0;
+    } else if (opacity > 1) {
+      opacity = 1;
+    }
+
+    const borderStyles = {
+      borderColor,
+      borderStyle: "solid;",
+    };
 
     const genericStyles: DecorationRenderOptions = {
       isWholeLine: true,
-      borderColor,
-      borderStyle: "solid;",
-      backgroundColor: "var(--vscode-editor-selectionBackground)",
+      backgroundColor: background,
+      ...borderStyles,
     };
 
     const zoomStyles: DecorationRenderOptions = {};
@@ -51,11 +69,13 @@ export class DecoratorService {
       before: {
         ...zoomStyles,
       },
+      opacity: "1; filter: blur(0);",
     });
 
     DecoratorService.betweenBlockDecorator = window.createTextEditorDecorationType({
       ...genericStyles,
       borderWidth: "0 2px 0 2px",
+      opacity: "1; filter: blur(0);",
     });
 
     DecoratorService.endBlockDecorator = window.createTextEditorDecorationType({
@@ -65,6 +85,12 @@ export class DecoratorService {
       after: {
         ...zoomStyles,
       },
+      opacity: "1; filter: blur(0);",
+    });
+
+    const opacityAndBlur = `${opacity}; filter: blur(${blur}px);`;
+    DecoratorService.blurDecorator = window.createTextEditorDecorationType({
+      opacity: opacityAndBlur,
     });
 
     // Remove the highlight when the user clicks in the editor
@@ -76,6 +102,11 @@ export class DecoratorService {
   }
 
   public static hightlightLines(textEditor: TextEditor, range: Range) {
+    // Remove the previous highlight
+    DecoratorService.unselect(textEditor);
+
+    textEditor.setDecorations(DecoratorService.blurDecorator, [new Range(0, 0, textEditor.document.lineCount, 0)]);
+
     if (range.start.line === range.end.line) {
       textEditor.setDecorations(DecoratorService.lineDecorator, [range]);
     } else {
@@ -94,6 +125,7 @@ export class DecoratorService {
   }
 
   public static unselect(textEditor: TextEditor) {
+    textEditor.setDecorations(DecoratorService.blurDecorator, []);
     textEditor.setDecorations(DecoratorService.lineDecorator, []);
     textEditor.setDecorations(DecoratorService.startBlockDecorator, []);
     textEditor.setDecorations(DecoratorService.betweenBlockDecorator, []);

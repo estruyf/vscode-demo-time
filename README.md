@@ -508,7 +508,10 @@ In the `insert_and_highlight.json` file, you can define the steps you want to ex
 
 | Setting | Description | Default |
 | --- | --- | --- |
+| `demoTime.highlightBackground` | The background color of the highlighted code | `var(--vscode-editor-selectionBackground)` |
 | `demoTime.highlightBorderColor` | The border color of the highlighted code | `rgba(255,0,0,0.5)` |
+| `demoTime.highlightBlur` | Blur effect on the text which is not highlighted | `0` |
+| `demoTime.highlightOpacity` | The opacity of the text which is not highlighted. Number between 0 and 1. | `0.5` |
 | `demoTime.highlightZoomEnabled` | Enable zooming when highlighting code | `false` |
 | `demoTime.showClock` | Show a clock in the status bar | `true` |
 | `demoTime.timer` | Count down timer for how long the session should last. If not set, it will not count down. The value is the number of minutes. | `null` |

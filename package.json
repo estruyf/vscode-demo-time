@@ -73,6 +73,21 @@
           "default": "rgba(255,0,0,0.5)",
           "description": "Color of the border when highlighting a step"
         },
+        "demoTime.highlightBackground": {
+          "type": "string",
+          "default": "var(--vscode-editor-selectionBackground)",
+          "description": "Background color when highlighting code"
+        },
+        "demoTime.highlightBlur": {
+          "type": "number",
+          "default": 0,
+          "description": "Blur effect on the text which is not highlighted"
+        },
+        "demoTime.highlightOpacity": {
+          "type": "number",
+          "default": 1,
+          "description": "Opacity of the text which is not highlighted"
+        },
         "demoTime.highlightZoomEnabled": {
           "type": "boolean",
           "default": false,

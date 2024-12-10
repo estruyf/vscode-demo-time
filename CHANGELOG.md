@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.39] - 2025-12-10
+
+- [#10](https://github.com/estruyf/vscode-demo-time/issues/10): Added the `demoTime.highlightBlur` and `demoTime.highlightOpacity` settings to change the blur and opacity effect on the non-highlighted code
+- [#14](https://github.com/estruyf/vscode-demo-time/issues/14): Added the `demoTime.highlightBackground` setting to change the highlight background color
+
 ## [0.0.38] - 2025-12-09
 
 - Continue with the first demo step in the next demo file if the current demo file is completed
