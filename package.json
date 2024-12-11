@@ -2,7 +2,7 @@
   "name": "vscode-demo-time",
   "displayName": "Demo Time",
   "description": "Unlock a new dimension in presenting coding demos - effortlessly click through them as if they were presentation slides, thanks to this VSCode extension.",
-  "version": "0.0.40",
+  "version": "0.0.41",
   "publisher": "eliostruyf",
   "galleryBanner": {
     "color": "#86836D",
