@@ -6,6 +6,7 @@ import { FileProvider } from "./FileProvider";
 import { DemoPanel } from "../panels/DemoPanel";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DemoRunner } from "./DemoRunner";
+import { addExtensionRecommendation } from "../utils";
 
 export class DemoCreator {
   public static ExecutedDemoSteps: string[] = [];
@@ -42,6 +43,8 @@ export class DemoCreator {
     if (fileUri) {
       await window.showTextDocument(fileUri);
     }
+
+    await addExtensionRecommendation();
 
     window.showInformationMessage("Demo time is initialized, you can now start adding demo steps!");
 

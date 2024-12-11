@@ -1,3 +1,4 @@
+export * from './addExtensionRecommendation';
 export * from './getLineInsertionSpeed';
 export * from './getLineRange';
 export * from './getNextDemoFile';

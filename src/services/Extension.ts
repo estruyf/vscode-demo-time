@@ -21,6 +21,13 @@ export class Extension {
   /**
    * Get the name of the extension
    */
+  public get id(): string {
+    return this.ctx.extension.id;
+  }
+
+  /**
+   * Get the name of the extension
+   */
   public get name(): string {
     return this.ctx.extension.packageJSON.name;
   }

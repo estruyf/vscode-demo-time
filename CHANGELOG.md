@@ -3,6 +3,7 @@
 ## [0.0.40] - 2025-12-11
 
 - [#11](https://github.com/estruyf/vscode-demo-time/issues/11): Included a fix to support web
+- [#13](https://github.com/estruyf/vscode-demo-time/issues/13): Add the extension to the recommended extensions list of the project on initialization
 
 ## [0.0.39] - 2025-12-10
 
