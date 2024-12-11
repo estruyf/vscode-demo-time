@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.41] - 2025-12-11
+
+- Fix for blur and opacity when only one line is highlighted
+
 ## [0.0.40] - 2025-12-11
 
 - [#9](https://github.com/estruyf/vscode-demo-time/issues/9): Added the ability to run the previous demo step when in presentation mode by enabling the `demoTime.previousEnabled` setting

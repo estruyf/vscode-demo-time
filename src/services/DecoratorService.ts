@@ -105,7 +105,20 @@ export class DecoratorService {
     // Remove the previous highlight
     DecoratorService.unselect(textEditor);
 
-    textEditor.setDecorations(DecoratorService.blurDecorator, [new Range(0, 0, textEditor.document.lineCount, 0)]);
+    // Get before and after lines
+    const beforeLine = range.start.line - 1;
+    const afterLine = range.end.line + 1;
+    
+    // Set the blur on the before and after lines
+    if (beforeLine >= 0) {
+      const beforeRange = new Range(0, 0, beforeLine, 0);
+      textEditor.setDecorations(DecoratorService.blurDecorator, [beforeRange]);
+    }
+
+    if (afterLine < textEditor.document.lineCount) {
+      const afterRange = new Range(afterLine, 0, textEditor.document.lineCount, 0);
+      textEditor.setDecorations(DecoratorService.blurDecorator, [afterRange]);
+    }
 
     if (range.start.line === range.end.line) {
       textEditor.setDecorations(DecoratorService.lineDecorator, [range]);
