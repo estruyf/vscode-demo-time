@@ -1,7 +1,7 @@
 import { commands, StatusBarAlignment, StatusBarItem, ThemeColor, window } from "vscode";
 import { DemoRunner } from "./DemoRunner";
 import { FileProvider } from "./FileProvider";
-import { COMMAND, Config } from "../constants";
+import { COMMAND, Config, ContextKeys } from "../constants";
 import { Subscription } from "../models";
 import { Extension } from "./Extension";
 import { getNextDemoFile } from "../utils";
@@ -15,7 +15,7 @@ export class DemoStatusBar {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
     subscriptions.push(commands.registerCommand(COMMAND.startCountdown, DemoStatusBar.startCountdown));
     subscriptions.push(commands.registerCommand(COMMAND.resetCountdown, DemoStatusBar.resetCountdown));
-    commands.executeCommand("setContext", "demo-time.countdown", false);
+    commands.executeCommand("setContext", ContextKeys.countdown, false);
 
     if (!DemoStatusBar.statusBarItem) {
       DemoStatusBar.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left, 100000);
@@ -28,6 +28,12 @@ export class DemoStatusBar {
     DemoStatusBar.update();
 
     DemoStatusBar.startClock();
+    DemoStatusBar.showTimer();
+  }
+
+  public static async showTimer() {
+    const showTimer = Extension.getInstance().getSetting<number>(Config.clock.timer);
+    await commands.executeCommand("setContext", ContextKeys.showTimer, !!showTimer);
   }
 
   public static async update() {
@@ -76,13 +82,13 @@ export class DemoStatusBar {
     }
 
     DemoStatusBar.countdownStarted = new Date();
-    await commands.executeCommand("setContext", "demo-time.countdown", true);
+    await commands.executeCommand("setContext", ContextKeys.countdown, true);
     DemoStatusBar.startClock();
   }
 
   private static async resetCountdown() {
     DemoStatusBar.countdownStarted = undefined;
-    await commands.executeCommand("setContext", "demo-time.countdown", false);
+    await commands.executeCommand("setContext", ContextKeys.countdown, false);
     DemoStatusBar.statusBarClock.backgroundColor = undefined;
     DemoStatusBar.statusBarClock.color = undefined;
     DemoStatusBar.startClock();

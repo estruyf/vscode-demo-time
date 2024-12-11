@@ -254,7 +254,7 @@
         },
         {
           "command": "demo-time.startCountdown",
-          "when": "view == demo-time && demo-time.countdown == false",
+          "when": "view == demo-time && !demo-time.countdown && demo-time.showTimer",
           "group": "navigation@-1"
         }
       ],

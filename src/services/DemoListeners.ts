@@ -4,6 +4,7 @@ import { DemoPanel } from "../panels/DemoPanel";
 import { Config, General } from "../constants";
 import { DecoratorService } from "./DecoratorService";
 import { DemoRunner } from "./DemoRunner";
+import { DemoStatusBar } from "./DemoStatusBar";
 
 export class DemoListeners {
   public static register() {
@@ -12,6 +13,7 @@ export class DemoListeners {
       if (e.affectsConfiguration(Config.root)) {
         DecoratorService.register();
         DemoRunner.allowPrevious();
+        DemoStatusBar.showTimer();
       }
     });
 
