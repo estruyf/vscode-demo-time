@@ -1,4 +1,3 @@
-import { join } from "path";
 import {
   Event,
   ProviderResult,
@@ -7,6 +6,7 @@ import {
   TreeDataProvider,
   TreeItem,
   TreeItemCollapsibleState,
+  Uri,
 } from "vscode";
 import { Extension } from "../services/Extension";
 
@@ -55,8 +55,8 @@ export class ActionTreeItem extends TreeItem {
       ? !image.custom
         ? new ThemeIcon(image.name, image.color)
         : {
-            light: join(extPath, "assets", "icons", "light", `${image.name}.svg`),
-            dark: join(extPath, "assets", "icons", "dark", `${image.name}.svg`),
+            light: Uri.joinPath(Uri.file(extPath), "assets", "icons", "light", `${image.name}.svg`).fsPath,
+            dark: Uri.joinPath(Uri.file(extPath), "assets", "icons", "dark", `${image.name}.svg`).fsPath,
           }
       : undefined;
 

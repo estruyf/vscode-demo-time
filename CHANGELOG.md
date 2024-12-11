@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.40] - 2025-12-11
+
+- [#11](https://github.com/estruyf/vscode-demo-time/issues/11): Included a fix to support web
+
 ## [0.0.39] - 2025-12-10
 
 - [#10](https://github.com/estruyf/vscode-demo-time/issues/10): Added the `demoTime.highlightBlur` and `demoTime.highlightOpacity` settings to change the blur and opacity effect on the non-highlighted code
