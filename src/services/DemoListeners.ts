@@ -3,12 +3,16 @@ import { parseWinPath } from "../utils";
 import { DemoPanel } from "../panels/DemoPanel";
 import { Config, General } from "../constants";
 import { DecoratorService } from "./DecoratorService";
+import { DemoRunner } from "./DemoRunner";
 
 export class DemoListeners {
   public static register() {
     workspace.onDidSaveTextDocument(DemoListeners.checkToUpdate);
     workspace.onDidChangeConfiguration((e) => {
-      if (e.affectsConfiguration(Config.root)) DecoratorService.register();
+      if (e.affectsConfiguration(Config.root)) {
+        DecoratorService.register();
+        DemoRunner.allowPrevious();
+      }
     });
 
     workspace.onDidCreateFiles((e) => DemoListeners.checkMultipleToUpdate(e.files || []));

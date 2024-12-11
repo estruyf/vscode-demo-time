@@ -1,4 +1,4 @@
-import { COMMAND, StateKeys } from "../constants";
+import { COMMAND, Config, ContextKeys, StateKeys } from "../constants";
 import { Demo, DemoFileCache, Demos, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import {
@@ -28,6 +28,7 @@ import {
   replaceContent,
   sleep,
   getNextDemoFile,
+  getPreviousDemoFile,
 } from "../utils";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DecoratorService } from "./DecoratorService";
@@ -53,10 +54,13 @@ export class DemoRunner {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
 
     subscriptions.push(commands.registerCommand(COMMAND.start, DemoRunner.start));
+    subscriptions.push(commands.registerCommand(COMMAND.previous, DemoRunner.previous));
     subscriptions.push(commands.registerCommand(COMMAND.togglePresentationMode, DemoRunner.togglePresentationMode));
     subscriptions.push(commands.registerCommand(COMMAND.runStep, DemoRunner.startDemo));
     subscriptions.push(commands.registerCommand(COMMAND.runById, DemoRunner.runById));
     subscriptions.push(commands.registerCommand(COMMAND.reset, DemoRunner.reset));
+
+    DemoRunner.allowPrevious();
   }
 
   /**
@@ -71,6 +75,17 @@ export class DemoRunner {
     }
 
     return demoFile;
+  }
+
+  /**
+   * Sets the context key for enabling or disabling the "previous" functionality
+   * based on the configuration setting.
+   * 
+   * @returns {Promise<void>} A promise that resolves when the context key has been set.
+   */
+  public static async allowPrevious(): Promise<void> {
+    const previousEnabled = Extension.getInstance().getSetting<boolean>(Config.presentationMode.previousEnabled) || false;
+    await commands.executeCommand("setContext", ContextKeys.previousEnabled, previousEnabled);
   }
 
   /**
@@ -91,7 +106,7 @@ export class DemoRunner {
    */
   private static async togglePresentationMode(enable?: boolean): Promise<void> {
     DemoRunner.isPresentationMode = typeof enable !== "undefined" ? enable : !DemoRunner.isPresentationMode;
-    await commands.executeCommand("setContext", "demo-time.presentation", DemoRunner.isPresentationMode);
+    await commands.executeCommand("setContext", ContextKeys.presentation, DemoRunner.isPresentationMode);
     if (DemoRunner.isPresentationMode) {
       DemoPanel.updateTitle("Demo time (Presentation mode)");
       await DemoRunner.getDemoFile();
@@ -112,7 +127,8 @@ export class DemoRunner {
   }
 
   /**
-   * Starts the demo runner.
+   * Starts the demo runner or runs the next demo step.
+   * 
    * @returns {Promise<void>} A promise that resolves when the demo runner has started.
    */
   private static async start(item: ActionTreeItem | { demoFilePath: string; description: string; }): Promise<void> {
@@ -160,6 +176,71 @@ export class DemoRunner {
       idx: demoIdxToRun,
       title: nextDemo.title,
       id: nextDemo.id,
+    });
+
+    await DemoRunner.setExecutedDemoFile(executingFile);
+    await DemoRunner.runSteps(demoSteps);
+  }
+
+  
+  /**
+   * Executes the previous demo step.
+   * 
+   * @returns {Promise<void>} A promise that resolves when the previous demo step has been executed.
+   */
+  private static async previous(): Promise<void> {
+    const executingFile = await DemoRunner.getExecutedDemoFile();
+    const filePath = executingFile.filePath;
+    if (!filePath) {
+      return;
+    }
+
+    const demoFile = await FileProvider.getFile(Uri.file(filePath));
+    const demos = demoFile?.demos || [];
+
+    if (demos.length <= 0) {
+      Notifications.error("No demo steps found");
+      return;
+    }
+
+    // Get the previous demo step to start
+    const lastDemo = executingFile.demo[executingFile.demo.length - 1] || 0;
+    const demoIdxToRun = demos.findIndex((d) => (d.id ? d.id === lastDemo.id : d.title === lastDemo.title));
+    const previousDemo = demos[demoIdxToRun - 1];
+
+    if (!previousDemo) {
+      const previousFile = await getPreviousDemoFile({
+        filePath,
+      });
+      if (!previousFile) {
+        Notifications.info("No previous demo steps found");
+        return;
+      }
+
+      executingFile.filePath = previousFile.filePath;
+      executingFile.demo = [];
+      // Get the last demo step of the previous file
+      const lastDemo = previousFile.demo.demos[previousFile.demo.demos.length - 1];
+      executingFile.demo.push({
+        idx: previousFile.demo.demos.length - 1,
+        title: lastDemo.title,
+        id: lastDemo.id,
+      });
+
+      await DemoRunner.setExecutedDemoFile(executingFile);
+      await DemoRunner.runSteps(lastDemo.steps);
+      return;
+    }
+
+    const demoSteps = previousDemo.steps;
+    if (!demoSteps) {
+      return;
+    }
+
+    executingFile.demo.push({
+      idx: demoIdxToRun,
+      title: previousDemo.title,
+      id: previousDemo.id,
     });
 
     await DemoRunner.setExecutedDemoFile(executingFile);

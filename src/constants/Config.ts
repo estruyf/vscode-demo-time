@@ -1,5 +1,8 @@
 export const Config = {
   root: "demoTime",
+  presentationMode: {
+    previousEnabled: "previousEnabled",
+  },
   highlight: {
     borderColor: "highlightBorderColor",
     background: "highlightBackground",

@@ -2,6 +2,7 @@
 
 ## [0.0.40] - 2025-12-11
 
+- [#9](https://github.com/estruyf/vscode-demo-time/issues/9): Added the ability to run the previous demo step when in presentation mode by enabling the `demoTime.previousEnabled` setting
 - [#11](https://github.com/estruyf/vscode-demo-time/issues/11): Included a fix to support web
 - [#13](https://github.com/estruyf/vscode-demo-time/issues/13): Add the extension to the recommended extensions list of the project on initialization
 

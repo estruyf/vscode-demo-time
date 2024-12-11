@@ -508,14 +508,34 @@ In the `insert_and_highlight.json` file, you can define the steps you want to ex
 
 | Setting | Description | Default |
 | --- | --- | --- |
-| `demoTime.highlightBackground` | The background color of the highlighted code | `var(--vscode-editor-selectionBackground)` |
-| `demoTime.highlightBorderColor` | The border color of the highlighted code | `rgba(255,0,0,0.5)` |
-| `demoTime.highlightBlur` | Blur effect on the text which is not highlighted | `0` |
+| `demoTime.previousEnabled` | Enable the previous command when in presentation mode. | `false` |
+| `demoTime.highlightBackground` | The background color of the highlighted code. | `var(--vscode-editor-selectionBackground)` |
+| `demoTime.highlightBorderColor` | The border color of the highlighted code. | `rgba(255,0,0,0.5)` |
+| `demoTime.highlightBlur` | Blur effect on the text which is not highlighted. | `0` |
 | `demoTime.highlightOpacity` | The opacity of the text which is not highlighted. Number between 0 and 1. | `0.5` |
-| `demoTime.highlightZoomEnabled` | Enable zooming when highlighting code | `false` |
-| `demoTime.showClock` | Show a clock in the status bar | `true` |
+| `demoTime.highlightZoomEnabled` | Enable zooming when highlighting code. | `false` |
+| `demoTime.showClock` | Show a clock in the status bar. | `true` |
 | `demoTime.timer` | Count down timer for how long the session should last. If not set, it will not count down. The value is the number of minutes. | `null` |
 | `demoTime.insertLineSpeed` | The speed in milliseconds for inserting lines. If you set it to `0`, it will insert its content immediately. | `25` |
+
+> The `demoTime.previousEnabled` is by default disabled to avoid conflicts when the previous action inserted content into a file.
+> When you enable this setting, you can use the `Demo Time: Previous` command to go back to the previous step or use the left clicker button.
+
+## Commands
+
+| Command | Description |
+| --- | --- |
+| `Demo Time: Start` | Starts the demo or runs the next demo step. |
+| `Demo Time: Previous` | Go back to the previous demo step (only in presentation mode and when the `demoTime.previousEnabled` setting is enabled). |
+| `Demo Time: Add as demo step` | Add the current selection as a demo step to the demo file. |
+| `Demo Time: Reset` | Reset all the demos. |
+| `Demo Time: Start countdown` | Start the countdown clock (you need to define the time in the `demoTime.timer` setting). |
+| `Demo Time: Reset countdown` | Reset the countdown clock. |
+| `Demo Time: Toggle presentation mode` | Toggle the presentation mode. In this mode you'll be able to use your clicker or arrow keys for the `Demo Time: Start` and `Demo Time: Previous` commands. |
+
+> The `Demo Time: Start` and `Demo Time: Previous` commands have a keybinding assigned to them.
+> You can override these keybindings in your Visual Studio Code settings.
+
 
 ## Tips and tricks
 

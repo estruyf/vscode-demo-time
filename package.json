@@ -68,6 +68,11 @@
     "configuration": {
       "title": "Demo Time",
       "properties": {
+        "demoTime.previousEnabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable the previous command when in presentation mode"
+        },
         "demoTime.highlightBorderColor": {
           "type": "string",
           "default": "rgba(255,0,0,0.5)",
@@ -116,6 +121,11 @@
         "title": "Start",
         "category": "Demo Time",
         "icon": "$(play)"
+      },
+      {
+        "command": "demo-time.previous",
+        "title": "Previous",
+        "category": "Demo Time"
       },
       {
         "command": "demo-time.runStep",
@@ -191,6 +201,10 @@
     "menus": {
       "commandPalette": [
         {
+          "command": "demo-time.previous",
+          "when": "demo-time.presentation && demo-time.previousEnabled"
+        },
+        {
           "command": "demo-time.runById",
           "when": "false"
         },
@@ -226,7 +240,7 @@
       "view/title": [
         {
           "command": "demo-time.togglePresentationMode",
-          "when": "view == demo-time && !config.demoTime.presentationMode",
+          "when": "view == demo-time && !demo-time.presentation",
           "group": "navigation@0"
         },
         {
@@ -278,6 +292,7 @@
         {
           "id": "demo-time",
           "name": "Demo Time",
+          "contextualTitle": "Demo Time",
           "icon": "assets/logo-small.svg"
         }
       ]
@@ -293,6 +308,11 @@
         "command": "demo-time.start",
         "key": "right",
         "when": "demo-time.presentation"
+      },
+      {
+        "command": "demo-time.previous",
+        "key": "left",
+        "when": "demo-time.presentation && demo-time.previousEnabled"
       }
     ]
   },
