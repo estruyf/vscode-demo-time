@@ -44,6 +44,10 @@
       "description": "",
       "steps": [
         {
+          "action": "unselect",
+          "path": "sample.json"
+        },
+        {
           "action": "highlight",
           "path": "sample.json",
           "position": "2"

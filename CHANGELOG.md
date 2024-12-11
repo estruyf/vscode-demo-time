@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.42] - 2025-12-11
+
+- Fix the before blur and opacity decoration
+
 ## [0.0.41] - 2025-12-11
 
 - Fix for blur and opacity when only one line is highlighted

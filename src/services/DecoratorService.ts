@@ -106,7 +106,7 @@ export class DecoratorService {
     DecoratorService.unselect(textEditor);
 
     // Get before and after lines
-    const beforeLine = range.start.line - 1;
+    const beforeLine = range.start.line;
     const afterLine = range.end.line + 1;
     
     // Set the blur on the before and after lines
