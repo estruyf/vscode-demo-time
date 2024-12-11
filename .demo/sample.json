@@ -38,6 +38,39 @@
           }
         }
       ]
+    },
+    {
+      "title": "Highlight firstName",
+      "description": "",
+      "steps": [
+        {
+          "action": "highlight",
+          "path": "sample.json",
+          "position": "2"
+        }
+      ]
+    },
+    {
+      "title": "Highlight lastName",
+      "description": "",
+      "steps": [
+        {
+          "action": "highlight",
+          "path": "sample.json",
+          "position": "3"
+        }
+      ]
+    },
+    {
+      "title": "Highlight location",
+      "description": "",
+      "steps": [
+        {
+          "action": "highlight",
+          "path": "sample.json",
+          "position": "4"
+        }
+      ]
     }
   ]
 }
