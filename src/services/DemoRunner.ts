@@ -108,10 +108,10 @@ export class DemoRunner {
     DemoRunner.isPresentationMode = typeof enable !== "undefined" ? enable : !DemoRunner.isPresentationMode;
     await commands.executeCommand("setContext", ContextKeys.presentation, DemoRunner.isPresentationMode);
     if (DemoRunner.isPresentationMode) {
-      DemoPanel.updateTitle("Demo time (Presentation mode)");
+      DemoPanel.updateMessage("Presentation mode enabled");
       await DemoRunner.getDemoFile();
     } else {
-      DemoPanel.updateTitle("Demo time");
+      DemoPanel.updateMessage();
     }
     DemoPanel.update();
   }

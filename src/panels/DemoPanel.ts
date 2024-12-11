@@ -30,6 +30,12 @@ export class DemoPanel {
     }
   }
 
+  public static updateMessage(message?: string) {
+    if (this.treeView) {
+      this.treeView.message = message;
+    }
+  }
+
   /**
    * Initialize the command panel
    * @returns
