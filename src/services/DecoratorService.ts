@@ -110,15 +110,18 @@ export class DecoratorService {
     const afterLine = range.end.line + 1;
     
     // Set the blur on the before and after lines
+    let blurRanges = [];
     if (beforeLine >= 0) {
       const beforeRange = new Range(0, 0, beforeLine, 0);
-      textEditor.setDecorations(DecoratorService.blurDecorator, [beforeRange]);
+      blurRanges.push(beforeRange);
     }
 
     if (afterLine < textEditor.document.lineCount) {
       const afterRange = new Range(afterLine, 0, textEditor.document.lineCount, 0);
-      textEditor.setDecorations(DecoratorService.blurDecorator, [afterRange]);
+      blurRanges.push(afterRange);
     }
+
+    textEditor.setDecorations(DecoratorService.blurDecorator, blurRanges);
 
     if (range.start.line === range.end.line) {
       textEditor.setDecorations(DecoratorService.lineDecorator, [range]);

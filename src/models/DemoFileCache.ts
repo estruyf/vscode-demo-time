@@ -1,8 +1,10 @@
 export interface DemoFileCache {
   filePath: string;
-  demo: {
-    idx: number;
-    title: string;
-    id?: string;
-  }[];
+  demo: DemoCache[];
+}
+
+export interface DemoCache {
+  idx: number;
+  title: string;
+  id?: string;
 }

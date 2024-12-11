@@ -3,6 +3,7 @@
 ## [0.0.41] - 2025-12-11
 
 - Fix for blur and opacity when only one line is highlighted
+- Fix issue when using the same demo titles in the same demo file
 
 ## [0.0.40] - 2025-12-11
 

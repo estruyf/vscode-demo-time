@@ -10,5 +10,6 @@ export * from './insertContent';
 export * from './insertLineByLine';
 export * from './insertVariables';
 export * from './parseWinPath';
+export * from './removeDemoDuplicates';
 export * from './replaceContent';
 export * from './sleep';

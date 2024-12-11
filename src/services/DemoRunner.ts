@@ -29,6 +29,7 @@ import {
   sleep,
   getNextDemoFile,
   getPreviousDemoFile,
+  removeDemoDuplicates,
 } from "../utils";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DecoratorService } from "./DecoratorService";
@@ -143,9 +144,10 @@ export class DemoRunner {
     }
 
     // Get the first demo step to start
-    const lastDemo = executingFile.demo[executingFile.demo.length - 1] || 0;
-    const demoIdxToRun = demos.findIndex((d) => (d.id ? d.id === lastDemo.id : d.title === lastDemo.title));
-    const nextDemo = demos[demoIdxToRun + 1];
+    const lastDemo = executingFile.demo[executingFile.demo.length - 1];
+    const lastDemoIdx = !lastDemo ? -1 : demos.findIndex((d, idx) => (d.id ? d.id === lastDemo.id : idx === lastDemo.idx));
+    const nextDemoIdx = lastDemoIdx + 1;
+    const nextDemo = demos[nextDemoIdx];
 
     if (!nextDemo) {
       // Check if there is a next demo file
@@ -173,10 +175,12 @@ export class DemoRunner {
     }
 
     executingFile.demo.push({
-      idx: demoIdxToRun,
+      idx: nextDemoIdx,
       title: nextDemo.title,
       id: nextDemo.id,
     });
+
+    executingFile.demo = removeDemoDuplicates(executingFile.demo);
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     await DemoRunner.runSteps(demoSteps);
@@ -203,12 +207,14 @@ export class DemoRunner {
       return;
     }
 
-    // Get the previous demo step to start
-    const lastDemo = executingFile.demo[executingFile.demo.length - 1] || 0;
-    const demoIdxToRun = demos.findIndex((d) => (d.id ? d.id === lastDemo.id : d.title === lastDemo.title));
-    const previousDemo = demos[demoIdxToRun - 1];
 
-    if (!previousDemo) {
+    // Get the previous demo step to start
+    const lastDemo = executingFile.demo[executingFile.demo.length - 1];
+    const demoIdxToRun = !lastDemo ? -1 : lastDemo.idx;
+    const previousDemoIdx = demoIdxToRun - 1;
+    const previousDemo = previousDemoIdx >= 0 ? demos[previousDemoIdx] : null;
+
+    if (previousDemoIdx < 0 || !previousDemo) {
       const previousFile = await getPreviousDemoFile({
         filePath,
       });
@@ -227,6 +233,8 @@ export class DemoRunner {
         id: lastDemo.id,
       });
 
+      executingFile.demo = removeDemoDuplicates(executingFile.demo);
+
       await DemoRunner.setExecutedDemoFile(executingFile);
       await DemoRunner.runSteps(lastDemo.steps);
       return;
@@ -237,11 +245,14 @@ export class DemoRunner {
       return;
     }
 
+    executingFile.demo.pop();
     executingFile.demo.push({
-      idx: demoIdxToRun,
+      idx: previousDemoIdx,
       title: previousDemo.title,
       id: previousDemo.id,
     });
+
+    executingFile.demo = removeDemoDuplicates(executingFile.demo);
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     await DemoRunner.runSteps(demoSteps);
@@ -273,6 +284,8 @@ export class DemoRunner {
       id: demoToRun.demo.id,
     });
 
+    executingFile.demo = removeDemoDuplicates(executingFile.demo);
+
     await DemoRunner.setExecutedDemoFile(executingFile);
     await DemoRunner.runSteps(demoToRun.demo.steps);
   }
@@ -293,7 +306,6 @@ export class DemoRunner {
 
     // Find the demo file that contains the specified id
     let filePath = null;
-    let demo = null;
     for (const crntFilePath in demoFiles) {
       const demos = demoFiles[crntFilePath].demos;
       const crntDemo = demos.find((demo) => demo.id === id);
@@ -327,6 +339,8 @@ export class DemoRunner {
       title: demoToRun.title,
       id: demoToRun.id,
     });
+
+    executingFile.demo = removeDemoDuplicates(executingFile.demo);
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     await DemoRunner.runSteps(demoToRun.steps);
