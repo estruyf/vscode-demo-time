@@ -33,7 +33,6 @@ export const StartPresentation: React.FunctionComponent<IStartPresentationProps>
     Messenger.listen(messageListener);
 
     messageHandler.request<boolean | undefined>(WebViewMessages.toVscode.getPresentationStarted).then((started: boolean | undefined) => {
-      console.log('started', started);
       setIsStarted(started);
     });
     

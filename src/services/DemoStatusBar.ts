@@ -62,6 +62,8 @@ export class DemoStatusBar {
         const nextFile = await getNextDemoFile(executingFile);
         if (!nextFile) {
           DemoStatusBar.statusBarItem.hide();
+          DemoStatusBar.nextDemo = undefined;
+          PresenterView.postMessage(WebViewMessages.toWebview.updateNextDemo, DemoStatusBar.nextDemo);
           return;
         }
 

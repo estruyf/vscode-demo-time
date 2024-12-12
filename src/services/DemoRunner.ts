@@ -167,7 +167,11 @@ export class DemoRunner {
       // Check if there is a next demo file
       const nextFile = await getNextDemoFile(demoFile);
       if (!nextFile) {
-        Notifications.info("All demo steps have been executed");
+        const yesOrNo = await window.showInformationMessage("No next demo steps found. Do you want to reset?", "Yes", "No");
+        if (yesOrNo === "Yes") {
+          await DemoRunner.reset();
+          await commands.executeCommand(COMMAND.start);
+        }
         return;
       }
 

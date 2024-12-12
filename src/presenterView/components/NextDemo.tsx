@@ -38,8 +38,8 @@ export const NextDemo: React.FunctionComponent<INextDemoProps> = ({
   React.useEffect(() => {
     Messenger.listen(messageListener);
 
-    messageHandler.request<Demo | undefined>(WebViewMessages.toVscode.getNextDemo).then((files: Demo | undefined) => {
-      setNextDemo(files);
+    messageHandler.request<Demo | undefined>(WebViewMessages.toVscode.getNextDemo).then((demo) => {
+      setNextDemo(demo);
     });
     
     return () => {
