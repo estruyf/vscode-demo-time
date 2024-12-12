@@ -2,7 +2,7 @@
   <img alt="Demo Time" src="./assets/demo-time-128x128.png">
 </h1>
 
-<h2 align="center">Unlock a new dimension in presenting coding demos – effortlessly click through them as if they were presentation slides, thanks to this cutting-edge VSCode extension.</h2>
+<h2 align="center">Script your coding demos to perfection with this VS Code extension – no typos, no missteps, just flawless, stress-free presentations every time. Execute each demo step seamlessly, just like advancing through a presentation!</h2>
 
 <p align="center">
   <a href="https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-demo-time" title="Check it out on the Visual Studio Marketplace">
@@ -24,6 +24,7 @@
 
 Currently, the extension supports the following features:
 
+- Highlighting code in a file.
 - Multiple demo files located in the `.demo` folder.
 - Support for code/snippet files in the `.demo` folder, allowing you to define multiple reusable steps.
 - Explorer panel to execute your demo steps (you can move it to the activity bar).
@@ -31,6 +32,7 @@ Currently, the extension supports the following features:
 - Presentation mode that allows you to use a **clicker** to navigate through the demo steps.
 - Run a specific demo step from a command execution using the `demo-time.runById` command.
 - Place your variables in a `variables.json` file in the `.demo` folder and reference them like `{variable_name}` in your demo steps.
+- Detachable presenter view which you can move to a different screen.
 
 ## Usage
 
@@ -215,9 +217,7 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
       <code>highlight</code>
     </td>
     <td>
-      Highlight code in a file. You can change the border color with the
-
-`demoTime.highlightBorderColor` setting.
+      Highlight code in a file. Check out the <a href="#settings" title="settings">settings</a> section to customize the highlight colors.
     </td>
     <td>
 
@@ -524,12 +524,12 @@ In the `insert_and_highlight.json` file, you can define the steps you want to ex
 
 | Setting | Description | Default |
 | --- | --- | --- |
-| `demoTime.previousEnabled` | Enable the previous command when in presentation mode. | `false` |
 | `demoTime.highlightBackground` | The background color of the highlighted code. | `var(--vscode-editor-selectionBackground)` |
 | `demoTime.highlightBorderColor` | The border color of the highlighted code. | `rgba(255,0,0,0.5)` |
 | `demoTime.highlightBlur` | Blur effect on the text which is not highlighted. | `0` |
 | `demoTime.highlightOpacity` | The opacity of the text which is not highlighted. Number between 0 and 1. | `0.5` |
 | `demoTime.highlightZoomEnabled` | Enable zooming when highlighting code. | `false` |
+| `demoTime.previousEnabled` | Enable the previous command when in presentation mode. | `false` |
 | `demoTime.showClock` | Show a clock in the status bar. | `true` |
 | `demoTime.timer` | Count down timer for how long the session should last. If not set, it will not count down. The value is the number of minutes. | `null` |
 | `demoTime.insertLineSpeed` | The speed in milliseconds for inserting lines. If you set it to `0`, it will insert its content immediately. | `25` |
@@ -548,12 +548,34 @@ In the `insert_and_highlight.json` file, you can define the steps you want to ex
 | `Demo Time: Start countdown` | Start the countdown clock (you need to define the time in the `demoTime.timer` setting). |
 | `Demo Time: Reset countdown` | Reset the countdown clock. |
 | `Demo Time: Toggle presentation mode` | Toggle the presentation mode. In this mode you'll be able to use your clicker or arrow keys for the `Demo Time: Start` and `Demo Time: Previous` commands. |
+| `Demo Time: Show presenter view` | Open the presenter view which you can detach and move to another screen while presenting. |
 
 > The `Demo Time: Start` and `Demo Time: Previous` commands have a keybinding assigned to them.
 > You can override these keybindings in your Visual Studio Code settings.
 
 
 ## Tips and tricks
+
+### Highlighting code
+
+By default, the extension highlights the code in a box with a red border. You can customize how you want to highlight the code with the highlight settings.
+
+![Default highlighting](./assets/highlight-default.png)
+
+#### Customizing the highlight
+
+Here is an example where the highlight border and background color are customized. Besides these color changes, the text which is not highlighted is blurred and its opacity is reduced to have a better focus on the highlighted code.
+
+```json
+{
+  "demoTime.highlightBorderColor": "transparent",
+  "demoTime.highlightBackground": "rgba(19, 142, 151, 0.2)",
+  "demoTime.highlightOpacity": 0.5,
+  "demoTime.highlightBlur": 2,
+}
+```
+
+![Customized highlighting](./assets/highlight-custom.png)
 
 ### Working with variables
 
@@ -595,6 +617,18 @@ When you want to insert content to a file, you can use the `content` or `content
 | --- | --- |
 | `content` | This property allows you to add the content directly in the JSON file, but this can make your JSON file quite big and it can be hard to read. |
 | `contentPath` | This property allows you to reference a file in the `.demo` folder. This way you can keep your JSON file clean and add the content in separate files. **Important**: the path is relative to the `.demo` folder. |
+
+### Presentation view
+
+When you use two screens during a presentation, you can use the detachable presenter view which you can move to another screen. This way you can keep an eye on the next steps while presenting without showing it to your audience.
+
+Follow these steps to use the presenter view:
+
+- Run the `Demo Time: Show presenter view` command to open the presenter view.
+- Drag the presenter view tab out of the Visual Studio Code window.
+- Once detached, you can move it to another screen.
+
+![Presenter view](./assets/presenter-view.png)
 
 ### Example demo file
 

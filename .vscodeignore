@@ -10,3 +10,10 @@ vsc-extension-quickstart.md
 **/.eslintrc.json
 **/*.map
 **/*.ts
+assets/logo.ai
+assets/demotime.gif
+postcss.config.js
+tailwind.config.js
+webview.config.js
+.demo
+.github

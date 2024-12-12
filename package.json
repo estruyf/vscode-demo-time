@@ -1,7 +1,7 @@
 {
   "name": "vscode-demo-time",
   "displayName": "Demo Time",
-  "description": "Unlock a new dimension in presenting coding demos - effortlessly click through them as if they were presentation slides, thanks to this VSCode extension.",
+  "description": "Script your coding demos to perfection with this VS Code extension – no typos, no missteps, just flawless, stress-free presentations every time. Execute each demo step seamlessly, just like advancing through a slide presentation!",
   "version": "0.0.42",
   "publisher": "eliostruyf",
   "galleryBanner": {
@@ -52,28 +52,28 @@
       "dt-clock": {
         "description": "Demo Time - clock",
         "default": {
-          "fontPath": "assets/demo-time.woff",
+          "fontPath": "assets/demo-time-v1.woff",
           "fontCharacter": "\\e903"
         }
       },
       "dt-timer": {
         "description": "Demo Time - timer",
         "default": {
-          "fontPath": "assets/demo-time.woff",
+          "fontPath": "assets/demo-time-v1.woff",
           "fontCharacter": "\\e901"
         }
       },
       "dt-timer-off": {
         "description": "Demo Time - timer off",
         "default": {
-          "fontPath": "assets/demo-time.woff",
+          "fontPath": "assets/demo-time-v1.woff",
           "fontCharacter": "\\e902"
         }
       },
       "dt-projector": {
         "description": "Demo Time - projector",
         "default": {
-          "fontPath": "assets/demo-time.woff",
+          "fontPath": "assets/demo-time-v1.woff",
           "fontCharacter": "\\e900"
         }
       }
