@@ -1,4 +1,5 @@
-import { COMMAND, Config, ContextKeys, StateKeys } from "../constants";
+import { PresenterView } from './../presenterView/PresenterView';
+import { COMMAND, Config, ContextKeys, StateKeys, WebViewMessages } from "../constants";
 import { Demo, DemoFileCache, Demos, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import {
@@ -96,6 +97,7 @@ export class DemoRunner {
   private static async setExecutedDemoFile(demoFile: DemoFileCache) {
     const ext = Extension.getInstance();
     await ext.setState(StateKeys.executingDemoFile, demoFile);
+    PresenterView.postMessage(WebViewMessages.toWebview.updateRunningDemos, demoFile);
   }
 
   /**
@@ -122,7 +124,9 @@ export class DemoRunner {
    */
   private static async reset(): Promise<void> {
     const ext = Extension.getInstance();
-    ext.setState(StateKeys.executingDemoFile, Object.assign({}, DEFAULT_START_VALUE));
+    const resetContent = Object.assign({}, DEFAULT_START_VALUE);
+    ext.setState(StateKeys.executingDemoFile, resetContent);
+    PresenterView.postMessage(WebViewMessages.toWebview.updateRunningDemos, resetContent);
     DemoRunner.togglePresentationMode(false);
     DemoPanel.update();
   }

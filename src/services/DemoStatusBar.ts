@@ -1,15 +1,17 @@
 import { commands, StatusBarAlignment, StatusBarItem, ThemeColor, window } from "vscode";
 import { DemoRunner } from "./DemoRunner";
 import { FileProvider } from "./FileProvider";
-import { COMMAND, Config, ContextKeys } from "../constants";
-import { Subscription } from "../models";
+import { COMMAND, Config, ContextKeys, WebViewMessages } from "../constants";
+import { Demo, Subscription } from "../models";
 import { Extension } from "./Extension";
 import { getNextDemoFile } from "../utils";
+import { PresenterView } from "../presenterView/PresenterView";
 
 export class DemoStatusBar {
   private static statusBarItem: StatusBarItem;
   private static statusBarClock: StatusBarItem;
   private static countdownStarted: Date | undefined;
+  private static nextDemo: Demo | undefined;
 
   public static register() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
@@ -29,6 +31,10 @@ export class DemoStatusBar {
 
     DemoStatusBar.startClock();
     DemoStatusBar.showTimer();
+  }
+
+  public static getNextDemo() {
+    return DemoStatusBar.nextDemo;
   }
 
   public static async showTimer() {
@@ -64,15 +70,20 @@ export class DemoStatusBar {
       const nextDemo = executingDemos[crntDemoIdx + 1];
 
       if (nextDemo) {
+        DemoStatusBar.nextDemo = nextDemo;
         DemoStatusBar.statusBarItem.text = `$(rocket) ${nextDemo.title}`;
         DemoStatusBar.statusBarItem.tooltip = nextDemo.description;
         DemoStatusBar.statusBarItem.show();
       } else {
+        DemoStatusBar.nextDemo = undefined;
         DemoStatusBar.statusBarItem.hide();
       }
     } else {
+      DemoStatusBar.nextDemo = undefined;
       DemoStatusBar.statusBarItem.hide();
     }
+
+    PresenterView.postMessage(WebViewMessages.toWebview.updateNextDemo, DemoStatusBar.nextDemo);
   }
 
   private static async startCountdown() {
@@ -113,7 +124,12 @@ export class DemoStatusBar {
     }
 
     // Only show hour and minute
-    let text = showClock ? `$(dt-clock) ${time.split(":").slice(0, 2).join(":")}` : "";
+    const clock = time.split(":").slice(0, 2).join(":");
+    let text = showClock ? `$(dt-clock) ${clock}` : "";
+
+    // Send the clock to the presenter view
+    PresenterView.postMessage(WebViewMessages.toWebview.updateClock, clock);
+
     if (DemoStatusBar.countdownStarted && timer) {
       // Show the time as countdown
       const diff = new Date().getTime() - DemoStatusBar.countdownStarted.getTime();
@@ -121,7 +137,9 @@ export class DemoStatusBar {
       let minutes = Math.floor(seconds / 60);
       const remainingSeconds = Math.abs(seconds % 60);
 
+      let isNegative = false;
       if (seconds <= 0) {
+        isNegative = true;
         DemoStatusBar.statusBarClock.backgroundColor = new ThemeColor("statusBarItem.errorBackground");
         DemoStatusBar.statusBarClock.color = new ThemeColor("statusBarItem.errorForeground");
 
@@ -134,7 +152,11 @@ export class DemoStatusBar {
       // Add leading zero
       const min = Math.abs(minutes) < 10 ? `0${Math.abs(minutes)}` : minutes;
       const sec = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
-      text += `    $(dt-timer) ${minutes < 0 ? `-${min}` : min}:${sec}`;
+      const countdown = `${min}:${sec}`;
+      text += `    $(dt-timer) ${isNegative ? "-" : ""}${countdown}`;
+
+      // Send the clock to the presenter view
+      PresenterView.postMessage(WebViewMessages.toWebview.updateCountdown, `${isNegative ? "-" : ""}${countdown}`);
     }
 
     DemoStatusBar.statusBarClock.text = text.trim();
