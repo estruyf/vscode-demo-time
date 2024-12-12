@@ -37,6 +37,10 @@ export class DemoStatusBar {
     return DemoStatusBar.nextDemo;
   }
 
+  public static getCountdownStarted() {
+    return DemoStatusBar.countdownStarted;
+  }
+
   public static async showTimer() {
     const showTimer = Extension.getInstance().getSetting<number>(Config.clock.timer);
     await commands.executeCommand("setContext", ContextKeys.showTimer, !!showTimer);
@@ -95,6 +99,7 @@ export class DemoStatusBar {
     DemoStatusBar.countdownStarted = new Date();
     await commands.executeCommand("setContext", ContextKeys.countdown, true);
     DemoStatusBar.startClock();
+    PresenterView.postMessage(WebViewMessages.toWebview.updateCountdownStarted, DemoStatusBar.countdownStarted);
   }
 
   private static async resetCountdown() {
@@ -103,6 +108,7 @@ export class DemoStatusBar {
     DemoStatusBar.statusBarClock.backgroundColor = undefined;
     DemoStatusBar.statusBarClock.color = undefined;
     DemoStatusBar.startClock();
+    PresenterView.postMessage(WebViewMessages.toWebview.updateCountdownStarted, undefined);
   }
 
   private static startClock() {
@@ -153,7 +159,7 @@ export class DemoStatusBar {
       const min = Math.abs(minutes) < 10 ? `0${Math.abs(minutes)}` : minutes;
       const sec = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
       const countdown = `${min}:${sec}`;
-      text += `    $(dt-timer) ${isNegative ? "-" : ""}${countdown}`;
+      text += `    $(dt-timer-off) ${isNegative ? "-" : ""}${countdown}`;
 
       // Send the clock to the presenter view
       PresenterView.postMessage(WebViewMessages.toWebview.updateCountdown, `${isNegative ? "-" : ""}${countdown}`);

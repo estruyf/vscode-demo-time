@@ -4,13 +4,17 @@ export const WebViewMessages = {
     getDemoFiles: 'getDemoFiles',
     getRunningDemos: 'getRunningDemos',
     getNextDemo: 'getNextDemo',
+    getCountdownStarted: 'getCountdownStarted',
+    getPresentationStarted: 'getPresentationStarted',
     runCommand: 'runCommand',
   },
   toWebview: {
     updateClock: 'updateClock',
-    updateCountdown: 'updateCountdown',
     updateFiles: 'updateFiles',
     updateRunningDemos: 'updateRunningDemos',
     updateNextDemo: 'updateNextDemo',
+    updateCountdown: 'updateCountdown',
+    updateCountdownStarted: 'updateCountdownStarted',
+    updatePresentationStarted: 'updatePresentationStarted',
   }
 };

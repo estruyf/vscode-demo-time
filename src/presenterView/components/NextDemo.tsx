@@ -3,11 +3,21 @@ import * as React from 'react';
 import { COMMAND, WebViewMessages } from '../../constants';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import { Demo } from '../../models';
-import { Button } from 'vscrui';
+import { Button, Icon } from 'vscrui';
 
-export interface INextDemoProps {}
+export interface INextDemoProps {
+  className?: string;
+  titleClass?: string;
+  iconClass?: string;
+  secondary?: boolean;
+}
 
-export const NextDemo: React.FunctionComponent<INextDemoProps> = (props: React.PropsWithChildren<INextDemoProps>) => {
+export const NextDemo: React.FunctionComponent<INextDemoProps> = ({
+  className,
+  titleClass,
+  iconClass,
+  secondary
+}: React.PropsWithChildren<INextDemoProps>) => {
   const [nextDemo, setNextDemo] = React.useState<Demo | undefined>(undefined);
 
   const messageListener = (message: MessageEvent<EventData<any>>) => {
@@ -22,7 +32,7 @@ export const NextDemo: React.FunctionComponent<INextDemoProps> = (props: React.P
   };
 
   const runNextDemo = () => {
-    messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.start);
+    messageHandler.send(WebViewMessages.toVscode.runCommand, { command: COMMAND.start});
   };
 
   React.useEffect(() => {
@@ -37,15 +47,14 @@ export const NextDemo: React.FunctionComponent<INextDemoProps> = (props: React.P
     };
   }, []);
 
-  if (!nextDemo || !nextDemo.title) {
-    return null;
-  }
-
   return (
-    <div className="flex justify-end">
-      <Button onClick={runNextDemo}>
-        {nextDemo.title}
-      </Button>
-    </div>
+    <Button 
+      className={className || ""}
+      onClick={runNextDemo} 
+      appearance={secondary ? "secondary" : "primary"}>
+      <span className={titleClass}>{nextDemo?.title || "Start"}</span>
+
+      <Icon name="arrow-right" className={`!text-inherit ${iconClass}`} />
+    </Button>
   );
 };

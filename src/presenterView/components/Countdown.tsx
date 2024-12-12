@@ -3,9 +3,13 @@ import * as React from 'react';
 import { WebViewMessages } from '../../constants';
 import { EventData } from '@estruyf/vscode';
 
-export interface ICountdownProps {}
+export interface ICountdownProps {
+  isStarted: Date | undefined;
+}
 
-export const Countdown: React.FunctionComponent<ICountdownProps> = (props: React.PropsWithChildren<ICountdownProps>) => {
+export const Countdown: React.FunctionComponent<ICountdownProps> = ({
+  isStarted
+}: React.PropsWithChildren<ICountdownProps>) => {
   const [countdown, setCountdown] = React.useState("");
 
   const messageListener = (message: MessageEvent<EventData<any>>) => {
@@ -29,12 +33,12 @@ export const Countdown: React.FunctionComponent<ICountdownProps> = (props: React
     };
   }, []);
 
-  if (!countdown) {
+  if (!countdown || !isStarted) {
     return null;
   }
 
   return (
-    <div className="rounded-lg border border-[var(--vscode-panel-border)] shadow-sm">
+    <div className="rounded-[2px] border border-[var(--vscode-panel-border)] shadow-sm">
       <div className="flex flex-col space-y-1.5 p-4">
         <h3 className="text-xl font-semibold leading-none tracking-tight">Countdown</h3>
       </div>

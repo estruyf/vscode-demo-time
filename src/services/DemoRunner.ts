@@ -101,6 +101,15 @@ export class DemoRunner {
   }
 
   /**
+   * Retrieves the current presentation mode status.
+   *
+   * @returns {boolean} A boolean indicating whether the presentation mode is active.
+   */
+  public static getIsPresentationMode(): boolean {
+    return DemoRunner.isPresentationMode;
+  }
+
+  /**
    * Toggles the presentation mode for the demo runner.
    * If `enable` parameter is provided, it sets the presentation mode to the specified value.
    * If `enable` parameter is not provided, it toggles the presentation mode.
@@ -110,6 +119,7 @@ export class DemoRunner {
   private static async togglePresentationMode(enable?: boolean): Promise<void> {
     DemoRunner.isPresentationMode = typeof enable !== "undefined" ? enable : !DemoRunner.isPresentationMode;
     await commands.executeCommand("setContext", ContextKeys.presentation, DemoRunner.isPresentationMode);
+    PresenterView.postMessage(WebViewMessages.toWebview.updatePresentationStarted, DemoRunner.isPresentationMode);
     if (DemoRunner.isPresentationMode) {
       DemoPanel.updateMessage("Presentation mode enabled");
       await DemoRunner.getDemoFile();

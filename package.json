@@ -53,14 +53,28 @@
         "description": "Demo Time - clock",
         "default": {
           "fontPath": "assets/demo-time.woff",
-          "fontCharacter": "\\e94e"
+          "fontCharacter": "\\e903"
         }
       },
       "dt-timer": {
         "description": "Demo Time - timer",
         "default": {
           "fontPath": "assets/demo-time.woff",
-          "fontCharacter": "\\e952"
+          "fontCharacter": "\\e901"
+        }
+      },
+      "dt-timer-off": {
+        "description": "Demo Time - timer off",
+        "default": {
+          "fontPath": "assets/demo-time.woff",
+          "fontCharacter": "\\e902"
+        }
+      },
+      "dt-projector": {
+        "description": "Demo Time - projector",
+        "default": {
+          "fontPath": "assets/demo-time.woff",
+          "fontCharacter": "\\e900"
         }
       }
     },
@@ -162,7 +176,7 @@
         "command": "demo-time.togglePresentationMode",
         "title": "Toggle presentation mode",
         "category": "Demo Time",
-        "icon": "$(vm)"
+        "icon": "$(dt-projector)"
       },
       {
         "command": "demo-time.reset",
@@ -199,7 +213,8 @@
       {
         "command": "demo-time.showPresenterView",
         "title": "Show presenter view",
-        "category": "Demo Time"
+        "category": "Demo Time",
+        "icon": "$(vm)"
       }
     ],
     "menus": {
@@ -245,22 +260,27 @@
         {
           "command": "demo-time.togglePresentationMode",
           "when": "view == demo-time && !demo-time.presentation",
-          "group": "navigation@0"
-        },
-        {
-          "command": "demo-time.reset",
-          "when": "view == demo-time",
-          "group": "navigation@1"
-        },
-        {
-          "command": "demo-time.collapseAll",
-          "when": "view == demo-time",
-          "group": "navigation@2"
+          "group": "navigation@-1"
         },
         {
           "command": "demo-time.startCountdown",
           "when": "view == demo-time && !demo-time.countdown && demo-time.showTimer",
-          "group": "navigation@-1"
+          "group": "navigation@0"
+        },
+        {
+          "command": "demo-time.showPresenterView",
+          "when": "view == demo-time",
+          "group": "navigation@1"
+        },
+        {
+          "command": "demo-time.reset",
+          "when": "view == demo-time",
+          "group": "navigation@2"
+        },
+        {
+          "command": "demo-time.collapseAll",
+          "when": "view == demo-time",
+          "group": "navigation@3"
         }
       ],
       "view/item/context": [

@@ -91,7 +91,18 @@ export class PresenterView {
       const nextDemo = DemoStatusBar.getNextDemo();
       PresenterView.postRequestMessage(command, requestId, nextDemo);
     } else if (command === WebViewMessages.toVscode.runCommand && payload) {
-      commands.executeCommand(payload);
+      const { command: cmd, args } = payload;
+      if (cmd && args) {
+        commands.executeCommand(cmd, args);
+      } else if (cmd) {
+        commands.executeCommand(cmd);
+      }
+    } else if (command === WebViewMessages.toVscode.getCountdownStarted) {
+      const startTime = DemoStatusBar.getCountdownStarted();
+      PresenterView.postRequestMessage(command, requestId, startTime);
+    } else if (command === WebViewMessages.toVscode.getPresentationStarted) {
+      const isPresentationMode = DemoRunner.getIsPresentationMode;
+      PresenterView.postRequestMessage(command, requestId, isPresentationMode);
     }
   }
 
