@@ -55,6 +55,22 @@ Add your demos to the `demos` array. Each demo can consist of multiple steps.
 }
 ```
 
+You can also add "icons" to your demo steps to make them more recognizable. You can use the following icons:
+
+```json
+{
+  "title": "<title>",
+  "description": "<description>",
+  "icons": {
+    "start": "<name of the icon (optional)>",
+    "end": "<name of the icon (optional)>"
+  },
+  "steps": []
+}
+```
+
+> Use the icon names you can find in the [icon listing](https://code.visualstudio.com/api/references/icons-in-labels#icon-listing) from the Visual Studio Code documentation.
+
 ## Demo steps
 
 ### File actions
