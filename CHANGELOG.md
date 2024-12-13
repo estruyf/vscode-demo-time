@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.43] - 2025-12-13
+
+- [#12](https://github.com/estruyf/vscode-demo-time/issues/12): Added the presenter view which you can open with the `Demo Time: Show presenter view`
+
 ## [0.0.42] - 2025-12-11
 
 - Fix the before blur and opacity decoration
