@@ -13,6 +13,7 @@ import { ResetAction } from './ResetAction';
 export interface IAppProps {}
 
 export const App: React.FunctionComponent<IAppProps> = (props: React.PropsWithChildren<IAppProps>) => {
+  const [isReady, setIsReady] = React.useState(false);
   const [showClock, setShowClock] = React.useState(false);
   const [countdown, setCountdown] = React.useState<number | undefined>(undefined);
   const [countdownStarted, setCountdownStarted] = React.useState<Date | undefined>(undefined);
@@ -27,6 +28,14 @@ export const App: React.FunctionComponent<IAppProps> = (props: React.PropsWithCh
       setCountdownStarted(payload);
     }
   };
+
+  React.useEffect(() => {
+    if (!isReady) {
+      setIsReady(true);
+
+      messageHandler.send(WebViewMessages.toVscode.detach);
+    }
+  }, [isReady]);
 
   React.useEffect(() => {
     Messenger.listen(messageListener);

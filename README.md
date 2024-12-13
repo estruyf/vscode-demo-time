@@ -625,7 +625,7 @@ When you use two screens during a presentation, you can use the detachable prese
 Follow these steps to use the presenter view:
 
 - Run the `Demo Time: Show presenter view` command to open the presenter view.
-- Drag the presenter view tab out of the Visual Studio Code window.
+- The presenter view will open in detached mode. If that is not the case, you can drag tab out of the Visual Studio Code window.
 - Once detached, you can move it to another screen.
 
 ![Presenter view](./assets/presenter-view.png)

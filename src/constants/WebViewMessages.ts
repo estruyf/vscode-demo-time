@@ -6,6 +6,7 @@ export const WebViewMessages = {
     getNextDemo: 'getNextDemo',
     getCountdownStarted: 'getCountdownStarted',
     getPresentationStarted: 'getPresentationStarted',
+    detach: 'detach',
     runCommand: 'runCommand',
   },
   toWebview: {

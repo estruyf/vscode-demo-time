@@ -1,7 +1,7 @@
 import { commands, ExtensionContext, ExtensionMode, Uri, Webview, WebviewPanel, workspace, window, ViewColumn } from "vscode";
 import { Subscription } from "../models";
 import { Extension } from "../services/Extension";
-import { COMMAND, WebViewMessages } from "../constants";
+import { COMMAND, EXTENSION_NAME, WebViewMessages } from "../constants";
 import { MessageHandlerData } from "@estruyf/vscode";
 import { FileProvider } from "../services/FileProvider";
 import { DemoRunner } from "../services/DemoRunner";
@@ -10,6 +10,7 @@ import { DemoStatusBar } from "../services/DemoStatusBar";
 export class PresenterView {
   private static webview: WebviewPanel | null = null;
   private static isDisposed = true;
+  private static isDetached = false;
   
   public static register() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
@@ -54,6 +55,7 @@ export class PresenterView {
     );
 
     PresenterView.isDisposed = false;
+    PresenterView.isDetached = false;
 
     PresenterView.webview.iconPath = {
       dark: Uri.joinPath(Uri.file(extensionUri), 'assets', 'logo-dark.svg'),
@@ -66,6 +68,7 @@ export class PresenterView {
 
     PresenterView.webview.onDidDispose(async () => {
       PresenterView.isDisposed = true;
+      PresenterView.isDetached = false;
     });
 
     PresenterView.webview.webview.onDidReceiveMessage(PresenterView.messageListener);
@@ -92,9 +95,17 @@ export class PresenterView {
       PresenterView.postRequestMessage(command, requestId, nextDemo);
     } else if (command === WebViewMessages.toVscode.runCommand && payload) {
       const { command: cmd, args } = payload;
-      if (cmd && args) {
+      if (!cmd) {
+        return;
+      }
+
+      if ((cmd as string).startsWith(EXTENSION_NAME)) {
+        await commands.executeCommand(`workbench.action.focusActivityBar`);
+      }
+
+      if (args) {
         commands.executeCommand(cmd, args);
-      } else if (cmd) {
+      } else {
         commands.executeCommand(cmd);
       }
     } else if (command === WebViewMessages.toVscode.getCountdownStarted) {
@@ -103,6 +114,12 @@ export class PresenterView {
     } else if (command === WebViewMessages.toVscode.getPresentationStarted) {
       const isPresentationMode = DemoRunner.getIsPresentationMode;
       PresenterView.postRequestMessage(command, requestId, isPresentationMode);
+    } else if (command === WebViewMessages.toVscode.detach) {
+      const panel = PresenterView.webview;
+      if (panel?.viewColumn === ViewColumn.One && !PresenterView.isDetached) {
+        PresenterView.isDetached = true;
+        commands.executeCommand("workbench.action.moveEditorToNewWindow");
+      }
     }
   }
 
