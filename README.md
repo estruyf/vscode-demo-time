@@ -16,6 +16,12 @@
   </a>
 </p>
 
+<h2 align="center">
+  <a href="https://estruyf.github.io/demo-time-docs/" title="Demo Time Documentation">
+    Check out the extension documentation at estruyf.github.io/demo-time-docs/
+  </a>
+</h2>
+
 <p align="center">
   <img alt="Demo Time" src="./assets/demotime.gif">
 </p>
@@ -80,8 +86,8 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
 <table>
   <tr>
     <th>Action</th>
-    <th>Description</td>
-    <th>Usage</td>
+    <th>Description</th>
+    <th>Usage</th>
   </tr>
   <tr>
     <td>
@@ -141,13 +147,13 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
   </tr>
 </table>
 
-### Code actions
+### Text actions
 
 <table>
   <tr>
     <th>Action</th>
-    <th>Description</td>
-    <th>Usage</td>
+    <th>Description</th>
+    <th>Usage</th>
   </tr>
   <tr>
     <td>
@@ -256,8 +262,8 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
 <table>
   <tr>
     <th>Action</th>
-    <th>Description</td>
-    <th>Usage</td>
+    <th>Description</th>
+    <th>Usage</th>
   </tr>
   <tr>
     <td>
@@ -327,8 +333,8 @@ To reset the settings, you can use the following steps:
 <table>
   <tr>
     <th>Action</th>
-    <th>Description</td>
-    <th>Usage</td>
+    <th>Description</th>
+    <th>Usage</th>
   </tr>
   <tr>
     <td>
@@ -372,8 +378,8 @@ To reset the settings, you can use the following steps:
 <table>
   <tr>
     <th>Action</th>
-    <th>Description</td>
-    <th>Usage</td>
+    <th>Description</th>
+    <th>Usage</th>
   </tr>
   <tr>
     <td>
@@ -420,8 +426,8 @@ To reset the settings, you can use the following steps:
 <table>
   <tr>
     <th>Action</th>
-    <th>Description</td>
-    <th>Usage</td>
+    <th>Description</th>
+    <th>Usage</th>
   </tr>
   <tr>
     <td>
@@ -448,8 +454,8 @@ To reset the settings, you can use the following steps:
 <table>
   <tr>
     <th>Action</th>
-    <th>Description</td>
-    <th>Usage</td>
+    <th>Description</th>
+    <th>Usage</th>
   </tr>
   <tr>
     <td>

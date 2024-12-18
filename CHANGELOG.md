@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.44] - 2025-12-18
+
+- Updated the README with link to the new documentation site
+
 ## [0.0.43] - 2025-12-13
 
 - [#12](https://github.com/estruyf/vscode-demo-time/issues/12): Added the presenter view which you can open with the `Demo Time: Show presenter view`

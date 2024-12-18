@@ -19,8 +19,14 @@
       "description": "Buy me a coffee",
       "url": "https://img.shields.io/badge/Buy%20me%20a%20coffee-€%203-blue?logo=buy-me-a-coffee&style=flat-square",
       "href": "https://www.buymeacoffee.com/zMeFRy9"
+    },
+    {
+      "description": "sponsor",
+      "url": "https://img.shields.io/badge/Sponsor-Elio%20Struyf%20%E2%9D%A4-%23fe8e86?logo=GitHub&style=flat-square",
+      "href": "https://github.com/sponsors/estruyf"
     }
   ],
+  "homepage": "https://estruyf.github.io/demo-time-docs/",
   "sponsor": {
     "url": "https://github.com/sponsors/estruyf"
   },
