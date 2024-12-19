@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.45] - 2025-12-19
+
+- Updated documentation URL
+
 ## [0.0.44] - 2025-12-18
 
 - Updated the README with link to the new documentation site

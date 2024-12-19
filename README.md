@@ -17,8 +17,8 @@
 </p>
 
 <h2 align="center">
-  <a href="https://estruyf.github.io/demo-time-docs/" title="Demo Time Documentation">
-    Check out the extension documentation at estruyf.github.io/demo-time-docs/
+  <a href="https://demotime.elio.dev/" title="Demo Time Documentation">
+    Check out the extension documentation at demotime.elio.dev
   </a>
 </h2>
 
@@ -702,10 +702,17 @@ If you enjoy my work and find them useful, consider sponsor me and the ecosystem
 </p>
 
 <br />
-<br />
 
 <p align="center">
   <a href="https://visitorbadge.io/status?path=https%3A%2F%2Fgithub.com%2Festruyf%2Fvscode-demo-time">
     <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Festruyf%2Fvscode-demo-time&labelColor=%23555555&countColor=%2397ca00" height="25px" alt="Front Matter visitors" />
+  </a>
+</p>
+
+<br />
+
+<p align="center">
+  <a href="https://struyfconsulting.com" title="Hire Elio Struyf via Struyf Consulting" target="_blank">
+    <img src="./assets/struyf-consulting.webp" height="25px" alt="Struyf Consulting Logo" />
   </a>
 </p>
