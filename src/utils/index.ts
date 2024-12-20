@@ -13,3 +13,4 @@ export * from './parseWinPath';
 export * from './removeDemoDuplicates';
 export * from './replaceContent';
 export * from './sleep';
+export * from './writeText';

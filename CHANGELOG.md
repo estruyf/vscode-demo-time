@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.0.46] - 2025-12-20
+
+- Improved the `position` setting so that you can define `<start line>,<start character>` a specific position or `<start line>,<start character>:<end line>,<end character>` to select a range of code
+- Added the `positionCursor` action to set the cursor position in the editor
+- Added the `write` action to write a single line of text to the editor
+- Added the `save` action to save the current file
+
 ## [0.0.45] - 2025-12-19
 
 - Updated documentation URL

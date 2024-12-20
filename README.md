@@ -145,6 +145,23 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
 
   </td>
   </tr>
+  <tr>
+    <td>
+      <code>save</code>
+    </td>
+    <td>
+      Save the current active file
+    </td>
+    <td>
+
+```json
+{
+  "action": "save"
+}
+```
+
+  </td>
+  </tr>
 </table>
 
 ### Text actions
@@ -168,7 +185,7 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
 {
   "action": "insert",
   "path": "<relative path to the file>",
-  "position": "<line number> or <start line number>:<end line number>",
+  "position": "<line number> or <start line number>:<end line number> or <start line>,<start character> or <start line>,<start character>:<end line>,<end character>",
   "content": "<content of the file> (optional)",
   "contentPath": "<relative path to the file in the .demo folder> (optional)",
   "lineInsertionDelay": "<delay in milliseconds to insert each line> (optional)"
@@ -190,7 +207,7 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
 {
   "action": "replace",
   "path": "<relative path to the file>",
-  "position": "<line number> or <start line number>:<end line number>",
+  "position": "<line number> or <start line number>:<end line number> or <start line>,<start character> or <start line>,<start character>:<end line>,<end character>",
   "content": "<content of the file> (optional)",
   "contentPath": "<relative path to the file in the .demo folder> (optional)",
   "lineInsertionDelay": "<delay in milliseconds to insert each line> (optional)"
@@ -212,7 +229,7 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
 {
   "action": "delete",
   "path": "<relative path to the file>",
-  "position": "<line number> or <start line number>:<end line number>"
+  "position": "<line number> or <start line number>:<end line number> or <start line>,<start character> or <start line>,<start character>:<end line>,<end character>"
 }
 ```
 
@@ -231,7 +248,26 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
 {
   "action": "highlight",
   "path": "<relative path to the file>",
-  "position": "<line number> or <start line number>:<end line number>"
+  "position": "<line number> or <start line number>:<end line number> or <start line>,<start character> or <start line>,<start character>:<end line>,<end character>"
+}
+```
+
+  </td>
+  </tr>
+  <tr>
+    <td>
+      <code>positionCursor</code>
+    </td>
+    <td>
+      Postion the cursor at a specific line and character position
+    </td>
+    <td>
+
+```json
+{
+  "action": "positionCursor",
+  "path": "<relative path to the file>",
+  "position": "<line number> or <start line number>:<end line number> or <start line>,<start character> or <start line>,<start character>:<end line>,<end character>"
 }
 ```
 
@@ -250,6 +286,33 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
 {
   "action": "unselect",
   "path": "<relative path to the file>"
+}
+```
+
+  </td>
+  </tr>
+  <tr>
+    <td>
+      <code>write</code>
+    </td>
+    <td>
+      Write a single line of text to the editor
+    </td>
+    <td>
+
+```jsonc
+// Write to current active position
+{
+  "action": "write",
+  "content": "Hello World"
+}
+
+// Write to a specific position in a file
+{
+  "action": "write",
+  "content": "Hello World",
+  "path": "README.md",
+  "position": "26,30"
 }
 ```
 
@@ -611,6 +674,8 @@ For the position you can use the following formats:
 
 - `number`: The line number
 - `number:number`: The start and end line number
+- `number,number`: The start line and character
+- `number,number:number,number`: The start line and character and the end line and character
 - The `start` and `end` keywords can also be used instead of the line numbers
   - `start` will be replaced by the first line number
   - `end` will be replaced by the last line number

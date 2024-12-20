@@ -31,6 +31,7 @@ import {
   getNextDemoFile,
   getPreviousDemoFile,
   removeDemoDuplicates,
+  writeText,
 } from "../utils";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DecoratorService } from "./DecoratorService";
@@ -477,6 +478,33 @@ export class DemoRunner {
         continue;
       }
 
+      if (step.action === "write" && !step.path) {
+        // Write the content at the current position
+        const editor = window.activeTextEditor;
+        if (!editor) {
+          window.showErrorMessage("No active text editor found");
+          return;
+        }
+        
+        const position = editor.selection.active;
+        const content = step.content || "";
+
+        if (!content) {
+          window.showErrorMessage("No content to write");
+          return;
+        }
+
+        await writeText(editor, content, position, step.lineInsertionDelay);
+        continue;
+      }
+
+      if (step.action === "save") {
+        await DemoRunner.saveFile();
+      }
+
+      /**
+       * All the following actions require a file path.
+       */
       if (!fileUri) {
         continue;
       }
@@ -526,6 +554,21 @@ export class DemoRunner {
         continue;
       }
 
+      if (step.action === "write") {
+        if (!content) {
+          window.showErrorMessage("No content to write");
+          return;
+        }
+
+        if (!crntPosition) {
+          window.showErrorMessage("No position specified where to write the content");
+          return;
+        }
+
+        await writeText(textEditor, content, crntPosition, step.lineInsertionDelay);
+        continue;
+      }
+
       if (step.action === "replace") {
         await DemoRunner.replace(
           textEditor,
@@ -536,6 +579,14 @@ export class DemoRunner {
           crntPosition,
           step.lineInsertionDelay
         );
+        continue;
+      }
+
+      if (step.action === "positionCursor") {
+        if (crntPosition) {
+          textEditor.revealRange(new Range(crntPosition, crntPosition), TextEditorRevealType.InCenter);
+          textEditor.selection = new Selection(crntPosition, crntPosition);
+        }
         continue;
       }
 
@@ -785,6 +836,7 @@ export class DemoRunner {
 
   /**
    * Retrieves the current position and range based on the provided step.
+   * 
    * @param editor The text document editor.
    * @param step The step object containing the position information.
    * @returns An object with the current position and range.
@@ -809,7 +861,10 @@ export class DemoRunner {
             end = editor.lineCount.toString();
           }
 
-          let lastLine = new Position(Number(end) - 1, 0);
+          const startPosition = DemoRunner.getLineAndCharacterPosition(start);
+          const endPosition = DemoRunner.getLineAndCharacterPosition(end);
+
+          let lastLine = new Position(Number(end) - 1, endPosition.character);
           try {
             const line = editor.lineAt(lastLine);
             lastLine = line.range.end;
@@ -817,9 +872,10 @@ export class DemoRunner {
             // do nothing
           }
 
-          crntRange = new Range(new Position(Number(start) - 1, 0), lastLine);
+          crntRange = new Range(new Position(startPosition.line, startPosition.character), lastLine);
         } else {
-          crntPosition = new Position(Number(step.position) - 1, 0);
+          const startPosition = DemoRunner.getLineAndCharacterPosition(step.position);
+          crntPosition = new Position(startPosition.line, startPosition.character);
         }
       } else {
         crntPosition = new Position(step.position - 1, 0);
@@ -827,6 +883,27 @@ export class DemoRunner {
     }
 
     return { crntPosition, crntRange };
+  }
+
+  /**
+   * Parses a position string and returns an object containing the line and character positions.
+   * 
+   * @param position - A string representing the position in the format "line,character" or just "line".
+   * @returns An object with `line` and `character` properties. The `line` is zero-based, and the `character` is zero if not specified.
+   */
+  private static getLineAndCharacterPosition(position: string): { line: number; character: number } {
+    let line = 0;
+    let character = 0;
+
+    if (position.includes(",")) {
+      let [lineStr, characterStr] = position.split(",");
+      line = parseInt(lineStr) - 1;
+      character = parseInt(characterStr);
+    } else {
+      line = parseInt(position) - 1;
+    }
+
+    return { line, character };
   }
 
   /**

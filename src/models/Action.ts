@@ -10,6 +10,9 @@ export type Action =
   | "replace"
   | "unselect"
   | "delete"
+  | "positionCursor"
+  | "write"
+  | "save"
   // Settings
   | "setSetting"
   // Timeout
