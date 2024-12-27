@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.47] - 2025-12-27
+
+- [#18](https://github.com/estruyf/vscode-demo-time/issues/18): Added the `save` and `write` actions to the `Demo Time: Add as demo step` command.
+
 ## [0.0.46] - 2025-12-20
 
 - Improved the `position` setting so that you can define `<start line>,<start character>` a specific position or `<start line>,<start character>:<end line>,<end character>` to select a range of code

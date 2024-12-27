@@ -25,8 +25,8 @@ export interface Icons {
 
 export interface Step {
   action: Action;
-  path: string;
-
+  
+  path?: string;
   content?: string;
   contentPath?: string;
   position?: string | number;

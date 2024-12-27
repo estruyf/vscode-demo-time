@@ -16,7 +16,7 @@ export class DemoCreator {
 
     subscriptions.push(commands.registerCommand(COMMAND.initialize, DemoCreator.initialize));
     subscriptions.push(commands.registerCommand(COMMAND.openDemoFile, DemoCreator.openFile));
-    subscriptions.push(commands.registerCommand(COMMAND.addToStep, DemoCreator.copy));
+    subscriptions.push(commands.registerCommand(COMMAND.addToStep, DemoCreator.addToStep));
     subscriptions.push(
       commands.registerCommand(COMMAND.stepMoveUp, (item: ActionTreeItem) => DemoCreator.move(item, "up"))
     );
@@ -92,7 +92,7 @@ export class DemoCreator {
    * If the user chooses to insert a step into an existing demo, they are prompted to select the demo.
    * The modified demo file is saved after the step is added.
    */
-  private static async copy() {
+  private static async addToStep() {
     let demoFiles = await FileProvider.getFiles();
     if (!demoFiles) {
       await FileProvider.createFile();
@@ -118,10 +118,17 @@ export class DemoCreator {
     }
     const { filePath, demo } = demoFile;
 
-    const action = await window.showQuickPick(["Insert", "Highlight", "Unselect", "Delete"], {
+    const actions: Action[] = ["insert", "highlight", "unselect", "delete", "save"];
+
+    // If selection is a single line, add the "write" action
+    if (selection.start.line === selection.end.line) {
+      actions.push("write");
+    }
+
+    const action = await window.showQuickPick(actions, {
       title: "Demo time!",
       placeHolder: "What kind of action step do you want to perform?",
-    });
+    }) as unknown as Action;
 
     if (!action) {
       return;
@@ -140,7 +147,7 @@ export class DemoCreator {
     const end = selection.end.line;
 
     let position: string | number = selection.start.line + 1;
-    if (action !== "Insert" && action !== "Unselect") {
+    if (action !== "insert" && action !== "unselect") {
       position = start === end ? start + 1 : `${start + 1}:${end + 1}`;
     }
 
@@ -151,11 +158,17 @@ export class DemoCreator {
     };
 
     // Unselect doesn't need the position
-    if (action === "Unselect") {
+    if (action === "unselect") {
       delete step.position;
     }
 
-    if (action === "Insert") {
+    // The save action doesn't need the position and path
+    if (action === "save") {
+      delete step.position;
+      delete step.path;
+    }
+
+    if (action === "insert" || action === "write") {
       step.content = modifiedText;
     }
 
