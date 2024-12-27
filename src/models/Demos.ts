@@ -25,7 +25,7 @@ export interface Icons {
 
 export interface Step {
   action: Action;
-  
+
   path?: string;
   content?: string;
   contentPath?: string;
@@ -36,6 +36,7 @@ export interface Step {
   args?: any;
   lineInsertionDelay?: number;
   setting?: Setting;
+  dest?: string;
 }
 
 export interface Setting {

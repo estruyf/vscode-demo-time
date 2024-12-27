@@ -2,6 +2,8 @@ export type Action =
   // File
   | "create"
   | "open"
+  | "rename"
+  | "deleteFile"
   // Markdown
   | "markdownPreview"
   // Code

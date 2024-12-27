@@ -2,6 +2,8 @@
 
 ## [0.0.47] - 2025-12-27
 
+- [#16](https://github.com/estruyf/vscode-demo-time/issues/16): added the `deleteFile` action
+- [#17](https://github.com/estruyf/vscode-demo-time/issues/17): Added the `rename` file action
 - [#18](https://github.com/estruyf/vscode-demo-time/issues/18): Added the `save` and `write` actions to the `Demo Time: Add as demo step` command.
 
 ## [0.0.46] - 2025-12-20

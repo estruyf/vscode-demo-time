@@ -13,6 +13,7 @@ import {
   TextEditorRevealType,
   Uri,
   WorkspaceEdit,
+  WorkspaceFolder,
   commands,
   window,
   workspace,
@@ -519,6 +520,16 @@ export class DemoRunner {
         continue;
       }
 
+      if (step.action === "rename") {
+        DemoRunner.rename(workspaceFolder, fileUri, step);
+        continue;
+      }
+
+      if (step.action === "deleteFile") {
+        await DemoRunner.deleteFile(workspaceFolder, fileUri);
+        continue;
+      }
+
       let content = step.content || "";
       if (step.contentPath) {
         const fileContent = await getFileContents(workspaceFolder, step.contentPath);
@@ -832,6 +843,46 @@ export class DemoRunner {
 
     DemoRunner.terminal.show();
     DemoRunner.terminal.sendText(command, true);
+  }
+
+  /**
+   * Renames a file within the specified workspace folder.
+   *
+   * @param workspaceFolder - The workspace folder containing the file to be renamed.
+   * @param fileUri - The URI of the file to be renamed.
+   * @param step - The step containing the destination path for the renamed file.
+   * @returns A promise that resolves when the file has been renamed.
+   *
+   * @throws Will throw an error if the destination is not specified or if the rename operation fails.
+   */
+  private static async rename(workspaceFolder: WorkspaceFolder, fileUri: Uri, step: Step): Promise<void> {
+    if (!step.dest) {
+      Notifications.error("No destination specified");
+      return;
+    }
+
+    try {
+      const newUri = Uri.joinPath(workspaceFolder.uri, step.dest);
+      await workspace.fs.rename(fileUri, newUri);
+    } catch (error) {
+      Notifications.error((error as Error).message);
+    }
+  }
+
+  /**
+   * Deletes a file from the given workspace folder.
+   *
+   * @param workspaceFolder - The workspace folder containing the file to be deleted.
+   * @param fileUri - The URI of the file to be deleted.
+   * @returns A promise that resolves when the file has been deleted.
+   * @throws Will throw an error if the file deletion fails.
+   */
+  private static async deleteFile(workspaceFolder: WorkspaceFolder, fileUri: Uri): Promise<void> {
+    try {
+      await workspace.fs.delete(fileUri);
+    } catch (error) {
+      Notifications.error((error as Error).message);
+    }
   }
 
   /**
