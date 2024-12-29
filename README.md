@@ -162,6 +162,43 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
 
   </td>
   </tr>
+  <tr>
+    <td>
+      <code>rename</code>
+    </td>
+    <td>
+      Rename a file
+    </td>
+    <td>
+
+```json
+{
+  "action": "rename",
+  "path": "<relative path to the file>",
+  "dest": "<new file name/path>"
+}
+```
+
+  </td>
+  </tr>
+  <tr>
+    <td>
+      <code>deleteFile</code>
+    </td>
+    <td>
+      Delete a file
+    </td>
+    <td>
+
+```json
+{
+  "action": "deleteFile",
+  "path": "<relative path to the file>"
+}
+```
+
+  </td>
+  </tr>
 </table>
 
 ### Text actions

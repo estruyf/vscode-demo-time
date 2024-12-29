@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.47] - 2025-12-29
+
+- Update the README with the new actions
+
 ## [0.0.47] - 2025-12-27
 
 - [#16](https://github.com/estruyf/vscode-demo-time/issues/16): added the `deleteFile` action
