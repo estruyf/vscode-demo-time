@@ -113,7 +113,7 @@
           "description": "Opacity of the text which is not highlighted"
         },
         "demoTime.highlightZoomEnabled": {
-          "type": "boolean",
+          "type": ["boolean", "number"],
           "default": false,
           "description": "Enable code zoom when highlighting code"
         },

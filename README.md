@@ -285,7 +285,8 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
 {
   "action": "highlight",
   "path": "<relative path to the file>",
-  "position": "<line number> or <start line number>:<end line number> or <start line>,<start character> or <start line>,<start character>:<end line>,<end character>"
+  "position": "<line number> or <start line number>:<end line number> or <start line>,<start character> or <start line>,<start character>:<end line>,<end character>",
+  "zoom": "<zoom level (optional)>"
 }
 ```
 
@@ -634,7 +635,7 @@ In the `insert_and_highlight.json` file, you can define the steps you want to ex
 | `demoTime.highlightBorderColor` | The border color of the highlighted code. | `rgba(255,0,0,0.5)` |
 | `demoTime.highlightBlur` | Blur effect on the text which is not highlighted. | `0` |
 | `demoTime.highlightOpacity` | The opacity of the text which is not highlighted. Number between 0 and 1. | `0.5` |
-| `demoTime.highlightZoomEnabled` | Enable zooming when highlighting code. | `false` |
+| `demoTime.highlightZoomEnabled` | Enable zooming when highlighting code. | `false` \| `number (zoom level)` |
 | `demoTime.previousEnabled` | Enable the previous command when in presentation mode. | `false` |
 | `demoTime.showClock` | Show a clock in the status bar. | `true` |
 | `demoTime.timer` | Count down timer for how long the session should last. If not set, it will not count down. The value is the number of minutes. | `null` |

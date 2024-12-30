@@ -555,7 +555,7 @@ export class DemoRunner {
       }
 
       if (step.action === "highlight" && (crntRange || crntPosition)) {
-        await DemoRunner.highlight(textEditor, crntRange, crntPosition);
+        await DemoRunner.highlight(textEditor, crntRange, crntPosition, step.zoom);
         continue;
       }
 
@@ -793,7 +793,8 @@ export class DemoRunner {
   public static async highlight(
     textEditor: TextEditor,
     range: Range | undefined,
-    position: Position | undefined
+    position: Position | undefined,
+    zoomLevel?: number
   ): Promise<void> {
     if (!range && !position) {
       return;
@@ -808,7 +809,7 @@ export class DemoRunner {
     }
 
     if (range) {
-      DecoratorService.hightlightLines(textEditor, range);
+      DecoratorService.hightlightLines(textEditor, range, zoomLevel);
       textEditor.revealRange(range, TextEditorRevealType.InCenter);
     }
   }

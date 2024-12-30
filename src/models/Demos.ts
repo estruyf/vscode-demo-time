@@ -37,6 +37,7 @@ export interface Step {
   lineInsertionDelay?: number;
   setting?: Setting;
   dest?: string;
+  zoom?: number;
 }
 
 export interface Setting {
