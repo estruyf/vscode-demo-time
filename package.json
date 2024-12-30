@@ -118,7 +118,7 @@
             "number"
           ],
           "default": false,
-          "description": "Enable code zoom when highlighting code"
+          "description": "Enable code zoom when highlighting code. When using a number, it will be the zoom level."
         },
         "demoTime.timer": {
           "type": "number",
