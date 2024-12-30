@@ -1,10 +1,10 @@
 # Change Log
 
-## [0.0.48] - 2025-12-31
+## [0.0.49] - 2025-12-31
 
 - [#22](https://github.com/estruyf/vscode-demo-time/issues/22): Better zoom support for the highlight action
 
-## [0.0.47] - 2025-12-29
+## [0.0.48] - 2025-12-29
 
 - Update the README with the new actions
 
