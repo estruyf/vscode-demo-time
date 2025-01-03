@@ -182,6 +182,12 @@
         "icon": "$(eye)"
       },
       {
+        "command": "demo-time.viewNotes",
+        "title": "View demo notes",
+        "category": "Demo Time",
+        "icon": "$(book)"
+      },
+      {
         "command": "demo-time.togglePresentationMode",
         "title": "Toggle presentation mode",
         "category": "Demo Time",
@@ -263,6 +269,10 @@
         {
           "command": "demo-time.viewStep",
           "when": "false"
+        },
+        {
+          "command": "demo-time.viewNotes",
+          "when": "false"
         }
       ],
       "view/title": [
@@ -305,18 +315,23 @@
         },
         {
           "command": "demo-time.stepMoveUp",
-          "when": "view == demo-time && (viewItem == demo-time.step || viewItem == demo-time.lastStep)",
+          "when": "view == demo-time && (viewItem =~ /demo-time.step/ || viewItem =~ /demo-time.lastStep/)",
           "group": "inline@1"
         },
         {
           "command": "demo-time.stepMoveDown",
-          "when": "view == demo-time && (viewItem == demo-time.step || viewItem == demo-time.firstStep)",
+          "when": "view == demo-time && (viewItem =~ /demo-time.step/ || viewItem =~ /demo-time.firstStep/)",
           "group": "inline@2"
         },
         {
           "command": "demo-time.viewStep",
-          "when": "view == demo-time && (viewItem == demo-time.step || viewItem == demo-time.firstStep || viewItem == demo-time.lastStep)",
+          "when": "view == demo-time && (viewItem =~ /demo-time.step/ || viewItem =~ /demo-time.firstStep/ || viewItem =~ /demo-time.lastStep/)",
           "group": "inline@3"
+        },
+        {
+          "command": "demo-time.viewNotes",
+          "when": "view == demo-time && (viewItem =~ /demo-time.hasNotes/)",
+          "group": "inline@4"
         }
       ]
     },

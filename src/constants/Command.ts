@@ -24,4 +24,6 @@ export const COMMAND = {
   resetCountdown: `${EXTENSION_NAME}.resetCountdown`,
   // Presenter view
   showPresenterView: `${EXTENSION_NAME}.showPresenterView`,
+  // Notes
+  viewNotes: `${EXTENSION_NAME}.viewNotes`,
 };

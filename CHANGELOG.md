@@ -1,135 +1,139 @@
 # Change Log
 
-## [0.0.49] - 2025-12-30
+## [0.0.50] - 2025-01-03
+
+- [#23](https://github.com/estruyf/vscode-demo-time/issues/23): Add the ability to add notes to demos
+
+## [0.0.49] - 2024-12-30
 
 - [#22](https://github.com/estruyf/vscode-demo-time/issues/22): Better zoom support for the highlight action
 
-## [0.0.48] - 2025-12-29
+## [0.0.48] - 2024-12-29
 
 - Update the README with the new actions
 
-## [0.0.47] - 2025-12-27
+## [0.0.47] - 2024-12-27
 
 - [#16](https://github.com/estruyf/vscode-demo-time/issues/16): added the `deleteFile` action
 - [#17](https://github.com/estruyf/vscode-demo-time/issues/17): Added the `rename` file action
 - [#18](https://github.com/estruyf/vscode-demo-time/issues/18): Added the `save` and `write` actions to the `Demo Time: Add as demo step` command.
 
-## [0.0.46] - 2025-12-20
+## [0.0.46] - 2024-12-20
 
 - Improved the `position` setting so that you can define `<start line>,<start character>` a specific position or `<start line>,<start character>:<end line>,<end character>` to select a range of code
 - Added the `positionCursor` action to set the cursor position in the editor
 - Added the `write` action to write a single line of text to the editor
 - Added the `save` action to save the current file
 
-## [0.0.45] - 2025-12-19
+## [0.0.45] - 2024-12-19
 
 - Updated documentation URL
 
-## [0.0.44] - 2025-12-18
+## [0.0.44] - 2024-12-18
 
 - Updated the README with link to the new documentation site
 
-## [0.0.43] - 2025-12-13
+## [0.0.43] - 2024-12-13
 
 - [#12](https://github.com/estruyf/vscode-demo-time/issues/12): Added the presenter view which you can open with the `Demo Time: Show presenter view`
 
-## [0.0.42] - 2025-12-11
+## [0.0.42] - 2024-12-11
 
 - Fix the before blur and opacity decoration
 
-## [0.0.41] - 2025-12-11
+## [0.0.41] - 2024-12-11
 
 - Fix for blur and opacity when only one line is highlighted
 - Fix issue when using the same demo titles in the same demo file
 
-## [0.0.40] - 2025-12-11
+## [0.0.40] - 2024-12-11
 
 - [#9](https://github.com/estruyf/vscode-demo-time/issues/9): Added the ability to run the previous demo step when in presentation mode by enabling the `demoTime.previousEnabled` setting
 - [#11](https://github.com/estruyf/vscode-demo-time/issues/11): Included a fix to support web
 - [#13](https://github.com/estruyf/vscode-demo-time/issues/13): Add the extension to the recommended extensions list of the project on initialization
 - [#15](https://github.com/estruyf/vscode-demo-time/issues/15): Hide the timer action when the timer is not enabled
 
-## [0.0.39] - 2025-12-10
+## [0.0.39] - 2024-12-10
 
 - [#10](https://github.com/estruyf/vscode-demo-time/issues/10): Added the `demoTime.highlightBlur` and `demoTime.highlightOpacity` settings to change the blur and opacity effect on the non-highlighted code
 - [#14](https://github.com/estruyf/vscode-demo-time/issues/14): Added the `demoTime.highlightBackground` setting to change the highlight background color
 
-## [0.0.38] - 2025-12-09
+## [0.0.38] - 2024-12-09
 
 - Continue with the first demo step in the next demo file if the current demo file is completed
 
-## [0.0.37] - 2025-12-09
+## [0.0.37] - 2024-12-09
 
 - [#2](https://github.com/estruyf/vscode-demo-time/issues/2): Added the ability to have a `variables.json` file to store variables/constants that can be used in the demo steps
 - Added example snippets to the project
 
-## [0.0.36] - 2025-12-09
+## [0.0.36] - 2024-12-09
 
 - Added the `setSetting` action to update a setting value
 
-## [0.0.35] - 2025-12-07
+## [0.0.35] - 2024-12-07
 
 - Updated the README with snippets information
 
-## [0.0.34] - 2025-12-07
+## [0.0.34] - 2024-12-07
 
 - Added browser extension support
 
-## [0.0.33] - 2025-12-06
+## [0.0.33] - 2024-12-06
 
 - New `markdownPreview` action to open a markdown preview
 - Added `path` property support for the `executeVSCodeCommand` action
 
-## [0.0.32] - 2025-11-20
+## [0.0.32] - 2024-11-20
 
 - Improved line by line insertion
 - Added an action to show the demo step in the demo file
 
-## [0.0.31] - 2025-11-20
+## [0.0.31] - 2024-11-20
 
 - Disable line insertion delay by default
 
-## [0.0.30] - 2025-10-30
+## [0.0.30] - 2024-10-30
 
 - Updated the line insertion deplay setting to `demoTime.lineInsertionDelay`
 - Added the `lineInsertionDelay` property to the demo step schema so that you can define it per insert/replace step
 
-## [0.0.29] - 2025-10-29
+## [0.0.29] - 2024-10-29
 
 - Implement a line-by-line insert/replace action
 - Configure the line-by-line insert/replace speed with the `demoTime.insertLineSpeed` setting
 
-## [0.0.28] - 2025-10-21
+## [0.0.28] - 2024-10-21
 
 - Changed completed action icon color
 - [#4](https://github.com/estruyf/vscode-demo-time/issues/4): Added the option to show a clock
 - [#5](https://github.com/estruyf/vscode-demo-time/issues/5): Added the option to show a countdown timer
 
-## [0.0.27] - 2025-10-17
+## [0.0.27] - 2024-10-17
 
 - Optional start and end icons for the demo steps
 
-## [0.0.26] - 2025-10-17
+## [0.0.26] - 2024-10-17
 
 - Support setting custom icons for the demo steps
 
-## [0.0.25] - 2025-10-17
+## [0.0.25] - 2024-10-17
 
 - Add a collapse all button to the demo time panel
 
-## [0.0.24] - 2025-10-14
+## [0.0.24] - 2024-10-14
 
 - Select by ID if present, otherwise select by title
 
-## [0.0.23] - 2025-10-14
+## [0.0.23] - 2024-10-14
 
 - Show the correct next demo if started with the `demo-time.runById` command
 
-## [0.0.22] - 2025-10-14
+## [0.0.22] - 2024-10-14
 
 - Added the `demo-time.runById` command to execute a specific demo step from VS Code. Useful for Slidev integration.
 
-## [0.0.21] - 2025-10-14
+## [0.0.21] - 2024-10-14
 
 - Add JSONC parser to support comments in the demo files
 

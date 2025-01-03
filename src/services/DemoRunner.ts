@@ -40,6 +40,7 @@ import { Notifications } from "./Notifications";
 import { parse as jsonParse } from "jsonc-parser";
 import { Logger } from "./Logger";
 import { insertVariables } from "../utils/insertVariables";
+import { NotesService } from './NotesService';
 
 const DEFAULT_START_VALUE = {
   filePath: "",
@@ -169,7 +170,7 @@ export class DemoRunner {
       // Check if there is a next demo file
       const nextFile = await getNextDemoFile(demoFile);
       if (!nextFile) {
-        const yesOrNo = await window.showInformationMessage("No next demo steps found. Do you want to reset?", "Yes", "No");
+        const yesOrNo = await Notifications.info("No next demo steps found. Do you want to reset?", "Yes", "No");
         if (yesOrNo === "Yes") {
           await DemoRunner.reset();
           await commands.executeCommand(COMMAND.start);
@@ -204,6 +205,7 @@ export class DemoRunner {
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     await DemoRunner.runSteps(demoSteps);
+    NotesService.showNotes(nextDemo);
   }
 
   
@@ -257,6 +259,7 @@ export class DemoRunner {
 
       await DemoRunner.setExecutedDemoFile(executingFile);
       await DemoRunner.runSteps(lastDemo.steps);
+      NotesService.showNotes(lastDemo);
       return;
     }
 
@@ -276,6 +279,7 @@ export class DemoRunner {
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     await DemoRunner.runSteps(demoSteps);
+    NotesService.showNotes(previousDemo);
   }
 
   /**
@@ -308,6 +312,7 @@ export class DemoRunner {
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     await DemoRunner.runSteps(demoToRun.demo.steps);
+    NotesService.showNotes(demoToRun.demo);
   }
 
   private static async runById(...args: string[]): Promise<void> {
@@ -364,6 +369,7 @@ export class DemoRunner {
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     await DemoRunner.runSteps(demoToRun.steps);
+    NotesService.showNotes(demoToRun);
   }
 
   /**
@@ -483,7 +489,7 @@ export class DemoRunner {
         // Write the content at the current position
         const editor = window.activeTextEditor;
         if (!editor) {
-          window.showErrorMessage("No active text editor found");
+          Notifications.error("No active text editor found");
           return;
         }
         
@@ -491,7 +497,7 @@ export class DemoRunner {
         const content = step.content || "";
 
         if (!content) {
-          window.showErrorMessage("No content to write");
+          Notifications.error("No content to write");
           return;
         }
 
@@ -567,12 +573,12 @@ export class DemoRunner {
 
       if (step.action === "write") {
         if (!content) {
-          window.showErrorMessage("No content to write");
+          Notifications.error("No content to write");
           return;
         }
 
         if (!crntPosition) {
-          window.showErrorMessage("No position specified where to write the content");
+          Notifications.error("No position specified where to write the content");
           return;
         }
 

@@ -16,6 +16,12 @@ export interface Demo {
   description: string;
   steps: Step[];
   icons?: Icons;
+  notes?: Notes;
+}
+
+export interface Notes {
+  file: string;
+  show?: boolean;
 }
 
 export interface Icons {

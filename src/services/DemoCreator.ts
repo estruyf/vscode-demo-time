@@ -7,6 +7,7 @@ import { DemoPanel } from "../panels/DemoPanel";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DemoRunner } from "./DemoRunner";
 import { addExtensionRecommendation } from "../utils";
+import { Notifications } from "./Notifications";
 
 export class DemoCreator {
   public static ExecutedDemoSteps: string[] = [];
@@ -46,7 +47,7 @@ export class DemoCreator {
 
     await addExtensionRecommendation();
 
-    window.showInformationMessage("Demo time is initialized, you can now start adding demo steps!");
+    Notifications.info("Demo time is initialized, you can now start adding demo steps!");
 
     DemoPanel.update();
   }
