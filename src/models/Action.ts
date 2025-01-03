@@ -4,6 +4,8 @@ export type Action =
   | "open"
   | "rename"
   | "deleteFile"
+  | "close"
+  | "closeAll"
   // Markdown
   | "markdownPreview"
   // Code

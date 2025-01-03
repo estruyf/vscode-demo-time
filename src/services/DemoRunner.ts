@@ -509,6 +509,16 @@ export class DemoRunner {
         await DemoRunner.saveFile();
       }
 
+      if (step.action === "close") {
+        await commands.executeCommand("workbench.action.closeActiveEditor");
+        continue;
+      }
+
+      if (step.action === "closeAll") {
+        await commands.executeCommand("workbench.action.closeAllEditors");
+        continue;
+      }
+
       /**
        * All the following actions require a file path.
        */
