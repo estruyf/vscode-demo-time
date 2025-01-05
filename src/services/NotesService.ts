@@ -16,8 +16,8 @@ export class NotesService {
   }
 
   public static async showNotes(demo: Demo) {
-    if (demo.notes && demo.notes.file && demo.notes.show) {
-      NotesService.openNotes(demo.notes.file);
+    if (demo.notes && demo.notes.path && demo.notes.showOnTrigger) {
+      NotesService.openNotes(demo.notes.path);
     }
   }
 

@@ -97,7 +97,7 @@ export class DemoPanel {
           ctxValue = "demo-time.lastStep";
         }
 
-        const hasNotes = notesFolder && demo.notes?.file ? true : false;
+        const hasNotes = notesFolder && demo.notes?.path ? true : false;
         if (hasNotes) {
           ctxValue += " demo-time.hasNotes";
         }
@@ -129,7 +129,7 @@ export class DemoPanel {
           undefined,
           parseWinPath(path),
           idx,
-          demo.notes?.file
+          demo.notes?.path
         );
       });
 

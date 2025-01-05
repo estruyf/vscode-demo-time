@@ -20,8 +20,8 @@ export interface Demo {
 }
 
 export interface Notes {
-  file: string;
-  show?: boolean;
+  path: string;
+  showOnTrigger?: boolean;
 }
 
 export interface Icons {
