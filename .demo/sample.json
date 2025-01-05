@@ -1,5 +1,5 @@
 {
-  "$schema": "https://elio.dev/demo-time.schema.json",
+  "$schema": "https://demotime.elio.dev/demo-time.schema.json",
   "title": "Sample demo",
   "description": "This is a sample demo configuration to show the capabilities of the extension.",
   "demos": [

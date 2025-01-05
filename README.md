@@ -46,7 +46,7 @@ To use the extension, you need to create a `.demo` folder in your workspace. Onc
 
 ```json
 {
-  "$schema": "https://elio.dev/demo-time.schema.json",
+  "$schema": "https://demotime.elio.dev/demo-time.schema.json",
   "title": "<title>",
   "description": "<description>",
   "demos": []
@@ -745,7 +745,7 @@ Here is an example demo:
 
 ```json
 {
-  "$schema": "https://elio.dev/demo-time.schema.json",
+  "$schema": "https://demotime.elio.dev/demo-time.schema.json",
   "title": "Sample demo",
   "description": "This is a sample demo configuration to show the capabilities of the extension.",
   "demos": [

@@ -112,7 +112,7 @@ export class FileProvider {
 
     const file = Uri.joinPath(workspaceFolder.uri, General.demoFolder, `demo.json`);
     const content = `{
-  "$schema": "https://elio.dev/demo-time.schema.json",
+  "$schema": "https://demotime.elio.dev/demo-time.schema.json",
   "title": "Demo",
   "description": "Demo description",
   "demos": []

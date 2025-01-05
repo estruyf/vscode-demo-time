@@ -4,6 +4,7 @@
 
 - [#23](https://github.com/estruyf/vscode-demo-time/issues/23): Add the ability to add notes to demos
 - [#24](https://github.com/estruyf/vscode-demo-time/issues/24): Added the `close` and `closeAll` actions to close editors
+- [#27](https://github.com/estruyf/vscode-demo-time/issues/27): Moved the JSON schema to the documentation site
 
 ## [0.0.49] - 2024-12-30
 

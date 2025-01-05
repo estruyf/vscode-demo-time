@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
-  "$id": "https://elio.dev/demo-time.schema.json",
+  "$id": "https://demotime.elio.dev/demo-time.schema.json",
   "title": "Demo Time - Schema",
   "description": "The schema for the Demo Time - VSCode extension",
   "lastModified": "2024-12-06",
