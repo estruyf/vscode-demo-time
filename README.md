@@ -39,6 +39,7 @@ Currently, the extension supports the following features:
 - Run a specific demo step from a command execution using the `demo-time.runById` command.
 - Place your variables in a `variables.json` file in the `.demo` folder and reference them like `{variable_name}` in your demo steps.
 - Detachable presenter view which you can move to a different screen.
+- Adding notes to your demo steps.
 
 ## Usage
 
@@ -194,6 +195,40 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
 {
   "action": "deleteFile",
   "path": "<relative path to the file>"
+}
+```
+
+  </td>
+  </tr>
+  <tr>
+    <td>
+      <code>close</code>
+    </td>
+    <td>
+      Close the current active file
+    </td>
+    <td>
+
+```json
+{
+  "action": "close"
+}
+```
+
+  </td>
+  </tr>
+  <tr>
+    <td>
+      <code>closeAll</code>
+    </td>
+    <td>
+      Close all open files
+    </td>
+    <td>
+
+```json
+{
+  "action": "closeAll",
 }
 ```
 
@@ -660,8 +695,25 @@ In the `insert_and_highlight.json` file, you can define the steps you want to ex
 > The `Demo Time: Start` and `Demo Time: Previous` commands have a keybinding assigned to them.
 > You can override these keybindings in your Visual Studio Code settings.
 
-
 ## Tips and tricks
+
+### Adding notes
+
+You are also able to add notes to your demos. These notes can be used to provide additional information for yourself or others who will be executing the demo.
+
+The notes should be created as a markdown file in the `.demo` folder. Here is an example of how you can add notes to your demo:
+
+```json
+{
+  "title": "<title>",
+  "description": "<description>",
+  "steps": [...],
+  "notes": {
+    "path": "<relative path in the .demo folder>",
+    "showOnTrigger": "<show notes on trigger (optional) - default is false>"
+  }
+}
+```
 
 ### Highlighting code
 
