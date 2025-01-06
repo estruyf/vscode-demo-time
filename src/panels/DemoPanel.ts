@@ -76,10 +76,6 @@ export class DemoPanel {
 
     const accountCommands: ActionTreeItem[] = [];
 
-    const workspaceFolder = Extension.getInstance().workspaceFolder;
-    const notesPath = workspaceFolder ? Uri.joinPath(workspaceFolder.uri, General.demoFolder, General.notesFolder) : undefined;
-    const notesFolder = notesPath ? await fileExists(notesPath) : false;
-
     for (const path of demoKeys) {
       const demos = (demoFiles as any)[path] as Demos;
       const executingFile = await DemoRunner.getExecutedDemoFile();
@@ -97,7 +93,7 @@ export class DemoPanel {
           ctxValue = "demo-time.lastStep";
         }
 
-        const hasNotes = notesFolder && demo.notes?.path ? true : false;
+        const hasNotes = demo.notes?.path ? true : false;
         if (hasNotes) {
           ctxValue += " demo-time.hasNotes";
         }

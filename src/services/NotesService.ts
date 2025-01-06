@@ -23,7 +23,7 @@ export class NotesService {
 
   public static async openNotes(filePath: string) {
     const workspaceFolder = Extension.getInstance().workspaceFolder;
-    const notesPath = workspaceFolder ? Uri.joinPath(workspaceFolder.uri, General.demoFolder, General.notesFolder, filePath) : undefined;
+    const notesPath = workspaceFolder ? Uri.joinPath(workspaceFolder.uri, General.demoFolder, filePath) : undefined;
     const notesFile = notesPath ? await fileExists(notesPath) : false;
     if (!notesFile) {
       Notifications.error("No notes available for this step.");
