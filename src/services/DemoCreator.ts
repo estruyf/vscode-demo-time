@@ -15,6 +15,7 @@ export class DemoCreator {
   public static registerCommands() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
 
+    subscriptions.push(commands.registerCommand(COMMAND.documentation, DemoCreator.documentation));
     subscriptions.push(commands.registerCommand(COMMAND.initialize, DemoCreator.initialize));
     subscriptions.push(commands.registerCommand(COMMAND.openDemoFile, DemoCreator.openFile));
     subscriptions.push(commands.registerCommand(COMMAND.addToStep, DemoCreator.addToStep));
@@ -27,6 +28,13 @@ export class DemoCreator {
     subscriptions.push(
       commands.registerCommand(COMMAND.viewStep, (item: ActionTreeItem) => DemoCreator.openFile(item, true))
     );
+  }
+
+  /**
+   * Opens the documentation page in the browser.
+   */
+  private static documentation() {
+    commands.executeCommand("vscode.open", Uri.parse("https://demotime.elio.dev/getting-started/"));
   }
 
   /**

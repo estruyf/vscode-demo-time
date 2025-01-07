@@ -82,6 +82,13 @@
           "fontPath": "assets/demo-time-v1.woff",
           "fontCharacter": "\\e900"
         }
+      },
+      "dt-logo": {
+        "description": "Demo Time - logo",
+        "default": {
+          "fontPath": "assets/demo-time-logo.woff",
+          "fontCharacter": "\\e800"
+        }
       }
     },
     "configuration": {
@@ -138,6 +145,12 @@
       }
     },
     "commands": [
+      {
+        "command": "demo-time.docs",
+        "title": "Open Demo Time documentation",
+        "category": "Demo Time",
+        "icon": "$(dt-logo)"
+      },
       {
         "command": "demo-time.start",
         "title": "Start",
@@ -332,6 +345,13 @@
           "command": "demo-time.viewNotes",
           "when": "view == demo-time && (viewItem =~ /demo-time.hasNotes/)",
           "group": "inline@4"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "demo-time.docs",
+          "when": "(editorLangId == jsonc || editorLangId == json) && resourceDirname =~ /\\.demo$/",
+          "group": "navigation@1"
         }
       ]
     },

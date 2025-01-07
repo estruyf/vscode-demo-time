@@ -1,6 +1,8 @@
 export const EXTENSION_NAME = "demo-time";
 
 export const COMMAND = {
+  // Documentation
+  documentation: `${EXTENSION_NAME}.docs`,
   // Running the demo
   start: `${EXTENSION_NAME}.start`,
   previous: `${EXTENSION_NAME}.previous`,
