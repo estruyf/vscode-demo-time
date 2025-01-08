@@ -6,6 +6,7 @@ export type Action =
   | "deleteFile"
   | "close"
   | "closeAll"
+  | "copy"
   // Markdown
   | "markdownPreview"
   // Code

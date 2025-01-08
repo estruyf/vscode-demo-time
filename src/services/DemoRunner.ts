@@ -541,6 +541,11 @@ export class DemoRunner {
         continue;
       }
 
+      if (step.action === "copy") {
+        DemoRunner.copy(workspaceFolder, fileUri, step);
+        continue;
+      }
+
       if (step.action === "deleteFile") {
         await DemoRunner.deleteFile(workspaceFolder, fileUri);
         continue;
@@ -880,7 +885,30 @@ export class DemoRunner {
 
     try {
       const newUri = Uri.joinPath(workspaceFolder.uri, step.dest);
-      await workspace.fs.rename(fileUri, newUri);
+      await workspace.fs.rename(fileUri, newUri, { overwrite: step.overwrite });
+    } catch (error) {
+      Notifications.error((error as Error).message);
+    }
+  }
+
+  /**
+   * Copies a file from the specified URI to a new destination within the workspace folder.
+   * 
+   * @param workspaceFolder - The workspace folder where the file will be copied.
+   * @param fileUri - The URI of the file to be copied.
+   * @param step - The step object containing the destination path.
+   * @returns A promise that resolves when the copy operation is complete.
+   * @throws Will throw an error if the destination is not specified or if the copy operation fails.
+   */
+  private static async copy(workspaceFolder: WorkspaceFolder, fileUri: Uri, step: Step): Promise<void> {
+    if (!step.dest) {
+      Notifications.error("No destination specified");
+      return;
+    }
+
+    try {
+      const newUri = Uri.joinPath(workspaceFolder.uri, step.dest);
+      await workspace.fs.copy(fileUri, newUri, { overwrite: step.overwrite });
     } catch (error) {
       Notifications.error((error as Error).message);
     }

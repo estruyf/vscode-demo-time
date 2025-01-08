@@ -3,6 +3,8 @@
 ## [0.0.52] - 2025-01-08
 
 - Added the description or label as the tooltip for the demo steps in the panel
+- Added the `overwrite` property for the `rename` and `copy` file actions
+- [#20](https://github.com/estruyf/vscode-demo-time/issues/20): Added the `copy` file action
 
 ## [0.0.51] - 2025-01-07
 

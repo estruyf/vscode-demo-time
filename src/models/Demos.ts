@@ -44,6 +44,7 @@ export interface Step {
   setting?: Setting;
   dest?: string;
   zoom?: number;
+  overwrite?: boolean;
 }
 
 export interface Setting {
