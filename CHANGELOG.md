@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.52] - 2025-01-08
+
+- Added the description or label as the tooltip for the demo steps in the panel
+
 ## [0.0.51] - 2025-01-07
 
 - Add open documentation action and link it to the editor title for JSON files

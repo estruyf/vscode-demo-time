@@ -51,6 +51,7 @@ export class ActionTreeItem extends TreeItem {
 
     this.label = label;
     this.description = description;
+    this.tooltip = description || label;
 
     this.iconPath = image
       ? !image.custom
