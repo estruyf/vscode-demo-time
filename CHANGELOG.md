@@ -114,7 +114,7 @@
 ## [0.0.29] - 2024-10-29
 
 - Implement a line-by-line insert/replace action
-- Configure the line-by-line insert/replace speed with the `demoTime.insertLineSpeed` setting
+- Configure the line-by-line insert/replace speed with the `demoTime.lineInsertionDelay` setting
 
 ## [0.0.28] - 2024-10-21
 

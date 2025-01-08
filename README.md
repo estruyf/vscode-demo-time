@@ -674,7 +674,7 @@ In the `insert_and_highlight.json` file, you can define the steps you want to ex
 | `demoTime.previousEnabled` | Enable the previous command when in presentation mode. | `false` |
 | `demoTime.showClock` | Show a clock in the status bar. | `true` |
 | `demoTime.timer` | Count down timer for how long the session should last. If not set, it will not count down. The value is the number of minutes. | `null` |
-| `demoTime.insertLineSpeed` | The speed in milliseconds for inserting lines. If you set it to `0`, it will insert its content immediately. | `25` |
+| `demoTime.lineInsertionDelay` | The speed in milliseconds for inserting lines. If you set it to `0`, it will insert its content immediately. | `25` |
 
 > The `demoTime.previousEnabled` is by default disabled to avoid conflicts when the previous action inserted content into a file.
 > When you enable this setting, you can use the `Demo Time: Previous` command to go back to the previous step or use the left clicker button.
