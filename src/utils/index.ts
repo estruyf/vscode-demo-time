@@ -1,4 +1,5 @@
 export * from './addExtensionRecommendation';
+export * from './bringToFront';
 export * from './fileExists';
 export * from './getFileContents';
 export * from './getLineInsertionSpeed';

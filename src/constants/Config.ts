@@ -17,4 +17,8 @@ export const Config = {
   insert: {
     speed: "lineInsertionDelay",
   },
+  api: {
+    enabled: "api.enabled",
+    port: "api.port",
+  }
 };
