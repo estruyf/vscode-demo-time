@@ -546,6 +546,11 @@ export class DemoRunner {
         continue;
       }
 
+      if (step.action === "move") {
+        DemoRunner.rename(workspaceFolder, fileUri, step);
+        continue;
+      }
+
       if (step.action === "deleteFile") {
         await DemoRunner.deleteFile(workspaceFolder, fileUri);
         continue;
@@ -885,7 +890,7 @@ export class DemoRunner {
 
     try {
       const newUri = Uri.joinPath(workspaceFolder.uri, step.dest);
-      await workspace.fs.rename(fileUri, newUri, { overwrite: step.overwrite });
+      await workspace.fs.rename(fileUri, newUri, { overwrite: !!step.overwrite });
     } catch (error) {
       Notifications.error((error as Error).message);
     }
@@ -908,7 +913,7 @@ export class DemoRunner {
 
     try {
       const newUri = Uri.joinPath(workspaceFolder.uri, step.dest);
-      await workspace.fs.copy(fileUri, newUri, { overwrite: step.overwrite });
+      await workspace.fs.copy(fileUri, newUri, { overwrite: !!step.overwrite });
     } catch (error) {
       Notifications.error((error as Error).message);
     }

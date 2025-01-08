@@ -7,6 +7,7 @@ export type Action =
   | "close"
   | "closeAll"
   | "copy"
+  | "move"
   // Markdown
   | "markdownPreview"
   // Code
