@@ -180,6 +180,8 @@ export class PresenterView {
       <div id="root"></div>
   
       ${scriptUrl.map((url) => `<script src="${url}"></script>`).join("\n")}
+
+      <img style="display:none" src="https://api.visitorbadge.io/api/combined?path=https:%2f%2fgithub.com%2festruyf%2fvscode-demo-time&labelColor=%23202736&countColor=%23FFD23F&slug=presenter-view" alt="Presenter view usage" />
     </body>
     </html>`;
   };
