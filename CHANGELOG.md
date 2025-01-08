@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.51] - 2025-01-07
+
+- Add open documentation action and link it to the editor title for JSON files
+
 ## [0.0.50] - 2025-01-06
 
 - [#23](https://github.com/estruyf/vscode-demo-time/issues/23): Add the ability to add notes to demos

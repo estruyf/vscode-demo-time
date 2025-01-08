@@ -2,7 +2,7 @@
   "name": "vscode-demo-time",
   "displayName": "Demo Time",
   "description": "Script your coding demos to perfection with this VS Code extension – no typos, no missteps, just flawless, stress-free presentations every time. Execute each demo step seamlessly, just like advancing through a slide presentation!",
-  "version": "0.0.50",
+  "version": "0.0.51",
   "publisher": "eliostruyf",
   "galleryBanner": {
     "color": "#86836D",
@@ -82,6 +82,13 @@
           "fontPath": "assets/demo-time-v1.woff",
           "fontCharacter": "\\e900"
         }
+      },
+      "dt-logo": {
+        "description": "Demo Time - logo",
+        "default": {
+          "fontPath": "assets/demo-time-logo.woff",
+          "fontCharacter": "\\e800"
+        }
       }
     },
     "configuration": {
@@ -138,6 +145,12 @@
       }
     },
     "commands": [
+      {
+        "command": "demo-time.docs",
+        "title": "Open Demo Time documentation",
+        "category": "Demo Time",
+        "icon": "$(dt-logo)"
+      },
       {
         "command": "demo-time.start",
         "title": "Start",
@@ -332,6 +345,13 @@
           "command": "demo-time.viewNotes",
           "when": "view == demo-time && (viewItem =~ /demo-time.hasNotes/)",
           "group": "inline@4"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "demo-time.docs",
+          "when": "(editorLangId == jsonc || editorLangId == json) && resourceDirname =~ /\\.demo$/",
+          "group": "navigation@1"
         }
       ]
     },
