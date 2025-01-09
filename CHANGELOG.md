@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.53] - 2025-01-09
+
+- [#29](https://github.com/estruyf/vscode-demo-time/issues/29): Added the local API to support external integrations with Demo Time (e.g., [Slidev](https://sli.dev/))
+
 ## [0.0.52] - 2025-01-08
 
 - Added the description or label as the tooltip for the demo steps in the panel
