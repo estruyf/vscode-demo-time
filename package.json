@@ -417,6 +417,7 @@
     "autoprefixer": "^10.4.20",
     "css-loader": "^7.1.2",
     "eslint": "^8.52.0",
+    "express": "^4.21.2",
     "glob": "^10.3.10",
     "jsonc-parser": "^3.3.1",
     "mocha": "^10.2.0",
@@ -435,8 +436,5 @@
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.2.0",
     "webpack-manifest-plugin": "^5.0.0"
-  },
-  "dependencies": {
-    "express": "^4.21.2"
   }
 }
