@@ -3,6 +3,7 @@ import { Extension } from "./Extension";
 import { COMMAND, Config } from "../constants";
 import { Server } from "http";
 import express, { Request, Response } from "express";
+import cors from "cors";
 import { Logger } from "./Logger";
 import { bringToFront } from "../utils";
 
@@ -54,6 +55,7 @@ export class DemoApi {
     Logger.info(`Starting API on port ${port}`);
     const app = express();
     app.use(express.json());
+    app.use(cors());
 
     app.get('/api/next', DemoApi.next);
     app.get('/api/runById', DemoApi.runById);

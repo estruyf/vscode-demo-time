@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.54] - 2025-01-09
+
+- Added CORS support for the local API
+
 ## [0.0.53] - 2025-01-09
 
 - [#29](https://github.com/estruyf/vscode-demo-time/issues/29): Added the local API to support external integrations with Demo Time (e.g., [Slidev](https://sli.dev/))
