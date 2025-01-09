@@ -29,5 +29,6 @@ export type Action =
   | "showInfoMessage"
   // Terminal
   | "executeTerminalCommand"
+  | "closeTerminal"
   // Extensibility
   | "snippet";

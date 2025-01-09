@@ -45,6 +45,7 @@ export interface Step {
   dest?: string;
   zoom?: number;
   overwrite?: boolean;
+  terminalId?: string;
 }
 
 export interface Setting {

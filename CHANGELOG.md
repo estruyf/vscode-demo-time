@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.55] - 2025-01-09
+
+- [#31](https://github.com/estruyf/vscode-demo-time/issues/31): Added the `terminalId` property to target the terminal to use for the `executeTerminalCommand` and `closeTerminal` actions
+- [#32](https://github.com/estruyf/vscode-demo-time/issues/32): Added the `closeTerminal` action
+
 ## [0.0.54] - 2025-01-09
 
 - Added CORS support for the local API

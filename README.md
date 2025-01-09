@@ -577,7 +577,27 @@ To reset the settings, you can use the following steps:
 ```json
 {
   "action": "executeTerminalCommand",
-  "command": "<command to execute>"
+  "command": "<command to execute>",
+  "terminalId": "<terminal id (optional)>"
+}
+```
+
+  </td>
+  </tr>
+  <tr>
+    <td>
+      <code>closeTerminal</code>
+    </td>
+    <td>
+      Close the terminal
+    </td>
+    <td>
+
+```json
+{
+  "action": "closeTerminal",
+  "command": "<command to execute>",
+  "terminalId": "<terminal id (optional)>"
 }
 ```
 

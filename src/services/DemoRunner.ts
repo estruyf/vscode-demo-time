@@ -49,7 +49,7 @@ const DEFAULT_START_VALUE = {
 
 export class DemoRunner {
   private static isPresentationMode = false;
-  private static terminal: Terminal | null;
+  private static terminal: { [id: string]: Terminal | null } = {};
   private static readonly terminalName = "DemoTime";
 
   /**
@@ -481,7 +481,13 @@ export class DemoRunner {
 
       // Run the specified terminal command
       if (step.action === "executeTerminalCommand") {
-        await DemoRunner.executeTerminalCommand(step.command);
+        await DemoRunner.executeTerminalCommand(step.command, step.terminalId);
+        continue;
+      }
+
+      // Run the specified terminal command
+      if (step.action === "closeTerminal") {
+        DemoRunner.closeTerminal(step.terminalId);
         continue;
       }
 
@@ -853,23 +859,50 @@ export class DemoRunner {
    * @param command - The command to be executed.
    * @returns A promise that resolves when the command execution is complete.
    */
-  private static async executeTerminalCommand(command?: string): Promise<void> {
+  private static async executeTerminalCommand(command?: string, terminalId?: string): Promise<void> {
     if (!command) {
       Notifications.error("No command specified");
       return;
     }
 
-    if (!DemoRunner.terminal) {
-      DemoRunner.terminal = window.createTerminal(DemoRunner.terminalName);
+    terminalId = terminalId || DemoRunner.terminalName;
+    let terminal = DemoRunner.terminal[terminalId];
+
+    if (!terminal) {
+      terminal = window.createTerminal(terminalId);
+      DemoRunner.terminal[terminalId] = terminal;
+
       window.onDidCloseTerminal((term) => {
-        if (term.name === DemoRunner.terminalName) {
-          DemoRunner.terminal = null;
+        if (term.name && DemoRunner.terminal[term.name]) {
+          delete DemoRunner.terminal[term.name];
         }
       });
     }
 
-    DemoRunner.terminal.show();
-    DemoRunner.terminal.sendText(command, true);
+    terminal.show();
+    terminal.sendText(command, true);
+  }
+
+  /**
+   * Closes the terminal.
+   * @param terminalId - The ID of the terminal to be closed.
+   * @returns A promise that resolves when the terminal is closed.
+   */
+  private static closeTerminal(terminalId?: string): void {
+    if (!terminalId) {
+      return;
+    }
+
+    terminalId = terminalId || DemoRunner.terminalName;
+    const terminal = DemoRunner.terminal[terminalId];
+
+    if (!terminal) {
+      return;
+    }
+
+    terminal.sendText("exit", true);
+    terminal.dispose();
+    delete DemoRunner.terminal[terminalId];
   }
 
   /**
