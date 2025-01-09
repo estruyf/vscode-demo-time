@@ -675,6 +675,8 @@ In the `insert_and_highlight.json` file, you can define the steps you want to ex
 | `demoTime.showClock` | Show a clock in the status bar. | `true` |
 | `demoTime.timer` | Count down timer for how long the session should last. If not set, it will not count down. The value is the number of minutes. | `null` |
 | `demoTime.lineInsertionDelay` | The speed in milliseconds for inserting lines. If you set it to `0`, it will insert its content immediately. | `25` |
+| `demoTime.api.enabled` | Enable the API to control the extension. | `false` |
+| `demoTime.api.port` | The port on which the API should run. | `3710` |
 
 > The `demoTime.previousEnabled` is by default disabled to avoid conflicts when the previous action inserted content into a file.
 > When you enable this setting, you can use the `Demo Time: Previous` command to go back to the previous step or use the left clicker button.
@@ -694,6 +696,50 @@ In the `insert_and_highlight.json` file, you can define the steps you want to ex
 
 > The `Demo Time: Start` and `Demo Time: Previous` commands have a keybinding assigned to them.
 > You can override these keybindings in your Visual Studio Code settings.
+
+## API
+
+The extension provides an API which you can use to control the extension. You can enable the API by setting the `demoTime.api.enabled` setting to `true`. When enabled, the API will run on the port defined in the `demoTime.api.port` setting.
+
+API URL: `http://localhost:3710/api/next`
+
+### API endpoints
+
+#### `/api/next`
+
+This endpoint will execute the next step in the demo.
+
+- Method: `GET`
+- Query parameters:
+  - `bringToFront`: Bring the Visual Studio Code window to the front. Default is `false`.
+
+#### `/api/runById`
+
+This endpoint will execute a specific step by its ID in your demo.
+
+You can call this endpoint via a `GET` or `POST` request.
+
+##### GET request
+
+- Method: `GET`
+- Query parameters:
+  - `id`: The ID of the step you want to
+  - `bringToFront`: Bring the Visual Studio Code window to the front. Default is `false`.
+
+##### POST request
+
+- Method: `POST`
+- Body:
+
+  ```json
+  {
+    "id": "<step id>",
+    "bringToFront": "<bring the Visual Studio Code window to the front (optional) - default is false>"
+  }
+  ```
+
+- Headers:
+  - `Content-Type: application/json`
 
 ## Tips and tricks
 
