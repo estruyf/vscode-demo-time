@@ -3,7 +3,7 @@
   "$id": "https://demotime.elio.dev/demo-time.schema.json",
   "title": "Demo Time - Schema",
   "description": "The schema for the Demo Time - VSCode extension",
-  "lastModified": "2024-12-06",
+  "lastModified": "2025-01-10",
   "type": "object",
   "properties": {
     "title": {
@@ -49,7 +49,33 @@
               "properties": {
                 "action": {
                   "type": "string",
-                  "enum": ["create", "open", "markdownPreview", "insert", "highlight", "unselect", "replace", "delete", "waitForTimeout", "waitForInput", "executeVSCodeCommand", "showInfoMessage", "executeTerminalCommand", "snippet"],
+                  "enum": [
+                    "create",
+                    "open",
+                    "rename",
+                    "deleteFile",
+                    "close",
+                    "closeAll",
+                    "copy",
+                    "move",
+                    "markdownPreview",
+                    "insert",
+                    "highlight", 
+                    "replace",
+                    "unselect", 
+                    "delete",
+                    "positionCursor",
+                    "write",
+                    "save",
+                    "setSetting",
+                    "waitForTimeout",
+                    "waitForInput",
+                    "executeVSCodeCommand",
+                    "showInfoMessage",
+                    "executeTerminalCommand",
+                    "closeTerminal",
+                    "snippet"
+                  ],
                   "title": "Action to perform"
                 },
                 "path": {
@@ -66,7 +92,15 @@
                 },
                 "position": {
                   "type": ["string", "number"],
-                  "title": "Position in the file. Can be line number or \"<start line>:<end line>\"."
+                  "title": "Position in the file. Can be line number or \"<start line>,<start character>\" or \"<start line>:<end line>\" or \"<start line>,<start character>:<end line>,<end character>\"."
+                },
+                "startPlaceholder": {
+                  "type": "string",
+                  "title": "Start placeholder value for the start position"
+                },
+                "endPlaceholder": {
+                  "type": "string",
+                  "title": "End placeholder value for the end position"
                 },
                 "timeout": {
                   "type": "number",
@@ -80,13 +114,46 @@
                   "type": "string",
                   "title": "The message for the notification"
                 },
+                "dest": {
+                  "type": "string",
+                  "title": "The destination path for the file"
+                },
+                "zoom": {
+                  "type": "number",
+                  "title": "The zoom level for the editor when highlighting code"
+                },
                 "lineInsertionDelay": {
                   "type": "number",
                   "title": "Speed in milliseconds to insert each line. If not defined, the \"demoTime.lineInsertionDelay\" setting will be used. To turn off the line insertion effect, set it to 0."
                 },
+                "overwrite": {
+                  "type": "boolean",
+                  "title": "Overwrite the destination file if it exists. Default is false."
+                },
+                "terminalId": {
+                  "type": "string",
+                  "title": "Define the name for the terminal. Default is \"DemoTime\"."
+                },
                 "args": {
                   "type": ["object", "array", "string", "number", "boolean"],
                   "title": "Arguments to pass to the command for VSCode or placeholder names for your snippet"
+                },
+                "setting": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "description": "The setting key"
+                    },
+                    "value": {
+                      "type": ["string", "number", "boolean", "object", "array", "null"],
+                      "description": "The setting value"
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "value"
+                  ]
                 }
               },
               "required": [
@@ -96,7 +163,7 @@
                 "if": {
                   "properties": {
                     "action": {
-                      "enum": ["create", "open", "markdownPreview"]
+                      "enum": ["create", "open", "deleteFile", "markdownPreview"]
                     }
                   }
                 },
@@ -128,8 +195,7 @@
                 },
                 "then": {
                   "required": [
-                    "path",
-                    "position"
+                    "path"
                   ],
                   "oneOf": [{
                     "required": [
@@ -158,28 +224,40 @@
                 "if": {
                   "properties": {
                     "action": {
-                      "const": "delete"
+                      "enum": ["rename", "copy", "move"]
                     }
                   }
                 },
                 "then": {
                   "required": [
                     "path",
-                    "position"
+                    "dest"
                   ]
                 }
               }, {
                 "if": {
                   "properties": {
                     "action": {
-                      "const": "highlight"
+                      "const": "setSetting"
                     }
                   }
                 },
                 "then": {
                   "required": [
-                    "path",
-                    "position"
+                    "setting"
+                  ]
+                }
+              }, {
+                "if": {
+                  "properties": {
+                    "action": {
+                      "enum": ["highlight", "positionCursor"]
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "path"
                   ]
                 }
               }, {
@@ -205,8 +283,7 @@
                 },
                 "then": {
                   "required": [
-                    "path",
-                    "position"
+                    "path"
                   ]
                 }
               }, {
@@ -225,6 +302,22 @@
               }],
               "additionalProperties": false
             }
+          },
+          "notes": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Path to the file to open"
+              },
+              "showOnTrigger": {
+                "type": "boolean",
+                "description": "Show the notes when the trigger is activated. Default is false."
+              }
+            },
+            "required": [
+              "path"
+            ]
           }
         },
         "required": [
