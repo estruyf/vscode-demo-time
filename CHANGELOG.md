@@ -3,6 +3,7 @@
 ## [0.0.56] - 2025-01-10
 
 - [#34](https://github.com/estruyf/vscode-demo-time/issues/34): Added the ability to have start and end placeholders for text actions like `insert`, `replace`, and `delete`
+- [#35](https://github.com/estruyf/vscode-demo-time/issues/35): Added the `Demo Time: Add new action to demo step` command + editor title action to make it easier to add new actions to demo steps
 
 ## [0.0.55] - 2025-01-09
 

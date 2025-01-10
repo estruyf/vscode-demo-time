@@ -1,13 +1,14 @@
 import { Uri, commands, window } from "vscode";
 import { COMMAND } from "../constants";
-import { Action, Step, Subscription } from "../models";
+import { Action, Demo, Demos, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import { FileProvider } from "./FileProvider";
 import { DemoPanel } from "../panels/DemoPanel";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DemoRunner } from "./DemoRunner";
-import { addExtensionRecommendation } from "../utils";
+import { addExtensionRecommendation, getActionTemplate } from "../utils";
 import { Notifications } from "./Notifications";
+import { parse as jsonParse } from "jsonc-parser";
 
 export class DemoCreator {
   public static ExecutedDemoSteps: string[] = [];
@@ -19,6 +20,7 @@ export class DemoCreator {
     subscriptions.push(commands.registerCommand(COMMAND.initialize, DemoCreator.initialize));
     subscriptions.push(commands.registerCommand(COMMAND.openDemoFile, DemoCreator.openFile));
     subscriptions.push(commands.registerCommand(COMMAND.addToStep, DemoCreator.addToStep));
+    subscriptions.push(commands.registerCommand(COMMAND.addStepToDemo, DemoCreator.addStepToDemo));
     subscriptions.push(
       commands.registerCommand(COMMAND.stepMoveUp, (item: ActionTreeItem) => DemoCreator.move(item, "up"))
     );
@@ -143,15 +145,6 @@ export class DemoCreator {
       return;
     }
 
-    const demoStep = await window.showQuickPick(["New demo step", "Insert in existing demo"], {
-      title: "Demo time!",
-      placeHolder: "Where do you want to insert the step?",
-    });
-
-    if (!demoStep) {
-      return;
-    }
-
     const start = selection.start.line;
     const end = selection.end.line;
 
@@ -179,6 +172,75 @@ export class DemoCreator {
 
     if (action === "insert" || action === "write") {
       step.content = modifiedText;
+    }
+
+    const updatedDemos = await DemoCreator.askWhereToAddStep(demo, step);
+    if (!updatedDemos) {
+      return;
+    }
+
+    demo.demos = updatedDemos;
+
+    await FileProvider.saveFile(filePath, JSON.stringify(demo, null, 2));
+
+    // Trigger a refresh of the treeview
+    DemoPanel.update();
+  }
+
+  private static async addStepToDemo() {
+    const editor = window.activeTextEditor;
+    if (!editor) {
+      return;
+    }
+
+    const fileContents = editor.document.getText();
+    const demo = jsonParse(fileContents) as Demos;
+
+    const actions = Object.values(Action);
+    const action = await window.showQuickPick(actions, {
+      title: "Demo time!",
+      placeHolder: "What kind of action step do you want to add?",
+    }) as unknown as Action;
+
+    if (!action) {
+      return;
+    }
+
+    const step = getActionTemplate(action);
+    if (!step) {
+      Notifications.error("Unknown action type");
+      return;
+    }
+
+    const updatedDemos = await DemoCreator.askWhereToAddStep(demo, step);
+    if (!updatedDemos) {
+      return;
+    }
+
+    demo.demos = updatedDemos;
+
+    await FileProvider.saveFile(editor.document.uri.fsPath, JSON.stringify(demo, null, 2));
+
+    // Trigger a refresh of the treeview
+    DemoPanel.update();
+  }
+
+  /**
+   * Prompts the user to decide where to add a new step in the demo.
+   * The user can choose to create a new demo step or insert it into an existing demo.
+   * 
+   * @param demo - The current demos object where the step will be added.
+   * @param step - The step to be added to the demo.
+   * @returns A promise that resolves to the updated list of demos or undefined if the operation was cancelled.
+   */
+  private static async askWhereToAddStep(demo: Demos, step: Step): Promise<Demo[]  | undefined> {
+    const demoStep = await window.showQuickPick(["New demo step", "Insert in existing demo"], {
+      title: "Demo time!",
+      placeHolder: "Where do you want to insert the step?",
+    });
+
+    if (!demoStep) {
+      return;
     }
 
     if (demoStep === "New demo step") {
@@ -231,10 +293,7 @@ export class DemoCreator {
       }
     }
 
-    await FileProvider.saveFile(filePath, JSON.stringify(demo, null, 2));
-
-    // Trigger a refresh of the treeview
-    DemoPanel.update();
+    return demo.demos;
   }
 
   /**

@@ -162,6 +162,12 @@
         "icon": "$(dt-logo)"
       },
       {
+        "command": "demo-time.addStepToDemo",
+        "title": "Add new action to demo step",
+        "category": "Demo Time",
+        "icon": "$(add)"
+      },
+      {
         "command": "demo-time.start",
         "title": "Start",
         "category": "Demo Time",
@@ -257,6 +263,10 @@
     ],
     "menus": {
       "commandPalette": [
+        {
+          "command": "demo-time.addStepToDemo",
+          "when": "(editorLangId == jsonc || editorLangId == json) && resourceDirname =~ /\\.demo$/"
+        },
         {
           "command": "demo-time.previous",
           "when": "demo-time.presentation && demo-time.previousEnabled"
@@ -358,6 +368,11 @@
         }
       ],
       "editor/title": [
+        {
+          "command": "demo-time.addStepToDemo",
+          "when": "(editorLangId == jsonc || editorLangId == json) && resourceDirname =~ /\\.demo$/",
+          "group": "navigation@0"
+        },
         {
           "command": "demo-time.docs",
           "when": "(editorLangId == jsonc || editorLangId == json) && resourceDirname =~ /\\.demo$/",
