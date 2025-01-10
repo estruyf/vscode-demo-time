@@ -1,6 +1,6 @@
 import { PresenterView } from './../presenterView/PresenterView';
 import { COMMAND, Config, ContextKeys, StateKeys, WebViewMessages } from "../constants";
-import { Demo, DemoFileCache, Demos, Step, Subscription } from "../models";
+import { Action, Demo, DemoFileCache, Demos, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import {
   ConfigurationTarget,
@@ -392,9 +392,9 @@ export class DemoRunner {
 
     // Replace the snippets in the demo steps
     const stepsToExecute: Step[] = [];
-    if (demoSteps.some((step) => step.action === "snippet")) {
+    if (demoSteps.some((step) => step.action === Action.Snippet)) {
       for (const step of demoSteps) {
-        if (step.action === "snippet") {
+        if (step.action === Action.Snippet) {
           let snippet = await getFileContents(workspaceFolder, step.contentPath);
           if (!snippet) {
             return;
@@ -426,10 +426,10 @@ export class DemoRunner {
       }
 
       // Wait for the specified timeout
-      if (step.action === "waitForTimeout") {
+      if (step.action === Action.WaitForTimeout) {
         await sleep(step.timeout || 1000);
         continue;
-      } else if (step.action === "waitForInput") {
+      } else if (step.action === Action.WaitForInput) {
         const answer = await window.showInputBox({
           title: "Demo time!",
           prompt: "Press any key to continue",
@@ -442,7 +442,7 @@ export class DemoRunner {
       }
 
       // Update settings
-      if (step.action === "setSetting") {
+      if (step.action === Action.SetSetting) {
         if (!step.setting || !step.setting.key || !step.setting.value) {
           Notifications.error("No setting or value specified");
           continue;
@@ -455,7 +455,7 @@ export class DemoRunner {
       const fileUri = step.path ? Uri.joinPath(workspaceFolder.uri, step.path) : undefined;
 
       // Execute the specified VSCode command
-      if (step.action === "executeVSCodeCommand") {
+      if (step.action === Action.ExecuteVSCodeCommand) {
         if (!step.command) {
           Notifications.error("No command specified");
           continue;
@@ -470,7 +470,7 @@ export class DemoRunner {
         continue;
       }
 
-      if (step.action === "showInfoMessage") {
+      if (step.action === Action.ShowInfoMessage) {
         if (!step.message) {
           Notifications.error("No message specified");
           continue;
@@ -481,18 +481,18 @@ export class DemoRunner {
       }
 
       // Run the specified terminal command
-      if (step.action === "executeTerminalCommand") {
+      if (step.action === Action.ExecuteTerminalCommand) {
         await DemoRunner.executeTerminalCommand(step.command, step.terminalId);
         continue;
       }
 
       // Run the specified terminal command
-      if (step.action === "closeTerminal") {
+      if (step.action === Action.CloseTerminal) {
         DemoRunner.closeTerminal(step.terminalId);
         continue;
       }
 
-      if (step.action === "write" && !step.path) {
+      if (step.action === Action.Write && !step.path) {
         // Write the content at the current position
         const editor = window.activeTextEditor;
         if (!editor) {
@@ -512,16 +512,16 @@ export class DemoRunner {
         continue;
       }
 
-      if (step.action === "save") {
+      if (step.action === Action.Save) {
         await DemoRunner.saveFile();
       }
 
-      if (step.action === "close") {
+      if (step.action === Action.Close) {
         await commands.executeCommand("workbench.action.closeActiveEditor");
         continue;
       }
 
-      if (step.action === "closeAll") {
+      if (step.action === Action.CloseAll) {
         await commands.executeCommand("workbench.action.closeAllEditors");
         continue;
       }
@@ -533,32 +533,32 @@ export class DemoRunner {
         continue;
       }
 
-      if (step.action === "open") {
+      if (step.action === Action.Open) {
         await commands.executeCommand("vscode.open", fileUri);
         continue;
       }
 
-      if (step.action === "markdownPreview") {
+      if (step.action === Action.MarkdownPreview) {
         await commands.executeCommand("markdown.showPreview", fileUri);
         continue;
       }
 
-      if (step.action === "rename") {
+      if (step.action === Action.Rename) {
         DemoRunner.rename(workspaceFolder, fileUri, step);
         continue;
       }
 
-      if (step.action === "copy") {
+      if (step.action === Action.Copy) {
         DemoRunner.copy(workspaceFolder, fileUri, step);
         continue;
       }
 
-      if (step.action === "move") {
+      if (step.action === Action.Move) {
         DemoRunner.rename(workspaceFolder, fileUri, step);
         continue;
       }
 
-      if (step.action === "deleteFile") {
+      if (step.action === Action.DeleteFile) {
         await DemoRunner.deleteFile(workspaceFolder, fileUri);
         continue;
       }
@@ -572,7 +572,7 @@ export class DemoRunner {
         content = fileContent;
       }
 
-      if (step.action === "create") {
+      if (step.action === Action.Create) {
         await workspace.fs.writeFile(fileUri, new Uint8Array(Buffer.from(content)));
         continue;
       }
@@ -582,23 +582,23 @@ export class DemoRunner {
 
       const { crntPosition, crntRange } = await getPositionAndRange(editor, step);
 
-      if (step.action === "unselect") {
+      if (step.action === Action.Unselect) {
         await DemoRunner.unselect(textEditor);
         continue;
       }
 
-      if (step.action === "highlight" && (crntRange || crntPosition)) {
+      if (step.action === Action.Highlight && (crntRange || crntPosition)) {
         await DemoRunner.highlight(textEditor, crntRange, crntPosition, step.zoom);
         continue;
       }
 
       // Code actions
-      if (step.action === "insert") {
+      if (step.action === Action.Insert) {
         await DemoRunner.insert(textEditor, editor, fileUri, content, crntPosition, step.lineInsertionDelay);
         continue;
       }
 
-      if (step.action === "write") {
+      if (step.action === Action.Write) {
         if (!content) {
           Notifications.error("No content to write");
           return;
@@ -613,7 +613,7 @@ export class DemoRunner {
         continue;
       }
 
-      if (step.action === "replace") {
+      if (step.action === Action.Replace) {
         await DemoRunner.replace(
           textEditor,
           editor,
@@ -626,7 +626,7 @@ export class DemoRunner {
         continue;
       }
 
-      if (step.action === "positionCursor") {
+      if (step.action === Action.PositionCursor) {
         if (crntPosition) {
           textEditor.revealRange(new Range(crntPosition, crntPosition), TextEditorRevealType.InCenter);
           textEditor.selection = new Selection(crntPosition, crntPosition);
@@ -634,7 +634,7 @@ export class DemoRunner {
         continue;
       }
 
-      if (step.action === "delete") {
+      if (step.action === Action.Delete) {
         await DemoRunner.delete(editor, fileUri, crntRange, crntPosition);
         continue;
       }

@@ -1,34 +1,35 @@
-export type Action =
+export enum Action {
   // File
-  | "create"
-  | "open"
-  | "rename"
-  | "deleteFile"
-  | "close"
-  | "closeAll"
-  | "copy"
-  | "move"
+  Create = "create",
+  Open = "open",
+  Rename = "rename",
+  DeleteFile = "deleteFile",
+  Close = "close",
+  CloseAll = "closeAll",
+  Copy = "copy",
+  Move = "move",
   // Markdown
-  | "markdownPreview"
+  MarkdownPreview = "markdownPreview",
   // Code
-  | "insert"
-  | "highlight"
-  | "replace"
-  | "unselect"
-  | "delete"
-  | "positionCursor"
-  | "write"
-  | "save"
+  Insert = "insert",
+  Highlight = "highlight",
+  Replace = "replace",
+  Unselect = "unselect",
+  Delete = "delete",
+  PositionCursor = "positionCursor",
+  Write = "write",
+  Save = "save",
   // Settings
-  | "setSetting"
+  SetSetting = "setSetting",
   // Timeout
-  | "waitForTimeout"
-  | "waitForInput"
+  WaitForTimeout = "waitForTimeout",
+  WaitForInput = "waitForInput",
   // VSCode
-  | "executeVSCodeCommand"
-  | "showInfoMessage"
+  ExecuteVSCodeCommand = "executeVSCodeCommand",
+  ShowInfoMessage = "showInfoMessage",
   // Terminal
-  | "executeTerminalCommand"
-  | "closeTerminal"
+  ExecuteTerminalCommand = "executeTerminalCommand",
+  CloseTerminal = "closeTerminal",
   // Extensibility
-  | "snippet";
+  Snippet = "snippet"
+}

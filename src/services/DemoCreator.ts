@@ -127,11 +127,11 @@ export class DemoCreator {
     }
     const { filePath, demo } = demoFile;
 
-    const actions: Action[] = ["insert", "highlight", "unselect", "delete", "save"];
+    const actions: Action[] = [Action.Insert, Action.Highlight, Action.Unselect, Action.Delete, Action.Save];
 
     // If selection is a single line, add the "write" action
     if (selection.start.line === selection.end.line) {
-      actions.push("write");
+      actions.push(Action.Write);
     }
 
     const action = await window.showQuickPick(actions, {
