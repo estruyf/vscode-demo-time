@@ -41,6 +41,7 @@ import { parse as jsonParse } from "jsonc-parser";
 import { Logger } from "./Logger";
 import { insertVariables } from "../utils/insertVariables";
 import { NotesService } from './NotesService';
+import { getPositionAndRange } from '../utils/getPositionAndRange';
 
 const DEFAULT_START_VALUE = {
   filePath: "",
@@ -579,7 +580,7 @@ export class DemoRunner {
       const editor = await workspace.openTextDocument(fileUri);
       const textEditor = await window.showTextDocument(editor);
 
-      const { crntPosition, crntRange } = DemoRunner.getPositionAndRange(editor, step);
+      const { crntPosition, crntRange } = await getPositionAndRange(editor, step);
 
       if (step.action === "unselect") {
         await DemoRunner.unselect(textEditor);
@@ -966,78 +967,6 @@ export class DemoRunner {
     } catch (error) {
       Notifications.error((error as Error).message);
     }
-  }
-
-  /**
-   * Retrieves the current position and range based on the provided step.
-   * 
-   * @param editor The text document editor.
-   * @param step The step object containing the position information.
-   * @returns An object with the current position and range.
-   */
-  private static getPositionAndRange(
-    editor: TextDocument,
-    step: Step
-  ): { crntPosition: Position | undefined; crntRange: Range | undefined } {
-    let crntPosition: Position | undefined = undefined;
-    let crntRange: Range | undefined = undefined;
-
-    if (step.position) {
-      if (typeof step.position === "string") {
-        if (step.position.includes(":")) {
-          let [start, end] = step.position.split(":");
-
-          if (start === "start") {
-            start = "1";
-          }
-
-          if (end === "end") {
-            end = editor.lineCount.toString();
-          }
-
-          const startPosition = DemoRunner.getLineAndCharacterPosition(start);
-          const endPosition = DemoRunner.getLineAndCharacterPosition(end);
-
-          let lastLine = new Position(Number(end) - 1, endPosition.character);
-          try {
-            const line = editor.lineAt(lastLine);
-            lastLine = line.range.end;
-          } catch (error) {
-            // do nothing
-          }
-
-          crntRange = new Range(new Position(startPosition.line, startPosition.character), lastLine);
-        } else {
-          const startPosition = DemoRunner.getLineAndCharacterPosition(step.position);
-          crntPosition = new Position(startPosition.line, startPosition.character);
-        }
-      } else {
-        crntPosition = new Position(step.position - 1, 0);
-      }
-    }
-
-    return { crntPosition, crntRange };
-  }
-
-  /**
-   * Parses a position string and returns an object containing the line and character positions.
-   * 
-   * @param position - A string representing the position in the format "line,character" or just "line".
-   * @returns An object with `line` and `character` properties. The `line` is zero-based, and the `character` is zero if not specified.
-   */
-  private static getLineAndCharacterPosition(position: string): { line: number; character: number } {
-    let line = 0;
-    let character = 0;
-
-    if (position.includes(",")) {
-      let [lineStr, characterStr] = position.split(",");
-      line = parseInt(lineStr) - 1;
-      character = parseInt(characterStr);
-    } else {
-      line = parseInt(position) - 1;
-    }
-
-    return { line, character };
   }
 
   /**

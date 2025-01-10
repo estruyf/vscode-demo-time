@@ -7,4 +7,4 @@ export const fileExists = async (filePath: Uri): Promise<boolean> => {
   } catch {
     return false;
   }
-}
+};

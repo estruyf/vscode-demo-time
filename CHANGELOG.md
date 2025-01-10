@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.56] - 2025-01-10
+
+- [#34](https://github.com/estruyf/vscode-demo-time/issues/34): Added the ability to have start and end placeholders for text actions like `insert`, `replace`, and `delete`
+
 ## [0.0.55] - 2025-01-09
 
 - [#31](https://github.com/estruyf/vscode-demo-time/issues/31): Added the `terminalId` property to target the terminal to use for the `executeTerminalCommand` and `closeTerminal` actions

@@ -35,7 +35,11 @@ export interface Step {
   path?: string;
   content?: string;
   contentPath?: string;
+
   position?: string | number;
+  startPlaceholder?: string;
+  endPlaceholder?: string;
+
   timeout?: number;
   command?: string;
   message?: string;
