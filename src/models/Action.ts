@@ -19,6 +19,7 @@ export enum Action {
   PositionCursor = "positionCursor",
   Write = "write",
   Save = "save",
+  Format = "format",
   // Settings
   SetSetting = "setSetting",
   // Timeout

@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.57] - 2025-01-11
+
+- [#36](https://github.com/estruyf/vscode-demo-time/issues/36): Added the `format` action to format the code in the editor
+
 ## [0.0.56] - 2025-01-10
 
 - [#34](https://github.com/estruyf/vscode-demo-time/issues/34): Added the ability to have start and end placeholders for text actions like `insert`, `replace`, and `delete`

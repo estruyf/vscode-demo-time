@@ -136,6 +136,12 @@ export const getActionTemplate = (action: Action): any => {
     };
   }
 
+  if (action === Action.Format) {
+    return {
+      action: "format",
+    };
+  }
+
   /**
    * Settings actions
    */

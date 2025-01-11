@@ -512,6 +512,11 @@ export class DemoRunner {
         continue;
       }
 
+      if (step.action === Action.Format) {
+        await commands.executeCommand("editor.action.formatDocument");
+        continue;
+      }
+
       if (step.action === Action.Save) {
         await DemoRunner.saveFile();
       }

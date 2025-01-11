@@ -84,6 +84,8 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
 
 ### File actions
 
+> Find more information on the [file actions](https://demotime.elio.dev/actions/file/) documentation page.
+
 <table>
   <tr>
     <th>Action</th>
@@ -238,6 +240,8 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
 
 ### Text actions
 
+> Find more information on the [text actions](https://demotime.elio.dev/actions/text/) documentation page.
+
 <table>
   <tr>
     <th>Action</th>
@@ -254,10 +258,22 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
     <td>
 
 ```json
+// Via position
 {
   "action": "insert",
   "path": "<relative path to the file>",
-  "position": "<line number> or <start line number>:<end line number> or <start line>,<start character> or <start line>,<start character>:<end line>,<end character>",
+  "position": "<position>",
+  "content": "<content of the file> (optional)",
+  "contentPath": "<relative path to the file in the .demo folder> (optional)",
+  "lineInsertionDelay": "<delay in milliseconds to insert each line> (optional)"
+}
+
+// Via placeholders
+{
+  "action": "insert",
+  "path": "<relative path to the file>",
+  "startPlaceholder": "<start placeholder>",
+  "endPlaceholder": "<end placeholder>",
   "content": "<content of the file> (optional)",
   "contentPath": "<relative path to the file in the .demo folder> (optional)",
   "lineInsertionDelay": "<delay in milliseconds to insert each line> (optional)"
@@ -276,10 +292,22 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
     <td>
 
 ```json
+// Via position
 {
   "action": "replace",
   "path": "<relative path to the file>",
-  "position": "<line number> or <start line number>:<end line number> or <start line>,<start character> or <start line>,<start character>:<end line>,<end character>",
+  "position": "<position>",
+  "content": "<content of the file> (optional)",
+  "contentPath": "<relative path to the file in the .demo folder> (optional)",
+  "lineInsertionDelay": "<delay in milliseconds to insert each line> (optional)"
+}
+
+// Via placeholders
+{
+  "action": "replace",
+  "path": "<relative path to the file>",
+  "startPlaceholder": "<start placeholder>",
+  "endPlaceholder": "<end placeholder>",
   "content": "<content of the file> (optional)",
   "contentPath": "<relative path to the file in the .demo folder> (optional)",
   "lineInsertionDelay": "<delay in milliseconds to insert each line> (optional)"
@@ -298,10 +326,19 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
     <td>
 
 ```json
+// Via position
 {
   "action": "delete",
   "path": "<relative path to the file>",
-  "position": "<line number> or <start line number>:<end line number> or <start line>,<start character> or <start line>,<start character>:<end line>,<end character>"
+  "position": "<position>"
+}
+
+// Via placeholders
+{
+  "action": "delete",
+  "path": "<relative path to the file>",
+  "startPlaceholder": "<start placeholder>",
+  "endPlaceholder": "<end placeholder>"
 }
 ```
 
@@ -317,11 +354,21 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
     <td>
 
 ```json
+// Via position
 {
   "action": "highlight",
   "path": "<relative path to the file>",
-  "position": "<line number> or <start line number>:<end line number> or <start line>,<start character> or <start line>,<start character>:<end line>,<end character>",
-  "zoom": "<zoom level (optional)>"
+  "position": "<position>",
+  "zoom": "<zoom level> (optional)"
+}
+
+// Via placeholders
+{
+  "action": "highlight",
+  "path": "<relative path to the file>",
+  "startPlaceholder": "<start placeholder>",
+  "endPlaceholder": "<end placeholder>",
+  "zoom": "<zoom level> (optional)"
 }
 ```
 
@@ -337,10 +384,18 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
     <td>
 
 ```json
+// Via position
 {
   "action": "positionCursor",
   "path": "<relative path to the file>",
-  "position": "<line number> or <start line number>:<end line number> or <start line>,<start character> or <start line>,<start character>:<end line>,<end character>"
+  "position": "<position>"
+}
+
+// Via start placeholder
+{
+  "action": "positionCursor",
+  "path": "<relative path to the file>",
+  "startPlaceholder": "<start placeholder>",
 }
 ```
 
@@ -381,11 +436,37 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
 }
 
 // Write to a specific position in a file
+// Via position
 {
   "action": "write",
   "content": "Hello World",
-  "path": "README.md",
-  "position": "26,30"
+  "path": "<relative path to the file>",
+  "position": "<position>"
+}
+
+// Via start placeholder
+{
+  "action": "write",
+  "content": "Hello World",
+  "path": "<relative path to the file>",
+  "startPlaceholder": "<start placeholder>",
+}
+```
+
+  </td>
+  </tr>
+  <tr>
+    <td>
+      <code>format</code>
+    </td>
+    <td>
+      Format the content of the active file
+    </td>
+    <td>
+
+```jsonc
+{
+  "action": "format"
 }
 ```
 
@@ -394,6 +475,8 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
 </table>
 
 ### Setting actions
+
+> Find more information on the [setting actions](https://demotime.elio.dev/actions/setting/) documentation page.
 
 <table>
   <tr>
@@ -466,6 +549,8 @@ To reset the settings, you can use the following steps:
 
 ### Time actions
 
+> Find more information on the [time actions](https://demotime.elio.dev/actions/time/) documentation page.
+
 <table>
   <tr>
     <th>Action</th>
@@ -510,6 +595,8 @@ To reset the settings, you can use the following steps:
 </table>
 
 ### VS Code actions
+
+> Find more information on the [vscode actions](https://demotime.elio.dev/actions/vscode/) documentation page.
 
 <table>
   <tr>
@@ -559,6 +646,8 @@ To reset the settings, you can use the following steps:
 
 ### Terminal actions
 
+> Find more information on the [terminal actions](https://demotime.elio.dev/actions/terminal/) documentation page.
+
 <table>
   <tr>
     <th>Action</th>
@@ -606,6 +695,8 @@ To reset the settings, you can use the following steps:
 </table>
 
 ### Snippets
+
+> Find more information on the [snippet actions](https://demotime.elio.dev/actions/snippet/) documentation page.
 
 <table>
   <tr>
@@ -824,9 +915,16 @@ You can define variables in a `variables.json` file in the `.demo` folder. You c
 }
 ```
 
-### Position
+### Positioning your text/code
 
-For the position you can use the following formats:
+For the positioning of the text to insert, there are two options:
+
+- Use the `position` property to specify the location where the action should be performed. With this property, you can specify the line number, character position, or a range of lines and characters.
+- Use the `startPlaceholder` and `endPlaceholder` properties to specify the text to search for in the file to determine the location where the action should be performed.
+
+#### Line position or range
+
+For the `position` property, you can use the following values:
 
 - `number`: The line number
 - `number:number`: The start and end line number
@@ -835,6 +933,36 @@ For the position you can use the following formats:
 - The `start` and `end` keywords can also be used instead of the line numbers
   - `start` will be replaced by the first line number
   - `end` will be replaced by the last line number
+
+Examples:
+
+```jsonc
+"position": "10" // Line 10
+"position": "10:20" // Lines 10 to 20
+"position": "10,5" // Start line 10, character 5
+"position": "10,5:20,10" // Start line 10, character 5 to end line 20, character 10
+```
+
+#### Placeholder position
+
+For the `startPlaceholder` and `endPlaceholder` properties, you specify the text to search for in the file.
+
+Examples:
+
+```jsonc
+"startPlaceholder": "// Start of demo1"
+"endPlaceholder": "// End of demo1"
+```
+
+> The text will be replaced from the start of the `startPlaceholder` to the end of the `endPlaceholder`.
+
+In the file, the placeholders should be defined like this:
+
+```javascript
+// Start of demo1
+const ext = 'Demo Time';
+// End of demo1
+```
 
 ### Adding content to a file
 
