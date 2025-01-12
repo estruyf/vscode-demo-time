@@ -1,6 +1,9 @@
+import { QuickPickItem } from "vscode";
 import { Action } from "../models";
 
-export const getActionTemplate = (action: Action): any => {
+export const getActionTemplate = (selectedAction: QuickPickItem): any => {
+  const action = selectedAction.label;
+  
   /**
    * File actions
    */

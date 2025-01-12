@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.58] - 2025-01-12
+
+- Action grouping in the quick pick selection of the `Demo Time: Add new action to demo step` command
+
 ## [0.0.57] - 2025-01-11
 
 - [#36](https://github.com/estruyf/vscode-demo-time/issues/36): Added the `format` action to format the code in the editor

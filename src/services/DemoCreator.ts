@@ -6,7 +6,7 @@ import { FileProvider } from "./FileProvider";
 import { DemoPanel } from "../panels/DemoPanel";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DemoRunner } from "./DemoRunner";
-import { addExtensionRecommendation, getActionTemplate } from "../utils";
+import { addExtensionRecommendation, getActionOptions, getActionTemplate } from "../utils";
 import { Notifications } from "./Notifications";
 import { parse as jsonParse } from "jsonc-parser";
 
@@ -196,11 +196,11 @@ export class DemoCreator {
     const fileContents = editor.document.getText();
     const demo = jsonParse(fileContents) as Demos;
 
-    const actions = Object.values(Action);
+    const actions = getActionOptions();
     const action = await window.showQuickPick(actions, {
       title: "Demo time!",
       placeHolder: "What kind of action step do you want to add?",
-    }) as unknown as Action;
+    });
 
     if (!action) {
       return;

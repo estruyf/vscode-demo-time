@@ -1,0 +1,211 @@
+import { QuickPickItem, QuickPickItemKind } from "vscode";
+import { Action } from "../models";
+
+export const getActionOptions = (): QuickPickItem[] => {
+  const actions: QuickPickItem[] = [];
+
+  /** 
+   * File actions
+   */
+  actions.push({
+    label: "File",
+    description: "File actions",
+    kind: QuickPickItemKind.Separator,
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.Open,
+    description: "Open a file",
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.Create,
+    description: "Create a file",
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.Save,
+    description: "Save the current file",
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.Rename,
+    description: "Rename a file",
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.Move,
+    description: "Move a file",
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.Copy,
+    description: "Copy a file",
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.DeleteFile,
+    description: "Delete a file",
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.Close,
+    description: "Close the current file",
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.CloseAll,
+    description: "Close all files",
+  } as QuickPickItem);
+  
+  /** 
+   * Markdown actions
+   */
+  actions.push({
+    label: "Markdown",
+    description: "Markdown actions",
+    kind: QuickPickItemKind.Separator,
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.MarkdownPreview,
+    description: "Preview a markdown file",
+  } as QuickPickItem);
+
+  /** 
+   * Text/Code actions
+   */
+  actions.push({
+    label: "Text/Code",
+    description: "Text/Code actions",
+    kind: QuickPickItemKind.Separator,
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.Highlight,
+    description: "Highlight text",
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.Insert,
+    description: "Insert text",
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.Replace,
+    description: "Replace text",
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.Write,
+    description: "Write single line of text",
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.Format,
+    description: "Format the content of the active file",
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.Unselect,
+    description: "Unselect text",
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.PositionCursor,
+    description: "Position the cursor",
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.Delete,
+    description: "Delete text",
+  } as QuickPickItem);
+
+  /** 
+   * Settings actions
+   */
+  actions.push({
+    label: "Settings",
+    description: "Settings actions",
+    kind: QuickPickItemKind.Separator,
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.SetSetting,
+    description: "Set a setting",
+  } as QuickPickItem);
+
+  /** 
+   * Terminal actions
+   */
+  actions.push({
+    label: "Terminal",
+    description: "Terminal actions",
+    kind: QuickPickItemKind.Separator,
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.ExecuteTerminalCommand,
+    description: "Execute a terminal command",
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.CloseTerminal,
+    description: "Close the terminal",
+  } as QuickPickItem);
+
+  /** 
+   * Timeout actions
+   */
+  actions.push({
+    label: "Timeout",
+    description: "Timeout actions",
+    kind: QuickPickItemKind.Separator,
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.WaitForTimeout,
+    description: "Wait for a timeout",
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.WaitForInput,
+    description: "Wait for user input",
+  } as QuickPickItem);
+
+  /** 
+   * VSCode actions
+   */
+  actions.push({
+    label: "VSCode",
+    description: "VSCode actions",
+    kind: QuickPickItemKind.Separator,
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.ExecuteVSCodeCommand,
+    description: "Execute a VSCode command",
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.ShowInfoMessage,
+    description: "Show an info message",
+  } as QuickPickItem);
+
+  /** 
+   * Extensibility actions
+   */
+  actions.push({
+    label: "Snippet",
+    description: "Snippet actions",
+    kind: QuickPickItemKind.Separator,
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.Snippet,
+    description: "Insert a snippet",
+  } as QuickPickItem);
+
+  return actions;
+};
+  
