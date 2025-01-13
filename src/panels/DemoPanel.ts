@@ -1,16 +1,19 @@
-import { ThemeColor, TreeItem, TreeView, Uri, commands, window } from "vscode";
+import { ThemeColor, TreeItem, TreeView, commands, window } from "vscode";
 import { ContextKeys } from "../constants/ContextKeys";
 import { FileProvider } from "../services/FileProvider";
-import { DemoFiles, Demos, Subscription } from "../models";
+import { DemoFileCache, DemoFiles, Demos, Subscription } from "../models";
 import { ActionTreeItem, ActionTreeviewProvider } from "../providers/ActionTreeviewProvider";
 import { DemoRunner } from "../services/DemoRunner";
-import { COMMAND, General } from "../constants";
-import { fileExists, parseWinPath } from "../utils";
+import { COMMAND } from "../constants";
+import { parseWinPath } from "../utils";
 import { DemoStatusBar } from "../services/DemoStatusBar";
 import { Extension } from "../services/Extension";
 
 export class DemoPanel {
   private static treeView: TreeView<TreeItem>;
+  private static demoActionsProvider: ActionTreeviewProvider;
+  private static demoFiles: DemoFiles | null | undefined;
+  private static executingDemoFile: DemoFileCache;
 
   public static register() {
     DemoPanel.init();
@@ -19,8 +22,11 @@ export class DemoPanel {
     subscriptions.push(commands.registerCommand(COMMAND.collapseAll, DemoPanel.collapseAll));
   }
 
-  public static update() {
-    DemoPanel.init();
+  public static async update() {
+    await DemoPanel.setDemoFiles();
+    await DemoPanel.setExecutingDemoFile();
+
+    DemoPanel.demoActionsProvider.update();
     DemoStatusBar.update();
   }
 
@@ -37,67 +43,57 @@ export class DemoPanel {
   }
 
   /**
-   * Initialize the command panel
-   * @returns
+   * Retrieves a list of demo commands organized by demo files.
+   *
+   * @returns {ActionTreeItem[]} An array of `ActionTreeItem` objects representing the demo commands.
    */
-  private static async init() {
-    const demoFiles = await FileProvider.getFiles();
+  public static getDemos() {
+    const demoFiles = DemoPanel.demoFiles;
+    const executingDemoFile = DemoPanel.executingDemoFile;
+    
     if (!demoFiles) {
-      DemoPanel.showWelcome();
-      return;
+      return [];
     }
-
-    DemoPanel.registerTreeview(demoFiles);
-  }
-
-  /**
-   * Register all the treeviews
-   */
-  private static async registerTreeview(demoFiles: DemoFiles) {
-    if (!demoFiles) {
-      return;
-    }
-
+    
     let demoKeys = Object.keys(demoFiles);
     demoKeys = demoKeys.sort((aPath, bPath) => {
       aPath = aPath.toLowerCase();
       bPath = bPath.toLowerCase();
-
+    
       if (aPath < bPath) {
         return -1;
       }
-
+    
       if (aPath > bPath) {
         return 1;
       }
-
+    
       return 0;
     });
-
+    
     const accountCommands: ActionTreeItem[] = [];
-
+    
     for (const path of demoKeys) {
       const demos = (demoFiles as any)[path] as Demos;
-      const executingFile = await DemoRunner.getExecutedDemoFile();
-
+    
       const demoSteps = demos.demos.map((demo, idx, allDemos) => {
         let hasExecuted = false;
-        if (executingFile.filePath === path) {
-          hasExecuted = !!executingFile.demo.find((d) => (d.id ? d.id === demo.id : d.idx === idx));
+        if (executingDemoFile.filePath === path) {
+          hasExecuted = !!executingDemoFile.demo.find((d) => (d.id ? d.id === demo.id : d.idx === idx));
         }
-
+    
         let ctxValue = "demo-time.step";
         if (idx === 0) {
           ctxValue = "demo-time.firstStep";
         } else if (idx === allDemos.length - 1) {
           ctxValue = "demo-time.lastStep";
         }
-
+    
         const hasNotes = demo.notes?.path ? true : false;
         if (hasNotes) {
           ctxValue += " demo-time.hasNotes";
         }
-
+    
         const icons = { start: "run", end: "pass-filled" };
         if (demo.icons?.start) {
           icons.start = demo.icons.start;
@@ -105,7 +101,7 @@ export class DemoPanel {
         if (demo.icons?.end) {
           icons.end = demo.icons.end;
         }
-
+    
         return new ActionTreeItem(
           demo.title,
           demo.description,
@@ -128,15 +124,15 @@ export class DemoPanel {
           demo.notes?.path
         );
       });
-
+    
       accountCommands.push(
         new ActionTreeItem(
           demos.title,
           path.split("/").pop() as string,
           {
-            name: executingFile.filePath === path ? "play-circle" : "folder",
+            name: executingDemoFile.filePath === path ? "play-circle" : "folder",
             custom: false,
-            color: executingFile.filePath === path ? new ThemeColor("notebookStatusSuccessIcon.foreground") : undefined,
+            color: executingDemoFile.filePath === path ? new ThemeColor("notebookStatusSuccessIcon.foreground") : undefined,
           },
           undefined,
           undefined,
@@ -150,8 +146,48 @@ export class DemoPanel {
       );
     }
 
+    return accountCommands;
+  }
+
+  /**
+   * Initialize the command panel
+   */
+  private static async init() {
+    const demoFiles = await DemoPanel.setDemoFiles();
+    if (!demoFiles) {
+      DemoPanel.showWelcome();
+      return;
+    }
+    
+    await DemoPanel.setExecutingDemoFile();
+    DemoPanel.registerTreeview();
+  }
+
+  /**
+   * Retrieves the demo files
+   * @returns {Promise<boolean>} True if demo files are available, false otherwise
+   */
+  private static async setDemoFiles(): Promise<boolean> {
+    const demoFiles = await FileProvider.getFiles();
+    DemoPanel.demoFiles = demoFiles;
+    return !!demoFiles;
+  }
+
+  /**
+   * Retrieves the executing demo file
+   */
+  private static async setExecutingDemoFile() {
+    DemoPanel.executingDemoFile = await DemoRunner.getExecutedDemoFile();
+  }
+
+  /**
+   * Register all the treeviews
+   */
+  private static async registerTreeview() {
+    DemoPanel.demoActionsProvider = new ActionTreeviewProvider();
+    DemoPanel.demoActionsProvider.update();
     this.treeView = window.createTreeView("demo-time", {
-      treeDataProvider: new ActionTreeviewProvider(accountCommands),
+      treeDataProvider: DemoPanel.demoActionsProvider,
     });
   }
 
