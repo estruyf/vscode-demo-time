@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.60] - 2025-01-14
+
+- [#37](https://github.com/estruyf/vscode-demo-time/issues/37): Added an URI handler for `next` and `runbyid` commands
+- [#38](https://github.com/estruyf/vscode-demo-time/issues/38): Automatically start the extension when there is a `.demo` folder in the workspace
+
 ## [0.0.59] - 2025-01-13
 
 - Refactor in the tree view provider to avoid flickering when updating the demo steps
