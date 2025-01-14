@@ -1,6 +1,7 @@
 import { Uri, WorkspaceFolder, workspace } from "vscode";
 import { General } from "../constants";
 import { parse as jsonParse } from "jsonc-parser";
+import { Logger } from "../services/Logger";
 
 export const getVariables = async (workspaceFolder: WorkspaceFolder): Promise<{ [key: string]: any} | undefined> => {
   try {
@@ -13,6 +14,6 @@ export const getVariables = async (workspaceFolder: WorkspaceFolder): Promise<{ 
     const content = contentEditor.getText();
     return jsonParse(content);
   } catch (error) {
-    console.error(error);
+    Logger.error((error as Error).message);
   }
 };

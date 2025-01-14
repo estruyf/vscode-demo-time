@@ -1,6 +1,7 @@
 import { Uri, workspace } from 'vscode';
 import { Extension } from "../services/Extension";
 import { fileExists } from './fileExists';
+import { Logger } from '../services/Logger';
 
 export const addExtensionRecommendation = async () => {
   try {
@@ -31,8 +32,7 @@ export const addExtensionRecommendation = async () => {
     contents.recommendations.push(id);
     
     await workspace.fs.writeFile(extensionsFile, new TextEncoder().encode(JSON.stringify(contents, null, 2)));
-  }
-  catch (error) {
-    console.error(error);
+  } catch (error) {
+    Logger.error((error as Error).message);
   }
 };
