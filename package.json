@@ -45,7 +45,9 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "workspaceContains:**/.demo/*"
+  ],
   "main": "./out/extension.js",
   "browser": "./out/extension.js",
   "configurationDefaults": {
