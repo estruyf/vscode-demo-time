@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.59] - 2025-01-13
+
+- Refactor in the tree view provider to avoid flickering when updating the demo steps
+
 ## [0.0.58] - 2025-01-12
 
 - Action grouping in the quick pick selection of the `Demo Time: Add new action to demo step` command

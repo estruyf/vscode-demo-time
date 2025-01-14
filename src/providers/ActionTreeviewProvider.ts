@@ -1,5 +1,6 @@
 import {
   Event,
+  EventEmitter,
   ProviderResult,
   ThemeColor,
   ThemeIcon,
@@ -9,14 +10,16 @@ import {
   Uri,
 } from "vscode";
 import { Extension } from "../services/Extension";
+import { DemoPanel } from "../panels/DemoPanel";
 
 export class ActionTreeviewProvider implements TreeDataProvider<any> {
-  onDidChangeTreeData?: Event<TreeItem | null | undefined> | undefined;
+  private _onDidChangeTreeData = new EventEmitter<TreeItem | undefined>();
+  public readonly onDidChangeTreeData: Event<TreeItem | undefined> = this._onDidChangeTreeData.event;
 
   actions: ActionTreeItem[];
 
-  constructor(actions: ActionTreeItem[] = []) {
-    this.actions = [...actions];
+  constructor() {
+    this.actions = DemoPanel.getDemos();
   }
 
   getTreeItem(element: ActionTreeItem): TreeItem | Thenable<TreeItem> {
@@ -27,6 +30,11 @@ export class ActionTreeviewProvider implements TreeDataProvider<any> {
     return element && (element as any).children
       ? Promise.resolve((element as any).children)
       : Promise.resolve(this.actions);
+  }
+
+  update(): void {
+    this.actions = DemoPanel.getDemos();
+    this._onDidChangeTreeData.fire(undefined);
   }
 }
 
