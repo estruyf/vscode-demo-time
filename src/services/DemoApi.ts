@@ -51,7 +51,7 @@ export class DemoApi {
    * @param {number} port - The port number on which the API server will listen.
    * @returns {Promise<void>} A promise that resolves when the server has started.
    */
-  private static async start(port: number) {
+  private static async start(port: number): Promise<void> {
     Logger.info(`Starting API on port ${port}`);
     const app = express();
     app.use(express.json());

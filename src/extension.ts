@@ -9,6 +9,7 @@ import { DemoStatusBar } from "./services/DemoStatusBar";
 import { PresenterView } from "./presenterView/PresenterView";
 import { NotesService } from "./services/NotesService";
 import { DemoApi } from "./services/DemoApi";
+import { UriHandler } from "./services/UriHandler";
 
 export async function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);
@@ -23,6 +24,7 @@ export async function activate(context: vscode.ExtensionContext) {
   PresenterView.register();
   NotesService.registerCommands();
   DemoApi.register();
+  UriHandler.register();
 
   console.log("Demo time is active!");
 }
