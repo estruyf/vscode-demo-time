@@ -21,7 +21,9 @@ export class DecoratorService {
   public static register() {
     const borderColor =
       Extension.getInstance().getSetting<string>(Config.highlight.borderColor) || "rgba(255, 0, 0, 0.5)";
-    const background = Extension.getInstance().getSetting<string>(Config.highlight.background) || "var(--vscode-editor-selectionBackground)";
+    const background =
+      Extension.getInstance().getSetting<string>(Config.highlight.background) ||
+      "var(--vscode-editor-selectionBackground)";
 
     let blur = Extension.getInstance().getSetting<number>(Config.highlight.blur) || 0;
     if (blur < 0) {
@@ -55,20 +57,20 @@ export class DecoratorService {
       ...genericStyles,
       textDecoration: "none;",
       borderWidth: "2px 2px 0 2px",
-      opacity: "1; filter: blur(0); padding-left: 5px;",
+      opacity: "1; filter: blur(0);",
     });
 
     DecoratorService.betweenBlockDecorator = window.createTextEditorDecorationType({
       ...genericStyles,
       borderWidth: "0 2px 0 2px",
-      opacity: "1; filter: blur(0); padding-left: 5px;",
+      opacity: "1; filter: blur(0);",
     });
 
     DecoratorService.endBlockDecorator = window.createTextEditorDecorationType({
       ...genericStyles,
       textDecoration: "none;",
       borderWidth: "0 2px 2px 2px",
-      opacity: "1; filter: blur(0); padding-left: 5px;",
+      opacity: "1; filter: blur(0);",
     });
 
     const opacityAndBlur = `${opacity}; filter: blur(${blur}px);`;
@@ -89,7 +91,7 @@ export class DecoratorService {
 
     // Remove the previous highlight
     DecoratorService.unselect(textEditor);
-    
+
     if (typeof zoomLevel !== "undefined" || zoomEnabled) {
       DecoratorService.isZoomed = true;
       let level = zoomEnabled;
@@ -109,7 +111,7 @@ export class DecoratorService {
     // Get before and after lines
     const beforeLine = range.start.line;
     const afterLine = range.end.line + 1;
-    
+
     // Set the blur on the before and after lines
     let blurRanges = [];
     if (beforeLine >= 0) {

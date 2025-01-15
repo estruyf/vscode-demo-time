@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.61] - 2025-01-15
+
+- Removed highlight left padding
+
 ## [0.0.60] - 2025-01-14
 
 - [#37](https://github.com/estruyf/vscode-demo-time/issues/37): Added an URI handler for `next` and `runbyid` commands
