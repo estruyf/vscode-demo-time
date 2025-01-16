@@ -1040,6 +1040,7 @@ You can also explore a comprehensive example in the following GitHub Repositorie
 - [presentation-github-actions](https://github.com/estruyf/presentation-github-actions) 
 - [presentation-m365-playwright-github-actions](https://github.com/estruyf/presentation-m365-playwright-github-actions)
 
+
 ## Support
 
 If you enjoy my work and find them useful, consider sponsor me and the ecosystem to help Open Source sustainable. Thank you!
@@ -1054,7 +1055,7 @@ If you enjoy my work and find them useful, consider sponsor me and the ecosystem
 
 <p align="center">
   <a href="https://visitorbadge.io/status?path=https%3A%2F%2Fgithub.com%2Festruyf%2Fvscode-demo-time">
-    <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Festruyf%2Fvscode-demo-time&labelColor=%23555555&countColor=%2397ca00" height="25px" alt="Front Matter visitors" />
+    <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Festruyf%2Fvscode-demo-time&labelColor=%23555555&countColor=%2397ca00" height="25px" alt="Demo Time visitors" />
   </a>
 </p>
 
