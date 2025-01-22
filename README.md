@@ -230,7 +230,7 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
 
 ```json
 {
-  "action": "closeAll",
+  "action": "closeAll"
 }
 ```
 
@@ -518,7 +518,7 @@ Here is an example of how you can hide the activity and status bar in Visual Stu
     "setting": "workbench.statusBar.visible",
     "value": false
   }
-}, 
+},
 {
   "action": "setSetting",
   "args": {
@@ -537,7 +537,7 @@ To reset the settings, you can use the following steps:
     "key": "workbench.statusBar.visible",
     "value": null
   }
-}, 
+},
 {
   "action": "setSetting",
   "setting": {
@@ -637,6 +637,27 @@ To reset the settings, you can use the following steps:
 {
   "action": "showInfoMessage",
   "message": "<message>"
+}
+```
+
+  </td>
+  </tr>
+  <tr>
+    <td>
+      <code>setState</code>
+    </td>
+    <td>
+      Set a state in the extension which is cleared on startup or when you reset the demos. You can use the state value in your demo steps by using the following `{STATE_<key>}` syntax.
+    </td>
+    <td>
+
+```json
+{
+  "action": "setState",
+  "state": {
+    "key": "<key>",
+    "value": "<value>"
+  }
 }
 ```
 
@@ -775,35 +796,35 @@ In the `insert_and_highlight.json` file, you can define the steps you want to ex
 
 ## Settings
 
-| Setting | Description | Default |
-| --- | --- | --- |
-| `demoTime.highlightBackground` | The background color of the highlighted code. | `var(--vscode-editor-selectionBackground)` |
-| `demoTime.highlightBorderColor` | The border color of the highlighted code. | `rgba(255,0,0,0.5)` |
-| `demoTime.highlightBlur` | Blur effect on the text which is not highlighted. | `0` |
-| `demoTime.highlightOpacity` | The opacity of the text which is not highlighted. Number between 0 and 1. | `0.5` |
-| `demoTime.highlightZoomEnabled` | Enable zooming when highlighting code. | `false` \| `number (zoom level)` |
-| `demoTime.previousEnabled` | Enable the previous command when in presentation mode. | `false` |
-| `demoTime.showClock` | Show a clock in the status bar. | `true` |
-| `demoTime.timer` | Count down timer for how long the session should last. If not set, it will not count down. The value is the number of minutes. | `null` |
-| `demoTime.lineInsertionDelay` | The speed in milliseconds for inserting lines. If you set it to `0`, it will insert its content immediately. | `25` |
-| `demoTime.api.enabled` | Enable the API to control the extension. | `false` |
-| `demoTime.api.port` | The port on which the API should run. | `3710` |
+| Setting                         | Description                                                                                                                    | Default                                    |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------ |
+| `demoTime.highlightBackground`  | The background color of the highlighted code.                                                                                  | `var(--vscode-editor-selectionBackground)` |
+| `demoTime.highlightBorderColor` | The border color of the highlighted code.                                                                                      | `rgba(255,0,0,0.5)`                        |
+| `demoTime.highlightBlur`        | Blur effect on the text which is not highlighted.                                                                              | `0`                                        |
+| `demoTime.highlightOpacity`     | The opacity of the text which is not highlighted. Number between 0 and 1.                                                      | `0.5`                                      |
+| `demoTime.highlightZoomEnabled` | Enable zooming when highlighting code.                                                                                         | `false` \| `number (zoom level)`           |
+| `demoTime.previousEnabled`      | Enable the previous command when in presentation mode.                                                                         | `false`                                    |
+| `demoTime.showClock`            | Show a clock in the status bar.                                                                                                | `true`                                     |
+| `demoTime.timer`                | Count down timer for how long the session should last. If not set, it will not count down. The value is the number of minutes. | `null`                                     |
+| `demoTime.lineInsertionDelay`   | The speed in milliseconds for inserting lines. If you set it to `0`, it will insert its content immediately.                   | `25`                                       |
+| `demoTime.api.enabled`          | Enable the API to control the extension.                                                                                       | `false`                                    |
+| `demoTime.api.port`             | The port on which the API should run.                                                                                          | `3710`                                     |
 
 > The `demoTime.previousEnabled` is by default disabled to avoid conflicts when the previous action inserted content into a file.
 > When you enable this setting, you can use the `Demo Time: Previous` command to go back to the previous step or use the left clicker button.
 
 ## Commands
 
-| Command | Description |
-| --- | --- |
-| `Demo Time: Start` | Starts the demo or runs the next demo step. |
-| `Demo Time: Previous` | Go back to the previous demo step (only in presentation mode and when the `demoTime.previousEnabled` setting is enabled). |
-| `Demo Time: Add as demo step` | Add the current selection as a demo step to the demo file. |
-| `Demo Time: Reset` | Reset all the demos. |
-| `Demo Time: Start countdown` | Start the countdown clock (you need to define the time in the `demoTime.timer` setting). |
-| `Demo Time: Reset countdown` | Reset the countdown clock. |
+| Command                               | Description                                                                                                                                                |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Demo Time: Start`                    | Starts the demo or runs the next demo step.                                                                                                                |
+| `Demo Time: Previous`                 | Go back to the previous demo step (only in presentation mode and when the `demoTime.previousEnabled` setting is enabled).                                  |
+| `Demo Time: Add as demo step`         | Add the current selection as a demo step to the demo file.                                                                                                 |
+| `Demo Time: Reset`                    | Reset all the demos.                                                                                                                                       |
+| `Demo Time: Start countdown`          | Start the countdown clock (you need to define the time in the `demoTime.timer` setting).                                                                   |
+| `Demo Time: Reset countdown`          | Reset the countdown clock.                                                                                                                                 |
 | `Demo Time: Toggle presentation mode` | Toggle the presentation mode. In this mode you'll be able to use your clicker or arrow keys for the `Demo Time: Start` and `Demo Time: Previous` commands. |
-| `Demo Time: Show presenter view` | Open the presenter view which you can detach and move to another screen while presenting. |
+| `Demo Time: Show presenter view`      | Open the presenter view which you can detach and move to another screen while presenting.                                                                  |
 
 > The `Demo Time: Start` and `Demo Time: Previous` commands have a keybinding assigned to them.
 > You can override these keybindings in your Visual Studio Code settings.
@@ -887,7 +908,7 @@ Here is an example where the highlight border and background color are customize
   "demoTime.highlightBorderColor": "transparent",
   "demoTime.highlightBackground": "rgba(19, 142, 151, 0.2)",
   "demoTime.highlightOpacity": 0.5,
-  "demoTime.highlightBlur": 2,
+  "demoTime.highlightBlur": 2
 }
 ```
 
@@ -896,6 +917,12 @@ Here is an example where the highlight border and background color are customize
 ### Working with variables
 
 You can define variables in a `variables.json` file in the `.demo` folder. You can reference these variables in your demo steps by using curly braces `{variable_name}`.
+
+The extension has also built-in support for a couple of predefined variables:
+
+- `{DT_INPUT}`: The extension will ask you to provide a value for this variable when the demo gets executed.
+- `{DT_CLIPBOARD}`: The value in your clipboard will be used for this variable.
+- `{STATE_<key>}`: The value of the state key which you set via the `setState` action, will be used for this variable.
 
 #### Example variables file
 
@@ -960,7 +987,7 @@ In the file, the placeholders should be defined like this:
 
 ```javascript
 // Start of demo1
-const ext = 'Demo Time';
+const ext = "Demo Time";
 // End of demo1
 ```
 
@@ -968,9 +995,9 @@ const ext = 'Demo Time';
 
 When you want to insert content to a file, you can use the `content` or `contentPath` properties in the demo step.
 
-| Property | Description |
-| --- | --- |
-| `content` | This property allows you to add the content directly in the JSON file, but this can make your JSON file quite big and it can be hard to read. |
+| Property      | Description                                                                                                                                                                                                      |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `content`     | This property allows you to add the content directly in the JSON file, but this can make your JSON file quite big and it can be hard to read.                                                                    |
 | `contentPath` | This property allows you to reference a file in the `.demo` folder. This way you can keep your JSON file clean and add the content in separate files. **Important**: the path is relative to the `.demo` folder. |
 
 ### Presentation view
@@ -1037,9 +1064,8 @@ Here is an example demo:
 
 You can also explore a comprehensive example in the following GitHub Repositories:
 
-- [presentation-github-actions](https://github.com/estruyf/presentation-github-actions) 
+- [presentation-github-actions](https://github.com/estruyf/presentation-github-actions)
 - [presentation-m365-playwright-github-actions](https://github.com/estruyf/presentation-m365-playwright-github-actions)
-
 
 ## Support
 
