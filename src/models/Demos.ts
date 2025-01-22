@@ -46,6 +46,7 @@ export interface Step {
   args?: any;
   lineInsertionDelay?: number;
   setting?: Setting;
+  state?: State;
   dest?: string;
   zoom?: number;
   overwrite?: boolean;
@@ -55,4 +56,9 @@ export interface Step {
 export interface Setting {
   key: string;
   value: string | number | boolean | object | null;
+}
+
+export interface State {
+  key: string;
+  value: string;
 }

@@ -1,5 +1,5 @@
 import { Uri, commands, window } from "vscode";
-import { COMMAND } from "../constants";
+import { COMMAND, Config } from "../constants";
 import { Action, Demo, Demos, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import { FileProvider } from "./FileProvider";
@@ -136,10 +136,10 @@ export class DemoCreator {
       actions.push(Action.Write);
     }
 
-    const action = await window.showQuickPick(actions, {
-      title: "Demo time!",
+    const action = (await window.showQuickPick(actions, {
+      title: Config.title,
       placeHolder: "What kind of action step do you want to perform?",
-    }) as unknown as Action;
+    })) as unknown as Action;
 
     if (!action) {
       return;
@@ -198,7 +198,7 @@ export class DemoCreator {
 
     const actions = getActionOptions();
     const action = await window.showQuickPick(actions, {
-      title: "Demo time!",
+      title: Config.title,
       placeHolder: "What kind of action step do you want to add?",
     });
 
@@ -228,14 +228,14 @@ export class DemoCreator {
   /**
    * Prompts the user to decide where to add a new step in the demo.
    * The user can choose to create a new demo step or insert it into an existing demo.
-   * 
+   *
    * @param demo - The current demos object where the step will be added.
    * @param step - The step to be added to the demo.
    * @returns A promise that resolves to the updated list of demos or undefined if the operation was cancelled.
    */
-  private static async askWhereToAddStep(demo: Demos, step: Step): Promise<Demo[]  | undefined> {
+  private static async askWhereToAddStep(demo: Demos, step: Step): Promise<Demo[] | undefined> {
     const demoStep = await window.showQuickPick(["New demo step", "Insert in existing demo"], {
-      title: "Demo time!",
+      title: Config.title,
       placeHolder: "Where do you want to insert the step?",
     });
 
@@ -245,7 +245,7 @@ export class DemoCreator {
 
     if (demoStep === "New demo step") {
       const title = await window.showInputBox({
-        title: "Demo time!",
+        title: Config.title,
         placeHolder: "Enter the step title",
       });
 
@@ -254,7 +254,7 @@ export class DemoCreator {
       }
 
       const description = await window.showInputBox({
-        title: "Demo time!",
+        title: Config.title,
         placeHolder: "Enter the step description",
       });
 
@@ -274,7 +274,7 @@ export class DemoCreator {
         const demoToEdit = await window.showQuickPick(
           demo.demos.map((demo) => demo.title),
           {
-            title: "Demo time!",
+            title: Config.title,
             placeHolder: "Select a demo to add the step",
           }
         );

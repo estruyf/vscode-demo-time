@@ -1,4 +1,5 @@
 export const Config = {
+  title: "Demo Time!",
   root: "demoTime",
   presentationMode: {
     previousEnabled: "previousEnabled",
@@ -20,5 +21,5 @@ export const Config = {
   api: {
     enabled: "api.enabled",
     port: "api.port",
-  }
+  },
 };

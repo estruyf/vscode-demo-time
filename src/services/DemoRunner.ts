@@ -1,4 +1,4 @@
-import { PresenterView } from './../presenterView/PresenterView';
+import { PresenterView } from "./../presenterView/PresenterView";
 import { COMMAND, Config, ContextKeys, StateKeys, WebViewMessages } from "../constants";
 import { Action, Demo, DemoFileCache, Demos, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
@@ -33,6 +33,8 @@ import {
   getPreviousDemoFile,
   removeDemoDuplicates,
   writeText,
+  getUserInput,
+  clearVariablesState,
 } from "../utils";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DecoratorService } from "./DecoratorService";
@@ -40,8 +42,8 @@ import { Notifications } from "./Notifications";
 import { parse as jsonParse } from "jsonc-parser";
 import { Logger } from "./Logger";
 import { insertVariables } from "../utils/insertVariables";
-import { NotesService } from './NotesService';
-import { getPositionAndRange } from '../utils/getPositionAndRange';
+import { NotesService } from "./NotesService";
+import { getPositionAndRange } from "../utils/getPositionAndRange";
 
 const DEFAULT_START_VALUE = {
   filePath: "",
@@ -86,11 +88,12 @@ export class DemoRunner {
   /**
    * Sets the context key for enabling or disabling the "previous" functionality
    * based on the configuration setting.
-   * 
+   *
    * @returns {Promise<void>} A promise that resolves when the context key has been set.
    */
   public static async allowPrevious(): Promise<void> {
-    const previousEnabled = Extension.getInstance().getSetting<boolean>(Config.presentationMode.previousEnabled) || false;
+    const previousEnabled =
+      Extension.getInstance().getSetting<boolean>(Config.presentationMode.previousEnabled) || false;
     await commands.executeCommand("setContext", ContextKeys.previousEnabled, previousEnabled);
   }
 
@@ -139,7 +142,8 @@ export class DemoRunner {
   private static async reset(): Promise<void> {
     const ext = Extension.getInstance();
     const resetContent = Object.assign({}, DEFAULT_START_VALUE);
-    ext.setState(StateKeys.executingDemoFile, resetContent);
+    await ext.setState(StateKeys.executingDemoFile, resetContent);
+    await clearVariablesState();
     PresenterView.postMessage(WebViewMessages.toWebview.updateRunningDemos, resetContent);
     DemoRunner.togglePresentationMode(false);
     DemoPanel.update();
@@ -147,10 +151,10 @@ export class DemoRunner {
 
   /**
    * Starts the demo runner or runs the next demo step.
-   * 
+   *
    * @returns {Promise<void>} A promise that resolves when the demo runner has started.
    */
-  private static async start(item: ActionTreeItem | { demoFilePath: string; description: string; }): Promise<void> {
+  private static async start(item: ActionTreeItem | { demoFilePath: string; description: string }): Promise<void> {
     const executingFile = await DemoRunner.getExecutedDemoFile();
 
     const demoFile = await DemoRunner.getDemoFile(item);
@@ -163,7 +167,9 @@ export class DemoRunner {
 
     // Get the first demo step to start
     const lastDemo = executingFile.demo[executingFile.demo.length - 1];
-    const lastDemoIdx = !lastDemo ? -1 : demos.findIndex((d, idx) => (d.id ? d.id === lastDemo.id : idx === lastDemo.idx));
+    const lastDemoIdx = !lastDemo
+      ? -1
+      : demos.findIndex((d, idx) => (d.id ? d.id === lastDemo.id : idx === lastDemo.idx));
     const nextDemoIdx = lastDemoIdx + 1;
     const nextDemo = demos[nextDemoIdx];
 
@@ -209,10 +215,9 @@ export class DemoRunner {
     NotesService.showNotes(nextDemo);
   }
 
-  
   /**
    * Executes the previous demo step.
-   * 
+   *
    * @returns {Promise<void>} A promise that resolves when the previous demo step has been executed.
    */
   private static async previous(): Promise<void> {
@@ -229,7 +234,6 @@ export class DemoRunner {
       Notifications.error("No demo steps found");
       return;
     }
-
 
     // Get the previous demo step to start
     const lastDemo = executingFile.demo[executingFile.demo.length - 1];
@@ -386,7 +390,7 @@ export class DemoRunner {
     let variables = await getVariables(workspaceFolder);
     if (variables && Object.keys(variables)) {
       let tempSteps = JSON.stringify(demoSteps);
-      tempSteps = insertVariables(tempSteps, variables);
+      tempSteps = await insertVariables(tempSteps, variables);
       demoSteps = jsonParse(tempSteps);
     }
 
@@ -402,11 +406,11 @@ export class DemoRunner {
 
           // Replace the argument variables in the snippet
           const args = step.args || {};
-          snippet = insertVariables(snippet, args);
+          snippet = await insertVariables(snippet, args);
 
           // Replace the variables in the snippet
           if (variables && Object.keys(variables)) {
-            snippet = insertVariables(snippet, variables);
+            snippet = await insertVariables(snippet, variables);
           }
 
           const newSteps = jsonParse(snippet);
@@ -420,9 +424,17 @@ export class DemoRunner {
     }
 
     // Loop over all the demo steps and execute them.
-    for (const step of stepsToExecute) {
+    for (let step of stepsToExecute) {
       if (!step.action) {
         continue;
+      }
+
+      // Verify if the current step has a `STATE_` variable which needs to be updated
+      // This can happen when the `setState` action is used during the current demo execution (previous step)
+      let stepJson = JSON.stringify(step);
+      if (stepJson.includes("STATE_") && variables) {
+        stepJson = await insertVariables(stepJson, variables);
+        step = jsonParse(stepJson);
       }
 
       // Wait for the specified timeout
@@ -430,11 +442,7 @@ export class DemoRunner {
         await sleep(step.timeout || 1000);
         continue;
       } else if (step.action === Action.WaitForInput) {
-        const answer = await window.showInputBox({
-          title: "Demo time!",
-          prompt: "Press any key to continue",
-          ignoreFocusOut: true,
-        });
+        const answer = await getUserInput("Press any key to continue");
         if (answer === undefined) {
           return;
         }
@@ -444,11 +452,32 @@ export class DemoRunner {
       // Update settings
       if (step.action === Action.SetSetting) {
         if (!step.setting || !step.setting.key || !step.setting.value) {
-          Notifications.error("No setting or value specified");
+          Notifications.error("No setting key or value specified");
           continue;
         }
 
-        await workspace.getConfiguration().update(step.args.setting, step.args.value === null ? undefined : step.args.value, ConfigurationTarget.Workspace);
+        await workspace
+          .getConfiguration()
+          .update(
+            step.args.setting,
+            step.args.value === null ? undefined : step.args.value,
+            ConfigurationTarget.Workspace
+          );
+        continue;
+      }
+
+      // Set state
+      if (step.action === Action.SetState) {
+        if (!step.state || !step.state.key || !step.state.value) {
+          Notifications.error("No state key or value specified");
+          continue;
+        }
+
+        const ext = Extension.getInstance();
+        const stateVariables = ext.getState<{ [key: string]: string }>(StateKeys.variables) || {};
+        stateVariables[step.state.key] = step.state.value;
+        await ext.setState(StateKeys.variables, stateVariables);
+        variables = await getVariables(workspaceFolder);
         continue;
       }
 
@@ -499,7 +528,7 @@ export class DemoRunner {
           Notifications.error("No active text editor found");
           return;
         }
-        
+
         const position = editor.selection.active;
         const content = step.content || "";
 
@@ -937,7 +966,7 @@ export class DemoRunner {
 
   /**
    * Copies a file from the specified URI to a new destination within the workspace folder.
-   * 
+   *
    * @param workspaceFolder - The workspace folder where the file will be copied.
    * @param fileUri - The URI of the file to be copied.
    * @param step - The step object containing the destination path.

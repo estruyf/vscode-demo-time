@@ -28,9 +28,10 @@ export enum Action {
   // VSCode
   ExecuteVSCodeCommand = "executeVSCodeCommand",
   ShowInfoMessage = "showInfoMessage",
+  SetState = "setState",
   // Terminal
   ExecuteTerminalCommand = "executeTerminalCommand",
   CloseTerminal = "closeTerminal",
   // Extensibility
-  Snippet = "snippet"
+  Snippet = "snippet",
 }

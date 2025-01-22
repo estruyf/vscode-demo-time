@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.62] - 2025-01-22
+
+- [#40](https://github.com/estruyf/vscode-demo-time/issues/40): Added the `setState` action to set a state key/value. Use the state as `STATE_<key>` in the demo steps
+- [#41](https://github.com/estruyf/vscode-demo-time/issues/41): Added the `DT_INPUT` and `DT_CLIPBOARD` variables to get the input and clipboard content in the demo steps
+
 ## [0.0.61] - 2025-01-15
 
 - Removed highlight left padding

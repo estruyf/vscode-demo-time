@@ -1,7 +1,7 @@
 import { Uri, window, workspace } from "vscode";
 import { Extension } from "./Extension";
 import { DemoFiles, Demos } from "../models";
-import { General } from "../constants";
+import { Config, General } from "../constants";
 import { parse as jsonParse } from "jsonc-parser";
 
 export class FileProvider {
@@ -72,7 +72,7 @@ export class FileProvider {
     });
 
     const demoFilePick = await window.showQuickPick(demoFileOptions, {
-      title: "Demo time!",
+      title: Config.title,
       placeHolder: "Select a demo file",
     });
 
