@@ -18,7 +18,7 @@ export const getVariables = async (workspaceFolder: WorkspaceFolder): Promise<{ 
     const ext = Extension.getInstance();
     const stateVariables = ext.getState<{ [key: string]: string }>(StateKeys.variables) || {};
     for (const key of Object.keys(stateVariables)) {
-      defaultVariables[`STATE_${key}`] = stateVariables[key];
+      defaultVariables[key] = stateVariables[key];
     }
 
     const contentUri = Uri.joinPath(workspaceFolder.uri, General.demoFolder, General.variablesFile);

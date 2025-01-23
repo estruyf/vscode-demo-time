@@ -32,6 +32,7 @@ export enum Action {
   // Terminal
   ExecuteTerminalCommand = "executeTerminalCommand",
   CloseTerminal = "closeTerminal",
+  ExecuteScript = "executeScript",
   // Extensibility
   Snippet = "snippet",
 }

@@ -40,6 +40,7 @@ export interface Step {
   startPlaceholder?: string;
   endPlaceholder?: string;
 
+  id?: string;
   timeout?: number;
   command?: string;
   message?: string;
