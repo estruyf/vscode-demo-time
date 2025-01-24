@@ -77,7 +77,7 @@ export class DemoStatusBar {
 
       if (nextDemo) {
         DemoStatusBar.nextDemo = nextDemo;
-        DemoStatusBar.statusBarItem.text = `$(rocket) ${nextDemo.title}`;
+        DemoStatusBar.statusBarItem.text = `$(dt-logo) ${nextDemo.title}`;
         DemoStatusBar.statusBarItem.tooltip = nextDemo.description;
         DemoStatusBar.statusBarItem.show();
       } else {

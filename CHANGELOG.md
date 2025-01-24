@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.63] - 2025-01-24
+
+- Update the rocket icon to the Demo Time logo in the status bar
+
 ## [0.0.62] - 2025-01-22
 
 - [#40](https://github.com/estruyf/vscode-demo-time/issues/40): Added the `setState` action to set a state key/value. Use the state as `STATE_<key>` in the demo steps
