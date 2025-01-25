@@ -6,6 +6,7 @@ import { Demo, Subscription } from "../models";
 import { Extension } from "./Extension";
 import { getNextDemoFile } from "../utils";
 import { PresenterView } from "../presenterView/PresenterView";
+import { Logger } from "./Logger";
 
 export class DemoStatusBar {
   private static statusBarItem: StatusBarItem;
@@ -19,13 +20,7 @@ export class DemoStatusBar {
     subscriptions.push(commands.registerCommand(COMMAND.resetCountdown, DemoStatusBar.resetCountdown));
     commands.executeCommand("setContext", ContextKeys.countdown, false);
 
-    if (!DemoStatusBar.statusBarItem) {
-      DemoStatusBar.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left, 100000);
-      DemoStatusBar.statusBarItem.command = COMMAND.start;
-
-      DemoStatusBar.statusBarItem.backgroundColor = new ThemeColor("statusBarItem.warningBackground");
-      DemoStatusBar.statusBarItem.color = new ThemeColor("statusBarItem.warningForeground");
-    }
+    DemoStatusBar.createNextDemoAction();
 
     DemoStatusBar.update();
 
@@ -39,6 +34,16 @@ export class DemoStatusBar {
 
   public static getCountdownStarted() {
     return DemoStatusBar.countdownStarted;
+  }
+
+  public static createNextDemoAction() {
+    if (!DemoStatusBar.statusBarItem) {
+      DemoStatusBar.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left, 100000);
+      DemoStatusBar.statusBarItem.command = COMMAND.start;
+
+      DemoStatusBar.statusBarItem.backgroundColor = new ThemeColor("statusBarItem.warningBackground");
+      DemoStatusBar.statusBarItem.color = new ThemeColor("statusBarItem.warningForeground");
+    }
   }
 
   public static async showTimer() {
@@ -76,15 +81,20 @@ export class DemoStatusBar {
       const nextDemo = executingDemos[crntDemoIdx + 1];
 
       if (nextDemo) {
+        DemoStatusBar.createNextDemoAction();
+
+        Logger.info(`Next demo: ${nextDemo.title}`);
         DemoStatusBar.nextDemo = nextDemo;
-        DemoStatusBar.statusBarItem.text = `$(rocket) ${nextDemo.title}`;
-        DemoStatusBar.statusBarItem.tooltip = nextDemo.description;
+        DemoStatusBar.statusBarItem.text = `$(dt-logo) ${nextDemo.title}`;
+        DemoStatusBar.statusBarItem.tooltip = nextDemo.description || `Next demo: ${nextDemo.title}`;
         DemoStatusBar.statusBarItem.show();
       } else {
+        Logger.info("No next demo found");
         DemoStatusBar.nextDemo = undefined;
         DemoStatusBar.statusBarItem.hide();
       }
     } else {
+      Logger.info("No next demo file path found");
       DemoStatusBar.nextDemo = undefined;
       DemoStatusBar.statusBarItem.hide();
     }
