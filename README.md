@@ -696,6 +696,26 @@ To reset the settings, you can use the following steps:
   </tr>
   <tr>
     <td>
+      <code>executeScript</code>
+    </td>
+    <td>
+      Execute a script in the background of which you can use the output in the next steps with `{STATE_<script id>}` syntax.
+    </td>
+    <td>
+
+```json
+{
+  "action": "executeScript",
+  "id": "<script id>",
+  "path": "<script to execute>",
+  "command": "node" // Can be powershell, bash, shell, python, etc.
+}
+```
+
+  </td>
+  </tr>
+  <tr>
+    <td>
       <code>closeTerminal</code>
     </td>
     <td>
@@ -922,6 +942,7 @@ The extension has also built-in support for a couple of predefined variables:
 
 - `{DT_INPUT}`: The extension will ask you to provide a value for this variable when the demo gets executed.
 - `{DT_CLIPBOARD}`: The value in your clipboard will be used for this variable.
+- `{SCRIPT_<key>}`: The output of the script which you executed via the `executeScript` action, will be used for this variable.
 - `{STATE_<key>}`: The value of the state key which you set via the `setState` action, will be used for this variable.
 
 #### Example variables file

@@ -1,11 +1,9 @@
 # Change Log
 
-## [0.0.63] - 2025-01-23
-
-- [#40](https://github.com/estruyf/vscode-demo-time/issues/40): Added the `executeScript` action to execute a script in the background and store the result in a `SCRIPT_<script ID>` variable
-## [0.0.63] - 2025-01-24
+## [0.0.63] - 2025-01-25
 
 - Update the rocket icon to the Demo Time logo in the status bar
+- [#40](https://github.com/estruyf/vscode-demo-time/issues/40): Added the `executeScript` action to execute a script in the background and store the result in a `SCRIPT_<script ID>` variable
 
 ## [0.0.62] - 2025-01-22
 
