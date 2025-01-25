@@ -647,7 +647,7 @@ To reset the settings, you can use the following steps:
       <code>setState</code>
     </td>
     <td>
-      Set a state in the extension which is cleared on startup or when you reset the demos. You can use the state value in your demo steps by using the following `{STATE_<key>}` syntax.
+      Set a state in the extension which is cleared on startup or when you reset the demos. You can use the state value in your demo steps by using the following <code>{STATE_<key>}</code> syntax.
     </td>
     <td>
 
@@ -699,7 +699,7 @@ To reset the settings, you can use the following steps:
       <code>executeScript</code>
     </td>
     <td>
-      Execute a script in the background of which you can use the output in the next steps with `{STATE_<script id>}` syntax.
+      Execute a script in the background of which you can use the output in the next steps with <code>{STATE_<script id>}</code> syntax.
     </td>
     <td>
 
