@@ -1,5 +1,5 @@
 export const Config = {
-  title: "Demo Time!",
+  title: "Demo Time",
   root: "demoTime",
   presentationMode: {
     previousEnabled: "previousEnabled",

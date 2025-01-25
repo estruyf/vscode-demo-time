@@ -44,6 +44,8 @@ import { Logger } from "./Logger";
 import { insertVariables } from "../utils/insertVariables";
 import { NotesService } from "./NotesService";
 import { getPositionAndRange } from "../utils/getPositionAndRange";
+import { ScriptExecutor } from "./ScriptExecutor";
+import { StateManager } from "./StateManager";
 
 const DEFAULT_START_VALUE = {
   filePath: "",
@@ -429,10 +431,10 @@ export class DemoRunner {
         continue;
       }
 
-      // Verify if the current step has a `STATE_` variable which needs to be updated
+      // Verify if the current step has a `STATE_` or `SCRIPT_` variable which needs to be updated
       // This can happen when the `setState` action is used during the current demo execution (previous step)
       let stepJson = JSON.stringify(step);
-      if (stepJson.includes("STATE_") && variables) {
+      if ((stepJson.includes(StateKeys.prefix.state) || stepJson.includes(StateKeys.prefix.script)) && variables) {
         stepJson = await insertVariables(stepJson, variables);
         step = jsonParse(stepJson);
       }
@@ -470,13 +472,10 @@ export class DemoRunner {
       if (step.action === Action.SetState) {
         if (!step.state || !step.state.key || !step.state.value) {
           Notifications.error("No state key or value specified");
-          continue;
+          return;
         }
 
-        const ext = Extension.getInstance();
-        const stateVariables = ext.getState<{ [key: string]: string }>(StateKeys.variables) || {};
-        stateVariables[step.state.key] = step.state.value;
-        await ext.setState(StateKeys.variables, stateVariables);
+        await StateManager.update(`${StateKeys.prefix.state}${step.state.key}`, step.state.value);
         variables = await getVariables(workspaceFolder);
         continue;
       }
@@ -518,6 +517,12 @@ export class DemoRunner {
       // Run the specified terminal command
       if (step.action === Action.CloseTerminal) {
         DemoRunner.closeTerminal(step.terminalId);
+        continue;
+      }
+
+      if (step.action === Action.ExecuteScript) {
+        await ScriptExecutor.run(step);
+        variables = await getVariables(workspaceFolder);
         continue;
       }
 
