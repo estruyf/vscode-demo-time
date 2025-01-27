@@ -149,7 +149,7 @@ export class DemoCreator {
     const end = selection.end.line;
 
     let position: string | number = selection.start.line + 1;
-    if (action !== "insert" && action !== "unselect") {
+    if (action !== Action.Insert && action !== Action.Unselect) {
       position = start === end ? start + 1 : `${start + 1}:${end + 1}`;
     }
 
@@ -160,17 +160,17 @@ export class DemoCreator {
     };
 
     // Unselect doesn't need the position
-    if (action === "unselect") {
+    if (action === Action.Unselect) {
       delete step.position;
     }
 
     // The save action doesn't need the position and path
-    if (action === "save") {
+    if (action === Action.Save) {
       delete step.position;
       delete step.path;
     }
 
-    if (action === "insert" || action === "write") {
+    if (action === Action.Insert || action === Action.Write) {
       step.content = modifiedText;
     }
 
