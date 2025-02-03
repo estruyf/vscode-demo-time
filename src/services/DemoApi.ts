@@ -10,7 +10,7 @@ import { bringToFront } from "../utils";
 export class DemoApi {
   private static statusBarItem: StatusBarItem;
   private static server: Server;
-  
+
   static register() {
     const ext = Extension.getInstance();
     const enabled = ext.getSetting<boolean>(Config.api.enabled);
@@ -47,7 +47,7 @@ export class DemoApi {
 
   /**
    * Starts the Demo API server on the specified port.
-   * 
+   *
    * @param {number} port - The port number on which the API server will listen.
    * @returns {Promise<void>} A promise that resolves when the server has started.
    */
@@ -57,12 +57,13 @@ export class DemoApi {
     app.use(express.json());
     app.use(cors());
 
-    app.get('/api/next', DemoApi.next);
-    app.get('/api/runById', DemoApi.runById);
-    app.post('/api/runById', DemoApi.runById);
-    
+    app.get("/api/next", DemoApi.next);
+    app.get("/api/runById", DemoApi.runById);
+    app.post("/api/runById", DemoApi.runById);
+
     DemoApi.server = app.listen(port, () => {
-      DemoApi.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left, 100001);
+      DemoApi.statusBarItem = window.createStatusBarItem("api", StatusBarAlignment.Left, 100005);
+      DemoApi.statusBarItem.name = "Demo Time - API";
       DemoApi.statusBarItem.text = `$(dt-logo) API: ${port}`;
       DemoApi.statusBarItem.show();
     });
@@ -70,10 +71,10 @@ export class DemoApi {
 
   /**
    * Handles the request to trigger the next demo.
-   * 
+   *
    * @param req - The request object.
    * @param res - The response object.
-   * 
+   *
    * @returns A promise that resolves when the demo has been brought to the front and started.
    */
   private static async next(req: Request, res: Response) {
@@ -90,7 +91,7 @@ export class DemoApi {
 
   /**
    * Handles the execution of a demo by its ID based on the HTTP request method.
-   * 
+   *
    * @param req - The HTTP request object.
    * @param res - The HTTP response object.
    * @returns A promise that resolves when the command execution is complete.

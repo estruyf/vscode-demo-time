@@ -50,12 +50,12 @@
   ],
   "main": "./out/extension.js",
   "browser": "./out/extension.js",
-  "configurationDefaults": {
-    "files.associations": {
-      "**/.demo/*.json": "jsonc"
-    }
-  },
   "contributes": {
+    "configurationDefaults": {
+      "files.associations": {
+        "**/.demo/*.json": "jsonc"
+      }
+    },
     "icons": {
       "dt-clock": {
         "description": "Demo Time - clock",

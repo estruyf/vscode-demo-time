@@ -10,6 +10,7 @@ import { Logger } from "./Logger";
 
 export class DemoStatusBar {
   private static statusBarItem: StatusBarItem;
+  private static statusBarNotes: StatusBarItem;
   private static statusBarClock: StatusBarItem;
   private static countdownStarted: Date | undefined;
   private static nextDemo: Demo | undefined;
@@ -20,7 +21,7 @@ export class DemoStatusBar {
     subscriptions.push(commands.registerCommand(COMMAND.resetCountdown, DemoStatusBar.resetCountdown));
     commands.executeCommand("setContext", ContextKeys.countdown, false);
 
-    DemoStatusBar.createNextDemoAction();
+    DemoStatusBar.createStatusBarItems();
 
     DemoStatusBar.update();
 
@@ -36,13 +37,22 @@ export class DemoStatusBar {
     return DemoStatusBar.countdownStarted;
   }
 
-  public static createNextDemoAction() {
+  public static createStatusBarItems() {
     if (!DemoStatusBar.statusBarItem) {
-      DemoStatusBar.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left, 100000);
+      DemoStatusBar.statusBarItem = window.createStatusBarItem("next-demo", StatusBarAlignment.Left, 100001);
+      DemoStatusBar.statusBarItem.name = "Demo Time - Next Demo";
       DemoStatusBar.statusBarItem.command = COMMAND.start;
 
       DemoStatusBar.statusBarItem.backgroundColor = new ThemeColor("statusBarItem.warningBackground");
       DemoStatusBar.statusBarItem.color = new ThemeColor("statusBarItem.warningForeground");
+    }
+
+    if (!DemoStatusBar.statusBarNotes) {
+      DemoStatusBar.statusBarNotes = window.createStatusBarItem("notes", StatusBarAlignment.Left, 100000);
+      DemoStatusBar.statusBarNotes.name = "Demo Time - Notes";
+      DemoStatusBar.statusBarNotes.command = COMMAND.viewNotes;
+      DemoStatusBar.statusBarNotes.text = `$(book) Notes`;
+      DemoStatusBar.statusBarNotes.tooltip = `Show the notes for the current demo step`;
     }
   }
 
@@ -60,6 +70,14 @@ export class DemoStatusBar {
       const lastDemo = executingFile.demo[executingFile.demo.length - 1];
 
       let crntDemoIdx = executingDemos.findIndex((d, idx) => (d.id ? d.id === lastDemo.id : idx === lastDemo.idx));
+
+      // Show the notes action
+      const crntDemo = executingDemos[crntDemoIdx];
+      if (crntDemo.notes && crntDemo.notes.path) {
+        DemoStatusBar.statusBarNotes.show();
+      } else {
+        DemoStatusBar.statusBarNotes.hide();
+      }
 
       // Check if exists and is the last demo
       if (crntDemoIdx !== -1 && crntDemoIdx === executingDemos.length - 1) {
@@ -81,7 +99,7 @@ export class DemoStatusBar {
       const nextDemo = executingDemos[crntDemoIdx + 1];
 
       if (nextDemo) {
-        DemoStatusBar.createNextDemoAction();
+        DemoStatusBar.createStatusBarItems();
 
         Logger.info(`Next demo: ${nextDemo.title}`);
         DemoStatusBar.nextDemo = nextDemo;
@@ -97,6 +115,7 @@ export class DemoStatusBar {
       Logger.info("No next demo file path found");
       DemoStatusBar.nextDemo = undefined;
       DemoStatusBar.statusBarItem.hide();
+      DemoStatusBar.statusBarNotes.hide();
     }
 
     PresenterView.postMessage(WebViewMessages.toWebview.updateNextDemo, DemoStatusBar.nextDemo);
@@ -125,7 +144,8 @@ export class DemoStatusBar {
 
   private static startClock() {
     if (!DemoStatusBar.statusBarClock) {
-      DemoStatusBar.statusBarClock = window.createStatusBarItem(StatusBarAlignment.Right, 100000);
+      DemoStatusBar.statusBarClock = window.createStatusBarItem("clock", StatusBarAlignment.Right, 100000);
+      DemoStatusBar.statusBarClock.name = "Demo Time - Clock & Countdown";
     }
 
     const date = new Date();

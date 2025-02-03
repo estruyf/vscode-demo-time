@@ -5,14 +5,14 @@ import { COMMAND, General } from "../constants";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { Notifications } from "./Notifications";
 import { fileExists } from "../utils";
+import { FileProvider } from "./FileProvider";
+import { DemoRunner } from "./DemoRunner";
 
 export class NotesService {
   public static registerCommands() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
 
-    subscriptions.push(
-      commands.registerCommand(COMMAND.viewNotes, NotesService.viewNotes)
-    );
+    subscriptions.push(commands.registerCommand(COMMAND.viewNotes, NotesService.viewNotes));
   }
 
   public static async showNotes(demo: Demo) {
@@ -35,10 +35,27 @@ export class NotesService {
 
   private static async viewNotes(item: ActionTreeItem) {
     if (!item || !item.notes) {
+      const demoFiles = await FileProvider.getFiles();
+      const executingFile = await DemoRunner.getExecutedDemoFile();
+
+      if (demoFiles && executingFile.filePath) {
+        let executingDemos = demoFiles[executingFile.filePath].demos;
+        const lastDemo = executingFile.demo[executingFile.demo.length - 1];
+
+        let crntDemoIdx = executingDemos.findIndex((d, idx) => (d.id ? d.id === lastDemo.id : idx === lastDemo.idx));
+
+        // Show the notes action
+        const crntDemo = executingDemos[crntDemoIdx];
+        if (crntDemo.notes && crntDemo.notes.path) {
+          NotesService.openNotes(crntDemo.notes.path);
+          return;
+        }
+      }
+
       Notifications.error("No notes available for this step.");
       return;
     }
-  
+
     NotesService.openNotes(item.notes);
   }
 }
