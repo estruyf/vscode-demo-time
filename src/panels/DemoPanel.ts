@@ -50,50 +50,50 @@ export class DemoPanel {
   public static getDemos() {
     const demoFiles = DemoPanel.demoFiles;
     const executingDemoFile = DemoPanel.executingDemoFile;
-    
+
     if (!demoFiles) {
       return [];
     }
-    
+
     let demoKeys = Object.keys(demoFiles);
     demoKeys = demoKeys.sort((aPath, bPath) => {
       aPath = aPath.toLowerCase();
       bPath = bPath.toLowerCase();
-    
+
       if (aPath < bPath) {
         return -1;
       }
-    
+
       if (aPath > bPath) {
         return 1;
       }
-    
+
       return 0;
     });
-    
+
     const accountCommands: ActionTreeItem[] = [];
-    
+
     for (const path of demoKeys) {
       const demos = (demoFiles as any)[path] as Demos;
-    
+
       const demoSteps = demos.demos.map((demo, idx, allDemos) => {
         let hasExecuted = false;
         if (executingDemoFile.filePath === path) {
           hasExecuted = !!executingDemoFile.demo.find((d) => (d.id ? d.id === demo.id : d.idx === idx));
         }
-    
+
         let ctxValue = "demo-time.step";
         if (idx === 0) {
           ctxValue = "demo-time.firstStep";
         } else if (idx === allDemos.length - 1) {
           ctxValue = "demo-time.lastStep";
         }
-    
+
         const hasNotes = demo.notes?.path ? true : false;
         if (hasNotes) {
           ctxValue += " demo-time.hasNotes";
         }
-    
+
         const icons = { start: "run", end: "pass-filled" };
         if (demo.icons?.start) {
           icons.start = demo.icons.start;
@@ -101,7 +101,7 @@ export class DemoPanel {
         if (demo.icons?.end) {
           icons.end = demo.icons.end;
         }
-    
+
         return new ActionTreeItem(
           demo.title,
           demo.description,
@@ -124,7 +124,7 @@ export class DemoPanel {
           demo.notes?.path
         );
       });
-    
+
       accountCommands.push(
         new ActionTreeItem(
           demos.title,
@@ -132,7 +132,8 @@ export class DemoPanel {
           {
             name: executingDemoFile.filePath === path ? "play-circle" : "folder",
             custom: false,
-            color: executingDemoFile.filePath === path ? new ThemeColor("notebookStatusSuccessIcon.foreground") : undefined,
+            color:
+              executingDemoFile.filePath === path ? new ThemeColor("notebookStatusSuccessIcon.foreground") : undefined,
           },
           undefined,
           undefined,
@@ -158,7 +159,7 @@ export class DemoPanel {
       DemoPanel.showWelcome();
       return;
     }
-    
+
     await DemoPanel.setExecutingDemoFile();
     DemoPanel.registerTreeview();
   }

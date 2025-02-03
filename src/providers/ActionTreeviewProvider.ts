@@ -50,7 +50,7 @@ export class ActionTreeItem extends TreeItem {
     private children?: ActionTreeItem[],
     public demoFilePath?: string,
     public stepIndex?: number,
-    public notes?: string,
+    public notes?: string
   ) {
     super(label, children ? TreeItemCollapsibleState.Expanded : TreeItemCollapsibleState.None);
 
