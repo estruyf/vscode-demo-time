@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.0.64] - 2025-02-03
+
+- Fix issue in configuration defaults for JSONC files
+- Added names to the status bar items so that it is easier to identify them when disabling/enabling them
+- Added status bar item to open the demo notes
+
 ## [0.0.63] - 2025-01-25
 
 - Update the rocket icon to the Demo Time logo in the status bar
