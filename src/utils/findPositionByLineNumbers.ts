@@ -1,5 +1,5 @@
-import { Position, TextDocument, Range } from 'vscode';
-import { getLineAndCharacterPosition } from '.';
+import { Position, TextDocument, Range } from "vscode";
+import { getLineAndCharacterPosition } from ".";
 
 export const findPositionByLineNumbers = (editor: TextDocument, position: string | number) => {
   let crntPosition: Position | undefined = undefined;
@@ -20,7 +20,7 @@ export const findPositionByLineNumbers = (editor: TextDocument, position: string
       const startPosition = getLineAndCharacterPosition(start);
       const endPosition = getLineAndCharacterPosition(end);
 
-      let lastLine = new Position(Number(end) - 1, endPosition.character);
+      let lastLine = new Position(Number(endPosition.line), endPosition.character);
       try {
         const line = editor.lineAt(lastLine);
         lastLine = line.range.end;
