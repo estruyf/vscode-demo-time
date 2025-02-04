@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.65] - 2025-02-04
+
+- [#44](https://github.com/estruyf/vscode-demo-time/issues/44): Fix code highlighting when line number + character positioning is used
+
 ## [0.0.64] - 2025-02-03
 
 - Fix issue in configuration defaults for JSONC files
