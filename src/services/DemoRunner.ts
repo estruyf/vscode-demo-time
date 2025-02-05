@@ -25,8 +25,10 @@ import {
   getFileContents,
   getLineInsertionSpeed,
   getLineRange,
+  getPositionAndRange,
   insertContent,
   insertLineByLine,
+  insertVariables,
   replaceContent,
   sleep,
   getNextDemoFile,
@@ -42,9 +44,7 @@ import { DecoratorService } from "./DecoratorService";
 import { Notifications } from "./Notifications";
 import { parse as jsonParse } from "jsonc-parser";
 import { Logger } from "./Logger";
-import { insertVariables } from "../utils/insertVariables";
 import { NotesService } from "./NotesService";
-import { getPositionAndRange } from "../utils/getPositionAndRange";
 import { ScriptExecutor } from "./ScriptExecutor";
 import { StateManager } from "./StateManager";
 
@@ -60,6 +60,7 @@ export class DemoRunner {
   private static crntFilePath: string | undefined;
   private static crntHighlightRange: Range | undefined;
   private static crntZoom: number | undefined;
+  private static crntHighlightWholeLine: boolean | undefined;
 
   /**
    * Registers the commands for the demo runner.
@@ -93,11 +94,13 @@ export class DemoRunner {
    * @param filePath - The path of the file to highlight.
    * @param range - The range within the file to highlight.
    * @param zoom - The zoom level for the highlighting.
+   * @param highlightWholeLine - Indicates whether the highlighting should be applied to the whole line.
    */
-  public static setCrntHighlighting(filePath?: string, range?: Range, zoom?: number) {
+  public static setCrntHighlighting(filePath?: string, range?: Range, zoom?: number, highlightWholeLine?: boolean) {
     DemoRunner.crntFilePath = filePath;
     DemoRunner.crntHighlightRange = range;
     DemoRunner.crntZoom = zoom;
+    DemoRunner.crntHighlightWholeLine = highlightWholeLine;
   }
 
   /**
@@ -650,7 +653,7 @@ export class DemoRunner {
       const editor = await workspace.openTextDocument(fileUri);
       const textEditor = await window.showTextDocument(editor);
 
-      const { crntPosition, crntRange } = await getPositionAndRange(editor, step);
+      const { crntPosition, crntRange, usesPlaceholders } = await getPositionAndRange(editor, step);
 
       if (step.action === Action.Unselect) {
         await DemoRunner.unselect(textEditor);
@@ -658,7 +661,12 @@ export class DemoRunner {
       }
 
       if (step.action === Action.Highlight && (crntRange || crntPosition)) {
-        await DemoRunner.highlight(textEditor, crntRange, crntPosition, step.zoom);
+        let highlightWholeLine = step.highlightWholeLine;
+        if (usesPlaceholders) {
+          highlightWholeLine = typeof step.highlightWholeLine === "undefined" ? true : step.highlightWholeLine;
+        }
+
+        await DemoRunner.highlight(textEditor, crntRange, crntPosition, step.zoom, highlightWholeLine);
         continue;
       }
 
@@ -891,13 +899,14 @@ export class DemoRunner {
     const activeEditor = window.activeTextEditor;
     const range = DemoRunner.crntHighlightRange;
     const zoom = DemoRunner.crntZoom;
+    const highlightWholeLine = DemoRunner.crntHighlightWholeLine;
 
     if (!activeEditor || !range) {
       return;
     }
 
     if (!DecoratorService.isDecorated()) {
-      DemoRunner.highlight(activeEditor, range, undefined, zoom);
+      DemoRunner.highlight(activeEditor, range, undefined, zoom, highlightWholeLine);
     } else {
       DemoRunner.unselect(activeEditor);
     }
@@ -913,7 +922,8 @@ export class DemoRunner {
     textEditor: TextEditor,
     range: Range | undefined,
     position: Position | undefined,
-    zoomLevel?: number
+    zoomLevel?: number,
+    highlightWholeLine?: boolean
   ): Promise<void> {
     if (!range && !position) {
       return;
@@ -928,10 +938,10 @@ export class DemoRunner {
     }
 
     if (range) {
-      DemoRunner.setCrntHighlighting(textEditor.document.fileName, range, zoomLevel);
+      DemoRunner.setCrntHighlighting(textEditor.document.fileName, range, zoomLevel, highlightWholeLine);
       await setContext(ContextKeys.hasCodeHighlighting, true);
 
-      DecoratorService.hightlightLines(textEditor, range, zoomLevel);
+      DecoratorService.hightlightLines(textEditor, range, zoomLevel, highlightWholeLine);
       textEditor.revealRange(range, TextEditorRevealType.InCenter);
     }
   }

@@ -3,6 +3,8 @@
 ## [0.0.66] - 2025-02-05
 
 - Added a new `demo-time.toggleHighlight` command which allows you to toggle the code highlight of the current demo step
+- Support for highlighting an area of code by line&character positioning
+- Added a `highlightWholeLine` property for the `highlight` action which can be used in combination with the start and end placeholders to turn off whole line highlighting
 
 ## [0.0.65] - 2025-02-04
 

@@ -4,7 +4,7 @@ export const findPosition = (fileTxt: string, placeholder: string, atTheEnd = fa
   if (!fileTxt || !placeholder) {
     return;
   }
-  
+
   const idx = fileTxt.indexOf(placeholder);
   const lines = fileTxt.split("\n");
   if (idx < 0) {

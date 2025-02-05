@@ -23,7 +23,7 @@ export const findPositionByLineNumbers = (editor: TextDocument, position: string
       let lastLine = new Position(Number(endPosition.line), endPosition.character);
       try {
         const line = editor.lineAt(lastLine);
-        lastLine = line.range.end;
+        lastLine = new Position(line.range.end.line, lastLine.character || line.range.end.character + 1);
       } catch (error) {
         // do nothing
       }

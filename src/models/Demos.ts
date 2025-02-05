@@ -40,6 +40,9 @@ export interface Step {
   startPlaceholder?: string;
   endPlaceholder?: string;
 
+  zoom?: number;
+  highlightWholeLine?: boolean;
+
   id?: string;
   timeout?: number;
   command?: string;
@@ -49,7 +52,6 @@ export interface Step {
   setting?: Setting;
   state?: State;
   dest?: string;
-  zoom?: number;
   overwrite?: boolean;
   terminalId?: string;
 }
