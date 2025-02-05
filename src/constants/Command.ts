@@ -12,6 +12,7 @@ export const COMMAND = {
   runById: `${EXTENSION_NAME}.runById`,
   togglePresentationMode: `${EXTENSION_NAME}.togglePresentationMode`,
   reset: `${EXTENSION_NAME}.reset`,
+  toggleHighlight: `${EXTENSION_NAME}.toggleHighlight`,
   // Creator
   initialize: `${EXTENSION_NAME}.initialize`,
   openDemoFile: `${EXTENSION_NAME}.openDemoFile`,

@@ -17,6 +17,7 @@ export class DecoratorService {
   private static endBlockDecorator: TextEditorDecorationType;
   private static blurDecorator: TextEditorDecorationType;
   private static isZoomed = false;
+  private static isHighlighted = false;
 
   public static register() {
     const borderColor =
@@ -86,6 +87,14 @@ export class DecoratorService {
     });
   }
 
+  public static isDecorated(): boolean {
+    return DecoratorService.isHighlighted;
+  }
+
+  public static setDecorated(isDecorated: boolean) {
+    DecoratorService.isHighlighted = isDecorated;
+  }
+
   public static hightlightLines(textEditor: TextEditor, range: Range, zoomLevel?: number) {
     const zoomEnabled = Extension.getInstance().getSetting<boolean | number>(Config.highlight.zoom);
 
@@ -141,9 +150,12 @@ export class DecoratorService {
       const endRange = new Range(range.end.line, 0, range.end.line, 0);
       textEditor.setDecorations(DecoratorService.endBlockDecorator, [endRange]);
     }
+
+    DecoratorService.isHighlighted = true;
   }
 
   public static unselect(textEditor: TextEditor) {
+    DecoratorService.isHighlighted = false;
     textEditor.setDecorations(DecoratorService.blurDecorator, []);
     textEditor.setDecorations(DecoratorService.lineDecorator, []);
     textEditor.setDecorations(DecoratorService.startBlockDecorator, []);

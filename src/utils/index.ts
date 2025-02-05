@@ -25,5 +25,6 @@ export * from "./insertVariables";
 export * from "./parseWinPath";
 export * from "./removeDemoDuplicates";
 export * from "./replaceContent";
+export * from "./setContext";
 export * from "./sleep";
 export * from "./writeText";

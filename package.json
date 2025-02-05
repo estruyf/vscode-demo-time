@@ -261,6 +261,15 @@
         "title": "Show presenter view",
         "category": "Demo Time",
         "icon": "$(vm)"
+      },
+      {
+        "command": "demo-time.toggleHighlight",
+        "title": "Toggle highlight",
+        "category": "Demo Time",
+        "icon": {
+          "light": "assets/highlight-light.svg",
+          "dark": "assets/highlight-dark.svg"
+        }
       }
     ],
     "menus": {
@@ -308,6 +317,10 @@
         {
           "command": "demo-time.viewNotes",
           "when": "false"
+        },
+        {
+          "command": "demo-time.toggleHighlight",
+          "when": "demo-time.hasCodeHighlighting == true"
         }
       ],
       "view/title": [
@@ -378,6 +391,11 @@
         {
           "command": "demo-time.docs",
           "when": "(editorLangId == jsonc || editorLangId == json) && resourceDirname =~ /\\.demo$/",
+          "group": "navigation@1"
+        },
+        {
+          "command": "demo-time.toggleHighlight",
+          "when": "activeEditor == 'workbench.editors.files.textFileEditor' && demo-time.hasCodeHighlighting == true",
           "group": "navigation@1"
         }
       ]

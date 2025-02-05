@@ -5,7 +5,7 @@ import { DemoFileCache, DemoFiles, Demos, Subscription } from "../models";
 import { ActionTreeItem, ActionTreeviewProvider } from "../providers/ActionTreeviewProvider";
 import { DemoRunner } from "../services/DemoRunner";
 import { COMMAND } from "../constants";
-import { parseWinPath } from "../utils";
+import { parseWinPath, setContext } from "../utils";
 import { DemoStatusBar } from "../services/DemoStatusBar";
 import { Extension } from "../services/Extension";
 
@@ -196,7 +196,7 @@ export class DemoPanel {
    * Set the welcome view its context
    */
   private static showWelcome() {
-    commands.executeCommand("setContext", ContextKeys.showWelcome, true);
+    setContext(ContextKeys.showWelcome, true);
   }
 
   /**

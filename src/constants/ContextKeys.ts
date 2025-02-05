@@ -4,4 +4,5 @@ export const ContextKeys = {
   presentation: "demo-time.presentation",
   showTimer: "demo-time.showTimer",
   countdown: "demo-time.countdown",
+  hasCodeHighlighting: "demo-time.hasCodeHighlighting",
 };

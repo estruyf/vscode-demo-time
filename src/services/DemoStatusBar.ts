@@ -4,7 +4,7 @@ import { FileProvider } from "./FileProvider";
 import { COMMAND, Config, ContextKeys, WebViewMessages } from "../constants";
 import { Demo, Subscription } from "../models";
 import { Extension } from "./Extension";
-import { getNextDemoFile } from "../utils";
+import { getNextDemoFile, setContext } from "../utils";
 import { PresenterView } from "../presenterView/PresenterView";
 import { Logger } from "./Logger";
 
@@ -19,7 +19,7 @@ export class DemoStatusBar {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
     subscriptions.push(commands.registerCommand(COMMAND.startCountdown, DemoStatusBar.startCountdown));
     subscriptions.push(commands.registerCommand(COMMAND.resetCountdown, DemoStatusBar.resetCountdown));
-    commands.executeCommand("setContext", ContextKeys.countdown, false);
+    setContext(ContextKeys.countdown, false);
 
     DemoStatusBar.createStatusBarItems();
 
@@ -58,7 +58,7 @@ export class DemoStatusBar {
 
   public static async showTimer() {
     const showTimer = Extension.getInstance().getSetting<number>(Config.clock.timer);
-    await commands.executeCommand("setContext", ContextKeys.showTimer, !!showTimer);
+    await setContext(ContextKeys.showTimer, !!showTimer);
   }
 
   public static async update() {
@@ -128,14 +128,14 @@ export class DemoStatusBar {
     }
 
     DemoStatusBar.countdownStarted = new Date();
-    await commands.executeCommand("setContext", ContextKeys.countdown, true);
+    await setContext(ContextKeys.countdown, true);
     DemoStatusBar.startClock();
     PresenterView.postMessage(WebViewMessages.toWebview.updateCountdownStarted, DemoStatusBar.countdownStarted);
   }
 
   private static async resetCountdown() {
     DemoStatusBar.countdownStarted = undefined;
-    await commands.executeCommand("setContext", ContextKeys.countdown, false);
+    await setContext(ContextKeys.countdown, false);
     DemoStatusBar.statusBarClock.backgroundColor = undefined;
     DemoStatusBar.statusBarClock.color = undefined;
     DemoStatusBar.startClock();

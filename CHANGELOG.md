@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.66] - 2025-02-05
+
+- Added a new `demo-time.toggleHighlight` command which allows you to toggle the code highlight of the current demo step
+
 ## [0.0.65] - 2025-02-04
 
 - [#44](https://github.com/estruyf/vscode-demo-time/issues/44): Fix code highlighting when line number + character positioning is used

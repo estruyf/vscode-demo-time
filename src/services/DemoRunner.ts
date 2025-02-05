@@ -35,6 +35,7 @@ import {
   writeText,
   getUserInput,
   clearVariablesState,
+  setContext,
 } from "../utils";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DecoratorService } from "./DecoratorService";
@@ -56,6 +57,9 @@ export class DemoRunner {
   private static isPresentationMode = false;
   private static terminal: { [id: string]: Terminal | null } = {};
   private static readonly terminalName = "DemoTime";
+  private static crntFilePath: string | undefined;
+  private static crntHighlightRange: Range | undefined;
+  private static crntZoom: number | undefined;
 
   /**
    * Registers the commands for the demo runner.
@@ -69,8 +73,31 @@ export class DemoRunner {
     subscriptions.push(commands.registerCommand(COMMAND.runStep, DemoRunner.startDemo));
     subscriptions.push(commands.registerCommand(COMMAND.runById, DemoRunner.runById));
     subscriptions.push(commands.registerCommand(COMMAND.reset, DemoRunner.reset));
+    subscriptions.push(commands.registerCommand(COMMAND.toggleHighlight, DemoRunner.toggleHighlight));
+
+    window.onDidChangeActiveTextEditor(async (editor) => {
+      if (editor && editor.document.fileName === DemoRunner.crntFilePath) {
+        await setContext(ContextKeys.hasCodeHighlighting, true);
+      } else {
+        DecoratorService.setDecorated(false);
+        await setContext(ContextKeys.hasCodeHighlighting, false);
+      }
+    });
 
     DemoRunner.allowPrevious();
+  }
+
+  /**
+   * Sets the current highlighting details including file path, range, and zoom level.
+   *
+   * @param filePath - The path of the file to highlight.
+   * @param range - The range within the file to highlight.
+   * @param zoom - The zoom level for the highlighting.
+   */
+  public static setCrntHighlighting(filePath?: string, range?: Range, zoom?: number) {
+    DemoRunner.crntFilePath = filePath;
+    DemoRunner.crntHighlightRange = range;
+    DemoRunner.crntZoom = zoom;
   }
 
   /**
@@ -96,7 +123,7 @@ export class DemoRunner {
   public static async allowPrevious(): Promise<void> {
     const previousEnabled =
       Extension.getInstance().getSetting<boolean>(Config.presentationMode.previousEnabled) || false;
-    await commands.executeCommand("setContext", ContextKeys.previousEnabled, previousEnabled);
+    await setContext(ContextKeys.previousEnabled, previousEnabled);
   }
 
   /**
@@ -127,7 +154,7 @@ export class DemoRunner {
    */
   private static async togglePresentationMode(enable?: boolean): Promise<void> {
     DemoRunner.isPresentationMode = typeof enable !== "undefined" ? enable : !DemoRunner.isPresentationMode;
-    await commands.executeCommand("setContext", ContextKeys.presentation, DemoRunner.isPresentationMode);
+    await setContext(ContextKeys.presentation, DemoRunner.isPresentationMode);
     PresenterView.postMessage(WebViewMessages.toWebview.updatePresentationStarted, DemoRunner.isPresentationMode);
     if (DemoRunner.isPresentationMode) {
       DemoPanel.updateMessage("Presentation mode enabled");
@@ -384,6 +411,10 @@ export class DemoRunner {
    * @param demoSteps An array of Step objects representing the steps to be executed.
    */
   private static async runSteps(demoSteps: Step[]): Promise<void> {
+    // Reset the highlight
+    await setContext(ContextKeys.hasCodeHighlighting, false);
+    DemoRunner.setCrntHighlighting();
+
     const workspaceFolder = Extension.getInstance().workspaceFolder;
     if (!workspaceFolder) {
       return;
@@ -856,6 +887,22 @@ export class DemoRunner {
     await DemoRunner.saveFile();
   }
 
+  public static async toggleHighlight(): Promise<void> {
+    const activeEditor = window.activeTextEditor;
+    const range = DemoRunner.crntHighlightRange;
+    const zoom = DemoRunner.crntZoom;
+
+    if (!activeEditor || !range) {
+      return;
+    }
+
+    if (!DecoratorService.isDecorated()) {
+      DemoRunner.highlight(activeEditor, range, undefined, zoom);
+    } else {
+      DemoRunner.unselect(activeEditor);
+    }
+  }
+
   /**
    * Highlights the specified range or position in the given text editor.
    * @param textEditor - The text editor in which to highlight the range or position.
@@ -881,6 +928,9 @@ export class DemoRunner {
     }
 
     if (range) {
+      DemoRunner.setCrntHighlighting(textEditor.document.fileName, range, zoomLevel);
+      await setContext(ContextKeys.hasCodeHighlighting, true);
+
       DecoratorService.hightlightLines(textEditor, range, zoomLevel);
       textEditor.revealRange(range, TextEditorRevealType.InCenter);
     }
