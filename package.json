@@ -8,7 +8,7 @@
     "color": "#0D1321",
     "theme": "dark"
   },
-  "icon": "assets/demo-time-128x128.png",
+  "icon": "assets/logo/demotime-128x128.png",
   "badges": [
     {
       "description": "version",
@@ -88,8 +88,8 @@
       "dt-logo": {
         "description": "Demo Time - logo",
         "default": {
-          "fontPath": "assets/demo-time-logo.woff",
-          "fontCharacter": "\\e800"
+          "fontPath": "assets/demo-time-logo-v2.woff",
+          "fontCharacter": "\\e801"
         }
       }
     },
@@ -406,7 +406,7 @@
           "id": "demo-time",
           "name": "Demo Time",
           "contextualTitle": "Demo Time",
-          "icon": "assets/logo-small.svg"
+          "icon": "assets/logo/demotime.svg"
         }
       ]
     },

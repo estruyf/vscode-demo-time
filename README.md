@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img alt="Demo Time" src="./assets/demo-time-128x128.png">
+  <img alt="Demo Time" src="./assets/logo/demotime.png">
 </h1>
 
 <h2 align="center">Script your coding demos to perfection with this VS Code extension – no typos, no missteps, just flawless, stress-free presentations every time. Execute each demo step seamlessly, just like advancing through a presentation!</h2>

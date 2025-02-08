@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.67] - 2025-02-08
+
+- Added the new Demo Time logo
+
 ## [0.0.66] - 2025-02-05
 
 - Added a new `demo-time.toggleHighlight` command which allows you to toggle the code highlight of the current demo step
