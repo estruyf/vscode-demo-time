@@ -1,6 +1,6 @@
 # Change Log
 
-## [0.0.68] - 2025-02-08
+## [0.0.68] - 2025-02-10
 
 - Added the open notes action on the presenter view
 - Small optimizations to the logo for the status bar, activity bar, and editor title
