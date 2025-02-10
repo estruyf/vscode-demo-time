@@ -149,7 +149,7 @@ export class DemoStatusBar {
     }
 
     const date = new Date();
-    const time = date.toLocaleTimeString();
+    const time = date.toTimeString();
 
     const showClock = Extension.getInstance().getSetting<number>(Config.clock.show);
     const timer = Extension.getInstance().getSetting<number>(Config.clock.timer);

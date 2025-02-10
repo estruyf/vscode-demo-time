@@ -1,4 +1,4 @@
-import { commands, ExtensionContext, ExtensionMode, Uri, Webview, WebviewPanel, workspace, window, ViewColumn } from "vscode";
+import { commands, Uri, Webview, WebviewPanel, workspace, window, ViewColumn } from "vscode";
 import { Subscription } from "../models";
 import { Extension } from "../services/Extension";
 import { COMMAND, EXTENSION_NAME, WebViewMessages } from "../constants";
@@ -6,12 +6,13 @@ import { MessageHandlerData } from "@estruyf/vscode";
 import { FileProvider } from "../services/FileProvider";
 import { DemoRunner } from "../services/DemoRunner";
 import { DemoStatusBar } from "../services/DemoStatusBar";
+import { NotesService } from "../services/NotesService";
 
 export class PresenterView {
   private static webview: WebviewPanel | null = null;
   private static isDisposed = true;
   private static isDetached = false;
-  
+
   public static register() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
     subscriptions.push(commands.registerCommand(COMMAND.showPresenterView, PresenterView.show));
@@ -44,13 +45,13 @@ export class PresenterView {
 
     // Create the preview webview
     PresenterView.webview = window.createWebviewPanel(
-      'demoTime:presenterView',
+      "demoTime:presenterView",
       `Demo Time: Presenter View`,
       ViewColumn.One,
       {
         enableScripts: true,
         retainContextWhenHidden: true,
-        enableCommandUris: true
+        enableCommandUris: true,
       }
     );
 
@@ -58,13 +59,11 @@ export class PresenterView {
     PresenterView.isDetached = false;
 
     PresenterView.webview.iconPath = {
-      dark: Uri.joinPath(Uri.file(extensionUri), 'assets', 'logo-dark.svg'),
-      light: Uri.joinPath(Uri.file(extensionUri), 'assets', 'logo-light.svg')
+      dark: Uri.joinPath(Uri.file(extensionUri), "assets", "logo-dark.svg"),
+      light: Uri.joinPath(Uri.file(extensionUri), "assets", "logo-light.svg"),
     };
 
-    PresenterView.webview.webview.html = await PresenterView.getWebviewContent(
-      PresenterView.webview.webview
-    );
+    PresenterView.webview.webview.html = await PresenterView.getWebviewContent(PresenterView.webview.webview);
 
     PresenterView.webview.onDidDispose(async () => {
       PresenterView.isDisposed = true;
@@ -120,13 +119,18 @@ export class PresenterView {
         PresenterView.isDetached = true;
         commands.executeCommand("workbench.action.moveEditorToNewWindow");
       }
+    } else if (command === WebViewMessages.toVscode.openNotes && payload) {
+      const { path } = payload;
+      if (path) {
+        NotesService.openNotes(path);
+      }
     }
   }
 
   public static async postMessage(command: string, payload: any) {
     PresenterView.webview?.webview.postMessage({
       command,
-      payload
+      payload,
     } as MessageHandlerData<any>);
   }
 
@@ -134,17 +138,17 @@ export class PresenterView {
     PresenterView.webview?.webview.postMessage({
       command,
       requestId,
-      payload
+      payload,
     } as MessageHandlerData<any>);
   }
 
   private static async getWebviewContent(webview: Webview) {
     const jsFile = "main.bundle.js";
     const localServerUrl = "http://localhost:9000";
-  
+
     let scriptUrl = [];
     let cssUrl = null;
-  
+
     const extension = Extension.getInstance();
     if (extension.isProductionMode) {
       // Get the manifest file from the dist folder
@@ -153,22 +157,16 @@ export class PresenterView {
       const manifest = await workspace.fs.readFile(manifestPath);
       const manifestText = Buffer.from(manifest).toString("utf8");
       const manifestJson = JSON.parse(manifestText);
-  
+
       for (const [key, value] of Object.entries<string>(manifestJson)) {
         if (key.endsWith(".js")) {
-          scriptUrl.push(
-            webview
-              .asWebviewUri(
-                Uri.joinPath(extPath, "out", "webview", value)
-              )
-              .toString()
-          );
+          scriptUrl.push(webview.asWebviewUri(Uri.joinPath(extPath, "out", "webview", value)).toString());
         }
       }
     } else {
       scriptUrl.push(`${localServerUrl}/${jsFile}`);
     }
-  
+
     return `<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -184,5 +182,5 @@ export class PresenterView {
       <img style="display:none" src="https://api.visitorbadge.io/api/combined?path=https:%2f%2fgithub.com%2festruyf%2fvscode-demo-time&labelColor=%23202736&countColor=%23FFD23F&slug=presenter-view" alt="Presenter view usage" />
     </body>
     </html>`;
-  };
+  }
 }

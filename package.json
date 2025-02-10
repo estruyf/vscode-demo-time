@@ -88,7 +88,7 @@
       "dt-logo": {
         "description": "Demo Time - logo",
         "default": {
-          "fontPath": "assets/demo-time-logo-v2.woff",
+          "fontPath": "assets/demo-time-logo-v3.woff",
           "fontCharacter": "\\e801"
         }
       }

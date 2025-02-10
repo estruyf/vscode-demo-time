@@ -5,7 +5,7 @@ import { COMMAND, WebViewMessages } from '../../constants';
 import { Icon } from 'vscrui';
 import { EventData } from '@estruyf/vscode';
 
-export interface IDemosProps {}
+export interface IDemosProps { }
 
 export const Demos: React.FunctionComponent<IDemosProps> = (props: React.PropsWithChildren<IDemosProps>) => {
   const [demoFiles, setDemoFiles] = React.useState<DemoFiles | null>(null);
@@ -22,7 +22,7 @@ export const Demos: React.FunctionComponent<IDemosProps> = (props: React.PropsWi
     }
   };
 
-  const runStep = React.useCallback((idx:number, demo: Demo) => {
+  const runStep = React.useCallback((idx: number, demo: Demo) => {
     messageHandler.send(WebViewMessages.toVscode.runCommand, {
       command: COMMAND.runStep,
       args: {
@@ -33,11 +33,21 @@ export const Demos: React.FunctionComponent<IDemosProps> = (props: React.PropsWi
     });
   }, [runningDemos]);
 
+  const openNotes = React.useCallback((path?: string) => {
+    if (!path) {
+      return;
+    }
+
+    messageHandler.send(WebViewMessages.toVscode.openNotes, {
+      path
+    });
+  }, []);
+
   const crntDemos = React.useMemo(() => {
     if (!demoFiles || !runningDemos) {
       return null;
     }
-    
+
     const file = demoFiles[runningDemos.filePath];
     if (!file) {
       return null;
@@ -51,6 +61,7 @@ export const Demos: React.FunctionComponent<IDemosProps> = (props: React.PropsWi
         description: d.description,
         icons: d.icons,
         source: Object.assign({}, d),
+        notes: d.notes,
         executed: runningDemos.demo.findIndex((rd) => rd.id ? rd.id === d.id : rd.idx === idx) !== -1
       }))
     };
@@ -65,7 +76,7 @@ export const Demos: React.FunctionComponent<IDemosProps> = (props: React.PropsWi
     messageHandler.request<DemoFileCache | null>(WebViewMessages.toVscode.getRunningDemos).then((demoFile: DemoFileCache | null) => {
       setRunningDemos(demoFile);
     });
-    
+
     return () => {
       Messenger.unlisten(messageListener);
     };
@@ -82,14 +93,14 @@ export const Demos: React.FunctionComponent<IDemosProps> = (props: React.PropsWi
           Demo: {crntDemos.title}
         </h3>
       </div>
-      
+
       <div className="p-4 pt-0">
-        <ul className="space-y-2">
+        <ul className="">
           {
             crntDemos && crntDemos.demos.map((d, idx) => (
-              <li key={d.id || idx} className="flex justify-between items-center">
-                <button 
-                  className="flex items-center space-x-2"
+              <li key={d.id || idx} className="flex items-center gap-2">
+                <button
+                  className="flex items-center p-1 space-x-2 hover:text-[var(--vscode-list-hoverForeground)] hover:bg-[var(--vscode-list-hoverBackground)] rounded-[2px]"
                   onClick={() => runStep(idx, d.source)}>
                   {
                     d.executed ? (
@@ -99,6 +110,16 @@ export const Demos: React.FunctionComponent<IDemosProps> = (props: React.PropsWi
                     )}
                   <span>{d.title}</span>
                 </button>
+
+                {
+                  (d.notes && d.notes.path) && (
+                    <button
+                      className="flex items-center p-1 space-x-2 hover:text-[var(--vscode-list-hoverForeground)] hover:bg-[var(--vscode-list-hoverBackground)] rounded-[2px]"
+                      onClick={() => openNotes(d.notes?.path)}>
+                      <Icon name="book" />
+                    </button>
+                  )
+                }
               </li>
             ))
           }

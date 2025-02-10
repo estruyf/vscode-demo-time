@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.68] - 2025-02-08
+
+- Added the open notes action on the presenter view
+- Small optimizations to the logo for the status bar, activity bar, and editor title
+
 ## [0.0.67] - 2025-02-08
 
 - Added the new Demo Time logo
