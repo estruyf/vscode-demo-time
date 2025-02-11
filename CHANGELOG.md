@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.69] - 2025-02-xx
+
+- Ability to create a new demo file when adding a step or creating a snapshot
+- Ability to create a snapshot of the current file
+
 ## [0.0.68] - 2025-02-10
 
 - Added the open notes action on the presenter view

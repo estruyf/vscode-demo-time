@@ -1,4 +1,4 @@
-import { Uri, commands, window } from "vscode";
+import { Uri, commands, window, workspace } from "vscode";
 import { COMMAND, Config } from "../constants";
 import { Action, Demo, Demos, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
@@ -6,9 +6,10 @@ import { FileProvider } from "./FileProvider";
 import { DemoPanel } from "../panels/DemoPanel";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DemoRunner } from "./DemoRunner";
-import { addExtensionRecommendation, getActionOptions, getActionTemplate } from "../utils";
+import { addExtensionRecommendation, createSnapshot, getActionOptions, getActionTemplate } from "../utils";
 import { Notifications } from "./Notifications";
 import { parse as jsonParse } from "jsonc-parser";
+import { diffLines, createPatch, applyPatch, parsePatch, reversePatch } from "diff";
 
 export class DemoCreator {
   public static ExecutedDemoSteps: string[] = [];
@@ -29,6 +30,86 @@ export class DemoCreator {
     );
     subscriptions.push(
       commands.registerCommand(COMMAND.viewStep, (item: ActionTreeItem) => DemoCreator.openFile(item, true))
+    );
+    subscriptions.push(commands.registerCommand(COMMAND.createSnapshot, createSnapshot));
+    subscriptions.push(
+      commands.registerCommand("demo-time.findDifferences", async () => {
+        const activeEditor = window.activeTextEditor;
+        if (!activeEditor) {
+          return;
+        }
+
+        const text = activeEditor.document.getText();
+        const wsFolder = Extension.getInstance().workspaceFolder;
+        if (!wsFolder) {
+          return;
+        }
+        const template = await workspace.fs.readFile(Uri.joinPath(wsFolder?.uri, `/.demo/templates/DemoRunner.ts`));
+        const templateText = template.toString();
+
+        const differences = diffLines(templateText, text, {});
+        console.log(differences);
+
+        const patch = createPatch(activeEditor.document.uri.fsPath, templateText, text);
+        console.log(patch);
+
+        await workspace.fs.writeFile(
+          Uri.joinPath(wsFolder?.uri, `/.demo/patches/DemoRunner.patch`),
+          new TextEncoder().encode(patch)
+        );
+      })
+    );
+    subscriptions.push(
+      commands.registerCommand("demo-time.applyPatch", async () => {
+        const activeEditor = window.activeTextEditor;
+        if (!activeEditor) {
+          return;
+        }
+
+        const text = activeEditor.document.getText();
+        const wsFolder = Extension.getInstance().workspaceFolder;
+        if (!wsFolder) {
+          return;
+        }
+        const patch = await workspace.fs.readFile(Uri.joinPath(wsFolder?.uri, `/.demo/patches/DemoRunner.patch`));
+        const patchText = Buffer.from(patch).toString("utf8");
+
+        const patched = applyPatch(text, patchText);
+        if (!patched) {
+          return;
+        }
+
+        await workspace.fs.writeFile(activeEditor.document.uri, new TextEncoder().encode(patched));
+      })
+    );
+    subscriptions.push(
+      commands.registerCommand("demo-time.reversePatch", async () => {
+        const activeEditor = window.activeTextEditor;
+        if (!activeEditor) {
+          return;
+        }
+
+        const text = activeEditor.document.getText();
+        const wsFolder = Extension.getInstance().workspaceFolder;
+        if (!wsFolder) {
+          return;
+        }
+        const patch = await workspace.fs.readFile(Uri.joinPath(wsFolder?.uri, `/.demo/patches/DemoRunner.patch`));
+        const patchText = Buffer.from(patch).toString("utf8");
+        const parsedPatch = parsePatch(patchText);
+
+        const newPatch = reversePatch(parsedPatch);
+        if (!newPatch) {
+          return;
+        }
+
+        const patched = applyPatch(text, newPatch);
+        if (!patched) {
+          return;
+        }
+
+        await workspace.fs.writeFile(activeEditor.document.uri, new TextEncoder().encode(patched));
+      })
     );
   }
 
@@ -230,17 +311,21 @@ export class DemoCreator {
    * The user can choose to create a new demo step or insert it into an existing demo.
    *
    * @param demo - The current demos object where the step will be added.
-   * @param step - The step to be added to the demo.
+   * @param step - The step(s) to be added to the demo.
    * @returns A promise that resolves to the updated list of demos or undefined if the operation was cancelled.
    */
-  private static async askWhereToAddStep(demo: Demos, step: Step): Promise<Demo[] | undefined> {
-    const demoStep = await window.showQuickPick(["New demo step", "Insert in existing demo"], {
-      title: Config.title,
-      placeHolder: "Where do you want to insert the step?",
-    });
+  public static async askWhereToAddStep(demo: Demos, step: Step | Step[]): Promise<Demo[] | undefined> {
+    let demoStep: string | undefined = "New demo step";
 
-    if (!demoStep) {
-      return;
+    if (demo.demos.length > 0) {
+      demoStep = await window.showQuickPick(["New demo step", "Insert in existing demo"], {
+        title: Config.title,
+        placeHolder: "Where do you want to insert the step?",
+      });
+
+      if (!demoStep) {
+        return;
+      }
     }
 
     if (demoStep === "New demo step") {
@@ -261,14 +346,14 @@ export class DemoCreator {
       demo.demos.push({
         title,
         description: description || "",
-        steps: [step],
+        steps: [...(Array.isArray(step) ? step : [step])],
       });
     } else {
       if (demo.demos.length === 0) {
         demo.demos.push({
           title: "New demo",
           description: "",
-          steps: [step],
+          steps: [...(Array.isArray(step) ? step : [step])],
         });
       } else {
         const demoToEdit = await window.showQuickPick(
@@ -289,7 +374,7 @@ export class DemoCreator {
           return;
         }
 
-        demo.demos[demoIndex].steps.push(step);
+        demo.demos[demoIndex].steps.push(...(Array.isArray(step) ? step : [step]));
       }
     }
 

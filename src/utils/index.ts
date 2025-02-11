@@ -1,6 +1,7 @@
 export * from "./addExtensionRecommendation";
 export * from "./bringToFront";
 export * from "./clearVariablesState";
+export * from "./createSnapshot";
 export * from "./evaluateCommand";
 export * from "./fileExists";
 export * from "./findPosition";
