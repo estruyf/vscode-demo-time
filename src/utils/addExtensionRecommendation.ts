@@ -1,7 +1,8 @@
-import { Uri, workspace } from 'vscode';
+import { Uri } from "vscode";
 import { Extension } from "../services/Extension";
-import { fileExists } from './fileExists';
-import { Logger } from '../services/Logger';
+import { fileExists } from "./fileExists";
+import { Logger } from "../services/Logger";
+import { readFile, writeFile } from ".";
 
 export const addExtensionRecommendation = async () => {
   try {
@@ -15,13 +16,13 @@ export const addExtensionRecommendation = async () => {
 
     const extensionsFile = Uri.joinPath(workspaceFolder.uri, ".vscode/extensions.json");
     let contents: { recommendations: string[] } = {
-      recommendations: []
+      recommendations: [],
     };
 
     // Check if file exists
     if (await fileExists(extensionsFile)) {
-      const data = await workspace.fs.readFile(extensionsFile);
-      contents = JSON.parse(data.toString());
+      const data = await readFile(extensionsFile);
+      contents = JSON.parse(data);
     }
 
     // Check if the extension is already recommended
@@ -30,8 +31,8 @@ export const addExtensionRecommendation = async () => {
     }
 
     contents.recommendations.push(id);
-    
-    await workspace.fs.writeFile(extensionsFile, new TextEncoder().encode(JSON.stringify(contents, null, 2)));
+
+    await writeFile(extensionsFile, JSON.stringify(contents, null, 2));
   } catch (error) {
     Logger.error((error as Error).message);
   }

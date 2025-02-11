@@ -7,6 +7,7 @@ import { FileProvider } from "../services/FileProvider";
 import { DemoRunner } from "../services/DemoRunner";
 import { DemoStatusBar } from "../services/DemoStatusBar";
 import { NotesService } from "../services/NotesService";
+import { readFile } from "../utils";
 
 export class PresenterView {
   private static webview: WebviewPanel | null = null;
@@ -154,9 +155,8 @@ export class PresenterView {
       // Get the manifest file from the dist folder
       const extPath = Uri.file(extension.extensionPath);
       const manifestPath = Uri.joinPath(extPath, "out", "webview", "manifest.json");
-      const manifest = await workspace.fs.readFile(manifestPath);
-      const manifestText = Buffer.from(manifest).toString("utf8");
-      const manifestJson = JSON.parse(manifestText);
+      const manifest = await readFile(manifestPath);
+      const manifestJson = JSON.parse(manifest);
 
       for (const [key, value] of Object.entries<string>(manifestJson)) {
         if (key.endsWith(".js")) {

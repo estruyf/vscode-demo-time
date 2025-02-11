@@ -3,6 +3,7 @@ import { Extension } from "./Extension";
 import { DemoFiles, Demos } from "../models";
 import { Config, General } from "../constants";
 import { parse as jsonParse } from "jsonc-parser";
+import { readFile, writeFile } from "../utils";
 
 export class FileProvider {
   /**
@@ -11,8 +12,7 @@ export class FileProvider {
    * @returns A Promise that resolves to the JSON object representing the file content, or undefined if the file is empty or not valid JSON.
    */
   public static async getFile(filePath: Uri): Promise<Demos | undefined> {
-    const rawContent = await workspace.fs.readFile(filePath);
-    const content = new TextDecoder().decode(rawContent);
+    const content = await readFile(filePath);
     if (!content) {
       return;
     }
@@ -149,7 +149,7 @@ export class FileProvider {
   "demos": []
 }`;
 
-    await workspace.fs.writeFile(file, new TextEncoder().encode(content));
+    await writeFile(file, content);
 
     return file;
   }
@@ -166,6 +166,6 @@ export class FileProvider {
     }
 
     const file = Uri.file(filePath);
-    await workspace.fs.writeFile(file, new TextEncoder().encode(content));
+    await writeFile(file, content);
   }
 }

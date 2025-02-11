@@ -5,6 +5,7 @@ import { parseWinPath } from "./parseWinPath";
 import { Action, Step } from "../models";
 import { DemoCreator, Extension, FileProvider, Notifications } from "../services";
 import { DemoPanel } from "../panels/DemoPanel";
+import { writeFile } from ".";
 
 export const createSnapshot = async () => {
   const activeEditor = window.activeTextEditor;
@@ -54,7 +55,7 @@ export const createSnapshot = async () => {
     return;
   }
 
-  await workspace.fs.writeFile(newFilePath, new TextEncoder().encode(text));
+  await writeFile(newFilePath, text);
 
   // Ask the user if they want to create a new demo starting from this file
   const createDemo = await window.showInformationMessage(
