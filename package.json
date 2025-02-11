@@ -277,18 +277,8 @@
         "category": "Demo Time"
       },
       {
-        "command": "demo-time.findDifferences",
-        "title": "Find differences",
-        "category": "Demo Time"
-      },
-      {
-        "command": "demo-time.applyPatch",
-        "title": "Apply patch",
-        "category": "Demo Time"
-      },
-      {
-        "command": "demo-time.reversePatch",
-        "title": "Reverse patch",
+        "command": "demo-time.createPatch",
+        "title": "Create patch for current file",
         "category": "Demo Time"
       }
     ],

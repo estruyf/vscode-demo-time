@@ -1,11 +1,9 @@
-import { Uri, window, workspace } from "vscode";
+import { Uri, window } from "vscode";
 import { Config, General } from "../constants";
 import { fileExists } from "./fileExists";
-import { parseWinPath } from "./parseWinPath";
 import { Action, Step } from "../models";
-import { DemoCreator, Extension, FileProvider, Notifications } from "../services";
-import { DemoPanel } from "../panels/DemoPanel";
-import { writeFile } from ".";
+import { Extension, Notifications } from "../services";
+import { addStepsToDemo, getFileName, writeFile } from ".";
 
 export const createSnapshot = async () => {
   const activeEditor = window.activeTextEditor;
@@ -19,8 +17,7 @@ export const createSnapshot = async () => {
   }
 
   const text = activeEditor.document.getText();
-  const crntFilePath = parseWinPath(activeEditor.document.fileName);
-  const fileName = Uri.file(crntFilePath).path.split("/").pop() ?? "";
+  const fileName = getFileName(activeEditor.document.uri);
   if (!fileName) {
     return;
   }
@@ -38,7 +35,7 @@ export const createSnapshot = async () => {
     validateInput: async (value) => {
       const newFilePath = Uri.joinPath(wsFolder.uri, General.demoFolder, General.snapshotsFolder, value);
       if (await fileExists(newFilePath)) {
-        return `File ${newFileName} already exists`;
+        return `Snapshot with name "${value}" already exists`;
       }
       return null;
     },
@@ -56,6 +53,7 @@ export const createSnapshot = async () => {
   }
 
   await writeFile(newFilePath, text);
+  Notifications.info(`Snapshot ${newFileName} created`);
 
   // Ask the user if they want to create a new demo starting from this file
   const createDemo = await window.showInformationMessage(
@@ -82,21 +80,5 @@ export const createSnapshot = async () => {
     },
   ];
 
-  const demoFile = await FileProvider.demoQuickPick();
-  if (!demoFile?.demo) {
-    return;
-  }
-  const { filePath, demo } = demoFile;
-
-  const updatedDemos = await DemoCreator.askWhereToAddStep(demo, steps);
-  if (!updatedDemos) {
-    return;
-  }
-
-  demo.demos = updatedDemos;
-
-  await FileProvider.saveFile(filePath, JSON.stringify(demo, null, 2));
-
-  // Trigger a refresh of the treeview
-  DemoPanel.update();
+  await addStepsToDemo(steps);
 };

@@ -1,4 +1,6 @@
 export * from "./addExtensionRecommendation";
+export * from "./addStepsToDemo";
+export * from "./applyPatch";
 export * from "./bringToFront";
 export * from "./clearVariablesState";
 export * from "./createPatch";
@@ -11,6 +13,7 @@ export * from "./findPositionByPlaceholders";
 export * from "./getActionOptions";
 export * from "./getActionTemplate";
 export * from "./getFileContents";
+export * from "./getFileName";
 export * from "./getLineAndCharacterPosition";
 export * from "./getLineInsertionSpeed";
 export * from "./getLineRange";

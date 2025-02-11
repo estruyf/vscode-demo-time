@@ -39,6 +39,7 @@ import {
   clearVariablesState,
   setContext,
   writeFile,
+  applyPatch,
 } from "../utils";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DecoratorService } from "./DecoratorService";
@@ -648,6 +649,11 @@ export class DemoRunner {
 
       if (step.action === Action.Create) {
         await writeFile(fileUri, content);
+        continue;
+      }
+
+      if (step.action === Action.ApplyPatch) {
+        await applyPatch(fileUri, content);
         continue;
       }
 

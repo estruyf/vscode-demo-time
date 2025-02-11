@@ -4,6 +4,7 @@
 
 - Ability to create a new demo file when adding a step or creating a snapshot
 - Ability to create a snapshot of the current file
+- Ability to create a patch file from the current file and a snapshot
 
 ## [0.0.68] - 2025-02-10
 

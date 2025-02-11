@@ -6,10 +6,18 @@ import { FileProvider } from "./FileProvider";
 import { DemoPanel } from "../panels/DemoPanel";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DemoRunner } from "./DemoRunner";
-import { addExtensionRecommendation, createSnapshot, getActionOptions, getActionTemplate } from "../utils";
+import {
+  addExtensionRecommendation,
+  addStepsToDemo,
+  createPatch,
+  createSnapshot,
+  getActionOptions,
+  getActionTemplate,
+  writeFile,
+} from "../utils";
 import { Notifications } from "./Notifications";
 import { parse as jsonParse } from "jsonc-parser";
-import { diffLines, createPatch, applyPatch, parsePatch, reversePatch } from "diff";
+import { applyPatch, parsePatch, reversePatch } from "diff";
 
 export class DemoCreator {
   public static ExecutedDemoSteps: string[] = [];
@@ -32,56 +40,7 @@ export class DemoCreator {
       commands.registerCommand(COMMAND.viewStep, (item: ActionTreeItem) => DemoCreator.openFile(item, true))
     );
     subscriptions.push(commands.registerCommand(COMMAND.createSnapshot, createSnapshot));
-    subscriptions.push(
-      commands.registerCommand("demo-time.findDifferences", async () => {
-        const activeEditor = window.activeTextEditor;
-        if (!activeEditor) {
-          return;
-        }
-
-        const text = activeEditor.document.getText();
-        const wsFolder = Extension.getInstance().workspaceFolder;
-        if (!wsFolder) {
-          return;
-        }
-        const template = await workspace.fs.readFile(Uri.joinPath(wsFolder?.uri, `/.demo/templates/DemoRunner.ts`));
-        const templateText = template.toString();
-
-        const differences = diffLines(templateText, text, {});
-        console.log(differences);
-
-        const patch = createPatch(activeEditor.document.uri.fsPath, templateText, text);
-        console.log(patch);
-
-        await workspace.fs.writeFile(
-          Uri.joinPath(wsFolder?.uri, `/.demo/patches/DemoRunner.patch`),
-          new TextEncoder().encode(patch)
-        );
-      })
-    );
-    subscriptions.push(
-      commands.registerCommand("demo-time.applyPatch", async () => {
-        const activeEditor = window.activeTextEditor;
-        if (!activeEditor) {
-          return;
-        }
-
-        const text = activeEditor.document.getText();
-        const wsFolder = Extension.getInstance().workspaceFolder;
-        if (!wsFolder) {
-          return;
-        }
-        const patch = await workspace.fs.readFile(Uri.joinPath(wsFolder?.uri, `/.demo/patches/DemoRunner.patch`));
-        const patchText = Buffer.from(patch).toString("utf8");
-
-        const patched = applyPatch(text, patchText);
-        if (!patched) {
-          return;
-        }
-
-        await workspace.fs.writeFile(activeEditor.document.uri, new TextEncoder().encode(patched));
-      })
-    );
+    subscriptions.push(commands.registerCommand(COMMAND.createPatch, createPatch));
     subscriptions.push(
       commands.registerCommand("demo-time.reversePatch", async () => {
         const activeEditor = window.activeTextEditor;
@@ -108,7 +67,7 @@ export class DemoCreator {
           return;
         }
 
-        await workspace.fs.writeFile(activeEditor.document.uri, new TextEncoder().encode(patched));
+        await writeFile(activeEditor.document.uri, patched);
       })
     );
   }
@@ -204,12 +163,6 @@ export class DemoCreator {
     const text = editor.document.getText(selection) || "";
     const modifiedText = text.replace(/\r?\n/g, "\n");
 
-    const demoFile = await FileProvider.demoQuickPick();
-    if (!demoFile?.demo) {
-      return;
-    }
-    const { filePath, demo } = demoFile;
-
     const actions: Action[] = [Action.Insert, Action.Highlight, Action.Unselect, Action.Delete, Action.Save];
 
     // If selection is a single line, add the "write" action
@@ -255,17 +208,7 @@ export class DemoCreator {
       step.content = modifiedText;
     }
 
-    const updatedDemos = await DemoCreator.askWhereToAddStep(demo, step);
-    if (!updatedDemos) {
-      return;
-    }
-
-    demo.demos = updatedDemos;
-
-    await FileProvider.saveFile(filePath, JSON.stringify(demo, null, 2));
-
-    // Trigger a refresh of the treeview
-    DemoPanel.update();
+    await addStepsToDemo(step);
   }
 
   private static async addStepToDemo() {
