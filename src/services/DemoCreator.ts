@@ -13,6 +13,8 @@ import {
   createSnapshot,
   getActionOptions,
   getActionTemplate,
+  lowercaseFirstLetter,
+  upperCaseFirstLetter,
   writeFile,
 } from "../utils";
 import { Notifications } from "./Notifications";
@@ -165,18 +167,18 @@ export class DemoCreator {
 
     const actions: QuickPickItem[] = [
       { label: "File", kind: QuickPickItemKind.Separator },
-      { label: "Create snapshot", kind: QuickPickItemKind.Default },
-      { label: "Create patch", kind: QuickPickItemKind.Default },
+      { label: "Create Snapshot", kind: QuickPickItemKind.Default },
+      { label: "Create Patch", kind: QuickPickItemKind.Default },
       { label: "Actions", kind: QuickPickItemKind.Separator },
       ...[Action.Insert, Action.Highlight, Action.Unselect, Action.Delete, Action.Save].map((action) => ({
-        label: action,
+        label: upperCaseFirstLetter(action),
         kind: QuickPickItemKind.Default,
       })),
     ];
 
     // If selection is a single line, add the "write" action
     if (selection.start.line === selection.end.line) {
-      actions.push({ label: Action.Write, kind: QuickPickItemKind.Default });
+      actions.push({ label: upperCaseFirstLetter(Action.Write), kind: QuickPickItemKind.Default });
     }
 
     const selectedAction = await window.showQuickPick(actions, {
@@ -196,7 +198,7 @@ export class DemoCreator {
       return;
     }
 
-    const action = selectedAction.label as Action;
+    const action = lowercaseFirstLetter(selectedAction.label) as Action;
 
     const start = selection.start.line;
     const end = selection.end.line;
