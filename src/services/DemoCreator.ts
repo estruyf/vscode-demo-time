@@ -264,6 +264,7 @@ export class DemoCreator {
       demoStep = await window.showQuickPick(["New demo step", "Insert in existing demo"], {
         title: Config.title,
         placeHolder: "Where do you want to insert the step?",
+        ignoreFocusOut: true,
       });
 
       if (!demoStep) {

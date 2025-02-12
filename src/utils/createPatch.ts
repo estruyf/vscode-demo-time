@@ -2,7 +2,7 @@ import { FileType, Uri, window, workspace } from "vscode";
 import { Extension, Notifications } from "../services";
 import { Config, General } from "../constants";
 import { addStepsToDemo, fileExists, getFileName, readFile, writeFile } from ".";
-import { createPatch as createFilePath } from "diff";
+import { createPatch as createFilePatch } from "diff";
 import { Action, Step } from "../models";
 
 export const createPatch = async () => {
@@ -41,10 +41,11 @@ export const createPatch = async () => {
     return;
   }
 
-  const selectedFilePath = Uri.joinPath(snapshotFolderPath, selectedFile);
-  const snapshot = await readFile(selectedFilePath);
+  const selectedSnapshotPath = Uri.joinPath(snapshotFolderPath, selectedFile);
+  const snapshot = await readFile(selectedSnapshotPath);
 
-  const patch = createFilePath(activeEditor.document.uri.fsPath, snapshot, text);
+  const relFilePath = activeEditor.document.uri.path.replace(wsFolder.uri.path, "");
+  const patch = createFilePatch(relFilePath, snapshot, text);
 
   const fileName = getFileName(activeEditor.document.uri);
   if (!fileName) {
@@ -62,8 +63,8 @@ export const createPatch = async () => {
     ignoreFocusOut: true,
     title: Config.title,
     validateInput: async (value) => {
-      const newFilePath = Uri.joinPath(wsFolder.uri, General.demoFolder, General.patchesFolder, value);
       value = `${value}.patch`;
+      const newFilePath = Uri.joinPath(wsFolder.uri, General.demoFolder, General.patchesFolder, value);
       if (await fileExists(newFilePath)) {
         return `Patch with name "${value}" already exists`;
       }
@@ -77,8 +78,8 @@ export const createPatch = async () => {
   }
 
   patchName = `${patchName}.patch`;
-  const newFilePath = Uri.joinPath(wsFolder.uri, General.demoFolder, General.patchesFolder, patchName);
-  await writeFile(newFilePath, patch);
+  const patchFilePath = Uri.joinPath(wsFolder.uri, General.demoFolder, General.patchesFolder, patchName);
+  await writeFile(patchFilePath, patch);
   Notifications.info(`Patch ${patchName} created`);
 
   // Ask the user if they want to create a new demo starting from this file
@@ -93,12 +94,17 @@ export const createPatch = async () => {
     return;
   }
 
-  const relFilePath = activeEditor.document.uri.path.replace(wsFolder.uri.path || "", "");
+  const demoFolderPath = Uri.joinPath(wsFolder.uri, General.demoFolder).path;
   const steps: Step[] = [
     {
       action: Action.ApplyPatch,
       path: relFilePath,
-      contentPath: newFilePath.path.replace(Uri.joinPath(wsFolder.uri, General.demoFolder).path, ""),
+      contentPath: selectedSnapshotPath.path.replace(demoFolderPath, ""),
+      patch: patchFilePath.path.replace(demoFolderPath, ""),
+    },
+    {
+      action: Action.Open,
+      path: relFilePath,
     },
   ];
 

@@ -133,6 +133,7 @@ export class FileProvider {
       }
 
       fileName = fileName.replace(/ /g, "-");
+      fileName = fileName.toLowerCase();
     }
 
     const files = await workspace.findFiles(`${General.demoFolder}/${fileName || `demo.json`}`, `**/node_modules/**`);

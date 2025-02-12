@@ -653,7 +653,7 @@ export class DemoRunner {
       }
 
       if (step.action === Action.ApplyPatch) {
-        await applyPatch(fileUri, content);
+        await applyPatch(fileUri, content, step.patch);
         continue;
       }
 
