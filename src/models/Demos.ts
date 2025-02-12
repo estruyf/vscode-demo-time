@@ -35,6 +35,7 @@ export interface Step {
   path?: string;
   content?: string;
   contentPath?: string;
+  patch?: string;
 
   position?: string | number;
   startPlaceholder?: string;

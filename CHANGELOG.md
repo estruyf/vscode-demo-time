@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.0.69] - 2025-02-12
+
+- [#45](https://github.com/estruyf/vscode-demo-time/issues/45): Ability to create a new demo file when adding a step or creating a snapshot
+- [#45](https://github.com/estruyf/vscode-demo-time/issues/45): Ability to create a snapshot of the current file
+- [#45](https://github.com/estruyf/vscode-demo-time/issues/45): Ability to create a patch file from the current file and a snapshot
+
 ## [0.0.68] - 2025-02-10
 
 - Added the open notes action on the presenter view

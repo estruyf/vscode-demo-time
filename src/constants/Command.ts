@@ -20,6 +20,8 @@ export const COMMAND = {
   stepMoveUp: `${EXTENSION_NAME}.stepMoveUp`,
   stepMoveDown: `${EXTENSION_NAME}.stepMoveDown`,
   viewStep: `${EXTENSION_NAME}.viewStep`,
+  createSnapshot: `${EXTENSION_NAME}.createSnapshot`,
+  createPatch: `${EXTENSION_NAME}.createPatch`,
   // Output
   showOutputChannel: `${EXTENSION_NAME}.showOutputChannel`,
   // Panel view

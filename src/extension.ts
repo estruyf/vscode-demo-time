@@ -1,16 +1,18 @@
 import * as vscode from "vscode";
-import { Extension } from "./services/Extension";
-import { DemoPanel } from "./panels/DemoPanel";
-import { DemoRunner } from "./services/DemoRunner";
-import { DemoCreator } from "./services/DemoCreator";
-import { DemoListeners } from "./services/DemoListeners";
-import { DecoratorService } from "./services/DecoratorService";
-import { DemoStatusBar } from "./services/DemoStatusBar";
-import { PresenterView } from "./presenterView/PresenterView";
-import { NotesService } from "./services/NotesService";
-import { DemoApi } from "./services/DemoApi";
-import { UriHandler } from "./services/UriHandler";
 import { clearVariablesState } from "./utils";
+import {
+  DecoratorService,
+  DemoApi,
+  DemoCreator,
+  DemoListeners,
+  DemoRunner,
+  DemoStatusBar,
+  Extension,
+  NotesService,
+  UriHandler,
+} from "./services";
+import { DemoPanel } from "./panels/DemoPanel";
+import { PresenterView } from "./presenterView/PresenterView";
 
 export async function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);

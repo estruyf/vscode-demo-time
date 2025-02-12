@@ -1,14 +1,18 @@
-import { Position, Uri, workspace, Range } from "vscode";
+import { Position, Uri, Range } from "vscode";
 import { Extension } from "../services/Extension";
 import { fileExists } from "./fileExists";
-import { findPosition } from ".";
+import { findPosition, readFile } from ".";
 import { Notifications } from "../services/Notifications";
 
-export const findPositionByPlaceholders = async (startPlaceholder: string, filePath: string, endPlaceholder?: string) => {
+export const findPositionByPlaceholders = async (
+  startPlaceholder: string,
+  filePath: string,
+  endPlaceholder?: string
+) => {
   if (!filePath || !startPlaceholder) {
     return;
   }
-  
+
   const workspaceFolder = Extension.getInstance().workspaceFolder;
   if (!workspaceFolder) {
     return;
@@ -19,14 +23,13 @@ export const findPositionByPlaceholders = async (startPlaceholder: string, fileP
     return;
   }
 
-  const fileContent = await workspace.fs.readFile(fileUri);
-  const fileTxt = Buffer.from(fileContent).toString("utf-8");
+  const fileTxt = await readFile(fileUri);
 
   // Find the position of the start placeholder in the file content
   const startIdx = fileTxt.indexOf(startPlaceholder);
   if (startIdx < 0) {
     return;
-  } 
+  }
 
   const startPosition = findPosition(fileTxt, startPlaceholder);
   let endPosition: Position | undefined;
@@ -44,9 +47,11 @@ export const findPositionByPlaceholders = async (startPlaceholder: string, fileP
 
   return {
     position: new Position(startPosition.line, startPosition.character),
-    range: endPosition ? new Range(
-      new Position(startPosition.line, startPosition.character),
-      new Position(endPosition.line, endPosition.character)
-    ) : undefined
+    range: endPosition
+      ? new Range(
+          new Position(startPosition.line, startPosition.character),
+          new Position(endPosition.line, endPosition.character)
+        )
+      : undefined,
   };
 };

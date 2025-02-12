@@ -192,8 +192,9 @@
       },
       {
         "command": "demo-time.addToStep",
-        "title": "Add as demo step",
-        "category": "Demo Time"
+        "title": "Add demo step",
+        "category": "Demo Time",
+        "icon": "$(add)"
       },
       {
         "command": "demo-time.initialize",
@@ -267,9 +268,19 @@
         "title": "Toggle highlight",
         "category": "Demo Time",
         "icon": {
-          "light": "assets/highlight-light.svg",
-          "dark": "assets/highlight-dark.svg"
+          "light": "assets/icons/highlight-light.svg",
+          "dark": "assets/icons/highlight-dark.svg"
         }
+      },
+      {
+        "command": "demo-time.createSnapshot",
+        "title": "Create a snapshot",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.createPatch",
+        "title": "Create patch for current file",
+        "category": "Demo Time"
       }
     ],
     "menus": {
@@ -397,6 +408,11 @@
           "command": "demo-time.toggleHighlight",
           "when": "activeEditor == 'workbench.editors.files.textFileEditor' && demo-time.hasCodeHighlighting == true",
           "group": "navigation@1"
+        },
+        {
+          "command": "demo-time.addToStep",
+          "when": "activeEditor == 'workbench.editors.files.textFileEditor' && !(resourceDirname =~ /\\.demo$/)",
+          "group": "navigation@1"
         }
       ]
     },
@@ -442,6 +458,7 @@
   "devDependencies": {
     "@estruyf/vscode": "^1.1.0",
     "@types/cors": "^2.8.17",
+    "@types/diff": "^7.0.1",
     "@types/mocha": "^10.0.3",
     "@types/node": "18.x",
     "@types/react": "^18.3.16",
@@ -473,5 +490,8 @@
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.2.0",
     "webpack-manifest-plugin": "^5.0.0"
+  },
+  "dependencies": {
+    "diff": "^7.0.0"
   }
 }

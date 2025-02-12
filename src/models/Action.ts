@@ -20,6 +20,7 @@ export enum Action {
   Write = "write",
   Save = "save",
   Format = "format",
+  ApplyPatch = "applyPatch",
   // Settings
   SetSetting = "setSetting",
   // Timeout

@@ -1,4 +1,4 @@
-import { Uri, commands, window } from "vscode";
+import { QuickPickItem, QuickPickItemKind, Uri, commands, window, workspace } from "vscode";
 import { COMMAND, Config } from "../constants";
 import { Action, Demo, Demos, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
@@ -6,9 +6,20 @@ import { FileProvider } from "./FileProvider";
 import { DemoPanel } from "../panels/DemoPanel";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DemoRunner } from "./DemoRunner";
-import { addExtensionRecommendation, getActionOptions, getActionTemplate } from "../utils";
+import {
+  addExtensionRecommendation,
+  addStepsToDemo,
+  createPatch,
+  createSnapshot,
+  getActionOptions,
+  getActionTemplate,
+  lowercaseFirstLetter,
+  upperCaseFirstLetter,
+  writeFile,
+} from "../utils";
 import { Notifications } from "./Notifications";
 import { parse as jsonParse } from "jsonc-parser";
+import { applyPatch, parsePatch, reversePatch } from "diff";
 
 export class DemoCreator {
   public static ExecutedDemoSteps: string[] = [];
@@ -29,6 +40,37 @@ export class DemoCreator {
     );
     subscriptions.push(
       commands.registerCommand(COMMAND.viewStep, (item: ActionTreeItem) => DemoCreator.openFile(item, true))
+    );
+    subscriptions.push(commands.registerCommand(COMMAND.createSnapshot, createSnapshot));
+    subscriptions.push(commands.registerCommand(COMMAND.createPatch, createPatch));
+    subscriptions.push(
+      commands.registerCommand("demo-time.reversePatch", async () => {
+        const activeEditor = window.activeTextEditor;
+        if (!activeEditor) {
+          return;
+        }
+
+        const text = activeEditor.document.getText();
+        const wsFolder = Extension.getInstance().workspaceFolder;
+        if (!wsFolder) {
+          return;
+        }
+        const patch = await workspace.fs.readFile(Uri.joinPath(wsFolder?.uri, `/.demo/patches/DemoRunner.patch`));
+        const patchText = Buffer.from(patch).toString("utf8");
+        const parsedPatch = parsePatch(patchText);
+
+        const newPatch = reversePatch(parsedPatch);
+        if (!newPatch) {
+          return;
+        }
+
+        const patched = applyPatch(text, newPatch);
+        if (!patched) {
+          return;
+        }
+
+        await writeFile(activeEditor.document.uri, patched);
+      })
     );
   }
 
@@ -123,27 +165,40 @@ export class DemoCreator {
     const text = editor.document.getText(selection) || "";
     const modifiedText = text.replace(/\r?\n/g, "\n");
 
-    const demoFile = await FileProvider.demoQuickPick();
-    if (!demoFile?.demo) {
-      return;
-    }
-    const { filePath, demo } = demoFile;
-
-    const actions: Action[] = [Action.Insert, Action.Highlight, Action.Unselect, Action.Delete, Action.Save];
+    const actions: QuickPickItem[] = [
+      { label: "File", kind: QuickPickItemKind.Separator },
+      { label: "Create Snapshot", kind: QuickPickItemKind.Default },
+      { label: "Create Patch", kind: QuickPickItemKind.Default },
+      { label: "Actions", kind: QuickPickItemKind.Separator },
+      ...[Action.Insert, Action.Highlight, Action.Unselect, Action.Delete, Action.Save].map((action) => ({
+        label: upperCaseFirstLetter(action),
+        kind: QuickPickItemKind.Default,
+      })),
+    ];
 
     // If selection is a single line, add the "write" action
     if (selection.start.line === selection.end.line) {
-      actions.push(Action.Write);
+      actions.push({ label: upperCaseFirstLetter(Action.Write), kind: QuickPickItemKind.Default });
     }
 
-    const action = (await window.showQuickPick(actions, {
+    const selectedAction = await window.showQuickPick(actions, {
       title: Config.title,
       placeHolder: "What kind of action step do you want to perform?",
-    })) as unknown as Action;
+    });
 
-    if (!action) {
+    if (!selectedAction) {
       return;
     }
+
+    if (selectedAction.label === "Create snapshot") {
+      await createSnapshot();
+      return;
+    } else if (selectedAction.label === "Create patch") {
+      await createPatch();
+      return;
+    }
+
+    const action = lowercaseFirstLetter(selectedAction.label) as Action;
 
     const start = selection.start.line;
     const end = selection.end.line;
@@ -174,17 +229,7 @@ export class DemoCreator {
       step.content = modifiedText;
     }
 
-    const updatedDemos = await DemoCreator.askWhereToAddStep(demo, step);
-    if (!updatedDemos) {
-      return;
-    }
-
-    demo.demos = updatedDemos;
-
-    await FileProvider.saveFile(filePath, JSON.stringify(demo, null, 2));
-
-    // Trigger a refresh of the treeview
-    DemoPanel.update();
+    await addStepsToDemo(step);
   }
 
   private static async addStepToDemo() {
@@ -230,17 +275,22 @@ export class DemoCreator {
    * The user can choose to create a new demo step or insert it into an existing demo.
    *
    * @param demo - The current demos object where the step will be added.
-   * @param step - The step to be added to the demo.
+   * @param step - The step(s) to be added to the demo.
    * @returns A promise that resolves to the updated list of demos or undefined if the operation was cancelled.
    */
-  private static async askWhereToAddStep(demo: Demos, step: Step): Promise<Demo[] | undefined> {
-    const demoStep = await window.showQuickPick(["New demo step", "Insert in existing demo"], {
-      title: Config.title,
-      placeHolder: "Where do you want to insert the step?",
-    });
+  public static async askWhereToAddStep(demo: Demos, step: Step | Step[]): Promise<Demo[] | undefined> {
+    let demoStep: string | undefined = "New demo step";
 
-    if (!demoStep) {
-      return;
+    if (demo.demos.length > 0) {
+      demoStep = await window.showQuickPick(["New demo step", "Insert in existing demo"], {
+        title: Config.title,
+        placeHolder: "Where do you want to insert the step?",
+        ignoreFocusOut: true,
+      });
+
+      if (!demoStep) {
+        return;
+      }
     }
 
     if (demoStep === "New demo step") {
@@ -261,14 +311,14 @@ export class DemoCreator {
       demo.demos.push({
         title,
         description: description || "",
-        steps: [step],
+        steps: [...(Array.isArray(step) ? step : [step])],
       });
     } else {
       if (demo.demos.length === 0) {
         demo.demos.push({
           title: "New demo",
           description: "",
-          steps: [step],
+          steps: [...(Array.isArray(step) ? step : [step])],
         });
       } else {
         const demoToEdit = await window.showQuickPick(
@@ -289,7 +339,7 @@ export class DemoCreator {
           return;
         }
 
-        demo.demos[demoIndex].steps.push(step);
+        demo.demos[demoIndex].steps.push(...(Array.isArray(step) ? step : [step]));
       }
     }
 

@@ -3,6 +3,7 @@ import { Extension } from "./Extension";
 import { DemoFiles, Demos } from "../models";
 import { Config, General } from "../constants";
 import { parse as jsonParse } from "jsonc-parser";
+import { readFile, writeFile } from "../utils";
 
 export class FileProvider {
   /**
@@ -11,8 +12,7 @@ export class FileProvider {
    * @returns A Promise that resolves to the JSON object representing the file content, or undefined if the file is empty or not valid JSON.
    */
   public static async getFile(filePath: Uri): Promise<Demos | undefined> {
-    const rawContent = await workspace.fs.readFile(filePath);
-    const content = new TextDecoder().decode(rawContent);
+    const content = await readFile(filePath);
     if (!content) {
       return;
     }
@@ -58,7 +58,7 @@ export class FileProvider {
    * @returns The selected demo file, or undefined if no file was selected.
    */
   public static async demoQuickPick(): Promise<{ filePath: string; demo: Demos } | undefined> {
-    const demoFiles = await FileProvider.getFiles();
+    let demoFiles = await FileProvider.getFiles();
     if (!demoFiles) {
       return;
     }
@@ -71,19 +71,41 @@ export class FileProvider {
       };
     });
 
+    demoFileOptions.push({ label: "Create new file", description: "" });
+
     const demoFilePick = await window.showQuickPick(demoFileOptions, {
       title: Config.title,
       placeHolder: "Select a demo file",
     });
 
-    if (!demoFilePick || !demoFilePick.description) {
+    if (!demoFilePick) {
       return;
     }
 
-    const demoFilePath = Object.keys(demoFiles).find((path) => path.endsWith(demoFilePick.description as string));
+    let demoFilePath: string | undefined = undefined;
+    if (demoFilePick.label === "Create new file") {
+      const demoName = await window.showInputBox({
+        title: Config.title,
+        placeHolder: "Enter the name of the demo file",
+      });
+      if (!demoName) {
+        return;
+      }
 
-    if (!demoFilePath) {
+      const file = await FileProvider.createFile(demoName.trim());
+      if (!file) {
+        return;
+      }
+
+      demoFilePath = file.path;
+      demoFiles = await FileProvider.getFiles();
+    } else if (!demoFilePick.description) {
       return;
+    } else {
+      demoFilePath = Object.keys(demoFiles).find((path) => path.endsWith(demoFilePick.description as string));
+      if (!demoFilePath) {
+        return;
+      }
     }
 
     const demo = (demoFiles as DemoFiles)[demoFilePath];
@@ -98,27 +120,37 @@ export class FileProvider {
    * The file is created at `.demo/demo.json` with initial content.
    * @returns A promise that resolves when the file is created.
    */
-  public static async createFile(): Promise<Uri | undefined> {
+  public static async createFile(fileName?: string): Promise<Uri | undefined> {
     const workspaceFolder = Extension.getInstance().workspaceFolder;
     if (!workspaceFolder) {
       return;
     }
 
-    const files = await workspace.findFiles(`${General.demoFolder}/demo.json`, `**/node_modules/**`);
+    const demoTitle = fileName || "Demo";
+    if (fileName) {
+      if (!fileName.endsWith(".json")) {
+        fileName = `${fileName}.json`;
+      }
+
+      fileName = fileName.replace(/ /g, "-");
+      fileName = fileName.toLowerCase();
+    }
+
+    const files = await workspace.findFiles(`${General.demoFolder}/${fileName || `demo.json`}`, `**/node_modules/**`);
 
     if (files.length > 0) {
       return;
     }
 
-    const file = Uri.joinPath(workspaceFolder.uri, General.demoFolder, `demo.json`);
+    const file = Uri.joinPath(workspaceFolder.uri, General.demoFolder, fileName || `demo.json`);
     const content = `{
   "$schema": "https://demotime.elio.dev/demo-time.schema.json",
-  "title": "Demo",
-  "description": "Demo description",
+  "title": "${demoTitle}",
+  "description": "",
   "demos": []
 }`;
 
-    await workspace.fs.writeFile(file, new TextEncoder().encode(content));
+    await writeFile(file, content);
 
     return file;
   }
@@ -135,6 +167,6 @@ export class FileProvider {
     }
 
     const file = Uri.file(filePath);
-    await workspace.fs.writeFile(file, new TextEncoder().encode(content));
+    await writeFile(file, content);
   }
 }
