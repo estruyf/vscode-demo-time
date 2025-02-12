@@ -1,4 +1,4 @@
-import { Uri, commands, window, workspace } from "vscode";
+import { QuickPickItem, QuickPickItemKind, Uri, commands, window, workspace } from "vscode";
 import { COMMAND, Config } from "../constants";
 import { Action, Demo, Demos, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
@@ -163,21 +163,40 @@ export class DemoCreator {
     const text = editor.document.getText(selection) || "";
     const modifiedText = text.replace(/\r?\n/g, "\n");
 
-    const actions: Action[] = [Action.Insert, Action.Highlight, Action.Unselect, Action.Delete, Action.Save];
+    const actions: QuickPickItem[] = [
+      { label: "File", kind: QuickPickItemKind.Separator },
+      { label: "Create snapshot", kind: QuickPickItemKind.Default },
+      { label: "Create patch", kind: QuickPickItemKind.Default },
+      { label: "Actions", kind: QuickPickItemKind.Separator },
+      ...[Action.Insert, Action.Highlight, Action.Unselect, Action.Delete, Action.Save].map((action) => ({
+        label: action,
+        kind: QuickPickItemKind.Default,
+      })),
+    ];
 
     // If selection is a single line, add the "write" action
     if (selection.start.line === selection.end.line) {
-      actions.push(Action.Write);
+      actions.push({ label: Action.Write, kind: QuickPickItemKind.Default });
     }
 
-    const action = (await window.showQuickPick(actions, {
+    const selectedAction = await window.showQuickPick(actions, {
       title: Config.title,
       placeHolder: "What kind of action step do you want to perform?",
-    })) as unknown as Action;
+    });
 
-    if (!action) {
+    if (!selectedAction) {
       return;
     }
+
+    if (selectedAction.label === "Create snapshot") {
+      await createSnapshot();
+      return;
+    } else if (selectedAction.label === "Create patch") {
+      await createPatch();
+      return;
+    }
+
+    const action = selectedAction.label as Action;
 
     const start = selection.start.line;
     const end = selection.end.line;

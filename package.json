@@ -192,8 +192,9 @@
       },
       {
         "command": "demo-time.addToStep",
-        "title": "Add as demo step",
-        "category": "Demo Time"
+        "title": "Add demo step",
+        "category": "Demo Time",
+        "icon": "$(add)"
       },
       {
         "command": "demo-time.initialize",
@@ -267,8 +268,8 @@
         "title": "Toggle highlight",
         "category": "Demo Time",
         "icon": {
-          "light": "assets/highlight-light.svg",
-          "dark": "assets/highlight-dark.svg"
+          "light": "assets/icons/highlight-light.svg",
+          "dark": "assets/icons/highlight-dark.svg"
         }
       },
       {
@@ -406,6 +407,11 @@
         {
           "command": "demo-time.toggleHighlight",
           "when": "activeEditor == 'workbench.editors.files.textFileEditor' && demo-time.hasCodeHighlighting == true",
+          "group": "navigation@1"
+        },
+        {
+          "command": "demo-time.addToStep",
+          "when": "activeEditor == 'workbench.editors.files.textFileEditor' && !(resourceDirname =~ /\\.demo$/)",
           "group": "navigation@1"
         }
       ]
