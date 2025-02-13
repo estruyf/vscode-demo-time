@@ -489,18 +489,14 @@ export class DemoRunner {
 
       // Update settings
       if (step.action === Action.SetSetting) {
-        if (!step.setting || !step.setting.key || !step.setting.value) {
+        if (!step.setting || !step.setting.key) {
           Notifications.error("No setting key or value specified");
           continue;
         }
 
-        await workspace
-          .getConfiguration()
-          .update(
-            step.args.setting,
-            step.args.value === null ? undefined : step.args.value,
-            ConfigurationTarget.Workspace
-          );
+        const { key, value } = step.setting;
+        const config = workspace.getConfiguration();
+        await config.update(key, value === null ? undefined : value, ConfigurationTarget.Workspace);
         continue;
       }
 

@@ -281,6 +281,11 @@
         "command": "demo-time.createPatch",
         "title": "Create patch for current file",
         "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.createDemoFile",
+        "title": "Create a new demo file",
+        "category": "Demo Time"
       }
     ],
     "menus": {

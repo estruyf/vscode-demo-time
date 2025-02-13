@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.70] - 2025-02-13
+
+- Fix in `setSetting` action where the setting was not updated in the workspace configuration
+- [#49](https://github.com/estruyf/vscode-demo-time/issues/#49): New command to create a new demo file
+
 ## [0.0.69] - 2025-02-12
 
 - [#45](https://github.com/estruyf/vscode-demo-time/issues/45): Ability to create a new demo file when adding a step or creating a snapshot

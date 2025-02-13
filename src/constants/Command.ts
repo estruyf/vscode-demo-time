@@ -22,6 +22,7 @@ export const COMMAND = {
   viewStep: `${EXTENSION_NAME}.viewStep`,
   createSnapshot: `${EXTENSION_NAME}.createSnapshot`,
   createPatch: `${EXTENSION_NAME}.createPatch`,
+  createDemoFile: `${EXTENSION_NAME}.createDemoFile`,
   // Output
   showOutputChannel: `${EXTENSION_NAME}.showOutputChannel`,
   // Panel view
