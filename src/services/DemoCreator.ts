@@ -9,17 +9,16 @@ import { DemoRunner } from "./DemoRunner";
 import {
   addExtensionRecommendation,
   addStepsToDemo,
+  createDemoFile,
   createPatch,
   createSnapshot,
   getActionOptions,
   getActionTemplate,
   lowercaseFirstLetter,
   upperCaseFirstLetter,
-  writeFile,
 } from "../utils";
 import { Notifications } from "./Notifications";
 import { parse as jsonParse } from "jsonc-parser";
-import { applyPatch, parsePatch, reversePatch } from "diff";
 
 export class DemoCreator {
   public static ExecutedDemoSteps: string[] = [];
@@ -43,35 +42,7 @@ export class DemoCreator {
     );
     subscriptions.push(commands.registerCommand(COMMAND.createSnapshot, createSnapshot));
     subscriptions.push(commands.registerCommand(COMMAND.createPatch, createPatch));
-    subscriptions.push(
-      commands.registerCommand("demo-time.reversePatch", async () => {
-        const activeEditor = window.activeTextEditor;
-        if (!activeEditor) {
-          return;
-        }
-
-        const text = activeEditor.document.getText();
-        const wsFolder = Extension.getInstance().workspaceFolder;
-        if (!wsFolder) {
-          return;
-        }
-        const patch = await workspace.fs.readFile(Uri.joinPath(wsFolder?.uri, `/.demo/patches/DemoRunner.patch`));
-        const patchText = Buffer.from(patch).toString("utf8");
-        const parsedPatch = parsePatch(patchText);
-
-        const newPatch = reversePatch(parsedPatch);
-        if (!newPatch) {
-          return;
-        }
-
-        const patched = applyPatch(text, newPatch);
-        if (!patched) {
-          return;
-        }
-
-        await writeFile(activeEditor.document.uri, patched);
-      })
-    );
+    subscriptions.push(commands.registerCommand(COMMAND.createDemoFile, createDemoFile));
   }
 
   /**

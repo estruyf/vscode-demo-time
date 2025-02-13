@@ -3,7 +3,7 @@ import { Extension } from "./Extension";
 import { DemoFiles, Demos } from "../models";
 import { Config, General } from "../constants";
 import { parse as jsonParse } from "jsonc-parser";
-import { readFile, writeFile } from "../utils";
+import { readFile, sanitizeFileName, writeFile } from "../utils";
 
 export class FileProvider {
   /**
@@ -84,19 +84,6 @@ export class FileProvider {
 
     let demoFilePath: string | undefined = undefined;
     if (demoFilePick.label === "Create new file") {
-      const demoName = await window.showInputBox({
-        title: Config.title,
-        placeHolder: "Enter the name of the demo file",
-      });
-      if (!demoName) {
-        return;
-      }
-
-      const file = await FileProvider.createFile(demoName.trim());
-      if (!file) {
-        return;
-      }
-
       demoFilePath = file.path;
       demoFiles = await FileProvider.getFiles();
     } else if (!demoFilePick.description) {
@@ -128,12 +115,7 @@ export class FileProvider {
 
     const demoTitle = fileName || "Demo";
     if (fileName) {
-      if (!fileName.endsWith(".json")) {
-        fileName = `${fileName}.json`;
-      }
-
-      fileName = fileName.replace(/ /g, "-");
-      fileName = fileName.toLowerCase();
+      fileName = sanitizeFileName(fileName);
     }
 
     const files = await workspace.findFiles(`${General.demoFolder}/${fileName || `demo.json`}`, `**/node_modules/**`);
