@@ -3,7 +3,7 @@ import { Extension } from "./Extension";
 import { DemoFiles, Demos } from "../models";
 import { Config, General } from "../constants";
 import { parse as jsonParse } from "jsonc-parser";
-import { readFile, sanitizeFileName, writeFile } from "../utils";
+import { createDemoFile, readFile, sanitizeFileName, writeFile } from "../utils";
 
 export class FileProvider {
   /**
@@ -84,6 +84,11 @@ export class FileProvider {
 
     let demoFilePath: string | undefined = undefined;
     if (demoFilePick.label === "Create new file") {
+      const file = await createDemoFile();
+      if (!file) {
+        return;
+      }
+
       demoFilePath = file.path;
       demoFiles = await FileProvider.getFiles();
     } else if (!demoFilePick.description) {

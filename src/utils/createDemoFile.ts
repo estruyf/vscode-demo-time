@@ -4,7 +4,7 @@ import { Extension, FileProvider } from "../services";
 import { sanitizeFileName } from "./sanitizeFileName";
 import { fileExists } from "./fileExists";
 
-export const createDemoFile = async () => {
+export const createDemoFile = async (openFile = false) => {
   const wsFolder = Extension.getInstance().workspaceFolder;
   if (!wsFolder) {
     return;
@@ -36,5 +36,9 @@ export const createDemoFile = async () => {
     return;
   }
 
-  await window.showTextDocument(file);
+  if (openFile) {
+    await window.showTextDocument(file);
+  }
+
+  return file;
 };

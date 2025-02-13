@@ -3,7 +3,7 @@ import { Action } from "../models";
 
 export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   const action = selectedAction.label;
-  
+
   /**
    * File actions
    */
@@ -62,6 +62,18 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.CloseAll) {
     return {
       action: "closeAll",
+    };
+  }
+
+  /**
+   * Patch actions
+   */
+  if (action === Action.ApplyPatch) {
+    return {
+      action: "applyPatch",
+      path: "",
+      contentPath: "",
+      patch: "",
     };
   }
 

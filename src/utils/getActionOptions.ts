@@ -4,7 +4,7 @@ import { Action } from "../models";
 export const getActionOptions = (): QuickPickItem[] => {
   const actions: QuickPickItem[] = [];
 
-  /** 
+  /**
    * File actions
    */
   actions.push({
@@ -57,8 +57,22 @@ export const getActionOptions = (): QuickPickItem[] => {
     label: Action.CloseAll,
     description: "Close all files",
   } as QuickPickItem);
-  
-  /** 
+
+  /**
+   * Patch actions
+   */
+  actions.push({
+    label: "Patch",
+    description: "Patch actions",
+    kind: QuickPickItemKind.Separator,
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.ApplyPatch,
+    description: "Apply a patch",
+  } as QuickPickItem);
+
+  /**
    * Markdown actions
    */
   actions.push({
@@ -72,7 +86,7 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: "Preview a markdown file",
   } as QuickPickItem);
 
-  /** 
+  /**
    * Text/Code actions
    */
   actions.push({
@@ -121,7 +135,7 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: "Delete text",
   } as QuickPickItem);
 
-  /** 
+  /**
    * Settings actions
    */
   actions.push({
@@ -135,7 +149,7 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: "Set a setting",
   } as QuickPickItem);
 
-  /** 
+  /**
    * Terminal actions
    */
   actions.push({
@@ -154,7 +168,7 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: "Close the terminal",
   } as QuickPickItem);
 
-  /** 
+  /**
    * Timeout actions
    */
   actions.push({
@@ -173,7 +187,7 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: "Wait for user input",
   } as QuickPickItem);
 
-  /** 
+  /**
    * VSCode actions
    */
   actions.push({
@@ -192,7 +206,7 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: "Show an info message",
   } as QuickPickItem);
 
-  /** 
+  /**
    * Extensibility actions
    */
   actions.push({
@@ -208,4 +222,3 @@ export const getActionOptions = (): QuickPickItem[] => {
 
   return actions;
 };
-  

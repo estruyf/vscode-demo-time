@@ -42,7 +42,7 @@ export class DemoCreator {
     );
     subscriptions.push(commands.registerCommand(COMMAND.createSnapshot, createSnapshot));
     subscriptions.push(commands.registerCommand(COMMAND.createPatch, createPatch));
-    subscriptions.push(commands.registerCommand(COMMAND.createDemoFile, createDemoFile));
+    subscriptions.push(commands.registerCommand(COMMAND.createDemoFile, () => createDemoFile(true)));
   }
 
   /**

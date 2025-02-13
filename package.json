@@ -364,6 +364,14 @@
           "command": "demo-time.collapseAll",
           "when": "view == demo-time",
           "group": "navigation@3"
+        },
+        {
+          "command": "demo-time.createDemoFile",
+          "when": "view == demo-time"
+        },
+        {
+          "command": "demo-time.docs",
+          "when": "view == demo-time"
         }
       ],
       "view/item/context": [
