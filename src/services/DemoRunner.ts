@@ -3,7 +3,6 @@ import { COMMAND, Config, ContextKeys, StateKeys, WebViewMessages } from "../con
 import { Action, Demo, DemoFileCache, Demos, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import {
-  ConfigurationTarget,
   Position,
   Range,
   Selection,
@@ -40,6 +39,7 @@ import {
   setContext,
   writeFile,
   applyPatch,
+  updateConfig,
 } from "../utils";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DecoratorService } from "./DecoratorService";
@@ -495,8 +495,22 @@ export class DemoRunner {
         }
 
         const { key, value } = step.setting;
-        const config = workspace.getConfiguration();
-        await config.update(key, value === null ? undefined : value, ConfigurationTarget.Workspace);
+        await updateConfig(key, value === null ? undefined : value);
+        continue;
+      }
+
+      if (step.action === Action.SetTheme) {
+        if (!step.theme) {
+          Notifications.error("No theme specified");
+          continue;
+        }
+
+        await updateConfig("workbench.colorTheme", step.theme);
+        continue;
+      }
+
+      if (step.action === Action.UnsetTheme) {
+        await updateConfig("workbench.colorTheme", null);
         continue;
       }
 

@@ -1,10 +1,11 @@
 # Change Log
 
-## [0.0.70] - 2025-02-13
+## [0.0.70] - 2025-02-14
 
 - Fix in `setSetting` action where the setting was not updated in the workspace configuration
 - Added actions to the Demo Time panel menu
-- [#49](https://github.com/estruyf/vscode-demo-time/issues/#49): New command to create a new demo file
+- [#49](https://github.com/estruyf/vscode-demo-time/issues/49): New command to create a new demo file
+- [#47](https://github.com/estruyf/vscode-demo-time/issues/47): Added the `setTheme` and `unsetTheme` actions
 
 ## [0.0.69] - 2025-02-12
 

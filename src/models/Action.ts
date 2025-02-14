@@ -23,6 +23,8 @@ export enum Action {
   ApplyPatch = "applyPatch",
   // Settings
   SetSetting = "setSetting",
+  SetTheme = "setTheme",
+  UnsetTheme = "unsetTheme",
   // Timeout
   WaitForTimeout = "waitForTimeout",
   WaitForInput = "waitForInput",

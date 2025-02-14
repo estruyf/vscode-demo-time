@@ -55,6 +55,7 @@ export interface Step {
   dest?: string;
   overwrite?: boolean;
   terminalId?: string;
+  theme?: string;
 }
 
 export interface Setting {

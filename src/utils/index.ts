@@ -36,6 +36,7 @@ export * from "./replaceContent";
 export * from "./sanitizeFileName";
 export * from "./setContext";
 export * from "./sleep";
+export * from "./updateConfig";
 export * from "./upperCaseFirstLetter";
 export * from "./writeFile";
 export * from "./writeText";
