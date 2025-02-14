@@ -57,11 +57,11 @@
       }
     },
     "icons": {
-      "dt-clock": {
-        "description": "Demo Time - clock",
+      "dt-projector": {
+        "description": "Demo Time - projector",
         "default": {
           "fontPath": "assets/demo-time-v1.woff",
-          "fontCharacter": "\\e903"
+          "fontCharacter": "\\e900"
         }
       },
       "dt-timer": {
@@ -78,11 +78,11 @@
           "fontCharacter": "\\e902"
         }
       },
-      "dt-projector": {
-        "description": "Demo Time - projector",
+      "dt-clock": {
+        "description": "Demo Time - clock",
         "default": {
           "fontPath": "assets/demo-time-v1.woff",
-          "fontCharacter": "\\e900"
+          "fontCharacter": "\\e903"
         }
       },
       "dt-logo": {
