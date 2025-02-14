@@ -474,6 +474,42 @@ You can also add "icons" to your demo steps to make them more recognizable. You 
   </tr>
 </table>
 
+### Patch actions
+
+> Find more information on the [patch actions](https://demotime.elio.dev/actions/patch/) documentation page.
+
+Similar to the Text actions, the patch actions can be used to update the contents of a file, but you do not need to specify the position of the text to insert. Instead, you need to create a snapshot of the file and a patch file.
+
+A patch works like a git’s diff functionality, but instead of requiring a git branch, the base file is stored as a snapshot in the `.demo/snapshots` folder, and the patch file is stored in the `.demo/patches` folder.
+
+<table>
+  <tr>
+    <th>Action</th>
+    <th>Description</th>
+    <th>Usage</th>
+  </tr>
+  <tr>
+    <td>
+      <code>applyPatch</code>
+    </td>
+    <td>
+      Apply a patch to a file
+    </td>
+    <td>
+
+```json
+{
+  "action": "applyPatch",
+  "path": "<relative path to the file>", // This will be the source file to update
+  "contentPath": "<relative path to the snapshot file in the .demo folder>",
+  "patch": "<relative path to the patch file in the .demo folder>"
+}
+```
+
+  </td>
+  </tr>
+</table>
+
 ### Setting actions
 
 > Find more information on the [setting actions](https://demotime.elio.dev/actions/setting/) documentation page.
