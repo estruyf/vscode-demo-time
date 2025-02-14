@@ -264,6 +264,15 @@
         "icon": "$(vm)"
       },
       {
+        "command": "demo-time.toggleSelectionHighlight",
+        "title": "Toggle highlight of current line or selection",
+        "category": "Demo Time",
+        "icon": {
+          "light": "assets/icons/selection-highlight-light.svg",
+          "dark": "assets/icons/selection-highlight-dark.svg"
+        }
+      },
+      {
         "command": "demo-time.toggleHighlight",
         "title": "Toggle highlight",
         "category": "Demo Time",
@@ -415,6 +424,11 @@
         {
           "command": "demo-time.docs",
           "when": "(editorLangId == jsonc || editorLangId == json) && resourceDirname =~ /\\.demo$/",
+          "group": "navigation@1"
+        },
+        {
+          "command": "demo-time.toggleSelectionHighlight",
+          "when": "activeEditor == 'workbench.editors.files.textFileEditor'",
           "group": "navigation@1"
         },
         {

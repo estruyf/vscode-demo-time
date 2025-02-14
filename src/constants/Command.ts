@@ -13,6 +13,7 @@ export const COMMAND = {
   togglePresentationMode: `${EXTENSION_NAME}.togglePresentationMode`,
   reset: `${EXTENSION_NAME}.reset`,
   toggleHighlight: `${EXTENSION_NAME}.toggleHighlight`,
+  toggleSelectionHighlight: `${EXTENSION_NAME}.toggleSelectionHighlight`,
   // Creator
   initialize: `${EXTENSION_NAME}.initialize`,
   openDemoFile: `${EXTENSION_NAME}.openDemoFile`,
