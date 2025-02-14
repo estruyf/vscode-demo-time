@@ -541,6 +541,41 @@ A patch works like a git’s diff functionality, but instead of requiring a git 
 
   </td>
   </tr>
+  <tr>
+    <td>
+      <code>setTheme</code>
+    </td>
+    <td>
+      Update the current theme
+    </td>
+    <td>
+
+```json
+{
+  "action": "setTheme",
+  "theme": "<theme name>"
+}
+```
+
+  </td>
+  </tr>
+  <tr>
+    <td>
+      <code>unsetTheme</code>
+    </td>
+    <td>
+      Reset the current theme
+    </td>
+    <td>
+
+```json
+{
+  "action": "unsetTheme"
+}
+```
+
+  </td>
+  </tr>
 </table>
 
 #### Setting update example
