@@ -1,6 +1,6 @@
 # Change Log
 
-## [0.0.71] - 2025-02-xx
+## [0.0.71] - 2025-02-15
 
 - [#50](https://github.com/estruyf/vscode-demo-time/issues/50): Added the `Demo Time: Toggle highlight of current line or selection` command to toggle the highlight of the current line or selection
 
