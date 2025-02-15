@@ -153,6 +153,11 @@
           "type": "number",
           "default": 3710,
           "description": "Port number for the API"
+        },
+        "demoTime.hideEditorActions": {
+          "type": "boolean",
+          "default": false,
+          "description": "Hide the editor actions"
         }
       }
     },
@@ -262,6 +267,15 @@
         "title": "Show presenter view",
         "category": "Demo Time",
         "icon": "$(vm)"
+      },
+      {
+        "command": "demo-time.toggleSelectionHighlight",
+        "title": "Toggle highlight of current line or selection",
+        "category": "Demo Time",
+        "icon": {
+          "light": "assets/icons/selection-highlight-light.svg",
+          "dark": "assets/icons/selection-highlight-dark.svg"
+        }
       },
       {
         "command": "demo-time.toggleHighlight",
@@ -418,13 +432,18 @@
           "group": "navigation@1"
         },
         {
+          "command": "demo-time.toggleSelectionHighlight",
+          "when": "activeEditor == 'workbench.editors.files.textFileEditor' && config.demoTime.hideEditorActions === false",
+          "group": "navigation@1"
+        },
+        {
           "command": "demo-time.toggleHighlight",
           "when": "activeEditor == 'workbench.editors.files.textFileEditor' && demo-time.hasCodeHighlighting == true",
           "group": "navigation@1"
         },
         {
           "command": "demo-time.addToStep",
-          "when": "activeEditor == 'workbench.editors.files.textFileEditor' && !(resourceDirname =~ /\\.demo$/)",
+          "when": "activeEditor == 'workbench.editors.files.textFileEditor' && !(resourceDirname =~ /\\.demo$/) && config.demoTime.hideEditorActions === false",
           "group": "navigation@1"
         }
       ]
@@ -455,6 +474,10 @@
         "command": "demo-time.previous",
         "key": "left",
         "when": "demo-time.presentation && demo-time.previousEnabled"
+      },
+      {
+        "command": "demo-time.toggleSelectionHighlight",
+        "key": "alt+h"
       }
     ]
   },

@@ -77,6 +77,7 @@ export class DemoRunner {
     subscriptions.push(commands.registerCommand(COMMAND.runById, DemoRunner.runById));
     subscriptions.push(commands.registerCommand(COMMAND.reset, DemoRunner.reset));
     subscriptions.push(commands.registerCommand(COMMAND.toggleHighlight, DemoRunner.toggleHighlight));
+    subscriptions.push(commands.registerCommand(COMMAND.toggleSelectionHighlight, DemoRunner.toggleSelectionHighlight));
 
     window.onDidChangeActiveTextEditor(async (editor) => {
       if (editor && editor.document.fileName === DemoRunner.crntFilePath) {
@@ -912,6 +913,17 @@ export class DemoRunner {
     await DemoRunner.saveFile();
   }
 
+  /**
+   * Toggles the highlight decoration in the active text editor.
+   *
+   * This method checks if there is an active text editor and a current highlight range.
+   * If the editor or range is not available, it exits early.
+   *
+   * If the text is not currently decorated, it highlights the specified range in the active editor.
+   * Otherwise, it removes the highlight decoration.
+   *
+   * @returns {Promise<void>} A promise that resolves when the toggle operation is complete.
+   */
   public static async toggleHighlight(): Promise<void> {
     const activeEditor = window.activeTextEditor;
     const range = DemoRunner.crntHighlightRange;
@@ -930,6 +942,44 @@ export class DemoRunner {
   }
 
   /**
+   * Toggles the highlight of the current text selection in the active editor.
+   *
+   * If there is no active editor, the function returns immediately.
+   * If the selection is a single line, it highlights the selection.
+   * If the selection spans multiple lines, it highlights the entire range.
+   * If the selection starts at the beginning of the line and ends at the end of the line,
+   * it highlights the whole line.
+   *
+   * If the text is not currently decorated, it highlights the selection.
+   * If the text is already decorated, it removes the highlight.
+   *
+   * @returns {Promise<void>} A promise that resolves when the operation is complete.
+   */
+  public static async toggleSelectionHighlight(): Promise<void> {
+    const activeEditor = window.activeTextEditor;
+    if (!activeEditor) {
+      return;
+    }
+
+    const selection = activeEditor.selection;
+    const range = selection.isSingleLine ? selection : new Range(selection.start, selection.end);
+    const endLineText = activeEditor.document.lineAt(selection.end).text;
+    let highlightWholeLine = range.start.character === 0 && range.end.character === endLineText.length;
+    if (range.start.line === range.end.line && range.start.character === range.end.character) {
+      highlightWholeLine = true;
+    }
+
+    // Remove the text selection
+    activeEditor.selection = new Selection(range.start, range.start);
+
+    if (!DecoratorService.isDecorated()) {
+      DemoRunner.highlight(activeEditor, range, undefined, undefined, highlightWholeLine, false);
+    } else {
+      DemoRunner.unselect(activeEditor);
+    }
+  }
+
+  /**
    * Highlights the specified range or position in the given text editor.
    * @param textEditor - The text editor in which to highlight the range or position.
    * @param range - The range to highlight. If not provided, the position will be used to create a range.
@@ -940,7 +990,8 @@ export class DemoRunner {
     range: Range | undefined,
     position: Position | undefined,
     zoomLevel?: number,
-    highlightWholeLine?: boolean
+    highlightWholeLine?: boolean,
+    keepInMemory = true
   ): Promise<void> {
     if (!range && !position) {
       return;
@@ -955,8 +1006,10 @@ export class DemoRunner {
     }
 
     if (range) {
-      DemoRunner.setCrntHighlighting(textEditor.document.fileName, range, zoomLevel, highlightWholeLine);
-      await setContext(ContextKeys.hasCodeHighlighting, true);
+      if (keepInMemory) {
+        DemoRunner.setCrntHighlighting(textEditor.document.fileName, range, zoomLevel, highlightWholeLine);
+        await setContext(ContextKeys.hasCodeHighlighting, true);
+      }
 
       DecoratorService.hightlightLines(textEditor, range, zoomLevel, highlightWholeLine);
       textEditor.revealRange(range, TextEditorRevealType.InCenter);
