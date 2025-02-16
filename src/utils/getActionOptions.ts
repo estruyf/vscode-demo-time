@@ -149,6 +149,16 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: "Set a setting",
   } as QuickPickItem);
 
+  actions.push({
+    label: Action.SetTheme,
+    description: "Set the theme",
+  });
+
+  actions.push({
+    label: Action.UnsetTheme,
+    description: "Unset the theme",
+  });
+
   /**
    * Terminal actions
    */
@@ -161,6 +171,11 @@ export const getActionOptions = (): QuickPickItem[] => {
   actions.push({
     label: Action.ExecuteTerminalCommand,
     description: "Execute a terminal command",
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.ExecuteScript,
+    description: "Execute a script",
   } as QuickPickItem);
 
   actions.push({
@@ -204,6 +219,11 @@ export const getActionOptions = (): QuickPickItem[] => {
   actions.push({
     label: Action.ShowInfoMessage,
     description: "Show an info message",
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.SetState,
+    description: "Set a state",
   } as QuickPickItem);
 
   /**

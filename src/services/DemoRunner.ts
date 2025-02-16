@@ -1059,10 +1059,6 @@ export class DemoRunner {
    * @returns A promise that resolves when the terminal is closed.
    */
   private static closeTerminal(terminalId?: string): void {
-    if (!terminalId) {
-      return;
-    }
-
     terminalId = terminalId || DemoRunner.terminalName;
     const terminal = DemoRunner.terminal[terminalId];
 

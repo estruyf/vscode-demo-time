@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.0.72] - 2025-02-16
+
+- Fix in `closeTerminal` action when no terminal ID is provided
+- Fix in property name for `waitForTimeout`
+- Add missing actions to the actions quick pick selection
+
 ## [0.0.71] - 2025-02-15
 
 - [#50](https://github.com/estruyf/vscode-demo-time/issues/50): Added the `Demo Time: Toggle highlight of current line or selection` command to toggle the highlight of the current line or selection

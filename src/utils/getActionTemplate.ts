@@ -9,14 +9,14 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
    */
   if (action === Action.Open) {
     return {
-      action: "open",
+      action: Action.Open,
       path: "",
     };
   }
 
   if (action === Action.Create) {
     return {
-      action: "create",
+      action: Action.Create,
       path: "",
       contentPath: "",
     };
@@ -24,13 +24,13 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
 
   if (action === Action.Save) {
     return {
-      action: "save",
+      action: Action.Save,
     };
   }
 
   if (action === Action.Rename || action === Action.Move) {
     return {
-      action: "rename",
+      action: Action.Rename,
       path: "",
       dest: "",
       overwrite: false,
@@ -39,7 +39,7 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
 
   if (action === Action.Copy) {
     return {
-      action: "copy",
+      action: Action.Copy,
       path: "",
       dest: "",
       overwrite: false,
@@ -48,20 +48,20 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
 
   if (action === Action.DeleteFile) {
     return {
-      action: "deleteFile",
+      action: Action.DeleteFile,
       path: "",
     };
   }
 
   if (action === Action.Close) {
     return {
-      action: "close",
+      action: Action.Close,
     };
   }
 
   if (action === Action.CloseAll) {
     return {
-      action: "closeAll",
+      action: Action.CloseAll,
     };
   }
 
@@ -70,7 +70,7 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
    */
   if (action === Action.ApplyPatch) {
     return {
-      action: "applyPatch",
+      action: Action.ApplyPatch,
       path: "",
       contentPath: "",
       patch: "",
@@ -82,7 +82,7 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
    */
   if (action === Action.MarkdownPreview) {
     return {
-      action: "markdownPreview",
+      action: Action.MarkdownPreview,
       path: "",
     };
   }
@@ -92,7 +92,7 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
    */
   if (action === Action.Highlight) {
     return {
-      action: "highlight",
+      action: Action.Highlight,
       path: "",
       startPlaceholder: "",
       endPlaceholder: "",
@@ -101,7 +101,7 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
 
   if (action === Action.PositionCursor) {
     return {
-      action: "positionCursor",
+      action: Action.PositionCursor,
       path: "",
       position: "",
     };
@@ -109,7 +109,7 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
 
   if (action === Action.Insert) {
     return {
-      action: "insert",
+      action: Action.Insert,
       path: "",
       startPlaceholder: "",
       contentPath: "",
@@ -118,7 +118,7 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
 
   if (action === Action.Replace) {
     return {
-      action: "replace",
+      action: Action.Replace,
       path: "",
       startPlaceholder: "",
       endPlaceholder: "",
@@ -128,7 +128,7 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
 
   if (action === Action.Write) {
     return {
-      action: "write",
+      action: Action.Write,
       content: "",
       path: "",
       position: "",
@@ -137,14 +137,14 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
 
   if (action === Action.Unselect) {
     return {
-      action: "unselect",
-      path: "<relative path to the file>",
+      action: Action.Unselect,
+      path: "",
     };
   }
 
   if (action === Action.Delete) {
     return {
-      action: "delete",
+      action: Action.Delete,
       path: "",
       startPlaceholder: "",
       endPlaceholder: "",
@@ -153,7 +153,7 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
 
   if (action === Action.Format) {
     return {
-      action: "format",
+      action: Action.Format,
     };
   }
 
@@ -162,10 +162,10 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
    */
   if (action === Action.SetSetting) {
     return {
-      action: "setSetting",
+      action: Action.SetSetting,
       setting: {
-        key: "<setting key>",
-        value: "<value>",
+        key: "",
+        value: "",
       },
     };
   }
@@ -175,14 +175,23 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
    */
   if (action === Action.ExecuteTerminalCommand) {
     return {
-      action: "executeTerminalCommand",
-      command: "<command to execute>",
+      action: Action.ExecuteTerminalCommand,
+      command: "",
+    };
+  }
+
+  if (action === Action.ExecuteScript) {
+    return {
+      action: Action.ExecuteScript,
+      id: "",
+      path: "",
+      command: "node",
     };
   }
 
   if (action === Action.CloseTerminal) {
     return {
-      action: "closeTerminal",
+      action: Action.CloseTerminal,
     };
   }
 
@@ -191,14 +200,14 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
    */
   if (action === Action.WaitForTimeout) {
     return {
-      action: "waitForTimeout",
-      duration: 0,
+      action: Action.WaitForTimeout,
+      timeout: 0,
     };
   }
 
   if (action === Action.WaitForInput) {
     return {
-      action: "waitForInput",
+      action: Action.WaitForInput,
     };
   }
 
@@ -207,15 +216,25 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
    */
   if (action === Action.ExecuteVSCodeCommand) {
     return {
-      action: "executeVSCodeCommand",
-      command: "<VSCode command>",
+      action: Action.ExecuteVSCodeCommand,
+      command: "",
+    };
+  }
+
+  if (action === Action.SetState) {
+    return {
+      action: Action.SetState,
+      state: {
+        key: "",
+        value: "",
+      },
     };
   }
 
   if (action === Action.ShowInfoMessage) {
     return {
-      action: "showInfoMessage",
-      message: "<message>",
+      action: Action.ShowInfoMessage,
+      message: "",
     };
   }
 
@@ -224,7 +243,7 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
    */
   if (action === Action.Snippet) {
     return {
-      action: "snippet",
+      action: Action.Snippet,
       contentPath: "",
       args: {},
     };
