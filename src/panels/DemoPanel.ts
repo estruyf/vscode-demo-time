@@ -103,7 +103,7 @@ export class DemoPanel {
         }
 
         return new ActionTreeItem(
-          demo.title,
+          `${idx + 1}. ${demo.title}`,
           demo.description,
           {
             name: hasExecuted ? icons.end : icons.start,

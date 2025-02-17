@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.73] - 2025-02-17
+
+- [#53](https://github.com/estruyf/vscode-demo-time/issues/53): Add step numbers to the demo steps
+
 ## [0.0.72] - 2025-02-16
 
 - Fix in `closeTerminal` action when no terminal ID is provided
