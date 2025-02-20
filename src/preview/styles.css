@@ -11,10 +11,6 @@ body,
   height: 100%;
 }
 
-body {
-  overflow: hidden;
-}
-
 blockquote {
   p {
     margin-bottom: 0 !important;
@@ -31,4 +27,5 @@ code {
 
 pre code {
   padding: 0;
+  white-space: pre-wrap;
 }

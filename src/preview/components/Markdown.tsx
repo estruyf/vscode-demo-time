@@ -16,7 +16,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
 }: React.PropsWithChildren<IMarkdownProps>) => {
   const [markdown, setMarkdown] = useRemark({
     rehypePlugins: [
-      [rehypeShiki, { theme: theme ? JSON.parse(theme) : {} } satisfies RehypeShikiOptions]
+      [rehypeShiki, { theme: theme ? theme : {} } satisfies RehypeShikiOptions]
     ],
     rehypeReactOptions: {
       components: {

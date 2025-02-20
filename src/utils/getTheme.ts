@@ -29,9 +29,16 @@ export const getTheme = async () => {
   const themePath = Uri.joinPath(themeExtension.extensionUri, themeFile.path);
   const fileContents = await readFile(themePath);
 
-  if (!fileContents) {
+  const theme = JSON.parse(fileContents);
+  if (!theme) {
     throw new Error(`Could not find theme file for ${crntTheme}`);
   }
 
-  return fileContents;
+  if (theme.include) {
+    const includePath = Uri.joinPath(themePath, "..", theme.include);
+    const includeContents = await readFile(includePath);
+    return { ...theme, ...JSON.parse(includeContents) };
+  }
+
+  return theme;
 };
