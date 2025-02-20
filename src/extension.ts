@@ -13,6 +13,7 @@ import {
 } from "./services";
 import { DemoPanel } from "./panels/DemoPanel";
 import { PresenterView } from "./presenterView/PresenterView";
+import { Preview } from "./preview/Preview";
 
 export async function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);
@@ -28,6 +29,7 @@ export async function activate(context: vscode.ExtensionContext) {
   DemoListeners.register();
   DemoStatusBar.register();
   PresenterView.register();
+  Preview.register();
   NotesService.registerCommands();
   DemoApi.register();
   UriHandler.register();

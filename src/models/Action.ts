@@ -8,8 +8,9 @@ export enum Action {
   CloseAll = "closeAll",
   Copy = "copy",
   Move = "move",
-  // Markdown
+  // Previews
   MarkdownPreview = "markdownPreview",
+  ImagePreview = "imagePreview",
   // Code
   Insert = "insert",
   Highlight = "highlight",

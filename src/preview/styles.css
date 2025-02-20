@@ -1,0 +1,34 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
+}
+
+blockquote {
+  p {
+    margin-bottom: 0 !important;
+  }
+}
+
+code {
+  font-family: var(--monaco-monospace-font);
+  color: var(--vscode-editor-foreground);
+  background-color: var(--vscode-editor-background);
+  padding: 1px 3px;
+  border-radius: 4px;
+}
+
+pre code {
+  padding: 0;
+}

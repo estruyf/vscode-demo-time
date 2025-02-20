@@ -60,8 +60,8 @@ export class PresenterView {
     PresenterView.isDetached = false;
 
     PresenterView.webview.iconPath = {
-      dark: Uri.joinPath(Uri.file(extensionUri), "assets", "logo-dark.svg"),
-      light: Uri.joinPath(Uri.file(extensionUri), "assets", "logo-light.svg"),
+      dark: Uri.joinPath(Uri.file(extensionUri), "assets", "logo", "demotime-bg.svg"),
+      light: Uri.joinPath(Uri.file(extensionUri), "assets", "logo", "demotime-bg.svg"),
     };
 
     PresenterView.webview.webview.html = await PresenterView.getWebviewContent(PresenterView.webview.webview);
