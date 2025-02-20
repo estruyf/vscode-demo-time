@@ -32,6 +32,7 @@ export enum Action {
   ExecuteVSCodeCommand = "executeVSCodeCommand",
   ShowInfoMessage = "showInfoMessage",
   SetState = "setState",
+  OpenWebsite = "openWebsite",
   // Terminal
   ExecuteTerminalCommand = "executeTerminalCommand",
   CloseTerminal = "closeTerminal",

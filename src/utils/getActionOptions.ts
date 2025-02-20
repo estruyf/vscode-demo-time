@@ -226,6 +226,11 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: "Set a state",
   } as QuickPickItem);
 
+  actions.push({
+    label: Action.OpenWebsite,
+    description: "Open a website in the browser or the editor",
+  } as QuickPickItem);
+
   /**
    * Extensibility actions
    */

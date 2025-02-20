@@ -56,6 +56,10 @@ export interface Step {
   overwrite?: boolean;
   terminalId?: string;
   theme?: string;
+
+  // Open website
+  url?: string;
+  openInVSCode?: boolean;
 }
 
 export interface Setting {

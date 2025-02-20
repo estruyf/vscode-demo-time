@@ -47,7 +47,7 @@ export class DemoPanel {
    *
    * @returns {ActionTreeItem[]} An array of `ActionTreeItem` objects representing the demo commands.
    */
-  public static getDemos() {
+  public static getDemos(): ActionTreeItem[] {
     const demoFiles = DemoPanel.demoFiles;
     const executingDemoFile = DemoPanel.executingDemoFile;
 
@@ -121,7 +121,8 @@ export class DemoPanel {
           undefined,
           parseWinPath(path),
           idx,
-          demo.notes?.path
+          demo.notes?.path,
+          demo.title
         );
       });
 
@@ -151,9 +152,16 @@ export class DemoPanel {
   }
 
   /**
+   * Set the welcome view its context
+   */
+  public static showWelcome(show = true) {
+    setContext(ContextKeys.showWelcome, show);
+  }
+
+  /**
    * Initialize the command panel
    */
-  private static async init() {
+  public static async init() {
     const demoFiles = await DemoPanel.setDemoFiles();
     if (!demoFiles) {
       DemoPanel.showWelcome();
@@ -190,13 +198,6 @@ export class DemoPanel {
     this.treeView = window.createTreeView("demo-time", {
       treeDataProvider: DemoPanel.demoActionsProvider,
     });
-  }
-
-  /**
-   * Set the welcome view its context
-   */
-  private static showWelcome() {
-    setContext(ContextKeys.showWelcome, true);
   }
 
   /**

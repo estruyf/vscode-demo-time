@@ -555,6 +555,20 @@ export class DemoRunner {
         continue;
       }
 
+      if (step.action === Action.OpenWebsite) {
+        if (!step.url) {
+          Notifications.error("No URL specified");
+          continue;
+        }
+
+        if (step.openInVSCode) {
+          await commands.executeCommand("simpleBrowser.show", Uri.parse(step.url));
+        } else {
+          await commands.executeCommand("vscode.open", Uri.parse(step.url));
+          continue;
+        }
+      }
+
       // Run the specified terminal command
       if (step.action === Action.ExecuteTerminalCommand) {
         await DemoRunner.executeTerminalCommand(step.command, step.terminalId);
