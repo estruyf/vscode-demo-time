@@ -72,7 +72,8 @@ export class DemoCreator {
 
     Notifications.info("Demo time is initialized, you can now start adding demo steps!");
 
-    DemoPanel.update();
+    DemoPanel.showWelcome(false);
+    DemoPanel.init();
   }
 
   /**
@@ -99,7 +100,7 @@ export class DemoCreator {
 
     const text = editor.document.getText();
     const lines = text.split("\n");
-    const matches = lines.filter((line) => line.includes(item.label as string));
+    const matches = lines.filter((line) => line.includes(item.originalLabel as string));
     if (matches.length === 0) {
       return;
     }
@@ -141,7 +142,7 @@ export class DemoCreator {
       { label: "Create Snapshot", kind: QuickPickItemKind.Default },
       { label: "Create Patch", kind: QuickPickItemKind.Default },
       { label: "Actions", kind: QuickPickItemKind.Separator },
-      ...[Action.Insert, Action.Highlight, Action.Unselect, Action.Delete, Action.Save].map((action) => ({
+      ...[Action.Open, Action.Insert, Action.Highlight, Action.Unselect, Action.Delete, Action.Save].map((action) => ({
         label: upperCaseFirstLetter(action),
         kind: QuickPickItemKind.Default,
       })),
@@ -185,8 +186,8 @@ export class DemoCreator {
       position,
     };
 
-    // Unselect doesn't need the position
-    if (action === Action.Unselect) {
+    // Open and Unselect don't need the position
+    if (action === Action.Open || action === Action.Unselect) {
       delete step.position;
     }
 

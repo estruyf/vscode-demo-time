@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.0.74] - 2025-02-20
+
+- Fix to render the tree view on initialize command
+- Fix the view step action
+- Added `open` action to the add demo step quick pick selection
+- Added the `openWebsite` action to open a website in the browser or Visual Studio Code
+
 ## [0.0.73] - 2025-02-17
 
 - [#53](https://github.com/estruyf/vscode-demo-time/issues/53): Add step numbers to the demo steps

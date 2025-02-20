@@ -238,6 +238,14 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  if (action === Action.OpenWebsite) {
+    return {
+      action: Action.OpenWebsite,
+      url: "",
+      openInVSCode: false,
+    };
+  }
+
   /**
    * Extensibility actions
    */
