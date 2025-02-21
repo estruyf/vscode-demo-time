@@ -2,6 +2,7 @@ import * as React from 'react';
 import rehypeShiki, { type RehypeShikiOptions } from '@shikijs/rehype';
 import { useRemark } from '../hooks/useRemark';
 import { transformImageUrl } from '../utils';
+import { Codeblock } from './Codeblock';
 
 export interface IMarkdownProps {
   content?: string;
@@ -16,7 +17,8 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
 }: React.PropsWithChildren<IMarkdownProps>) => {
   const [markdown, setMarkdown] = useRemark({
     rehypePlugins: [
-      [rehypeShiki, { theme: theme ? theme : {} } satisfies RehypeShikiOptions]
+      // [rehypeShiki, { theme: theme ? theme : {} } satisfies RehypeShikiOptions]
+      // [rehypeShiki, { theme: "github-light" } satisfies RehypeShikiOptions]
     ],
     rehypeReactOptions: {
       components: {
@@ -28,7 +30,11 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
         ul: ({ node, ...props }) => <ul className="list-disc ml-6" {...props} />,
         ol: ({ node, ...props }) => <ol className="list-decimal ml-6" {...props} />,
         li: ({ node, ...props }) => <li className="mb-2" {...props} />,
-        pre: ({ node, ...props }) => <pre className="bg-[var(--vscode-editor-background)] p-2 rounded-md" {...props} />,
+        pre: ({ node, ...props }) => {
+          const code = (props.children as any).props.children;
+          const className = (props.children as any).props.className;
+          return <Codeblock code={code} className={className} theme={theme} />;
+        },
         code: ({ node, ...props }) => <code className="inline-block px-1 rounded-[2px]" {...props} />,
         img: ({ node, src, ...props }) => {
           const fullSrc = transformImageUrl(webviewUrl || "", src);
