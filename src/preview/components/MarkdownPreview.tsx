@@ -8,8 +8,8 @@ export interface IMarkdownPreviewProps {
   webviewUrl: string | null;
 }
 
-const Slide_Width = 1280;
-const Slide_Height = 720;
+const Slide_Width = 960;
+const Slide_Height = 540;
 
 export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = ({
   fileUri,
@@ -19,6 +19,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const [theme, setTheme] = React.useState<any | undefined>(undefined);
   const ref = React.useRef<HTMLDivElement>(null);
   const slideRef = React.useRef<HTMLDivElement>(null);
+  const [template, setTemplate] = React.useState<string | undefined>(undefined);
+  const [slideType, setSlideType] = React.useState<string | undefined>(undefined);
 
   React.useEffect(() => {
     if (!fileUri) {
@@ -94,12 +96,18 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   }, []);
 
   return (
-    <div ref={ref} className="slideshow relative w-full h-full overflow-hidden">
-      <div className='absolute top-[50%] left-[50%] w-[1280px] h-[720px]' style={{ transform: 'translate(-50%, -50%) scale(var(--demotime-scale, 1))' }}>
-        <div ref={slideRef} className='slide h-full w-full p-4 space-y-4'>
+    <div ref={ref} className={`slideshow ${template || "default"} ${slideType || "default"} relative w-full h-full overflow-hidden`}>
+      <div className='absolute top-[50%] left-[50%] w-[960px] h-[540px]' style={{ transform: 'translate(-50%, -50%) scale(var(--demotime-scale, 1))' }}>
+        <div ref={slideRef} className={`slide`}>
           {
             content && theme ? (
-              <Markdown content={content} theme={theme} webviewUrl={webviewUrl} />
+              <Markdown
+                content={content}
+                theme={theme}
+                webviewUrl={webviewUrl}
+                updateTemplate={setTemplate}
+                updateSlideType={setSlideType}
+              />
             ) : null
           }
         </div>

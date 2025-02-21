@@ -4,8 +4,10 @@ import { type ReactElement, useCallback, useState } from 'react';
 import * as jsxRuntime from 'react/jsx-runtime';
 import rehypeRaw from 'rehype-raw';
 import rehypeReact from 'rehype-react';
+import remarkFrontmatter from 'remark-frontmatter';
 import remarkParse, { type Options as RemarkParseOptions } from 'remark-parse';
 import remarkToRehype from 'remark-rehype';
+import { matter } from 'vfile-matter';
 import { type PluggableList, unified } from 'unified';
 
 export type UseRemarkOptions = {
@@ -26,8 +28,13 @@ export const useRemark = ({
   remarkParseOptions,
   remarkPlugins = [],
   remarkToRehypeOptions,
-}: UseRemarkOptions = {}): [null | ReactElement, (source: string) => void] => {
+}: UseRemarkOptions = {}): {
+  markdown: null | ReactElement,
+  setMarkdown: (source: string) => void,
+  matter: null | any,
+} => {
   const [reactContent, setReactContent] = useState<null | ReactElement>(null);
+  const [metadata, setMetadata] = useState<null | any>(null);
 
   const setMarkdownSource = useCallback((source: string) => {
     unified()
@@ -45,10 +52,25 @@ export const useRemark = ({
         jsx: jsxRuntime.jsx,
         jsxs: jsxRuntime.jsxs,
       })
+      .use(remarkFrontmatter)
+      .use(() => (_, file) => {
+        try {
+          matter(file);
+        } catch (err) {
+          // Catch error and ignore it
+        }
+      })
       .process(source)
-      .then((vfile) => setReactContent(vfile.result as ReactElement))
+      .then((vfile) => {
+        setReactContent(vfile.result as ReactElement);
+        setMetadata(vfile.data?.matter || {});
+      })
       .catch(onError);
   }, []);
 
-  return [reactContent, setMarkdownSource];
+  return {
+    markdown: reactContent,
+    setMarkdown: setMarkdownSource,
+    matter: metadata,
+  };
 };

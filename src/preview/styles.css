@@ -18,14 +18,107 @@ blockquote {
 }
 
 code {
-  font-family: var(--monaco-monospace-font);
-  color: var(--vscode-editor-foreground);
-  background-color: var(--vscode-editor-background);
+  color: var(--vscode-textPreformat-foreground);
+  background-color: var(--vscode-textPreformat-background);
   padding: 1px 3px;
   border-radius: 4px;
+}
+
+pre {
 }
 
 pre code {
   padding: 0 !important;
   white-space: pre-wrap;
+  background: var(--vscode-editor-background);
+}
+
+.slide {
+  @apply h-full w-full p-4 space-y-4;
+}
+
+/* Default Template */
+.slideshow.default {
+  @apply text-base;
+
+  h1 {
+    @apply text-4xl mb-6;
+  }
+
+  h2 {
+    @apply text-3xl;
+  }
+
+  h3 {
+    @apply text-2xl;
+  }
+
+  h4 {
+    @apply text-xl;
+  }
+
+  h5 {
+    @apply text-lg;
+  }
+
+  p {
+    @apply leading-relaxed;
+  }
+
+  a {
+    @apply text-[var(--vscode-textLink-foreground)] underline;
+
+    &:hover {
+      @apply text-[var(--vscode-textLink-activeForeground)];
+    }
+  }
+
+  ul,
+  ol {
+    @apply ml-6;
+
+    li {
+      @apply mb-2;
+    }
+  }
+
+  ul {
+    @apply list-disc;
+  }
+
+  ol {
+    @apply list-decimal;
+  }
+
+  img {
+  }
+
+  blockquote {
+    @apply border-l-4 border-[var(--vscode-textBlockQuote-border)] bg-[var(--vscode-textBlockQuote-background)] p-2;
+  }
+
+  /* Slide templates */
+  &.intro {
+    @apply h-full grid;
+
+    .slide {
+      @apply flex flex-col items-center justify-center;
+    }
+
+    h1 {
+      @apply text-5xl w-auto p-4 inline-block leading-tight mx-auto;
+      background: black;
+      color: white;
+    }
+  }
+
+  &.section {
+    .slide {
+      @apply p-8 w-full flex flex-col items-center justify-center text-center;
+    }
+
+    h1 {
+      @apply text-5xl mb-8;
+    }
+  }
 }
