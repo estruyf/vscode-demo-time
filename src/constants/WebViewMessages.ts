@@ -13,6 +13,7 @@ export const WebViewMessages = {
     getFileUri: "getFileUri",
     getStyles: "getStyles",
     getTheme: "getTheme",
+    getSlideTheme: "getSlideTheme",
   },
   toWebview: {
     updateClock: "updateClock",
@@ -24,6 +25,7 @@ export const WebViewMessages = {
     updatePresentationStarted: "updatePresentationStarted",
     // Preview
     updateFileUri: "updateFileUri",
+    triggerUpdate: "triggerUpdate",
     updateStyles: "updateStyles",
   },
 };

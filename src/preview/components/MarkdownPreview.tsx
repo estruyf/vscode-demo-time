@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { messageHandler } from '@estruyf/vscode/dist/client/webview';
+import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import { WebViewMessages } from '../../constants';
 import { Markdown } from './Markdown';
+import { EventData } from '@estruyf/vscode';
 
 export interface IMarkdownPreviewProps {
   fileUri: string;
@@ -22,7 +23,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const [template, setTemplate] = React.useState<string | undefined>(undefined);
   const [slideType, setSlideType] = React.useState<string | undefined>(undefined);
 
-  React.useEffect(() => {
+  const getFileContents = React.useCallback(async (fileUri: string) => {
     if (!fileUri) {
       return;
     }
@@ -32,7 +33,18 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       .then((text) => {
         setContent(text);
       });
-  }, [fileUri]);
+  }, []);
+
+  const messageListener = (message: MessageEvent<EventData<any>>) => {
+    const { command, payload } = message.data;
+    if (!command) {
+      return;
+    }
+
+    if (command === WebViewMessages.toWebview.triggerUpdate) {
+      getFileContents(payload);
+    }
+  };
 
   const updateScale = React.useCallback(() => {
     if (!slideRef.current || !ref.current) {
@@ -56,6 +68,10 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       document.documentElement.style.setProperty('--demotime-scale', '1');
     }
   }, [slideRef.current, ref.current]);
+
+  React.useEffect(() => {
+    getFileContents(fileUri);
+  }, [fileUri]);
 
   React.useEffect(() => {
     const handleResize = () => {
@@ -90,9 +106,15 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   }, [slideRef.current, ref.current]);
 
   React.useEffect(() => {
+    Messenger.listen(messageListener);
+
     messageHandler.request<any>(WebViewMessages.toVscode.getTheme).then((theme) => {
       setTheme(theme);
     });
+
+    return () => {
+      Messenger.unlisten(messageListener);
+    };
   }, []);
 
   return (

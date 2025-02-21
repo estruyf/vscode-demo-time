@@ -34,13 +34,11 @@ pre code {
 }
 
 .slide {
-  @apply h-full w-full p-4 space-y-4;
+  @apply h-full w-full p-4 space-y-4 text-base;
 }
 
 /* Default Template */
 .slideshow.default {
-  @apply text-base;
-
   h1 {
     @apply text-4xl mb-6;
   }

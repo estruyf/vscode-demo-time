@@ -8,6 +8,7 @@ import {
   DemoRunner,
   DemoStatusBar,
   Extension,
+  FileProvider,
   NotesService,
   UriHandler,
 } from "./services";
@@ -29,6 +30,7 @@ export async function activate(context: vscode.ExtensionContext) {
   DemoListeners.register();
   DemoStatusBar.register();
   PresenterView.register();
+  FileProvider.register();
   Preview.register();
   NotesService.registerCommands();
   DemoApi.register();

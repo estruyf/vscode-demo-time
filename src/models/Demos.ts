@@ -67,7 +67,7 @@ export interface IOpenWebsite {
 export interface IImagePreview {
   action: Action;
   path?: string;
-  css?: string;
+  theme?: string;
 }
 
 export interface Setting {

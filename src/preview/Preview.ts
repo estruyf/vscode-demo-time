@@ -23,14 +23,26 @@ export class Preview {
     if (Preview.isOpen) {
       Preview.reveal();
 
-      Preview.postMessage(WebViewMessages.toWebview.updateStyles, css);
-
       if (Preview.webview?.webview) {
         const fileWebviewPath = getWebviewUrl(Preview.webview?.webview, fileUri);
         Preview.postMessage(WebViewMessages.toWebview.updateFileUri, fileWebviewPath);
+
+        if (css) {
+          const cssWebviewPath = getWebviewUrl(Preview.webview?.webview, css);
+          Preview.postMessage(WebViewMessages.toWebview.updateStyles, cssWebviewPath);
+        }
       }
     } else {
       Preview.create();
+    }
+  }
+
+  public static triggerUpdate(fileUri: Uri) {
+    if (Preview.isOpen && Preview.webview?.webview) {
+      Preview.postMessage(
+        WebViewMessages.toWebview.triggerUpdate,
+        Preview.webview.webview.asWebviewUri(fileUri).toString()
+      );
     }
   }
 
@@ -82,7 +94,8 @@ export class Preview {
       Preview.postRequestMessage(WebViewMessages.toVscode.getFileUri, requestId, fileWebviewPath);
       return;
     } else if (command === WebViewMessages.toVscode.getStyles && requestId) {
-      Preview.postRequestMessage(WebViewMessages.toVscode.getFileUri, requestId, Preview.crntCss);
+      const cssWebviewPath = getWebviewUrl(Preview.webview?.webview, Preview.crntCss);
+      Preview.postRequestMessage(WebViewMessages.toVscode.getStyles, requestId, cssWebviewPath);
       return;
     } else if (command === WebViewMessages.toVscode.getTheme && requestId) {
       const theme = await getTheme();

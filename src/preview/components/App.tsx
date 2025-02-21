@@ -12,7 +12,7 @@ export interface IAppProps {
 export const App: React.FunctionComponent<IAppProps> = ({
   webviewUrl
 }: React.PropsWithChildren<IAppProps>) => {
-  const [customStyles, setCustomStyles] = React.useState<string | undefined>(undefined);
+  const [customTheme, setCustomTheme] = React.useState<string | undefined>(undefined);
   const [fileUri, setFileUri] = React.useState<string | undefined>(undefined);
 
   const messageListener = (message: MessageEvent<EventData<any>>) => {
@@ -22,7 +22,7 @@ export const App: React.FunctionComponent<IAppProps> = ({
     }
 
     if (command === WebViewMessages.toWebview.updateStyles) {
-      setCustomStyles(payload);
+      setCustomTheme(payload);
     } else if (command === WebViewMessages.toWebview.updateFileUri) {
       setFileUri(payload);
     }
@@ -56,7 +56,7 @@ export const App: React.FunctionComponent<IAppProps> = ({
     Messenger.listen(messageListener);
 
     messageHandler.request<string>(WebViewMessages.toVscode.getStyles).then((styles) => {
-      setCustomStyles(styles);
+      setCustomTheme(styles);
 
       messageHandler.request<string>(WebViewMessages.toVscode.getFileUri).then((fileUri) => {
         setFileUri(fileUri);
@@ -74,7 +74,7 @@ export const App: React.FunctionComponent<IAppProps> = ({
 
   return (
     <>
-      {customStyles && <style>{customStyles}</style>}
+      {customTheme && <link href={customTheme} rel="stylesheet" />}
 
       {type === 'markdown' && <MarkdownPreview fileUri={fileUri} webviewUrl={webviewUrl} />}
       {type === 'image' && <ImagePreview fileUri={fileUri} />}

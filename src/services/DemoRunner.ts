@@ -634,9 +634,9 @@ export class DemoRunner {
         continue;
       }
 
-      if (step.action === Action.ImagePreview) {
-        const { path, css } = step as IImagePreview;
-        Preview.show(path as string, css);
+      if (step.action === Action.ImagePreview || step.action === Action.OpenSlide) {
+        const { path, theme } = step as IImagePreview;
+        Preview.show(path as string, theme);
         continue;
       }
 

@@ -11,6 +11,7 @@ export enum Action {
   // Previews
   MarkdownPreview = "markdownPreview",
   ImagePreview = "imagePreview",
+  OpenSlide = "openSlide",
   // Code
   Insert = "insert",
   Highlight = "highlight",
