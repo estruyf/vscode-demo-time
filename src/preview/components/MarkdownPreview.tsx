@@ -94,10 +94,9 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   }, []);
 
   return (
-    // <div className="max-w-5xl mx-auto px-7 py-4 space-y-4">
     <div ref={ref} className="slideshow relative w-full h-full overflow-hidden">
       <div className='absolute top-[50%] left-[50%] w-[1280px] h-[720px]' style={{ transform: 'translate(-50%, -50%) scale(var(--demotime-scale, 1))' }}>
-        <div ref={slideRef} className='slide h-full w-full p-4'>
+        <div ref={slideRef} className='slide h-full w-full p-4 space-y-4'>
           {
             content && theme ? (
               <Markdown content={content} theme={theme} webviewUrl={webviewUrl} />

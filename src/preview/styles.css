@@ -26,6 +26,6 @@ code {
 }
 
 pre code {
-  padding: 0;
+  padding: 0 !important;
   white-space: pre-wrap;
 }
