@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { App } from "./components/App";
 import 'vscrui/dist/codicon.css';
 import './styles.css';
+import './themes/default.css';
 
 declare const acquireVsCodeApi: <T = unknown>() => {
   getState: () => T;

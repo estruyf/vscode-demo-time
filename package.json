@@ -300,6 +300,11 @@
         "command": "demo-time.createDemoFile",
         "title": "Create a new demo file",
         "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.createSlide",
+        "title": "Create a slide",
+        "category": "Demo Time"
       }
     ],
     "menus": {

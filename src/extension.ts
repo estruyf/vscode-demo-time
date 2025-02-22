@@ -10,6 +10,7 @@ import {
   Extension,
   FileProvider,
   NotesService,
+  Slides,
   UriHandler,
 } from "./services";
 import { DemoPanel } from "./panels/DemoPanel";
@@ -32,6 +33,7 @@ export async function activate(context: vscode.ExtensionContext) {
   PresenterView.register();
   FileProvider.register();
   Preview.register();
+  Slides.registerCommands();
   NotesService.registerCommands();
   DemoApi.register();
   UriHandler.register();

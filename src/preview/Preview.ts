@@ -30,6 +30,8 @@ export class Preview {
         if (css) {
           const cssWebviewPath = getWebviewUrl(Preview.webview?.webview, css);
           Preview.postMessage(WebViewMessages.toWebview.updateStyles, cssWebviewPath);
+        } else {
+          Preview.postMessage(WebViewMessages.toWebview.updateStyles, undefined);
         }
       }
     } else {
@@ -94,7 +96,7 @@ export class Preview {
       Preview.postRequestMessage(WebViewMessages.toVscode.getFileUri, requestId, fileWebviewPath);
       return;
     } else if (command === WebViewMessages.toVscode.getStyles && requestId) {
-      const cssWebviewPath = getWebviewUrl(Preview.webview?.webview, Preview.crntCss);
+      const cssWebviewPath = Preview.crntCss ? getWebviewUrl(Preview.webview?.webview, Preview.crntCss) : undefined;
       Preview.postRequestMessage(WebViewMessages.toVscode.getStyles, requestId, cssWebviewPath);
       return;
     } else if (command === WebViewMessages.toVscode.getTheme && requestId) {

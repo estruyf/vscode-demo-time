@@ -1,0 +1,108 @@
+/* Default Template */
+.slideshow.default {
+  h1 {
+    @apply text-4xl mb-6;
+  }
+
+  h2 {
+    @apply text-3xl;
+  }
+
+  h3 {
+    @apply text-2xl;
+  }
+
+  h4 {
+    @apply text-xl;
+  }
+
+  h5 {
+    @apply text-lg;
+  }
+
+  p {
+    @apply leading-relaxed;
+  }
+
+  a {
+    @apply text-[var(--vscode-textLink-foreground)] underline;
+
+    &:hover {
+      @apply text-[var(--vscode-textLink-activeForeground)];
+    }
+  }
+
+  ul,
+  ol {
+    @apply ml-6;
+
+    li {
+      @apply mb-2;
+    }
+  }
+
+  ul {
+    @apply list-disc;
+  }
+
+  ol {
+    @apply list-decimal;
+  }
+
+  img {
+  }
+
+  blockquote {
+    @apply border-l-4 border-[var(--vscode-textBlockQuote-border)] bg-[var(--vscode-textBlockQuote-background)] p-2;
+  }
+
+  &.intro {
+    .slide {
+      @apply p-8 w-full flex flex-col items-center justify-center text-center;
+    }
+
+    h1 {
+      @apply text-6xl mb-8;
+    }
+
+    p {
+      @apply text-base opacity-70;
+    }
+  }
+
+  &.quote {
+    .slide {
+      @apply p-8 w-full flex flex-col items-center justify-center text-center;
+    }
+
+    blockquote {
+      @apply text-2xl;
+    }
+
+    cite {
+      @apply text-lg;
+    }
+  }
+
+  &.section {
+    .slide {
+      @apply p-8 w-full flex flex-col items-center justify-center text-center;
+    }
+
+    h1 {
+      @apply text-5xl mb-8;
+    }
+  }
+
+  &.image {
+  }
+
+  &.image-left {
+  }
+
+  &.image-right {
+  }
+
+  &.two-columns {
+  }
+}
