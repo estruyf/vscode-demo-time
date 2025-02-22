@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
-import { WebViewMessages } from '../../constants';
+import { SlideLayout, WebViewMessages } from '../../constants';
 import { Markdown } from './Markdown';
 import { EventData } from '@estruyf/vscode';
 
@@ -22,6 +22,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const slideRef = React.useRef<HTMLDivElement>(null);
   const [template, setTemplate] = React.useState<string | undefined>(undefined);
   const [slideType, setSlideType] = React.useState<string | undefined>(undefined);
+  const [bgStyles, setBgStyles] = React.useState<any | null>(null);
 
   const getFileContents = React.useCallback(async (fileUri: string) => {
     if (!fileUri) {
@@ -68,6 +69,24 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       document.documentElement.style.setProperty('--demotime-scale', '1');
     }
   }, [slideRef.current, ref.current]);
+
+  const slideClasses = React.useMemo(() => {
+    if (!slideType) {
+      return '';
+    }
+
+    if (slideType === SlideLayout.ImageLeft || slideType === SlideLayout.ImageRight) {
+      return 'grid grid-cols-2 w-full h-full auto-rows-fr';
+    }
+  }, [slideType]);
+
+  const getBgStyles = React.useCallback(() => {
+    if (!slideType || slideType === SlideLayout.ImageLeft || slideType === SlideLayout.ImageRight) {
+      return undefined;
+    }
+
+    return bgStyles;
+  }, [bgStyles, slideType]);
 
   React.useEffect(() => {
     getFileContents(fileUri);
@@ -120,17 +139,32 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   return (
     <div ref={ref} className={`slideshow ${template || "default"} ${slideType || "default"} relative w-full h-full overflow-hidden`}>
       <div className='absolute top-[50%] left-[50%] w-[960px] h-[540px]' style={{ transform: 'translate(-50%, -50%) scale(var(--demotime-scale, 1))' }}>
-        <div ref={slideRef} className={`slide`}>
+        <div ref={slideRef} className={`slide ${slideClasses}`} style={getBgStyles()}>
+          {
+            slideType === SlideLayout.ImageLeft && (
+              <div className={`w-full h-full`} style={bgStyles}></div>
+            )
+          }
+
           {
             content && theme ? (
-              <Markdown
-                content={content}
-                theme={theme}
-                webviewUrl={webviewUrl}
-                updateTemplate={setTemplate}
-                updateSlideType={setSlideType}
-              />
+              <div className='slide-content'>
+                <Markdown
+                  content={content}
+                  theme={theme}
+                  webviewUrl={webviewUrl}
+                  updateTemplate={setTemplate}
+                  updateSlideType={setSlideType}
+                  updateBgStyles={setBgStyles}
+                />
+              </div>
             ) : null
+          }
+
+          {
+            slideType === SlideLayout.ImageRight && (
+              <div className={`w-full h-full`} style={bgStyles}></div>
+            )
           }
         </div>
       </div>

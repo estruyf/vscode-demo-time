@@ -6,5 +6,5 @@ export enum SlideLayout {
   Image = "image",
   ImageRight = "image-right",
   ImageLeft = "image-left",
-  TwoColumn = "two-column",
+  TwoColumns = "two-columns",
 }

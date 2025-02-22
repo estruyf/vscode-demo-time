@@ -9,6 +9,7 @@ export interface IMarkdownProps {
   webviewUrl: string | null;
   updateTemplate: (template: string) => void;
   updateSlideType: (template: string) => void;
+  updateBgStyles: (styles: any) => void;
 }
 
 export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
@@ -17,6 +18,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   webviewUrl,
   updateTemplate,
   updateSlideType,
+  updateBgStyles
 }: React.PropsWithChildren<IMarkdownProps>) => {
   const {
     markdown,
@@ -48,6 +50,18 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   React.useEffect(() => {
     updateTemplate(matter?.template || "default");
     updateSlideType(matter?.layout || "default");
+
+    if (matter?.image) {
+      updateBgStyles({
+        color: 'white',
+        backgroundImage: `url(${matter?.image})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center center',
+      });
+    } else {
+      updateBgStyles(undefined);
+    }
   }, [matter, updateTemplate, updateSlideType]);
 
   React.useEffect(() => {
@@ -57,8 +71,8 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   }, [content]);
 
   return (
-    <div>
+    <>
       {markdown}
-    </div>
+    </>
   );
 };

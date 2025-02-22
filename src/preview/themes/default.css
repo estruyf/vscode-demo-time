@@ -57,7 +57,7 @@
   }
 
   &.intro {
-    .slide {
+    .slide-content {
       @apply p-8 w-full flex flex-col items-center justify-center text-center;
     }
 
@@ -71,7 +71,7 @@
   }
 
   &.quote {
-    .slide {
+    .slide-content {
       @apply p-8 w-full flex flex-col items-center justify-center text-center;
     }
 
@@ -85,7 +85,7 @@
   }
 
   &.section {
-    .slide {
+    .slide-content {
       @apply p-8 w-full flex flex-col items-center justify-center text-center;
     }
 
@@ -95,9 +95,15 @@
   }
 
   &.image {
+    .slide-content {
+      @apply p-8 w-full flex flex-col items-center justify-center text-center;
+    }
   }
 
   &.image-left {
+    .slide-content {
+      @apply p-8 w-full;
+    }
   }
 
   &.image-right {
