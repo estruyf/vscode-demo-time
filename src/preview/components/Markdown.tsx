@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRemark } from '../hooks/useRemark';
-import { transformImageUrl } from '../utils';
+import { transformImageUrl, twoColumnFormatting } from '../utils';
 import rehypePrettyCode from 'rehype-pretty-code';
 
 export interface IMarkdownProps {
@@ -66,7 +66,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
 
   React.useEffect(() => {
     if (content) {
-      setMarkdown(content);
+      setMarkdown(twoColumnFormatting(content));
     }
   }, [content]);
 

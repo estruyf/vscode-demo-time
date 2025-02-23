@@ -137,18 +137,25 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   }, []);
 
   return (
-    <div ref={ref} className={`slideshow ${template || "default"} ${slideType || "default"} relative w-full h-full overflow-hidden`}>
-      <div className='absolute top-[50%] left-[50%] w-[960px] h-[540px]' style={{ transform: 'translate(-50%, -50%) scale(var(--demotime-scale, 1))' }}>
-        <div ref={slideRef} className={`slide ${slideClasses}`} style={getBgStyles()}>
+    <div
+      ref={ref}
+      className={`slide ${template || "default"} relative w-full h-full overflow-hidden`}>
+      <div
+        className='slide__container absolute top-[50%] left-[50%] w-[960px] h-[540px]'
+        style={{ transform: 'translate(-50%, -50%) scale(var(--demotime-scale, 1))' }}>
+        <div
+          ref={slideRef}
+          className={`slide__layout ${slideClasses || ""} ${slideType || "default"}`}
+          style={getBgStyles()}>
           {
             slideType === SlideLayout.ImageLeft && (
-              <div className={`w-full h-full`} style={bgStyles}></div>
+              <div className={`slide__image_left w-full h-full`} style={bgStyles}></div>
             )
           }
 
           {
             content && theme ? (
-              <div className='slide-content'>
+              <div className='slide__content'>
                 <Markdown
                   content={content}
                   theme={theme}
@@ -163,7 +170,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
 
           {
             slideType === SlideLayout.ImageRight && (
-              <div className={`w-full h-full`} style={bgStyles}></div>
+              <div className={`slide__image_right w-full h-full`} style={bgStyles}></div>
             )
           }
         </div>
