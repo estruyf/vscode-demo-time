@@ -1,7 +1,7 @@
 import { ThemeColor, TreeItem, TreeView, commands, window } from "vscode";
 import { ContextKeys } from "../constants/ContextKeys";
 import { FileProvider } from "../services/FileProvider";
-import { DemoFileCache, DemoFiles, Demos, Subscription } from "../models";
+import { Action, DemoFileCache, DemoFiles, Demos, Subscription } from "../models";
 import { ActionTreeItem, ActionTreeviewProvider } from "../providers/ActionTreeviewProvider";
 import { DemoRunner } from "../services/DemoRunner";
 import { COMMAND } from "../constants";
@@ -91,7 +91,11 @@ export class DemoPanel {
 
         const hasNotes = demo.notes?.path ? true : false;
         if (hasNotes) {
-          ctxValue += " demo-time.hasNotes";
+          ctxValue += ` ${ContextKeys.hasNotes}`;
+        }
+
+        if (demo.steps.find((step) => step.action === Action.OpenSlide)) {
+          ctxValue += ` ${ContextKeys.isSlide}`;
         }
 
         const icons = { start: "run", end: "pass-filled" };

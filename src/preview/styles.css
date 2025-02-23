@@ -40,3 +40,29 @@ pre code {
 .slide__content {
   @apply h-full w-full text-base;
 }
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 300ms ease-in-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+
+.slide-in {
+  animation: slideIn 0.5s ease-in-out;
+}

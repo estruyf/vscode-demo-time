@@ -1,6 +1,6 @@
 import { Uri, Webview, WebviewPanel, window, ViewColumn } from "vscode";
 import { Extension } from "../services/Extension";
-import { WebViewMessages } from "../constants";
+import { Config, WebViewMessages } from "../constants";
 import { MessageHandlerData } from "@estruyf/vscode";
 import { getTheme, getWebviewUrl, readFile } from "../utils";
 
@@ -62,7 +62,7 @@ export class Preview {
     const extensionUri = Extension.getInstance().extensionPath;
 
     // Create the preview webview
-    Preview.webview = window.createWebviewPanel("demoTime:preview", `Demo Time: Preview`, ViewColumn.One, {
+    Preview.webview = window.createWebviewPanel("demoTime:preview", Config.title, ViewColumn.One, {
       enableScripts: true,
       retainContextWhenHidden: true,
       enableCommandUris: true,
@@ -102,6 +102,9 @@ export class Preview {
     } else if (command === WebViewMessages.toVscode.getTheme && requestId) {
       const theme = await getTheme();
       Preview.postRequestMessage(WebViewMessages.toVscode.getTheme, requestId, theme);
+      return;
+    } else if (command === WebViewMessages.toVscode.updateTitle && payload) {
+      Preview.webview.title = `${Config.title}: ${payload}`;
       return;
     }
   }

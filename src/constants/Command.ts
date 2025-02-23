@@ -37,4 +37,5 @@ export const COMMAND = {
   viewNotes: `${EXTENSION_NAME}.viewNotes`,
   // Slides
   createSlide: `${EXTENSION_NAME}.createSlide`,
+  viewSlide: `${EXTENSION_NAME}.viewSlide`,
 };

@@ -3,12 +3,16 @@ import { Action, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import { COMMAND, Config, General, SlideLayout } from "../constants";
 import { addStepsToDemo, fileExists, sanitizeFileName, upperCaseFirstLetter, writeFile } from "../utils";
+import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
+import { FileProvider } from "./FileProvider";
+import { DemoRunner } from "./DemoRunner";
 
 export class Slides {
   public static registerCommands() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
 
     subscriptions.push(commands.registerCommand(COMMAND.createSlide, Slides.createSlide));
+    subscriptions.push(commands.registerCommand(COMMAND.viewSlide, Slides.viewSlide));
   }
 
   public static async createSlide() {
@@ -93,5 +97,40 @@ layout: ${layout.toLowerCase()}
     ];
 
     await addStepsToDemo(steps, slideTitle, "");
+  }
+
+  private static async viewSlide(item: ActionTreeItem) {
+    if (!item || !item.demoFilePath) {
+      return;
+    }
+
+    const demoFiles = await FileProvider.getFiles();
+    if (!demoFiles) {
+      return;
+    }
+
+    const executingDemos = demoFiles[item.demoFilePath].demos;
+    const crntDemo = executingDemos.find((_, idx) => idx === item.stepIndex);
+    if (!crntDemo) {
+      return;
+    }
+
+    const slidePath = crntDemo.steps.find((step) => step.action === Action.OpenSlide)?.path;
+    if (!slidePath) {
+      return;
+    }
+
+    const wsFolder = Extension.getInstance().workspaceFolder;
+    if (!wsFolder) {
+      return;
+    }
+
+    const slideUri = Uri.joinPath(wsFolder.uri, slidePath);
+    const slideExists = await fileExists(slideUri);
+    if (!slideExists) {
+      return;
+    }
+
+    await window.showTextDocument(slideUri);
   }
 }

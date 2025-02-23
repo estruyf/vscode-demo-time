@@ -35,6 +35,7 @@ export const App: React.FunctionComponent<IAppProps> = ({
 
     const fileExtension = fileUri.split('.').pop();
     if (fileExtension === 'md') {
+      messageHandler.send(WebViewMessages.toVscode.updateTitle, 'Slide');
       return 'markdown';
     }
 
@@ -46,6 +47,7 @@ export const App: React.FunctionComponent<IAppProps> = ({
       fileExtension === 'webp' ||
       fileExtension === 'avif'
     ) {
+      messageHandler.send(WebViewMessages.toVscode.updateTitle, 'Image');
       return 'image';
     }
 

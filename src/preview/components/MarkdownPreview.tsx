@@ -16,6 +16,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   fileUri,
   webviewUrl
 }: React.PropsWithChildren<IMarkdownPreviewProps>) => {
+  const [crntFilePath, setCrntFilePath] = React.useState<string | undefined>(undefined);
   const [content, setContent] = React.useState<string | undefined>(undefined);
   const [theme, setTheme] = React.useState<any | undefined>(undefined);
   const ref = React.useRef<HTMLDivElement>(null);
@@ -26,8 +27,11 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
 
   const getFileContents = React.useCallback(async (fileUri: string) => {
     if (!fileUri) {
+      setCrntFilePath(undefined);
       return;
     }
+
+    setCrntFilePath(fileUri);
 
     fetch(fileUri)
       .then((response) => response.text())
@@ -138,8 +142,9 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
 
   return (
     <div
+      key={crntFilePath}
       ref={ref}
-      className={`slide ${template || "default"} relative w-full h-full overflow-hidden`}>
+      className={`slide fade-in ${template || "default"} relative w-full h-full overflow-hidden`}>
       <div
         className='slide__container absolute top-[50%] left-[50%] w-[960px] h-[540px]'
         style={{ transform: 'translate(-50%, -50%) scale(var(--demotime-scale, 1))' }}>

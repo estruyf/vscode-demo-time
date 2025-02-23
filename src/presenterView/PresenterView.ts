@@ -1,7 +1,7 @@
 import { commands, Uri, Webview, WebviewPanel, workspace, window, ViewColumn } from "vscode";
 import { Subscription } from "../models";
 import { Extension } from "../services/Extension";
-import { COMMAND, EXTENSION_NAME, WebViewMessages } from "../constants";
+import { COMMAND, Config, EXTENSION_NAME, WebViewMessages } from "../constants";
 import { MessageHandlerData } from "@estruyf/vscode";
 import { FileProvider } from "../services/FileProvider";
 import { DemoRunner } from "../services/DemoRunner";
@@ -47,7 +47,7 @@ export class PresenterView {
     // Create the preview webview
     PresenterView.webview = window.createWebviewPanel(
       "demoTime:presenterView",
-      `Demo Time: Presenter View`,
+      `${Config.title}: Presenter View`,
       ViewColumn.One,
       {
         enableScripts: true,

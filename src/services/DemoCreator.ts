@@ -70,7 +70,7 @@ export class DemoCreator {
 
     await addExtensionRecommendation();
 
-    Notifications.info("Demo time is initialized, you can now start adding demo steps!");
+    Notifications.info(`${Config.title} is initialized, you can now start adding demo steps!`);
 
     DemoPanel.showWelcome(false);
     DemoPanel.init();

@@ -14,6 +14,7 @@ export const WebViewMessages = {
     getStyles: "getStyles",
     getTheme: "getTheme",
     getSlideTheme: "getSlideTheme",
+    updateTitle: "updateTitle",
   },
   toWebview: {
     updateClock: "updateClock",

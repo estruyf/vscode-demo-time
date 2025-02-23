@@ -16,6 +16,7 @@ import {
 import { DemoPanel } from "./panels/DemoPanel";
 import { PresenterView } from "./presenterView/PresenterView";
 import { Preview } from "./preview/Preview";
+import { Config } from "./constants";
 
 export async function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);
@@ -38,7 +39,7 @@ export async function activate(context: vscode.ExtensionContext) {
   DemoApi.register();
   UriHandler.register();
 
-  console.log("Demo time is active!");
+  console.log(`${Config.title} is active!`);
 }
 
 export function deactivate() {}

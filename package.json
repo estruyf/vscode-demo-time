@@ -305,6 +305,12 @@
         "command": "demo-time.createSlide",
         "title": "Create a slide",
         "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.viewSlide",
+        "title": "View slide",
+        "category": "Demo Time",
+        "icon": "$(preview)"
       }
     ],
     "menus": {
@@ -351,6 +357,10 @@
         },
         {
           "command": "demo-time.viewNotes",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.viewSlide",
           "when": "false"
         },
         {
@@ -422,6 +432,11 @@
         {
           "command": "demo-time.viewNotes",
           "when": "view == demo-time && (viewItem =~ /demo-time.hasNotes/)",
+          "group": "inline@4"
+        },
+        {
+          "command": "demo-time.viewSlide",
+          "when": "view == demo-time && (viewItem =~ /demo-time.isSlide/)",
           "group": "inline@4"
         }
       ],
