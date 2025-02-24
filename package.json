@@ -2,7 +2,7 @@
   "name": "vscode-demo-time",
   "displayName": "Demo Time",
   "description": "Script your coding demos to perfection with this VS Code extension – no typos, no missteps, just flawless, stress-free presentations every time. Execute each demo step seamlessly, just like advancing through a slide presentation!",
-  "version": "0.0.74",
+  "version": "0.0.75",
   "publisher": "eliostruyf",
   "galleryBanner": {
     "color": "#0D1321",
