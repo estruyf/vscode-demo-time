@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.75] - 2025-02-24
+
+- [#55](https://github.com/estruyf/vscode-demo-time/issues/55): Added slide support with new `openSlide` and `imagePreview` actions
+
 ## [0.0.74] - 2025-02-20
 
 - Fix to render the tree view on initialize command

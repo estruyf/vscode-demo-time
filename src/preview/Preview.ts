@@ -10,15 +10,13 @@ export class Preview {
   private static crntFile: string | null = null;
   private static crntCss: string | null = null;
 
-  public static register() {}
-
   public static get isOpen(): boolean {
     return !Preview.isDisposed;
   }
 
   public static show(fileUri: string, css?: string) {
-    Preview.crntFile = fileUri || null;
-    Preview.crntCss = css || null;
+    Preview.crntFile = fileUri ?? null;
+    Preview.crntCss = css ?? null;
 
     if (Preview.isOpen) {
       Preview.reveal();
@@ -94,18 +92,14 @@ export class Preview {
     if (command === WebViewMessages.toVscode.getFileUri && requestId) {
       const fileWebviewPath = getWebviewUrl(Preview.webview?.webview, Preview.crntFile);
       Preview.postRequestMessage(WebViewMessages.toVscode.getFileUri, requestId, fileWebviewPath);
-      return;
     } else if (command === WebViewMessages.toVscode.getStyles && requestId) {
       const cssWebviewPath = Preview.crntCss ? getWebviewUrl(Preview.webview?.webview, Preview.crntCss) : undefined;
       Preview.postRequestMessage(WebViewMessages.toVscode.getStyles, requestId, cssWebviewPath);
-      return;
     } else if (command === WebViewMessages.toVscode.getTheme && requestId) {
       const theme = await getTheme();
       Preview.postRequestMessage(WebViewMessages.toVscode.getTheme, requestId, theme);
-      return;
     } else if (command === WebViewMessages.toVscode.updateTitle && payload) {
       Preview.webview.title = `${Config.title}: ${payload}`;
-      return;
     }
   }
 

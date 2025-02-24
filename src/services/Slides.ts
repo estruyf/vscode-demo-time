@@ -5,7 +5,6 @@ import { COMMAND, Config, General, SlideLayout } from "../constants";
 import { addStepsToDemo, fileExists, sanitizeFileName, upperCaseFirstLetter, writeFile } from "../utils";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { FileProvider } from "./FileProvider";
-import { DemoRunner } from "./DemoRunner";
 
 export class Slides {
   public static registerCommands() {
