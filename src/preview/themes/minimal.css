@@ -1,11 +1,10 @@
-/* Default Template */
-.slide.default {
+.slide.minimal {
   .slide__content {
     @apply p-8 space-y-4;
   }
 
   h1 {
-    @apply text-4xl;
+    @apply text-4xl bg-[var(--vscode-editor-foreground)] text-[var(--vscode-editor-background)] p-4;
   }
 
   h2 {

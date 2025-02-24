@@ -4,6 +4,7 @@ import { App } from "./components/App";
 import 'vscrui/dist/codicon.css';
 import './styles.css';
 import './themes/default.css';
+import './themes/minimal.css';
 
 declare const acquireVsCodeApi: <T = unknown>() => {
   getState: () => T;
