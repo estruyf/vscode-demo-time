@@ -119,7 +119,7 @@ export class Preview {
   }
 
   private static async getWebviewContent(webview: Webview) {
-    const jsFile = "preview.bundle.js";
+    const jsFile = "preview.main.bundle.js";
     const localServerUrl = "http://localhost:9001";
 
     let scriptUrl = [];

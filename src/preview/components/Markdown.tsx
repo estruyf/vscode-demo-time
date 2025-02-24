@@ -52,9 +52,10 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     updateSlideType(matter?.layout || "default");
 
     if (matter?.image) {
+      const img = transformImageUrl(webviewUrl || "", matter?.image)
       updateBgStyles({
         color: 'white',
-        backgroundImage: `url(${matter?.image})`,
+        backgroundImage: `url(${img})`,
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
         backgroundPosition: 'center center',

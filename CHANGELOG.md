@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.76] - 2025-02-24
+
+- Fix for local development of preview-view
+- Fix of background image when it is loaded from the local project
+
 ## [0.0.75] - 2025-02-24
 
 - [#55](https://github.com/estruyf/vscode-demo-time/issues/55): Added slide support with new `openSlide` and `imagePreview` actions
