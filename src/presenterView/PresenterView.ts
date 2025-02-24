@@ -148,7 +148,6 @@ export class PresenterView {
     const localServerUrl = "http://localhost:9000";
 
     let scriptUrl = [];
-    let cssUrl = null;
 
     const extension = Extension.getInstance();
     if (extension.isProductionMode) {
@@ -172,7 +171,6 @@ export class PresenterView {
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      ${extension.isProductionMode ? `<link href="${cssUrl}" rel="stylesheet">` : ""}
     </head>
     <body>
       <div id="root"></div>
