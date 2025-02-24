@@ -11,7 +11,7 @@ const config = [
     target: 'web',
     entry: './src/preview/index.tsx',
     output: {
-      filename: 'preview.bundle.js',
+      filename: 'preview.[name].bundle.js',
       path: path.resolve(__dirname, './out/webview')
     },
     devtool: 'source-map',
