@@ -1,6 +1,6 @@
 import { PresenterView } from "./../presenterView/PresenterView";
 import { COMMAND, Config, ContextKeys, StateKeys, WebViewMessages } from "../constants";
-import { Action, Demo, DemoFileCache, Demos, Step, Subscription } from "../models";
+import { Action, Demo, DemoFileCache, Demos, IImagePreview, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import {
   Position,
@@ -49,6 +49,7 @@ import { Logger } from "./Logger";
 import { NotesService } from "./NotesService";
 import { ScriptExecutor } from "./ScriptExecutor";
 import { StateManager } from "./StateManager";
+import { Preview } from "../preview/Preview";
 
 const DEFAULT_START_VALUE = {
   filePath: "",
@@ -630,6 +631,12 @@ export class DemoRunner {
        * All the following actions require a file path.
        */
       if (!fileUri) {
+        continue;
+      }
+
+      if (step.action === Action.ImagePreview || step.action === Action.OpenSlide) {
+        const { path, theme } = step as IImagePreview;
+        Preview.show(path as string, theme);
         continue;
       }
 

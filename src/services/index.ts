@@ -10,5 +10,6 @@ export * from "./Logger";
 export * from "./NotesService";
 export * from "./Notifications";
 export * from "./ScriptExecutor";
+export * from "./Slides";
 export * from "./StateManager";
 export * from "./UriHandler";

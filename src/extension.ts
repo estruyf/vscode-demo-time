@@ -8,11 +8,14 @@ import {
   DemoRunner,
   DemoStatusBar,
   Extension,
+  FileProvider,
   NotesService,
+  Slides,
   UriHandler,
 } from "./services";
 import { DemoPanel } from "./panels/DemoPanel";
 import { PresenterView } from "./presenterView/PresenterView";
+import { Config } from "./constants";
 
 export async function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);
@@ -28,11 +31,13 @@ export async function activate(context: vscode.ExtensionContext) {
   DemoListeners.register();
   DemoStatusBar.register();
   PresenterView.register();
+  FileProvider.register();
+  Slides.registerCommands();
   NotesService.registerCommands();
   DemoApi.register();
   UriHandler.register();
 
-  console.log("Demo time is active!");
+  console.log(`${Config.title} is active!`);
 }
 
 export function deactivate() {}

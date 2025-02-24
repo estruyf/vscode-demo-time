@@ -1,7 +1,7 @@
 import { commands, Uri, Webview, WebviewPanel, workspace, window, ViewColumn } from "vscode";
 import { Subscription } from "../models";
 import { Extension } from "../services/Extension";
-import { COMMAND, EXTENSION_NAME, WebViewMessages } from "../constants";
+import { COMMAND, Config, EXTENSION_NAME, WebViewMessages } from "../constants";
 import { MessageHandlerData } from "@estruyf/vscode";
 import { FileProvider } from "../services/FileProvider";
 import { DemoRunner } from "../services/DemoRunner";
@@ -47,7 +47,7 @@ export class PresenterView {
     // Create the preview webview
     PresenterView.webview = window.createWebviewPanel(
       "demoTime:presenterView",
-      `Demo Time: Presenter View`,
+      `${Config.title}: Presenter View`,
       ViewColumn.One,
       {
         enableScripts: true,
@@ -60,8 +60,8 @@ export class PresenterView {
     PresenterView.isDetached = false;
 
     PresenterView.webview.iconPath = {
-      dark: Uri.joinPath(Uri.file(extensionUri), "assets", "logo-dark.svg"),
-      light: Uri.joinPath(Uri.file(extensionUri), "assets", "logo-light.svg"),
+      dark: Uri.joinPath(Uri.file(extensionUri), "assets", "logo", "demotime-bg.svg"),
+      light: Uri.joinPath(Uri.file(extensionUri), "assets", "logo", "demotime-bg.svg"),
     };
 
     PresenterView.webview.webview.html = await PresenterView.getWebviewContent(PresenterView.webview.webview);
@@ -148,7 +148,6 @@ export class PresenterView {
     const localServerUrl = "http://localhost:9000";
 
     let scriptUrl = [];
-    let cssUrl = null;
 
     const extension = Extension.getInstance();
     if (extension.isProductionMode) {
@@ -172,7 +171,6 @@ export class PresenterView {
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      ${extension.isProductionMode ? `<link href="${cssUrl}" rel="stylesheet">` : ""}
     </head>
     <body>
       <div id="root"></div>

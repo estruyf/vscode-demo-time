@@ -40,7 +40,7 @@ export class DemoStatusBar {
   public static createStatusBarItems() {
     if (!DemoStatusBar.statusBarItem) {
       DemoStatusBar.statusBarItem = window.createStatusBarItem("next-demo", StatusBarAlignment.Left, 100001);
-      DemoStatusBar.statusBarItem.name = "Demo Time - Next Demo";
+      DemoStatusBar.statusBarItem.name = `${Config.title} - Next Demo`;
       DemoStatusBar.statusBarItem.command = COMMAND.start;
 
       DemoStatusBar.statusBarItem.backgroundColor = new ThemeColor("statusBarItem.warningBackground");
@@ -49,7 +49,7 @@ export class DemoStatusBar {
 
     if (!DemoStatusBar.statusBarNotes) {
       DemoStatusBar.statusBarNotes = window.createStatusBarItem("notes", StatusBarAlignment.Left, 100000);
-      DemoStatusBar.statusBarNotes.name = "Demo Time - Notes";
+      DemoStatusBar.statusBarNotes.name = `${Config.title} - Notes`;
       DemoStatusBar.statusBarNotes.command = COMMAND.viewNotes;
       DemoStatusBar.statusBarNotes.text = `$(book) Notes`;
       DemoStatusBar.statusBarNotes.tooltip = `Show the notes for the current demo step`;
@@ -145,7 +145,7 @@ export class DemoStatusBar {
   private static startClock() {
     if (!DemoStatusBar.statusBarClock) {
       DemoStatusBar.statusBarClock = window.createStatusBarItem("clock", StatusBarAlignment.Right, 100000);
-      DemoStatusBar.statusBarClock.name = "Demo Time - Clock & Countdown";
+      DemoStatusBar.statusBarClock.name = `${Config.title} - Clock & Countdown`;
     }
 
     const date = new Date();

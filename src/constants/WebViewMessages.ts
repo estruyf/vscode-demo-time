@@ -9,6 +9,12 @@ export const WebViewMessages = {
     detach: "detach",
     runCommand: "runCommand",
     openNotes: "openNotes",
+    // Preview
+    getFileUri: "getFileUri",
+    getStyles: "getStyles",
+    getTheme: "getTheme",
+    getSlideTheme: "getSlideTheme",
+    updateTitle: "updateTitle",
   },
   toWebview: {
     updateClock: "updateClock",
@@ -18,5 +24,9 @@ export const WebViewMessages = {
     updateCountdown: "updateCountdown",
     updateCountdownStarted: "updateCountdownStarted",
     updatePresentationStarted: "updatePresentationStarted",
+    // Preview
+    updateFileUri: "updateFileUri",
+    triggerUpdate: "triggerUpdate",
+    updateStyles: "updateStyles",
   },
 };
