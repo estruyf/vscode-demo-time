@@ -35,23 +35,25 @@ export const SlideControls: React.FunctionComponent<ISlideControlsProps> = ({
       className={`absolute bottom-4 left-1/2 -translate-x-1/2 transition-opacity duration-300 ${show ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
     >
-      <div className="bg-[#252526]/90 backdrop-blur-sm rounded-lg shadow-lg p-2 flex items-center gap-4">
+      <div
+        className="bg-[var(--vscode-editorWidget-background)] rounded-lg p-2 flex items-center gap-4"
+        style={{ boxShadow: '0 0 8px 2px var(--vscode-widget-shadow)' }}>
         {
           previousEnabled && (
             <button
               onClick={previous}
-              className="p-2 inline-flex justify-center items-center rounded hover:bg-[#2d2d2d] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2 inline-flex justify-center items-center rounded hover:bg-[var(--vscode-toolbar-hoverBackground)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Icon name='chevron-left' className="!text-white inline-flex justify-center items-center" />
+              <Icon name='chevron-left' className="!text-[var(--vscode-editorWidget-foreground)] inline-flex justify-center items-center" />
             </button>
           )
         }
 
         <button
           onClick={next}
-          className="p-2 inline-flex justify-center items-center rounded hover:bg-[#2d2d2d] disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-2 inline-flex justify-center items-center rounded hover:bg-[var(--vscode-toolbar-hoverBackground)] disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <Icon name='chevron-right' className="!text-white inline-flex justify-center items-center" />
+          <Icon name='chevron-right' className="!text-[var(--vscode-editorWidget-foreground)] inline-flex justify-center items-center" />
         </button>
       </div>
     </div>
