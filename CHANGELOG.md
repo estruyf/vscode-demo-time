@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.79] - 2025-02-25
+
+- [#60](https://github.com/estruyf/vscode-demo-time/issues/60): Cursor visibility on the slide view
+
 ## [0.0.78] - 2025-02-25
 
 - Added missing actions to the actions quick pick selection

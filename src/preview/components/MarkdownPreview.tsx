@@ -5,6 +5,7 @@ import { Markdown } from './Markdown';
 import { EventData } from '@estruyf/vscode';
 import { useScale } from '../hooks/useScale';
 import { useFileContents } from '../hooks/useFileContents';
+import useCursor from '../hooks/useCursor';
 
 export interface IMarkdownPreviewProps {
   fileUri: string;
@@ -22,6 +23,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const [bgStyles, setBgStyles] = React.useState<any | null>(null);
   const ref = React.useRef<HTMLDivElement>(null);
   const slideRef = React.useRef<HTMLDivElement>(null);
+  const { cursorVisible, resetCursorTimeout } = useCursor();
   useScale(ref, slideRef);
 
   const messageListener = (message: MessageEvent<EventData<any>>) => {
@@ -53,6 +55,10 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     return bgStyles;
   }, [bgStyles, layout]);
 
+  const handleMouseMove = React.useCallback(() => {
+    resetCursorTimeout();
+  }, [resetCursorTimeout]);
+
   React.useEffect(() => {
     getFileContents(fileUri);
   }, [fileUri]);
@@ -73,7 +79,10 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     <div
       key={crntFilePath}
       ref={ref}
-      className={`slide fade-in ${theme || "default"} relative w-full h-full overflow-hidden`}>
+      className={`slide fade-in ${theme || "default"} relative w-full h-full overflow-hidden`}
+      onMouseMove={handleMouseMove}
+      style={{ cursor: cursorVisible ? 'default' : 'none' }}
+    >
       <div
         className='slide__container absolute top-[50%] left-[50%] w-[960px] h-[540px]'
         style={{ transform: 'translate(-50%, -50%) scale(var(--demotime-scale, 1))' }}>
