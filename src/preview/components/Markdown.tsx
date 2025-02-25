@@ -5,19 +5,19 @@ import rehypePrettyCode from 'rehype-pretty-code';
 
 export interface IMarkdownProps {
   content?: string;
-  theme: any;
+  vsCodeTheme: any;
   webviewUrl: string | null;
-  updateTemplate: (template: string) => void;
-  updateSlideType: (template: string) => void;
+  updateTheme: (theme: string) => void;
+  updateLayout: (layout: string) => void;
   updateBgStyles: (styles: any) => void;
 }
 
 export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   content,
-  theme,
+  vsCodeTheme,
   webviewUrl,
-  updateTemplate,
-  updateSlideType,
+  updateTheme,
+  updateLayout,
   updateBgStyles
 }: React.PropsWithChildren<IMarkdownProps>) => {
   const {
@@ -27,7 +27,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   } = useRemark({
     rehypePlugins: [
       [rehypePrettyCode, {
-        theme: theme ? theme : {},
+        theme: vsCodeTheme ? vsCodeTheme : {},
       }]
     ],
     rehypeReactOptions: {
@@ -48,8 +48,8 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   });
 
   React.useEffect(() => {
-    updateTemplate(matter?.template || "default");
-    updateSlideType(matter?.layout || "default");
+    updateTheme(matter?.theme || "default");
+    updateLayout(matter?.layout || "default");
 
     if (matter?.image) {
       const img = transformImageUrl(webviewUrl || "", matter?.image)
@@ -63,7 +63,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     } else {
       updateBgStyles(undefined);
     }
-  }, [matter, updateTemplate, updateSlideType]);
+  }, [matter, updateTheme, updateLayout]);
 
   React.useEffect(() => {
     if (content) {

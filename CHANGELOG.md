@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.77] - 2025-02-25
+
+- Update `template` to `theme` in Markdown slides
+
 ## [0.0.76] - 2025-02-24
 
 - Fix for local development of preview-view

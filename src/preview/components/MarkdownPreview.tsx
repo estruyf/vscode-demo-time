@@ -16,9 +16,9 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   webviewUrl
 }: React.PropsWithChildren<IMarkdownPreviewProps>) => {
   const { content, crntFilePath, getFileContents } = useFileContents();
-  const [theme, setTheme] = React.useState<any | undefined>(undefined);
-  const [template, setTemplate] = React.useState<string | undefined>(undefined);
-  const [slideType, setSlideType] = React.useState<string | undefined>(undefined);
+  const [vsCodeTheme, setVsCodeTheme] = React.useState<any | undefined>(undefined);
+  const [theme, setTheme] = React.useState<string | undefined>(undefined);
+  const [layout, setLayout] = React.useState<string | undefined>(undefined);
   const [bgStyles, setBgStyles] = React.useState<any | null>(null);
   const ref = React.useRef<HTMLDivElement>(null);
   const slideRef = React.useRef<HTMLDivElement>(null);
@@ -36,22 +36,22 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   };
 
   const slideClasses = React.useMemo(() => {
-    if (!slideType) {
+    if (!layout) {
       return '';
     }
 
-    if (slideType === SlideLayout.ImageLeft || slideType === SlideLayout.ImageRight) {
+    if (layout === SlideLayout.ImageLeft || layout === SlideLayout.ImageRight) {
       return 'grid grid-cols-2 w-full h-full auto-rows-fr';
     }
-  }, [slideType]);
+  }, [layout]);
 
   const getBgStyles = React.useCallback(() => {
-    if (!slideType || slideType === SlideLayout.ImageLeft || slideType === SlideLayout.ImageRight) {
+    if (!layout || layout === SlideLayout.ImageLeft || layout === SlideLayout.ImageRight) {
       return undefined;
     }
 
     return bgStyles;
-  }, [bgStyles, slideType]);
+  }, [bgStyles, layout]);
 
   React.useEffect(() => {
     getFileContents(fileUri);
@@ -61,7 +61,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     Messenger.listen(messageListener);
 
     messageHandler.request<any>(WebViewMessages.toVscode.getTheme).then((theme) => {
-      setTheme(theme);
+      setVsCodeTheme(theme);
     });
 
     return () => {
@@ -73,29 +73,29 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     <div
       key={crntFilePath}
       ref={ref}
-      className={`slide fade-in ${template || "default"} relative w-full h-full overflow-hidden`}>
+      className={`slide fade-in ${theme || "default"} relative w-full h-full overflow-hidden`}>
       <div
         className='slide__container absolute top-[50%] left-[50%] w-[960px] h-[540px]'
         style={{ transform: 'translate(-50%, -50%) scale(var(--demotime-scale, 1))' }}>
         <div
           ref={slideRef}
-          className={`slide__layout ${slideClasses || ""} ${slideType || "default"}`}
+          className={`slide__layout ${slideClasses || ""} ${layout || "default"}`}
           style={getBgStyles()}>
           {
-            slideType === SlideLayout.ImageLeft && (
+            layout === SlideLayout.ImageLeft && (
               <div className={`slide__image_left w-full h-full`} style={bgStyles}></div>
             )
           }
 
           {
-            content && theme ? (
+            content && vsCodeTheme ? (
               <div className='slide__content'>
                 <Markdown
                   content={content}
-                  theme={theme}
+                  vsCodeTheme={vsCodeTheme}
                   webviewUrl={webviewUrl}
-                  updateTemplate={setTemplate}
-                  updateSlideType={setSlideType}
+                  updateTheme={setTheme}
+                  updateLayout={setLayout}
                   updateBgStyles={setBgStyles}
                 />
               </div>
@@ -103,7 +103,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           }
 
           {
-            slideType === SlideLayout.ImageRight && (
+            layout === SlideLayout.ImageRight && (
               <div className={`slide__image_right w-full h-full`} style={bgStyles}></div>
             )
           }

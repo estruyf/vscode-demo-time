@@ -1,3 +1,4 @@
+/* Minimal Theme */
 .slide.minimal {
   .slide__content {
     @apply p-8 space-y-4;

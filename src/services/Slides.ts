@@ -66,7 +66,7 @@ export class Slides {
     }
 
     const content = `---
-template: default
+theme: default
 layout: ${layout.toLowerCase()}
 ---
 
