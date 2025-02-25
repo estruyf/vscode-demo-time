@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.78] - 2025-02-25
+
+- Added missing actions to the actions quick pick selection
+- Added action verification script for the GitHub Actions release workflow
+
 ## [0.0.77] - 2025-02-25
 
 - Update `template` to `theme` in Markdown slides

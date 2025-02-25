@@ -78,11 +78,25 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   }
 
   /**
-   * Markdown actions
+   * Preview actions
    */
+  if (action === Action.OpenSlide) {
+    return {
+      action: Action.OpenSlide,
+      path: "",
+    };
+  }
+
   if (action === Action.MarkdownPreview) {
     return {
       action: Action.MarkdownPreview,
+      path: "",
+    };
+  }
+
+  if (action === Action.ImagePreview) {
+    return {
+      action: Action.ImagePreview,
       path: "",
     };
   }
@@ -167,6 +181,19 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
         key: "",
         value: "",
       },
+    };
+  }
+
+  if (action === Action.SetTheme) {
+    return {
+      action: Action.SetTheme,
+      theme: "",
+    };
+  }
+
+  if (action === Action.UnsetTheme) {
+    return {
+      action: Action.UnsetTheme,
     };
   }
 

@@ -73,17 +73,27 @@ export const getActionOptions = (): QuickPickItem[] => {
   } as QuickPickItem);
 
   /**
-   * Markdown actions
+   * Preview actions
    */
   actions.push({
-    label: "Markdown",
-    description: "Markdown actions",
+    label: "Preview",
+    description: "Preview actions",
     kind: QuickPickItemKind.Separator,
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.OpenSlide,
+    description: "Open a slide",
   } as QuickPickItem);
 
   actions.push({
     label: Action.MarkdownPreview,
     description: "Preview a markdown file",
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.ImagePreview,
+    description: "Preview an image",
   } as QuickPickItem);
 
   /**

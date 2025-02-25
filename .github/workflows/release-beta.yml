@@ -21,6 +21,9 @@ jobs:
       - name: Install the dependencies
         run: npm ci
 
+      - name: Verify actions
+        run: node .github/scripts/verify-actions.mjs
+
       - name: Publish
         run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }} --baseImagesUrl https://raw.githubusercontent.com/estruyf/vscode-demo-time/dev
 
