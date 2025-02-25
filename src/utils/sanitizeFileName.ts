@@ -1,7 +1,7 @@
-export const sanitizeFileName = (fileName: string) => {
+export const sanitizeFileName = (fileName: string, fileExt = ".json") => {
   if (fileName) {
-    if (!fileName.endsWith(".json")) {
-      fileName = `${fileName}.json`;
+    if (!fileName.endsWith(fileExt)) {
+      fileName = `${fileName}${fileExt}`;
     }
 
     fileName = fileName.replace(/ /g, "-");

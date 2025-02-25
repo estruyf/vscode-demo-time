@@ -70,7 +70,7 @@ export class DemoCreator {
 
     await addExtensionRecommendation();
 
-    Notifications.info("Demo time is initialized, you can now start adding demo steps!");
+    Notifications.info(`${Config.title} is initialized, you can now start adding demo steps!`);
 
     DemoPanel.showWelcome(false);
     DemoPanel.init();
@@ -250,7 +250,12 @@ export class DemoCreator {
    * @param step - The step(s) to be added to the demo.
    * @returns A promise that resolves to the updated list of demos or undefined if the operation was cancelled.
    */
-  public static async askWhereToAddStep(demo: Demos, step: Step | Step[]): Promise<Demo[] | undefined> {
+  public static async askWhereToAddStep(
+    demo: Demos,
+    step: Step | Step[],
+    stepTitle?: string,
+    stepDescription?: string
+  ): Promise<Demo[] | undefined> {
     let demoStep: string | undefined = "New demo step";
 
     if (demo.demos.length > 0) {
@@ -266,19 +271,24 @@ export class DemoCreator {
     }
 
     if (demoStep === "New demo step") {
-      const title = await window.showInputBox({
-        title: Config.title,
-        placeHolder: "Enter the step title",
-      });
+      const title = !stepTitle
+        ? await window.showInputBox({
+            title: Config.title,
+            placeHolder: "Enter the step title",
+          })
+        : stepTitle;
 
       if (!title) {
         return;
       }
 
-      const description = await window.showInputBox({
-        title: Config.title,
-        placeHolder: "Enter the step description",
-      });
+      const description =
+        typeof stepDescription === "undefined"
+          ? await window.showInputBox({
+              title: Config.title,
+              placeHolder: "Enter the step description",
+            })
+          : stepDescription;
 
       demo.demos.push({
         title,

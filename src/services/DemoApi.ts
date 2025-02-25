@@ -63,7 +63,7 @@ export class DemoApi {
 
     DemoApi.server = app.listen(port, () => {
       DemoApi.statusBarItem = window.createStatusBarItem("api", StatusBarAlignment.Left, 100005);
-      DemoApi.statusBarItem.name = "Demo Time - API";
+      DemoApi.statusBarItem.name = `${Config.title} - API`;
       DemoApi.statusBarItem.text = `$(dt-logo) API: ${port}`;
       DemoApi.statusBarItem.show();
     });

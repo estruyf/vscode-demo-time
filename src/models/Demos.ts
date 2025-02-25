@@ -29,7 +29,7 @@ export interface Icons {
   end: string;
 }
 
-export interface Step {
+export interface Step extends IOpenWebsite, IImagePreview {
   action: Action;
 
   path?: string;
@@ -56,10 +56,18 @@ export interface Step {
   overwrite?: boolean;
   terminalId?: string;
   theme?: string;
+}
 
-  // Open website
+export interface IOpenWebsite {
+  action: Action;
   url?: string;
   openInVSCode?: boolean;
+}
+
+export interface IImagePreview {
+  action: Action;
+  path?: string;
+  theme?: string;
 }
 
 export interface Setting {

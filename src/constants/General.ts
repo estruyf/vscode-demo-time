@@ -3,4 +3,5 @@ export const General = {
   variablesFile: "variables.json",
   snapshotsFolder: "snapshots",
   patchesFolder: "patches",
+  slidesFolder: "slides",
 };

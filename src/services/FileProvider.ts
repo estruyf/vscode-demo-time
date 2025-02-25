@@ -4,8 +4,21 @@ import { DemoFiles, Demos } from "../models";
 import { Config, General } from "../constants";
 import { parse as jsonParse } from "jsonc-parser";
 import { createDemoFile, readFile, sanitizeFileName, writeFile } from "../utils";
+import { Preview } from "../preview/Preview";
 
 export class FileProvider {
+  public static register() {
+    const subscriptions = Extension.getInstance().subscriptions;
+
+    subscriptions.push(
+      workspace.onDidSaveTextDocument((e) => {
+        if (e.uri.fsPath.endsWith(`.md`)) {
+          Preview.triggerUpdate(e.uri);
+        }
+      })
+    );
+  }
+
   /**
    * Retrieves the content of a file as a JSON object.
    * @param filePath - The path of the file to read.

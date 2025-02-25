@@ -2,14 +2,14 @@ import { Step } from "../models";
 import { DemoPanel } from "../panels/DemoPanel";
 import { DemoCreator, FileProvider } from "../services";
 
-export const addStepsToDemo = async (steps: Step | Step[]) => {
+export const addStepsToDemo = async (steps: Step | Step[], title?: string, description?: string) => {
   const demoFile = await FileProvider.demoQuickPick();
   if (!demoFile?.demo) {
     return;
   }
   const { filePath, demo } = demoFile;
 
-  const updatedDemos = await DemoCreator.askWhereToAddStep(demo, steps);
+  const updatedDemos = await DemoCreator.askWhereToAddStep(demo, steps, title, description);
   if (!updatedDemos) {
     return;
   }
