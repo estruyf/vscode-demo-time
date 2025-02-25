@@ -1,4 +1,4 @@
-import { Uri, Webview, WebviewPanel, window, ViewColumn } from "vscode";
+import { Uri, Webview, WebviewPanel, window, ViewColumn, commands } from "vscode";
 import { Extension } from "../services/Extension";
 import { Config, WebViewMessages } from "../constants";
 import { MessageHandlerData } from "@estruyf/vscode";
@@ -100,6 +100,12 @@ export class Preview {
       Preview.postRequestMessage(WebViewMessages.toVscode.getTheme, requestId, theme);
     } else if (command === WebViewMessages.toVscode.updateTitle && payload) {
       Preview.webview.title = `${Config.title}: ${payload}`;
+    } else if (command === WebViewMessages.toVscode.getPreviousEnabled && requestId) {
+      const previousEnabled =
+        Extension.getInstance().getSetting<boolean>(Config.presentationMode.previousEnabled) || false;
+      Preview.postRequestMessage(WebViewMessages.toVscode.getPreviousEnabled, requestId, previousEnabled);
+    } else if (command === WebViewMessages.toVscode.runCommand && payload) {
+      await commands.executeCommand(payload);
     }
   }
 

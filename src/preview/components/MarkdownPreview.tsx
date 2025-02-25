@@ -6,6 +6,7 @@ import { EventData } from '@estruyf/vscode';
 import { useScale } from '../hooks/useScale';
 import { useFileContents } from '../hooks/useFileContents';
 import useCursor from '../hooks/useCursor';
+import { SlideControls } from './SlideControls';
 
 export interface IMarkdownPreviewProps {
   fileUri: string;
@@ -21,6 +22,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const [theme, setTheme] = React.useState<string | undefined>(undefined);
   const [layout, setLayout] = React.useState<string | undefined>(undefined);
   const [bgStyles, setBgStyles] = React.useState<any | null>(null);
+  const [showControls, setShowControls] = React.useState(false);
   const ref = React.useRef<HTMLDivElement>(null);
   const slideRef = React.useRef<HTMLDivElement>(null);
   const { cursorVisible, resetCursorTimeout } = useCursor();
@@ -80,6 +82,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       key={crntFilePath}
       ref={ref}
       className={`slide fade-in ${theme || "default"} relative w-full h-full overflow-hidden`}
+      onMouseEnter={() => setShowControls(true)}
+      onMouseLeave={() => setShowControls(false)}
       onMouseMove={handleMouseMove}
       style={{ cursor: cursorVisible ? 'default' : 'none' }}
     >
@@ -118,6 +122,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           }
         </div>
       </div>
+
+      <SlideControls show={showControls && cursorVisible} />
     </div>
   );
 };
