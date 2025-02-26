@@ -1,13 +1,18 @@
 /* 
-  The unnamed Theme - Based on: https://github.com/estruyf/slidev-theme-the-unnamed
+  Monomi Theme - Based on: https://github.com/estruyf/slidev-theme-the-unnamed
 */
 :root {
   --demotime-color: var(--vscode-editor-foreground);
-  --demotime-background: var(--vscode-panel-background);
+  --demotime-background: var(--vscode-editor-background);
 
-  --demotime-heading-color: var(--vscode-activityBarBadge-foreground);
-  --demotime-heading-background: var(--vscode-activityBarBadge-background);
-  --demotime-header-shadow: 0 0 8px 2px var(--vscode-widget-shadow);
+  --demotime-bordered: 0
+
+  --demotime-font-size: var(--vscode-editor-font-size);
+
+  --demotime-box-color: var(--vscode-editor-background);
+  --demotime-box-background: var(--vscode-editor-foreground);
+
+  --demotime-title-font-weight: 900;
 
   --demotime-link-color: var(--vscode-textLink-foreground);
   --demotime-link-active-color: var(--vscode-textLink-activeForeground);
@@ -51,38 +56,33 @@
   --demotime-two-columns-heading-background: var(--demotime-heading-background);
 }
 
-.slide.unnamed {
+.slide.monomi {
   background: var(--demotime-background);
   color: var(--demotime-color);
+  font-size: var(--demotime-font-size, 1.1em);
 
   .slide__content__inner {
     @apply p-8 space-y-4;
   }
 
   h1 {
-    @apply text-4xl;
-    display: inline-block;
-    padding: 0.25em;
-    position: relative;
-    margin-bottom: 0.5em;
-    z-index: 1;
+    @apply text-4xl p-2 w-auto inline-block;
+    background: var(--demotime-box-background);
+    color: var(--demotime-box-color);
+    font-weight: var(--demotime-title-font-weight);
 
-    &::before {
-      box-shadow: var(--demotime-header-shadow);
-      content: " ";
-      display: block;
-      position: absolute;
-      width: calc(100%);
-      height: calc(100%);
-      margin-left: -0.25em;
-      margin-top: -0.25em;
-      z-index: -1;
-      transform: rotate(-1deg);
+    border: calc(2 * var(--demotime-bordered)) solid var(--demotime-background);
+    outline: var(--demotime-bordered) solid var(--demotime-heading-box-background);
+
+    margin-left: 0;
+
+    &:not(:first-child) {
+      @apply mt-8;
     }
   }
 
   h2 {
-    @apply text-3xl;
+    @apply text-3xl pt-4 pb-2;
   }
 
   h3 {
@@ -98,22 +98,14 @@
   }
 
   p {
-    @apply leading-relaxed opacity-80;
-
-    &:has(> img) {
-      @apply opacity-100;
-    }
-
-    &:has(> a) {
-      @apply opacity-100;
-    }
+    @apply leading-relaxed;
   }
 
   a {
-    @apply text-[var(--demotime-link-color)] underline;
+    @apply text-[var(--demotime-link-foreground)] underline;
 
     &:hover {
-      @apply text-[var(--demotime-link-active-color)];
+      @apply text-[var(--demotime-link-activeForeground)];
     }
   }
 
@@ -141,12 +133,6 @@
     @apply border-l-4 border-[var(--demotime-quote-border)] bg-[var(--demotime-quote-background)] p-2;
   }
 
-  pre code {
-    @apply !p-4;
-    background: var(--demotime-code-background);
-    border: 1px solid var(--demotime-code-border);
-  }
-
   .default {
     background: var(--demotime-default-background);
     color: var(--demotime-default-color);
@@ -165,20 +151,27 @@
     color: var(--demotime-intro-color);
 
     .slide__content__inner {
-      @apply flex flex-col items-center justify-center text-center;
+      @apply w-full flex flex-col items-center justify-center;
     }
 
     h1 {
-      @apply text-6xl;
-      color: var(--demotime-intro-heading-color);
-
-      &::before {
-        background: var(--demotime-intro-heading-background);
-      }
+      @apply text-5xl w-4/6 p-4 inline-block leading-tight mx-auto;
+      background: var(--demotime-box-background);
+      color: var(--demotime-box-color);
+      min-height: 25%;
     }
 
-    p {
-      @apply text-base opacity-70;
+    h1 + h2,
+    h1 + p {
+      @apply text-2xl -mt-2 mb-4 w-4/6 mx-auto;
+      color: var(--slidev-theme-box-background);
+      padding-left: calc(1rem + (2 * var(--slidev-theme-bordered)));
+    }
+
+    p + h2,
+    ul + h2,
+    table + h2 {
+      @apply mt-10;
     }
   }
 
@@ -186,21 +179,16 @@
     background: var(--demotime-quote-background);
     color: var(--demotime-quote-color);
 
-    .slide__content__inner {
-      @apply flex flex-col items-start justify-center text-center;
-    }
+    .slide__content {
+      @apply w-full flex flex-col justify-center;
 
-    h1 {
-      @apply text-5xl;
-      color: var(--demotime-quote-heading-color);
-
-      &::before {
-        background: var(--demotime-quote-heading-background);
+      .slide__content__inner {
+        @apply p-8 w-full h-auto;
       }
     }
 
-    p {
-      @apply text-base opacity-50;
+    h1 {
+      @apply text-5xl mb-0;
     }
   }
 
@@ -208,31 +196,34 @@
     background: var(--demotime-section-background);
     color: var(--demotime-section-color);
 
-    .slide__content__inner {
-      @apply flex flex-col items-center justify-center text-center;
-    }
+    .slide__content {
+      @apply px-0 w-full h-full flex items-center;
 
-    h1 {
-      @apply text-6xl;
-      color: var(--demotime-section-heading-color);
-
-      &::before {
-        background: var(--demotime-section-heading-background);
+      .slide__content__inner {
+        @apply p-8 w-full h-auto text-center;
+        background: var(--demotime-box-background);
+        color: var(--demotime-box-color);
+    
+        border-bottom: calc(2 * var(--demotime-bordered)) solid
+          var(--demotime-background);
+        border-top: calc(2 * var(--demotime-bordered)) solid
+          var(--demotime-background);
+        outline: var(--demotime-bordered) solid
+          var(--demotime-box-background);
       }
     }
 
-    h2 {
-      @apply text-3xl opacity-80;
-    }
+    h1 {
+      @apply text-5xl mb-0;
 
-    p {
-      @apply text-base;
+      border: 0;
+      outline: 0;
     }
   }
 
   .image {
-    .slide__content__inner {
-      @apply flex flex-col items-center justify-center text-center;
+    .slide__content {
+      @apply w-full flex flex-col items-center justify-center text-center;
     }
   }
 
@@ -240,12 +231,8 @@
     background: var(--demotime-image-left-background);
     color: var(--demotime-image-left-color);
 
-    h1 {
-      color: var(--demotime-image-left-heading-color);
-
-      &::before {
-        background: var(--demotime-image-left-heading-background);
-      }
+    .slide__content {
+      @apply w-full;
     }
   }
 
@@ -253,12 +240,8 @@
     background: var(--demotime-image-right-background);
     color: var(--demotime-image-right-color);
 
-    h1 {
-      color: var(--demotime-image-right-heading-color);
-
-      &::before {
-        background: var(--demotime-image-right-heading-background);
-      }
+    .slide__content {
+      @apply w-full;
     }
   }
 
@@ -273,14 +256,6 @@
     .slide__left,
     .slide__right {
       @apply w-full space-y-4;
-    }
-
-    h1 {
-      color: var(--demotime-two-columns-heading-color);
-
-      &::before {
-        background: var(--demotime-two-columns-heading-background);
-      }
     }
   }
 }

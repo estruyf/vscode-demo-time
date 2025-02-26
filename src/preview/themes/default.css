@@ -1,6 +1,6 @@
 /* Default Theme */
 .slide.default {
-  .slide__content {
+  .slide__content__inner {
     @apply p-8 space-y-4;
   }
 
@@ -64,9 +64,12 @@
     @apply border-l-4 border-[var(--vscode-textBlockQuote-border)] bg-[var(--vscode-textBlockQuote-background)] p-2;
   }
 
+  .default {
+  }
+
   .intro {
-    .slide__content {
-      @apply w-full flex flex-col items-center justify-center text-center;
+    .slide__content__inner {
+      @apply flex flex-col items-center justify-center text-center;
     }
 
     h1 {
@@ -79,8 +82,8 @@
   }
 
   .quote {
-    .slide__content {
-      @apply w-full flex flex-col items-start justify-center text-center;
+    .slide__content__inner {
+      @apply flex flex-col items-start justify-center text-center;
     }
 
     h1 {
@@ -93,8 +96,8 @@
   }
 
   .section {
-    .slide__content {
-      @apply w-full flex flex-col items-center justify-center text-center;
+    .slide__content__inner {
+      @apply flex flex-col items-center justify-center text-center;
     }
 
     h1 {
@@ -111,22 +114,19 @@
   }
 
   .image {
-    .slide__content {
-      @apply w-full flex flex-col items-center justify-center text-center;
+    .slide__content__inner {
+      @apply flex flex-col items-center justify-center text-center;
     }
   }
 
   .image-left {
-    .slide__content {
-      @apply w-full;
-    }
   }
 
   .image-right {
   }
 
   .two-columns {
-    .slide__content {
+    .slide__content__inner {
       @apply w-full grid grid-cols-2 gap-4 space-y-0;
     }
 

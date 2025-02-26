@@ -6,6 +6,7 @@ import './styles.css';
 import './themes/default.css';
 import './themes/minimal.css';
 import './themes/unnamed.css';
+import './themes/monomi.css';
 
 declare const acquireVsCodeApi: <T = unknown>() => {
   getState: () => T;

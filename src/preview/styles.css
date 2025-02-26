@@ -39,6 +39,10 @@ pre code {
 
 .slide__content {
   @apply h-full w-full text-base;
+
+  .slide__content__inner {
+    @apply h-full w-full;
+  }
 }
 
 @keyframes fadeIn {
