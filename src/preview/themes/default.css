@@ -106,7 +106,7 @@
     }
 
     p {
-      @apply text-base opacity-50;
+      @apply text-base opacity-75;
     }
   }
 

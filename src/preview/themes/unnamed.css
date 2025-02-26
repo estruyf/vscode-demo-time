@@ -1,0 +1,292 @@
+/* Default Theme */
+:root {
+  --demotime-theme-color: var(--vscode-editor-activeForeground);
+  --demotime-theme-background: var(--vscode-panel-background);
+
+  --demotime-heading-color: var(--vscode-activityBarBadge-foreground);
+  --demotime-heading-background: var(--vscode-activityBarBadge-background);
+  --demotime-header-shadow: 0 0 8px 2px var(--vscode-widget-shadow);
+
+  --demotime-link-foreground: var(--vscode-textLink-foreground);
+  --demotime-link-activeForeground: var(--vscode-textLink-activeForeground);
+
+  --demotime-code-background: var(--vscode-editor-background);
+  --demotime-code-border: var(--vscode-panel-border);
+
+  --demotime-default-background: var(--demotime-theme-background);
+  --demotime-default-color: var(--demotime-theme-color);
+  --demotime-default-heading-color: var(--demotime-heading-color);
+  --demotime-default-heading-background: var(--demotime-heading-background);
+
+  --demotime-intro-background: var(--demotime-theme-background);
+  --demotime-intro-color: var(--demotime-theme-color);
+  --demotime-intro-heading-color: var(--demotime-heading-color);
+  --demotime-intro-heading-background: var(--demotime-heading-background);
+
+  --demotime-quote-background: var(--demotime-theme-background);
+  --demotime-quote-color: var(--demotime-theme-color);
+  --demotime-quote-heading-color: var(--demotime-heading-color);
+  --demotime-quote-heading-background: var(--demotime-heading-background);
+
+  --demotime-section-background: var(--demotime-theme-background);
+  --demotime-section-color: var(--demotime-theme-color);
+  --demotime-section-heading-color: var(--demotime-heading-color);
+  --demotime-section-heading-background: var(--demotime-heading-background);
+
+  --demotime-image-left-background: var(--demotime-theme-background);
+  --demotime-image-left-color: var(--demotime-theme-color);
+  --demotime-image-left-heading-color: var(--demotime-heading-color);
+  --demotime-image-left-heading-background: var(--demotime-heading-background);
+
+  --demotime-image-right-background: var(--demotime-theme-background);
+  --demotime-image-right-color: var(--demotime-theme-color);
+  --demotime-image-right-heading-color: var(--demotime-heading-color);
+  --demotime-image-right-heading-background: var(--demotime-heading-background);
+
+  --demotime-two-columns-background: var(--demotime-theme-background);
+  --demotime-two-columns-color: var(--demotime-theme-color);
+  --demotime-two-columns-heading-color: var(--demotime-heading-color);
+  --demotime-two-columns-heading-background: var(--demotime-heading-background);
+}
+
+.slide.unnamed {
+  background: var(--demotime-theme-background);
+  color: var(--demotime-theme-color);
+
+  .slide__content {
+    @apply p-8 space-y-4;
+  }
+
+  h1 {
+    @apply text-4xl;
+    display: inline-block;
+    padding: 0.25em;
+    position: relative;
+    margin-bottom: 0.5em;
+    z-index: 1;
+
+    &::before {
+      box-shadow: var(--demotime-header-shadow);
+      content: " ";
+      display: block;
+      position: absolute;
+      width: calc(100%);
+      height: calc(100%);
+      margin-left: -0.25em;
+      margin-top: -0.25em;
+      z-index: -1;
+      transform: rotate(-1deg);
+    }
+  }
+
+  h2 {
+    @apply text-3xl;
+  }
+
+  h3 {
+    @apply text-2xl;
+  }
+
+  h4 {
+    @apply text-xl;
+  }
+
+  h5 {
+    @apply text-lg;
+  }
+
+  p {
+    @apply leading-relaxed opacity-80;
+
+    &:has(> img) {
+      @apply opacity-100;
+    }
+
+    &:has(> a) {
+      @apply opacity-100;
+    }
+  }
+
+  a {
+    @apply text-[var(--demotime-link-foreground)] underline;
+
+    &:hover {
+      @apply text-[var(--demotime-link-activeForeground)];
+    }
+  }
+
+  ul,
+  ol {
+    @apply ml-6;
+
+    li {
+      @apply mb-2;
+    }
+  }
+
+  ul {
+    @apply list-disc;
+  }
+
+  ol {
+    @apply list-decimal;
+  }
+
+  img {
+  }
+
+  blockquote {
+    @apply border-l-4 border-[var(--demotime-quote-border)] bg-[var(--demotime-quote-background)] p-2;
+  }
+
+  pre code {
+    @apply !p-4;
+    background: var(--demotime-code-background);
+    border: 1px solid var(--demotime-code-border);
+  }
+
+  .default {
+    background: var(--demotime-default-background);
+    font-size: var(--demotime-default-font-size);
+
+    h1 {
+      color: var(--demotime-default-heading-color);
+
+      &::before {
+        background: var(--demotime-default-heading-background);
+      }
+    }
+  }
+
+  .intro {
+    background: var(--demotime-intro-background);
+    font-size: var(--demotime-intro-font-size);
+
+    .slide__content {
+      @apply w-full flex flex-col items-center justify-center text-center;
+    }
+
+    h1 {
+      @apply text-6xl;
+      color: var(--demotime-intro-heading-color);
+
+      &::before {
+        background: var(--demotime-intro-heading-background);
+      }
+    }
+
+    p {
+      @apply text-base opacity-70;
+    }
+  }
+
+  .quote {
+    background: var(--demotime-quote-background);
+    font-size: var(--demotime-quote-font-size);
+
+    .slide__content {
+      @apply w-full flex flex-col items-start justify-center text-center;
+    }
+
+    h1 {
+      @apply text-5xl;
+      color: var(--demotime-quote-heading-color);
+
+      &::before {
+        background: var(--demotime-quote-heading-background);
+      }
+    }
+
+    p {
+      @apply text-base opacity-50;
+    }
+  }
+
+  .section {
+    background: var(--demotime-section-background);
+    font-size: var(--demotime-section-font-size);
+
+    .slide__content {
+      @apply w-full flex flex-col items-center justify-center text-center;
+    }
+
+    h1 {
+      @apply text-6xl;
+      color: var(--demotime-section-heading-color);
+
+      &::before {
+        background: var(--demotime-section-heading-background);
+      }
+    }
+
+    h2 {
+      @apply text-3xl opacity-80;
+    }
+
+    p {
+      @apply text-base;
+    }
+  }
+
+  .image {
+    .slide__content {
+      @apply w-full flex flex-col items-center justify-center text-center;
+    }
+  }
+
+  .image-left {
+    background: var(--demotime-image-left-background);
+    font-size: var(--demotime-image-left-font-size);
+
+    .slide__content {
+      @apply w-full;
+    }
+
+    h1 {
+      color: var(--demotime-image-left-heading-color);
+
+      &::before {
+        background: var(--demotime-image-left-heading-background);
+      }
+    }
+  }
+
+  .image-right {
+    background: var(--demotime-image-right-background);
+    font-size: var(--demotime-image-right-font-size);
+
+    .slide__content {
+      @apply w-full;
+    }
+
+    h1 {
+      color: var(--demotime-image-right-heading-color);
+
+      &::before {
+        background: var(--demotime-image-right-heading-background);
+      }
+    }
+  }
+
+  .two-columns {
+    background: var(--demotime-two-columns-background);
+    font-size: var(--demotime-two-columns-font-size);
+
+    .slide__content {
+      @apply w-full grid grid-cols-2 gap-4 space-y-0;
+    }
+
+    .slide__left,
+    .slide__right {
+      @apply w-full space-y-4;
+    }
+
+    h1 {
+      color: var(--demotime-two-columns-heading-color);
+
+      &::before {
+        background: var(--demotime-two-columns-heading-background);
+      }
+    }
+  }
+}

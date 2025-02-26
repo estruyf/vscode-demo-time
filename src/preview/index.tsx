@@ -5,6 +5,7 @@ import 'vscrui/dist/codicon.css';
 import './styles.css';
 import './themes/default.css';
 import './themes/minimal.css';
+import './themes/unnamed.css';
 
 declare const acquireVsCodeApi: <T = unknown>() => {
   getState: () => T;
