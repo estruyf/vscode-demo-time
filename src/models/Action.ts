@@ -27,6 +27,8 @@ export enum Action {
   SetSetting = "setSetting",
   SetTheme = "setTheme",
   UnsetTheme = "unsetTheme",
+  SetPresentationView = "setPresentationView",
+  UnsetPresentationView = "unsetPresentationView",
   // Timeout
   WaitForTimeout = "waitForTimeout",
   WaitForInput = "waitForInput",

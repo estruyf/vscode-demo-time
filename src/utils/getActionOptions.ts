@@ -169,6 +169,16 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: "Unset the theme",
   });
 
+  actions.push({
+    label: Action.SetPresentationView,
+    description: "Set the presentation view",
+  });
+
+  actions.push({
+    label: Action.UnsetPresentationView,
+    description: "Unset the presentation view",
+  });
+
   /**
    * Terminal actions
    */

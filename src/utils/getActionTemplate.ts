@@ -197,6 +197,18 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  if (action === Action.SetPresentationView) {
+    return {
+      action: Action.SetPresentationView,
+    };
+  }
+
+  if (action === Action.UnsetPresentationView) {
+    return {
+      action: Action.UnsetPresentationView,
+    };
+  }
+
   /**
    * Terminal actions
    */

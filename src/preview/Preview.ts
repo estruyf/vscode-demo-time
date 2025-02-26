@@ -1,14 +1,22 @@
 import { Uri, Webview, WebviewPanel, window, ViewColumn, commands } from "vscode";
 import { Extension } from "../services/Extension";
-import { Config, WebViewMessages } from "../constants";
+import { COMMAND, Config, WebViewMessages } from "../constants";
 import { MessageHandlerData } from "@estruyf/vscode";
-import { getTheme, getWebviewUrl, readFile } from "../utils";
+import { getTheme, getWebviewUrl, readFile, togglePresentationView } from "../utils";
 
 export class Preview {
   private static webview: WebviewPanel | null = null;
   private static isDisposed = true;
   private static crntFile: string | null = null;
   private static crntCss: string | null = null;
+
+  public static register() {
+    const subscriptions = Extension.getInstance().subscriptions;
+
+    subscriptions.push(
+      commands.registerCommand(COMMAND.togglePresentationView, togglePresentationView)
+    );
+  }
 
   public static get isOpen(): boolean {
     return !Preview.isDisposed;

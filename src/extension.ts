@@ -14,6 +14,7 @@ import {
   UriHandler,
 } from "./services";
 import { DemoPanel } from "./panels/DemoPanel";
+import { Preview } from "./preview/Preview";
 import { PresenterView } from "./presenterView/PresenterView";
 import { Config } from "./constants";
 
@@ -30,6 +31,7 @@ export async function activate(context: vscode.ExtensionContext) {
   DemoCreator.registerCommands();
   DemoListeners.register();
   DemoStatusBar.register();
+  Preview.register();
   PresenterView.register();
   FileProvider.register();
   Slides.registerCommands();

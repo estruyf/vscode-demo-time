@@ -38,4 +38,5 @@ export const COMMAND = {
   // Slides
   createSlide: `${EXTENSION_NAME}.createSlide`,
   viewSlide: `${EXTENSION_NAME}.viewSlide`,
+  togglePresentationView: `${EXTENSION_NAME}.togglePresentationView`,
 };

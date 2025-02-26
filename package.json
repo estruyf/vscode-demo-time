@@ -231,6 +231,11 @@
         "icon": "$(dt-projector)"
       },
       {
+        "command": "demo-time.togglePresentationView",
+        "title": "Toggle presentation view (hides status bar, tabs, and activity bar)",
+        "category": "Demo Time"
+      },
+      {
         "command": "demo-time.reset",
         "title": "Reset",
         "category": "Demo Time",

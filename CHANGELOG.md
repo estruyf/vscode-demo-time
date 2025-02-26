@@ -4,6 +4,7 @@
 
 - [#59](https://github.com/estruyf/vscode-demo-time/issues/59): Added slide controls next and previous (if enabled)
 - [#60](https://github.com/estruyf/vscode-demo-time/issues/60): Cursor visibility on the slide view
+- [#61](https://github.com/estruyf/vscode-demo-time/issues/61): Added `demo-time.togglePresentationView` command, the `setPresentationView`, and `unsetPresentationView` actions
 
 ## [0.0.78] - 2025-02-25
 

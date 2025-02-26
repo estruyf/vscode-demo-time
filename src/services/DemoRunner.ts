@@ -40,6 +40,7 @@ import {
   writeFile,
   applyPatch,
   updateConfig,
+  togglePresentationView,
 } from "../utils";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DecoratorService } from "./DecoratorService";
@@ -513,6 +514,16 @@ export class DemoRunner {
 
       if (step.action === Action.UnsetTheme) {
         await updateConfig("workbench.colorTheme", null);
+        continue;
+      }
+
+      if (step.action === Action.SetPresentationView) {
+        await togglePresentationView(true);
+        continue;
+      }
+
+      if (step.action === Action.UnsetPresentationView) {
+        await togglePresentationView(false);
         continue;
       }
 
