@@ -11,7 +11,7 @@ export default function useCursor() {
     setCursorVisible(true);
     cursorTimeoutRef.current = window.setTimeout(() => {
       setCursorVisible(false);
-    }, 2000);
+    }, 5000);
   }, []);
 
   useEffect(() => {

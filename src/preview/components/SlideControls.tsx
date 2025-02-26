@@ -32,7 +32,7 @@ export const SlideControls: React.FunctionComponent<ISlideControlsProps> = ({
 
   return (
     <div
-      className={`absolute bottom-4 left-1/2 -translate-x-1/2 transition-opacity duration-300 ${show ? 'opacity-100' : 'opacity-0 pointer-events-none'
+      className={`absolute bottom-4 left-1/2 -translate-x-1/2 transition-opacity duration-300 ${show ? 'opacity-90' : 'opacity-0 pointer-events-none'
         }`}
     >
       <div
