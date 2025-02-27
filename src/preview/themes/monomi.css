@@ -1,24 +1,26 @@
 /* 
   Monomi Theme - Based on: https://github.com/estruyf/slidev-theme-the-unnamed
 */
-:root {
+.slide.monomi {
   --demotime-color: var(--vscode-editor-foreground);
   --demotime-background: var(--vscode-editor-background);
+  
+  --demotime-heading-color: var(--vscode-editor-background);
+  --demotime-heading-background: var(--vscode-editor-foreground);
+  --demotime-heading-font-weight: 900;
+
+  --demotime-font-size: var(--vscode-editor-font-size, 1.1em);
 
   --demotime-bordered: 0
-
-  --demotime-font-size: var(--vscode-editor-font-size);
-
-  --demotime-box-color: var(--vscode-editor-background);
-  --demotime-box-background: var(--vscode-editor-foreground);
-
-  --demotime-title-font-weight: 900;
 
   --demotime-link-color: var(--vscode-textLink-foreground);
   --demotime-link-active-color: var(--vscode-textLink-activeForeground);
 
   --demotime-code-background: var(--vscode-editor-background);
   --demotime-code-border: var(--vscode-panel-border);
+
+  --demotime-blockquote-border: var(--vscode-textBlockQuote-border);
+  --demotime-blockquote-background: var(--vscode-textBlockQuote-background);
 
   --demotime-default-background: var(--demotime-background);
   --demotime-default-color: var(--demotime-color);
@@ -36,7 +38,7 @@
   --demotime-quote-heading-background: var(--demotime-heading-background);
 
   --demotime-section-background: var(--demotime-background);
-  --demotime-section-color: var(--demotime-color);
+  --demotime-section-color: var(--demotime-background);
   --demotime-section-heading-color: var(--demotime-heading-color);
   --demotime-section-heading-background: var(--demotime-heading-background);
 
@@ -54,12 +56,10 @@
   --demotime-two-columns-color: var(--demotime-color);
   --demotime-two-columns-heading-color: var(--demotime-heading-color);
   --demotime-two-columns-heading-background: var(--demotime-heading-background);
-}
 
-.slide.monomi {
   background: var(--demotime-background);
   color: var(--demotime-color);
-  font-size: var(--demotime-font-size, 1.1em);
+  font-size: var(--demotime-font-size);
 
   .slide__content__inner {
     @apply p-8 space-y-4;
@@ -67,12 +67,12 @@
 
   h1 {
     @apply text-4xl p-2 w-auto inline-block;
-    background: var(--demotime-box-background);
-    color: var(--demotime-box-color);
-    font-weight: var(--demotime-title-font-weight);
+    background: var(--demotime-heading-background);
+    color: var(--demotime-heading-color);
+    font-weight: var(--demotime-heading-font-weight);
 
     border: calc(2 * var(--demotime-bordered)) solid var(--demotime-background);
-    outline: var(--demotime-bordered) solid var(--demotime-heading-box-background);
+    outline: var(--demotime-bordered) solid var(--demotime-heading-background);
 
     margin-left: 0;
 
@@ -130,7 +130,7 @@
   }
 
   blockquote {
-    @apply border-l-4 border-[var(--demotime-quote-border)] bg-[var(--demotime-quote-background)] p-2;
+    @apply border-l-4 p-2 border-[var(--demotime-blockquote-border)] bg-[var(--demotime-blockquote-background)];
   }
 
   .default {
@@ -139,10 +139,7 @@
 
     h1 {
       color: var(--demotime-default-heading-color);
-
-      &::before {
-        background: var(--demotime-default-heading-background);
-      }
+      background: var(--demotime-default-heading-background);
     }
   }
 
@@ -156,15 +153,15 @@
 
     h1 {
       @apply text-5xl w-4/6 p-4 inline-block leading-tight mx-auto;
-      background: var(--demotime-box-background);
-      color: var(--demotime-box-color);
+      color: var(--demotime-intro-heading-color);
+      background: var(--demotime-intro-heading-background);
       min-height: 25%;
     }
 
     h1 + h2,
     h1 + p {
       @apply text-2xl -mt-2 mb-4 w-4/6 mx-auto;
-      color: var(--slidev-theme-box-background);
+      color: var(--slidev-intro-heading-background);
       padding-left: calc(1rem + (2 * var(--slidev-theme-bordered)));
     }
 
@@ -189,6 +186,8 @@
 
     h1 {
       @apply text-5xl mb-0;
+      color: var(--demotime-quote-heading-color);
+      background: var(--demotime-quote-heading-background);
     }
   }
 
@@ -201,23 +200,29 @@
 
       .slide__content__inner {
         @apply p-8 w-full h-auto text-center;
-        background: var(--demotime-box-background);
-        color: var(--demotime-box-color);
+        background: var(--demotime-section-heading-background);
+        color: var(--demotime-section-heading-color);
     
         border-bottom: calc(2 * var(--demotime-bordered)) solid
           var(--demotime-background);
         border-top: calc(2 * var(--demotime-bordered)) solid
           var(--demotime-background);
         outline: var(--demotime-bordered) solid
-          var(--demotime-box-background);
+          var(--demotime-section-heading-background);
       }
     }
 
     h1 {
       @apply text-5xl mb-0;
+      background: var(--demotime-section-heading-background);
+      color: var(--demotime-section-heading-color);
 
       border: 0;
       outline: 0;
+    }
+
+    p {
+      color: var(--demotime-section-color);
     }
   }
 
@@ -234,6 +239,11 @@
     .slide__content {
       @apply w-full;
     }
+
+    h1 {
+      color: var(--demotime-image-left-heading-color);
+      background: var(--demotime-image-left-heading-background);
+    }
   }
 
   .image-right {
@@ -242,6 +252,11 @@
 
     .slide__content {
       @apply w-full;
+    }
+
+    h1 {
+      color: var(--demotime-image-right-heading-color);
+      background: var(--demotime-image-right-heading-background);
     }
   }
 
@@ -256,6 +271,11 @@
     .slide__left,
     .slide__right {
       @apply w-full space-y-4;
+    }
+
+    h1 {
+      color: var(--demotime-two-columns-heading-color);
+      background: var(--demotime-two-columns-heading-background);
     }
   }
 }
