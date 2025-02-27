@@ -1,6 +1,6 @@
 # Change Log
 
-## [0.0.79] - 2025-02-25
+## [0.0.79] - 2025-02-27
 
 - Added the `unnamed` slide theme
 - Added the `monomi` slide theme
