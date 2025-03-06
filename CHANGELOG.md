@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.80] - 2025-03-06
+
+- Updated the title
+- Updated the description
+
 ## [0.0.79] - 2025-02-27
 
 - Added the `unnamed` slide theme
