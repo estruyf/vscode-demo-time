@@ -68,8 +68,22 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   React.useEffect(() => {
     Messenger.listen(messageListener);
 
-    messageHandler.request<any>(WebViewMessages.toVscode.getTheme).then((theme) => {
-      setVsCodeTheme(theme);
+    messageHandler.request<any | null>(WebViewMessages.toVscode.getTheme).then((theme) => {
+      if (theme === null) {
+        // Check if light or dark theme
+        const elm = document.body.getAttribute(`data-vscode-theme-kind`);
+        if (elm === 'vscode-light') {
+          setVsCodeTheme("github-light");
+        } else if (elm === 'vscode-dark') {
+          setVsCodeTheme("github-dark");
+        } else if (elm === 'vscode-high-contrast') {
+          setVsCodeTheme("github-dark-high-contrast");
+        } else {
+          setVsCodeTheme("github-light-high-contrast");
+        }
+      } else {
+        setVsCodeTheme(theme);
+      }
     });
 
     return () => {

@@ -13,9 +13,7 @@ export class Preview {
   public static register() {
     const subscriptions = Extension.getInstance().subscriptions;
 
-    subscriptions.push(
-      commands.registerCommand(COMMAND.togglePresentationView, togglePresentationView)
-    );
+    subscriptions.push(commands.registerCommand(COMMAND.togglePresentationView, togglePresentationView));
   }
 
   public static get isOpen(): boolean {
@@ -104,8 +102,13 @@ export class Preview {
       const cssWebviewPath = Preview.crntCss ? getWebviewUrl(Preview.webview?.webview, Preview.crntCss) : undefined;
       Preview.postRequestMessage(WebViewMessages.toVscode.getStyles, requestId, cssWebviewPath);
     } else if (command === WebViewMessages.toVscode.getTheme && requestId) {
-      const theme = await getTheme();
-      Preview.postRequestMessage(WebViewMessages.toVscode.getTheme, requestId, theme);
+      try {
+        const theme = await getTheme();
+        Preview.postRequestMessage(WebViewMessages.toVscode.getTheme, requestId, theme);
+      } catch (e) {
+        // This can happen in a Dev Container where the theme is not available
+        Preview.postRequestMessage(WebViewMessages.toVscode.getTheme, requestId, null);
+      }
     } else if (command === WebViewMessages.toVscode.updateTitle && payload) {
       Preview.webview.title = `${Config.title}: ${payload}`;
     } else if (command === WebViewMessages.toVscode.getPreviousEnabled && requestId) {

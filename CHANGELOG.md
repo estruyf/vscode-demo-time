@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.81] - 2025-03-10
+
+- [#62](https://github.com/estruyf/vscode-demo-time/issues/62): Fix issue with theme retrieval in DevContainer that prevents slides to open
+
 ## [0.0.80] - 2025-03-06
 
 - Updated the title
