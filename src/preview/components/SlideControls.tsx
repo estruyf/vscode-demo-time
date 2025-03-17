@@ -3,7 +3,6 @@ import * as React from 'react';
 import { COMMAND, WebViewMessages } from '../../constants';
 import { SlideControl } from './SlideControl';
 import { WhiteboardIcon } from './WhiteboardIcon';
-import { DemoTimeLogo } from './DemoTimeLogo';
 import { Icon } from 'vscrui';
 
 export interface ISlideControlsProps {

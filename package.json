@@ -236,6 +236,11 @@
         "category": "Demo Time"
       },
       {
+        "command": "demo-time.closePresentationView",
+        "title": "Close presentation view",
+        "category": "Demo Time"
+      },
+      {
         "command": "demo-time.reset",
         "title": "Reset",
         "category": "Demo Time",

@@ -1,7 +1,7 @@
 import { EventData } from '@estruyf/vscode';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import * as React from 'react';
-import { WebViewMessages } from '../../constants';
+import { COMMAND, WebViewMessages } from '../../constants';
 import { MarkdownPreview } from './MarkdownPreview';
 import { ImagePreview } from './ImagePreview';
 
@@ -14,6 +14,12 @@ export const App: React.FunctionComponent<IAppProps> = ({
 }: React.PropsWithChildren<IAppProps>) => {
   const [customTheme, setCustomTheme] = React.useState<string | undefined>(undefined);
   const [fileUri, setFileUri] = React.useState<string | undefined>(undefined);
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.closePresentationView);
+    }
+  };
 
   const messageListener = (message: MessageEvent<EventData<any>>) => {
     const { command, payload } = message.data;
@@ -56,6 +62,7 @@ export const App: React.FunctionComponent<IAppProps> = ({
 
   React.useEffect(() => {
     Messenger.listen(messageListener);
+    window.addEventListener('keydown', handleKeyDown);
 
     messageHandler.request<string>(WebViewMessages.toVscode.getStyles).then((styles) => {
       setCustomTheme(styles);
@@ -67,6 +74,7 @@ export const App: React.FunctionComponent<IAppProps> = ({
 
     return () => {
       Messenger.unlisten(messageListener);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 

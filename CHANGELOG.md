@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.83] - 2025-03-xx
+
+- [#65](https://github.com/estruyf/vscode-demo-time/issues/65): When in presentation view, you can now exit it via `esc` key
+
 ## [0.0.82] - 2025-03-17
 
 - Split the `presenter` and `preview` webview folder in the `out` folder

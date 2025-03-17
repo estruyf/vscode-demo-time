@@ -14,6 +14,7 @@ export class Preview {
     const subscriptions = Extension.getInstance().subscriptions;
 
     subscriptions.push(commands.registerCommand(COMMAND.togglePresentationView, togglePresentationView));
+    subscriptions.push(commands.registerCommand(COMMAND.closePresentationView, () => togglePresentationView(false)));
   }
 
   public static get isOpen(): boolean {
