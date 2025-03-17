@@ -116,6 +116,11 @@
     li {
       @apply mb-2;
     }
+
+    ul,
+    ol {
+      @apply mt-2;
+    }
   }
 
   ul {

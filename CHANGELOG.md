@@ -2,6 +2,7 @@
 
 ## [0.0.83] - 2025-03-xx
 
+- [#64](https://github.com/estruyf/vscode-demo-time/issues/64): Slide list spacing improvements
 - [#65](https://github.com/estruyf/vscode-demo-time/issues/65): When in presentation view, you can now exit it via `esc` key
 - [#66](https://github.com/estruyf/vscode-demo-time/issues/66): Added record status to the status bar when turning on the presentation mode
 
