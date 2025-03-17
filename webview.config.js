@@ -12,7 +12,7 @@ const config = [
     entry: './src/presenterView/index.tsx',
     output: {
       filename: '[name].bundle.js',
-      path: path.resolve(__dirname, './out/webview')
+      path: path.resolve(__dirname, './out/presenter')
     },
     devtool: 'source-map',
     resolve: {

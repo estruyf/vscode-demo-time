@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.82] - 2025-03-17
+
+- Split the `presenter` and `preview` webview folder in the `out` folder
+
 ## [0.0.81] - 2025-03-10
 
 - [#62](https://github.com/estruyf/vscode-demo-time/issues/62): Fix issue with theme retrieval in DevContainer that prevents slides to open

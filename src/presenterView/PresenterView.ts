@@ -153,13 +153,13 @@ export class PresenterView {
     if (extension.isProductionMode) {
       // Get the manifest file from the dist folder
       const extPath = Uri.file(extension.extensionPath);
-      const manifestPath = Uri.joinPath(extPath, "out", "webview", "manifest.json");
+      const manifestPath = Uri.joinPath(extPath, "out", "presenter", "manifest.json");
       const manifest = await readFile(manifestPath);
       const manifestJson = JSON.parse(manifest);
 
       for (const [key, value] of Object.entries<string>(manifestJson)) {
         if (key.endsWith(".js")) {
-          scriptUrl.push(webview.asWebviewUri(Uri.joinPath(extPath, "out", "webview", value)).toString());
+          scriptUrl.push(webview.asWebviewUri(Uri.joinPath(extPath, "out", "presenter", value)).toString());
         }
       }
     } else {

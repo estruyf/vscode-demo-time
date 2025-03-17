@@ -136,7 +136,7 @@ export class Preview {
   }
 
   private static async getWebviewContent(webview: Webview) {
-    const jsFile = "preview.main.bundle.js";
+    const jsFile = "main.bundle.js";
     const localServerUrl = "http://localhost:9001";
 
     let scriptUrl = [];
@@ -145,13 +145,13 @@ export class Preview {
     if (extension.isProductionMode) {
       // Get the manifest file from the dist folder
       const extPath = Uri.file(extension.extensionPath);
-      const manifestPath = Uri.joinPath(extPath, "out", "webview", "manifest.json");
+      const manifestPath = Uri.joinPath(extPath, "out", "preview", "manifest.json");
       const manifest = await readFile(manifestPath);
       const manifestJson = JSON.parse(manifest);
 
       for (const [key, value] of Object.entries<string>(manifestJson)) {
         if (key.endsWith(".js")) {
-          scriptUrl.push(webview.asWebviewUri(Uri.joinPath(extPath, "out", "webview", value)).toString());
+          scriptUrl.push(webview.asWebviewUri(Uri.joinPath(extPath, "out", "preview", value)).toString());
         }
       }
     } else {
