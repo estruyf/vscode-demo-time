@@ -9,6 +9,7 @@ import { PresenterView } from "../presenterView/PresenterView";
 import { Logger } from "./Logger";
 
 export class DemoStatusBar {
+  private static statusPresenting: StatusBarItem;
   private static statusBarItem: StatusBarItem;
   private static statusBarNotes: StatusBarItem;
   private static statusBarClock: StatusBarItem;
@@ -119,6 +120,24 @@ export class DemoStatusBar {
     }
 
     PresenterView.postMessage(WebViewMessages.toWebview.updateNextDemo, DemoStatusBar.nextDemo);
+  }
+
+  public static async setPresenting(enabled: boolean) {
+    if (!DemoStatusBar.statusPresenting) {
+      DemoStatusBar.statusPresenting = window.createStatusBarItem("presenting", StatusBarAlignment.Left, 100002);
+      DemoStatusBar.statusPresenting.name = `${Config.title} - presenting`;
+      DemoStatusBar.statusPresenting.text = `$(record)`;
+      DemoStatusBar.statusPresenting.tooltip = "Presenting";
+      DemoStatusBar.statusPresenting.command = COMMAND.togglePresentationMode;
+      DemoStatusBar.statusPresenting.backgroundColor = new ThemeColor("statusBarItem.errorBackground");
+      DemoStatusBar.statusPresenting.color = new ThemeColor("statusBarItem.errorForeground");
+    }
+
+    if (enabled) {
+      DemoStatusBar.statusPresenting.show();
+    } else {
+      DemoStatusBar.statusPresenting.hide();
+    }
   }
 
   private static async startCountdown() {

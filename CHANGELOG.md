@@ -3,6 +3,7 @@
 ## [0.0.83] - 2025-03-xx
 
 - [#65](https://github.com/estruyf/vscode-demo-time/issues/65): When in presentation view, you can now exit it via `esc` key
+- [#66](https://github.com/estruyf/vscode-demo-time/issues/66): Added record status to the status bar when turning on the presentation mode
 
 ## [0.0.82] - 2025-03-17
 

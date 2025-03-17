@@ -51,6 +51,7 @@ import { NotesService } from "./NotesService";
 import { ScriptExecutor } from "./ScriptExecutor";
 import { StateManager } from "./StateManager";
 import { Preview } from "../preview/Preview";
+import { DemoStatusBar } from "./DemoStatusBar";
 
 const DEFAULT_START_VALUE = {
   filePath: "",
@@ -162,6 +163,7 @@ export class DemoRunner {
    */
   private static async togglePresentationMode(enable?: boolean): Promise<void> {
     DemoRunner.isPresentationMode = typeof enable !== "undefined" ? enable : !DemoRunner.isPresentationMode;
+    DemoStatusBar.setPresenting(DemoRunner.isPresentationMode);
     await setContext(ContextKeys.presentation, DemoRunner.isPresentationMode);
     PresenterView.postMessage(WebViewMessages.toWebview.updatePresentationStarted, DemoRunner.isPresentationMode);
     if (DemoRunner.isPresentationMode) {
