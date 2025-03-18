@@ -1,6 +1,6 @@
 # Change Log
 
-## [0.0.83] - 2025-03-xx
+## [0.0.83] - 2025-03-18
 
 - [#64](https://github.com/estruyf/vscode-demo-time/issues/64): Slide list spacing improvements
 - [#65](https://github.com/estruyf/vscode-demo-time/issues/65): When in presentation view, you can now exit it via `esc` key
