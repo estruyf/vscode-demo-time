@@ -104,7 +104,8 @@ export class Preview {
       Preview.postRequestMessage(WebViewMessages.toVscode.getStyles, requestId, cssWebviewPath);
     } else if (command === WebViewMessages.toVscode.getTheme && requestId) {
       try {
-        const theme = await getTheme();
+        const themeName = payload || "";
+        const theme = await getTheme(themeName);
         Preview.postRequestMessage(WebViewMessages.toVscode.getTheme, requestId, theme);
       } catch (e) {
         // This can happen in a Dev Container where the theme is not available

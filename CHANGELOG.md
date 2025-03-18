@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.85] - 2025-03-xx
+
+- [#58](https://github.com/estruyf/vscode-demo-time/issues/58): Support theme changes in Shiki codeblocks on slides
+
 ## [0.0.84] - 2025-03-18
 
 - Fix in dispose check on the presenter webview

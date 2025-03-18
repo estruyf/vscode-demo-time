@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
+import { Messenger } from '@estruyf/vscode/dist/client/webview';
 import { SlideLayout, WebViewMessages } from '../../constants';
 import { Markdown } from './Markdown';
 import { EventData } from '@estruyf/vscode';
@@ -7,6 +7,7 @@ import { useScale } from '../hooks/useScale';
 import { useFileContents } from '../hooks/useFileContents';
 import useCursor from '../hooks/useCursor';
 import { SlideControls } from './SlideControls';
+import useTheme from '../hooks/useTheme';
 
 export interface IMarkdownPreviewProps {
   fileUri: string;
@@ -18,7 +19,6 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   webviewUrl
 }: React.PropsWithChildren<IMarkdownPreviewProps>) => {
   const { content, crntFilePath, getFileContents } = useFileContents();
-  const [vsCodeTheme, setVsCodeTheme] = React.useState<any | undefined>(undefined);
   const [theme, setTheme] = React.useState<string | undefined>(undefined);
   const [layout, setLayout] = React.useState<string | undefined>(undefined);
   const [bgStyles, setBgStyles] = React.useState<any | null>(null);
@@ -26,6 +26,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const ref = React.useRef<HTMLDivElement>(null);
   const slideRef = React.useRef<HTMLDivElement>(null);
   const { cursorVisible, resetCursorTimeout } = useCursor();
+  const { vsCodeTheme } = useTheme();
   useScale(ref, slideRef);
 
   const messageListener = (message: MessageEvent<EventData<any>>) => {
@@ -67,24 +68,6 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
 
   React.useEffect(() => {
     Messenger.listen(messageListener);
-
-    messageHandler.request<any | null>(WebViewMessages.toVscode.getTheme).then((theme) => {
-      if (theme === null) {
-        // Check if light or dark theme
-        const elm = document.body.getAttribute(`data-vscode-theme-kind`);
-        if (elm === 'vscode-light') {
-          setVsCodeTheme("github-light");
-        } else if (elm === 'vscode-dark') {
-          setVsCodeTheme("github-dark");
-        } else if (elm === 'vscode-high-contrast') {
-          setVsCodeTheme("github-dark-high-contrast");
-        } else {
-          setVsCodeTheme("github-light-high-contrast");
-        }
-      } else {
-        setVsCodeTheme(theme);
-      }
-    });
 
     return () => {
       Messenger.unlisten(messageListener);

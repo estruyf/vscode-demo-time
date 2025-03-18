@@ -25,11 +25,6 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     setMarkdown,
     matter
   } = useRemark({
-    rehypePlugins: [
-      [rehypePrettyCode, {
-        theme: vsCodeTheme ? vsCodeTheme : {},
-      }]
-    ],
     rehypeReactOptions: {
       components: {
         img: ({ node, src, ...props }) => {
@@ -52,7 +47,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     updateLayout(matter?.layout || "default");
 
     if (matter?.image) {
-      const img = transformImageUrl(webviewUrl || "", matter?.image)
+      const img = transformImageUrl(webviewUrl || "", matter?.image);
       updateBgStyles({
         color: 'white',
         backgroundImage: `url(${img})`,
@@ -67,9 +62,10 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
 
   React.useEffect(() => {
     if (content) {
-      setMarkdown(twoColumnFormatting(content));
+      // Passing the theme here as it could be that the theme has been updated
+      setMarkdown(twoColumnFormatting(content), [[rehypePrettyCode, { theme: vsCodeTheme ? vsCodeTheme : {} }]]);
     }
-  }, [content]);
+  }, [content, vsCodeTheme]);
 
   return (
     <>

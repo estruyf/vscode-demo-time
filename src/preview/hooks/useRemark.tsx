@@ -30,13 +30,13 @@ export const useRemark = ({
   remarkToRehypeOptions,
 }: UseRemarkOptions = {}): {
   markdown: null | ReactElement,
-  setMarkdown: (source: string) => void,
+  setMarkdown: (source: string, customPlugins?: PluggableList) => void,
   matter: null | any,
 } => {
   const [reactContent, setReactContent] = useState<null | ReactElement>(null);
   const [metadata, setMetadata] = useState<null | any>(null);
 
-  const setMarkdownSource = useCallback((source: string) => {
+  const setMarkdownSource = useCallback((source: string, customPlugins?: PluggableList) => {
     unified()
       .use(remarkParse, remarkParseOptions)
       .use(remarkToRehype, {
@@ -45,7 +45,7 @@ export const useRemark = ({
       })
       .use(rehypeRaw)
       .use(remarkPlugins)
-      .use(rehypePlugins)
+      .use([...rehypePlugins, ...(customPlugins || [])])
       .use(rehypeReact, {
         ...rehypeReactOptions,
         Fragment: jsxRuntime.Fragment,
