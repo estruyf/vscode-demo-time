@@ -129,6 +129,10 @@ export class PresenterView {
   }
 
   public static async postMessage(command: string, payload: any) {
+    if (PresenterView.isDisposed) {
+      return;
+    }
+
     PresenterView.webview?.webview.postMessage({
       command,
       payload,

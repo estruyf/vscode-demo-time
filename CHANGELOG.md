@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.84] - 2025-03-18
+
+- Fix in dispose check on the presenter webview
+
 ## [0.0.83] - 2025-03-18
 
 - [#64](https://github.com/estruyf/vscode-demo-time/issues/64): Slide list spacing improvements
