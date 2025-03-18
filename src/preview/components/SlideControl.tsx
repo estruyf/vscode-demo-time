@@ -8,6 +8,7 @@ export interface ISlideControlProps {
   title: string;
   disabled?: boolean;
   isSlideControl?: boolean;
+  className?: string;
 }
 
 export const SlideControl: React.FunctionComponent<ISlideControlProps> = ({
@@ -17,13 +18,14 @@ export const SlideControl: React.FunctionComponent<ISlideControlProps> = ({
   title,
   disabled,
   isSlideControl,
+  className,
 }: React.PropsWithChildren<ISlideControlProps>) => {
   return (
     <button
       title={title}
       onClick={action}
       disabled={disabled}
-      className={`p-2 inline-flex justify-center items-center rounded hover:bg-[var(--vscode-toolbar-hoverBackground)] disabled:opacity-50 disabled:cursor-not-allowed ${!isSlideControl ? ' opacity-70 hover:opacity-100' : ''}`}
+      className={`p-2 inline-flex justify-center items-center rounded disabled:opacity-50 disabled:cursor-not-allowed ${!isSlideControl ? ' opacity-70 hover:opacity-100' : ''} ${className ? className : "hover:bg-[var(--vscode-toolbar-hoverBackground)]"}`}
     >
       <span className="sr-only">{title}</span>
       {iconName && <Icon name={iconName as any} className="!text-[var(--vscode-editorWidget-foreground)] inline-flex justify-center items-center" />}

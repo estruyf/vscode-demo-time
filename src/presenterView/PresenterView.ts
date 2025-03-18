@@ -112,7 +112,7 @@ export class PresenterView {
       const startTime = DemoStatusBar.getCountdownStarted();
       PresenterView.postRequestMessage(command, requestId, startTime);
     } else if (command === WebViewMessages.toVscode.getPresentationStarted) {
-      const isPresentationMode = DemoRunner.getIsPresentationMode;
+      const isPresentationMode = DemoRunner.getIsPresentationMode();
       PresenterView.postRequestMessage(command, requestId, isPresentationMode);
     } else if (command === WebViewMessages.toVscode.detach) {
       const panel = PresenterView.webview;

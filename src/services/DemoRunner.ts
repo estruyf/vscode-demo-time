@@ -169,8 +169,10 @@ export class DemoRunner {
     if (DemoRunner.isPresentationMode) {
       DemoPanel.updateMessage("Presentation mode enabled");
       await DemoRunner.getDemoFile();
+      Preview.postMessage(WebViewMessages.toWebview.updateIsInPresentationMode, true);
     } else {
       DemoPanel.updateMessage();
+      Preview.postMessage(WebViewMessages.toWebview.updateIsInPresentationMode, false);
     }
     DemoPanel.update();
   }

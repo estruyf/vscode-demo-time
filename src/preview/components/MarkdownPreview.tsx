@@ -122,7 +122,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         </div>
       </div>
 
-      <SlideControls show={showControls && cursorVisible} />
+      <SlideControls show={showControls && cursorVisible} path={crntFilePath} />
     </div>
   );
 };

@@ -1,18 +1,34 @@
-import { messageHandler } from '@estruyf/vscode/dist/client/webview';
+import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import * as React from 'react';
 import { COMMAND, WebViewMessages } from '../../constants';
 import { SlideControl } from './SlideControl';
 import { WhiteboardIcon } from './WhiteboardIcon';
 import { Icon } from 'vscrui';
+import { ProjectorIcon } from './ProjectorIcon';
+import { EventData } from '@estruyf/vscode';
 
 export interface ISlideControlsProps {
   show: boolean;
+  path?: string;
 }
 
 export const SlideControls: React.FunctionComponent<ISlideControlsProps> = ({
-  show
+  show,
+  path
 }: React.PropsWithChildren<ISlideControlsProps>) => {
   const [previousEnabled, setPreviousEnabled] = React.useState(false);
+  const [isPresentationMode, setIsPresentationMode] = React.useState(false);
+
+  const messageListener = (message: MessageEvent<EventData<any>>) => {
+    const { command, payload } = message.data;
+    if (!command) {
+      return;
+    }
+
+    if (command === WebViewMessages.toWebview.updateIsInPresentationMode) {
+      setIsPresentationMode(payload);
+    }
+  };
 
   const previous = React.useCallback(() => {
     if (previousEnabled) {
@@ -40,6 +56,14 @@ export const SlideControls: React.FunctionComponent<ISlideControlsProps> = ({
     messageHandler.send(WebViewMessages.toVscode.runCommand, "demo-time.focus");
   }, []);
 
+  const togglePresentationMode = React.useCallback(() => {
+    messageHandler.send(WebViewMessages.toVscode.runCommand, "demo-time.togglePresentationMode");
+  }, []);
+
+  const openSlideSource = React.useCallback(() => {
+    messageHandler.send(WebViewMessages.toVscode.openFile, path);
+  }, [path]);
+
   React.useEffect(() => {
     if (show) {
       messageHandler.request<boolean>(WebViewMessages.toVscode.getPreviousEnabled).then((previous) => {
@@ -47,6 +71,19 @@ export const SlideControls: React.FunctionComponent<ISlideControlsProps> = ({
       });
     }
   }, [show]);
+
+  React.useEffect(() => {
+    messageHandler.request<boolean>(WebViewMessages.toVscode.getPresentationStarted).then((value) => {
+      console.log("value", value);
+      setIsPresentationMode(value);
+    });
+
+    Messenger.listen(messageListener);
+
+    return () => {
+      Messenger.unlisten(messageListener);
+    };
+  }, []);
 
   return (
     <div
@@ -58,6 +95,7 @@ export const SlideControls: React.FunctionComponent<ISlideControlsProps> = ({
         style={{ boxShadow: '0 0 8px 0 var(--vscode-widget-shadow)' }}
       >
         <div className='flex items-center'>
+          <SlideControl title="Toggle presentation mode" className={`${isPresentationMode ? `bg-[var(--vscode-statusBarItem-errorBackground)] hover:-[var(--vscode-statusBarItem-errorHoverBackground)]` : ''}`} icon={<ProjectorIcon className={`w-4 h-4 inline-flex justify-center items-center ${isPresentationMode ? `text-[var(--vscode-statusBarItem-errorForeground)] hover:text-[var(--vscode-statusBarItem-errorHoverForeground)]` : `text-[var(--vscode-editorWidget-foreground)]`}`} />} action={togglePresentationMode} />
           <SlideControl title="Toggle fullscreen" iconName="screen-full" action={toggleFullscreen} />
           <SlideControl title="Toggle presentation view" icon={<WhiteboardIcon className="w-4 h-4 text-[var(--vscode-editorWidget-foreground)] inline-flex justify-center items-center" />} action={togglePresentationView} />
           <SlideControl title="Close sidebar" icon={(
@@ -80,7 +118,13 @@ export const SlideControls: React.FunctionComponent<ISlideControlsProps> = ({
 
           <SlideControl title="Next" iconName="arrow-right" action={next} isSlideControl />
         </div>
-        <div></div>
+        <div className="flex items-center justify-end gap-4">
+          {
+            path && (
+              <SlideControl title="Open slide source" iconName="preview" action={openSlideSource} />
+            )
+          }
+        </div>
       </div>
     </div>
   );

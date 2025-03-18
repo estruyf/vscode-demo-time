@@ -3,6 +3,8 @@
 ## [0.0.85] - 2025-03-xx
 
 - [#58](https://github.com/estruyf/vscode-demo-time/issues/58): Support theme changes in Shiki codeblocks on slides
+- [#67](https://github.com/estruyf/vscode-demo-time/issues/67): Add the open slide source action to the slide view
+- [#68](https://github.com/estruyf/vscode-demo-time/issues/68): Add the toggle action for the presentation mode to the slide view
 
 ## [0.0.84] - 2025-03-18
 

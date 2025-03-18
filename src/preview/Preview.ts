@@ -3,6 +3,7 @@ import { Extension } from "../services/Extension";
 import { COMMAND, Config, WebViewMessages } from "../constants";
 import { MessageHandlerData } from "@estruyf/vscode";
 import { getTheme, getWebviewUrl, readFile, togglePresentationView } from "../utils";
+import { DemoRunner } from "../services";
 
 export class Preview {
   private static webview: WebviewPanel | null = null;
@@ -119,10 +120,21 @@ export class Preview {
       Preview.postRequestMessage(WebViewMessages.toVscode.getPreviousEnabled, requestId, previousEnabled);
     } else if (command === WebViewMessages.toVscode.runCommand && payload) {
       await commands.executeCommand(payload);
+    } else if (command === WebViewMessages.toVscode.getPresentationStarted) {
+      const isPresentationMode = DemoRunner.getIsPresentationMode();
+      Preview.postRequestMessage(command, requestId, isPresentationMode);
+    } else if (command === WebViewMessages.toVscode.openFile && payload) {
+      const fileUri = Uri.parse(payload);
+      const filePath = Uri.file(fileUri.path);
+      await window.showTextDocument(filePath);
     }
   }
 
   public static async postMessage(command: string, payload: any) {
+    if (Preview.isDisposed) {
+      return;
+    }
+
     Preview.webview?.webview.postMessage({
       command,
       payload,
