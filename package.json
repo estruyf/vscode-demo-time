@@ -323,6 +323,12 @@
         "icon": "$(preview)"
       },
       {
+        "command": "demo-time.openSlidePreview",
+        "title": "Open slide preview",
+        "category": "Demo Time",
+        "icon": "$(preview)"
+      },
+      {
         "command": "demo-time.exportToPdf",
         "title": "Export slides to PDF",
         "category": "Demo Time",
@@ -471,6 +477,11 @@
           "command": "demo-time.docs",
           "when": "(editorLangId == jsonc || editorLangId == json) && resourceDirname =~ /\\.demo$/",
           "group": "navigation@1"
+        },
+        {
+          "command": "demo-time.openSlidePreview",
+          "when": "editorLangId == markdown && resourceDirname =~ /\\.demo/",
+          "group": "navigation@-1"
         },
         {
           "command": "demo-time.toggleSelectionHighlight",

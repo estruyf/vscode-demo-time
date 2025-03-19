@@ -15,7 +15,7 @@ import { FileProvider } from ".";
 import { getTheme, readFile, writeFile } from "../utils";
 import { commands, Uri, workspace, WorkspaceFolder, window, ProgressLocation } from "vscode";
 import { Page } from "playwright-chromium";
-import { General } from "../constants";
+import { COMMAND, General } from "../constants";
 
 export class PdfExportService {
   private static workspaceFolder: WorkspaceFolder | undefined;
@@ -24,7 +24,7 @@ export class PdfExportService {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
     PdfExportService.init();
 
-    subscriptions.push(commands.registerCommand("demo-time.exportToPdf", PdfExportService.exportToPdf));
+    subscriptions.push(commands.registerCommand(COMMAND.exportToPdf, PdfExportService.exportToPdf));
   }
 
   public static init() {

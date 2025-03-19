@@ -2,9 +2,18 @@ import { commands, CompletionItem, CompletionItemKind, Hover, languages, Uri, wi
 import { Action, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import { COMMAND, Config, General, SlideLayout, SlideTheme } from "../constants";
-import { addStepsToDemo, fileExists, sanitizeFileName, upperCaseFirstLetter, writeFile } from "../utils";
+import {
+  addStepsToDemo,
+  fileExists,
+  getRelPath,
+  parseWinPath,
+  sanitizeFileName,
+  upperCaseFirstLetter,
+  writeFile,
+} from "../utils";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { FileProvider } from "./FileProvider";
+import { Preview } from "../preview/Preview";
 
 export class Slides {
   public static register() {
@@ -12,6 +21,7 @@ export class Slides {
 
     subscriptions.push(commands.registerCommand(COMMAND.createSlide, Slides.createSlide));
     subscriptions.push(commands.registerCommand(COMMAND.viewSlide, Slides.viewSlide));
+    subscriptions.push(commands.registerCommand(COMMAND.openSlidePreview, Slides.openSlidePreview));
 
     subscriptions.push(Slides.registerCompletionProvider());
     subscriptions.push(Slides.registerHoverProvider());
@@ -136,6 +146,16 @@ layout: ${layout.toLowerCase()}
     await window.showTextDocument(slideUri);
   }
 
+  private static async openSlidePreview() {
+    const editor = window.activeTextEditor;
+    if (!editor || editor.document.languageId !== "markdown") {
+      return;
+    }
+
+    const path = editor.document.uri.fsPath;
+    Preview.show(getRelPath(parseWinPath(path)));
+  }
+
   private static registerHoverProvider() {
     return languages.registerHoverProvider(
       { language: "markdown", scheme: "file" },
@@ -163,6 +183,14 @@ layout: ${layout.toLowerCase()}
                   .map((layout) => `- \`${layout}\``)
                   .join("\n");
                 return new Hover(`Specifies the layout for the slide. Available options:\n${layouts}`);
+              } else if (line.startsWith("customTheme:")) {
+                return new Hover(
+                  "Specifies a custom theme for the slide. Provide a relative path or URL to a CSS file."
+                );
+              } else if (line.startsWith("image:")) {
+                return new Hover(
+                  "Specifies the image URL or path for the slide. Provide a relative path to the image file."
+                );
               }
             }
           }
@@ -196,22 +224,29 @@ layout: ${layout.toLowerCase()}
                 return [
                   new CompletionItem(
                     {
-                      label: "image: ",
+                      label: "image",
                       description: "Image URL or path",
                     },
                     CompletionItemKind.Property
                   ),
                   new CompletionItem(
                     {
-                      label: "theme: ",
+                      label: "theme",
                       description: "Theme for the slide",
                     },
                     CompletionItemKind.Property
                   ),
                   new CompletionItem(
                     {
-                      label: "layout: ",
+                      label: "layout",
                       description: "Layout for the slide",
+                    },
+                    CompletionItemKind.Property
+                  ),
+                  new CompletionItem(
+                    {
+                      label: "customTheme",
+                      description: "Relative path or URL to a CSS file for custom theme",
                     },
                     CompletionItemKind.Property
                   ),

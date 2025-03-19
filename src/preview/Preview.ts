@@ -100,6 +100,9 @@ export class Preview {
     if (command === WebViewMessages.toVscode.getFileUri && requestId) {
       const fileWebviewPath = getWebviewUrl(Preview.webview?.webview, Preview.crntFile);
       Preview.postRequestMessage(WebViewMessages.toVscode.getFileUri, requestId, fileWebviewPath);
+    } else if (command === WebViewMessages.toVscode.parseFileUri && requestId && payload) {
+      const fileWebviewPath = getWebviewUrl(Preview.webview?.webview, payload);
+      Preview.postRequestMessage(WebViewMessages.toVscode.getFileUri, requestId, fileWebviewPath);
     } else if (command === WebViewMessages.toVscode.getStyles && requestId) {
       const cssWebviewPath = Preview.crntCss ? getWebviewUrl(Preview.webview?.webview, Preview.crntCss) : undefined;
       Preview.postRequestMessage(WebViewMessages.toVscode.getStyles, requestId, cssWebviewPath);

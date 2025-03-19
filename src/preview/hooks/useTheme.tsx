@@ -19,7 +19,6 @@ export default function useTheme(options?: any) {
   const getVsCodeTheme = () => {
 
     messageHandler.request<any | null>(WebViewMessages.toVscode.getTheme, getThemeName()).then((theme) => {
-      console.log('getVsCodeTheme', theme);
       if (theme === null) {
         // Check if light or dark theme
         const elm = document.body.getAttribute(`data-vscode-theme-kind`);
@@ -39,8 +38,6 @@ export default function useTheme(options?: any) {
   };
 
   useEffect(() => {
-    console.log('Theme changed', theme);
-    console.log('prevTheme changed', prevTheme);
     if (theme !== prevTheme) {
       getVsCodeTheme();
     }

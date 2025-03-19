@@ -10,6 +10,7 @@ export interface IMarkdownProps {
   updateTheme: (theme: string) => void;
   updateLayout: (layout: string) => void;
   updateBgStyles: (styles: any) => void;
+  updateCustomTheme: (theme: string) => void;
 }
 
 export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
@@ -18,7 +19,8 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   webviewUrl,
   updateTheme,
   updateLayout,
-  updateBgStyles
+  updateBgStyles,
+  updateCustomTheme
 }: React.PropsWithChildren<IMarkdownProps>) => {
   const {
     markdown,
@@ -45,6 +47,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   React.useEffect(() => {
     updateTheme(matter?.theme || "default");
     updateLayout(matter?.layout || "default");
+    updateCustomTheme(matter?.customTheme || undefined);
 
     if (matter?.image) {
       const img = transformImageUrl(webviewUrl || "", matter?.image);
@@ -58,7 +61,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     } else {
       updateBgStyles(undefined);
     }
-  }, [matter, updateTheme, updateLayout]);
+  }, [matter, updateTheme, updateLayout, updateCustomTheme]);
 
   React.useEffect(() => {
     if (content) {

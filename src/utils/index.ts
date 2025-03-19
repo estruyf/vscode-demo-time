@@ -22,6 +22,7 @@ export * from "./getNextDemoFile";
 export * from "./getPlatform";
 export * from "./getPositionAndRange";
 export * from "./getPreviousDemoFile";
+export * from "./getRelPath";
 export * from "./getShellPath";
 export * from "./getTheme";
 export * from "./getUserInput";

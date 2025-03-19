@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Messenger } from '@estruyf/vscode/dist/client/webview';
+import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import { SlideLayout, WebViewMessages } from '../../constants';
 import { Markdown } from './Markdown';
 import { EventData } from '@estruyf/vscode';
@@ -21,6 +21,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const { content, crntFilePath, getFileContents } = useFileContents();
   const [theme, setTheme] = React.useState<string | undefined>(undefined);
   const [layout, setLayout] = React.useState<string | undefined>(undefined);
+  const [customTheme, setCustomTheme] = React.useState<string | undefined>(undefined);
   const [bgStyles, setBgStyles] = React.useState<any | null>(null);
   const [showControls, setShowControls] = React.useState(false);
   const ref = React.useRef<HTMLDivElement>(null);
@@ -62,6 +63,24 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     resetCursorTimeout();
   }, [resetCursorTimeout]);
 
+  const updateCustomThemePath = React.useCallback((customThemePath: string) => {
+    if (!customThemePath) {
+      setCustomTheme(undefined);
+      return;
+    }
+
+    if (customThemePath.startsWith(`https://`)) {
+      setCustomTheme(customThemePath);
+    } else {
+      messageHandler.request<string>(WebViewMessages.toVscode.parseFileUri, customThemePath).then((customThemeUri) => {
+        setCustomTheme(customThemeUri);
+        console.log('updateCustomThemePath', customThemeUri);
+      }).catch(() => {
+        setCustomTheme(undefined);
+      });
+    }
+  }, []);
+
   React.useEffect(() => {
     getFileContents(fileUri);
   }, [fileUri]);
@@ -74,55 +93,62 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     };
   }, []);
 
+  console.log('customTheme', customTheme);
+
   return (
-    <div
-      key={crntFilePath}
-      ref={ref}
-      className={`slide fade-in ${theme || "default"} relative w-full h-full overflow-hidden`}
-      onMouseEnter={() => setShowControls(true)}
-      onMouseLeave={() => setShowControls(false)}
-      onMouseMove={handleMouseMove}
-      style={{ cursor: cursorVisible ? 'default' : 'none' }}
-    >
+    <>
+      {customTheme && <link href={customTheme} rel="stylesheet" />}
+
       <div
-        className='slide__container absolute top-[50%] left-[50%] w-[960px] h-[540px]'
-        style={{ transform: 'translate(-50%, -50%) scale(var(--demotime-scale, 1))' }}>
+        key={crntFilePath}
+        ref={ref}
+        className={`slide fade-in ${theme || "default"} relative w-full h-full overflow-hidden`}
+        onMouseEnter={() => setShowControls(true)}
+        onMouseLeave={() => setShowControls(false)}
+        onMouseMove={handleMouseMove}
+        style={{ cursor: cursorVisible ? 'default' : 'none' }}
+      >
         <div
-          ref={slideRef}
-          className={`slide__layout ${slideClasses || ""} ${layout || "default"}`}
-          style={getBgStyles()}>
-          {
-            layout === SlideLayout.ImageLeft && (
-              <div className={`slide__image_left w-full h-full`} style={bgStyles}></div>
-            )
-          }
+          className='slide__container absolute top-[50%] left-[50%] w-[960px] h-[540px]'
+          style={{ transform: 'translate(-50%, -50%) scale(var(--demotime-scale, 1))' }}>
+          <div
+            ref={slideRef}
+            className={`slide__layout ${slideClasses || ""} ${layout || "default"}`}
+            style={getBgStyles()}>
+            {
+              layout === SlideLayout.ImageLeft && (
+                <div className={`slide__image_left w-full h-full`} style={bgStyles}></div>
+              )
+            }
 
-          {
-            content && vsCodeTheme ? (
-              <div className='slide__content'>
-                <div className='slide__content__inner'>
-                  <Markdown
-                    content={content}
-                    vsCodeTheme={vsCodeTheme}
-                    webviewUrl={webviewUrl}
-                    updateTheme={setTheme}
-                    updateLayout={setLayout}
-                    updateBgStyles={setBgStyles}
-                  />
+            {
+              content && vsCodeTheme ? (
+                <div className='slide__content'>
+                  <div className='slide__content__inner'>
+                    <Markdown
+                      content={content}
+                      vsCodeTheme={vsCodeTheme}
+                      webviewUrl={webviewUrl}
+                      updateTheme={setTheme}
+                      updateCustomTheme={(customTheme) => updateCustomThemePath(customTheme)}
+                      updateLayout={setLayout}
+                      updateBgStyles={setBgStyles}
+                    />
+                  </div>
                 </div>
-              </div>
-            ) : null
-          }
+              ) : null
+            }
 
-          {
-            layout === SlideLayout.ImageRight && (
-              <div className={`slide__image_right w-full h-full`} style={bgStyles}></div>
-            )
-          }
+            {
+              layout === SlideLayout.ImageRight && (
+                <div className={`slide__image_right w-full h-full`} style={bgStyles}></div>
+              )
+            }
+          </div>
         </div>
-      </div>
 
-      <SlideControls show={showControls && cursorVisible} path={crntFilePath} />
-    </div>
+        <SlideControls show={showControls && cursorVisible} path={crntFilePath} />
+      </div>
+    </>
   );
 };
