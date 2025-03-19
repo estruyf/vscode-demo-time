@@ -321,6 +321,11 @@
         "title": "View slide",
         "category": "Demo Time",
         "icon": "$(preview)"
+      },
+      {
+        "command": "demo-time.exportToPdf",
+        "title": "Export slides to PDF",
+        "category": "Demo Time"
       }
     ],
     "menus": {
@@ -523,6 +528,14 @@
     "watch:preview": "webpack serve --mode development --config ./preview.config.js",
     "lint": "eslint src --ext ts"
   },
+  "peerDependencies": {
+    "playwright-chromium": "^1.51.1"
+  },
+  "peerDependenciesMeta": {
+    "playwright-chromium": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@estruyf/vscode": "^1.1.0",
     "@types/cors": "^2.8.17",
@@ -538,34 +551,36 @@
     "autoprefixer": "^10.4.20",
     "cors": "^2.8.5",
     "css-loader": "^7.1.2",
+    "diff": "^7.0.0",
     "eslint": "^8.52.0",
     "express": "^4.21.2",
     "glob": "^10.3.10",
     "jsonc-parser": "^3.3.1",
+    "mlly": "^1.7.4",
     "mocha": "^10.2.0",
     "npm-run-all": "^4.1.5",
+    "playwright-chromium": "^1.51.1",
     "postcss": "^8.4.49",
     "postcss-loader": "^8.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "rehype-pretty-code": "^0.14.0",
+    "rehype-raw": "^7.0.0",
+    "rehype-react": "^8.0.0",
+    "rehype-stringify": "^10.0.1",
+    "remark-frontmatter": "^5.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-rehype": "^11.1.1",
     "style-loader": "^4.0.0",
     "tailwindcss": "^3.4.16",
     "ts-loader": "^9.5.1",
     "tsup": "^8.0.1",
     "typescript": "^5.2.2",
+    "vfile-matter": "^5.0.0",
     "vscrui": "^0.2.0-beta.1229608",
     "webpack": "^5.97.1",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.2.0",
-    "webpack-manifest-plugin": "^5.0.0",
-    "diff": "^7.0.0",
-    "rehype-pretty-code": "^0.14.0",
-    "rehype-raw": "^7.0.0",
-    "rehype-react": "^8.0.0",
-    "remark-frontmatter": "^5.0.0",
-    "remark-gfm": "^4.0.1",
-    "remark-rehype": "^11.1.1",
-    "vfile-matter": "^5.0.0"
-  },
-  "dependencies": {}
+    "webpack-manifest-plugin": "^5.0.1"
+  }
 }

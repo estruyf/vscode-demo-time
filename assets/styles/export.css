@@ -1,0 +1,170 @@
+@media print {
+  @page {
+    size: 960px 540px landscape;
+    margin: 0;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  .slide {
+    page-break-after: always;
+    page-break-inside: avoid;
+    height: 540px;
+    width: 960px;
+    overflow: hidden;
+  }
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.slide {
+  background-color: var(--vscode-editor-background, #fff);
+  border: 1px solid var(--vscode-panel-border, #e0e0e0);
+  color: var(--vscode-editor-foreground, #333);
+  min-height: 540px;
+  width: 960px;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  box-sizing: border-box;
+  overflow: hidden;
+  font-size: var(--vscode-editor-font-size, 1.1em);
+  line-height: 1.5;
+  font-weight: normal;
+
+  & > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-y-reverse: 0;
+    margin-top: calc(1rem /* 16px */ * calc(1 - var(--tw-space-y-reverse)));
+    margin-bottom: calc(1rem /* 16px */ * var(--tw-space-y-reverse));
+  }
+}
+
+.slide * {
+  color: var(--vscode-editor-foreground, #333);
+}
+
+h1 {
+  font-size: 2.25rem /* 36px */;
+  line-height: 2.5rem /* 40px */;
+  background-color: var(--vscode-editor-background, #fff);
+  color: var(--vscode-editor-foreground, #333);
+}
+
+h2 {
+  font-size: 1.875rem /* 30px */;
+  line-height: 2.25rem /* 36px */;
+  background-color: var(--vscode-editor-background, #fff);
+  color: var(--vscode-editor-foreground, #333);
+}
+
+h3 {
+  font-size: 1.5rem /* 24px */;
+  line-height: 2rem /* 32px */;
+  background-color: var(--vscode-editor-background, #fff);
+  color: var(--vscode-editor-foreground, #333);
+}
+
+h4 {
+  font-size: 1.25rem /* 20px */;
+  line-height: 1.75rem /* 28px */;
+  background-color: var(--vscode-editor-background, #fff);
+  color: var(--vscode-editor-foreground, #333);
+}
+
+h5 {
+  font-size: 1.125rem /* 18px */;
+  line-height: 1.75rem /* 28px */;
+  background-color: var(--vscode-editor-background, #fff);
+  color: var(--vscode-editor-foreground, #333);
+}
+
+p {
+  line-height: 1.625;
+  opacity: 0.8;
+
+  &:has(> img),
+  &:has(> a) {
+    opacity: 1;
+  }
+}
+
+a {
+  color: var(--vscode-textLink-foreground, #007acc);
+  text-decoration: underline;
+
+  &:hover {
+    color: var(--vscode-textLink-activeForeground, #005a9e);
+  }
+}
+
+ul,
+ol {
+  margin-left: 1.5rem /* 24px */;
+
+  li {
+    margin-bottom: 0.5rem /* 8px */;
+  }
+
+  ul,
+  ol {
+    margin-top: 0.5rem /* 8px */;
+  }
+}
+
+ul {
+  list-style-type: disc;
+}
+
+ol {
+  list-style-type: decimal;
+}
+
+blockquote {
+  background-color: var(--vscode-textBlockQuote-background, #f0f0f0);
+  border-color: var(--vscode-textBlockQuote-border, #ddd);
+  border-left-width: 4px;
+  padding: 0.5rem /* 8px */;
+}
+
+pre {
+  background: var(--vscode-editor-background);
+  border-radius: 4px;
+  overflow: auto;
+  max-width: 100%;
+  margin: 1.5rem 0;
+
+  code {
+    padding: 0 !important;
+    white-space: pre-wrap;
+    background: var(--vscode-editor-background);
+  }
+}
+
+code {
+  font-family: var(--vscode-editor-font-size, ui-sans-serif), ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+img {
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1rem 0;
+  color: inherit;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  text-align: left;
+  color: inherit;
+}

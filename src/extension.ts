@@ -17,6 +17,7 @@ import { DemoPanel } from "./panels/DemoPanel";
 import { Preview } from "./preview/Preview";
 import { PresenterView } from "./presenterView/PresenterView";
 import { Config } from "./constants";
+import { PdfExportService } from "./services/PdfExportService";
 
 export async function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);
@@ -38,6 +39,7 @@ export async function activate(context: vscode.ExtensionContext) {
   NotesService.registerCommands();
   DemoApi.register();
   UriHandler.register();
+  PdfExportService.register();
 
   console.log(`${Config.title} is active!`);
 }

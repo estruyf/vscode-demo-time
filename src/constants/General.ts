@@ -4,4 +4,6 @@ export const General = {
   snapshotsFolder: "snapshots",
   patchesFolder: "patches",
   slidesFolder: "slides",
+  htmlExportFile: "demotime.export.html",
+  pdfExportFile: "demotime.export.pdf",
 };
