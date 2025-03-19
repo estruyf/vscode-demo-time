@@ -325,7 +325,8 @@
       {
         "command": "demo-time.exportToPdf",
         "title": "Export slides to PDF",
-        "category": "Demo Time"
+        "category": "Demo Time",
+        "icon": "$(file-pdf)"
       }
     ],
     "menus": {
@@ -405,9 +406,14 @@
           "group": "navigation@2"
         },
         {
-          "command": "demo-time.collapseAll",
+          "command": "demo-time.exportToPdf",
           "when": "view == demo-time",
           "group": "navigation@3"
+        },
+        {
+          "command": "demo-time.collapseAll",
+          "when": "view == demo-time",
+          "group": "navigation@4"
         },
         {
           "command": "demo-time.createDemoFile",

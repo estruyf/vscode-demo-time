@@ -96,7 +96,7 @@ export class PdfExportService {
 
           // Convert HTML to PDF
           progress.report({ message: "Converting HTML to PDF..." });
-          await PdfExportService.generatePdfFromHtml(page, tempHtmlOutputPath.fsPath);
+          const pdfPath = await PdfExportService.generatePdfFromHtml(page, tempHtmlOutputPath.fsPath);
 
           // Clean up
           await page.close();
@@ -121,9 +121,23 @@ export class PdfExportService {
       return await import("playwright-chromium");
     } catch {}
 
-    throw new Error(
-      "Playwright not found. Please install Playwright to export slides to PDF `npm i playwright-chromium -D`."
-    );
+    const markdownContent = `
+  # Playwright Not Found
+
+  To export slides to PDF, you need to install Playwright Chromium. Please run the following command in your terminal:
+
+  \`\`\`bash
+  npm i playwright-chromium -D
+  \`\`\`
+
+  Once installed, try exporting the slides again.
+  `;
+
+    const tempMarkdownPath = Uri.joinPath(PdfExportService.workspaceFolder?.uri as Uri, "playwright-instructions.md");
+    await writeFile(tempMarkdownPath, markdownContent);
+
+    await commands.executeCommand("markdown.showPreview", tempMarkdownPath);
+    throw new Error("Playwright not found. Instructions have been opened in a markdown preview.");
   }
 
   /**
@@ -205,7 +219,7 @@ export class PdfExportService {
     return html;
   }
 
-  private static async generatePdfFromHtml(page: Page, htmlPath: string): Promise<void> {
+  private static async generatePdfFromHtml(page: Page, htmlPath: string): Promise<string> {
     // Load the HTML file
     await page.goto(`file://${htmlPath}`, { waitUntil: "networkidle" });
     await page.waitForLoadState("networkidle");
@@ -226,6 +240,8 @@ export class PdfExportService {
       },
       preferCSSPageSize: true,
     });
+
+    return pdfPath;
   }
 
   private static async updateColorsInCss(css: string): Promise<string> {
