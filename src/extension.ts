@@ -34,7 +34,7 @@ export async function activate(context: vscode.ExtensionContext) {
   Preview.register();
   PresenterView.register();
   FileProvider.register();
-  Slides.registerCommands();
+  Slides.register();
   NotesService.registerCommands();
   DemoApi.register();
   UriHandler.register();

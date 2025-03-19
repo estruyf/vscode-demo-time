@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.86] - 2025-03-19
+
+- Optimized package size
+- [#63](https://github.com/estruyf/vscode-demo-time/issues/63): Added completion and hover panel support for the frontmatter of the markdown slides
+
 ## [0.0.85] - 2025-03-18
 
 - [#58](https://github.com/estruyf/vscode-demo-time/issues/58): Support theme changes in Shiki codeblocks on slides

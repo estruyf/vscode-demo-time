@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Demo Time - Slide",
+  "type": "object",
+  "properties": {
+    "theme": {
+      "type": "string",
+      "enum": ["default", "minimal", "monomi", "unnamed"],
+      "description": "The theme of the slide."
+    },
+    "layout": {
+      "type": "string",
+      "enum": ["default", "intro", "section", "quote", "image", "image-left", "image-right", "two-columns"],
+      "description": "The layout of the slide."
+    },
+    "image": {
+      "type": "string",
+      "description": "The URL of the image for the slide."
+    }
+  },
+  "additionalProperties": false
+}
