@@ -162,7 +162,7 @@ layout: ${layout.toLowerCase()}
       {
         provideHover(document, position) {
           const text = document.getText();
-          const frontmatterRegex = /^---\s*([\s\S]*?)\s*---/;
+          const frontmatterRegex = /^---(?:[^\r\n]*\r?\n)+?---/;
           const frontmatterMatch = frontmatterRegex.exec(text);
 
           if (frontmatterMatch) {
