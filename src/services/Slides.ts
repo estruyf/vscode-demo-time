@@ -16,6 +16,8 @@ import { FileProvider } from "./FileProvider";
 import { Preview } from "../preview/Preview";
 
 export class Slides {
+  private static frontmatterRegex = /^---(?:[^\r\n]*\r?\n)+?---/;
+
   public static register() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
 
@@ -162,8 +164,7 @@ layout: ${layout.toLowerCase()}
       {
         provideHover(document, position) {
           const text = document.getText();
-          const frontmatterRegex = /^---(?:[^\r\n]*\r?\n)+?---/;
-          const frontmatterMatch = frontmatterRegex.exec(text);
+          const frontmatterMatch = Slides.frontmatterRegex.exec(text);
 
           if (frontmatterMatch) {
             const frontmatterStart = text.indexOf(frontmatterMatch[0]);
@@ -209,9 +210,8 @@ layout: ${layout.toLowerCase()}
           const linePrefix = document.lineAt(position).text.substring(0, position.character);
 
           // Check if the cursor is within the frontmatter section
-          const frontmatterRegex = /^---\s*([\s\S]*?)\s*---/;
           const text = document.getText();
-          const frontmatterMatch = frontmatterRegex.exec(text);
+          const frontmatterMatch = Slides.frontmatterRegex.exec(text);
 
           if (frontmatterMatch) {
             const frontmatterStart = text.indexOf(frontmatterMatch[0]);
