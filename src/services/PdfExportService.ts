@@ -103,7 +103,7 @@ export class PdfExportService {
           await page.close();
           await context.close();
           await browser.close();
-          // await workspace.fs.delete(tempHtmlOutputPath);
+          await workspace.fs.delete(tempHtmlOutputPath);
           Notifications.info("Slides exported to PDF successfully.");
         }
       );
