@@ -1,6 +1,6 @@
 # Change Log
 
-## [0.0.86] - 2025-03-19
+## [0.0.86] - 2025-03-20
 
 - Optimized package size
 - [#63](https://github.com/estruyf/vscode-demo-time/issues/63): Added completion and hover panel support for the frontmatter of the markdown slides
