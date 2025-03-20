@@ -326,7 +326,7 @@
         "command": "demo-time.openSlidePreview",
         "title": "Open slide preview",
         "category": "Demo Time",
-        "icon": "$(preview)"
+        "icon": "$(eye)"
       },
       {
         "command": "demo-time.exportToPdf",
