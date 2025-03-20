@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.0.86] - 2025-03-20
+
+- Optimized package size
+- [#63](https://github.com/estruyf/vscode-demo-time/issues/63): Added completion and hover panel support for the frontmatter of the markdown slides
+- [#69](https://github.com/estruyf/vscode-demo-time/issues/69): Added the functionality to export the slides to a PDF file
+- [#72](https://github.com/estruyf/vscode-demo-time/issues/72): Moved the custom theme property from the demo JSON to the slide's frontmatter
+
 ## [0.0.85] - 2025-03-18
 
 - [#58](https://github.com/estruyf/vscode-demo-time/issues/58): Support theme changes in Shiki codeblocks on slides

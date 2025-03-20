@@ -11,6 +11,7 @@ export const WebViewMessages = {
     openNotes: "openNotes",
     // Preview
     getFileUri: "getFileUri",
+    parseFileUri: "parseFileUri",
     getStyles: "getStyles",
     getTheme: "getTheme",
     getSlideTheme: "getSlideTheme",

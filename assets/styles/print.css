@@ -1,0 +1,104 @@
+@media print {
+  @page {
+    size: 960px 540px landscape;
+    margin: 0;
+  }
+
+  .slide {
+    page-break-after: always;
+    page-break-inside: avoid;
+    overflow: hidden;
+  }
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.slide {
+  background-color: var(--vscode-editor-background, #fff);
+  border: 1px solid var(--vscode-panel-border, #e0e0e0);
+  color: var(--vscode-editor-foreground, #333);
+  height: 540px;
+  min-height: 540px;
+  width: 960px;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  box-sizing: border-box;
+  overflow: hidden;
+  font-size: var(--vscode-editor-font-size, 1.1em);
+  line-height: 1.5;
+  font-weight: normal;
+}
+
+code {
+  font-family: var(--vscode-editor-font-size, ui-sans-serif), ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+blockquote {
+  p {
+    margin-bottom: 0 !important;
+  }
+}
+
+code {
+  color: var(--vscode-textPreformat-foreground);
+  background-color: var(--vscode-textPreformat-background);
+  padding: 1px 3px;
+  border-radius: 4px;
+}
+
+pre code {
+  padding: 0 !important;
+  white-space: pre-wrap;
+  background: var(--vscode-editor-background);
+}
+
+.slide__container,
+.slide__layout {
+  @apply h-full w-full;
+}
+
+.slide__content {
+  @apply h-full w-full text-base;
+
+  .slide__content__inner {
+    @apply h-full w-full;
+  }
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1rem 0;
+  color: inherit;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  text-align: left;
+  color: inherit;
+}
+
+/* Layouts */
+div.image {
+  @apply w-full h-full bg-cover bg-center bg-no-repeat;
+}
+
+.image-left,
+.image-right {
+  @apply grid grid-cols-2 w-full h-full auto-rows-fr;
+}
+
+.slide__image_left,
+.slide__image_right {
+  @apply w-full h-full bg-cover bg-center;
+}

@@ -1,6 +1,6 @@
 import { PresenterView } from "./../presenterView/PresenterView";
 import { COMMAND, Config, ContextKeys, StateKeys, WebViewMessages } from "../constants";
-import { Action, Demo, DemoFileCache, Demos, IImagePreview, Step, Subscription } from "../models";
+import { Action, Demo, DemoFileCache, Demos, IImagePreview, ISlidePreview, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import {
   Position,
@@ -649,9 +649,15 @@ export class DemoRunner {
         continue;
       }
 
-      if (step.action === Action.ImagePreview || step.action === Action.OpenSlide) {
+      if (step.action === Action.ImagePreview) {
         const { path, theme } = step as IImagePreview;
         Preview.show(path as string, theme);
+        continue;
+      }
+
+      if (step.action === Action.OpenSlide) {
+        const { path } = step as ISlidePreview;
+        Preview.show(path as string);
         continue;
       }
 

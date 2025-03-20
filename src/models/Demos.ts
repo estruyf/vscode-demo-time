@@ -64,9 +64,12 @@ export interface IOpenWebsite {
   openInVSCode?: boolean;
 }
 
-export interface IImagePreview {
+export interface ISlidePreview {
   action: Action;
   path?: string;
+}
+
+export interface IImagePreview extends ISlidePreview {
   theme?: string;
 }
 

@@ -74,7 +74,6 @@ export const SlideControls: React.FunctionComponent<ISlideControlsProps> = ({
 
   React.useEffect(() => {
     messageHandler.request<boolean>(WebViewMessages.toVscode.getPresentationStarted).then((value) => {
-      console.log("value", value);
       setIsPresentationMode(value);
     });
 

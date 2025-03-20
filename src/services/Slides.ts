@@ -1,17 +1,30 @@
-import { commands, Uri, window } from "vscode";
+import { commands, CompletionItem, CompletionItemKind, Hover, languages, Uri, window } from "vscode";
 import { Action, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
-import { COMMAND, Config, General, SlideLayout } from "../constants";
-import { addStepsToDemo, fileExists, sanitizeFileName, upperCaseFirstLetter, writeFile } from "../utils";
+import { COMMAND, Config, General, SlideLayout, SlideTheme } from "../constants";
+import {
+  addStepsToDemo,
+  fileExists,
+  getRelPath,
+  parseWinPath,
+  sanitizeFileName,
+  upperCaseFirstLetter,
+  writeFile,
+} from "../utils";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { FileProvider } from "./FileProvider";
+import { Preview } from "../preview/Preview";
 
 export class Slides {
-  public static registerCommands() {
+  public static register() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
 
     subscriptions.push(commands.registerCommand(COMMAND.createSlide, Slides.createSlide));
     subscriptions.push(commands.registerCommand(COMMAND.viewSlide, Slides.viewSlide));
+    subscriptions.push(commands.registerCommand(COMMAND.openSlidePreview, Slides.openSlidePreview));
+
+    subscriptions.push(Slides.registerCompletionProvider());
+    subscriptions.push(Slides.registerHoverProvider());
   }
 
   public static async createSlide() {
@@ -131,5 +144,130 @@ layout: ${layout.toLowerCase()}
     }
 
     await window.showTextDocument(slideUri);
+  }
+
+  private static async openSlidePreview() {
+    const editor = window.activeTextEditor;
+    if (!editor || editor.document.languageId !== "markdown") {
+      return;
+    }
+
+    const path = editor.document.uri.fsPath;
+    Preview.show(getRelPath(parseWinPath(path)));
+  }
+
+  private static registerHoverProvider() {
+    return languages.registerHoverProvider(
+      { language: "markdown", scheme: "file" },
+      {
+        provideHover(document, position) {
+          const text = document.getText();
+          const frontmatterRegex = /^---(?:[^\r\n]*\r?\n)+?---/;
+          const frontmatterMatch = frontmatterRegex.exec(text);
+
+          if (frontmatterMatch) {
+            const frontmatterStart = text.indexOf(frontmatterMatch[0]);
+            const frontmatterEnd = frontmatterStart + frontmatterMatch[0].length;
+
+            const cursorOffset = document.offsetAt(position);
+            if (cursorOffset >= frontmatterStart && cursorOffset <= frontmatterEnd) {
+              const line = document.lineAt(position).text.trim();
+
+              if (line.startsWith("theme:")) {
+                const themes = Object.values(SlideTheme)
+                  .map((theme) => `- \`${theme}\``)
+                  .join("\n");
+                return new Hover(`Specifies the theme for the slide. Available options:\n${themes}`);
+              } else if (line.startsWith("layout:")) {
+                const layouts = Object.values(SlideLayout)
+                  .map((layout) => `- \`${layout}\``)
+                  .join("\n");
+                return new Hover(`Specifies the layout for the slide. Available options:\n${layouts}`);
+              } else if (line.startsWith("customTheme:")) {
+                return new Hover(
+                  "Specifies a custom theme for the slide. Provide a relative path or URL to a CSS file."
+                );
+              } else if (line.startsWith("image:")) {
+                return new Hover(
+                  "Specifies the image URL or path for the slide. Provide a relative path to the image file."
+                );
+              }
+            }
+          }
+
+          return undefined;
+        },
+      }
+    );
+  }
+
+  private static registerCompletionProvider() {
+    return languages.registerCompletionItemProvider(
+      { language: "markdown", scheme: "file" },
+      {
+        provideCompletionItems(document, position) {
+          const linePrefix = document.lineAt(position).text.substring(0, position.character);
+
+          // Check if the cursor is within the frontmatter section
+          const frontmatterRegex = /^---\s*([\s\S]*?)\s*---/;
+          const text = document.getText();
+          const frontmatterMatch = frontmatterRegex.exec(text);
+
+          if (frontmatterMatch) {
+            const frontmatterStart = text.indexOf(frontmatterMatch[0]);
+            const frontmatterEnd = frontmatterStart + frontmatterMatch[0].length;
+
+            const cursorOffset = document.offsetAt(position);
+            if (cursorOffset >= frontmatterStart && cursorOffset <= frontmatterEnd) {
+              if (!linePrefix.includes(":")) {
+                // Provide suggestions for frontmatter keys
+                return [
+                  new CompletionItem(
+                    {
+                      label: "image",
+                      description: "Image URL or path",
+                    },
+                    CompletionItemKind.Property
+                  ),
+                  new CompletionItem(
+                    {
+                      label: "theme",
+                      description: "Theme for the slide",
+                    },
+                    CompletionItemKind.Property
+                  ),
+                  new CompletionItem(
+                    {
+                      label: "layout",
+                      description: "Layout for the slide",
+                    },
+                    CompletionItemKind.Property
+                  ),
+                  new CompletionItem(
+                    {
+                      label: "customTheme",
+                      description: "Relative path or URL to a CSS file for custom theme",
+                    },
+                    CompletionItemKind.Property
+                  ),
+                ];
+              } else if (linePrefix.startsWith("theme:")) {
+                return Object.values(SlideTheme).map((theme) => {
+                  return new CompletionItem(theme, CompletionItemKind.EnumMember);
+                });
+              } else if (linePrefix.startsWith("layout:")) {
+                return Object.values(SlideLayout).map((layout) => {
+                  return new CompletionItem(layout, CompletionItemKind.EnumMember);
+                });
+              }
+            }
+          }
+
+          return undefined;
+        },
+      },
+      ":",
+      " "
+    );
   }
 }
