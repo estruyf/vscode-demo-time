@@ -539,6 +539,7 @@
     "compile:ext": "tsup --minify",
     "compile:wv": "webpack --mode production --config ./webview.config.js",
     "compile:preview": "webpack --mode production --config ./preview.config.js",
+    "compile:copy": "node ./scripts/copy-assets.mjs",
     "watch": "npm-run-all --parallel watch:*",
     "watch:ext": "tsup --watch",
     "watch:wv": "webpack serve --mode development --config ./webview.config.js",

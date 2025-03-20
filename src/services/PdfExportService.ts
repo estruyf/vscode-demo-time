@@ -15,7 +15,8 @@ import { FileProvider } from ".";
 import { getTheme, readFile, writeFile } from "../utils";
 import { commands, Uri, workspace, WorkspaceFolder, window, ProgressLocation } from "vscode";
 import { Page } from "playwright-chromium";
-import { COMMAND, General } from "../constants";
+import { COMMAND, General, SlideLayout } from "../constants";
+import { twoColumnFormatting } from "../preview/utils";
 
 export class PdfExportService {
   private static workspaceFolder: WorkspaceFolder | undefined;
@@ -83,7 +84,7 @@ export class PdfExportService {
               const slideUri = Uri.joinPath(PdfExportService.workspaceFolder?.uri as Uri, slideAction.path as string);
               const content = await readFile(slideUri);
               return {
-                content: content,
+                content: twoColumnFormatting(content),
               };
             })
           );
@@ -96,13 +97,13 @@ export class PdfExportService {
 
           // Convert HTML to PDF
           progress.report({ message: "Converting HTML to PDF..." });
-          const pdfPath = await PdfExportService.generatePdfFromHtml(page, tempHtmlOutputPath.fsPath);
+          await PdfExportService.generatePdfFromHtml(page, tempHtmlOutputPath.fsPath);
 
           // Clean up
           await page.close();
           await context.close();
           await browser.close();
-          await workspace.fs.delete(tempHtmlOutputPath);
+          // await workspace.fs.delete(tempHtmlOutputPath);
           Notifications.info("Slides exported to PDF successfully.");
         }
       );
@@ -169,9 +170,16 @@ export class PdfExportService {
         try {
           const vfile = await processor.process(slide.content);
           const theme = (vfile.data?.matter as any)?.theme || SlideTheme.default;
+          const layout = (vfile.data?.matter as any)?.layout || SlideLayout.Default;
+          const image = (vfile.data?.matter as any)?.image || undefined;
+          const customTheme = (vfile.data?.matter as any)?.customTheme || undefined;
+
           return {
             html: vfile,
-            theme: theme,
+            theme,
+            layout,
+            image,
+            customTheme,
           };
         } catch (error) {
           console.error("Error processing slide content:", (error as Error).message);
@@ -181,8 +189,24 @@ export class PdfExportService {
     );
 
     const extensionPath = Extension.getInstance().extensionPath;
-    const exportStyles = await readFile(Uri.joinPath(Uri.parse(extensionPath), "assets", "styles", "export.css"));
-    const css = await PdfExportService.updateColorsInCss(exportStyles);
+    const exportStyles = await readFile(Uri.joinPath(Uri.parse(extensionPath), "assets", "styles", "print.css"));
+    const css = await PdfExportService.insertCssVariables(exportStyles);
+
+    const defaultTheme = await readFile(
+      Uri.joinPath(Uri.parse(extensionPath), "assets", "styles", "themes", "default.css")
+    );
+
+    const minimalTheme = await readFile(
+      Uri.joinPath(Uri.parse(extensionPath), "assets", "styles", "themes", "minimal.css")
+    );
+
+    const monomiTheme = await readFile(
+      Uri.joinPath(Uri.parse(extensionPath), "assets", "styles", "themes", "monomi.css")
+    );
+
+    const unnamedTheme = await readFile(
+      Uri.joinPath(Uri.parse(extensionPath), "assets", "styles", "themes", "unnamed.css")
+    );
 
     // Create the HTML document with all slides
     let html = `
@@ -193,6 +217,7 @@ export class PdfExportService {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Demo Time Slides</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
   <style type="text/tailwindcss">
   ${css}
   </style>
@@ -201,15 +226,67 @@ export class PdfExportService {
     `;
 
     // Add each slide as a div
-    slideContents
-      .filter((slide) => slide !== undefined)
-      .forEach((slide, index) => {
-        if (slide) {
-          html += `<div class="slide ${slide.theme.toLowerCase()}" id="slide-${index + 1}">
-  ${slide.html}
-</div>`;
+    const allSlides = slideContents.filter((slide) => slide !== undefined);
+
+    let index = 0;
+    for (const slide of allSlides) {
+      if (slide) {
+        const css = await PdfExportService.getCustomTheme(slide.customTheme);
+        const slideBg =
+          slide.image && slide.layout !== SlideLayout.ImageLeft && slide.layout !== SlideLayout.ImageRight
+            ? `background-image: url(${slide.image});`
+            : ``;
+
+        html += `
+
+<div class="w-full h-full flex items-center justify-center" id="slide-${index + 1}">
+${
+  slide.theme === SlideTheme.default
+    ? `<style type="text/tailwindcss">#slide-${index + 1} { ${defaultTheme} }</style>`
+    : ``
+}
+${
+  slide.theme === SlideTheme.minimal
+    ? `<style type="text/tailwindcss">#slide-${index + 1} { ${minimalTheme} }</style>`
+    : ``
+}
+${
+  slide.theme === SlideTheme.monomi
+    ? `<style type="text/tailwindcss">#slide-${index + 1} { ${monomiTheme} }</style>`
+    : ``
+}
+${
+  slide.theme === SlideTheme.unnamed
+    ? `<style type="text/tailwindcss">#slide-${index + 1} { ${unnamedTheme} }</style>`
+    : ``
+}
+${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` : ``}
+  <div class="slide ${slide.theme.toLowerCase()}" date-theme="${slide.theme.toLowerCase()}" data-layout="${slide.layout.toLowerCase()}" >
+    <div class="slide__container">
+      <div class="slide__layout ${slide.layout.toLowerCase()}" style="${slideBg}">
+        ${
+          slide.layout === SlideLayout.ImageLeft
+            ? `<div class="slide__image_left" style="background-image: url(${slide.image});"></div>`
+            : ``
         }
-      });
+        
+        <div class="slide__content">
+          <div class="slide__content__inner">${slide.html}</div>
+        </div>
+      
+        ${
+          slide.layout === SlideLayout.ImageRight
+            ? `<div class="slide__image_right" style="background-image: url(${slide.image});"></div>`
+            : ``
+        }
+      </div>
+    </div>
+  </div>
+</div>`;
+      }
+
+      index++;
+    }
 
     html += `
       </body>
@@ -244,7 +321,32 @@ export class PdfExportService {
     return pdfPath;
   }
 
-  private static async updateColorsInCss(css: string): Promise<string> {
+  private static async getCustomTheme(themePath: string): Promise<string | undefined> {
+    if (!themePath) {
+      return undefined;
+    }
+
+    if (themePath.startsWith("https://")) {
+      const response = await fetch(themePath);
+      if (!response.ok) {
+        Notifications.error(`Error fetching theme from URL: ${themePath}`);
+        return undefined;
+      }
+
+      const css = await response.text();
+      return css;
+    }
+
+    const uri = Uri.joinPath(PdfExportService.workspaceFolder?.uri as Uri, themePath);
+    const fileContent = await readFile(uri);
+    if (!fileContent) {
+      Notifications.error(`Error reading theme file: ${themePath}`);
+      return undefined;
+    }
+    return fileContent;
+  }
+
+  private static async insertCssVariables(css: string = ""): Promise<string> {
     const theme = await getTheme(undefined);
     if (!theme) {
       return css;

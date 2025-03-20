@@ -21,7 +21,6 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const { content, crntFilePath, getFileContents } = useFileContents();
   const [theme, setTheme] = React.useState<string | undefined>(undefined);
   const [layout, setLayout] = React.useState<string | undefined>(undefined);
-  const [customTheme, setCustomTheme] = React.useState<string | undefined>(undefined);
   const [bgStyles, setBgStyles] = React.useState<any | null>(null);
   const [showControls, setShowControls] = React.useState(false);
   const ref = React.useRef<HTMLDivElement>(null);
@@ -41,16 +40,6 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     }
   };
 
-  const slideClasses = React.useMemo(() => {
-    if (!layout) {
-      return '';
-    }
-
-    if (layout === SlideLayout.ImageLeft || layout === SlideLayout.ImageRight) {
-      return 'grid grid-cols-2 w-full h-full auto-rows-fr';
-    }
-  }, [layout]);
-
   const getBgStyles = React.useCallback(() => {
     if (!layout || layout === SlideLayout.ImageLeft || layout === SlideLayout.ImageRight) {
       return undefined;
@@ -62,24 +51,6 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const handleMouseMove = React.useCallback(() => {
     resetCursorTimeout();
   }, [resetCursorTimeout]);
-
-  const updateCustomThemePath = React.useCallback((customThemePath: string) => {
-    if (!customThemePath) {
-      setCustomTheme(undefined);
-      return;
-    }
-
-    if (customThemePath.startsWith(`https://`)) {
-      setCustomTheme(customThemePath);
-    } else {
-      messageHandler.request<string>(WebViewMessages.toVscode.parseFileUri, customThemePath).then((customThemeUri) => {
-        setCustomTheme(customThemeUri);
-        console.log('updateCustomThemePath', customThemeUri);
-      }).catch(() => {
-        setCustomTheme(undefined);
-      });
-    }
-  }, []);
 
   React.useEffect(() => {
     getFileContents(fileUri);
@@ -93,11 +64,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     };
   }, []);
 
-  console.log('customTheme', customTheme);
-
   return (
     <>
-      {customTheme && <link href={customTheme} rel="stylesheet" />}
 
       <div
         key={crntFilePath}
@@ -113,7 +81,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           style={{ transform: 'translate(-50%, -50%) scale(var(--demotime-scale, 1))' }}>
           <div
             ref={slideRef}
-            className={`slide__layout ${slideClasses || ""} ${layout || "default"}`}
+            className={`slide__layout ${layout || "default"}`}
             style={getBgStyles()}>
             {
               layout === SlideLayout.ImageLeft && (
@@ -130,7 +98,6 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
                       vsCodeTheme={vsCodeTheme}
                       webviewUrl={webviewUrl}
                       updateTheme={setTheme}
-                      updateCustomTheme={(customTheme) => updateCustomThemePath(customTheme)}
                       updateLayout={setLayout}
                       updateBgStyles={setBgStyles}
                     />

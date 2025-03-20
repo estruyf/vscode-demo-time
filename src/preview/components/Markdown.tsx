@@ -2,6 +2,9 @@ import * as React from 'react';
 import { useRemark } from '../hooks/useRemark';
 import { transformImageUrl, twoColumnFormatting } from '../utils';
 import rehypePrettyCode from 'rehype-pretty-code';
+import { usePrevious } from '../hooks/usePrevious';
+import { messageHandler } from '@estruyf/vscode/dist/client/webview';
+import { WebViewMessages } from '../../constants';
 
 export interface IMarkdownProps {
   content?: string;
@@ -10,7 +13,6 @@ export interface IMarkdownProps {
   updateTheme: (theme: string) => void;
   updateLayout: (layout: string) => void;
   updateBgStyles: (styles: any) => void;
-  updateCustomTheme: (theme: string) => void;
 }
 
 export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
@@ -19,9 +21,11 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   webviewUrl,
   updateTheme,
   updateLayout,
-  updateBgStyles,
-  updateCustomTheme
+  updateBgStyles
 }: React.PropsWithChildren<IMarkdownProps>) => {
+  const prevContent = usePrevious(content);
+  const [customTheme, setCustomTheme] = React.useState<string | undefined>(undefined);
+
   const {
     markdown,
     setMarkdown,
@@ -44,10 +48,29 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     }
   });
 
+
+
+  const updateCustomThemePath = React.useCallback((customThemePath: string) => {
+    if (!customThemePath) {
+      setCustomTheme(undefined);
+      return;
+    }
+
+    if (customThemePath.startsWith(`https://`)) {
+      setCustomTheme(customThemePath);
+    } else {
+      messageHandler.request<string>(WebViewMessages.toVscode.parseFileUri, customThemePath).then((customThemeUri) => {
+        setCustomTheme(customThemeUri);
+      }).catch(() => {
+        setCustomTheme(undefined);
+      });
+    }
+  }, []);
+
   React.useEffect(() => {
     updateTheme(matter?.theme || "default");
     updateLayout(matter?.layout || "default");
-    updateCustomTheme(matter?.customTheme || undefined);
+    updateCustomThemePath(matter?.customTheme || undefined);
 
     if (matter?.image) {
       const img = transformImageUrl(webviewUrl || "", matter?.image);
@@ -61,10 +84,10 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     } else {
       updateBgStyles(undefined);
     }
-  }, [matter, updateTheme, updateLayout, updateCustomTheme]);
+  }, [matter, updateTheme, updateLayout, updateCustomThemePath, updateBgStyles, webviewUrl]);
 
   React.useEffect(() => {
-    if (content) {
+    if (content && content !== prevContent) {
       // Passing the theme here as it could be that the theme has been updated
       setMarkdown(twoColumnFormatting(content), [[rehypePrettyCode, { theme: vsCodeTheme ? vsCodeTheme : {} }]]);
     }
@@ -72,6 +95,8 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
 
   return (
     <>
+      {customTheme && <link href={customTheme} rel="stylesheet" />}
+
       {markdown}
     </>
   );

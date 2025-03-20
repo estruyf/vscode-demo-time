@@ -57,3 +57,9 @@ pre code {
 .fade-in {
   animation: fadeIn 300ms ease-in-out;
 }
+
+/* Layouts */
+.image-left,
+.image-right {
+  @apply grid grid-cols-2 w-full h-full auto-rows-fr;
+}
