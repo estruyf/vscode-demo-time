@@ -1,6 +1,6 @@
 # Change Log
 
-## [0.0.87] - 2025-03-xx
+## [0.0.87] - 2025-03-23
 
 - [#74](https://github.com/estruyf/vscode-demo-time/issues/74): Support for custom slide layouts with the `customLayout` property
 - [#75](https://github.com/estruyf/vscode-demo-time/issues/75): Provide a filename for the PDF export
