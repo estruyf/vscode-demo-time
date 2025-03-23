@@ -3,7 +3,7 @@
 @import "tailwindcss/utilities";
 
 :root {
-  --demotime-transition: 0.5s;
+  --demotime-transition-duration: 0.5s;
 }
 
 html,
@@ -141,39 +141,39 @@ pre code {
 }
 
 .fadeIn {
-  animation: fadeIn var(--demotime-transition) ease-in-out;
+  animation: fadeIn var(--demotime-transition-duration) ease-in-out;
 }
 
 .slideLeft {
-  animation: slideLeft var(--demotime-transition) ease-in-out;
+  animation: slideLeft var(--demotime-transition-duration) ease-in-out;
 }
 
 .slideRight {
-  animation: slideRight var(--demotime-transition) ease-in-out;
+  animation: slideRight var(--demotime-transition-duration) ease-in-out;
 }
 
 .slideUp {
-  animation: slideUp var(--demotime-transition) ease-in-out;
+  animation: slideUp var(--demotime-transition-duration) ease-in-out;
 }
 
 .slideDown {
-  animation: slideDown var(--demotime-transition) ease-in-out;
+  animation: slideDown var(--demotime-transition-duration) ease-in-out;
 }
 
 .zoomIn {
-  animation: zoomIn var(--demotime-transition) ease-in-out;
+  animation: zoomIn var(--demotime-transition-duration) ease-in-out;
 }
 
 .zoomOut {
-  animation: zoomOut var(--demotime-transition) ease-in-out;
+  animation: zoomOut var(--demotime-transition-duration) ease-in-out;
 }
 
 .rotateIn {
-  animation: rotateIn var(--demotime-transition) ease-in-out;
+  animation: rotateIn var(--demotime-transition-duration) ease-in-out;
 }
 
 .rotateOut {
-  animation: rotateOut var(--demotime-transition) ease-in-out;
+  animation: rotateOut var(--demotime-transition-duration) ease-in-out;
 }
 
 /* Layouts */
