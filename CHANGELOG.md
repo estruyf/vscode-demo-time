@@ -2,8 +2,9 @@
 
 ## [0.0.87] - 2025-03-xx
 
-- [#74](https://github.com/estruyf/vscode-demo-time/issues/74): Support for custom slide layouts
+- [#74](https://github.com/estruyf/vscode-demo-time/issues/74): Support for custom slide layouts with the `customLayout` property
 - [#75](https://github.com/estruyf/vscode-demo-time/issues/75): Provide a filename for the PDF export
+- [#76](https://github.com/estruyf/vscode-demo-time/issues/76): Added slide transition support with the `transition` property
 
 ## [0.0.86] - 2025-03-20
 

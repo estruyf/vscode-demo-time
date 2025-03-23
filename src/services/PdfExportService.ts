@@ -53,22 +53,32 @@ export class PdfExportService {
           const page = await context.newPage();
 
           // Get all demo files
-          const demoFiles = await FileProvider.getFiles();
+          let demoFiles = await FileProvider.getFiles();
           if (!demoFiles) {
             Notifications.error("No demo files found.");
             return;
           }
 
+          // Sort the demo files by their paths
+          demoFiles = Object.keys(demoFiles)
+            .sort()
+            .reduce((sortedFiles, key) => {
+              if (demoFiles) {
+                sortedFiles[key] = demoFiles[key];
+              }
+              return sortedFiles;
+            }, {} as typeof demoFiles);
+
           // Get all slide actions
           const slideActions: Step[] = [];
           for (const demoFile of Object.values(demoFiles)) {
-            demoFile.demos.forEach((demo) => {
-              demo.steps.forEach((step) => {
+            for (const demo of demoFile.demos) {
+              for (const step of demo.steps) {
                 if (step.action === Action.OpenSlide && step.path) {
                   slideActions.push(step);
                 }
-              });
-            });
+              }
+            }
           }
 
           // Retrieving slide contents

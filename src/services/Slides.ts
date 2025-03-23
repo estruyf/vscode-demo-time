@@ -1,7 +1,7 @@
 import { commands, CompletionItem, CompletionItemKind, Hover, languages, Uri, window } from "vscode";
 import { Action, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
-import { COMMAND, Config, General, SlideLayout, SlideTheme } from "../constants";
+import { COMMAND, Config, General, SlideLayout, SlideTheme, SlideTransition } from "../constants";
 import {
   addStepsToDemo,
   fileExists,
@@ -192,6 +192,19 @@ layout: ${layout.toLowerCase()}
                 return new Hover(
                   "Specifies the image URL or path for the slide. Provide a relative path to the image file."
                 );
+              } else if (line.startsWith("customTheme:")) {
+                return new Hover(
+                  "Specifies a custom theme for the slide. Provide a relative path or URL to a CSS file."
+                );
+              } else if (line.startsWith("customLayout:")) {
+                return new Hover(
+                  "Specifies a custom layout for the slide. Provide a relative path to the Handlebars template."
+                );
+              } else if (line.startsWith("transition:")) {
+                const transitions = Object.values(SlideTransition)
+                  .map((transition) => `- \`${transition}\``)
+                  .join("\n");
+                return new Hover(`Specifies the transition for the slide. Available options:\n${transitions}`);
               }
             }
           }
@@ -250,6 +263,20 @@ layout: ${layout.toLowerCase()}
                     },
                     CompletionItemKind.Property
                   ),
+                  new CompletionItem(
+                    {
+                      label: "customLayout",
+                      description: "Relative path to the Handlebars template",
+                    },
+                    CompletionItemKind.Property
+                  ),
+                  new CompletionItem(
+                    {
+                      label: "transition",
+                      description: "Transition for the slide",
+                    },
+                    CompletionItemKind.Property
+                  ),
                 ];
               } else if (linePrefix.startsWith("theme:")) {
                 return Object.values(SlideTheme).map((theme) => {
@@ -258,6 +285,10 @@ layout: ${layout.toLowerCase()}
               } else if (linePrefix.startsWith("layout:")) {
                 return Object.values(SlideLayout).map((layout) => {
                   return new CompletionItem(layout, CompletionItemKind.EnumMember);
+                });
+              } else if (linePrefix.startsWith("transition:")) {
+                return Object.values(SlideTransition).map((transition) => {
+                  return new CompletionItem(transition, CompletionItemKind.EnumMember);
                 });
               }
             }

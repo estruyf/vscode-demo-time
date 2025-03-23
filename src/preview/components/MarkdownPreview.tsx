@@ -70,7 +70,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       <div
         key={crntFilePath}
         ref={ref}
-        className={`slide fade-in ${theme || "default"} relative w-full h-full overflow-hidden`}
+        className={`slide ${theme || "default"} relative w-full h-full overflow-hidden`}
         onMouseEnter={() => setShowControls(true)}
         onMouseLeave={() => setShowControls(false)}
         onMouseMove={handleMouseMove}

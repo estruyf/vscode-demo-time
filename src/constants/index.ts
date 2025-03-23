@@ -4,5 +4,6 @@ export * from "./ContextKeys";
 export * from "./General";
 export * from "./SlideLayout";
 export * from "./SlideTheme";
+export * from "./SlideTransition";
 export * from "./StateKeys";
 export * from "./WebViewMessages";

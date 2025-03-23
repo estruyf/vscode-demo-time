@@ -2,6 +2,10 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+:root {
+  --demotime-transition: 0.5s;
+}
+
 html,
 body,
 #root {
@@ -46,6 +50,7 @@ pre code {
   }
 }
 
+/* Transitions */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -55,8 +60,120 @@ pre code {
   }
 }
 
-.fade-in {
-  animation: fadeIn 300ms ease-in-out;
+@keyframes slideLeft {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideRight {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes zoomOut {
+  from {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes rotateIn {
+  from {
+    transform: rotate(-180deg);
+    opacity: 0;
+  }
+  to {
+    transform: rotate(0);
+    opacity: 1;
+  }
+}
+
+@keyframes rotateOut {
+  from {
+    transform: rotate(180deg);
+    opacity: 0;
+  }
+  to {
+    transform: rotate(0);
+    opacity: 1;
+  }
+}
+
+.fadeIn {
+  animation: fadeIn var(--demotime-transition) ease-in-out;
+}
+
+.slideLeft {
+  animation: slideLeft var(--demotime-transition) ease-in-out;
+}
+
+.slideRight {
+  animation: slideRight var(--demotime-transition) ease-in-out;
+}
+
+.slideUp {
+  animation: slideUp var(--demotime-transition) ease-in-out;
+}
+
+.slideDown {
+  animation: slideDown var(--demotime-transition) ease-in-out;
+}
+
+.zoomIn {
+  animation: zoomIn var(--demotime-transition) ease-in-out;
+}
+
+.zoomOut {
+  animation: zoomOut var(--demotime-transition) ease-in-out;
+}
+
+.rotateIn {
+  animation: rotateIn var(--demotime-transition) ease-in-out;
+}
+
+.rotateOut {
+  animation: rotateOut var(--demotime-transition) ease-in-out;
 }
 
 /* Layouts */

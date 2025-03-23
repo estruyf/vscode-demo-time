@@ -4,9 +4,10 @@ import { transformImageUrl, twoColumnFormatting } from '../utils';
 import rehypePrettyCode from 'rehype-pretty-code';
 import { usePrevious } from '../hooks/usePrevious';
 import { messageHandler } from '@estruyf/vscode/dist/client/webview';
-import { WebViewMessages } from '../../constants';
+import { SlideTransition, WebViewMessages } from '../../constants';
 import { renderToString } from 'react-dom/server';
 import { convertTemplateToHtml } from '../../utils/convertTemplateToHtml';
+import { SlideMetadata } from '../../models';
 
 export interface IMarkdownProps {
   content?: string;
@@ -29,6 +30,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   const [isReady, setIsReady] = React.useState(false);
   const [customTheme, setCustomTheme] = React.useState<string | undefined>(undefined);
   const [customLayout, setCustomLayout] = React.useState<string | undefined>(undefined);
+  const [transition, setTransition] = React.useState<SlideTransition | undefined>(undefined);
   const [template, setTemplate] = React.useState<string | undefined>(undefined);
 
   const {
@@ -55,7 +57,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
 
   const prevMatter = usePrevious(JSON.stringify(matter));
 
-  const updateCustomLayout = React.useCallback((layout: string, metadata: any) => {
+  const updateCustomLayout = React.useCallback((metadata: SlideMetadata, layout?: string) => {
     if (layout) {
       messageHandler.request<string>(WebViewMessages.toVscode.getFileContents, layout).then(async (templateHtml) => {
         if (templateHtml) {
@@ -78,7 +80,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     }
   }, [content, markdown]);
 
-  const updateCustomThemePath = React.useCallback((customThemePath: string) => {
+  const updateCustomThemePath = React.useCallback((customThemePath?: string) => {
     if (!customThemePath) {
       setCustomTheme(undefined);
       return;
@@ -108,10 +110,11 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     setIsReady(false);
     setCustomLayout(undefined);
     setCustomTheme(undefined);
+    setTransition(matter?.transition || undefined);
     setTemplate(undefined);
 
     const cLayout = matter?.customLayout || undefined;
-    updateCustomLayout(cLayout, matter);
+    updateCustomLayout(matter, cLayout);
 
     updateTheme(matter?.theme || "default");
     updateLayout(cLayout || matter?.layout || "default");
@@ -151,7 +154,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
       <>
         {customTheme && <link href={customTheme} rel="stylesheet" />}
 
-        <div className='slide__content__custom' dangerouslySetInnerHTML={{ __html: template }} />
+        <div className={`slide__content__custom ${transition}`} dangerouslySetInnerHTML={{ __html: template }} />
       </>
     );
   }
@@ -160,7 +163,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     <>
       {customTheme && <link href={customTheme} rel="stylesheet" />}
 
-      <div className='slide__content__inner'>{markdown}</div>
+      <div className={`slide__content__inner ${transition}`}>{markdown}</div>
     </>
   );
 };

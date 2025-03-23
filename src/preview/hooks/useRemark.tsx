@@ -4,6 +4,7 @@ import { type ReactElement, useCallback, useState } from 'react';
 import { type Options as RemarkParseOptions } from 'remark-parse';
 import { type PluggableList } from 'unified';
 import { transformMarkdown } from '../../utils/transformMarkdown';
+import { SlideMetadata } from '../../models';
 
 
 export type UseRemarkOptions = {
@@ -28,12 +29,12 @@ export const useRemark = ({
   markdown: null | ReactElement,
   processMarkdown: (source: string, customPlugins?: PluggableList) => Promise<{
     reactContent: ReactElement | null,
-    metadata: any | null,
+    metadata: SlideMetadata | null,
   }>,
   setMarkdown: (source: string, customPlugins?: PluggableList) => void,
   getMarkdown: (contents: string) => string,
   getFrontMatter: (contents: string) => string,
-  matter: null | any,
+  matter: null | SlideMetadata,
 } => {
   const [reactContent, setReactContent] = useState<null | ReactElement>(null);
   const [metadata, setMetadata] = useState<null | any>(null);
@@ -51,7 +52,7 @@ export const useRemark = ({
    */
   const processMarkdown = async (source: string, customPlugins?: PluggableList): Promise<{
     reactContent: ReactElement | null,
-    metadata: any | null,
+    metadata: SlideMetadata | null,
   }> => {
     try {
       const vfile = await transformMarkdown(source, remarkParseOptions, remarRehypeOptions, remarkPlugins, [...rehypePlugins, ...(customPlugins || [])], rehypeReactOptions);
