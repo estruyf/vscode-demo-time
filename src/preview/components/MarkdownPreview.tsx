@@ -92,16 +92,14 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             {
               content && vsCodeTheme ? (
                 <div className='slide__content'>
-                  <div className='slide__content__inner'>
-                    <Markdown
-                      content={content}
-                      vsCodeTheme={vsCodeTheme}
-                      webviewUrl={webviewUrl}
-                      updateTheme={setTheme}
-                      updateLayout={setLayout}
-                      updateBgStyles={setBgStyles}
-                    />
-                  </div>
+                  <Markdown
+                    content={content}
+                    vsCodeTheme={vsCodeTheme}
+                    webviewUrl={webviewUrl}
+                    updateTheme={setTheme}
+                    updateLayout={setLayout}
+                    updateBgStyles={setBgStyles}
+                  />
                 </div>
               ) : null
             }

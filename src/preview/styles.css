@@ -38,10 +38,11 @@ pre code {
 }
 
 .slide__content {
-  @apply h-full w-full text-base;
+  @apply h-full w-full text-base overflow-hidden;
 
+  .slide__content__custom,
   .slide__content__inner {
-    @apply h-full w-full;
+    @apply relative h-full w-full;
   }
 }
 

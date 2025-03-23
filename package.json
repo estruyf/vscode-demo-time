@@ -530,6 +530,12 @@
       {
         "command": "demo-time.toggleSelectionHighlight",
         "key": "alt+h"
+      },
+      {
+        "command": "workbench.action.webview.reloadWebviewAction",
+        "key": "ctrl+r",
+        "mac": "cmd+r",
+        "when": "activeWebviewPanelId == demoTime:preview"
       }
     ]
   },
@@ -573,6 +579,7 @@
     "eslint": "^8.52.0",
     "express": "^4.21.2",
     "glob": "^10.3.10",
+    "handlebars": "^4.7.8",
     "jsonc-parser": "^3.3.1",
     "mlly": "^1.7.4",
     "mocha": "^10.2.0",

@@ -18,6 +18,7 @@ export const WebViewMessages = {
     updateTitle: "updateTitle",
     getPreviousEnabled: "getPreviousEnabled",
     openFile: "openFile",
+    getFileContents: "getFileContents",
   },
   toWebview: {
     updateClock: "updateClock",

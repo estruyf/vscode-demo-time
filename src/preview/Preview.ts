@@ -2,7 +2,7 @@ import { Uri, Webview, WebviewPanel, window, ViewColumn, commands } from "vscode
 import { Extension } from "../services/Extension";
 import { COMMAND, Config, WebViewMessages } from "../constants";
 import { MessageHandlerData } from "@estruyf/vscode";
-import { getTheme, getWebviewUrl, readFile, togglePresentationView } from "../utils";
+import { getAbsolutePath, getTheme, getWebviewUrl, readFile, togglePresentationView } from "../utils";
 import { DemoRunner } from "../services";
 
 export class Preview {
@@ -126,10 +126,13 @@ export class Preview {
     } else if (command === WebViewMessages.toVscode.getPresentationStarted) {
       const isPresentationMode = DemoRunner.getIsPresentationMode();
       Preview.postRequestMessage(command, requestId, isPresentationMode);
-    } else if (command === WebViewMessages.toVscode.openFile && payload) {
-      const fileUri = Uri.parse(payload);
-      const filePath = Uri.file(fileUri.path);
-      await window.showTextDocument(filePath);
+    } else if (command === WebViewMessages.toVscode.getFileContents && payload) {
+      try {
+        const fileContents = await readFile(getAbsolutePath(payload));
+        Preview.postRequestMessage(command, requestId, fileContents);
+      } catch (e) {
+        Preview.postRequestMessage(command, requestId, null);
+      }
     }
   }
 
@@ -159,9 +162,10 @@ export class Preview {
     let scriptUrl = [];
 
     const extension = Extension.getInstance();
+    const extPath = Uri.file(extension.extensionPath);
+
     if (extension.isProductionMode) {
       // Get the manifest file from the dist folder
-      const extPath = Uri.file(extension.extensionPath);
       const manifestPath = Uri.joinPath(extPath, "out", "preview", "manifest.json");
       const manifest = await readFile(manifestPath);
       const manifestJson = JSON.parse(manifest);
@@ -174,6 +178,8 @@ export class Preview {
     } else {
       scriptUrl.push(`${localServerUrl}/${jsFile}`);
     }
+
+    scriptUrl.push(webview.asWebviewUri(Uri.joinPath(extPath, "assets", "slides", "tailwind.js")).toString());
 
     const webviewUrl = getWebviewUrl(webview, "");
 

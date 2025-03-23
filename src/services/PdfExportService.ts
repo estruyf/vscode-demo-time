@@ -1,22 +1,16 @@
-import remarkParse from "remark-parse";
 import { SlideTheme } from "../constants/SlideTheme";
-import remarkRehype from "remark-rehype";
-import remarkFrontmatter from "remark-frontmatter";
-import rehypeRaw from "rehype-raw";
 import rehypePrettyCode from "rehype-pretty-code";
-import rehypeStringify from "rehype-stringify";
-import { unified } from "unified";
-import { matter } from "vfile-matter";
 import { resolve } from "mlly";
 import { Notifications } from "./Notifications";
 import { Action, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import { FileProvider } from ".";
-import { getTheme, readFile, writeFile } from "../utils";
-import { commands, Uri, workspace, WorkspaceFolder, window, ProgressLocation } from "vscode";
+import { convertTemplateToHtml, getTheme, readFile, transformMarkdown, writeFile } from "../utils";
+import { commands, Uri, workspace, WorkspaceFolder, window, ProgressLocation, TextDocument, env } from "vscode";
 import { Page } from "playwright-chromium";
 import { COMMAND, General, SlideLayout } from "../constants";
 import { twoColumnFormatting } from "../preview/utils";
+import { renderToString } from "react-dom/server";
 
 export class PdfExportService {
   private static workspaceFolder: WorkspaceFolder | undefined;
@@ -79,15 +73,37 @@ export class PdfExportService {
 
           // Retrieving slide contents
           progress.report({ message: "Retrieving slide contents..." });
-          const slideContents = await Promise.all(
-            slideActions.map(async (slideAction) => {
-              const slideUri = Uri.joinPath(PdfExportService.workspaceFolder?.uri as Uri, slideAction.path as string);
-              const content = await readFile(slideUri);
-              return {
-                content: twoColumnFormatting(content),
-              };
-            })
+          const slideContents = [];
+          for (const slideAction of slideActions) {
+            const slideUri = Uri.joinPath(PdfExportService.workspaceFolder?.uri as Uri, slideAction.path as string);
+            const content = await readFile(slideUri);
+            slideContents.push({
+              content: twoColumnFormatting(content),
+            });
+          }
+
+          if (slideContents.length === 0) {
+            Notifications.error("No slides found.");
+            return;
+          }
+
+          let pdfPath: Uri | undefined = Uri.joinPath(
+            PdfExportService.workspaceFolder?.uri as Uri,
+            General.pdfExportFile
           );
+          pdfPath = await window.showSaveDialog({
+            defaultUri: pdfPath,
+            filters: {
+              pdf: ["pdf"],
+            },
+            saveLabel: "Export",
+            title: "Export slides to PDF",
+          });
+
+          if (!pdfPath) {
+            Notifications.info("Export cancelled.");
+            return;
+          }
 
           // Generate HTML for all slides
           progress.report({ message: "Generating HTML for slides..." });
@@ -97,13 +113,16 @@ export class PdfExportService {
 
           // Convert HTML to PDF
           progress.report({ message: "Converting HTML to PDF..." });
-          await PdfExportService.generatePdfFromHtml(page, tempHtmlOutputPath.fsPath);
+          await PdfExportService.generatePdfFromHtml(page, tempHtmlOutputPath.fsPath, pdfPath.fsPath);
 
           // Clean up
           await page.close();
           await context.close();
           await browser.close();
           await workspace.fs.delete(tempHtmlOutputPath);
+
+          // Open the generated PDF
+          await env.openExternal(pdfPath);
           Notifications.info("Slides exported to PDF successfully.");
         }
       );
@@ -148,45 +167,56 @@ export class PdfExportService {
     const theme = await getTheme(undefined);
 
     // Generate slide content HTML
-    const slideContents = await Promise.all(
-      slides.map(async (slide) => {
-        const processor = unified()
-          .use(remarkParse)
-          .use(remarkRehype, {
-            allowDangerousHtml: true,
-          })
-          .use(rehypeRaw)
-          .use(rehypePrettyCode, { theme: theme ? theme : {} })
-          .use(remarkFrontmatter)
-          .use(rehypeStringify)
-          .use(() => (_, file) => {
-            try {
-              matter(file);
-            } catch (err) {
-              // Catch error and ignore it
-            }
+    const slideContents = [];
+
+    let idx = 0;
+    for (const slide of slides) {
+      try {
+        const vfile = await transformMarkdown(
+          slide.content,
+          undefined,
+          undefined,
+          undefined,
+          [[rehypePrettyCode, { theme: theme ? theme : {} }]],
+          undefined
+        );
+        let { metadata, reactContent } = vfile;
+
+        const slideTheme = metadata?.theme || SlideTheme.default;
+        const layout = metadata?.customLayout ? metadata?.customLayout : metadata?.layout || SlideLayout.Default;
+        const image = metadata?.image || undefined;
+        const customTheme = metadata?.customTheme || undefined;
+        const customLayout = metadata?.customLayout || undefined;
+
+        let html = renderToString(reactContent);
+        if (customLayout) {
+          const customLayoutPath = Uri.joinPath(PdfExportService.workspaceFolder?.uri as Uri, customLayout);
+          const customLayoutContent = await readFile(customLayoutPath);
+
+          html = await convertTemplateToHtml(customLayoutContent, {
+            metadata,
+            content: html,
           });
 
-        try {
-          const vfile = await processor.process(slide.content);
-          const theme = (vfile.data?.matter as any)?.theme || SlideTheme.default;
-          const layout = (vfile.data?.matter as any)?.layout || SlideLayout.Default;
-          const image = (vfile.data?.matter as any)?.image || undefined;
-          const customTheme = (vfile.data?.matter as any)?.customTheme || undefined;
-
-          return {
-            html: vfile,
-            theme,
-            layout,
-            image,
-            customTheme,
-          };
-        } catch (error) {
-          console.error("Error processing slide content:", (error as Error).message);
-          return;
+          // Isolate the styles for the custom layout to the slide
+          html = html.replace(/<style>/g, `<style type="text/tailwindcss">#slide-${idx + 1} {`);
+          html = html.replace(/<\/style>/g, "}</style>");
         }
-      })
-    );
+
+        slideContents.push({
+          html,
+          theme: slideTheme,
+          layout,
+          image,
+          customTheme,
+          customLayout,
+        });
+      } catch (error) {
+        console.error("Error processing slide content:", (error as Error).message);
+      }
+
+      idx++;
+    }
 
     const extensionPath = Extension.getInstance().extensionPath;
     const exportStyles = await readFile(Uri.joinPath(Uri.parse(extensionPath), "assets", "styles", "print.css"));
@@ -208,6 +238,9 @@ export class PdfExportService {
       Uri.joinPath(Uri.parse(extensionPath), "assets", "styles", "themes", "unnamed.css")
     );
 
+    // Get workspace title
+    const workspaceTitle = workspace.name || "Demo Time";
+
     // Create the HTML document with all slides
     let html = `
 <!DOCTYPE html>
@@ -215,8 +248,8 @@ export class PdfExportService {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Demo Time Slides</title>
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <title>${workspaceTitle}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 
   <style type="text/tailwindcss">
   ${css}
@@ -271,7 +304,9 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
         }
         
         <div class="slide__content">
-          <div class="slide__content__inner">${slide.html}</div>
+          <div class="${slide.customLayout ? `slide__content__custom` : `slide__content__inner`}">
+            ${slide.html}
+          </div>
         </div>
       
         ${
@@ -296,14 +331,23 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
     return html;
   }
 
-  private static async generatePdfFromHtml(page: Page, htmlPath: string): Promise<string> {
+  /**
+   * Generates a PDF file from an HTML file using a Puppeteer page instance.
+   *
+   * @param page - The Puppeteer `Page` instance used to load the HTML and generate the PDF.
+   * @param htmlPath - The file path to the HTML file to be converted into a PDF.
+   * @param pdfPath - The file path where the generated PDF will be saved.
+   * @returns A promise that resolves to the file path of the generated PDF.
+   *
+   * @throws Will throw an error if the HTML file cannot be loaded or the PDF generation fails.
+   */
+  private static async generatePdfFromHtml(page: Page, htmlPath: string, pdfPath: string): Promise<string> {
     // Load the HTML file
     await page.goto(`file://${htmlPath}`, { waitUntil: "networkidle" });
     await page.waitForLoadState("networkidle");
     await page.emulateMedia({ media: "print" });
 
     // Generate the PDF
-    const pdfPath = Uri.joinPath(PdfExportService.workspaceFolder?.uri as Uri, General.pdfExportFile).fsPath;
     await page.pdf({
       path: pdfPath,
       width: "960px",
@@ -321,6 +365,17 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
     return pdfPath;
   }
 
+  /**
+   * Retrieves a custom theme as a string, either from a URL or a local file path.
+   *
+   * @param themePath - The path or URL to the custom theme. If the path is empty or undefined, the method returns `undefined`.
+   * @returns A promise that resolves to the theme's CSS content as a string, or `undefined` if the theme could not be retrieved.
+   *
+   * @remarks
+   * - If the `themePath` starts with "https://", the method fetches the theme from the URL.
+   * - If the `themePath` is a local file path, it reads the file content from the workspace folder.
+   * - If an error occurs during fetching or reading, an error notification is displayed, and the method returns `undefined`.
+   */
   private static async getCustomTheme(themePath: string): Promise<string | undefined> {
     if (!themePath) {
       return undefined;
@@ -346,6 +401,16 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
     return fileContent;
   }
 
+  /**
+   * Inserts CSS variables based on the current VS Code theme and editor settings into the provided CSS string.
+   *
+   * This method retrieves the active theme's color variables and the editor's font size and font family settings,
+   * then constructs a `:root` CSS block containing these variables. The generated CSS is prepended to the provided
+   * CSS string.
+   *
+   * @param css - The existing CSS string to which the theme and editor variables will be added. Defaults to an empty string.
+   * @returns A promise that resolves to the updated CSS string with the inserted variables.
+   */
   private static async insertCssVariables(css: string = ""): Promise<string> {
     const theme = await getTheme(undefined);
     if (!theme) {

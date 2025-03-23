@@ -1,14 +1,10 @@
 import { type Components } from 'hast-util-to-jsx-runtime';
 import { type Options as RemarkRehypeOptions } from 'mdast-util-to-hast';
 import { type ReactElement, useCallback, useState } from 'react';
-import * as jsxRuntime from 'react/jsx-runtime';
-import rehypeRaw from 'rehype-raw';
-import rehypeReact from 'rehype-react';
-import remarkFrontmatter from 'remark-frontmatter';
-import remarkParse, { type Options as RemarkParseOptions } from 'remark-parse';
-import remarkToRehype from 'remark-rehype';
-import { matter } from 'vfile-matter';
-import { type PluggableList, unified } from 'unified';
+import { type Options as RemarkParseOptions } from 'remark-parse';
+import { type PluggableList } from 'unified';
+import { transformMarkdown } from '../../utils/transformMarkdown';
+
 
 export type UseRemarkOptions = {
   onError?: (err: Error) => void;
@@ -18,7 +14,7 @@ export type UseRemarkOptions = {
   };
   remarkParseOptions?: RemarkParseOptions;
   remarkPlugins?: PluggableList;
-  remarkToRehypeOptions?: RemarkRehypeOptions;
+  remarRehypeOptions?: RemarkRehypeOptions;
 };
 
 export const useRemark = ({
@@ -27,50 +23,72 @@ export const useRemark = ({
   rehypeReactOptions,
   remarkParseOptions,
   remarkPlugins = [],
-  remarkToRehypeOptions,
+  remarRehypeOptions,
 }: UseRemarkOptions = {}): {
   markdown: null | ReactElement,
+  processMarkdown: (source: string, customPlugins?: PluggableList) => Promise<{
+    reactContent: ReactElement | null,
+    metadata: any | null,
+  }>,
   setMarkdown: (source: string, customPlugins?: PluggableList) => void,
+  getMarkdown: (contents: string) => string,
+  getFrontMatter: (contents: string) => string,
   matter: null | any,
 } => {
   const [reactContent, setReactContent] = useState<null | ReactElement>(null);
   const [metadata, setMetadata] = useState<null | any>(null);
 
+  /**
+   * Processes a Markdown string and converts it into a React element along with extracted metadata.
+   *
+   * @param source - The Markdown source string to process.
+   * @param customPlugins - An optional list of custom plugins to extend the processing pipeline.
+   * @returns An object containing:
+   * - `reactContent`: The processed React element representation of the Markdown content.
+   * - `metadata`: Extracted frontmatter metadata from the Markdown file, if available.
+   * 
+   * @throws Will call the `onError` handler if an error occurs during processing.
+   */
+  const processMarkdown = async (source: string, customPlugins?: PluggableList): Promise<{
+    reactContent: ReactElement | null,
+    metadata: any | null,
+  }> => {
+    try {
+      const vfile = await transformMarkdown(source, remarkParseOptions, remarRehypeOptions, remarkPlugins, [...rehypePlugins, ...(customPlugins || [])], rehypeReactOptions);
+      return vfile;
+    } catch (err) {
+      onError(err as Error);
+      return { reactContent: null, metadata: null };
+    }
+  };
+
   const setMarkdownSource = useCallback((source: string, customPlugins?: PluggableList) => {
-    unified()
-      .use(remarkParse, remarkParseOptions)
-      .use(remarkToRehype, {
-        ...remarkToRehypeOptions,
-        allowDangerousHtml: true,
-      })
-      .use(rehypeRaw)
-      .use(remarkPlugins)
-      .use([...rehypePlugins, ...(customPlugins || [])])
-      .use(rehypeReact, {
-        ...rehypeReactOptions,
-        Fragment: jsxRuntime.Fragment,
-        jsx: jsxRuntime.jsx,
-        jsxs: jsxRuntime.jsxs,
-      })
-      .use(remarkFrontmatter)
-      .use(() => (_, file) => {
-        try {
-          matter(file);
-        } catch (err) {
-          // Catch error and ignore it
-        }
-      })
-      .process(source)
-      .then((vfile) => {
-        setReactContent(vfile.result as ReactElement);
-        setMetadata(vfile.data?.matter || {});
-      })
-      .catch(onError);
+    processMarkdown(source, customPlugins).then(({ reactContent, metadata }) => {
+      setReactContent(reactContent);
+      setMetadata(metadata);
+    });
+  }, []);
+
+  const getMarkdown = useCallback((contents: string) => {
+    const frontmatterRegex = /^---[\s\S]*?---\n/;
+    return contents.replace(frontmatterRegex, '');
+  }, []);
+
+  const getFrontMatter = useCallback((contents: string) => {
+    const frontmatterRegex = /^---[\s\S]*?---\n/;
+    const match = contents.match(frontmatterRegex);
+    if (match) {
+      return match[0];
+    }
+    return '';
   }, []);
 
   return {
     markdown: reactContent,
+    processMarkdown: processMarkdown,
     setMarkdown: setMarkdownSource,
+    getMarkdown: getMarkdown,
+    getFrontMatter: getFrontMatter,
     matter: metadata,
   };
 };
