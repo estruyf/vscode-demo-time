@@ -196,6 +196,10 @@ export class DemoRunner {
    * @returns {Promise<void>} A promise that resolves when the demo runner has started.
    */
   private static async start(item: ActionTreeItem | { demoFilePath: string; description: string }): Promise<void> {
+    if (Preview.isListening()) {
+      return;
+    }
+
     const executingFile = await DemoRunner.getExecutedDemoFile();
 
     const demoFile = await DemoRunner.getDemoFile(item);

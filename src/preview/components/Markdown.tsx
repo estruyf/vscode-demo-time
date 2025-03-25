@@ -10,6 +10,7 @@ import { convertTemplateToHtml } from '../../utils/convertTemplateToHtml';
 import { SlideMetadata } from '../../models';
 
 export interface IMarkdownProps {
+  filePath?: string;
   content?: string;
   vsCodeTheme: any;
   webviewUrl: string | null;
@@ -19,6 +20,7 @@ export interface IMarkdownProps {
 }
 
 export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
+  filePath,
   content,
   vsCodeTheme,
   webviewUrl,
@@ -26,6 +28,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   updateLayout,
   updateBgStyles
 }: React.PropsWithChildren<IMarkdownProps>) => {
+  const prevFilePath = usePrevious(filePath);
   const prevContent = usePrevious(content);
   const [isReady, setIsReady] = React.useState(false);
   const [customTheme, setCustomTheme] = React.useState<string | undefined>(undefined);
@@ -154,7 +157,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
       <>
         {customTheme && <link href={customTheme} rel="stylesheet" />}
 
-        <div className={`slide__content__custom ${transition}`} dangerouslySetInnerHTML={{ __html: template }} />
+        <div key={filePath} className={`slide__content__custom ${transition}`} dangerouslySetInnerHTML={{ __html: template }} />
       </>
     );
   }
@@ -163,7 +166,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     <>
       {customTheme && <link href={customTheme} rel="stylesheet" />}
 
-      <div className={`slide__content__inner ${transition}`}>{markdown}</div>
+      <div key={filePath} className={`slide__content__inner ${transition}`}>{markdown}</div>
     </>
   );
 };

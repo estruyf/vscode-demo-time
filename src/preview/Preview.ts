@@ -8,6 +8,7 @@ import { DemoRunner } from "../services";
 export class Preview {
   private static webview: WebviewPanel | null = null;
   private static isDisposed = true;
+  private static hasClickListener = false;
   private static crntFile: string | null = null;
   private static crntCss: string | null = null;
 
@@ -20,6 +21,14 @@ export class Preview {
 
   public static get isOpen(): boolean {
     return !Preview.isDisposed;
+  }
+
+  public static isListening(): boolean {
+    if (!Preview.isOpen) {
+      return false;
+    }
+
+    return Preview.hasClickListener;
   }
 
   public static show(fileUri: string, css?: string) {
@@ -85,6 +94,7 @@ export class Preview {
 
     Preview.webview.onDidDispose(async () => {
       Preview.isDisposed = true;
+      Preview.hasClickListener = false;
     });
 
     Preview.webview.webview.onDidReceiveMessage(Preview.messageListener);
@@ -133,6 +143,8 @@ export class Preview {
       } catch (e) {
         Preview.postRequestMessage(command, requestId, null);
       }
+    } else if (command === WebViewMessages.toVscode.setHasClickListener) {
+      Preview.hasClickListener = !!payload;
     }
   }
 
