@@ -7,7 +7,6 @@ import './themes/default.css';
 import './themes/minimal.css';
 import './themes/unnamed.css';
 import './themes/monomi.css';
-import './webcomponents/Hide';
 import './webcomponents/Show';
 
 declare const acquireVsCodeApi: <T = unknown>() => {

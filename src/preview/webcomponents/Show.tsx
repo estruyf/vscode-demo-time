@@ -3,17 +3,19 @@ import * as React from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import { WebViewMessages } from '../../constants';
 
-export interface IShowProps {
+export interface IClickToHideProps {
   clicks?: number;
   content?: string;
+  invert?: boolean;
 }
 
-export const Show: React.FunctionComponent<React.PropsWithChildren<IShowProps>> = ({
+export const ClickToHide: React.FunctionComponent<React.PropsWithChildren<IClickToHideProps>> = ({
   clicks = 1,
   content = '',
-}: React.PropsWithChildren<IShowProps>) => {
+  invert = false,
+}: React.PropsWithChildren<IClickToHideProps>) => {
   const [, setCount] = React.useState<number>(0);
-  const [visible, setVisible] = React.useState(false);
+  const [visible, setVisible] = React.useState(!!invert);
 
   const handleEvent = React.useCallback((event: KeyboardEvent | MouseEvent) => {
     const isKeyPress = event instanceof KeyboardEvent && event.key === 'ArrowRight';
@@ -24,34 +26,34 @@ export const Show: React.FunctionComponent<React.PropsWithChildren<IShowProps>> 
         const newCount = prevCount + 1;
         if (newCount === clicks) {
           event.preventDefault();
-          setVisible(true);
+          setVisible(invert ? false : true);
         }
 
         if (newCount >= clicks) {
           window.removeEventListener('keydown', handleEvent);
           window.removeEventListener('click', handleEvent);
-          messageHandler.send(WebViewMessages.toVscode.setHasClickListener, false);
+          messageHandler.send(WebViewMessages.toVscode.setHasClickListener, { listening: false });
+        } else {
+          messageHandler.send(WebViewMessages.toVscode.setHasClickListener, { listening: true });
         }
 
         return newCount;
       });
     }
-  }, [clicks]);
+  }, [clicks, invert]);
 
   React.useEffect(() => {
     setCount(0);
-    messageHandler.send(WebViewMessages.toVscode.setHasClickListener, true);
+    messageHandler.send(WebViewMessages.toVscode.setHasClickListener, { listening: true });
     window.addEventListener('keydown', handleEvent);
     window.addEventListener('click', handleEvent);
 
     return () => {
-      messageHandler.send(WebViewMessages.toVscode.setHasClickListener, false);
+      messageHandler.send(WebViewMessages.toVscode.setHasClickListener, { listening: false });
       window.removeEventListener('keydown', handleEvent);
       window.removeEventListener('click', handleEvent);
     };
-  }, [clicks]);
-
-  console.log('Nr of clicks', clicks);
+  }, [clicks, invert]);
 
   if (!content) {
     return null;
@@ -61,10 +63,11 @@ export const Show: React.FunctionComponent<React.PropsWithChildren<IShowProps>> 
 };
 
 
-class ShowWebComponent extends HTMLElement {
+abstract class BaseWebComponent extends HTMLElement {
   private root: ShadowRoot | null = null;
   private rootElm: Root | null = null;
   private rootObserver: MutationObserver | null = null;
+  public invert: boolean = false;
 
   constructor() {
     super();
@@ -106,12 +109,14 @@ class ShowWebComponent extends HTMLElement {
   renderComponent(clicks: string | null | undefined = null) {
     if (this.rootElm) {
       const parsedClicks = clicks ? parseInt(clicks, 10) : undefined;
-      this.rootElm.render(<Show clicks={parsedClicks} content={this.innerHTML}></Show>);
+      this.rootElm.render(
+        <ClickToHide clicks={parsedClicks} content={this.innerHTML} invert={this.invert} />
+      );
     }
   }
 
   disconnectedCallback() {
-    messageHandler.send(WebViewMessages.toVscode.setHasClickListener, false);
+    messageHandler.send(WebViewMessages.toVscode.setHasClickListener, { listening: false });
     if (this.rootElm) {
       this.rootElm.unmount();
     }
@@ -122,4 +127,19 @@ class ShowWebComponent extends HTMLElement {
   }
 }
 
+class ShowWebComponent extends BaseWebComponent {
+  constructor() {
+    super();
+    this.invert = false;
+  }
+}
+
+class HideWebComponent extends BaseWebComponent {
+  constructor() {
+    super();
+    this.invert = true;
+  }
+}
+
 customElements.define('dt-show', ShowWebComponent);
+customElements.define('dt-hide', HideWebComponent);

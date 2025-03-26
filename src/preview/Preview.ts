@@ -101,6 +101,7 @@ export class Preview {
   }
 
   private static async messageListener(message: any) {
+    console.log("Preview message", message);
     const { command, requestId, payload } = message;
 
     if (!command || !Preview.webview?.webview) {
@@ -144,7 +145,7 @@ export class Preview {
         Preview.postRequestMessage(command, requestId, null);
       }
     } else if (command === WebViewMessages.toVscode.setHasClickListener) {
-      Preview.hasClickListener = !!payload;
+      Preview.hasClickListener = payload.listening ?? false;
     }
   }
 
