@@ -129,7 +129,7 @@ export class PdfExportService {
           await page.close();
           await context.close();
           await browser.close();
-          await workspace.fs.delete(tempHtmlOutputPath);
+          // await workspace.fs.delete(tempHtmlOutputPath);
 
           // Open the generated PDF
           await env.openExternal(pdfPath);
@@ -248,9 +248,7 @@ export class PdfExportService {
       Uri.joinPath(Uri.parse(extensionPath), "assets", "styles", "themes", "unnamed.css")
     );
 
-    const webcomponents = await readFile(
-      Uri.joinPath(Uri.parse(extensionPath), "out", "webcomponents", "index.global.js")
-    );
+    const webcomponents = await readFile(Uri.joinPath(Uri.parse(extensionPath), "out", "webcomponents", "index.mjs"));
 
     // Get workspace title
     const workspaceTitle = workspace.name || "Demo Time";
@@ -264,7 +262,7 @@ export class PdfExportService {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${workspaceTitle}</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>${webcomponents}</script>
+  <script type="module">${webcomponents}</script>
 
   <style type="text/tailwindcss">
   ${css}

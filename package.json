@@ -542,7 +542,8 @@
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "npm-run-all --parallel compile:*",
-    "compile:ext": "tsup --minify",
+    "compile:ext": "tsup --minify --clean",
+    "compile:wc": "tsup --minify",
     "compile:wv": "webpack --mode production --config ./webview.config.js",
     "compile:preview": "webpack --mode production --config ./preview.config.js",
     "compile:copy": "node ./scripts/copy-assets.mjs",
