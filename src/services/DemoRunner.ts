@@ -188,6 +188,7 @@ export class DemoRunner {
     PresenterView.postMessage(WebViewMessages.toWebview.updateRunningDemos, resetContent);
     DemoRunner.togglePresentationMode(false);
     DemoPanel.update();
+    Preview.close();
   }
 
   /**

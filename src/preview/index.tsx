@@ -9,6 +9,8 @@ import './themes/unnamed.css';
 import './themes/monomi.css';
 import './webcomponents/Show';
 import './webcomponents/Arrow';
+import './webcomponents/Square';
+import './webcomponents/Circle';
 
 declare const acquireVsCodeApi: <T = unknown>() => {
   getState: () => T;
