@@ -2,7 +2,8 @@
 
 ## [0.0.88] - 2025-03-xx
 
-- [#77](https://github.com/estruyf/vscode-demo-time/issues/77): Trigger the first demo when turning on the presentation mode
+- [#77](https://github.com/estruyf/vscode-demo-time/issues/77): Creating components to show or hide slide content based on clicks
+- [#79](https://github.com/estruyf/vscode-demo-time/issues/79): Trigger the first demo when turning on the presentation mode
 
 ## [0.0.87] - 2025-03-23
 
