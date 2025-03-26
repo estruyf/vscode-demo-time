@@ -13,5 +13,5 @@
 		"esModuleInterop": true,
 		"jsx": "react"
 	},
-	"exclude": ["tsup.config.ts"]
+	"exclude": ["tsup.config.ts", "tsup.wc.config.ts", "node_modules", "out"],
 }

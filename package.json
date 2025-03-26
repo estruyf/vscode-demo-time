@@ -548,6 +548,7 @@
     "compile:copy": "node ./scripts/copy-assets.mjs",
     "watch": "npm-run-all --parallel watch:*",
     "watch:ext": "tsup --watch",
+    "watch:wc": "tsup --watch --config tsup.wc.config.ts",
     "watch:wv": "webpack serve --mode development --config ./webview.config.js",
     "watch:preview": "webpack serve --mode development --config ./preview.config.js",
     "lint": "eslint src --ext ts"

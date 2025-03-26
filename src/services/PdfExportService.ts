@@ -248,6 +248,10 @@ export class PdfExportService {
       Uri.joinPath(Uri.parse(extensionPath), "assets", "styles", "themes", "unnamed.css")
     );
 
+    const webcomponents = await readFile(
+      Uri.joinPath(Uri.parse(extensionPath), "out", "webcomponents", "index.global.js")
+    );
+
     // Get workspace title
     const workspaceTitle = workspace.name || "Demo Time";
 
@@ -260,6 +264,7 @@ export class PdfExportService {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${workspaceTitle}</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>${webcomponents}</script>
 
   <style type="text/tailwindcss">
   ${css}
