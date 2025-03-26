@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.88] - 2025-03-xx
+
+- [#77](https://github.com/estruyf/vscode-demo-time/issues/77): Trigger the first demo when turning on the presentation mode
+
 ## [0.0.87] - 2025-03-23
 
 - [#74](https://github.com/estruyf/vscode-demo-time/issues/74): Support for custom slide layouts with the `customLayout` property

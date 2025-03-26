@@ -168,7 +168,7 @@ export class DemoRunner {
     PresenterView.postMessage(WebViewMessages.toWebview.updatePresentationStarted, DemoRunner.isPresentationMode);
     if (DemoRunner.isPresentationMode) {
       DemoPanel.updateMessage("Presentation mode enabled");
-      await DemoRunner.getDemoFile();
+      await DemoRunner.getDemoFile(undefined, true);
       Preview.postMessage(WebViewMessages.toWebview.updateIsInPresentationMode, true);
     } else {
       DemoPanel.updateMessage();
@@ -1191,9 +1191,13 @@ export class DemoRunner {
   /**
    * Retrieves the demo file associated with the given ActionTreeItem.
    * @param item The ActionTreeItem representing the demo file.
+   * @param triggerFirstDemo A boolean indicating whether to trigger the first demo.
    * @returns A Promise that resolves to an object containing the filePath and demo, or undefined if no demo file is found.
    */
-  private static async getDemoFile(item?: ActionTreeItem): Promise<
+  private static async getDemoFile(
+    item?: ActionTreeItem,
+    triggerFirstDemo: boolean = false
+  ): Promise<
     | {
         filePath: string;
         demo: Demos;
@@ -1240,6 +1244,11 @@ export class DemoRunner {
       executingFile.filePath = demoFilePath;
       executingFile.demo = [];
       await DemoRunner.setExecutedDemoFile(executingFile);
+
+      if (triggerFirstDemo) {
+        await commands.executeCommand(COMMAND.start);
+      }
+
       return {
         filePath: demoFilePath,
         demo: demoFiles[demoFilePath],
