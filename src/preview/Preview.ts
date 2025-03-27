@@ -101,7 +101,6 @@ export class Preview {
   }
 
   private static async messageListener(message: any) {
-    console.log("Preview message", message);
     const { command, requestId, payload } = message;
 
     if (!command || !Preview.webview?.webview) {
