@@ -3,4 +3,5 @@ export enum SlideTheme {
   minimal = "minimal",
   monomi = "monomi",
   unnamed = "unnamed",
+  quantum = "quantum",
 }

@@ -2,11 +2,11 @@ import * as React from 'react';
 import { BaseShapeProps } from '../../models';
 import { BaseShapeComponent } from './BaseShapeComponent';
 
-export interface ISquareProps extends BaseShapeProps {
+export interface IRectangleProps extends BaseShapeProps {
   fillColor?: string;
 }
 
-export const Square: React.FunctionComponent<ISquareProps> = ({
+export const Rectangle: React.FunctionComponent<IRectangleProps> = ({
   x1,
   y1,
   x2,
@@ -14,7 +14,7 @@ export const Square: React.FunctionComponent<ISquareProps> = ({
   lineColor = 'black',
   lineWidth = 1,
   fillColor = 'none'
-}: React.PropsWithChildren<ISquareProps>) => {
+}: React.PropsWithChildren<IRectangleProps>) => {
   return (
     <rect
       x={Math.min(x1, x2)}
@@ -28,10 +28,10 @@ export const Square: React.FunctionComponent<ISquareProps> = ({
   );
 };
 
-class SquareComponent extends BaseShapeComponent {
+class RectangleComponent extends BaseShapeComponent {
   render() {
     if (this.rootElm) {
-      const props: ISquareProps = {
+      const props: IRectangleProps = {
         x1: Number(this.getAttribute('x1')) || 0,
         y1: Number(this.getAttribute('y1')) || 0,
         x2: Number(this.getAttribute('x2')) || 100,
@@ -52,11 +52,11 @@ class SquareComponent extends BaseShapeComponent {
             pointerEvents: 'none'
           }}
         >
-          <Square {...props} />
+          <Rectangle {...props} />
         </svg>
       );
     }
   }
 }
 
-customElements.define('dt-square', SquareComponent);
+customElements.define('dt-rectangle', RectangleComponent);

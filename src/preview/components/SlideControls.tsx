@@ -119,13 +119,13 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
 
           <SlideControl title="Next" iconName="arrow-right" action={next} isSlideControl />
         </div>
-        <div className="flex items-center justify-end gap-4">
+        <div className="flex items-center justify-end">
           {
             showPosition && (
               children
             )
           }
-          <SlideControl title="Toggle mouse position" iconName="symbol-ruler" action={() => setShowPosition(prev => !prev)} />
+          <SlideControl title="Toggle mouse position" className='-rotate-90 hover:bg-[var(--vscode-toolbar-hoverBackground)]' iconName="symbol-ruler" action={() => setShowPosition(prev => !prev)} />
           {
             path && (
               <SlideControl title="Open slide source" iconName="preview" action={openSlideSource} />

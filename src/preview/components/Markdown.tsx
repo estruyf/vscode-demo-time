@@ -157,7 +157,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
       <>
         {customTheme && <link href={customTheme} rel="stylesheet" />}
 
-        <div key={filePath} className={`slide__content__custom ${transition}`} dangerouslySetInnerHTML={{ __html: template }} />
+        <div key={filePath} className={`slide__content__custom ${transition || ""}`} dangerouslySetInnerHTML={{ __html: template }} />
       </>
     );
   }
@@ -166,7 +166,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     <>
       {customTheme && <link href={customTheme} rel="stylesheet" />}
 
-      <div key={filePath} className={`slide__content__inner ${transition}`}>{markdown}</div>
+      <div key={filePath} className={`slide__content__inner ${transition || ""}`}>{markdown}</div>
     </>
   );
 };
