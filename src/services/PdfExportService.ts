@@ -129,7 +129,7 @@ export class PdfExportService {
           await page.close();
           await context.close();
           await browser.close();
-          // await workspace.fs.delete(tempHtmlOutputPath);
+          await workspace.fs.delete(tempHtmlOutputPath);
 
           // Open the generated PDF
           await env.openExternal(pdfPath);
