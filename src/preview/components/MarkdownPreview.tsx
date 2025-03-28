@@ -61,6 +61,10 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     }
   }, [resetCursorTimeout, scale]);
 
+  const relativePath = React.useMemo(() => {
+    return crntFilePath ? crntFilePath.replace(webviewUrl || "", "") : undefined;
+  }, [crntFilePath, webviewUrl]);
+
   React.useEffect(() => {
     getFileContents(fileUri);
   }, [fileUri]);
@@ -124,7 +128,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           </div>
         </div>
 
-        <SlideControls show={showControls && cursorVisible} path={crntFilePath}>
+        <SlideControls show={showControls && cursorVisible} path={relativePath}>
           {/* Mouse Position */}
           {mousePosition && (
             <div className="mouse-position text-sm px-2 py-1 text-[var(--vscode-editorWidget-foreground)]">

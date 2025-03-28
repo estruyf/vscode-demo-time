@@ -3,6 +3,7 @@
 ## [0.0.89] - 2025-03-29
 
 - Small title theme fix in `quantum`
+- Fix to open slide contents from slide preview
 
 ## [0.0.88] - 2025-03-28
 
