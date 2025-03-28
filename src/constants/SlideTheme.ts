@@ -4,4 +4,5 @@ export enum SlideTheme {
   monomi = "monomi",
   unnamed = "unnamed",
   quantum = "quantum",
+  frost = "frost",
 }
