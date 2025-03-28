@@ -7,6 +7,12 @@ import './themes/default.css';
 import './themes/minimal.css';
 import './themes/unnamed.css';
 import './themes/monomi.css';
+import './themes/quantum.css';
+import './themes/frost.css';
+import './webcomponents/Show';
+import './webcomponents/Arrow';
+import './webcomponents/Rectangle';
+import './webcomponents/Circle';
 
 declare const acquireVsCodeApi: <T = unknown>() => {
   getState: () => T;

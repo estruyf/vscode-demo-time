@@ -1,4 +1,6 @@
 export * from "./Action";
+export * from "./ArrowHeadType";
+export * from "./BaseShapeProps";
 export * from "./CommandType";
 export * from "./DemoFileCache";
 export * from "./Demos";

@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.0.88] - 2025-03-28
+
+- Two new themes: `quantum` and `frost`
+- [#77](https://github.com/estruyf/vscode-demo-time/issues/77): Creating components to show or hide slide content based on clicks
+- [#78](https://github.com/estruyf/vscode-demo-time/issues/78): Created the `arrow`, `circle`, and `rectangle` components to highlight areas on the slides
+- [#79](https://github.com/estruyf/vscode-demo-time/issues/79): Trigger the first demo when turning on the presentation mode
+- [#80](https://github.com/estruyf/vscode-demo-time/issues/80): Have an action on the slide view to show the mouse position. This can help you place the components correctly onto your slides
+
 ## [0.0.87] - 2025-03-23
 
 - [#74](https://github.com/estruyf/vscode-demo-time/issues/74): Support for custom slide layouts with the `customLayout` property

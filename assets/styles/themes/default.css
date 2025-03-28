@@ -208,6 +208,10 @@
     .slide__content__inner {
       @apply flex flex-col items-center justify-center text-center;
     }
+
+    h1 {
+      @apply p-1;
+    }
   }
 
   .image-left {

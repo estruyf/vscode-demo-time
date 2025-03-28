@@ -232,8 +232,8 @@
   }
 
   .image {
-    .slide__content {
-      @apply w-full flex flex-col items-center justify-center text-center;
+    .slide__content__inner {
+      @apply flex flex-col items-center justify-center text-center;
     }
   }
 

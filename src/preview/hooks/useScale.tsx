@@ -1,9 +1,11 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 
 const Slide_Width = 960;
 const Slide_Height = 540;
 
 export const useScale = (ref: React.RefObject<HTMLDivElement>, slideRef: React.RefObject<HTMLDivElement>) => {
+  const [value, setValue] = useState(0);
+
   const updateScale = useCallback(() => {
     if (!slideRef.current || !ref.current) {
       return;
@@ -14,17 +16,20 @@ export const useScale = (ref: React.RefObject<HTMLDivElement>, slideRef: React.R
     const scaledWidth = Slide_Width * scale;
     const scaledHeight = Slide_Height * scale;
 
+    let scaleValue = 1;
     if (scale > 3.5) {
-      document.documentElement.style.setProperty('--demotime-scale', '3.5');
+      scaleValue = 3.5;
     } else if (scaledWidth <= width && scaledHeight <= height) {
-      document.documentElement.style.setProperty('--demotime-scale', scale.toString());
+      scaleValue = scale;
     } else if (scaledWidth <= width) {
-      document.documentElement.style.setProperty('--demotime-scale', (width / Slide_Width).toString());
+      scaleValue = width / Slide_Width;
     } else if (scaledHeight <= height) {
-      document.documentElement.style.setProperty('--demotime-scale', (height / Slide_Height).toString());
+      scaleValue = height / Slide_Height;
     } else {
-      document.documentElement.style.setProperty('--demotime-scale', '1');
+      scaleValue = 1;
     }
+    document.documentElement.style.setProperty('--demotime-scale', `${scaleValue}`);
+    setValue(scaleValue);
   }, [slideRef.current, ref.current]);
 
   useEffect(() => {
@@ -59,5 +64,8 @@ export const useScale = (ref: React.RefObject<HTMLDivElement>, slideRef: React.R
     };
   }, [slideRef, ref, updateScale]);
 
-  return updateScale;
+  return {
+    scale: value,
+    updateScale,
+  };
 };

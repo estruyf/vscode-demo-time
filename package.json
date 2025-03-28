@@ -2,7 +2,7 @@
   "name": "vscode-demo-time",
   "displayName": "Demo Time - Live demos & slides in VS Code",
   "description": "Script your coding demos to perfection and present slides — all within VS Code! No typos, no missteps—just flawless, stress-free presentations. Seamlessly execute each demo step and advance through slides like a pro, keeping your audience engaged without ever leaving your coding environment.",
-  "version": "0.0.87",
+  "version": "0.0.88",
   "publisher": "eliostruyf",
   "galleryBanner": {
     "color": "#0D1321",
@@ -48,8 +48,8 @@
   "activationEvents": [
     "workspaceContains:**/.demo/*"
   ],
-  "main": "./out/extension.js",
-  "browser": "./out/extension.js",
+  "main": "./out/extension/extension.js",
+  "browser": "./out/extension/extension.js",
   "contributes": {
     "configurationDefaults": {
       "files.associations": {
@@ -543,11 +543,13 @@
     "vscode:prepublish": "npm run compile",
     "compile": "npm-run-all --parallel compile:*",
     "compile:ext": "tsup --minify",
+    "compile:wc": "tsup --minify --config tsup.wc.config.ts",
     "compile:wv": "webpack --mode production --config ./webview.config.js",
     "compile:preview": "webpack --mode production --config ./preview.config.js",
     "compile:copy": "node ./scripts/copy-assets.mjs",
     "watch": "npm-run-all --parallel watch:*",
     "watch:ext": "tsup --watch",
+    "watch:wc": "tsup --watch --config tsup.wc.config.ts",
     "watch:wv": "webpack serve --mode development --config ./webview.config.js",
     "watch:preview": "webpack serve --mode development --config ./preview.config.js",
     "lint": "eslint src --ext ts"

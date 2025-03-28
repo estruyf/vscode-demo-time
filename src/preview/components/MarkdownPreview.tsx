@@ -25,9 +25,10 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const [showControls, setShowControls] = React.useState(false);
   const ref = React.useRef<HTMLDivElement>(null);
   const slideRef = React.useRef<HTMLDivElement>(null);
+  const [mousePosition, setMousePosition] = React.useState<{ x: number; y: number } | null>(null);
   const { cursorVisible, resetCursorTimeout } = useCursor();
   const { vsCodeTheme } = useTheme();
-  useScale(ref, slideRef);
+  const { scale } = useScale(ref, slideRef);
 
   const messageListener = (message: MessageEvent<EventData<any>>) => {
     const { command, payload } = message.data;
@@ -48,9 +49,17 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     return bgStyles;
   }, [bgStyles, layout]);
 
-  const handleMouseMove = React.useCallback(() => {
+  const handleMouseMove = React.useCallback((event: React.MouseEvent<HTMLDivElement>) => {
     resetCursorTimeout();
-  }, [resetCursorTimeout]);
+
+    const rect = slideRef.current?.getBoundingClientRect();
+    if (rect) {
+      setMousePosition({
+        x: Math.round((event.clientX - rect.left) / scale),
+        y: Math.round((event.clientY - rect.top) / scale),
+      });
+    }
+  }, [resetCursorTimeout, scale]);
 
   React.useEffect(() => {
     getFileContents(fileUri);
@@ -92,14 +101,17 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             {
               content && vsCodeTheme ? (
                 <div className='slide__content'>
-                  <Markdown
-                    content={content}
-                    vsCodeTheme={vsCodeTheme}
-                    webviewUrl={webviewUrl}
-                    updateTheme={setTheme}
-                    updateLayout={setLayout}
-                    updateBgStyles={setBgStyles}
-                  />
+                  {
+                    <Markdown
+                      filePath={crntFilePath}
+                      content={content}
+                      vsCodeTheme={vsCodeTheme}
+                      webviewUrl={webviewUrl}
+                      updateTheme={setTheme}
+                      updateLayout={setLayout}
+                      updateBgStyles={setBgStyles}
+                    />
+                  }
                 </div>
               ) : null
             }
@@ -112,7 +124,14 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           </div>
         </div>
 
-        <SlideControls show={showControls && cursorVisible} path={crntFilePath} />
+        <SlideControls show={showControls && cursorVisible} path={crntFilePath}>
+          {/* Mouse Position */}
+          {mousePosition && (
+            <div className="mouse-position text-sm px-2 py-1 text-[var(--vscode-editorWidget-foreground)]">
+              X: {mousePosition.x}, Y: {mousePosition.y}
+            </div>
+          )}
+        </SlideControls>
       </div>
     </>
   );
