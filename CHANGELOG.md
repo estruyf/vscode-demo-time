@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.89] - 2025-03-29
+
+- Small title theme fix in `quantum`
+
 ## [0.0.88] - 2025-03-28
 
 - Two new themes: `quantum` and `frost`
