@@ -197,9 +197,16 @@ export class Preview {
 
     scriptUrl.push(webview.asWebviewUri(Uri.joinPath(extPath, "assets", "slides", "tailwind.js")).toString());
 
-    const workspaceFolder = extension.workspaceFolder;
-    if (workspaceFolder) {
-      moduleUrl.push(webview.asWebviewUri(Uri.joinPath(workspaceFolder.uri, ".demo/custom/greeting.js")).toString());
+    const webComponents = extension.getSetting<string[]>(Config.webcomponents.scripts);
+    if (webComponents) {
+      const workspaceFolder = extension.workspaceFolder;
+      for (const webComponent of webComponents) {
+        if (webComponent.startsWith("http")) {
+          moduleUrl.push(webComponent);
+        } else if (workspaceFolder) {
+          moduleUrl.push(webview.asWebviewUri(Uri.joinPath(workspaceFolder.uri, webComponent)).toString());
+        }
+      }
     }
 
     const webviewUrl = getWebviewUrl(webview, "");

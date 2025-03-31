@@ -158,6 +158,14 @@
           "type": "boolean",
           "default": false,
           "description": "Hide the editor actions"
+        },
+        "demoTime.customWebComponents": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Provide paths to scripts for loading your custom web components. Each path should point to a JavaScript file."
         }
       }
     },

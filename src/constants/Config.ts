@@ -22,4 +22,7 @@ export const Config = {
     enabled: "api.enabled",
     port: "api.port",
   },
+  webcomponents: {
+    scripts: "customWebComponents",
+  },
 };
