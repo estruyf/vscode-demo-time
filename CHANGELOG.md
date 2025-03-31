@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.90] - 2025-03-31
+
+- [#83](https://github.com/estruyf/vscode-demo-time/issues/83): Added support for custom web components in the slide view
+
 ## [0.0.89] - 2025-03-29
 
 - Small title theme fix in `quantum`
