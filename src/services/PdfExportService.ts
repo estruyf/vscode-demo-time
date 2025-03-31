@@ -8,7 +8,7 @@ import { FileProvider } from ".";
 import { convertTemplateToHtml, getTheme, readFile, transformMarkdown, writeFile } from "../utils";
 import { commands, Uri, workspace, WorkspaceFolder, window, ProgressLocation, TextDocument, env } from "vscode";
 import { Page } from "playwright-chromium";
-import { COMMAND, General, SlideLayout } from "../constants";
+import { COMMAND, Config, General, SlideLayout } from "../constants";
 import { twoColumnFormatting } from "../preview/utils";
 import { renderToString } from "react-dom/server";
 
@@ -248,7 +248,33 @@ export class PdfExportService {
       Uri.joinPath(Uri.parse(extensionPath), "assets", "styles", "themes", "unnamed.css")
     );
 
+    const quantumTheme = await readFile(
+      Uri.joinPath(Uri.parse(extensionPath), "assets", "styles", "themes", "quantum.css")
+    );
+
+    const frostTheme = await readFile(
+      Uri.joinPath(Uri.parse(extensionPath), "assets", "styles", "themes", "frost.css")
+    );
+
     const webcomponents = await readFile(Uri.joinPath(Uri.parse(extensionPath), "out", "webcomponents", "index.mjs"));
+
+    let customComponents = [];
+    let customComponentsUrls = [];
+    const extension = Extension.getInstance();
+    const webComponents = extension.getSetting<string[]>(Config.webcomponents.scripts);
+    if (webComponents) {
+      const workspaceFolder = extension.workspaceFolder;
+      for (const webComponent of webComponents) {
+        if (webComponent.startsWith("http")) {
+          customComponentsUrls.push(webComponent);
+        } else if (workspaceFolder) {
+          const component = await readFile(Uri.joinPath(workspaceFolder.uri, webComponent));
+          if (component) {
+            customComponents.push(component);
+          }
+        }
+      }
+    }
 
     // Get workspace title
     const workspaceTitle = workspace.name || "Demo Time";
@@ -264,6 +290,9 @@ export class PdfExportService {
   <script src="https://cdn.tailwindcss.com"></script>
   <script type="module">${webcomponents}</script>
 
+  ${customComponentsUrls.map((url) => `<script type="module" src="${url}"></script>`).join("\n")}
+  ${customComponents.map((component) => `<script type="module">${component}</script>`).join("\n")}
+
   <style type="text/tailwindcss">
   ${css}
   </style>
@@ -275,6 +304,16 @@ export class PdfExportService {
     const allSlides = slideContents.filter((slide) => slide !== undefined);
 
     let index = 0;
+
+    const slideThemes: { [theme: string]: number[] } = {
+      [SlideTheme.default]: [],
+      [SlideTheme.minimal]: [],
+      [SlideTheme.monomi]: [],
+      [SlideTheme.unnamed]: [],
+      [SlideTheme.quantum]: [],
+      [SlideTheme.frost]: [],
+    };
+
     for (const slide of allSlides) {
       if (slide) {
         const css = await PdfExportService.getCustomTheme(slide.customTheme);
@@ -283,29 +322,22 @@ export class PdfExportService {
             ? `background-image: url(${slide.image});`
             : ``;
 
-        html += `
+        if (slide.theme === SlideTheme.default) {
+          slideThemes.default.push(index + 1);
+        } else if (slide.theme === SlideTheme.minimal) {
+          slideThemes.minimal.push(index + 1);
+        } else if (slide.theme === SlideTheme.monomi) {
+          slideThemes.monomi.push(index + 1);
+        } else if (slide.theme === SlideTheme.unnamed) {
+          slideThemes.unnamed.push(index + 1);
+        } else if (slide.theme === SlideTheme.quantum) {
+          slideThemes.quantum.push(index + 1);
+        } else if (slide.theme === SlideTheme.frost) {
+          slideThemes.frost.push(index + 1);
+        }
 
+        html += `
 <div class="w-full h-full flex items-center justify-center" id="slide-${index + 1}">
-${
-  slide.theme === SlideTheme.default
-    ? `<style type="text/tailwindcss">#slide-${index + 1} { ${defaultTheme} }</style>`
-    : ``
-}
-${
-  slide.theme === SlideTheme.minimal
-    ? `<style type="text/tailwindcss">#slide-${index + 1} { ${minimalTheme} }</style>`
-    : ``
-}
-${
-  slide.theme === SlideTheme.monomi
-    ? `<style type="text/tailwindcss">#slide-${index + 1} { ${monomiTheme} }</style>`
-    : ``
-}
-${
-  slide.theme === SlideTheme.unnamed
-    ? `<style type="text/tailwindcss">#slide-${index + 1} { ${unnamedTheme} }</style>`
-    : ``
-}
 ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` : ``}
   <div class="slide ${slide.theme.toLowerCase()}" date-theme="${slide.theme.toLowerCase()}" data-layout="${slide.layout.toLowerCase()}" >
     <div class="slide__container">
@@ -334,6 +366,27 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
       }
 
       index++;
+    }
+
+    // Add the themes to the HTML
+    for (const [theme, slides] of Object.entries(slideThemes)) {
+      if (slides.length > 0) {
+        const slideIds = slides.map((slideIndex) => `#slide-${slideIndex}`).join(", ");
+
+        if (theme === SlideTheme.default) {
+          html += `<style type="text/tailwindcss">${slideIds} { ${defaultTheme} }</style>`;
+        } else if (theme === SlideTheme.minimal) {
+          html += `<style type="text/tailwindcss">${slideIds} { ${minimalTheme} }</style>`;
+        } else if (theme === SlideTheme.monomi) {
+          html += `<style type="text/tailwindcss">${slideIds} { ${monomiTheme} }</style>`;
+        } else if (theme === SlideTheme.unnamed) {
+          html += `<style type="text/tailwindcss">${slideIds} { ${unnamedTheme} }</style>`;
+        } else if (theme === SlideTheme.quantum) {
+          html += `<style type="text/tailwindcss">${slideIds} { ${quantumTheme} }</style>`;
+        } else if (theme === SlideTheme.frost) {
+          html += `<style type="text/tailwindcss">${slideIds} { ${frostTheme} }</style>`;
+        }
+      }
     }
 
     html += `

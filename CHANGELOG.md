@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.0.91] - 2025-03-31
+
+- Optimized CSS theming in the PDF slides export
+- [#83](https://github.com/estruyf/vscode-demo-time/issues/83): Added support for custom web components in the PDF slides export
+
 ## [0.0.90] - 2025-03-31
 
 - [#83](https://github.com/estruyf/vscode-demo-time/issues/83): Added support for custom web components in the slide view
