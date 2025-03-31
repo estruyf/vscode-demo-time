@@ -172,6 +172,7 @@ export class Preview {
     const localServerUrl = "http://localhost:9001";
 
     let scriptUrl = [];
+    let moduleUrl = [];
 
     const extension = Extension.getInstance();
     const extPath = Uri.file(extension.extensionPath);
@@ -193,6 +194,11 @@ export class Preview {
 
     scriptUrl.push(webview.asWebviewUri(Uri.joinPath(extPath, "assets", "slides", "tailwind.js")).toString());
 
+    const workspaceFolder = extension.workspaceFolder;
+    if (workspaceFolder) {
+      moduleUrl.push(webview.asWebviewUri(Uri.joinPath(workspaceFolder.uri, ".demo/custom/greeting.js")).toString());
+    }
+
     const webviewUrl = getWebviewUrl(webview, "");
 
     return `<!DOCTYPE html>
@@ -205,6 +211,7 @@ export class Preview {
       <div id="root" data-webview-url="${webviewUrl}"></div>
   
       ${scriptUrl.map((url) => `<script src="${url}"></script>`).join("\n")}
+      ${moduleUrl.map((url) => `<script src="${url}" type="module"></script>`).join("\n")}
 
       <img style="display:none" src="https://api.visitorbadge.io/api/combined?path=https:%2f%2fgithub.com%2festruyf%2fvscode-demo-time&labelColor=%23202736&countColor=%23FFD23F&slug=preview" alt="Preview usage" />
     </body>
