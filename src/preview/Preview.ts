@@ -145,6 +145,9 @@ export class Preview {
       }
     } else if (command === WebViewMessages.toVscode.setHasClickListener) {
       Preview.hasClickListener = payload.listening ?? false;
+    } else if (command === WebViewMessages.toVscode.openFile && payload) {
+      const fileUri = getAbsolutePath(payload);
+      await window.showTextDocument(fileUri, { preview: false });
     }
   }
 

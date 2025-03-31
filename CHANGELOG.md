@@ -1,6 +1,11 @@
 # Change Log
 
-## [0.0.88] - 2025-03-xx
+## [0.0.89] - 2025-03-29
+
+- Small title theme fix in `quantum`
+- Fix to open slide contents from slide preview
+
+## [0.0.88] - 2025-03-28
 
 - Two new themes: `quantum` and `frost`
 - [#77](https://github.com/estruyf/vscode-demo-time/issues/77): Creating components to show or hide slide content based on clicks

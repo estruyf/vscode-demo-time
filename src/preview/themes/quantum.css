@@ -216,6 +216,7 @@
 
     h1 {
       @apply text-6xl mb-6;
+      line-height: 1.2;
       color: var(--demotime-intro-heading-color);
       background: var(--demotime-intro-heading-background);
       -webkit-background-clip: text;
@@ -271,6 +272,7 @@
 
     h1 {
       @apply text-6xl mb-6;
+      line-height: 1.2;
       color: var(--demotime-section-heading-color);
       background: var(--demotime-section-heading-background);
       -webkit-background-clip: text;
