@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.0.0] - 2025-04-03
+
+- [#86](https://github.com/estruyf/vscode-demo-time/issues/86): Version `1.0.0` release
+- [#85](https://github.com/estruyf/vscode-demo-time/issues/85): Support added for importing PowerPoint image slides
+
 ## [0.0.91] - 2025-03-31
 
 - Optimized CSS theming in the PDF slides export
