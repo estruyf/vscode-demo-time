@@ -1,4 +1,6 @@
 export * from "./Arrow";
-export * from "./BaseShapeComponent";
 export * from "./Circle";
 export * from "./Rectangle";
+export * from "./Show";
+export * from "./animations";
+export * from "./text";

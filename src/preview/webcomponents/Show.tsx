@@ -74,6 +74,7 @@ abstract class BaseWebComponent extends HTMLElement {
   }
 
   connectedCallback() {
+    this.style.display = 'inline-block';
     // Create a ShadowDOM
     this.root = this.attachShadow({ mode: 'open' });
 
