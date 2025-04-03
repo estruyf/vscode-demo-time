@@ -4,7 +4,7 @@ import { resolve } from "mlly";
 import { Notifications } from "./Notifications";
 import { Action, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
-import { FileProvider } from ".";
+import { FileProvider, Logger } from ".";
 import { convertTemplateToHtml, getTheme, readFile, transformMarkdown, writeFile } from "../utils";
 import { commands, Uri, workspace, WorkspaceFolder, window, ProgressLocation, TextDocument, env } from "vscode";
 import { Page } from "playwright-chromium";
@@ -222,7 +222,7 @@ export class PdfExportService {
           customLayout,
         });
       } catch (error) {
-        console.error("Error processing slide content:", (error as Error).message);
+        Logger.error(`Error processing slide content: ${(error as Error).message}`);
       }
 
       idx++;

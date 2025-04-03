@@ -1,5 +1,6 @@
 import { Uri, workspace } from "vscode";
 import { getRelPath } from "./getRelPath";
+import { Logger } from "../services";
 
 export const createImageSlide = async (imageUri: Uri, slideFolder: Uri): Promise<string | undefined> => {
   const imageName = imageUri.path.split("/").pop() || "";
@@ -19,7 +20,7 @@ image: ${imageRelativePath}
     const slideRelativePath = getRelPath(slideFileUri.fsPath);
     return slideRelativePath;
   } catch (error) {
-    console.error("Failed to create slide file:", error);
+    Logger.error(`Failed to create slide file: ${(error as Error).message}`);
     return undefined;
   }
 };
