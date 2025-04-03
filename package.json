@@ -341,6 +341,12 @@
         "title": "Export slides to PDF",
         "category": "Demo Time",
         "icon": "$(file-pdf)"
+      },
+      {
+        "command": "demo-time.importPowerPointImages",
+        "title": "Import PowerPoint Images as Slides",
+        "category": "Demo Time",
+        "icon": "$(file-media)"
       }
     ],
     "menus": {
@@ -478,6 +484,11 @@
       "editor/title": [
         {
           "command": "demo-time.addStepToDemo",
+          "when": "(editorLangId == jsonc || editorLangId == json) && resourceDirname =~ /\\.demo$/",
+          "group": "navigation@-1"
+        },
+        {
+          "command": "demo-time.start",
           "when": "(editorLangId == jsonc || editorLangId == json) && resourceDirname =~ /\\.demo$/",
           "group": "navigation@0"
         },

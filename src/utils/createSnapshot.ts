@@ -59,11 +59,10 @@ export const createSnapshot = async () => {
   const createDemo = await window.showInformationMessage(
     "Do you want to create a demo starting from this file?",
     { modal: true },
-    "Yes",
-    "No"
+    "Yes"
   );
 
-  if (createDemo === "No") {
+  if (!createDemo) {
     return;
   }
 

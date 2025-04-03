@@ -86,11 +86,10 @@ export const createPatch = async () => {
   const createDemo = await window.showInformationMessage(
     "Do you want to create a demo step with this patch?",
     { modal: true },
-    "Yes",
-    "No"
+    "Yes"
   );
 
-  if (createDemo === "No") {
+  if (!createDemo) {
     return;
   }
 

@@ -9,7 +9,9 @@ import {
   DemoStatusBar,
   Extension,
   FileProvider,
+  ImportService,
   NotesService,
+  PdfExportService,
   Slides,
   UriHandler,
 } from "./services";
@@ -17,7 +19,6 @@ import { DemoPanel } from "./panels/DemoPanel";
 import { Preview } from "./preview/Preview";
 import { PresenterView } from "./presenterView/PresenterView";
 import { Config } from "./constants";
-import { PdfExportService } from "./services/PdfExportService";
 
 export async function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);
@@ -40,6 +41,7 @@ export async function activate(context: vscode.ExtensionContext) {
   DemoApi.register();
   UriHandler.register();
   PdfExportService.register();
+  ImportService.register();
 
   console.log(`${Config.title} is active!`);
 }

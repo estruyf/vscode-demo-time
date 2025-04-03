@@ -5,6 +5,7 @@ export * from "./bringToFront";
 export * from "./clearVariablesState";
 export * from "./convertTemplateToHtml";
 export * from "./createDemoFile";
+export * from "./createImageSlide";
 export * from "./createPatch";
 export * from "./createSnapshot";
 export * from "./evaluateCommand";

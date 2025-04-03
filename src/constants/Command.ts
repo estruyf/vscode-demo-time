@@ -42,4 +42,6 @@ export const COMMAND = {
   togglePresentationView: `${EXTENSION_NAME}.togglePresentationView`,
   closePresentationView: `${EXTENSION_NAME}.closePresentationView`,
   exportToPdf: `${EXTENSION_NAME}.exportToPdf`,
+  // Importer
+  importPowerPointImages: `${EXTENSION_NAME}.importPowerPointImages`,
 };

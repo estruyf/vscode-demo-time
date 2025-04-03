@@ -1196,7 +1196,7 @@ export class DemoRunner {
    * @returns A Promise that resolves to an object containing the filePath and demo, or undefined if no demo file is found.
    */
   private static async getDemoFile(
-    item?: ActionTreeItem,
+    item?: ActionTreeItem | Uri,
     triggerFirstDemo: boolean = false
   ): Promise<
     | {
@@ -1208,25 +1208,28 @@ export class DemoRunner {
     const demoFiles = await FileProvider.getFiles();
     const executingFile = await DemoRunner.getExecutedDemoFile();
 
-    if (item && item.demoFilePath) {
+    const itemPath = item instanceof Uri ? item.fsPath : item?.demoFilePath;
+
+    if (item && itemPath) {
       if (!demoFiles) {
         Notifications.warning("No demo files found");
         return;
       }
 
-      const demoFile = await FileProvider.getFile(Uri.file(item.demoFilePath));
+      const demoFile = await FileProvider.getFile(Uri.file(itemPath));
       if (!demoFile) {
-        Notifications.warning(`No demo file found with the name ${item.description}`);
+        const demoFileName = itemPath.split("/").pop();
+        Notifications.warning(`No demo file found with the name ${demoFileName}`);
         return;
       }
 
-      if (executingFile.filePath !== item.demoFilePath) {
-        executingFile.filePath = item.demoFilePath;
+      if (executingFile.filePath !== itemPath) {
+        executingFile.filePath = itemPath;
         executingFile.demo = [];
         await DemoRunner.setExecutedDemoFile(executingFile);
       }
       return {
-        filePath: item.demoFilePath,
+        filePath: itemPath,
         demo: demoFile,
       };
     } else if (!executingFile.filePath && !item && demoFiles) {

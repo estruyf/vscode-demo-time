@@ -1,6 +1,6 @@
 import { QuickPickItem, QuickPickItemKind, Uri, commands, window, workspace } from "vscode";
 import { COMMAND, Config } from "../constants";
-import { Action, Demo, Demos, Step, Subscription } from "../models";
+import { Action, Demo, Demos, Icons, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import { FileProvider } from "./FileProvider";
 import { DemoPanel } from "../panels/DemoPanel";
@@ -254,7 +254,8 @@ export class DemoCreator {
     demo: Demos,
     step: Step | Step[],
     stepTitle?: string,
-    stepDescription?: string
+    stepDescription?: string,
+    stepIcons?: Icons
   ): Promise<Demo[] | undefined> {
     let demoStep: string | undefined = "New demo step";
 
@@ -290,18 +291,30 @@ export class DemoCreator {
             })
           : stepDescription;
 
-      demo.demos.push({
+      const newDemo: Demo = {
         title,
         description: description || "",
         steps: [...(Array.isArray(step) ? step : [step])],
-      });
+      };
+
+      if (stepIcons) {
+        newDemo.icons = stepIcons;
+      }
+
+      demo.demos.push(newDemo);
     } else {
       if (demo.demos.length === 0) {
-        demo.demos.push({
+        const newDemo: Demo = {
           title: "New demo",
           description: "",
           steps: [...(Array.isArray(step) ? step : [step])],
-        });
+        };
+
+        if (stepIcons) {
+          newDemo.icons = stepIcons;
+        }
+
+        demo.demos.push(newDemo);
       } else {
         const demoToEdit = await window.showQuickPick(
           demo.demos.map((demo) => demo.title),

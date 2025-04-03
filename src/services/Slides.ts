@@ -94,11 +94,10 @@ layout: ${layout.toLowerCase()}
     const addStep = await window.showInformationMessage(
       `Slide "${slideTitle}" created. Do you want to add it as a new step to the demo?`,
       { modal: true },
-      "Yes",
-      "No"
+      "Yes"
     );
 
-    if (addStep === "No") {
+    if (!addStep) {
       return;
     }
 
@@ -110,7 +109,10 @@ layout: ${layout.toLowerCase()}
       },
     ];
 
-    await addStepsToDemo(steps, slideTitle, "");
+    await addStepsToDemo(steps, slideTitle, "", {
+      start: "vm",
+      end: "pass-filled",
+    });
   }
 
   private static async viewSlide(item: ActionTreeItem) {
