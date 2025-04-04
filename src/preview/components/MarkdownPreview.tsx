@@ -27,7 +27,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const slideRef = React.useRef<HTMLDivElement>(null);
   const [mousePosition, setMousePosition] = React.useState<{ x: number; y: number } | null>(null);
   const { cursorVisible, resetCursorTimeout } = useCursor();
-  const { vsCodeTheme } = useTheme();
+  const { vsCodeTheme, isDarkTheme } = useTheme();
   const { scale } = useScale(ref, slideRef);
 
   const messageListener = (message: MessageEvent<EventData<any>>) => {
@@ -110,6 +110,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
                       filePath={crntFilePath}
                       content={content}
                       vsCodeTheme={vsCodeTheme}
+                      isDarkTheme={isDarkTheme}
                       webviewUrl={webviewUrl}
                       updateTheme={setTheme}
                       updateLayout={setLayout}

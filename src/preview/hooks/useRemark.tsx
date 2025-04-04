@@ -20,6 +20,7 @@ export type UseRemarkOptions = {
 
 export const useRemark = ({
   onError = () => { },
+  // rehypePlugins = [[rehypeMermaid, { strategy: "inline-svg" }]],
   rehypePlugins = [],
   rehypeReactOptions,
   remarkParseOptions,

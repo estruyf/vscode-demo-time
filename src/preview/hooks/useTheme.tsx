@@ -3,9 +3,10 @@ import { useState, useEffect } from 'react';
 import { WebViewMessages } from '../../constants';
 import { usePrevious } from './usePrevious';
 
-export default function useTheme(options?: any) {
+export default function useTheme() {
   const [theme, setTheme] = useState('');
   const prevTheme = usePrevious(theme);
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [vsCodeTheme, setVsCodeTheme] = useState('');
 
   const getThemeName = () => {
@@ -17,16 +18,18 @@ export default function useTheme(options?: any) {
   });
 
   const getVsCodeTheme = () => {
+    const themeType = document.body.getAttribute(`data-vscode-theme-kind`);
+    setIsDarkTheme(themeType?.includes('dark') || false);
 
     messageHandler.request<any | null>(WebViewMessages.toVscode.getTheme, getThemeName()).then((theme) => {
       if (theme === null) {
         // Check if light or dark theme
-        const elm = document.body.getAttribute(`data-vscode-theme-kind`);
-        if (elm === 'vscode-light') {
+        const themeType = document.body.getAttribute(`data-vscode-theme-kind`);
+        if (themeType === 'vscode-light') {
           setVsCodeTheme("github-light");
-        } else if (elm === 'vscode-dark') {
+        } else if (themeType === 'vscode-dark') {
           setVsCodeTheme("github-dark");
-        } else if (elm === 'vscode-high-contrast') {
+        } else if (themeType === 'vscode-high-contrast') {
           setVsCodeTheme("github-dark-high-contrast");
         } else {
           setVsCodeTheme("github-light-high-contrast");
@@ -53,6 +56,7 @@ export default function useTheme(options?: any) {
   }, []);
 
   return {
-    vsCodeTheme
+    vsCodeTheme,
+    isDarkTheme
   };
 }

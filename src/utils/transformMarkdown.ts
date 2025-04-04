@@ -8,6 +8,7 @@ import { matter } from "vfile-matter";
 import { type PluggableList, unified } from "unified";
 import { ReactElement } from "react";
 import { type Options as RemarkRehypeOptions } from "mdast-util-to-hast";
+import { visit } from "unist-util-visit";
 
 export const transformMarkdown = async (
   markdown: string,
@@ -24,6 +25,15 @@ export const transformMarkdown = async (
 }> => {
   const vFile = await unified()
     .use(remarkParse, remarkParseOptions)
+    .use(() => (tree) => {
+      visit(tree, (node: any) => {
+        if (node.type === "code" && node.lang === "mermaid") {
+          const code = node.value.trim();
+          node.type = "html";
+          node.value = `<pre class="mermaid">${code}</pre>`;
+        }
+      });
+    })
     .use(remarRehype, {
       ...remarRehypeOptions,
       allowDangerousHtml: true,

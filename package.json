@@ -628,5 +628,8 @@
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.2.0",
     "webpack-manifest-plugin": "^5.0.1"
+  },
+  "dependencies": {
+    "mermaid": "^11.6.0"
   }
 }

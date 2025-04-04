@@ -8,11 +8,13 @@ import { SlideTransition, WebViewMessages } from '../../constants';
 import { renderToString } from 'react-dom/server';
 import { convertTemplateToHtml } from '../../utils/convertTemplateToHtml';
 import { SlideMetadata } from '../../models';
+import { MermaidRenderer } from './MermaidRenderer';
 
 export interface IMarkdownProps {
   filePath?: string;
   content?: string;
   vsCodeTheme: any;
+  isDarkTheme: boolean;
   webviewUrl: string | null;
   updateTheme: (theme: string) => void;
   updateLayout: (layout: string) => void;
@@ -23,6 +25,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   filePath,
   content,
   vsCodeTheme,
+  isDarkTheme,
   webviewUrl,
   updateTheme,
   updateLayout,
@@ -158,6 +161,8 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
         {customTheme && <link href={customTheme} rel="stylesheet" />}
 
         <div key={filePath} className={`slide__content__custom ${transition || ""}`} dangerouslySetInnerHTML={{ __html: template }} />
+
+        <MermaidRenderer dark={isDarkTheme} />
       </>
     );
   }
@@ -167,6 +172,8 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
       {customTheme && <link href={customTheme} rel="stylesheet" />}
 
       <div key={filePath} className={`slide__content__inner ${transition || ""}`}>{markdown}</div>
+
+      <MermaidRenderer dark={isDarkTheme} />
     </>
   );
 };
