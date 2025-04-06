@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.0.1] - 2025-04-06
+
+- [#90](https://github.com/estruyf/vscode-demo-time/issues/90): Highlighting whole line fix when position is set to start of the line
+
 ## [1.0.0] - 2025-04-03
 
 - [#86](https://github.com/estruyf/vscode-demo-time/issues/86): Version `1.0.0` release
