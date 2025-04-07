@@ -8,7 +8,6 @@ import { SlideTransition, WebViewMessages } from '../../constants';
 import { renderToString } from 'react-dom/server';
 import { convertTemplateToHtml } from '../../utils/convertTemplateToHtml';
 import { SlideMetadata } from '../../models';
-import { MermaidRenderer } from './MermaidRenderer';
 
 export interface IMarkdownProps {
   filePath?: string;
@@ -143,9 +142,9 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   React.useEffect(() => {
     if (content && content !== prevContent) {
       // Passing the theme here as it could be that the theme has been updated
-      setMarkdown(twoColumnFormatting(content), [[rehypePrettyCode, { theme: vsCodeTheme ? vsCodeTheme : {} }]]);
+      setMarkdown(twoColumnFormatting(content), [[rehypePrettyCode, { theme: vsCodeTheme ? vsCodeTheme : {} }]], isDarkTheme);
     }
-  }, [content, vsCodeTheme]);
+  }, [content, vsCodeTheme, isDarkTheme]);
 
   if (!isReady) {
     return null;
@@ -155,25 +154,17 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     return null;
   }
 
-  if (template) {
-    return (
-      <>
-        {customTheme && <link href={customTheme} rel="stylesheet" />}
-
-        <div key={filePath} className={`slide__content__custom ${transition || ""}`} dangerouslySetInnerHTML={{ __html: template }} />
-
-        <MermaidRenderer dark={isDarkTheme} />
-      </>
-    );
-  }
-
   return (
     <>
       {customTheme && <link href={customTheme} rel="stylesheet" />}
 
-      <div key={filePath} className={`slide__content__inner ${transition || ""}`}>{markdown}</div>
-
-      <MermaidRenderer dark={isDarkTheme} />
+      {
+        template ? (
+          <div key={filePath} className={`slide__content__custom ${transition || ""}`} dangerouslySetInnerHTML={{ __html: template }} />
+        ) : (
+          <div key={filePath} className={`slide__content__inner ${transition || ""}`}>{markdown}</div>
+        )
+      }
     </>
   );
 };
