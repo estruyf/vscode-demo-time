@@ -126,7 +126,7 @@ export class DecoratorService {
     textEditor.setDecorations(DecoratorService.blurDecorator, blurRanges);
 
     if (range.start.line === range.end.line) {
-      DecoratorService.setLineDecorator(beforeChar > 0 && isWholeLine);
+      DecoratorService.setLineDecorator(isWholeLine);
       textEditor.setDecorations(DecoratorService.lineDecorator, [range]);
     } else {
       let enableWholeLine = true;
@@ -206,10 +206,6 @@ export class DecoratorService {
       borderWidth: "2px;",
       isWholeLine,
     };
-
-    if (isWholeLine) {
-      lineStyles.borderColor = "transparent";
-    }
 
     DecoratorService.lineDecorator = window.createTextEditorDecorationType(lineStyles);
   }
