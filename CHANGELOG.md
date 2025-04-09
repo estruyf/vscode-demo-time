@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.1.0] - 2025-04-09
+
+- [#88](https://github.com/estruyf/vscode-demo-time/issues/88): Added new animation components which can be used in slides: `fade-in`, `text-typewriter`, and `text-highlight`
+- [#89](https://github.com/estruyf/vscode-demo-time/issues/89): Added support for [Mermaid](https://mermaid.js.org/) diagrams in the slides
+
 ## [1.0.1] - 2025-04-06
 
 - [#90](https://github.com/estruyf/vscode-demo-time/issues/90): Highlighting whole line fix when position is set to start of the line
