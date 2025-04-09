@@ -31,6 +31,7 @@ export * from "./getTheme";
 export * from "./getUserInput";
 export * from "./getVariables";
 export * from "./getWebviewUrl";
+export * from "./htmlDecode";
 export * from "./insertContent";
 export * from "./insertLineByLine";
 export * from "./insertVariables";

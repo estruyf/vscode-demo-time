@@ -84,8 +84,7 @@ class ArrowComponent extends BaseShapeComponent {
           height="540"
           style={{
             position: 'absolute',
-            top: 0,
-            left: 0,
+            inset: 0,
             pointerEvents: 'none'
           }}
         >

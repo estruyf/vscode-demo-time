@@ -6,7 +6,7 @@ import { Action, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import { FileProvider, Logger } from ".";
 import { convertTemplateToHtml, getTheme, readFile, transformMarkdown, writeFile } from "../utils";
-import { commands, Uri, workspace, WorkspaceFolder, window, ProgressLocation, TextDocument, env } from "vscode";
+import { commands, Uri, workspace, WorkspaceFolder, window, ProgressLocation, env, ColorThemeKind } from "vscode";
 import { Page } from "playwright-chromium";
 import { COMMAND, Config, General, SlideLayout } from "../constants";
 import { twoColumnFormatting } from "../preview/utils";
@@ -129,7 +129,7 @@ export class PdfExportService {
           await page.close();
           await context.close();
           await browser.close();
-          await workspace.fs.delete(tempHtmlOutputPath);
+          // await workspace.fs.delete(tempHtmlOutputPath);
 
           // Open the generated PDF
           await env.openExternal(pdfPath);
@@ -279,6 +279,10 @@ export class PdfExportService {
     // Get workspace title
     const workspaceTitle = workspace.name || "Demo Time";
 
+    // Get color theme
+    const colorTheme = window.activeColorTheme;
+    const isDark = colorTheme.kind === ColorThemeKind.Dark || colorTheme.kind === ColorThemeKind.HighContrast;
+
     // Create the HTML document with all slides
     let html = `
 <!DOCTYPE html>
@@ -287,6 +291,11 @@ export class PdfExportService {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${workspaceTitle}</title>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+
+    mermaid.initialize({ startOnLoad: true, theme: "${isDark ? "dark" : "default"}" });
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script type="module">${webcomponents}</script>
 
@@ -412,6 +421,8 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
     await page.goto(`file://${htmlPath}`, { waitUntil: "networkidle" });
     await page.waitForLoadState("networkidle");
     await page.emulateMedia({ media: "print" });
+
+    await page.waitForTimeout(5000);
 
     // Generate the PDF
     await page.pdf({

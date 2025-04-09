@@ -8,6 +8,8 @@ import { matter } from "vfile-matter";
 import { type PluggableList, unified } from "unified";
 import { ReactElement } from "react";
 import { type Options as RemarkRehypeOptions } from "mdast-util-to-hast";
+import { visit } from "unist-util-visit";
+import { v4 as uuidv4 } from "uuid";
 
 export const transformMarkdown = async (
   markdown: string,
@@ -17,6 +19,10 @@ export const transformMarkdown = async (
   rehypePlugins?: PluggableList,
   rehypeReactOptions?: {
     components?: Partial<Components>;
+  },
+  mermaidOptions?: {
+    isWebComponent?: boolean;
+    isDark?: boolean;
   }
 ): Promise<{
   reactContent: ReactElement | null;
@@ -24,6 +30,18 @@ export const transformMarkdown = async (
 }> => {
   const vFile = await unified()
     .use(remarkParse, remarkParseOptions)
+    .use(() => (tree) => {
+      visit(tree, (node: any) => {
+        if (node.type === "code" && node.lang === "mermaid") {
+          const code = node.value.trim();
+          node.type = "html";
+          const randomId = uuidv4();
+          node.value = mermaidOptions?.isWebComponent
+            ? `<dt-mermaid id="d${randomId}" code="${code}" ${mermaidOptions.isDark ? "dark" : ""}></dt-mermaid>`
+            : `<pre class="mermaid">${code}</pre>`;
+        }
+      });
+    })
     .use(remarRehype, {
       ...remarRehypeOptions,
       allowDangerousHtml: true,

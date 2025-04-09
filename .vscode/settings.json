@@ -15,4 +15,7 @@
     "demoTime.previousEnabled": true,
     "demoTime.showClock": true,
     "demoTime.timer": 10,
+    "exportall.config.relExclusion": [
+        "/src/preview/webcomponents/BaseShapeComponent.ts"
+    ],
 }
