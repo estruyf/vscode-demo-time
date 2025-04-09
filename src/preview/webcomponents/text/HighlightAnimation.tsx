@@ -9,7 +9,7 @@ export interface HighlightProps {
   duration?: number;
   repeat?: boolean;
   highlightColor?: string;
-  direction?: 'left-to-right' | 'right-to-left' | 'center-out' | 'center-in';
+  direction?: 'left-to-right' | 'right-to-left' | 'center-out';
   className?: string;
 }
 
@@ -36,9 +36,6 @@ export const HighlightAnimation: React.FC<HighlightProps> = ({
       break;
     case 'center-out':
       clipPath = 'inset(0 50% 0 50%)';
-      break;
-    case 'center-in':
-      clipPath = 'inset(0 0 0 0)';
       break;
     default:
       clipPath = 'inset(0 100% 0 0)';
@@ -143,7 +140,7 @@ export class HighlightComponent extends HTMLElement {
         duration: Number(this.getAttribute('duration')) || 1000,
         repeat: this.hasAttribute('repeat'),
         highlightColor: this.getAttribute('highlight-color') || '#ffff00',
-        direction: (this.getAttribute('direction') as 'left-to-right' | 'right-to-left' | 'center-out' | 'center-in') || 'left-to-right',
+        direction: (this.getAttribute('direction') as 'left-to-right' | 'right-to-left' | 'center-out') || 'left-to-right',
       };
 
       this.rootElm.render(
