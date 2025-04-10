@@ -166,6 +166,11 @@
           },
           "default": [],
           "description": "Provide paths to scripts for loading your custom web components. Each path should point to a JavaScript file."
+        },
+        "demoTime.customTheme": {
+          "type": "string",
+          "default": "",
+          "description": "Provide a path to a CSS file for loading your custom theme. The path should point to a CSS file."
         }
       }
     },

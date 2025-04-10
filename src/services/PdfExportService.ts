@@ -129,7 +129,11 @@ export class PdfExportService {
           await page.close();
           await context.close();
           await browser.close();
-          // await workspace.fs.delete(tempHtmlOutputPath);
+
+          if (Extension.getInstance().isProductionMode) {
+            // Delete the temporary HTML file
+            await workspace.fs.delete(tempHtmlOutputPath);
+          }
 
           // Open the generated PDF
           await env.openExternal(pdfPath);
@@ -258,12 +262,13 @@ export class PdfExportService {
 
     const webcomponents = await readFile(Uri.joinPath(Uri.parse(extensionPath), "out", "webcomponents", "index.mjs"));
 
-    let customComponents = [];
-    let customComponentsUrls = [];
+    const customComponents = [];
+    const customComponentsUrls = [];
     const extension = Extension.getInstance();
     const webComponents = extension.getSetting<string[]>(Config.webcomponents.scripts);
+    const workspaceFolder = extension.workspaceFolder;
+
     if (webComponents) {
-      const workspaceFolder = extension.workspaceFolder;
       for (const webComponent of webComponents) {
         if (webComponent.startsWith("http")) {
           customComponentsUrls.push(webComponent);
@@ -272,6 +277,20 @@ export class PdfExportService {
           if (component) {
             customComponents.push(component);
           }
+        }
+      }
+    }
+
+    const customThemes = [];
+    const customThemeUrls = [];
+    const customTheme = extension.getSetting<string>(Config.slides.customTheme);
+    if (customTheme) {
+      if (customTheme.startsWith("http")) {
+        customThemeUrls.push(customTheme);
+      } else if (workspaceFolder) {
+        const theme = await readFile(Uri.joinPath(workspaceFolder.uri, customTheme));
+        if (theme) {
+          customThemes.push(theme);
         }
       }
     }
@@ -348,6 +367,7 @@ export class PdfExportService {
         html += `
 <div class="w-full h-full flex items-center justify-center" id="slide-${index + 1}">
 ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` : ``}
+
   <div class="slide ${slide.theme.toLowerCase()}" date-theme="${slide.theme.toLowerCase()}" data-layout="${slide.layout.toLowerCase()}" >
     <div class="slide__container">
       <div class="slide__layout ${slide.layout.toLowerCase()}" style="${slideBg}">
@@ -399,6 +419,8 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
     }
 
     html += `
+        ${customThemes ? `<style type="text/tailwindcss">${customThemes}</style>` : ``}
+        ${customThemeUrls ? `<link rel="stylesheet" href="${customThemeUrls}">` : ``}
       </body>
       </html>
     `;

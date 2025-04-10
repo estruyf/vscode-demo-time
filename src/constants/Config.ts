@@ -22,6 +22,9 @@ export const Config = {
     enabled: "api.enabled",
     port: "api.port",
   },
+  slides: {
+    customTheme: "customTheme",
+  },
   webcomponents: {
     scripts: "customWebComponents",
   },

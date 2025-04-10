@@ -176,6 +176,7 @@ export class Preview {
 
     let scriptUrl = [];
     let moduleUrl = [];
+    let styleUrl = [];
 
     const extension = Extension.getInstance();
     const extPath = Uri.file(extension.extensionPath);
@@ -196,16 +197,25 @@ export class Preview {
     }
 
     scriptUrl.push(webview.asWebviewUri(Uri.joinPath(extPath, "assets", "slides", "tailwind.js")).toString());
+    const workspaceFolder = extension.workspaceFolder;
 
     const webComponents = extension.getSetting<string[]>(Config.webcomponents.scripts);
     if (webComponents) {
-      const workspaceFolder = extension.workspaceFolder;
       for (const webComponent of webComponents) {
         if (webComponent.startsWith("http")) {
           moduleUrl.push(webComponent);
         } else if (workspaceFolder) {
           moduleUrl.push(webview.asWebviewUri(Uri.joinPath(workspaceFolder.uri, webComponent)).toString());
         }
+      }
+    }
+
+    const customTheme = extension.getSetting<string>(Config.slides.customTheme);
+    if (customTheme) {
+      if (customTheme.startsWith("http")) {
+        styleUrl.push(customTheme);
+      } else if (workspaceFolder) {
+        styleUrl.push(webview.asWebviewUri(Uri.joinPath(workspaceFolder.uri, customTheme)).toString());
       }
     }
 
@@ -222,6 +232,8 @@ export class Preview {
   
       ${scriptUrl.map((url) => `<script src="${url}"></script>`).join("\n")}
       ${moduleUrl.map((url) => `<script src="${url}" type="module"></script>`).join("\n")}
+
+      ${styleUrl.map((url) => `<link rel="stylesheet" href="${url}">`).join("\n")}
 
       <img style="display:none" src="https://api.visitorbadge.io/api/combined?path=https:%2f%2fgithub.com%2festruyf%2fvscode-demo-time&labelColor=%23202736&countColor=%23FFD23F&slug=preview" alt="Preview usage" />
     </body>

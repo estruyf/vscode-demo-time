@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.2.0] - 2025-04-xx
+
+- [#92](https://github.com/estruyf/vscode-demo-time/issues/92): Added new `demoTime.customTheme` setting for global custom themes
+
 ## [1.1.0] - 2025-04-09
 
 - [#88](https://github.com/estruyf/vscode-demo-time/issues/88): Added new animation components which can be used in slides: `fade-in`, `text-typewriter`, and `text-highlight`
