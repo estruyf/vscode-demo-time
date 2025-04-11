@@ -534,12 +534,6 @@
         }
       ]
     },
-    "viewsWelcome": [
-      {
-        "view": "demo-time",
-        "contents": "Hello and welcome to Demo Time! You can use this extension to help you during coding demos.\n\nGet started creating a `.demo/demo.json` file in your workspace or by clicking on the initialize button.\n\n[Initialize](command:demo-time.initialize)"
-      }
-    ],
     "keybindings": [
       {
         "command": "demo-time.start",
@@ -560,6 +554,49 @@
         "key": "ctrl+r",
         "mac": "cmd+r",
         "when": "activeWebviewPanelId == demoTime:preview"
+      }
+    ],
+    "viewsWelcome": [
+      {
+        "view": "demo-time",
+        "contents": "Welcome to Demo Time! Start by creating a `.demo/demo.json` file or clicking the initialize button.\n\n[Initialize](command:demo-time.initialize) | [Learn More](https://demotime.elio.dev)"
+      }
+    ],
+    "walkthroughs": [
+      {
+        "id": "demo-time.welcome",
+        "title": "Welcome to Demo Time",
+        "description": "Demo Time helps you create and present coding presentions, workshops, trainings, etc...",
+        "steps": [
+          {
+            "id": "frontmatter.welcome.init",
+            "title": "Get started",
+            "description": "Initial steps to get started.\n[Initialize](command:demo-time.initialize)",
+            "completionEvents": [
+              "onContext:demo-time.isInitialized"
+            ],
+            "media": {
+              "markdown": "walkthrough/init.md"
+            }
+          },
+          {
+            "id": "demo-time.welcome.createDemo",
+            "title": "Create a Demo File",
+            "description": "Use the [Demo Time: Create a new demo file](command:demo-time.createDemoFile) command to create a new demo file.",
+            "media": {
+              "markdown": "walkthrough/create-demo.md"
+            }
+          },
+          {
+            "id": "demo-time.documentation",
+            "title": "Explore Documentation",
+            "description": "Visit the [Demo Time Documentation](https://demotime.elio.dev) for more details.",
+            "media": {
+              "image": "assets/logo/demotime-bg.svg",
+              "altText": "Demo Time Logo"
+            }
+          }
+        ]
       }
     ]
   },

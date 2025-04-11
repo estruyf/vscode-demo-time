@@ -1,5 +1,5 @@
 import { QuickPickItem, QuickPickItemKind, Uri, commands, window, workspace } from "vscode";
-import { COMMAND, Config } from "../constants";
+import { COMMAND, Config, ContextKeys } from "../constants";
 import { Action, Demo, Demos, Icons, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import { FileProvider } from "./FileProvider";
@@ -15,6 +15,7 @@ import {
   getActionOptions,
   getActionTemplate,
   lowercaseFirstLetter,
+  setContext,
   upperCaseFirstLetter,
 } from "../utils";
 import { Notifications } from "./Notifications";
@@ -43,6 +44,15 @@ export class DemoCreator {
     subscriptions.push(commands.registerCommand(COMMAND.createSnapshot, createSnapshot));
     subscriptions.push(commands.registerCommand(COMMAND.createPatch, createPatch));
     subscriptions.push(commands.registerCommand(COMMAND.createDemoFile, () => createDemoFile(true)));
+
+    // Check if the workspace is initialized
+    const demoFolder = workspace.workspaceFolders?.find((folder) =>
+      workspace.fs.stat(Uri.joinPath(folder.uri, ".demo")).then(
+        () => true,
+        () => false
+      )
+    );
+    setContext(ContextKeys.isInitialized, demoFolder ? true : false);
   }
 
   /**
@@ -70,6 +80,7 @@ export class DemoCreator {
 
     await addExtensionRecommendation();
 
+    await setContext(ContextKeys.isInitialized, true);
     Notifications.info(`${Config.title} is initialized, you can now start adding demo steps!`);
 
     DemoPanel.showWelcome(false);
