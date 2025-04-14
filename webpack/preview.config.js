@@ -12,7 +12,7 @@ const config = [
     entry: './src/preview/index.tsx',
     output: {
       filename: '[name].bundle.js',
-      path: path.resolve(__dirname, './out/preview')
+      path: path.resolve(__dirname, '../out/preview')
     },
     devtool: 'source-map',
     resolve: {

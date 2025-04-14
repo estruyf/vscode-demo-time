@@ -1,11 +1,10 @@
 import { ThemeColor, TreeItem, TreeView, commands, window } from "vscode";
-import { ContextKeys } from "../constants/ContextKeys";
-import { FileProvider } from "../services/FileProvider";
 import { Action, DemoFileCache, DemoFiles, Demos, Subscription } from "../models";
 import { ActionTreeItem, ActionTreeviewProvider } from "../providers/ActionTreeviewProvider";
-import { DemoRunner } from "../services/DemoRunner";
-import { COMMAND } from "../constants";
+import { COMMAND, ContextKeys } from "../constants";
 import { parseWinPath, setContext } from "../utils";
+import { DemoRunner } from "../services/DemoRunner";
+import { FileProvider } from "../services/FileProvider";
 import { DemoStatusBar } from "../services/DemoStatusBar";
 import { Extension } from "../services/Extension";
 
