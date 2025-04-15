@@ -49,7 +49,6 @@
     "workspaceContains:**/.demo/*"
   ],
   "main": "./out/extension/extension.js",
-  "browser": "./out/extension/extension.js",
   "contributes": {
     "configurationDefaults": {
       "files.associations": {
