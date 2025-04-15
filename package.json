@@ -49,7 +49,7 @@
     "workspaceContains:**/.demo/*"
   ],
   "main": "./out/extension/extension.js",
-  "browser": "./out/web/extension.js",
+  "browser": "./out/web/webext.js",
   "contributes": {
     "configurationDefaults": {
       "files.associations": {
@@ -608,13 +608,14 @@
     "compile:wv": "webpack --mode production --config ./webpack/webview.config.js",
     "compile:preview": "webpack --mode production --config ./webpack/preview.config.js",
     "compile:web": "webpack --mode production --config ./webpack/browser.config.js",
+    "compile:vite": "vite build",
     "compile:copy": "node ./scripts/copy-assets.mjs",
     "watch": "npm-run-all --parallel watch:*",
     "watch:ext": "tsup --watch",
     "watch:wc": "tsup --watch --config tsup.wc.config.ts",
     "watch:wv": "webpack serve --mode development --config ./webpack/webview.config.js",
     "watch:preview": "webpack serve --mode development --config ./webpack/preview.config.js",
-    "watch:web": "webpack serve --mode development --config ./webpack/browser.config.js",
+    "watch:web": "vite",
     "lint": "eslint src --ext ts"
   },
   "peerDependencies": {
@@ -670,6 +671,8 @@
     "typescript": "^5.2.2",
     "uuid": "^11.1.0",
     "vfile-matter": "^5.0.0",
+    "vite": "^6.2.6",
+    "vite-plugin-node-polyfills": "^0.23.0",
     "vscrui": "^0.2.0-beta.1229608",
     "webpack": "^5.99.5",
     "webpack-cli": "^6.0.1",
