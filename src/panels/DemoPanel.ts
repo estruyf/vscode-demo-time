@@ -5,7 +5,7 @@ import { Action, DemoFileCache, DemoFiles, Demos, Subscription } from "../models
 import { ActionTreeItem, ActionTreeviewProvider } from "../providers/ActionTreeviewProvider";
 import { DemoRunner } from "../services/DemoRunner";
 import { COMMAND } from "../constants";
-import { parseWinPath, setContext } from "../utils";
+import { parseWinPath, setContext, sortFiles } from "../utils";
 import { DemoStatusBar } from "../services/DemoStatusBar";
 import { Extension } from "../services/Extension";
 
@@ -55,21 +55,7 @@ export class DemoPanel {
       return [];
     }
 
-    let demoKeys = Object.keys(demoFiles);
-    demoKeys = demoKeys.sort((aPath, bPath) => {
-      aPath = aPath.toLowerCase();
-      bPath = bPath.toLowerCase();
-
-      if (aPath < bPath) {
-        return -1;
-      }
-
-      if (aPath > bPath) {
-        return 1;
-      }
-
-      return 0;
-    });
+    const demoKeys = sortFiles(demoFiles);
 
     const accountCommands: ActionTreeItem[] = [];
 

@@ -3,7 +3,7 @@ import { Extension } from "./Extension";
 import { DemoFiles, Demos } from "../models";
 import { Config, General } from "../constants";
 import { parse as jsonParse } from "jsonc-parser";
-import { createDemoFile, readFile, sanitizeFileName, writeFile } from "../utils";
+import { createDemoFile, readFile, sanitizeFileName, sortFiles, writeFile } from "../utils";
 import { Preview } from "../preview/Preview";
 
 export class FileProvider {
@@ -76,7 +76,7 @@ export class FileProvider {
       return;
     }
 
-    const files = Object.keys(demoFiles).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    const files = sortFiles(demoFiles);
     const demoFileOptions = files.map((path) => {
       return {
         label: (demoFiles as any)[path].title,
@@ -107,7 +107,7 @@ export class FileProvider {
     } else if (!demoFilePick.description) {
       return;
     } else {
-      demoFilePath = Object.keys(demoFiles).find((path) => path.endsWith(demoFilePick.description as string));
+      demoFilePath = sortFiles(demoFiles).find((path) => path.endsWith(demoFilePick.description as string));
       if (!demoFilePath) {
         return;
       }

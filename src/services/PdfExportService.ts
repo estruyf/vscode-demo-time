@@ -5,7 +5,7 @@ import { Notifications } from "./Notifications";
 import { Action, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import { FileProvider, Logger } from ".";
-import { convertTemplateToHtml, getTheme, readFile, transformMarkdown, writeFile } from "../utils";
+import { convertTemplateToHtml, getTheme, readFile, sortFiles, transformMarkdown, writeFile } from "../utils";
 import { commands, Uri, workspace, WorkspaceFolder, window, ProgressLocation, env, ColorThemeKind } from "vscode";
 import { Page } from "playwright-chromium";
 import { COMMAND, Config, General, SlideLayout } from "../constants";
@@ -60,14 +60,12 @@ export class PdfExportService {
           }
 
           // Sort the demo files by their paths
-          demoFiles = Object.keys(demoFiles)
-            .sort()
-            .reduce((sortedFiles, key) => {
-              if (demoFiles) {
-                sortedFiles[key] = demoFiles[key];
-              }
-              return sortedFiles;
-            }, {} as typeof demoFiles);
+          demoFiles = sortFiles(demoFiles).reduce((sortedFiles, key) => {
+            if (demoFiles) {
+              sortedFiles[key] = demoFiles[key];
+            }
+            return sortedFiles;
+          }, {} as typeof demoFiles);
 
           // Get all slide actions
           const slideActions: Step[] = [];

@@ -1,19 +1,23 @@
+import { sortFiles } from ".";
 import { DemoFiles, Demos } from "../models";
 import { FileProvider } from "../services/FileProvider";
 
 export const getPreviousDemoFile = async (demoFile?: {
   filePath: string;
-}): Promise<{
-  filePath: string;
-  demo: Demos;
-} | undefined> => {
+}): Promise<
+  | {
+      filePath: string;
+      demo: Demos;
+    }
+  | undefined
+> => {
   if (!demoFile) {
     return;
   }
 
   // Get the next demo file
-  const demoFiles: DemoFiles = await FileProvider.getFiles() || {};
-  const files = Object.keys(demoFiles).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+  const demoFiles: DemoFiles = (await FileProvider.getFiles()) || {};
+  const files = sortFiles(demoFiles);
   const fileIdx = files.findIndex((file) => file === demoFile.filePath);
   const previousIdx = fileIdx - 1;
 

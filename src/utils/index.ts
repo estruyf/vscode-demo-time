@@ -43,6 +43,7 @@ export * from "./replaceContent";
 export * from "./sanitizeFileName";
 export * from "./setContext";
 export * from "./sleep";
+export * from "./sortFiles";
 export * from "./togglePresentationView";
 export * from "./transformMarkdown";
 export * from "./updateConfig";
