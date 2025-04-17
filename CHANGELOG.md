@@ -1,6 +1,6 @@
 # Change Log
 
-## [1.2.0] - 2025-04-xx
+## [1.2.0] - 2025-04-17
 
 - [#87](https://github.com/estruyf/vscode-demo-time/issues/87): Added new walkthrough for Visual Studio Code
 - [#92](https://github.com/estruyf/vscode-demo-time/issues/92): Added new `demoTime.customTheme` setting for global custom themes
