@@ -1,7 +1,7 @@
-import { commands, Uri, Webview, WebviewPanel, workspace, window, ViewColumn } from "vscode";
+import { commands, Uri, Webview, WebviewPanel, window, ViewColumn } from "vscode";
 import { Subscription } from "../models";
 import { Extension } from "../services/Extension";
-import { COMMAND, Config, EXTENSION_NAME, WebViewMessages } from "../constants";
+import { COMMAND, Config, EXTENSION_NAME, General, WebViewMessages } from "../constants";
 import { MessageHandlerData } from "@estruyf/vscode";
 import { FileProvider } from "../services/FileProvider";
 import { DemoRunner } from "../services/DemoRunner";
@@ -125,6 +125,18 @@ export class PresenterView {
       if (path) {
         NotesService.openNotes(path);
       }
+    } else if (command === WebViewMessages.toVscode.getNotes && payload) {
+      const { path } = payload;
+      if (path) {
+        const workspaceFolder = Extension.getInstance().workspaceFolder;
+        const notesPath = workspaceFolder ? Uri.joinPath(workspaceFolder.uri, General.demoFolder, path) : undefined;
+        if (notesPath) {
+          const notes = await readFile(notesPath);
+          PresenterView.postRequestMessage(command, requestId, notes);
+          return;
+        }
+      }
+      PresenterView.postRequestMessage(command, requestId, undefined);
     }
   }
 

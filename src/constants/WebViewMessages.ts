@@ -9,6 +9,7 @@ export const WebViewMessages = {
     detach: "detach",
     runCommand: "runCommand",
     openNotes: "openNotes",
+    getNotes: "getNotes",
     // Preview
     getFileUri: "getFileUri",
     parseFileUri: "parseFileUri",

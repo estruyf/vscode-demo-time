@@ -6,7 +6,9 @@ import { EventData } from '@estruyf/vscode';
 import { DemoHeader } from './DemoHeader';
 import { DemoListItem } from './DemoListItem';
 
-export interface IDemosProps { }
+export interface IDemosProps {
+  setNotes: (notes: string | undefined) => void;
+}
 
 export const Demos: React.FunctionComponent<IDemosProps> = (props: React.PropsWithChildren<IDemosProps>) => {
   const [demoFiles, setDemoFiles] = React.useState<DemoFiles | null>(null);
@@ -24,6 +26,16 @@ export const Demos: React.FunctionComponent<IDemosProps> = (props: React.PropsWi
   };
 
   const runStep = React.useCallback((idx: number, demo: Demo) => {
+    if (demo.notes?.path) {
+      props.setNotes(undefined);
+      messageHandler.request<string | undefined>(WebViewMessages.toVscode.getNotes, {
+        path: demo.notes.path
+      }).then((notes) => {
+        props.setNotes(notes);
+      });
+    } else {
+      props.setNotes(undefined);
+    }
     messageHandler.send(WebViewMessages.toVscode.runCommand, {
       command: COMMAND.runStep,
       args: {

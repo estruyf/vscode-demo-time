@@ -9,14 +9,16 @@ import { StartCountdown } from './StartCountdown';
 import { EventData } from '@estruyf/vscode';
 import { StartPresentation } from './StartPresentation';
 import { ResetAction } from './ResetAction';
+import { Notes } from './Notes';
 
-export interface IAppProps {}
+export interface IAppProps { }
 
 export const App: React.FunctionComponent<IAppProps> = (props: React.PropsWithChildren<IAppProps>) => {
   const [isReady, setIsReady] = React.useState(false);
   const [showClock, setShowClock] = React.useState(false);
   const [countdown, setCountdown] = React.useState<number | undefined>(undefined);
   const [countdownStarted, setCountdownStarted] = React.useState<Date | undefined>(undefined);
+  const [notes, setNotes] = React.useState<string | undefined>(undefined);
 
   const messageListener = (message: MessageEvent<EventData<any>>) => {
     const { command, payload } = message.data;
@@ -43,15 +45,15 @@ export const App: React.FunctionComponent<IAppProps> = (props: React.PropsWithCh
     messageHandler.request<boolean>(WebViewMessages.toVscode.getSetting, Config.clock.show).then((show) => {
       setShowClock(show);
     });
-    
+
     messageHandler.request<number | undefined>(WebViewMessages.toVscode.getSetting, Config.clock.timer).then((time) => {
       setCountdown(time);
     });
-    
+
     messageHandler.request<Date | undefined>(WebViewMessages.toVscode.getCountdownStarted).then((time) => {
       setCountdownStarted(time);
     });
-        
+
     return () => {
       Messenger.unlisten(messageListener);
     };
@@ -79,14 +81,18 @@ export const App: React.FunctionComponent<IAppProps> = (props: React.PropsWithCh
           <ResetAction />
         </div>
       </section>
-      
+
       <div className="max-w-4xl mx-auto space-y-4">
 
         <header className='flex justify-between items-center'>
           <h1 className='text-2xl'>Presenter view</h1>
         </header>
 
-        <Demos />
+        <div className="grid grid-cols-2 gap-4">
+          <Demos setNotes={setNotes} />
+
+          <Notes content={notes} />
+        </div>
 
         {showClock && (
           <div className="grid grid-cols-2 gap-4">
