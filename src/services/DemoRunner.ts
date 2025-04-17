@@ -66,6 +66,7 @@ export class DemoRunner {
   private static crntHighlightRange: Range | undefined;
   private static crntZoom: number | undefined;
   private static crntHighlightWholeLine: boolean | undefined;
+  public static currentDemo: Demo | undefined;
 
   /**
    * Registers the commands for the demo runner.
@@ -186,6 +187,8 @@ export class DemoRunner {
     await ext.setState(StateKeys.executingDemoFile, resetContent);
     await clearVariablesState();
     PresenterView.postMessage(WebViewMessages.toWebview.updateRunningDemos, resetContent);
+    PresenterView.postMessage(WebViewMessages.toWebview.resetNotes, undefined);
+    DemoRunner.currentDemo = undefined;
     DemoRunner.togglePresentationMode(false);
     DemoPanel.update();
     Preview.close();
@@ -257,6 +260,7 @@ export class DemoRunner {
     executingFile.demo = removeDemoDuplicates(executingFile.demo);
 
     await DemoRunner.setExecutedDemoFile(executingFile);
+    DemoRunner.currentDemo = nextDemo;
     await DemoRunner.runSteps(demoSteps);
     NotesService.showNotes(nextDemo);
   }
@@ -309,6 +313,7 @@ export class DemoRunner {
       executingFile.demo = removeDemoDuplicates(executingFile.demo);
 
       await DemoRunner.setExecutedDemoFile(executingFile);
+      DemoRunner.currentDemo = lastDemo;
       await DemoRunner.runSteps(lastDemo.steps);
       NotesService.showNotes(lastDemo);
       return;
@@ -329,6 +334,7 @@ export class DemoRunner {
     executingFile.demo = removeDemoDuplicates(executingFile.demo);
 
     await DemoRunner.setExecutedDemoFile(executingFile);
+    DemoRunner.currentDemo = previousDemo;
     await DemoRunner.runSteps(demoSteps);
     NotesService.showNotes(previousDemo);
   }
@@ -362,6 +368,7 @@ export class DemoRunner {
     executingFile.demo = removeDemoDuplicates(executingFile.demo);
 
     await DemoRunner.setExecutedDemoFile(executingFile);
+    DemoRunner.currentDemo = demoToRun.demo;
     await DemoRunner.runSteps(demoToRun.demo.steps);
     NotesService.showNotes(demoToRun.demo);
   }
@@ -409,6 +416,7 @@ export class DemoRunner {
       return;
     }
     const demoToRun = demoFiles[filePath].demos[demoIdx];
+    DemoRunner.currentDemo = demoToRun;
 
     executingFile.demo.push({
       idx: demoIdx,
@@ -419,6 +427,7 @@ export class DemoRunner {
     executingFile.demo = removeDemoDuplicates(executingFile.demo);
 
     await DemoRunner.setExecutedDemoFile(executingFile);
+    DemoRunner.currentDemo = demoToRun;
     await DemoRunner.runSteps(demoToRun.steps);
     NotesService.showNotes(demoToRun);
   }

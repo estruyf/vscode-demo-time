@@ -3,6 +3,7 @@ export const WebViewMessages = {
     getSetting: "getSetting",
     getDemoFiles: "getDemoFiles",
     getRunningDemos: "getRunningDemos",
+    getCurrentDemo: "getCurrentDemo",
     getNextDemo: "getNextDemo",
     getCountdownStarted: "getCountdownStarted",
     getPresentationStarted: "getPresentationStarted",
@@ -30,6 +31,7 @@ export const WebViewMessages = {
     updateCountdown: "updateCountdown",
     updateCountdownStarted: "updateCountdownStarted",
     updatePresentationStarted: "updatePresentationStarted",
+    resetNotes: "resetNotes",
     // Preview
     updateFileUri: "updateFileUri",
     triggerUpdate: "triggerUpdate",

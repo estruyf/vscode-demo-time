@@ -90,6 +90,8 @@ export class PresenterView {
     } else if (command === WebViewMessages.toVscode.getRunningDemos) {
       const executingFile = await DemoRunner.getExecutedDemoFile();
       PresenterView.postRequestMessage(command, requestId, executingFile);
+    } else if (command === WebViewMessages.toVscode.getCurrentDemo) {
+      PresenterView.postRequestMessage(command, requestId, DemoRunner.currentDemo);
     } else if (command === WebViewMessages.toVscode.getNextDemo) {
       const nextDemo = DemoStatusBar.getNextDemo();
       PresenterView.postRequestMessage(command, requestId, nextDemo);
@@ -121,6 +123,8 @@ export class PresenterView {
         commands.executeCommand("workbench.action.moveEditorToNewWindow");
       }
     } else if (command === WebViewMessages.toVscode.openNotes && payload) {
+      await commands.executeCommand(`workbench.action.focusActivityBar`);
+
       const { path } = payload;
       if (path) {
         NotesService.openNotes(path);

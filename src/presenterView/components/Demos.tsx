@@ -5,14 +5,27 @@ import { COMMAND, WebViewMessages } from '../../constants';
 import { EventData } from '@estruyf/vscode';
 import { DemoHeader } from './DemoHeader';
 import { DemoListItem } from './DemoListItem';
+import { Notes } from './Notes';
 
-export interface IDemosProps {
-  setNotes: (notes: string | undefined) => void;
-}
+export interface IDemosProps { }
 
-export const Demos: React.FunctionComponent<IDemosProps> = (props: React.PropsWithChildren<IDemosProps>) => {
+export const Demos: React.FunctionComponent<IDemosProps> = ({ }: React.PropsWithChildren<IDemosProps>) => {
   const [demoFiles, setDemoFiles] = React.useState<DemoFiles | null>(null);
   const [runningDemos, setRunningDemos] = React.useState<DemoFileCache | null>(null);
+  const [notes, setNotes] = React.useState<string | undefined>(undefined);
+
+  const checkToSetNotes = React.useCallback((demo?: Demo) => {
+    if (demo?.notes?.path) {
+      setNotes(undefined);
+      messageHandler.request<string | undefined>(WebViewMessages.toVscode.getNotes, {
+        path: demo.notes.path
+      }).then((notes) => {
+        setNotes(notes);
+      });
+    } else {
+      setNotes(undefined);
+    }
+  }, [setNotes]);
 
   const messageListener = (message: MessageEvent<EventData<any>>) => {
     const { command, payload } = message.data;
@@ -22,20 +35,12 @@ export const Demos: React.FunctionComponent<IDemosProps> = (props: React.PropsWi
 
     if (command === WebViewMessages.toWebview.updateRunningDemos) {
       setRunningDemos(payload);
+    } else if (command === WebViewMessages.toWebview.resetNotes) {
+      setNotes(undefined);
     }
   };
 
   const runStep = React.useCallback((idx: number, demo: Demo) => {
-    if (demo.notes?.path) {
-      props.setNotes(undefined);
-      messageHandler.request<string | undefined>(WebViewMessages.toVscode.getNotes, {
-        path: demo.notes.path
-      }).then((notes) => {
-        props.setNotes(notes);
-      });
-    } else {
-      props.setNotes(undefined);
-    }
     messageHandler.send(WebViewMessages.toVscode.runCommand, {
       command: COMMAND.runStep,
       args: {
@@ -82,6 +87,12 @@ export const Demos: React.FunctionComponent<IDemosProps> = (props: React.PropsWi
   }, [demoFiles, runningDemos]);
 
   React.useEffect(() => {
+    messageHandler.request<Demo | undefined>(WebViewMessages.toVscode.getCurrentDemo).then((demo) => {
+      checkToSetNotes(demo);
+    });
+  }, [crntDemos?.demos]);
+
+  React.useEffect(() => {
     Messenger.listen(messageListener);
     messageHandler.request<DemoFiles | null>(WebViewMessages.toVscode.getDemoFiles).then((files: DemoFiles | null) => {
       setDemoFiles(files);
@@ -101,23 +112,31 @@ export const Demos: React.FunctionComponent<IDemosProps> = (props: React.PropsWi
   }
 
   return (
-    <div className="rounded-[2px] border border-[var(--vscode-panel-border)] shadow-sm">
-      <DemoHeader title={crntDemos.title} />
+    <div className="grid grid-cols-2 gap-4">
+      <div className="rounded-[2px] border border-[var(--vscode-panel-border)] shadow-sm">
+        <DemoHeader title={crntDemos.title} />
 
-      <div className="p-4 pt-0">
-        <ul className="">
-          {
-            crntDemos && crntDemos.demos.map((d, idx) => (
-              <DemoListItem
-                key={d.id || idx}
-                demo={d}
-                onRun={() => runStep(idx, d.source)}
-                onOpenNotes={() => openNotes(d.notes?.path)}
-              />
-            ))
-          }
-        </ul>
+        <div className="p-4 pt-0">
+          <ul className="">
+            {
+              crntDemos && crntDemos.demos.map((d, idx) => (
+                <DemoListItem
+                  key={d.id || idx}
+                  demo={d}
+                  onRun={() => runStep(idx, d.source)}
+                  onOpenNotes={() => openNotes(d.notes?.path)}
+                />
+              ))
+            }
+          </ul>
+        </div>
       </div>
+
+      {
+        (crntDemos && crntDemos.demos) && (
+          <Notes content={notes} />
+        )
+      }
     </div>
   );
 };

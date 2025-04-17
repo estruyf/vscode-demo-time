@@ -74,6 +74,7 @@ export class DemoStatusBar {
 
       // Show the notes action
       const crntDemo = executingDemos[crntDemoIdx];
+
       if (crntDemo.notes && crntDemo.notes.path) {
         DemoStatusBar.statusBarNotes.show();
       } else {

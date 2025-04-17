@@ -18,14 +18,14 @@ export const Notes: React.FunctionComponent<INotesProps> = ({
   }, [content]);
 
   return (
-    <>
+    <div className="rounded-[2px] border border-[var(--vscode-panel-border)] shadow-sm">
       {markdown ? (
-        <div className="notes-content">
+        <div className="notes-container">
           {markdown}
         </div>
       ) : (
         <div className="no-notes"></div>
       )}
-    </>
+    </div>
   );
 };

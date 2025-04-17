@@ -9,8 +9,6 @@ import { StartCountdown } from './StartCountdown';
 import { EventData } from '@estruyf/vscode';
 import { StartPresentation } from './StartPresentation';
 import { ResetAction } from './ResetAction';
-import { Notes } from './Notes';
-
 export interface IAppProps { }
 
 export const App: React.FunctionComponent<IAppProps> = (props: React.PropsWithChildren<IAppProps>) => {
@@ -18,7 +16,6 @@ export const App: React.FunctionComponent<IAppProps> = (props: React.PropsWithCh
   const [showClock, setShowClock] = React.useState(false);
   const [countdown, setCountdown] = React.useState<number | undefined>(undefined);
   const [countdownStarted, setCountdownStarted] = React.useState<Date | undefined>(undefined);
-  const [notes, setNotes] = React.useState<string | undefined>(undefined);
 
   const messageListener = (message: MessageEvent<EventData<any>>) => {
     const { command, payload } = message.data;
@@ -82,17 +79,12 @@ export const App: React.FunctionComponent<IAppProps> = (props: React.PropsWithCh
         </div>
       </section>
 
-      <div className="max-w-4xl mx-auto space-y-4">
-
+      <div className="max-w-7xl mx-auto space-y-4">
         <header className='flex justify-between items-center'>
           <h1 className='text-2xl'>Presenter view</h1>
         </header>
 
-        <div className="grid grid-cols-2 gap-4">
-          <Demos setNotes={setNotes} />
-
-          <Notes content={notes} />
-        </div>
+        <Demos />
 
         {showClock && (
           <div className="grid grid-cols-2 gap-4">
