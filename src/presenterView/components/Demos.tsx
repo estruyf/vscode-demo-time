@@ -2,8 +2,9 @@ import * as React from 'react';
 import { Demo, DemoFileCache, DemoFiles } from '../../models';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import { COMMAND, WebViewMessages } from '../../constants';
-import { Icon } from 'vscrui';
 import { EventData } from '@estruyf/vscode';
+import { DemoHeader } from './DemoHeader';
+import { DemoListItem } from './DemoListItem';
 
 export interface IDemosProps { }
 
@@ -60,6 +61,7 @@ export const Demos: React.FunctionComponent<IDemosProps> = (props: React.PropsWi
         title: d.title,
         description: d.description,
         icons: d.icons,
+        steps: d.steps,
         source: Object.assign({}, d),
         notes: d.notes,
         executed: runningDemos.demo.findIndex((rd) => rd.id ? rd.id === d.id : rd.idx === idx) !== -1
@@ -88,39 +90,18 @@ export const Demos: React.FunctionComponent<IDemosProps> = (props: React.PropsWi
 
   return (
     <div className="rounded-[2px] border border-[var(--vscode-panel-border)] shadow-sm">
-      <div className="flex flex-col space-y-1.5 p-4">
-        <h3 className="text-xl font-semibold leading-none tracking-tight">
-          Demo: {crntDemos.title}
-        </h3>
-      </div>
+      <DemoHeader title={crntDemos.title} />
 
       <div className="p-4 pt-0">
         <ul className="">
           {
             crntDemos && crntDemos.demos.map((d, idx) => (
-              <li key={d.id || idx} className="flex items-center gap-2">
-                <button
-                  className="flex items-center p-1 space-x-2 hover:text-[var(--vscode-list-hoverForeground)] hover:bg-[var(--vscode-list-hoverBackground)] rounded-[2px]"
-                  onClick={() => runStep(idx, d.source)}>
-                  {
-                    d.executed ? (
-                      <Icon name={d.icons?.end as any || "pass-filled"} className={d.executed ? "!text-[var(--vscode-charts-green)]" : ""} />
-                    ) : (
-                      <Icon name={d.icons?.start as any || "run"} className={d.executed ? "!text-[var(--vscode-charts-green)]" : ""} />
-                    )}
-                  <span>{d.title}</span>
-                </button>
-
-                {
-                  (d.notes && d.notes.path) && (
-                    <button
-                      className="flex items-center p-1 space-x-2 hover:text-[var(--vscode-list-hoverForeground)] hover:bg-[var(--vscode-list-hoverBackground)] rounded-[2px]"
-                      onClick={() => openNotes(d.notes?.path)}>
-                      <Icon name="book" />
-                    </button>
-                  )
-                }
-              </li>
+              <DemoListItem
+                key={d.id || idx}
+                demo={d}
+                onRun={() => runStep(idx, d.source)}
+                onOpenNotes={() => openNotes(d.notes?.path)}
+              />
             ))
           }
         </ul>
