@@ -4,17 +4,19 @@ import { Icon } from 'vscrui';
 
 export interface DemoListItemProps {
   demo: Demo & { executed: boolean };
+  isActive: boolean;
   onRun: () => void;
   onOpenNotes: () => void;
 }
 
 export const DemoListItem: React.FunctionComponent<DemoListItemProps> = ({
   demo,
+  isActive,
   onRun,
   onOpenNotes,
 }) => {
   return (
-    <li className="flex items-center gap-2">
+    <li className={`flex items-center gap-2 ${isActive ? 'bg-[var(--vscode-list-activeSelectionBackground)]' : ''}`}>
       <button
         className="flex items-center p-1 space-x-2 hover:text-[var(--vscode-list-hoverForeground)] hover:bg-[var(--vscode-list-hoverBackground)] rounded-[2px]"
         onClick={onRun}

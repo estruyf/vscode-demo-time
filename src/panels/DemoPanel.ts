@@ -62,10 +62,16 @@ export class DemoPanel {
     for (const path of demoKeys) {
       const demos = (demoFiles as any)[path] as Demos;
 
+      const crntDemo = DemoRunner.currentDemo;
       const demoSteps = demos.demos.map((demo, idx, allDemos) => {
         let hasExecuted = false;
         if (executingDemoFile.filePath === path) {
           hasExecuted = !!executingDemoFile.demo.find((d) => (d.id ? d.id === demo.id : d.idx === idx));
+        }
+
+        let isActive = false;
+        if (crntDemo && executingDemoFile.filePath === path) {
+          isActive = typeof crntDemo.id !== "undefined" ? crntDemo.id === demo.id : crntDemo.title === demo.title;
         }
 
         let ctxValue = "demo-time.step";
@@ -112,7 +118,8 @@ export class DemoPanel {
           parseWinPath(path),
           idx,
           demo.notes?.path,
-          demo.title
+          demo.title,
+          isActive
         );
       });
 

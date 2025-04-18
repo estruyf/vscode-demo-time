@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.3.0] - 2025-04-18
+
+- Highlight the current demo step in the tree view and the presenter view
+- [#95](https://github.com/estruyf/vscode-demo-time/issues/95): Render the speaker notes in the presenter view
+
 ## [1.2.0] - 2025-04-17
 
 - [#87](https://github.com/estruyf/vscode-demo-time/issues/87): Added new walkthrough for Visual Studio Code

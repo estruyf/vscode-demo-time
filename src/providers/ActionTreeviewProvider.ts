@@ -51,7 +51,8 @@ export class ActionTreeItem extends TreeItem {
     public demoFilePath?: string,
     public stepIndex?: number,
     public notes?: string,
-    public originalLabel?: string
+    public originalLabel?: string,
+    public isActive?: boolean
   ) {
     super(label, children ? TreeItemCollapsibleState.Expanded : TreeItemCollapsibleState.None);
 
@@ -59,7 +60,7 @@ export class ActionTreeItem extends TreeItem {
     const extPath = ext.extensionPath;
 
     this.label = label;
-    this.description = description;
+    this.description = `${isActive ? `←` : ``} ${description || ""}`;
     this.tooltip = description || label;
 
     this.iconPath = image

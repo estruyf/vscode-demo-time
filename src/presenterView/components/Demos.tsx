@@ -13,6 +13,7 @@ export const Demos: React.FunctionComponent<IDemosProps> = ({ }: React.PropsWith
   const [demoFiles, setDemoFiles] = React.useState<DemoFiles | null>(null);
   const [runningDemos, setRunningDemos] = React.useState<DemoFileCache | null>(null);
   const [notes, setNotes] = React.useState<string | undefined>(undefined);
+  const [crntDemo, setCrntDemo] = React.useState<Demo | undefined>(undefined);
 
   const checkToSetNotes = React.useCallback((demo?: Demo) => {
     if (demo?.notes?.path) {
@@ -88,6 +89,7 @@ export const Demos: React.FunctionComponent<IDemosProps> = ({ }: React.PropsWith
 
   React.useEffect(() => {
     messageHandler.request<Demo | undefined>(WebViewMessages.toVscode.getCurrentDemo).then((demo) => {
+      setCrntDemo(demo);
       checkToSetNotes(demo);
     });
   }, [crntDemos?.demos]);
@@ -125,6 +127,7 @@ export const Demos: React.FunctionComponent<IDemosProps> = ({ }: React.PropsWith
                   demo={d}
                   onRun={() => runStep(idx, d.source)}
                   onOpenNotes={() => openNotes(d.notes?.path)}
+                  isActive={typeof crntDemo?.id !== 'undefined' ? crntDemo?.id === d.id : crntDemo?.title === d.title}
                 />
               ))
             }
