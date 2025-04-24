@@ -1,6 +1,6 @@
 # Change Log
 
-## [1.3.0] - 2025-04-18
+## [1.3.0] - 2025-04-24
 
 - Highlight the current demo step in the tree view and the presenter view
 - [#95](https://github.com/estruyf/vscode-demo-time/issues/95): Render the speaker notes in the presenter view
