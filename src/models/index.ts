@@ -6,5 +6,6 @@ export * from "./DemoFileCache";
 export * from "./Demos";
 export * from "./ShellSetting";
 export * from "./SlideMetadata";
+export * from "./SlideModels";
 export * from "./Subscription";
 export * from "./Theme";
