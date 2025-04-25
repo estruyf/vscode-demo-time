@@ -8,7 +8,6 @@ import { SlideTransition, WebViewMessages } from '../../constants';
 import { renderToString } from 'react-dom/server';
 import { convertTemplateToHtml } from '../../utils/convertTemplateToHtml';
 import { SlideMetadata } from '../../models';
-import { SlideParser } from '../../services/SlideParser';
 
 export interface IMarkdownProps {
   filePath?: string;
@@ -142,14 +141,6 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
 
   React.useEffect(() => {
     if (content && content !== prevContent) {
-      // Split content into individual slides using the "---" delimiter
-      console.log('Splitting content into slides...');
-      const parser = new SlideParser();
-      const slides = parser.parseSlides(content);
-
-      console.log('Parsed slides:', slides);
-
-
       // Passing the theme here as it could be that the theme has been updated
       setMarkdown(twoColumnFormatting(content), [[rehypePrettyCode, { theme: vsCodeTheme ? vsCodeTheme : {} }]], isDarkTheme);
     }

@@ -9,6 +9,7 @@ export class Preview {
   private static webview: WebviewPanel | null = null;
   private static isDisposed = true;
   private static hasClickListener = false;
+  private static isSlideGroup = false;
   private static crntFile: string | null = null;
   private static crntCss: string | null = null;
 
@@ -29,6 +30,13 @@ export class Preview {
     }
 
     return Preview.hasClickListener;
+  }
+
+  public static checkIsSlideGroup(): boolean {
+    if (!Preview.isOpen) {
+      return false;
+    }
+    return Preview.isSlideGroup;
   }
 
   public static show(fileUri: string, css?: string) {
@@ -95,6 +103,7 @@ export class Preview {
     Preview.webview.onDidDispose(async () => {
       Preview.isDisposed = true;
       Preview.hasClickListener = false;
+      Preview.isSlideGroup = false;
     });
 
     Preview.webview.webview.onDidReceiveMessage(Preview.messageListener);
@@ -145,13 +154,15 @@ export class Preview {
       }
     } else if (command === WebViewMessages.toVscode.setHasClickListener) {
       Preview.hasClickListener = payload.listening ?? false;
+    } else if (command === WebViewMessages.toVscode.setIsSlideGroup) {
+      Preview.isSlideGroup = payload.slideGroup ?? false;
     } else if (command === WebViewMessages.toVscode.openFile && payload) {
       const fileUri = getAbsolutePath(payload);
       await window.showTextDocument(fileUri, { preview: false });
     }
   }
 
-  public static async postMessage(command: string, payload: any) {
+  public static async postMessage(command: string, payload?: any) {
     if (Preview.isDisposed) {
       return;
     }

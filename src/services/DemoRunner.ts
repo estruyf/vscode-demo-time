@@ -204,6 +204,11 @@ export class DemoRunner {
       return;
     }
 
+    if (Preview.checkIsSlideGroup()) {
+      await Preview.postMessage(WebViewMessages.toWebview.nextSlide);
+      return;
+    }
+
     const executingFile = await DemoRunner.getExecutedDemoFile();
 
     const demoFile = await DemoRunner.getDemoFile(item);

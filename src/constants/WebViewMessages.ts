@@ -22,6 +22,7 @@ export const WebViewMessages = {
     openFile: "openFile",
     getFileContents: "getFileContents",
     setHasClickListener: "setHasClickListener",
+    setIsSlideGroup: "setIsSlideGroup",
   },
   toWebview: {
     updateClock: "updateClock",
@@ -37,5 +38,7 @@ export const WebViewMessages = {
     triggerUpdate: "triggerUpdate",
     updateStyles: "updateStyles",
     updateIsInPresentationMode: "updateIsInPresentationMode",
+    previousSlide: "previousSlide",
+    nextSlide: "nextSlide",
   },
 };

@@ -8,6 +8,8 @@ import { useFileContents } from '../hooks/useFileContents';
 import useCursor from '../hooks/useCursor';
 import { SlideControls } from './SlideControls';
 import useTheme from '../hooks/useTheme';
+import { Slide } from '../../models';
+import { SlideParser } from '../../services/SlideParser';
 
 export interface IMarkdownPreviewProps {
   fileUri: string;
@@ -28,6 +30,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const [mousePosition, setMousePosition] = React.useState<{ x: number; y: number } | null>(null);
   const { cursorVisible, resetCursorTimeout } = useCursor();
   const { vsCodeTheme, isDarkTheme } = useTheme();
+  const [slides, setSlides] = React.useState<Slide[]>([]);
+  const [crntSlide, setCrntSlide] = React.useState<Slide | null>(null);
   const { scale } = useScale(ref, slideRef);
 
   const messageListener = (message: MessageEvent<EventData<any>>) => {
@@ -37,9 +41,33 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     }
 
     if (command === WebViewMessages.toWebview.triggerUpdate) {
+      setSlides([]);
+      setCrntSlide(null);
+      messageHandler.send(WebViewMessages.toVscode.setIsSlideGroup, { slideGroup: false });
       getFileContents(payload);
     }
   };
+
+  const updateSlideIdx = React.useCallback((slideIdx: number) => {
+    if (slideIdx < 0 || slideIdx >= slides.length) {
+      messageHandler.send(WebViewMessages.toVscode.setIsSlideGroup, { slideGroup: false });
+      return;
+    }
+    const slide = slides[slideIdx];
+    setCrntSlide(slide);
+  }, [slides]);
+
+  const slidesListener = React.useCallback((message: MessageEvent<EventData<any>>) => {
+    const { command, payload } = message.data;
+    if (!command) {
+      return;
+    }
+
+    if (command === WebViewMessages.toWebview.nextSlide) {
+      const nextSlide = crntSlide ? crntSlide.index + 1 : 1;
+      updateSlideIdx(nextSlide);
+    }
+  }, [crntSlide, slides.length, updateSlideIdx]);
 
   const getBgStyles = React.useCallback(() => {
     if (!layout || layout === SlideLayout.ImageLeft || layout === SlideLayout.ImageRight) {
@@ -66,11 +94,43 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   }, [crntFilePath, webviewUrl]);
 
   React.useEffect(() => {
+    if (content) {
+      const parser = new SlideParser();
+      const allSlides = parser.parseSlides(content);
+      setSlides(allSlides);
+      setCrntSlide(allSlides[0]);
+      if (allSlides.length > 1) {
+        messageHandler.send(WebViewMessages.toVscode.setIsSlideGroup, { slideGroup: true });
+      }
+    }
+  }, [content]);
+
+  React.useEffect(() => {
     getFileContents(fileUri);
   }, [fileUri]);
 
   React.useEffect(() => {
+    Messenger.listen(slidesListener);
+
+    if (slides.length === 1) {
+      messageHandler.send(WebViewMessages.toVscode.setIsSlideGroup, { slideGroup: false });
+    } else if (slides.length > 1 && crntSlide?.index === slides.length - 1) {
+      messageHandler.send(WebViewMessages.toVscode.setIsSlideGroup, { slideGroup: false });
+    } else if (slides.length > 1) {
+      messageHandler.send(WebViewMessages.toVscode.setIsSlideGroup, { slideGroup: true });
+    }
+
+    return () => {
+      Messenger.unlisten(slidesListener);
+    };
+  }, [slides.length, crntSlide]);
+
+  React.useEffect(() => {
     Messenger.listen(messageListener);
+
+    setSlides([]);
+    setCrntSlide(null);
+    messageHandler.send(WebViewMessages.toVscode.setIsSlideGroup, { slideGroup: false });
 
     return () => {
       Messenger.unlisten(messageListener);
@@ -79,7 +139,6 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
 
   return (
     <>
-
       <div
         key={crntFilePath}
         ref={ref}
@@ -103,12 +162,12 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             }
 
             {
-              content && vsCodeTheme ? (
+              crntSlide && vsCodeTheme ? (
                 <div className='slide__content'>
                   {
                     <Markdown
                       filePath={crntFilePath}
-                      content={content}
+                      content={crntSlide.content}
                       vsCodeTheme={vsCodeTheme}
                       isDarkTheme={isDarkTheme}
                       webviewUrl={webviewUrl}
@@ -129,9 +188,9 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           </div>
         </div>
 
-        <SlideControls show={showControls && cursorVisible} path={relativePath}>
+        <SlideControls show={true} path={relativePath} slides={slides.length} currentSlide={crntSlide?.index} updateSlideIdx={updateSlideIdx}>
           {/* Mouse Position */}
-          {mousePosition && (
+          {mousePosition && showControls && cursorVisible && (
             <div className="mouse-position text-sm px-2 py-1 text-[var(--vscode-editorWidget-foreground)]">
               X: {mousePosition.x}, Y: {mousePosition.y}
             </div>
