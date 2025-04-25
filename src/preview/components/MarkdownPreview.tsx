@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
-import { SlideLayout, WebViewMessages } from '../../constants';
+import { SlideLayout, SlideTheme, WebViewMessages } from '../../constants';
 import { Markdown } from './Markdown';
 import { EventData } from '@estruyf/vscode';
 import { useScale } from '../hooks/useScale';
@@ -34,6 +34,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const [crntSlide, setCrntSlide] = React.useState<Slide | null>(null);
   const { scale } = useScale(ref, slideRef);
 
+  console.log("MarkdownPreview");
+
   const messageListener = (message: MessageEvent<EventData<any>>) => {
     const { command, payload } = message.data;
     if (!command) {
@@ -43,14 +45,15 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     if (command === WebViewMessages.toWebview.triggerUpdate) {
       setSlides([]);
       setCrntSlide(null);
-      messageHandler.send(WebViewMessages.toVscode.setIsSlideGroup, { slideGroup: false });
+      messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
+      messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, false);
       getFileContents(payload);
     }
   };
 
   const updateSlideIdx = React.useCallback((slideIdx: number) => {
     if (slideIdx < 0 || slideIdx >= slides.length) {
-      messageHandler.send(WebViewMessages.toVscode.setIsSlideGroup, { slideGroup: false });
+      messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
       return;
     }
     const slide = slides[slideIdx];
@@ -66,6 +69,9 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     if (command === WebViewMessages.toWebview.nextSlide) {
       const nextSlide = crntSlide ? crntSlide.index + 1 : 1;
       updateSlideIdx(nextSlide);
+    } else if (command === WebViewMessages.toWebview.previousSlide) {
+      const previousSlide = crntSlide ? crntSlide.index - 1 : 0;
+      updateSlideIdx(previousSlide);
     }
   }, [crntSlide, slides.length, updateSlideIdx]);
 
@@ -100,7 +106,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       setSlides(allSlides);
       setCrntSlide(allSlides[0]);
       if (allSlides.length > 1) {
-        messageHandler.send(WebViewMessages.toVscode.setIsSlideGroup, { slideGroup: true });
+        messageHandler.send(WebViewMessages.toVscode.hasNextSlide, true);
       }
     }
   }, [content]);
@@ -110,14 +116,22 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   }, [fileUri]);
 
   React.useEffect(() => {
+    setTheme(crntSlide?.frontmatter.theme || SlideTheme.default);
+    setLayout(crntSlide?.frontmatter.layout || SlideLayout.Default);
+  }, [crntSlide]);
+
+  React.useEffect(() => {
     Messenger.listen(slidesListener);
 
     if (slides.length === 1) {
-      messageHandler.send(WebViewMessages.toVscode.setIsSlideGroup, { slideGroup: false });
+      messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
+      messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, false);
     } else if (slides.length > 1 && crntSlide?.index === slides.length - 1) {
-      messageHandler.send(WebViewMessages.toVscode.setIsSlideGroup, { slideGroup: false });
+      messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
+      messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, true);
     } else if (slides.length > 1) {
-      messageHandler.send(WebViewMessages.toVscode.setIsSlideGroup, { slideGroup: true });
+      messageHandler.send(WebViewMessages.toVscode.hasNextSlide, true);
+      messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, (crntSlide?.index && crntSlide.index > 0));
     }
 
     return () => {
@@ -130,7 +144,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
 
     setSlides([]);
     setCrntSlide(null);
-    messageHandler.send(WebViewMessages.toVscode.setIsSlideGroup, { slideGroup: false });
+    messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
+    messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, false);
 
     return () => {
       Messenger.unlisten(messageListener);
@@ -166,13 +181,13 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
                 <div className='slide__content'>
                   {
                     <Markdown
+                      key={crntSlide.index}
                       filePath={crntFilePath}
                       content={crntSlide.content}
+                      matter={crntSlide.frontmatter}
                       vsCodeTheme={vsCodeTheme}
                       isDarkTheme={isDarkTheme}
                       webviewUrl={webviewUrl}
-                      updateTheme={setTheme}
-                      updateLayout={setLayout}
                       updateBgStyles={setBgStyles}
                     />
                   }

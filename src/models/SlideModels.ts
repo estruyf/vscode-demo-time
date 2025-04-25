@@ -1,3 +1,5 @@
+import { SlideMetadata } from "./SlideMetadata";
+
 export interface ParserOptions {
   delimiterPattern?: RegExp;
   includeEmpty?: boolean;
@@ -7,18 +9,14 @@ export interface ParserOptions {
 export interface Slide {
   content: string;
   rawContent: string;
-  frontmatter: SlideFrontmatter;
+  frontmatter: SlideMetadata;
   index: number;
 }
 
 export interface InternalSlide {
   content: string;
   rawContent: string;
-  docFrontMatter: SlideFrontmatter;
-  frontmatter: SlideFrontmatter;
+  docFrontMatter: SlideMetadata;
+  frontmatter: SlideMetadata;
   index: number;
-}
-
-export interface SlideFrontmatter {
-  [key: string]: any;
 }

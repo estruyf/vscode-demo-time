@@ -545,6 +545,11 @@
         "when": "demo-time.presentation && demo-time.previousEnabled"
       },
       {
+        "command": "demo-time.previous",
+        "key": "left",
+        "when": "demo-time.presentation && demo-time.hasPreviousSlide == true"
+      },
+      {
         "command": "demo-time.toggleSelectionHighlight",
         "key": "alt+h"
       },

@@ -1,15 +1,16 @@
 import { Uri, Webview, WebviewPanel, window, ViewColumn, commands } from "vscode";
 import { Extension } from "../services/Extension";
-import { COMMAND, Config, WebViewMessages } from "../constants";
+import { COMMAND, Config, ContextKeys, WebViewMessages } from "../constants";
 import { MessageHandlerData } from "@estruyf/vscode";
-import { getAbsolutePath, getTheme, getWebviewUrl, readFile, togglePresentationView } from "../utils";
+import { getAbsolutePath, getTheme, getWebviewUrl, readFile, setContext, togglePresentationView } from "../utils";
 import { DemoRunner } from "../services";
 
 export class Preview {
   private static webview: WebviewPanel | null = null;
   private static isDisposed = true;
   private static hasClickListener = false;
-  private static isSlideGroup = false;
+  private static hasPreviousSlide = false;
+  private static hasNextSlide = false;
   private static crntFile: string | null = null;
   private static crntCss: string | null = null;
 
@@ -32,11 +33,18 @@ export class Preview {
     return Preview.hasClickListener;
   }
 
-  public static checkIsSlideGroup(): boolean {
+  public static checkIfHasNextSlide(): boolean {
     if (!Preview.isOpen) {
       return false;
     }
-    return Preview.isSlideGroup;
+    return Preview.hasNextSlide;
+  }
+
+  public static checkIfHasPreviousSlide(): boolean {
+    if (!Preview.isOpen) {
+      return false;
+    }
+    return Preview.hasPreviousSlide;
   }
 
   public static show(fileUri: string, css?: string) {
@@ -103,7 +111,8 @@ export class Preview {
     Preview.webview.onDidDispose(async () => {
       Preview.isDisposed = true;
       Preview.hasClickListener = false;
-      Preview.isSlideGroup = false;
+      Preview.hasPreviousSlide = false;
+      Preview.hasNextSlide = false;
     });
 
     Preview.webview.webview.onDidReceiveMessage(Preview.messageListener);
@@ -154,8 +163,11 @@ export class Preview {
       }
     } else if (command === WebViewMessages.toVscode.setHasClickListener) {
       Preview.hasClickListener = payload.listening ?? false;
-    } else if (command === WebViewMessages.toVscode.setIsSlideGroup) {
-      Preview.isSlideGroup = payload.slideGroup ?? false;
+    } else if (command === WebViewMessages.toVscode.hasNextSlide) {
+      Preview.hasNextSlide = payload;
+    } else if (command === WebViewMessages.toVscode.hasPreviousSlide) {
+      Preview.hasPreviousSlide = payload;
+      setContext(ContextKeys.hasPreviousSlide, payload);
     } else if (command === WebViewMessages.toVscode.openFile && payload) {
       const fileUri = getAbsolutePath(payload);
       await window.showTextDocument(fileUri, { preview: false });

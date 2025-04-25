@@ -22,7 +22,8 @@ export const WebViewMessages = {
     openFile: "openFile",
     getFileContents: "getFileContents",
     setHasClickListener: "setHasClickListener",
-    setIsSlideGroup: "setIsSlideGroup",
+    hasNextSlide: "hasNextSlide",
+    hasPreviousSlide: "hasPreviousSlide",
   },
   toWebview: {
     updateClock: "updateClock",

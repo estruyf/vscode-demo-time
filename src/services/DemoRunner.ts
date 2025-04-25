@@ -204,7 +204,7 @@ export class DemoRunner {
       return;
     }
 
-    if (Preview.checkIsSlideGroup()) {
+    if (Preview.checkIfHasNextSlide()) {
       await Preview.postMessage(WebViewMessages.toWebview.nextSlide);
       return;
     }
@@ -276,6 +276,11 @@ export class DemoRunner {
    * @returns {Promise<void>} A promise that resolves when the previous demo step has been executed.
    */
   private static async previous(): Promise<void> {
+    if (Preview.checkIfHasPreviousSlide()) {
+      await Preview.postMessage(WebViewMessages.toWebview.previousSlide);
+      return;
+    }
+
     const executingFile = await DemoRunner.getExecutedDemoFile();
     const filePath = executingFile.filePath;
     if (!filePath) {

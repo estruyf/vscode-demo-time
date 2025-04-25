@@ -1,5 +1,6 @@
 import { FrontMatterParser } from "./FrontMatterParser";
-import { ParserOptions, Slide, InternalSlide, SlideFrontmatter } from "../models";
+import { ParserOptions, Slide, InternalSlide, SlideMetadata } from "../models";
+import { SlideLayout } from "../constants";
 
 export class SlideParser {
   private defaultOptions: Required<ParserOptions> = {
@@ -36,8 +37,8 @@ export class SlideParser {
 
     let currentSlide: {
       content: string[];
-      docFrontMatter: SlideFrontmatter;
-      frontmatter: SlideFrontmatter;
+      docFrontMatter: SlideMetadata;
+      frontmatter: SlideMetadata;
       inCodeBlock: boolean;
       codeBlockMarker: string;
     } = {
@@ -50,7 +51,7 @@ export class SlideParser {
 
     let slideStarted = true; // Set to true to capture the first slide content
     let collectingFrontmatter = false;
-    let currentFrontmatter: SlideFrontmatter = {};
+    let currentFrontmatter: SlideMetadata = {};
 
     // Process each line
     for (let i = 0; i < lines.length; i++) {
@@ -148,9 +149,14 @@ export class SlideParser {
     }
 
     // Apply default layout where not specified
-    return slides.map((slide) => {
+    return slides.map((slide, idx) => {
       if (!slide.frontmatter.layout) {
-        slide.frontmatter.layout = "default";
+        // On the first slide, use the docFrontMatter layout if available
+        if (idx === 0 && slide.docFrontMatter.layout) {
+          slide.frontmatter.layout = slide.docFrontMatter.layout;
+        } else {
+          slide.frontmatter.layout = SlideLayout.Default;
+        }
       }
       if (slide.docFrontMatter.theme) {
         slide.frontmatter.theme = slide.docFrontMatter.theme;
@@ -174,7 +180,7 @@ export class SlideParser {
    */
   public groupSlidesByProperty(slides: Slide[], property: string): Record<string, Slide[]> {
     return slides.reduce((groups, slide) => {
-      const propertyValue = slide.frontmatter[property] || "default";
+      const propertyValue = slide.frontmatter[property] || SlideLayout.Default;
       if (!groups[propertyValue]) {
         groups[propertyValue] = [];
       }
