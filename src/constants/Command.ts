@@ -31,6 +31,7 @@ export const COMMAND = {
   // Countdown
   startCountdown: `${EXTENSION_NAME}.startCountdown`,
   resetCountdown: `${EXTENSION_NAME}.resetCountdown`,
+  pauseCountdown: `${EXTENSION_NAME}.pauseCountdown`,
   // Presenter view
   showPresenterView: `${EXTENSION_NAME}.showPresenterView`,
   // Notes

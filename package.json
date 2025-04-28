@@ -285,6 +285,11 @@
         "category": "Demo Time"
       },
       {
+        "command": "demo-time.pauseCountdown",
+        "title": "Pause or resume countdown",
+        "category": "Demo Time"
+      },
+      {
         "command": "demo-time.showPresenterView",
         "title": "Show presenter view",
         "category": "Demo Time",
