@@ -351,7 +351,7 @@ export class PdfExportService {
 
     for (const slide of allSlides) {
       if (slide) {
-        const css = await PdfExportService.getCustomTheme(slide.customTheme);
+        const css = await PdfExportService.getCustomTheme(slide.customTheme || "");
         const slideBg =
           slide.image && slide.layout !== SlideLayout.ImageLeft && slide.layout !== SlideLayout.ImageRight
             ? `background-image: url(${slide.image});`
