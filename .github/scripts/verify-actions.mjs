@@ -25,7 +25,7 @@ for (let action of actions) {
   }
 }
 
-const summary = core.summary.addHeading(`Version info`);
+const summary = core.summary.addHeading(`Missing Actions`);
 
 if (options.length > 0) {
   summary.addRaw(`The following actions are missing from getActionOptions.ts`);
