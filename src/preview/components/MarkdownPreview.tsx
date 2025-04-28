@@ -10,6 +10,7 @@ import { SlideControls } from './SlideControls';
 import useTheme from '../hooks/useTheme';
 import { Slide } from '../../models';
 import { SlideParser } from '../../services/SlideParser';
+import { useMousePosition } from '../hooks/useMousePosition';
 
 export interface IMarkdownPreviewProps {
   fileUri: string;
@@ -27,12 +28,12 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const [showControls, setShowControls] = React.useState(false);
   const ref = React.useRef<HTMLDivElement>(null);
   const slideRef = React.useRef<HTMLDivElement>(null);
-  const [mousePosition, setMousePosition] = React.useState<{ x: number; y: number } | null>(null);
-  const { cursorVisible, resetCursorTimeout } = useCursor();
+  const { cursorVisible } = useCursor();
   const { vsCodeTheme, isDarkTheme } = useTheme();
   const [slides, setSlides] = React.useState<Slide[]>([]);
   const [crntSlide, setCrntSlide] = React.useState<Slide | null>(null);
   const { scale } = useScale(ref, slideRef);
+  const { mousePosition, handleMouseMove } = useMousePosition(slideRef, scale);
 
   console.log("MarkdownPreview");
 
@@ -82,18 +83,6 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
 
     return bgStyles;
   }, [bgStyles, layout]);
-
-  const handleMouseMove = React.useCallback((event: React.MouseEvent<HTMLDivElement>) => {
-    resetCursorTimeout();
-
-    const rect = slideRef.current?.getBoundingClientRect();
-    if (rect) {
-      setMousePosition({
-        x: Math.round((event.clientX - rect.left) / scale),
-        y: Math.round((event.clientY - rect.top) / scale),
-      });
-    }
-  }, [resetCursorTimeout, scale]);
 
   const relativePath = React.useMemo(() => {
     return crntFilePath ? crntFilePath.replace(webviewUrl || "", "") : undefined;
