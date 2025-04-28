@@ -447,6 +447,12 @@ export class DemoRunner {
    * @param demoSteps An array of Step objects representing the steps to be executed.
    */
   private static async runSteps(demoSteps: Step[]): Promise<void> {
+    // Unselect the current selection
+    const textEditor = window.activeTextEditor;
+    if (textEditor) {
+      DecoratorService.unselect(textEditor);
+    }
+
     // Reset the highlight
     await setContext(ContextKeys.hasCodeHighlighting, false);
     DemoRunner.setCrntHighlighting();

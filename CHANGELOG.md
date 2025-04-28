@@ -2,6 +2,8 @@
 
 ## [1.4.0] - 2025-xx-xx
 
+- [#101](https://github.com/estruyf/vscode-demo-time/issues/101): Implementation of feedback
+  - [#103](https://github.com/estruyf/vscode-demo-time/issues/103): Clear highlight the moment you run the next step
 - [#97](https://github.com/estruyf/vscode-demo-time/issues/97): Support for Markdown slides with multiple slides (slide groups)
   - [#99](https://github.com/estruyf/vscode-demo-time/issues/99): PDF export support for multiple slides included
 
