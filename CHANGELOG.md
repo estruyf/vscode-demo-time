@@ -3,6 +3,7 @@
 ## [1.4.0] - 2025-xx-xx
 
 - [#97](https://github.com/estruyf/vscode-demo-time/issues/97): Support for Markdown slides with multiple slides (slide groups)
+  - [#99](https://github.com/estruyf/vscode-demo-time/issues/99): PDF export support for multiple slides included
 
 ## [1.3.0] - 2025-04-24
 
