@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.4.0] - 2025-xx-xx
+
+- [#97](https://github.com/estruyf/vscode-demo-time/issues/97): Support for Markdown slides with multiple slides (slide groups)
+
 ## [1.3.0] - 2025-04-24
 
 - Highlight the current demo step in the tree view and the presenter view

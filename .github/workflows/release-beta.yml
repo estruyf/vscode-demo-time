@@ -23,9 +23,12 @@ jobs:
       - name: Verify actions
         run: node .github/scripts/verify-actions.mjs
 
+      - name: Prepare BETA
+        run: node .github/scripts/beta-release.js $GITHUB_RUN_ID
+
       - name: Publish
         if: contains(github.event.head_commit.message, '#release')
-        run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }} --baseImagesUrl https://raw.githubusercontent.com/estruyf/vscode-demo-time/dev
+        run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }} --baseImagesUrl https://raw.githubusercontent.com/estruyf/vscode-demo-time/dev --pre-release
 
       - name: Publish to open-vsx.org
         if: contains(github.event.head_commit.message, '#release')
