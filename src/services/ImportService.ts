@@ -119,7 +119,7 @@ export class ImportService {
         if (demo) {
           const demoFileUri = Uri.joinPath(wsFolder.uri, General.demoFolder, `${slideFolderName}.json`);
           try {
-            await workspace.fs.writeFile(demoFileUri, Buffer.from(JSON.stringify(demo, null, 2)));
+            await workspace.fs.writeFile(demoFileUri, new TextEncoder().encode(JSON.stringify(demo, null, 2)));
             await window.showTextDocument(demoFileUri, { preview: false });
           } catch (error) {
             Notifications.error("Failed to create demo file.");
