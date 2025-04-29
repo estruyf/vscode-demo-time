@@ -7,6 +7,7 @@
 - [#101](https://github.com/estruyf/vscode-demo-time/issues/101): Implementation of feedback
   - [#103](https://github.com/estruyf/vscode-demo-time/issues/103): Clear highlight the moment you run the next step
   - [#105](https://github.com/estruyf/vscode-demo-time/issues/105): Ability to pause the countdown and resume it
+- [#106](https://github.com/estruyf/vscode-demo-time/issues/106): Fix issue where file creating is slower than the async/await
 
 ## [1.3.0] - 2025-04-24
 
