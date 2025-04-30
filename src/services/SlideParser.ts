@@ -115,7 +115,7 @@ export class SlideParser {
         const keyValueMatch = trimmedLine.match(/^(\w+):\s*(.+)$/);
         if (keyValueMatch) {
           const [, key, value] = keyValueMatch;
-          currentFrontmatter[key] = value;
+          currentFrontmatter[key] = value.startsWith('"') && value.endsWith('"') ? value.slice(1, -1) : value;
           continue;
         } else if (trimmedLine === "") {
           // Empty line within frontmatter is allowed
@@ -150,7 +150,6 @@ export class SlideParser {
 
     // Apply default layout where not specified
     return slides.map((slide, idx) => {
-      console.log("Slide:", slide);
       if (idx === 0) {
         slide.frontmatter = {
           ...slide.frontmatter,
