@@ -35,8 +35,6 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const { scale } = useScale(ref, slideRef);
   const { mousePosition, handleMouseMove } = useMousePosition(slideRef, scale);
 
-  console.log("MarkdownPreview");
-
   const messageListener = (message: MessageEvent<EventData<any>>) => {
     const { command, payload } = message.data;
     if (!command) {

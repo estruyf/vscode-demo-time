@@ -150,13 +150,16 @@ export class SlideParser {
 
     // Apply default layout where not specified
     return slides.map((slide, idx) => {
+      console.log("Slide:", slide);
+      if (idx === 0) {
+        slide.frontmatter = {
+          ...slide.frontmatter,
+          ...slide.docFrontMatter,
+        };
+      }
+
       if (!slide.frontmatter.layout) {
-        // On the first slide, use the docFrontMatter layout if available
-        if (idx === 0 && slide.docFrontMatter.layout) {
-          slide.frontmatter.layout = slide.docFrontMatter.layout;
-        } else {
-          slide.frontmatter.layout = SlideLayout.Default;
-        }
+        slide.frontmatter.layout = SlideLayout.Default;
       }
       if (slide.docFrontMatter.theme) {
         slide.frontmatter.theme = slide.docFrontMatter.theme;
