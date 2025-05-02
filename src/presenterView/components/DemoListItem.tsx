@@ -9,14 +9,14 @@ export interface DemoListItemProps {
   onOpenNotes: () => void;
 }
 
-export const DemoListItem: React.FunctionComponent<DemoListItemProps> = ({
+const DemoListItem = React.forwardRef<HTMLLIElement, DemoListItemProps>(({
   demo,
   isActive,
   onRun,
   onOpenNotes,
-}) => {
+}, ref) => {
   return (
-    <li className={`flex items-center gap-2 ${isActive ? 'bg-[var(--vscode-list-activeSelectionBackground)]' : ''}`}>
+    <li ref={ref} className={`flex items-center gap-2 ${isActive ? 'bg-[var(--vscode-list-activeSelectionBackground)]' : ''}`}>
       <button
         className="flex items-center p-1 space-x-2 hover:text-[var(--vscode-list-hoverForeground)] hover:bg-[var(--vscode-list-hoverBackground)] rounded-[2px]"
         onClick={onRun}
@@ -45,4 +45,6 @@ export const DemoListItem: React.FunctionComponent<DemoListItemProps> = ({
       )}
     </li>
   );
-};
+});
+
+export default DemoListItem;
