@@ -160,7 +160,7 @@ export class DemoStatusBar {
     }
 
     DemoStatusBar.countdownStarted = new Date();
-    DemoStatusBar.countdownPaused = false;
+    DemoStatusBar.updatePause(false);
     DemoStatusBar.pausedTimeRemaining = undefined;
     await setContext(ContextKeys.countdown, true);
     DemoStatusBar.startClock();
@@ -170,7 +170,7 @@ export class DemoStatusBar {
 
   private static async resetCountdown() {
     DemoStatusBar.countdownStarted = undefined;
-    DemoStatusBar.countdownPaused = false;
+    DemoStatusBar.updatePause(false);
     DemoStatusBar.pausedTimeRemaining = undefined;
     await setContext(ContextKeys.countdown, false);
     DemoStatusBar.statusBarClock.backgroundColor = undefined;
@@ -178,6 +178,7 @@ export class DemoStatusBar {
     DemoStatusBar.startClock();
     DemoStatusBar.statusBarPause.hide();
     PresenterView.postMessage(WebViewMessages.toWebview.updateCountdownStarted, undefined);
+    PresenterView.postMessage(WebViewMessages.toWebview.resetCountdown, undefined);
   }
 
   private static async pauseCountdown() {
@@ -188,7 +189,7 @@ export class DemoStatusBar {
 
     if (DemoStatusBar.countdownPaused) {
       // Resume countdown
-      DemoStatusBar.countdownPaused = false;
+      DemoStatusBar.updatePause(false);
       if (DemoStatusBar.pausedTimeRemaining !== undefined) {
         DemoStatusBar.countdownStarted = new Date(
           new Date().getTime() - (timer * 60 * 1000 - DemoStatusBar.pausedTimeRemaining)
@@ -198,7 +199,7 @@ export class DemoStatusBar {
       DemoStatusBar.statusBarPause.tooltip = "Pause the countdown timer";
     } else {
       // Pause countdown
-      DemoStatusBar.countdownPaused = true;
+      DemoStatusBar.updatePause(true);
       if (DemoStatusBar.countdownStarted) {
         const diff = new Date().getTime() - DemoStatusBar.countdownStarted.getTime();
         DemoStatusBar.pausedTimeRemaining = timer * 60 * 1000 - diff;
@@ -293,5 +294,10 @@ export class DemoStatusBar {
     setTimeout(() => {
       DemoStatusBar.startClock();
     }, 1000);
+  }
+
+  private static updatePause(status: boolean) {
+    DemoStatusBar.countdownPaused = status;
+    PresenterView.postMessage(WebViewMessages.toWebview.updateCountdownStatus, status);
   }
 }

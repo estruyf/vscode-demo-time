@@ -32,6 +32,8 @@ export const WebViewMessages = {
     updateNextDemo: "updateNextDemo",
     updateCountdown: "updateCountdown",
     updateCountdownStarted: "updateCountdownStarted",
+    updateCountdownStatus: "updateCountdownStatus",
+    resetCountdown: "resetCountdown",
     updatePresentationStarted: "updatePresentationStarted",
     resetNotes: "resetNotes",
     // Preview
