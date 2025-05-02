@@ -116,7 +116,7 @@ export const Demos: React.FunctionComponent<IDemosProps> = ({ }: React.PropsWith
   return (
     <div className="grid grid-cols-2 gap-4">
       <div className="rounded-[2px] border border-[var(--vscode-panel-border)] shadow-sm">
-        <DemoHeader title={crntDemos.title} />
+        <DemoHeader prefix='Demo' title={crntDemos.title} />
 
         <div className="p-4 pt-0">
           <ul className="">
@@ -137,7 +137,7 @@ export const Demos: React.FunctionComponent<IDemosProps> = ({ }: React.PropsWith
 
       {
         (crntDemos && crntDemos.demos) && (
-          <Notes content={notes} />
+          <Notes content={notes} path={crntDemo?.notes?.path} />
         )
       }
     </div>
