@@ -1,6 +1,7 @@
 export const Config = {
   title: "Demo Time",
   root: "demoTime",
+  relativeFromWorkspace: "relativeFromWorkspace",
   presentationMode: {
     previousEnabled: "previousEnabled",
   },

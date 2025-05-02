@@ -170,6 +170,11 @@
           "type": "string",
           "default": "",
           "description": "Provide a path to a CSS file for loading your custom theme. The path should point to a CSS file."
+        },
+        "demoTime.relativeFromWorkspace": {
+          "type": "boolean",
+          "default": true,
+          "description": "When `true`, all paths are resolved relative to the workspace folder. When `false`, paths are resolved relative to the .demo folder."
         }
       }
     },

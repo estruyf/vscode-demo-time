@@ -6,4 +6,7 @@ export const StateKeys = {
   executingDemoFile: "executingDemoFile",
   variables: "variables",
   presentationView: "presentationView",
+  versions: {
+    v2: "v2",
+  },
 };

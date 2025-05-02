@@ -3,7 +3,7 @@ import { Config, General } from "../constants";
 import { fileExists } from "./fileExists";
 import { Action, Step } from "../models";
 import { Extension, Notifications } from "../services";
-import { addStepsToDemo, getFileName, writeFile } from ".";
+import { addStepsToDemo, getFileName, getSetting, writeFile } from ".";
 
 export const createSnapshot = async () => {
   const activeEditor = window.activeTextEditor;
@@ -66,12 +66,17 @@ export const createSnapshot = async () => {
     return;
   }
 
+  const isRelativeFromWorkspace = getSetting<boolean>(Config.relativeFromWorkspace);
+  const contentPath = isRelativeFromWorkspace
+    ? newFilePath.path.replace(wsFolder.uri.path, "")
+    : newFilePath.path.replace(Uri.joinPath(wsFolder.uri, General.demoFolder).path, "");
+
   const relFilePath = activeEditor.document.uri.path.replace(wsFolder.uri.path || "", "");
   const steps: Step[] = [
     {
       action: Action.Create,
       path: relFilePath,
-      contentPath: newFilePath.path.replace(Uri.joinPath(wsFolder.uri, General.demoFolder).path, ""),
+      contentPath,
     },
     {
       action: Action.Open,

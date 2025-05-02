@@ -1,7 +1,7 @@
 import { FileType, Uri, window, workspace } from "vscode";
 import { Extension, Notifications } from "../services";
 import { Config, General } from "../constants";
-import { addStepsToDemo, fileExists, getFileName, readFile, writeFile } from ".";
+import { addStepsToDemo, fileExists, getFileName, getSetting, readFile, writeFile } from ".";
 import { createPatch as createFilePatch } from "diff";
 import { Action, Step } from "../models";
 
@@ -93,13 +93,21 @@ export const createPatch = async () => {
     return;
   }
 
-  const demoFolderPath = Uri.joinPath(wsFolder.uri, General.demoFolder).path;
+  const isRelativeFromWorkspace = getSetting<boolean>(Config.relativeFromWorkspace);
+  const contentPath = isRelativeFromWorkspace
+    ? patchFilePath.path.replace(wsFolder.uri.path, "")
+    : patchFilePath.path.replace(Uri.joinPath(wsFolder.uri, General.demoFolder).path, "");
+
+  const patchPath = isRelativeFromWorkspace
+    ? patchFilePath.path.replace(wsFolder.uri.path, "")
+    : patchFilePath.path.replace(Uri.joinPath(wsFolder.uri, General.demoFolder).path, "");
+
   const steps: Step[] = [
     {
       action: Action.ApplyPatch,
       path: relFilePath,
-      contentPath: selectedSnapshotPath.path.replace(demoFolderPath, ""),
-      patch: patchFilePath.path.replace(demoFolderPath, ""),
+      contentPath,
+      patch: patchPath,
     },
     {
       action: Action.Open,

@@ -1,5 +1,5 @@
 import { QuickPickItem, QuickPickItemKind, Uri, commands, window, workspace } from "vscode";
-import { COMMAND, Config, ContextKeys } from "../constants";
+import { COMMAND, Config, ContextKeys, StateKeys } from "../constants";
 import { Action, Demo, Demos, Icons, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import { FileProvider } from "./FileProvider";
@@ -85,6 +85,8 @@ export class DemoCreator {
 
     DemoPanel.showWelcome(false);
     DemoPanel.init();
+
+    Extension.getInstance().setState(StateKeys.versions.v2, true);
   }
 
   /**

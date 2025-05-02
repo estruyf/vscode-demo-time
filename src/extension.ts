@@ -14,6 +14,7 @@ import {
   PdfExportService,
   Slides,
   UriHandler,
+  VersionValidation,
 } from "./services";
 import { DemoPanel } from "./panels/DemoPanel";
 import { Preview } from "./preview/Preview";
@@ -22,6 +23,8 @@ import { Config } from "./constants";
 
 export async function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);
+
+  VersionValidation.pathCheck();
 
   // Clearing the variable state when the extension starts
   clearVariablesState();

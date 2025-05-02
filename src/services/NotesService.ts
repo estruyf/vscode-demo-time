@@ -1,10 +1,10 @@
 import { commands, Uri } from "vscode";
 import { Subscription, Demo } from "../models";
 import { Extension } from "./Extension";
-import { COMMAND, General } from "../constants";
+import { COMMAND, Config, General } from "../constants";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { Notifications } from "./Notifications";
-import { fileExists } from "../utils";
+import { fileExists, getSetting } from "../utils";
 import { FileProvider } from "./FileProvider";
 import { DemoRunner } from "./DemoRunner";
 
@@ -23,7 +23,12 @@ export class NotesService {
 
   public static async openNotes(filePath: string) {
     const workspaceFolder = Extension.getInstance().workspaceFolder;
-    const notesPath = workspaceFolder ? Uri.joinPath(workspaceFolder.uri, General.demoFolder, filePath) : undefined;
+    const isRelativeFromWorkspace = getSetting<boolean>(Config.relativeFromWorkspace);
+    const notesPath = workspaceFolder
+      ? isRelativeFromWorkspace
+        ? Uri.joinPath(workspaceFolder.uri, filePath)
+        : Uri.joinPath(workspaceFolder.uri, General.demoFolder, filePath)
+      : undefined;
     const notesFile = notesPath ? await fileExists(notesPath) : false;
     if (!notesFile) {
       Notifications.error("No notes available for this step.");

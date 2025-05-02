@@ -1,12 +1,17 @@
 import { Uri, WorkspaceFolder, workspace } from "vscode";
-import { General } from "../constants";
+import { Config, General } from "../constants";
+import { getSetting } from "./getSetting";
 
 export const getFileContents = async (workspaceFolder: WorkspaceFolder, contentPath?: string) => {
   if (!contentPath) {
     return;
   }
 
-  const contentUri = Uri.joinPath(workspaceFolder.uri, General.demoFolder, contentPath);
+  const isRelativeFromWorkspace = getSetting<boolean>(Config.relativeFromWorkspace);
+
+  const contentUri = isRelativeFromWorkspace
+    ? Uri.joinPath(workspaceFolder.uri, contentPath)
+    : Uri.joinPath(workspaceFolder.uri, General.demoFolder, contentPath);
   if (!contentUri) {
     return;
   }

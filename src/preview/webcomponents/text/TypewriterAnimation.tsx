@@ -122,7 +122,6 @@ export class TypewriterComponent extends HTMLElement {
     if (this.rootElm) {
       // Use text attribute if provided, otherwise use slot
       const parentFontSize = window.getComputedStyle(this.parentElement!).fontSize;
-      console.log('Parent font size:', parentFontSize);
 
       const props: TypewriterProps = {
         text: this.innerHTML,
