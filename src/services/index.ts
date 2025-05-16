@@ -17,4 +17,3 @@ export * from "./SlideParser";
 export * from "./Slides";
 export * from "./StateManager";
 export * from "./UriHandler";
-export * from "./VersionValidation";

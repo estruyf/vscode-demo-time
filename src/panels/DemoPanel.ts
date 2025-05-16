@@ -1,7 +1,7 @@
 import { ThemeColor, TreeItem, TreeView, commands, window } from "vscode";
 import { ContextKeys } from "../constants/ContextKeys";
 import { FileProvider } from "../services/FileProvider";
-import { Action, DemoFileCache, DemoFiles, Demos, Subscription } from "../models";
+import { Action, DemoFileCache, DemoFiles, DemoFile, Subscription } from "../models";
 import { ActionTreeItem, ActionTreeviewProvider } from "../providers/ActionTreeviewProvider";
 import { DemoRunner } from "../services/DemoRunner";
 import { COMMAND } from "../constants";
@@ -60,7 +60,7 @@ export class DemoPanel {
     const accountCommands: ActionTreeItem[] = [];
 
     for (const path of demoKeys) {
-      const demos = (demoFiles as any)[path] as Demos;
+      const demos = (demoFiles as any)[path] as DemoFile;
 
       const crntDemo = DemoRunner.currentDemo;
       const demoSteps = demos.demos.map((demo, idx, allDemos) => {

@@ -1,6 +1,16 @@
 import { PresenterView } from "./../presenterView/PresenterView";
 import { COMMAND, Config, ContextKeys, StateKeys, WebViewMessages } from "../constants";
-import { Action, Demo, DemoFileCache, Demos, IImagePreview, ISlidePreview, Step, Subscription } from "../models";
+import {
+  Action,
+  Demo,
+  DemoFileCache,
+  DemoFile,
+  IImagePreview,
+  ISlidePreview,
+  Step,
+  Subscription,
+  Version,
+} from "../models";
 import { Extension } from "./Extension";
 import {
   Position,
@@ -55,6 +65,7 @@ import { DemoStatusBar } from "./DemoStatusBar";
 
 const DEFAULT_START_VALUE = {
   filePath: "",
+  version: 2 as Version,
   demo: [],
 };
 
@@ -153,6 +164,26 @@ export class DemoRunner {
    */
   public static getIsPresentationMode(): boolean {
     return DemoRunner.isPresentationMode;
+  }
+
+  /**
+   * Retrieves the current version of the executing demo file.
+   *
+   * @returns {Version} The detected version of the current demo file.
+   */
+  public static getCurrentVersion(): Version {
+    const executingFile = Extension.getInstance().getState<DemoFileCache>(StateKeys.executingDemoFile);
+    if (!executingFile) {
+      return 2;
+    }
+
+    const lastDemo = executingFile.demo[executingFile.demo.length - 1];
+    if (!lastDemo) {
+      return 2;
+    }
+
+    // Only old demo files without a version property should be version 1
+    return typeof executingFile.version === "number" ? (executingFile.version as Version) : 1;
   }
 
   /**
@@ -367,6 +398,9 @@ export class DemoRunner {
     if (executingFile.filePath !== demoToRun.filePath) {
       executingFile.filePath = demoToRun.filePath;
       executingFile.demo = [];
+
+      const demoFile = await FileProvider.getFile(Uri.file(demoToRun.filePath));
+      executingFile.version = demoFile?.version || 1;
     }
 
     executingFile.demo.push({
@@ -1226,7 +1260,7 @@ export class DemoRunner {
   ): Promise<
     | {
         filePath: string;
-        demo: Demos;
+        demo: DemoFile;
       }
     | undefined
   > {

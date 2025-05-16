@@ -1,5 +1,5 @@
 import { commands, FileType, ProgressLocation, Uri, window, workspace } from "vscode";
-import { Action, Demos, Subscription } from "../models";
+import { Action, DemoFile, Subscription } from "../models";
 import { Extension } from "./Extension";
 import { COMMAND, General } from "../constants";
 import { Notifications } from "./Notifications";
@@ -73,7 +73,7 @@ export class ImportService {
           return;
         }
 
-        let demo: Demos | undefined;
+        let demo: DemoFile | undefined;
         if (createNewDemoFile === "Yes") {
           demo = {
             title: slideFolderName,

@@ -1,10 +1,10 @@
 import { commands, Uri } from "vscode";
 import { Subscription, Demo } from "../models";
 import { Extension } from "./Extension";
-import { COMMAND, Config, General } from "../constants";
+import { COMMAND, General } from "../constants";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { Notifications } from "./Notifications";
-import { fileExists, getSetting } from "../utils";
+import { fileExists } from "../utils";
 import { FileProvider } from "./FileProvider";
 import { DemoRunner } from "./DemoRunner";
 
@@ -23,9 +23,9 @@ export class NotesService {
 
   public static async openNotes(filePath: string) {
     const workspaceFolder = Extension.getInstance().workspaceFolder;
-    const isRelativeFromWorkspace = getSetting<boolean>(Config.relativeFromWorkspace);
+    const version = DemoRunner.getCurrentVersion();
     const notesPath = workspaceFolder
-      ? isRelativeFromWorkspace
+      ? version === 2
         ? Uri.joinPath(workspaceFolder.uri, filePath)
         : Uri.joinPath(workspaceFolder.uri, General.demoFolder, filePath)
       : undefined;

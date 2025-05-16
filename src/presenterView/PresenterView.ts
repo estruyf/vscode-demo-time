@@ -7,7 +7,7 @@ import { FileProvider } from "../services/FileProvider";
 import { DemoRunner } from "../services/DemoRunner";
 import { DemoStatusBar } from "../services/DemoStatusBar";
 import { NotesService } from "../services/NotesService";
-import { getSetting, readFile } from "../utils";
+import { readFile } from "../utils";
 
 export class PresenterView {
   private static webview: WebviewPanel | null = null;
@@ -133,9 +133,9 @@ export class PresenterView {
       const { path } = payload;
       if (path) {
         const workspaceFolder = Extension.getInstance().workspaceFolder;
-        const isRelativeFromWorkspace = getSetting<boolean>(Config.relativeFromWorkspace);
+        const version = DemoRunner.getCurrentVersion();
         const notesPath = workspaceFolder
-          ? isRelativeFromWorkspace
+          ? version === 2
             ? Uri.joinPath(workspaceFolder.uri, path)
             : Uri.joinPath(workspaceFolder.uri, General.demoFolder, path)
           : undefined;
@@ -148,9 +148,9 @@ export class PresenterView {
       PresenterView.postRequestMessage(command, requestId, undefined);
     } else if (command === WebViewMessages.toVscode.openFile && payload) {
       const workspaceFolder = Extension.getInstance().workspaceFolder;
-      const isRelativeFromWorkspace = getSetting<boolean>(Config.relativeFromWorkspace);
+      const version = DemoRunner.getCurrentVersion();
       const notesPath = workspaceFolder
-        ? isRelativeFromWorkspace
+        ? version === 2
           ? Uri.joinPath(workspaceFolder.uri, payload)
           : Uri.joinPath(workspaceFolder.uri, General.demoFolder, payload)
         : undefined;

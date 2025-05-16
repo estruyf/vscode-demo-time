@@ -1,7 +1,7 @@
 import { FileType, Uri, window, workspace } from "vscode";
 import { Extension, Notifications } from "../services";
 import { Config, General } from "../constants";
-import { addStepsToDemo, fileExists, getFileName, getSetting, readFile, writeFile } from ".";
+import { addStepsToDemo, chooseDemoFile, fileExists, getFileName, readFile, writeFile } from ".";
 import { createPatch as createFilePatch } from "diff";
 import { Action, Step } from "../models";
 
@@ -93,14 +93,22 @@ export const createPatch = async () => {
     return;
   }
 
-  const isRelativeFromWorkspace = getSetting<boolean>(Config.relativeFromWorkspace);
-  const contentPath = isRelativeFromWorkspace
-    ? patchFilePath.path.replace(wsFolder.uri.path, "")
-    : patchFilePath.path.replace(Uri.joinPath(wsFolder.uri, General.demoFolder).path, "");
+  const demoFile = await chooseDemoFile();
+  if (!demoFile) {
+    return;
+  }
 
-  const patchPath = isRelativeFromWorkspace
-    ? patchFilePath.path.replace(wsFolder.uri.path, "")
-    : patchFilePath.path.replace(Uri.joinPath(wsFolder.uri, General.demoFolder).path, "");
+  const version = demoFile.demo.version || 1;
+
+  const contentPath =
+    version === 2
+      ? patchFilePath.path.replace(wsFolder.uri.path, "")
+      : patchFilePath.path.replace(Uri.joinPath(wsFolder.uri, General.demoFolder).path, "");
+
+  const patchPath =
+    version === 2
+      ? patchFilePath.path.replace(wsFolder.uri.path, "")
+      : patchFilePath.path.replace(Uri.joinPath(wsFolder.uri, General.demoFolder).path, "");
 
   const steps: Step[] = [
     {
@@ -115,5 +123,5 @@ export const createPatch = async () => {
     },
   ];
 
-  await addStepsToDemo(steps);
+  await addStepsToDemo(steps, demoFile);
 };

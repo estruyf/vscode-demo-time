@@ -1,6 +1,6 @@
 import { Uri, window, workspace } from "vscode";
 import { Extension } from "./Extension";
-import { DemoFiles, Demos } from "../models";
+import { DemoFiles, DemoFile } from "../models";
 import { Config, General } from "../constants";
 import { parse as jsonParse } from "jsonc-parser";
 import { createDemoFile, readFile, sanitizeFileName, sortFiles, writeFile } from "../utils";
@@ -24,7 +24,7 @@ export class FileProvider {
    * @param filePath - The path of the file to read.
    * @returns A Promise that resolves to the JSON object representing the file content, or undefined if the file is empty or not valid JSON.
    */
-  public static async getFile(filePath: Uri): Promise<Demos | undefined> {
+  public static async getFile(filePath: Uri): Promise<DemoFile | undefined> {
     const content = await readFile(filePath);
     if (!content) {
       return;
@@ -70,7 +70,7 @@ export class FileProvider {
    * Retrieves a demo file using a quick pick dialog.
    * @returns The selected demo file, or undefined if no file was selected.
    */
-  public static async demoQuickPick(): Promise<{ filePath: string; demo: Demos } | undefined> {
+  public static async demoQuickPick(): Promise<{ filePath: string; demo: DemoFile } | undefined> {
     let demoFiles = await FileProvider.getFiles();
     if (!demoFiles) {
       return;
@@ -147,6 +147,7 @@ export class FileProvider {
   "$schema": "https://demotime.elio.dev/demo-time.schema.json",
   "title": "${demoTitle}",
   "description": "",
+  "version": 2,
   "demos": []
 }`;
 

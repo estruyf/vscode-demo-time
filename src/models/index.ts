@@ -9,3 +9,4 @@ export * from "./SlideMetadata";
 export * from "./SlideModels";
 export * from "./Subscription";
 export * from "./Theme";
+export * from "./Version";

@@ -1,6 +1,6 @@
 import { QuickPickItem, QuickPickItemKind, Uri, commands, window, workspace } from "vscode";
-import { COMMAND, Config, ContextKeys, StateKeys } from "../constants";
-import { Action, Demo, Demos, Icons, Step, Subscription } from "../models";
+import { COMMAND, Config, ContextKeys } from "../constants";
+import { Action, Demo, DemoFile, Icons, Step, Subscription } from "../models";
 import { Extension } from "./Extension";
 import { FileProvider } from "./FileProvider";
 import { DemoPanel } from "../panels/DemoPanel";
@@ -9,6 +9,7 @@ import { DemoRunner } from "./DemoRunner";
 import {
   addExtensionRecommendation,
   addStepsToDemo,
+  chooseDemoFile,
   createDemoFile,
   createPatch,
   createSnapshot,
@@ -85,8 +86,6 @@ export class DemoCreator {
 
     DemoPanel.showWelcome(false);
     DemoPanel.init();
-
-    Extension.getInstance().setState(StateKeys.versions.v2, true);
   }
 
   /**
@@ -214,7 +213,8 @@ export class DemoCreator {
       step.content = modifiedText;
     }
 
-    await addStepsToDemo(step);
+    const demoFile = await chooseDemoFile();
+    await addStepsToDemo(step, demoFile);
   }
 
   private static async addStepToDemo() {
@@ -224,7 +224,7 @@ export class DemoCreator {
     }
 
     const fileContents = editor.document.getText();
-    const demo = jsonParse(fileContents) as Demos;
+    const demo = jsonParse(fileContents) as DemoFile;
 
     const actions = getActionOptions();
     const action = await window.showQuickPick(actions, {
@@ -242,12 +242,12 @@ export class DemoCreator {
       return;
     }
 
-    const updatedDemos = await DemoCreator.askWhereToAddStep(demo, step);
-    if (!updatedDemos) {
+    const demoFile = await DemoCreator.askWhereToAddStep(demo, step);
+    if (!demoFile) {
       return;
     }
 
-    demo.demos = updatedDemos;
+    demo.demos = demoFile.demos;
 
     await FileProvider.saveFile(editor.document.uri.fsPath, JSON.stringify(demo, null, 2));
 
@@ -264,12 +264,12 @@ export class DemoCreator {
    * @returns A promise that resolves to the updated list of demos or undefined if the operation was cancelled.
    */
   public static async askWhereToAddStep(
-    demo: Demos,
+    demo: DemoFile,
     step: Step | Step[],
     stepTitle?: string,
     stepDescription?: string,
     stepIcons?: Icons
-  ): Promise<Demo[] | undefined> {
+  ): Promise<DemoFile | undefined> {
     let demoStep: string | undefined = "New demo step";
 
     if (demo.demos.length > 0) {
@@ -351,7 +351,7 @@ export class DemoCreator {
       }
     }
 
-    return demo.demos;
+    return demo;
   }
 
   /**
