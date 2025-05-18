@@ -1,10 +1,13 @@
 import { useState, useCallback } from 'react';
 
-export const useMousePosition = (slideRef: React.RefObject<HTMLDivElement>, scale: number) => {
+export const useMousePosition = (slideRef: React.RefObject<HTMLDivElement>, scale: number, callback?: () => void) => {
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number } | null>(null);
 
   const handleMouseMove = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
+      if (callback) {
+        callback();
+      }
       const rect = slideRef.current?.getBoundingClientRect();
       if (rect) {
         setMousePosition({
@@ -13,7 +16,7 @@ export const useMousePosition = (slideRef: React.RefObject<HTMLDivElement>, scal
         });
       }
     },
-    [slideRef, scale]
+    [slideRef, scale, callback]
   );
 
   return { mousePosition, handleMouseMove };

@@ -28,12 +28,12 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const [showControls, setShowControls] = React.useState(false);
   const ref = React.useRef<HTMLDivElement>(null);
   const slideRef = React.useRef<HTMLDivElement>(null);
-  const { cursorVisible } = useCursor();
+  const { cursorVisible, resetCursorTimeout } = useCursor();
   const { vsCodeTheme, isDarkTheme } = useTheme();
   const [slides, setSlides] = React.useState<Slide[]>([]);
   const [crntSlide, setCrntSlide] = React.useState<Slide | null>(null);
   const { scale } = useScale(ref, slideRef);
-  const { mousePosition, handleMouseMove } = useMousePosition(slideRef, scale);
+  const { mousePosition, handleMouseMove } = useMousePosition(slideRef, scale, resetCursorTimeout);
 
   const messageListener = (message: MessageEvent<EventData<any>>) => {
     const { command, payload } = message.data;
@@ -190,7 +190,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           </div>
         </div>
 
-        <SlideControls show={true} path={relativePath} slides={slides.length} currentSlide={crntSlide?.index} updateSlideIdx={updateSlideIdx}>
+        <SlideControls show={showControls && cursorVisible} path={relativePath} slides={slides.length} currentSlide={crntSlide?.index} updateSlideIdx={updateSlideIdx}>
           {/* Mouse Position */}
           {mousePosition && showControls && cursorVisible && (
             <div className="mouse-position text-sm px-2 py-1 text-[var(--vscode-editorWidget-foreground)]">
