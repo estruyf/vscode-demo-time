@@ -38,11 +38,15 @@ export const findPositionByPlaceholders = async (
   }
 
   if (endPlaceholder) {
-    endPosition = findPosition(fileTxt, endPlaceholder, true);
+    endPosition = findPosition(fileTxt.substring(startIdx), endPlaceholder, true);
     if (!endPosition) {
       Notifications.error(`End placeholder "${endPlaceholder}" not found in file "${filePath}"`);
       return;
     }
+    endPosition = new Position(
+      endPosition.line + startPosition.line,
+      endPosition.character
+    );
   }
 
   return {
