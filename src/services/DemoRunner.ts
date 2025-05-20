@@ -51,6 +51,7 @@ import {
   applyPatch,
   updateConfig,
   togglePresentationView,
+  removeDemosForCurrentPosition,
 } from "../utils";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DecoratorService } from "./DecoratorService";
@@ -294,6 +295,7 @@ export class DemoRunner {
     });
 
     executingFile.demo = removeDemoDuplicates(executingFile.demo);
+    executingFile.demo = removeDemosForCurrentPosition(executingFile.demo, nextDemoIdx);
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     DemoRunner.currentDemo = nextDemo;
@@ -345,13 +347,15 @@ export class DemoRunner {
       executingFile.demo = [];
       // Get the last demo step of the previous file
       const lastDemo = previousFile.demo.demos[previousFile.demo.demos.length - 1];
+      const crntIdx = previousFile.demo.demos.length - 1;
       executingFile.demo.push({
-        idx: previousFile.demo.demos.length - 1,
+        idx: crntIdx,
         title: lastDemo.title,
         id: lastDemo.id,
       });
 
       executingFile.demo = removeDemoDuplicates(executingFile.demo);
+      executingFile.demo = removeDemosForCurrentPosition(executingFile.demo, crntIdx);
 
       await DemoRunner.setExecutedDemoFile(executingFile);
       DemoRunner.currentDemo = lastDemo;
@@ -373,6 +377,7 @@ export class DemoRunner {
     });
 
     executingFile.demo = removeDemoDuplicates(executingFile.demo);
+    executingFile.demo = removeDemosForCurrentPosition(executingFile.demo, previousDemoIdx);
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     DemoRunner.currentDemo = previousDemo;
@@ -410,6 +415,7 @@ export class DemoRunner {
     });
 
     executingFile.demo = removeDemoDuplicates(executingFile.demo);
+    executingFile.demo = removeDemosForCurrentPosition(executingFile.demo, demoToRun.idx);
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     DemoRunner.currentDemo = demoToRun.demo;
@@ -469,6 +475,7 @@ export class DemoRunner {
     });
 
     executingFile.demo = removeDemoDuplicates(executingFile.demo);
+    executingFile.demo = removeDemosForCurrentPosition(executingFile.demo, demoIdx);
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     DemoRunner.currentDemo = demoToRun;
