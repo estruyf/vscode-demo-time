@@ -42,6 +42,7 @@ export * from "./lowercaseFirstLetter";
 export * from "./parseWinPath";
 export * from "./readFile";
 export * from "./removeDemoDuplicates";
+export * from "./removeDemosForCurrentPosition";
 export * from "./replaceContent";
 export * from "./sanitizeFileName";
 export * from "./setContext";

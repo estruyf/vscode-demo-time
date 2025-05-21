@@ -170,6 +170,15 @@
           "type": "string",
           "default": "",
           "description": "Provide a path to a CSS file for loading your custom theme. The path should point to a CSS file."
+        },
+        "demoTime.nextActionBehaviour": {
+          "type": "string",
+          "enum": [
+            "lastExecuted",
+            "currentPosition"
+          ],
+          "default": "lastExecuted",
+          "description": "Define the behavior of the next action. Possible values are 'lastExecuted', or 'currentPosition'."
         }
       }
     },
