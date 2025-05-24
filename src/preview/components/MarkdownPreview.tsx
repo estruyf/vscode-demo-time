@@ -7,21 +7,22 @@ import { useScale } from '../hooks/useScale';
 import { useFileContents } from '../hooks/useFileContents';
 import useCursor from '../hooks/useCursor';
 import { SlideControls } from './SlideControls';
+// Removed WebViewMessages import as setInitialSlide is no longer used here directly for listener
 import useTheme from '../hooks/useTheme';
 import { Slide } from '../../models';
 import { SlideParser } from '../../services/SlideParser';
 import { useMousePosition } from '../hooks/useMousePosition';
 
 export interface IMarkdownPreviewProps {
-  fileUri: string;
+  // fileUri: string; // No longer needed as prop
   webviewUrl: string | null;
 }
 
 export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = ({
-  fileUri,
+  // fileUri, // No longer needed as prop
   webviewUrl
 }: React.PropsWithChildren<IMarkdownPreviewProps>) => {
-  const { content, crntFilePath, getFileContents } = useFileContents();
+  const { content, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();
   const [theme, setTheme] = React.useState<string | undefined>(undefined);
   const [layout, setLayout] = React.useState<string | undefined>(undefined);
   const [bgStyles, setBgStyles] = React.useState<any | null>(null);
@@ -36,92 +37,27 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const { scale } = useScale(ref, slideRef);
   const { mousePosition, handleMouseMove } = useMousePosition(slideRef, scale, resetCursorTimeout);
 
-  React.useEffect(() => {
-    const initialSlideListener = (message: MessageEvent<EventData<any>>) => {
-      const { command, payload } = message.data;
-      if (!command) {
-        return;
-      }
-
-      if (command === WebViewMessages.toWebview.setInitialSlide) {
-        const initialSlideIndex = payload as number;
-        if (slides && slides.length > 0) {
-          if (initialSlideIndex >= 0 && initialSlideIndex < slides.length) {
-            setCrntSlide(slides[initialSlideIndex]);
-          } else {
-            setCrntSlide(slides[0]); // Default to first slide if out of bounds
-          }
-        } else {
-          // If slides are not yet loaded or no slides exist, set to null.
-          // This relies on other useEffects to set a slide if/when slides are populated.
-          setCrntSlide(null); 
-        }
-      }
-    };
-
-    Messenger.listen(initialSlideListener);
-
-    return () => {
-      Messenger.unlisten(initialSlideListener);
-    };
-  }, [slides, setCrntSlide]);
+  // Removed the two useEffect hooks that were listening for WebViewMessages.toWebview.setInitialSlide
 
   React.useEffect(() => {
-    const messageListener = (message: MessageEvent<EventData<any>>) => {
-      const { command, payload } = message.data;
-      if (!command) {
-        return;
+    if (slides && slides.length > 0 && typeof initialSlideIndex === 'number') {
+      if (initialSlideIndex >= 0 && initialSlideIndex < slides.length) {
+        setCrntSlide(slides[initialSlideIndex]);
+      } else {
+        setCrntSlide(slides[0]); // Default to 0 if out of bounds
       }
-
-      if (command === WebViewMessages.toWebview.setInitialSlide) {
-        const initialSlideIndex = payload as number;
-        if (slides && slides.length > 0) {
-          if (initialSlideIndex >= 0 && initialSlideIndex < slides.length) {
-            setCrntSlide(slides[initialSlideIndex]);
-          } else {
-            setCrntSlide(slides[0]); // Default to first slide if out of bounds
-          }
-        } else {
-          // If slides are not yet loaded, this message might be too early.
-          // Or, if there are genuinely no slides, crntSlide should remain null or be set to null.
-          // For now, if slides array is empty, do nothing or set to null.
-          // Let's assume Preview.ts sends this after content is loaded and parsed.
-          // If slides becomes populated later, other useEffects will handle setting crntSlide.
-          // However, to be safe according to instructions (default to 0),
-          // this implies we expect slides to be populated.
-          // If slides is empty, setting slides[0] would error.
-          // A robust way:
-          if (slides && slides.length > 0) {
-             setCrntSlide(slides[0]);
-          } else {
-             setCrntSlide(null); // Or handle as appropriate if slides are pending
-          }
-        }
-      }
-    };
-
-    Messenger.listen(messageListener);
-
-    return () => {
-      Messenger.unlisten(messageListener);
-    };
-  }, [slides, setCrntSlide]); // Added setCrntSlide to dependencies as it's used.
-
-  const messageListener = (message: MessageEvent<EventData<any>>) => {
-    const { command, payload } = message.data;
-    if (!command) {
-      return;
-    }
-
-    if (command === WebViewMessages.toWebview.triggerUpdate) {
-      setSlides([]);
+    } else if (slides && slides.length === 0) { // If slides are loaded and there are none
+      setCrntSlide(null); // No slides
+    } else if (!slides && initialSlideIndex === undefined) { // Initial state before any content/slides are loaded
       setCrntSlide(null);
-      messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
-      messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, false);
-      getFileContents(payload);
-      setRefreshKey(prevKey => prevKey + 1);
     }
-  };
+    // Not setting slide if initialSlideIndex is undefined but slides might exist from a previous load,
+    // or if slides is undefined (still loading).
+    // The logic aims to set slide based on initialSlideIndex once slides are confirmed.
+  }, [initialSlideIndex, slides, setCrntSlide]);
+
+  // Removed the old messageListener function and its useEffect, as triggerUpdate for content
+  // and initial slide is now handled by useFileContents.
 
   const updateSlideIdx = React.useCallback((slideIdx: number) => {
     if (slideIdx < 0 || slideIdx >= slides.length) {
@@ -171,9 +107,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     }
   }, [content, refreshKey]);
 
-  React.useEffect(() => {
-    getFileContents(fileUri);
-  }, [fileUri]);
+  // Removed: React.useEffect(() => { getFileContents(fileUri); }, [fileUri]);
+  // This initial load is now handled by useFileContents via triggerUpdate.
 
   React.useEffect(() => {
     setTheme(crntSlide?.frontmatter.theme || SlideTheme.default);
@@ -183,7 +118,10 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   React.useEffect(() => {
     Messenger.listen(slidesListener);
 
-    if (slides.length === 1) {
+    if (slides === null || slides.length === 0) { // Check if slides is null or empty
+      messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
+      messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, false);
+    } else if (slides.length === 1) {
       messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
       messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, false);
     } else if (slides.length > 1 && crntSlide?.index === slides.length - 1) {
@@ -191,30 +129,15 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, true);
     } else if (slides.length > 1) {
       messageHandler.send(WebViewMessages.toVscode.hasNextSlide, true);
-      messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, (crntSlide?.index && crntSlide.index > 0));
+      messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, (crntSlide?.index !== undefined && crntSlide.index > 0));
     }
 
     return () => {
       Messenger.unlisten(slidesListener);
     };
-  }, [slides.length, crntSlide]);
+  }, [slides, crntSlide]); // Added slides to dependency array for null/empty check
 
-  React.useEffect(() => {
-    Messenger.listen(messageListener);
-
-    setSlides([]);
-    setCrntSlide(null);
-    messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
-    messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, false);
-
-    return () => {
-      Messenger.unlisten(messageListener);
-    };
-  // Removed empty dependency array to ensure this runs when component mounts, 
-  // but be careful about stale closures if messageListener itself isn't memoized or redefined.
-  // For this particular messageListener (defined outside this useEffect), it should be fine.
-  // The original empty array means it runs once.
-  }, []); 
+  // Removed the useEffect that registered the old messageListener (the one with the empty dependency array)
 
   return (
     <>

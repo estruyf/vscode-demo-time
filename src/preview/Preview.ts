@@ -49,8 +49,8 @@ export class Preview {
     return Preview.hasPreviousSlide;
   }
 
-  public static show(fileUri: string, css?: string) {
-    Preview.crntFile = fileUri ?? null;
+  public static async show(fileUri: string, css?: string) {
+    Preview.crntFile = fileUri ?? null; // fileUri from argument is the source of truth
     Preview.crntCss = css ?? null;
 
     if (Preview.crntFile !== Preview.lastFileProcessed) {
@@ -61,9 +61,9 @@ export class Preview {
     if (Preview.isOpen) {
       Preview.reveal();
 
-      if (Preview.webview?.webview) {
-        const fileWebviewPath = getWebviewUrl(Preview.webview?.webview, fileUri);
-        Preview.postMessage(WebViewMessages.toWebview.updateFileUri, fileWebviewPath);
+      // Use the fileUri argument for triggerUpdate, as it's the most current.
+      if (Preview.webview?.webview && fileUri) { 
+        Preview.triggerUpdate(Uri.file(fileUri)); // Convert string to Uri
 
         if (css) {
           const cssWebviewPath = getWebviewUrl(Preview.webview?.webview, css);
@@ -71,18 +71,25 @@ export class Preview {
         } else {
           Preview.postMessage(WebViewMessages.toWebview.updateStyles, undefined);
         }
-        Preview.postMessage(WebViewMessages.toWebview.setInitialSlide, Preview.currentSlideIndex);
       }
     } else {
-      Preview.create();
+      await Preview.create(); 
+      // After creating, if fileUri is available, trigger update
+      if (fileUri) { // Use fileUri from argument
+        Preview.triggerUpdate(Uri.file(fileUri)); // Convert string to Uri
+      }
     }
   }
 
-  public static triggerUpdate(fileUri: Uri) {
+  public static triggerUpdate(fileUri: Uri) { // Ensure fileUri is a Uri object
     if (Preview.isOpen && Preview.webview?.webview) {
+      const payload = {
+        fileUriString: Preview.webview.webview.asWebviewUri(fileUri).toString(),
+        slideIndex: Preview.currentSlideIndex
+      };
       Preview.postMessage(
         WebViewMessages.toWebview.triggerUpdate,
-        Preview.webview.webview.asWebviewUri(fileUri).toString()
+        payload
       );
     }
   }
@@ -115,7 +122,7 @@ export class Preview {
     };
 
     Preview.webview.webview.html = await Preview.getWebviewContent(Preview.webview.webview);
-    Preview.postMessage(WebViewMessages.toWebview.setInitialSlide, Preview.currentSlideIndex);
+    // Removed: Preview.postMessage(WebViewMessages.toWebview.setInitialSlide, Preview.currentSlideIndex);
 
     Preview.webview.onDidDispose(async () => {
       Preview.isDisposed = true;

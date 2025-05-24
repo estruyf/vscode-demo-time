@@ -44,6 +44,5 @@ export const WebViewMessages = {
     updateIsInPresentationMode: "updateIsInPresentationMode",
     previousSlide: "previousSlide",
     nextSlide: "nextSlide",
-    setInitialSlide: "setInitialSlide", // New message
   },
 };
