@@ -32,6 +32,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const { vsCodeTheme, isDarkTheme } = useTheme();
   const [slides, setSlides] = React.useState<Slide[]>([]);
   const [crntSlide, setCrntSlide] = React.useState<Slide | null>(null);
+  const [refreshKey, setRefreshKey] = React.useState(0);
   const { scale } = useScale(ref, slideRef);
   const { mousePosition, handleMouseMove } = useMousePosition(slideRef, scale, resetCursorTimeout);
 
@@ -47,6 +48,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
       messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, false);
       getFileContents(payload);
+      setRefreshKey(prevKey => prevKey + 1);
     }
   };
 
@@ -96,7 +98,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         messageHandler.send(WebViewMessages.toVscode.hasNextSlide, true);
       }
     }
-  }, [content]);
+  }, [content, refreshKey]);
 
   React.useEffect(() => {
     getFileContents(fileUri);
