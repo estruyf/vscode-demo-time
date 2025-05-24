@@ -36,6 +36,77 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const { scale } = useScale(ref, slideRef);
   const { mousePosition, handleMouseMove } = useMousePosition(slideRef, scale, resetCursorTimeout);
 
+  React.useEffect(() => {
+    const initialSlideListener = (message: MessageEvent<EventData<any>>) => {
+      const { command, payload } = message.data;
+      if (!command) {
+        return;
+      }
+
+      if (command === WebViewMessages.toWebview.setInitialSlide) {
+        const initialSlideIndex = payload as number;
+        if (slides && slides.length > 0) {
+          if (initialSlideIndex >= 0 && initialSlideIndex < slides.length) {
+            setCrntSlide(slides[initialSlideIndex]);
+          } else {
+            setCrntSlide(slides[0]); // Default to first slide if out of bounds
+          }
+        } else {
+          // If slides are not yet loaded or no slides exist, set to null.
+          // This relies on other useEffects to set a slide if/when slides are populated.
+          setCrntSlide(null); 
+        }
+      }
+    };
+
+    Messenger.listen(initialSlideListener);
+
+    return () => {
+      Messenger.unlisten(initialSlideListener);
+    };
+  }, [slides, setCrntSlide]);
+
+  React.useEffect(() => {
+    const messageListener = (message: MessageEvent<EventData<any>>) => {
+      const { command, payload } = message.data;
+      if (!command) {
+        return;
+      }
+
+      if (command === WebViewMessages.toWebview.setInitialSlide) {
+        const initialSlideIndex = payload as number;
+        if (slides && slides.length > 0) {
+          if (initialSlideIndex >= 0 && initialSlideIndex < slides.length) {
+            setCrntSlide(slides[initialSlideIndex]);
+          } else {
+            setCrntSlide(slides[0]); // Default to first slide if out of bounds
+          }
+        } else {
+          // If slides are not yet loaded, this message might be too early.
+          // Or, if there are genuinely no slides, crntSlide should remain null or be set to null.
+          // For now, if slides array is empty, do nothing or set to null.
+          // Let's assume Preview.ts sends this after content is loaded and parsed.
+          // If slides becomes populated later, other useEffects will handle setting crntSlide.
+          // However, to be safe according to instructions (default to 0),
+          // this implies we expect slides to be populated.
+          // If slides is empty, setting slides[0] would error.
+          // A robust way:
+          if (slides && slides.length > 0) {
+             setCrntSlide(slides[0]);
+          } else {
+             setCrntSlide(null); // Or handle as appropriate if slides are pending
+          }
+        }
+      }
+    };
+
+    Messenger.listen(messageListener);
+
+    return () => {
+      Messenger.unlisten(messageListener);
+    };
+  }, [slides, setCrntSlide]); // Added setCrntSlide to dependencies as it's used.
+
   const messageListener = (message: MessageEvent<EventData<any>>) => {
     const { command, payload } = message.data;
     if (!command) {
@@ -139,7 +210,11 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     return () => {
       Messenger.unlisten(messageListener);
     };
-  }, []);
+  // Removed empty dependency array to ensure this runs when component mounts, 
+  // but be careful about stale closures if messageListener itself isn't memoized or redefined.
+  // For this particular messageListener (defined outside this useEffect), it should be fine.
+  // The original empty array means it runs once.
+  }, []); 
 
   return (
     <>

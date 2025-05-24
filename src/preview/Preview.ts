@@ -13,6 +13,8 @@ export class Preview {
   private static hasNextSlide = false;
   private static crntFile: string | null = null;
   private static crntCss: string | null = null;
+  private static currentSlideIndex: number = 0;
+  private static lastFileProcessed: string | null = null;
 
   public static register() {
     const subscriptions = Extension.getInstance().subscriptions;
@@ -51,6 +53,11 @@ export class Preview {
     Preview.crntFile = fileUri ?? null;
     Preview.crntCss = css ?? null;
 
+    if (Preview.crntFile !== Preview.lastFileProcessed) {
+      Preview.currentSlideIndex = 0;
+      Preview.lastFileProcessed = Preview.crntFile;
+    }
+
     if (Preview.isOpen) {
       Preview.reveal();
 
@@ -64,6 +71,7 @@ export class Preview {
         } else {
           Preview.postMessage(WebViewMessages.toWebview.updateStyles, undefined);
         }
+        Preview.postMessage(WebViewMessages.toWebview.setInitialSlide, Preview.currentSlideIndex);
       }
     } else {
       Preview.create();
@@ -107,6 +115,7 @@ export class Preview {
     };
 
     Preview.webview.webview.html = await Preview.getWebviewContent(Preview.webview.webview);
+    Preview.postMessage(WebViewMessages.toWebview.setInitialSlide, Preview.currentSlideIndex);
 
     Preview.webview.onDidDispose(async () => {
       Preview.isDisposed = true;
@@ -171,6 +180,8 @@ export class Preview {
     } else if (command === WebViewMessages.toVscode.openFile && payload) {
       const fileUri = getAbsolutePath(payload);
       await window.showTextDocument(fileUri, { preview: false });
+    } else if (command === WebViewMessages.toVscode.updateSlideIndex) {
+      Preview.currentSlideIndex = payload;
     }
   }
 

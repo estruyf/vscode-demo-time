@@ -24,6 +24,7 @@ export const WebViewMessages = {
     setHasClickListener: "setHasClickListener",
     hasNextSlide: "hasNextSlide",
     hasPreviousSlide: "hasPreviousSlide",
+    updateSlideIndex: "updateSlideIndex", // New message
   },
   toWebview: {
     updateClock: "updateClock",
@@ -43,5 +44,6 @@ export const WebViewMessages = {
     updateIsInPresentationMode: "updateIsInPresentationMode",
     previousSlide: "previousSlide",
     nextSlide: "nextSlide",
+    setInitialSlide: "setInitialSlide", // New message
   },
 };
