@@ -62,8 +62,9 @@ export class Preview {
       Preview.reveal();
 
       // Use the fileUri argument for triggerUpdate, as it's the most current.
-      if (Preview.webview?.webview && fileUri) { 
-        Preview.triggerUpdate(Uri.file(fileUri)); // Convert string to Uri
+      if (Preview.webview?.webview && fileUri) {
+        const fileWebviewPath = getWebviewUrl(Preview.webview?.webview, fileUri);
+        Preview.triggerUpdate(fileWebviewPath);
 
         if (css) {
           const cssWebviewPath = getWebviewUrl(Preview.webview?.webview, css);
@@ -73,24 +74,32 @@ export class Preview {
         }
       }
     } else {
-      await Preview.create(); 
+      await Preview.create();
       // After creating, if fileUri is available, trigger update
-      if (fileUri) { // Use fileUri from argument
-        Preview.triggerUpdate(Uri.file(fileUri)); // Convert string to Uri
+      if (fileUri && Preview.webview?.webview) {
+        // Use fileUri from argument
+        const fileWebviewPath = getWebviewUrl(Preview.webview.webview, fileUri);
+        Preview.triggerUpdate(fileWebviewPath); // Convert string to Uri
       }
     }
   }
 
-  public static triggerUpdate(fileUri: Uri) { // Ensure fileUri is a Uri object
+  public static triggerUpdate(fileUri?: Uri | string) {
+    if (!fileUri || !Preview.webview?.webview) {
+      return;
+    }
+
+    if (typeof fileUri !== "string") {
+      fileUri = Preview.webview.webview.asWebviewUri(fileUri).toString();
+    }
+
+    // Ensure fileUri is a Uri object
     if (Preview.isOpen && Preview.webview?.webview) {
       const payload = {
-        fileUriString: Preview.webview.webview.asWebviewUri(fileUri).toString(),
-        slideIndex: Preview.currentSlideIndex
+        fileUriString: fileUri,
+        slideIndex: Preview.currentSlideIndex,
       };
-      Preview.postMessage(
-        WebViewMessages.toWebview.triggerUpdate,
-        payload
-      );
+      Preview.postMessage(WebViewMessages.toWebview.triggerUpdate, payload);
     }
   }
 
@@ -122,7 +131,6 @@ export class Preview {
     };
 
     Preview.webview.webview.html = await Preview.getWebviewContent(Preview.webview.webview);
-    // Removed: Preview.postMessage(WebViewMessages.toWebview.setInitialSlide, Preview.currentSlideIndex);
 
     Preview.webview.onDidDispose(async () => {
       Preview.isDisposed = true;

@@ -14,12 +14,12 @@ import { SlideParser } from '../../services/SlideParser';
 import { useMousePosition } from '../hooks/useMousePosition';
 
 export interface IMarkdownPreviewProps {
-  // fileUri: string; // No longer needed as prop
+  fileUri: string;
   webviewUrl: string | null;
 }
 
 export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = ({
-  // fileUri, // No longer needed as prop
+  fileUri,
   webviewUrl
 }: React.PropsWithChildren<IMarkdownPreviewProps>) => {
   const { content, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();
@@ -37,8 +37,6 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const { scale } = useScale(ref, slideRef);
   const { mousePosition, handleMouseMove } = useMousePosition(slideRef, scale, resetCursorTimeout);
 
-  // Removed the two useEffect hooks that were listening for WebViewMessages.toWebview.setInitialSlide
-
   React.useEffect(() => {
     if (slides && slides.length > 0 && typeof initialSlideIndex === 'number') {
       if (initialSlideIndex >= 0 && initialSlideIndex < slides.length) {
@@ -55,9 +53,6 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     // or if slides is undefined (still loading).
     // The logic aims to set slide based on initialSlideIndex once slides are confirmed.
   }, [initialSlideIndex, slides, setCrntSlide]);
-
-  // Removed the old messageListener function and its useEffect, as triggerUpdate for content
-  // and initial slide is now handled by useFileContents.
 
   const updateSlideIdx = React.useCallback((slideIdx: number) => {
     if (slideIdx < 0 || slideIdx >= slides.length) {
@@ -107,9 +102,6 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     }
   }, [content, refreshKey]);
 
-  // Removed: React.useEffect(() => { getFileContents(fileUri); }, [fileUri]);
-  // This initial load is now handled by useFileContents via triggerUpdate.
-
   React.useEffect(() => {
     setTheme(crntSlide?.frontmatter.theme || SlideTheme.default);
     setLayout(crntSlide?.frontmatter.layout || SlideLayout.Default);
@@ -137,7 +129,9 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     };
   }, [slides, crntSlide]); // Added slides to dependency array for null/empty check
 
-  // Removed the useEffect that registered the old messageListener (the one with the empty dependency array)
+  React.useEffect(() => {
+    getFileContents(fileUri);
+  }, [fileUri]);
 
   return (
     <>

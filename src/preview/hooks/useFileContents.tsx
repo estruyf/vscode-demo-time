@@ -33,7 +33,7 @@ export const useFileContents = () => {
       if (command === WebViewMessages.toWebview.triggerUpdate) {
         if (payload && typeof payload.fileUriString === 'string' && typeof payload.slideIndex === 'number') {
           setInitialSlideIndex(payload.slideIndex);
-          getFileContents(payload.fileUriString); 
+          getFileContents(payload.fileUriString);
         }
       }
     };
@@ -43,7 +43,7 @@ export const useFileContents = () => {
     return () => {
       Messenger.unlisten(messageListener);
     };
-  }, [getFileContents]); // getFileContents is a dependency
+  }, [getFileContents]);
 
   return { content, crntFilePath, initialSlideIndex, getFileContents };
 };
