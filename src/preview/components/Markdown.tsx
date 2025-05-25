@@ -163,7 +163,11 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
               <div className="slide__footer">
                 <div dangerouslySetInnerHTML={{ 
                   __html: Object.entries(matter).reduce((html, [key, value]) => {
-                    return html.replace(new RegExp(`{{${key}}}`, 'g'), value);
+                    // Only process string values
+                    if (typeof html === 'string' && typeof value === 'string') {
+                      return html.replace(new RegExp(`{{${key}}}`, 'g'), value);
+                    }
+                    return html;
                   }, matter.footer) 
                 }} />
               </div>

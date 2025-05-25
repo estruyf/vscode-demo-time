@@ -392,9 +392,11 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
           <div class="slide__footer">
             <div>${
               Object.entries(slide).reduce((html, [key, value]) => {
-                return typeof html === 'string' && typeof value === 'string' 
-                  ? html.replace(new RegExp(`{{${key}}}`, 'g'), value)
-                  : html;
+                // Only process string values
+                if (typeof html === 'string' && typeof value === 'string') {
+                  return html.replace(new RegExp(`{{${key}}}`, 'g'), value);
+                }
+                return html;
               }, slide.footer)
             }</div>
           </div>` : ''}

@@ -70,6 +70,7 @@ pre code {
   .slide__content__custom,
   .slide__content__inner {
     @apply relative h-full w-full;
+    padding-bottom: 2rem; /* Add space for the footer */
   }
   
   .slide__footer {
