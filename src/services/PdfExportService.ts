@@ -206,6 +206,20 @@ export class PdfExportService {
           const customTheme = crntSlide.frontmatter.customTheme || undefined;
           const customLayout = crntSlide.frontmatter.customLayout || undefined;
 
+          // Process footer if present
+          let footer = crntSlide.frontmatter.footer || undefined;
+          const globalFooterTemplate = extension.getSetting<string>(Config.slides.footerTemplate);
+          
+          // Use front matter footer, or the global footer template if available
+          if (!footer && globalFooterTemplate) {
+            footer = globalFooterTemplate;
+          }
+          
+          // Process the footer template with Handlebars if it exists
+          if (footer) {
+            footer = await convertTemplateToHtml(footer, { ...crntSlide.frontmatter });
+          }
+
           let html = renderToString(reactContent);
           if (customLayout) {
             const customLayoutPath = Uri.joinPath(PdfExportService.workspaceFolder?.uri as Uri, customLayout);
@@ -228,6 +242,7 @@ export class PdfExportService {
             image,
             customTheme,
             customLayout,
+            footer
           });
 
           idx++;
@@ -388,6 +403,11 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
           <div class="${slide.customLayout ? `slide__content__custom` : `slide__content__inner`}">
             ${slide.html}
           </div>
+          ${
+            slide.footer 
+              ? `<div class="slide__footer">${slide.footer}</div>`
+              : ``
+          }
         </div>
       
         ${

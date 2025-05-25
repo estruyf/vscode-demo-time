@@ -171,6 +171,11 @@
           "default": "",
           "description": "Provide a path to a CSS file for loading your custom theme. The path should point to a CSS file."
         },
+        "demoTime.slideFooterTemplate": {
+          "type": "string",
+          "default": "",
+          "description": "HTML template for slide footers. Supports Handlebars syntax with frontmatter variables. Example: '<footer><span>{{name}}</span> <span>{{date}}</span></footer>'"
+        },
         "demoTime.nextActionBehaviour": {
           "type": "string",
           "enum": [

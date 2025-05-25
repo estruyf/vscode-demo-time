@@ -35,6 +35,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   const [customLayout, setCustomLayout] = React.useState<string | undefined>(undefined);
   const [transition, setTransition] = React.useState<SlideTransition | undefined>(undefined);
   const [template, setTemplate] = React.useState<string | undefined>(undefined);
+  const [footer, setFooter] = React.useState<string | undefined>(undefined);
 
   const {
     markdown,
@@ -114,11 +115,29 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     setCustomTheme(undefined);
     setTransition(matter?.transition || undefined);
     setTemplate(undefined);
+    setFooter(undefined);
 
     const cLayout = matter?.customLayout || undefined;
     updateCustomLayout(matter, cLayout);
 
     updateCustomThemePath(matter?.customTheme || undefined);
+
+    // Process footer if present in front matter
+    if (matter?.footer) {
+      convertTemplateToHtml(matter.footer, matter).then(processedFooter => {
+        setFooter(processedFooter);
+      });
+    } else {
+      // Check for global footer template
+      messageHandler.request<string>(WebViewMessages.toVscode.getSetting, "demoTime.slideFooterTemplate").then(async (template) => {
+        if (template) {
+          const processedFooter = await convertTemplateToHtml(template, matter);
+          setFooter(processedFooter);
+        }
+      }).catch(() => {
+        setFooter(undefined);
+      });
+    }
 
     if (matter?.image) {
       const img = transformImageUrl(webviewUrl || "", matter?.image);
@@ -157,7 +176,10 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
         template ? (
           <div key={filePath} className={`slide__content__custom ${transition || ""}`} dangerouslySetInnerHTML={{ __html: template }} />
         ) : (
-          <div key={filePath} className={`slide__content__inner ${transition || ""}`}>{markdown}</div>
+          <>
+            <div key={filePath} className={`slide__content__inner ${transition || ""}`}>{markdown}</div>
+            {footer && <div className="slide__footer" dangerouslySetInnerHTML={{ __html: footer }} />}
+          </>
         )
       }
     </>
