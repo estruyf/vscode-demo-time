@@ -33,7 +33,6 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const { vsCodeTheme, isDarkTheme } = useTheme();
   const [slides, setSlides] = React.useState<Slide[]>([]);
   const [crntSlide, setCrntSlide] = React.useState<Slide | null>(null);
-  const [refreshKey, setRefreshKey] = React.useState(0);
   const { scale } = useScale(ref, slideRef);
   const { mousePosition, handleMouseMove } = useMousePosition(slideRef, scale, resetCursorTimeout);
 
@@ -42,16 +41,13 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       if (initialSlideIndex >= 0 && initialSlideIndex < slides.length) {
         setCrntSlide(slides[initialSlideIndex]);
       } else {
-        setCrntSlide(slides[0]); // Default to 0 if out of bounds
+        setCrntSlide(slides[0]);
       }
-    } else if (slides && slides.length === 0) { // If slides are loaded and there are none
-      setCrntSlide(null); // No slides
-    } else if (!slides && initialSlideIndex === undefined) { // Initial state before any content/slides are loaded
+    } else if (slides && slides.length === 0) {
+      setCrntSlide(null);
+    } else if (!slides && initialSlideIndex === undefined) {
       setCrntSlide(null);
     }
-    // Not setting slide if initialSlideIndex is undefined but slides might exist from a previous load,
-    // or if slides is undefined (still loading).
-    // The logic aims to set slide based on initialSlideIndex once slides are confirmed.
   }, [initialSlideIndex, slides, setCrntSlide]);
 
   const updateSlideIdx = React.useCallback((slideIdx: number) => {
@@ -64,7 +60,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   }, [slides]);
 
   const slidesListener = React.useCallback((message: MessageEvent<EventData<any>>) => {
-    const { command, payload } = message.data;
+    const { command } = message.data;
     if (!command) {
       return;
     }
@@ -100,7 +96,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         messageHandler.send(WebViewMessages.toVscode.hasNextSlide, true);
       }
     }
-  }, [content, refreshKey]);
+  }, [content]);
 
   React.useEffect(() => {
     setTheme(crntSlide?.frontmatter.theme || SlideTheme.default);
@@ -110,10 +106,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   React.useEffect(() => {
     Messenger.listen(slidesListener);
 
-    if (slides === null || slides.length === 0) { // Check if slides is null or empty
-      messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
-      messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, false);
-    } else if (slides.length === 1) {
+    if (slides === null || slides.length === 0 || slides.length === 1) {
       messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
       messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, false);
     } else if (slides.length > 1 && crntSlide?.index === slides.length - 1) {

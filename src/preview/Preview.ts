@@ -14,7 +14,6 @@ export class Preview {
   private static crntFile: string | null = null;
   private static crntCss: string | null = null;
   private static currentSlideIndex: number = 0;
-  private static lastFileProcessed: string | null = null;
 
   public static register() {
     const subscriptions = Extension.getInstance().subscriptions;
@@ -50,13 +49,12 @@ export class Preview {
   }
 
   public static async show(fileUri: string, css?: string) {
-    Preview.crntFile = fileUri ?? null; // fileUri from argument is the source of truth
-    Preview.crntCss = css ?? null;
-
-    if (Preview.crntFile !== Preview.lastFileProcessed) {
+    if (Preview.crntFile !== fileUri) {
       Preview.currentSlideIndex = 0;
-      Preview.lastFileProcessed = Preview.crntFile;
     }
+
+    Preview.crntFile = fileUri ?? null;
+    Preview.crntCss = css ?? null;
 
     if (Preview.isOpen) {
       Preview.reveal();
