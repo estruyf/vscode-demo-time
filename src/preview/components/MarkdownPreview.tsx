@@ -37,18 +37,18 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const { mousePosition, handleMouseMove } = useMousePosition(slideRef, scale, resetCursorTimeout);
 
   React.useEffect(() => {
-    if (slides && slides.length > 0 && typeof initialSlideIndex === 'number') {
-      if (initialSlideIndex >= 0 && initialSlideIndex < slides.length) {
+    // If slides are loaded and initialSlideIndex is a valid number
+    if (Array.isArray(slides) && slides.length > 0) {
+      if (typeof initialSlideIndex === 'number' && initialSlideIndex >= 0 && initialSlideIndex < slides.length) {
         setCrntSlide(slides[initialSlideIndex]);
       } else {
         setCrntSlide(slides[0]);
       }
-    } else if (slides && slides.length === 0) {
-      setCrntSlide(null);
-    } else if (!slides && initialSlideIndex === undefined) {
+    } else {
+      // No slides loaded or slides is empty
       setCrntSlide(null);
     }
-  }, [initialSlideIndex, slides, setCrntSlide]);
+  }, [initialSlideIndex, slides]);
 
   const updateSlideIdx = React.useCallback((slideIdx: number) => {
     if (slideIdx < 0 || slideIdx >= slides.length) {
