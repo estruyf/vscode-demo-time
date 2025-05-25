@@ -112,10 +112,19 @@ export class SlideParser {
 
       // Check for frontmatter key-value pairs when we're collecting frontmatter
       if (collectingFrontmatter) {
-        const keyValueMatch = trimmedLine.match(/^(\w+):\s*(.+)$/);
+        // Match key-value pairs, allowing quoted values with colons and hashes
+        const keyValueMatch = trimmedLine.match(/^(\w+):\s*(?:(["'])([\s\S]*?)\2|([^\n]+))$/);
         if (keyValueMatch) {
-          const [, key, value] = keyValueMatch;
-          currentFrontmatter[key] = value.startsWith('"') && value.endsWith('"') ? value.slice(1, -1) : value;
+          const key = keyValueMatch[1];
+          let value: string;
+          if (keyValueMatch[3] !== undefined) {
+            // Quoted value (may contain colons, hashes, etc.)
+            value = keyValueMatch[3];
+          } else {
+            // Unquoted value, strip inline comments (anything after #)
+            value = keyValueMatch[4].replace(/\s+#.*$/, "");
+          }
+          currentFrontmatter[key] = value.trim();
           continue;
         } else if (trimmedLine === "") {
           // Empty line within frontmatter is allowed

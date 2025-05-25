@@ -4,6 +4,7 @@
 
 - [#97](https://github.com/estruyf/vscode-demo-time/issues/97): Support for Markdown slides with multiple slides (slide groups)
   - [#99](https://github.com/estruyf/vscode-demo-time/issues/99): PDF export support for multiple slides included
+  - [#111](https://github.com/estruyf/vscode-demo-time/issues/111): Fix issue with comments in front matter parsing
   - [#115](https://github.com/estruyf/vscode-demo-time/issues/115): Fix the slide preview which is empty after saving twice
   - [#117](https://github.com/estruyf/vscode-demo-time/issues/117): Keep the current slide index when refreshing slide preview on save
 - [#101](https://github.com/estruyf/vscode-demo-time/issues/101): Implementation of feedback
