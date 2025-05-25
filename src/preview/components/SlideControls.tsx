@@ -47,6 +47,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
     const prevSlide = currentSlide - 1;
     if (prevSlide >= 0) {
       updateSlideIdx(prevSlide);
+      messageHandler.send(WebViewMessages.toVscode.updateSlideIndex, prevSlide);
     } else if (previousEnabled) {
       messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.previous);
     }
@@ -61,6 +62,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
     const nextSlide = currentSlide + 1;
     if (nextSlide < slides) {
       updateSlideIdx(nextSlide);
+      messageHandler.send(WebViewMessages.toVscode.updateSlideIndex, nextSlide);
     } else {
       messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.start);
     }

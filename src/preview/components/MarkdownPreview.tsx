@@ -7,6 +7,7 @@ import { useScale } from '../hooks/useScale';
 import { useFileContents } from '../hooks/useFileContents';
 import useCursor from '../hooks/useCursor';
 import { SlideControls } from './SlideControls';
+// Removed WebViewMessages import as setInitialSlide is no longer used here directly for listener
 import useTheme from '../hooks/useTheme';
 import { Slide } from '../../models';
 import { SlideParser } from '../../services/SlideParser';
@@ -21,7 +22,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   fileUri,
   webviewUrl
 }: React.PropsWithChildren<IMarkdownPreviewProps>) => {
-  const { content, crntFilePath, getFileContents } = useFileContents();
+  const { content, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();
   const [theme, setTheme] = React.useState<string | undefined>(undefined);
   const [layout, setLayout] = React.useState<string | undefined>(undefined);
   const [bgStyles, setBgStyles] = React.useState<any | null>(null);
@@ -32,25 +33,22 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const { vsCodeTheme, isDarkTheme } = useTheme();
   const [slides, setSlides] = React.useState<Slide[]>([]);
   const [crntSlide, setCrntSlide] = React.useState<Slide | null>(null);
-  const [refreshKey, setRefreshKey] = React.useState(0);
   const { scale } = useScale(ref, slideRef);
   const { mousePosition, handleMouseMove } = useMousePosition(slideRef, scale, resetCursorTimeout);
 
-  const messageListener = (message: MessageEvent<EventData<any>>) => {
-    const { command, payload } = message.data;
-    if (!command) {
-      return;
-    }
-
-    if (command === WebViewMessages.toWebview.triggerUpdate) {
-      setSlides([]);
+  React.useEffect(() => {
+    // If slides are loaded and initialSlideIndex is a valid number
+    if (Array.isArray(slides) && slides.length > 0) {
+      if (typeof initialSlideIndex === 'number' && initialSlideIndex >= 0 && initialSlideIndex < slides.length) {
+        setCrntSlide(slides[initialSlideIndex]);
+      } else {
+        setCrntSlide(slides[0]);
+      }
+    } else {
+      // No slides loaded or slides is empty
       setCrntSlide(null);
-      messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
-      messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, false);
-      getFileContents(payload);
-      setRefreshKey(prevKey => prevKey + 1);
     }
-  };
+  }, [initialSlideIndex, slides]);
 
   const updateSlideIdx = React.useCallback((slideIdx: number) => {
     if (slideIdx < 0 || slideIdx >= slides.length) {
@@ -62,7 +60,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   }, [slides]);
 
   const slidesListener = React.useCallback((message: MessageEvent<EventData<any>>) => {
-    const { command, payload } = message.data;
+    const { command } = message.data;
     if (!command) {
       return;
     }
@@ -98,11 +96,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         messageHandler.send(WebViewMessages.toVscode.hasNextSlide, true);
       }
     }
-  }, [content, refreshKey]);
-
-  React.useEffect(() => {
-    getFileContents(fileUri);
-  }, [fileUri]);
+  }, [content]);
 
   React.useEffect(() => {
     setTheme(crntSlide?.frontmatter.theme || SlideTheme.default);
@@ -112,7 +106,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   React.useEffect(() => {
     Messenger.listen(slidesListener);
 
-    if (slides.length === 1) {
+    if (slides === null || slides.length === 0 || slides.length === 1) {
       messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
       messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, false);
     } else if (slides.length > 1 && crntSlide?.index === slides.length - 1) {
@@ -120,26 +114,17 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, true);
     } else if (slides.length > 1) {
       messageHandler.send(WebViewMessages.toVscode.hasNextSlide, true);
-      messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, (crntSlide?.index && crntSlide.index > 0));
+      messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, (crntSlide?.index !== undefined && crntSlide.index > 0));
     }
 
     return () => {
       Messenger.unlisten(slidesListener);
     };
-  }, [slides.length, crntSlide]);
+  }, [slides, crntSlide]); // Added slides to dependency array for null/empty check
 
   React.useEffect(() => {
-    Messenger.listen(messageListener);
-
-    setSlides([]);
-    setCrntSlide(null);
-    messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
-    messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, false);
-
-    return () => {
-      Messenger.unlisten(messageListener);
-    };
-  }, []);
+    getFileContents(fileUri);
+  }, [fileUri]);
 
   return (
     <>
