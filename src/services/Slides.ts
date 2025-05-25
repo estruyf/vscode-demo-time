@@ -84,6 +84,10 @@ export class Slides {
     const content = `---
 theme: default
 layout: ${layout.toLowerCase()}
+# Optional: add a footer with your name and date
+# footer: "<span>{{name}}</span> <span>{{date}}</span>"
+# name: Your Name
+# date: "${new Date().toISOString().split('T')[0]}"
 ---
 
 # ${slideTitle}`;
@@ -209,6 +213,10 @@ layout: ${layout.toLowerCase()}
                   .map((transition) => `- \`${transition}\``)
                   .join("\n");
                 return new Hover(`Specifies the transition for the slide. Available options:\n${transitions}`);
+              } else if (line.startsWith("footer:")) {
+                return new Hover(
+                  "Specifies a footer for the slide. You can use variables like {{name}} or {{date}} that are defined in the frontmatter."
+                );
               }
             }
           }
@@ -250,6 +258,13 @@ layout: ${layout.toLowerCase()}
                     {
                       label: "theme",
                       description: "Theme for the slide",
+                    },
+                    CompletionItemKind.Property
+                  ),
+                  new CompletionItem(
+                    {
+                      label: "footer",
+                      description: "Footer for the slide",
                     },
                     CompletionItemKind.Property
                   ),

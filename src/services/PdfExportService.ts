@@ -388,6 +388,16 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
           <div class="${slide.customLayout ? `slide__content__custom` : `slide__content__inner`}">
             ${slide.html}
           </div>
+          ${slide.footer ? `
+          <div class="slide__footer">
+            <div>${
+              Object.entries(slide).reduce((html, [key, value]) => {
+                return typeof html === 'string' && typeof value === 'string' 
+                  ? html.replace(new RegExp(`{{${key}}}`, 'g'), value)
+                  : html;
+              }, slide.footer)
+            }</div>
+          </div>` : ''}
         </div>
       
         ${

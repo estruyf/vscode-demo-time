@@ -157,7 +157,18 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
         template ? (
           <div key={filePath} className={`slide__content__custom ${transition || ""}`} dangerouslySetInnerHTML={{ __html: template }} />
         ) : (
-          <div key={filePath} className={`slide__content__inner ${transition || ""}`}>{markdown}</div>
+          <>
+            <div key={filePath} className={`slide__content__inner ${transition || ""}`}>{markdown}</div>
+            {matter?.footer && (
+              <div className="slide__footer">
+                <div dangerouslySetInnerHTML={{ 
+                  __html: Object.entries(matter).reduce((html, [key, value]) => {
+                    return html.replace(new RegExp(`{{${key}}}`, 'g'), value);
+                  }, matter.footer) 
+                }} />
+              </div>
+            )}
+          </>
         )
       }
     </>

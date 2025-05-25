@@ -6,6 +6,7 @@ export interface SlideMetadata {
   transition?: SlideTransition;
   customTheme?: string;
   customLayout?: string;
+  footer?: string;
 
   [key: string]: any;
 }
