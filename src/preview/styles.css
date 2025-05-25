@@ -181,3 +181,33 @@ pre code {
 .image-right {
   @apply grid grid-cols-2 w-full h-full auto-rows-fr;
 }
+
+.slide__header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  text-align: center;
+  z-index: 10;
+  color: var(--vscode-editor-foreground, #333); /* Example color */
+  font-size: 0.8em;
+  /* Add a subtle background or border if desired, e.g.: */
+  /* background-color: rgba(0,0,0,0.05); */
+}
+
+.slide__footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  text-align: center;
+  z-index: 10;
+  color: var(--vscode-editor-foreground, #333); /* Example color */
+  font-size: 0.8em;
+  /* Add a subtle background or border if desired, e.g.: */
+  /* background-color: rgba(0,0,0,0.05); */
+}

@@ -196,10 +196,6 @@ layout: ${layout.toLowerCase()}
                 return new Hover(
                   "Specifies the image URL or path for the slide. Provide a relative path to the image file."
                 );
-              } else if (line.startsWith("customTheme:")) {
-                return new Hover(
-                  "Specifies a custom theme for the slide. Provide a relative path or URL to a CSS file."
-                );
               } else if (line.startsWith("customLayout:")) {
                 return new Hover(
                   "Specifies a custom layout for the slide. Provide a relative path to the Handlebars template."
@@ -209,6 +205,14 @@ layout: ${layout.toLowerCase()}
                   .map((transition) => `- \`${transition}\``)
                   .join("\n");
                 return new Hover(`Specifies the transition for the slide. Available options:\n${transitions}`);
+              } else if (line.startsWith("header:")) {
+                return new Hover(
+                  "Specifies the header content for the slide, processed as a Handlebars template. Context includes: `frontmatter` (object), `slide_number`, `total_slides`, `date`."
+                );
+              } else if (line.startsWith("footer:")) {
+                return new Hover(
+                  "Specifies the footer content for the slide, processed as a Handlebars template. Context includes: `frontmatter` (object), `slide_number`, `total_slides`, `date`."
+                );
               }
             }
           }
@@ -278,6 +282,20 @@ layout: ${layout.toLowerCase()}
                     {
                       label: "transition",
                       description: "Transition for the slide",
+                    },
+                    CompletionItemKind.Property
+                  ),
+                  new CompletionItem(
+                    {
+                      label: "header",
+                      description: "Content for the slide header",
+                    },
+                    CompletionItemKind.Property
+                  ),
+                  new CompletionItem(
+                    {
+                      label: "footer",
+                      description: "Content for the slide footer",
                     },
                     CompletionItemKind.Property
                   ),

@@ -12,6 +12,7 @@ import useTheme from '../hooks/useTheme';
 import { Slide } from '../../models';
 import { SlideParser } from '../../services/SlideParser';
 import { useMousePosition } from '../hooks/useMousePosition';
+import * as Handlebars from 'handlebars';
 
 export interface IMarkdownPreviewProps {
   fileUri: string;
@@ -126,6 +127,31 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     getFileContents(fileUri);
   }, [fileUri]);
 
+  const headerContent = crntSlide?.frontmatter?.header;
+  const footerContent = crntSlide?.frontmatter?.footer;
+
+  let renderedHeader = "";
+  let renderedFooter = "";
+
+  if (crntSlide) {
+    const context = {
+      frontmatter: crntSlide.frontmatter,
+      slide_number: crntSlide.index + 1,
+      total_slides: slides.length,
+      date: new Date().toLocaleDateString()
+    };
+
+    if (headerContent) {
+      const headerTemplate = Handlebars.compile(headerContent);
+      renderedHeader = headerTemplate(context);
+    }
+
+    if (footerContent) {
+      const footerTemplate = Handlebars.compile(footerContent);
+      renderedFooter = footerTemplate(context);
+    }
+  }
+
   return (
     <>
       <div
@@ -137,6 +163,12 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         onMouseMove={handleMouseMove}
         style={{ cursor: cursorVisible ? 'default' : 'none' }}
       >
+        {renderedHeader && (
+          <div className="slide__header">
+            {renderedHeader}
+          </div>
+        )}
+
         <div
           className='slide__container absolute top-[50%] left-[50%] w-[960px] h-[540px]'
           style={{ transform: 'translate(-50%, -50%) scale(var(--demotime-scale, 1))' }}>
@@ -176,6 +208,12 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             }
           </div>
         </div>
+
+        {renderedFooter && (
+          <div className="slide__footer">
+            {renderedFooter}
+          </div>
+        )}
 
         <SlideControls show={showControls && cursorVisible} path={relativePath} slides={slides.length} currentSlide={crntSlide?.index} updateSlideIdx={updateSlideIdx}>
           {/* Mouse Position */}

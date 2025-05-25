@@ -178,6 +178,13 @@ export class SlideParser {
       if (slide.docFrontMatter.transition && !slide.frontmatter.transition) {
         slide.frontmatter.transition = slide.docFrontMatter.transition;
       }
+      // Apply header and footer defaults from docFrontMatter
+      if (slide.docFrontMatter.header && !slide.frontmatter.header) {
+        slide.frontmatter.header = slide.docFrontMatter.header;
+      }
+      if (slide.docFrontMatter.footer && !slide.frontmatter.footer) {
+        slide.frontmatter.footer = slide.docFrontMatter.footer;
+      }
       return slide;
     });
   }

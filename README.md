@@ -33,6 +33,45 @@
 - **Integrated Slides**: Present slides directly within VS Code for a cohesive experience.​
 - **Customizable Actions**: Execute various VS Code commands and tasks as part of your demo.
 
+## Headers and Footers
+
+You can add global or slide-specific headers and footers to your presentation. These are defined in the frontmatter and are processed using Handlebars templating, offering great flexibility.
+
+-   `header`: A Handlebars template string for the header.
+-   `footer`: A Handlebars template string for the footer.
+
+These properties can be defined at the top of your Markdown file (document-level) to apply to all slides, or within the frontmatter of a specific slide to override the global settings or apply only to that slide.
+
+### Templating Data Context
+When your header and footer templates are rendered, they have access to the following data:
+
+*   `frontmatter`: An object containing all the frontmatter key-value pairs for the current slide. For example, if your slide's frontmatter has `author: "Jane Doe"`, you can use `{{frontmatter.author}}`.
+*   `slide_number`: The current slide number (e.g., `{{slide_number}}`).
+*   `total_slides`: The total number of slides (e.g., `{{total_slides}}`).
+*   `date`: The current date, formatted according to system locale (e.g., `{{date}}`).
+
+### Example
+
+```markdown
+---
+title: "My Awesome Presentation"
+author: "John Smith"
+header: "{{frontmatter.title}} - {{date}}"
+footer: "Slide {{slide_number}} of {{total_slides}} - © {{frontmatter.author}}"
+---
+
+# First Slide Title
+This slide will use the global header and footer, rendering data from its own frontmatter.
+
+---
+author: "Alice Wonderland"
+footer: "Special Footer by {{frontmatter.author}} ({{slide_number}}/{{total_slides}})"
+---
+
+# Second Slide Title
+This slide has the global header but a custom footer, using its own author.
+```
+
 ## Getting Started
 
 1. **Installation**: Install the extension.​
