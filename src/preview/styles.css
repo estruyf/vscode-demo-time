@@ -37,6 +37,24 @@ pre code {
   background: var(--vscode-editor-background);
 }
 
+/* Table styling */
+table {
+  @apply w-full border-collapse my-4;
+}
+
+table th {
+  @apply font-bold text-left p-2 border;
+  background-color: var(--vscode-keybindingTable-headerBackground);
+  color: var(--vscode-editor-foreground);
+  border-color: var(--vscode-panel-border);
+}
+
+table td {
+  @apply p-2 border;
+  border-color: var(--vscode-panel-border);
+  color: var(--vscode-editor-foreground);
+}
+
 .slide__layout {
   @apply h-full w-full;
 }
