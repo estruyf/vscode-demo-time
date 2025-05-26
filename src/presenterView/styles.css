@@ -48,20 +48,4 @@
   hr {
     @apply border-t border-[var(--vscode-panel-border)] my-4;
   }
-  
-  table {
-    @apply w-full border-collapse my-4;
-  }
-
-  table th {
-    @apply bg-opacity-10 bg-gray-700 dark:bg-gray-300 font-bold text-left p-2 border border-gray-300 dark:border-gray-700;
-  }
-
-  table td {
-    @apply p-2 border border-gray-300 dark:border-gray-700;
-  }
-
-  table tr:nth-child(even) {
-    @apply bg-opacity-5 bg-gray-500 dark:bg-gray-400;
-  }
 }
