@@ -84,6 +84,7 @@ export class Slides {
     const content = `---
 theme: default
 layout: ${layout.toLowerCase()}
+# footer: "<span>{{name}}</span> <span>{{date}}</span>"
 ---
 
 # ${slideTitle}`;
@@ -209,6 +210,10 @@ layout: ${layout.toLowerCase()}
                   .map((transition) => `- \`${transition}\``)
                   .join("\n");
                 return new Hover(`Specifies the transition for the slide. Available options:\n${transitions}`);
+              } else if (line.startsWith("footer:")) {
+                return new Hover(
+                  "Specifies the HTML template for the slide footer. Supports Handlebars syntax with frontmatter variables. Example: `<span>{{name}}</span> <span>{{date}}</span>`"
+                );
               }
             }
           }
@@ -278,6 +283,13 @@ layout: ${layout.toLowerCase()}
                     {
                       label: "transition",
                       description: "Transition for the slide",
+                    },
+                    CompletionItemKind.Property
+                  ),
+                  new CompletionItem(
+                    {
+                      label: "footer",
+                      description: "HTML template for the slide footer",
                     },
                     CompletionItemKind.Property
                   ),

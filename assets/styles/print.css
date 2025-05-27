@@ -71,6 +71,12 @@ pre code {
   .slide__content__inner {
     @apply relative h-full w-full;
   }
+  
+  .slide__footer {
+    @apply absolute bottom-0 left-0 right-0 px-8 py-4 flex justify-between items-center text-sm;
+    color: inherit;
+    font-size: 0.8em;
+  }
 }
 
 table {
