@@ -30,7 +30,7 @@ export class DemoCreator {
 
     subscriptions.push(commands.registerCommand(COMMAND.documentation, DemoCreator.documentation));
     subscriptions.push(commands.registerCommand(COMMAND.initialize, DemoCreator.initialize));
-    subscriptions.push(commands.registerCommand(COMMAND.openDemoFile, DemoCreator.openFile));
+    subscriptions.push(commands.registerCommand(COMMAND.openDemoFile, DemoCreator.openDemoFile));
     subscriptions.push(commands.registerCommand(COMMAND.addToStep, DemoCreator.addToStep));
     subscriptions.push(commands.registerCommand(COMMAND.addStepToDemo, DemoCreator.addStepToDemo));
     subscriptions.push(
@@ -40,7 +40,7 @@ export class DemoCreator {
       commands.registerCommand(COMMAND.stepMoveDown, (item: ActionTreeItem) => DemoCreator.move(item, "down"))
     );
     subscriptions.push(
-      commands.registerCommand(COMMAND.viewStep, (item: ActionTreeItem) => DemoCreator.openFile(item, true))
+      commands.registerCommand(COMMAND.viewStep, (item: ActionTreeItem) => DemoCreator.openDemoFile(item, true))
     );
     subscriptions.push(commands.registerCommand(COMMAND.createSnapshot, createSnapshot));
     subscriptions.push(commands.registerCommand(COMMAND.createPatch, createPatch));
@@ -89,10 +89,11 @@ export class DemoCreator {
   }
 
   /**
-   * Opens the file associated with the given ActionTreeItem.
+   * Opens the demo file associated with the given ActionTreeItem and highlights the specified step if applicable.
    * @param item The ActionTreeItem containing the demo file path.
+   * @param isDemoStep A boolean indicating whether the item is a demo step and should be highlighted.
    */
-  private static async openFile(item: ActionTreeItem, isDemoStep: boolean) {
+  private static async openDemoFile(item: ActionTreeItem, isDemoStep: boolean) {
     if (!item || !item.demoFilePath) {
       return;
     }
@@ -100,11 +101,10 @@ export class DemoCreator {
     const fileUri = Uri.file(item.demoFilePath);
     await window.showTextDocument(fileUri);
 
-    if (!isDemoStep) {
+    if (!isDemoStep || !item.originalLabel || item.stepIndex === undefined) {
       return;
     }
 
-    // Find the line number of the step
     const editor = window.activeTextEditor;
     if (!editor) {
       return;
@@ -112,12 +112,44 @@ export class DemoCreator {
 
     const text = editor.document.getText();
     const lines = text.split("\n");
-    const matches = lines.filter((line) => line.includes(item.originalLabel as string));
-    if (matches.length === 0) {
+
+    const includesLabel = (target: string) => target.includes(item.originalLabel as string);
+
+    // Find all line numbers that contain the original label
+    const matchingLineNumbers = lines
+      .map((line, index) => (includesLabel(line) ? index : -1))
+      .filter((index) => index !== -1);
+
+    if (matchingLineNumbers.length === 0) {
       return;
     }
 
-    const lineNr = lines.indexOf(matches[0]);
+    let lineNr = matchingLineNumbers[0]; // Default to first match
+
+    // If there are multiple matches and we have a stepIndex, find the correct occurrence
+    if (matchingLineNumbers.length > 1) {
+      const demoFile = await FileProvider.getFile(fileUri);
+      if (!demoFile?.demos) {
+        return;
+      }
+
+      let occurrenceIndex = 0;
+
+      // Count previous demos with the same title
+      for (let i = 0; i < item.stepIndex; i++) {
+        if (includesLabel(demoFile.demos[i].title)) {
+          occurrenceIndex++;
+        }
+      }
+
+      // Go to the next occurrence if the title also matches
+      if (includesLabel(demoFile.title)) {
+        occurrenceIndex++;
+      }
+
+      lineNr = matchingLineNumbers[occurrenceIndex] ?? matchingLineNumbers[0];
+    }
+
     await DemoRunner.highlight(editor, editor.document.lineAt(lineNr).range, undefined);
   }
 
