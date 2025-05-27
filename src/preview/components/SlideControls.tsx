@@ -13,6 +13,7 @@ export interface ISlideControlsProps {
   slides: number;
   currentSlide?: number;
   updateSlideIdx: (index: number) => void;
+  triggerMouseMove: (value: boolean) => void;
 }
 
 export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISlideControlsProps>> = ({
@@ -21,7 +22,8 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   children,
   slides,
   currentSlide = 0,
-  updateSlideIdx
+  updateSlideIdx,
+  triggerMouseMove
 }: React.PropsWithChildren<ISlideControlsProps>) => {
   const [previousEnabled, setPreviousEnabled] = React.useState(false);
   const [isPresentationMode, setIsPresentationMode] = React.useState(false);
@@ -159,7 +161,15 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
               children
             )
           }
-          <SlideControl title="Toggle mouse position" className='-rotate-90 hover:bg-[var(--vscode-toolbar-hoverBackground)]' iconName="symbol-ruler" action={() => setShowPosition(prev => !prev)} />
+          <SlideControl
+            title="Toggle mouse position"
+            className='-rotate-90 hover:bg-[var(--vscode-toolbar-hoverBackground)]'
+            iconName="symbol-ruler"
+            action={() => {
+              setShowPosition(prev => !prev);
+              triggerMouseMove(!showPosition);
+            }}
+          />
           {
             path && (
               <SlideControl title="Open slide source" iconName="preview" action={openSlideSource} />

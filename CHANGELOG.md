@@ -15,7 +15,7 @@
 - [#110](https://github.com/estruyf/vscode-demo-time/issues/110): Be able to change how the next action/step behaviour works with the `demoTime.nextActionBehaviour` setting
 - [#113](https://github.com/estruyf/vscode-demo-time/pull/113): Enhancement for the end placeholder setting to look after the start placeholder index. Thanks to [Leonardo Montini](https://github.com/Balastrong).
 - [#122](https://github.com/estruyf/vscode-demo-time/issues/122): Add table support to the slides
-  - Added default table styling for slide previews and PDF export
+- [#124](https://github.com/estruyf/vscode-demo-time/issues/124): Fix content for custom layouts
 
 ## [1.3.0] - 2025-04-24
 

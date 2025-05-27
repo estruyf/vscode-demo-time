@@ -35,6 +35,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const [crntSlide, setCrntSlide] = React.useState<Slide | null>(null);
   const { scale } = useScale(ref, slideRef);
   const { mousePosition, handleMouseMove } = useMousePosition(slideRef, scale, resetCursorTimeout);
+  const [isMouseMoveEnabled, setIsMouseMoveEnabled] = React.useState(false);
 
   React.useEffect(() => {
     // If slides are loaded and initialSlideIndex is a valid number
@@ -134,7 +135,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         className={`slide ${theme || "default"} relative w-full h-full overflow-hidden`}
         onMouseEnter={() => setShowControls(true)}
         onMouseLeave={() => setShowControls(false)}
-        onMouseMove={handleMouseMove}
+        onMouseMove={isMouseMoveEnabled ? handleMouseMove : undefined}
         style={{ cursor: cursorVisible ? 'default' : 'none' }}
       >
         <div
@@ -177,7 +178,14 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           </div>
         </div>
 
-        <SlideControls show={showControls && cursorVisible} path={relativePath} slides={slides.length} currentSlide={crntSlide?.index} updateSlideIdx={updateSlideIdx}>
+        <SlideControls
+          show={showControls && cursorVisible}
+          path={relativePath}
+          slides={slides.length}
+          currentSlide={crntSlide?.index}
+          updateSlideIdx={updateSlideIdx}
+          triggerMouseMove={setIsMouseMoveEnabled}
+        >
           {/* Mouse Position */}
           {mousePosition && showControls && cursorVisible && (
             <div className="mouse-position text-sm px-2 py-1 text-[var(--vscode-editorWidget-foreground)]">
