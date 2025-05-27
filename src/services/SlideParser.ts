@@ -178,6 +178,7 @@ export class SlideParser {
       if (slide.docFrontMatter.transition && !slide.frontmatter.transition) {
         slide.frontmatter.transition = slide.docFrontMatter.transition;
       }
+
       return slide;
     });
   }
