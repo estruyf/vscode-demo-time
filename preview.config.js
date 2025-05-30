@@ -66,7 +66,7 @@ module.exports = (env, argv) => {
 
       configItem.optimization = {
         splitChunks: {
-          chunks: 'all',
+          chunks: 'async',
         },
       };
     }

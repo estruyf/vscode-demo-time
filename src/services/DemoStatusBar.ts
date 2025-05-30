@@ -13,13 +13,17 @@ export class DemoStatusBar {
   private static statusBarItem: StatusBarItem;
   private static statusBarNotes: StatusBarItem;
   private static statusBarClock: StatusBarItem;
+  private static statusBarPause: StatusBarItem;
   private static countdownStarted: Date | undefined;
+  private static countdownPaused: boolean = false;
+  private static pausedTimeRemaining: number | undefined;
   private static nextDemo: Demo | undefined;
 
   public static register() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
     subscriptions.push(commands.registerCommand(COMMAND.startCountdown, DemoStatusBar.startCountdown));
     subscriptions.push(commands.registerCommand(COMMAND.resetCountdown, DemoStatusBar.resetCountdown));
+    subscriptions.push(commands.registerCommand(COMMAND.pauseCountdown, DemoStatusBar.pauseCountdown));
     setContext(ContextKeys.countdown, false);
 
     DemoStatusBar.createStatusBarItems();
@@ -54,6 +58,14 @@ export class DemoStatusBar {
       DemoStatusBar.statusBarNotes.command = COMMAND.viewNotes;
       DemoStatusBar.statusBarNotes.text = `$(book) Notes`;
       DemoStatusBar.statusBarNotes.tooltip = `Show the notes for the current demo step`;
+    }
+
+    if (!DemoStatusBar.statusBarPause) {
+      DemoStatusBar.statusBarPause = window.createStatusBarItem("pause-countdown", StatusBarAlignment.Right, 99999);
+      DemoStatusBar.statusBarPause.name = `${Config.title} - Pause/Resume Countdown`;
+      DemoStatusBar.statusBarPause.command = COMMAND.pauseCountdown;
+      DemoStatusBar.statusBarPause.text = `$(debug-pause) Pause`;
+      DemoStatusBar.statusBarPause.tooltip = "Pause the countdown timer";
     }
   }
 
@@ -148,18 +160,53 @@ export class DemoStatusBar {
     }
 
     DemoStatusBar.countdownStarted = new Date();
+    DemoStatusBar.updatePause(false);
+    DemoStatusBar.pausedTimeRemaining = undefined;
     await setContext(ContextKeys.countdown, true);
     DemoStatusBar.startClock();
+    DemoStatusBar.statusBarPause.show();
     PresenterView.postMessage(WebViewMessages.toWebview.updateCountdownStarted, DemoStatusBar.countdownStarted);
   }
 
   private static async resetCountdown() {
     DemoStatusBar.countdownStarted = undefined;
+    DemoStatusBar.updatePause(false);
+    DemoStatusBar.pausedTimeRemaining = undefined;
     await setContext(ContextKeys.countdown, false);
     DemoStatusBar.statusBarClock.backgroundColor = undefined;
     DemoStatusBar.statusBarClock.color = undefined;
     DemoStatusBar.startClock();
+    DemoStatusBar.statusBarPause.hide();
     PresenterView.postMessage(WebViewMessages.toWebview.updateCountdownStarted, undefined);
+    PresenterView.postMessage(WebViewMessages.toWebview.resetCountdown, undefined);
+  }
+
+  private static async pauseCountdown() {
+    const timer = Extension.getInstance().getSetting<number>(Config.clock.timer);
+    if (!timer) {
+      return;
+    }
+
+    if (DemoStatusBar.countdownPaused) {
+      // Resume countdown
+      DemoStatusBar.updatePause(false);
+      if (DemoStatusBar.pausedTimeRemaining !== undefined) {
+        DemoStatusBar.countdownStarted = new Date(
+          new Date().getTime() - (timer * 60 * 1000 - DemoStatusBar.pausedTimeRemaining)
+        );
+      }
+      DemoStatusBar.statusBarPause.text = `$(debug-pause) Pause`;
+      DemoStatusBar.statusBarPause.tooltip = "Pause the countdown timer";
+    } else {
+      // Pause countdown
+      DemoStatusBar.updatePause(true);
+      if (DemoStatusBar.countdownStarted) {
+        const diff = new Date().getTime() - DemoStatusBar.countdownStarted.getTime();
+        DemoStatusBar.pausedTimeRemaining = timer * 60 * 1000 - diff;
+      }
+      DemoStatusBar.statusBarPause.text = `$(debug-start) Resume`;
+      DemoStatusBar.statusBarPause.tooltip = "Resume the countdown timer";
+    }
   }
 
   private static startClock() {
@@ -189,35 +236,54 @@ export class DemoStatusBar {
     PresenterView.postMessage(WebViewMessages.toWebview.updateClock, clock);
 
     if (DemoStatusBar.countdownStarted && timer) {
-      // Show the time as countdown
-      const diff = new Date().getTime() - DemoStatusBar.countdownStarted.getTime();
-      const seconds = Math.floor((timer * 60 * 1000 - diff) / 1000);
-      let minutes = Math.floor(seconds / 60);
-      const remainingSeconds = Math.abs(seconds % 60);
-
+      let countdown: string;
       let isNegative = false;
-      if (seconds <= 0) {
-        isNegative = true;
-        DemoStatusBar.statusBarClock.backgroundColor = new ThemeColor("statusBarItem.errorBackground");
-        DemoStatusBar.statusBarClock.color = new ThemeColor("statusBarItem.errorForeground");
 
-        if (minutes < 0) {
-          // To show the correct overtime
-          minutes = minutes + 1;
+      if (DemoStatusBar.countdownPaused) {
+        // If paused, use the paused time remaining
+        const seconds = Math.floor(DemoStatusBar.pausedTimeRemaining! / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = Math.abs(seconds % 60);
+
+        // Add leading zero
+        const min = Math.abs(minutes) < 10 ? `0${Math.abs(minutes)}` : minutes;
+        const sec = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
+        countdown = `${min}:${sec}`;
+      } else {
+        // Calculate the countdown normally
+        const diff = new Date().getTime() - DemoStatusBar.countdownStarted.getTime();
+        const seconds = Math.floor((timer * 60 * 1000 - diff) / 1000);
+        let minutes = Math.floor(seconds / 60);
+        const remainingSeconds = Math.abs(seconds % 60);
+
+        if (seconds <= 0) {
+          isNegative = true;
+          DemoStatusBar.statusBarClock.backgroundColor = new ThemeColor("statusBarItem.errorBackground");
+          DemoStatusBar.statusBarClock.color = new ThemeColor("statusBarItem.errorForeground");
+
+          if (minutes < 0) {
+            // To show the correct overtime
+            minutes = minutes + 1;
+          }
+        } else {
+          DemoStatusBar.statusBarClock.backgroundColor = undefined;
+          DemoStatusBar.statusBarClock.color = undefined;
         }
+
+        // Add leading zero
+        const min = Math.abs(minutes) < 10 ? `0${Math.abs(minutes)}` : minutes;
+        const sec = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
+        countdown = `${isNegative ? "-" : ""}${min}:${sec}`;
       }
 
-      // Add leading zero
-      const min = Math.abs(minutes) < 10 ? `0${Math.abs(minutes)}` : minutes;
-      const sec = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
-      const countdown = `${min}:${sec}`;
-      text += `    $(dt-timer-off) ${isNegative ? "-" : ""}${countdown}`;
+      text += `    $(dt-timer-off) ${countdown}`;
 
-      // Send the clock to the presenter view
-      PresenterView.postMessage(WebViewMessages.toWebview.updateCountdown, `${isNegative ? "-" : ""}${countdown}`);
+      // Send the countdown to the presenter view
+      PresenterView.postMessage(WebViewMessages.toWebview.updateCountdown, countdown);
     }
 
     DemoStatusBar.statusBarClock.text = text.trim();
+    DemoStatusBar.statusBarClock.tooltip = "Click to start/reset the countdown timer";
 
     if (!DemoStatusBar.statusBarClock.text) {
       DemoStatusBar.statusBarClock.hide();
@@ -228,5 +294,10 @@ export class DemoStatusBar {
     setTimeout(() => {
       DemoStatusBar.startClock();
     }, 1000);
+  }
+
+  private static updatePause(status: boolean) {
+    DemoStatusBar.countdownPaused = status;
+    PresenterView.postMessage(WebViewMessages.toWebview.updateCountdownStatus, status);
   }
 }

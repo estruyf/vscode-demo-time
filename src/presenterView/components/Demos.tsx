@@ -4,7 +4,7 @@ import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import { COMMAND, WebViewMessages } from '../../constants';
 import { EventData } from '@estruyf/vscode';
 import { DemoHeader } from './DemoHeader';
-import { DemoListItem } from './DemoListItem';
+import DemoListItem from './DemoListItem';
 import { Notes } from './Notes';
 
 export interface IDemosProps { }
@@ -14,6 +14,8 @@ export const Demos: React.FunctionComponent<IDemosProps> = ({ }: React.PropsWith
   const [runningDemos, setRunningDemos] = React.useState<DemoFileCache | null>(null);
   const [notes, setNotes] = React.useState<string | undefined>(undefined);
   const [crntDemo, setCrntDemo] = React.useState<Demo | undefined>(undefined);
+
+  const activeDemoRef = React.useRef<HTMLLIElement | null>(null);
 
   const checkToSetNotes = React.useCallback((demo?: Demo) => {
     if (demo?.notes?.path) {
@@ -109,6 +111,15 @@ export const Demos: React.FunctionComponent<IDemosProps> = ({ }: React.PropsWith
     };
   }, []);
 
+  React.useEffect(() => {
+    if (activeDemoRef.current) {
+      activeDemoRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }
+  }, [crntDemo]);
+
   if (!crntDemos) {
     return null;
   }
@@ -116,9 +127,9 @@ export const Demos: React.FunctionComponent<IDemosProps> = ({ }: React.PropsWith
   return (
     <div className="grid grid-cols-2 gap-4">
       <div className="rounded-[2px] border border-[var(--vscode-panel-border)] shadow-sm">
-        <DemoHeader title={crntDemos.title} />
+        <DemoHeader prefix='Demo' title={crntDemos.title} />
 
-        <div className="p-4 pt-0">
+        <div className="p-4 pt-0 max-h-64 overflow-y-auto">
           <ul className="">
             {
               crntDemos && crntDemos.demos.map((d, idx) => (
@@ -128,6 +139,7 @@ export const Demos: React.FunctionComponent<IDemosProps> = ({ }: React.PropsWith
                   onRun={() => runStep(idx, d.source)}
                   onOpenNotes={() => openNotes(d.notes?.path)}
                   isActive={typeof crntDemo?.id !== 'undefined' ? crntDemo?.id === d.id : crntDemo?.title === d.title}
+                  ref={(typeof crntDemo?.id !== 'undefined' ? crntDemo?.id === d.id : crntDemo?.title === d.title) ? activeDemoRef : null}
                 />
               ))
             }
@@ -137,7 +149,7 @@ export const Demos: React.FunctionComponent<IDemosProps> = ({ }: React.PropsWith
 
       {
         (crntDemos && crntDemos.demos) && (
-          <Notes content={notes} />
+          <Notes content={notes} path={crntDemo?.notes?.path} />
         )
       }
     </div>

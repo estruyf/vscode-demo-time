@@ -90,7 +90,7 @@ export const App: React.FunctionComponent<IAppProps> = (props: React.PropsWithCh
           <div className="grid grid-cols-2 gap-4">
             <Clock />
 
-            <Countdown isStarted={countdownStarted} />
+            <Countdown time={countdown} />
           </div>
         )}
 

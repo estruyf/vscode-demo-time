@@ -133,7 +133,12 @@ export class PresenterView {
       const { path } = payload;
       if (path) {
         const workspaceFolder = Extension.getInstance().workspaceFolder;
-        const notesPath = workspaceFolder ? Uri.joinPath(workspaceFolder.uri, General.demoFolder, path) : undefined;
+        const version = DemoRunner.getCurrentVersion();
+        const notesPath = workspaceFolder
+          ? version === 2
+            ? Uri.joinPath(workspaceFolder.uri, path)
+            : Uri.joinPath(workspaceFolder.uri, General.demoFolder, path)
+          : undefined;
         if (notesPath) {
           const notes = await readFile(notesPath);
           PresenterView.postRequestMessage(command, requestId, notes);
@@ -141,6 +146,17 @@ export class PresenterView {
         }
       }
       PresenterView.postRequestMessage(command, requestId, undefined);
+    } else if (command === WebViewMessages.toVscode.openFile && payload) {
+      const workspaceFolder = Extension.getInstance().workspaceFolder;
+      const version = DemoRunner.getCurrentVersion();
+      const notesPath = workspaceFolder
+        ? version === 2
+          ? Uri.joinPath(workspaceFolder.uri, payload)
+          : Uri.joinPath(workspaceFolder.uri, General.demoFolder, payload)
+        : undefined;
+      if (notesPath) {
+        await window.showTextDocument(notesPath, { preview: false });
+      }
     }
   }
 

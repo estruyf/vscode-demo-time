@@ -8,17 +8,10 @@ export const twoColumnFormatting = (content: string) => {
     const left = rightSplit[0].trim();
     const right = rightSplit[1].trim();
 
-    const data = left.split(`---`);
-    const fm = data[1].trim();
-    const leftContent = data[2].trim();
-
-    const updatedContent = `---
-${fm}
----
-
+    const updatedContent = `
 <div class="slide__left">
 
-${leftContent}
+${left}
 
 </div>
 <div class="slide__right">

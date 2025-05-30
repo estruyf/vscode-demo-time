@@ -1,5 +1,25 @@
 # Change Log
 
+## [1.4.0] - 2025-05-30
+
+- [#97](https://github.com/estruyf/vscode-demo-time/issues/97): Support for Markdown slides with multiple slides (slide groups)
+  - [#99](https://github.com/estruyf/vscode-demo-time/issues/99): PDF export support for multiple slides included
+  - [#111](https://github.com/estruyf/vscode-demo-time/issues/111): Fix issue with comments in front matter parsing
+  - [#115](https://github.com/estruyf/vscode-demo-time/issues/115): Fix the slide preview which is empty after saving twice
+  - [#117](https://github.com/estruyf/vscode-demo-time/issues/117): Keep the current slide index when refreshing slide preview on save
+- [#101](https://github.com/estruyf/vscode-demo-time/issues/101): Implementation of feedback
+  - [#103](https://github.com/estruyf/vscode-demo-time/issues/103): Clear highlight the moment you run the next step
+  - [#105](https://github.com/estruyf/vscode-demo-time/issues/105): Ability to pause the countdown and resume it
+  - [#109](https://github.com/estruyf/vscode-demo-time/issues/109): Optimize the demo view with a maximum height, scroll current demo step into view, cleaner presentation notes view
+- [#102](https://github.com/estruyf/vscode-demo-time/issues/102): Start all paths from the project folder instead of `.demo` folder by setting the `version` property in the demo file to `2`
+- [#106](https://github.com/estruyf/vscode-demo-time/issues/106): Fix issue where file creating is slower than the async/await
+- [#110](https://github.com/estruyf/vscode-demo-time/issues/110): Be able to change how the next action/step behaviour works with the `demoTime.nextActionBehaviour` setting
+- [#112](https://github.com/estruyf/vscode-demo-time/issues/112): MCP server for Demo Time via [@demotime/mcp](https://www.npmjs.com/package/@demotime/mcp)
+- [#113](https://github.com/estruyf/vscode-demo-time/pull/113): Enhancement for the end placeholder setting to look after the start placeholder index. Thanks to [Leonardo Montini](https://github.com/Balastrong).
+- [#114](https://github.com/estruyf/vscode-demo-time/issues/114): Fix to show the correct view step demo. Thanks to [Leonardo Montini](https://github.com/Balastrong).
+- [#122](https://github.com/estruyf/vscode-demo-time/issues/122): Add table support to the slides
+- [#124](https://github.com/estruyf/vscode-demo-time/issues/124): Fix content for custom layouts
+
 ## [1.3.0] - 2025-04-24
 
 - Highlight the current demo step in the tree view and the presenter view
