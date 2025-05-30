@@ -11,6 +11,7 @@ import useTheme from '../hooks/useTheme';
 import { Slide } from '../../models';
 import { SlideParser } from '../../services/SlideParser';
 import { useMousePosition } from '../hooks/useMousePosition';
+import { convertTemplateToHtml } from '../../utils/convertTemplateToHtml';
 
 export interface IMarkdownPreviewProps {
   fileUri: string;
@@ -139,6 +140,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     };
   }, []);
 
+  console.log("Slides listener", slides);
+
   return (
     <>
       <div
@@ -157,6 +160,13 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             ref={slideRef}
             className={`slide__layout ${layout || "default"}`}
             style={getBgStyles()}>
+
+            {
+              crntSlide?.frontmatter.header && (
+                <header className={`slide__header`} dangerouslySetInnerHTML={{ __html: convertTemplateToHtml(crntSlide.frontmatter.header, crntSlide?.frontmatter) }}></header>
+              )
+            }
+
             {
               layout === SlideLayout.ImageLeft && (
                 <div className={`slide__image_left w-full h-full`} style={bgStyles}></div>
@@ -187,6 +197,12 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
                 <div className={`slide__image_right w-full h-full`} style={bgStyles}></div>
               )
             }
+
+            {
+              crntSlide?.frontmatter.footer && (
+                <footer className={`slide__footer`} dangerouslySetInnerHTML={{ __html: convertTemplateToHtml(crntSlide.frontmatter.footer, crntSlide?.frontmatter) }}></footer>
+              )
+            }
           </div>
         </div>
 
@@ -198,7 +214,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             </div>
           )}
         </SlideControls>
-      </div>
+      </div >
     </>
   );
 };

@@ -1,6 +1,6 @@
 import Handlebars from "handlebars";
 
-export const convertTemplateToHtml = async (template: string, data: any) => {
+export const convertTemplateToHtml = (template: string, data: any) => {
   Handlebars.registerHelper("eq", (a, b) => {
     return a === b;
   });

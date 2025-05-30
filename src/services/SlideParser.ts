@@ -169,6 +169,21 @@ export class SlideParser {
       if (slide.docFrontMatter.transition && !slide.frontmatter.transition) {
         slide.frontmatter.transition = slide.docFrontMatter.transition;
       }
+      if (slide.docFrontMatter.header && !slide.frontmatter.header) {
+        slide.frontmatter.header = slide.docFrontMatter.header;
+      }
+      if (slide.docFrontMatter.footer && !slide.frontmatter.footer) {
+        slide.frontmatter.footer = slide.docFrontMatter.footer;
+      }
+
+      for (const [key, value] of Object.entries(slide.docFrontMatter)) {
+        if (
+          !["theme", "customTheme", "transition", "header", "footer", "layout"].includes(key) &&
+          slide.frontmatter[key] === undefined
+        ) {
+          slide.frontmatter[key] = value;
+        }
+      }
       return slide;
     });
   }

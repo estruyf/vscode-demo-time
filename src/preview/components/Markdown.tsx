@@ -61,9 +61,9 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
 
   const updateCustomLayout = React.useCallback((metadata: SlideMetadata, layout?: string) => {
     if (layout) {
-      messageHandler.request<string>(WebViewMessages.toVscode.getFileContents, layout).then(async (templateHtml) => {
+      messageHandler.request<string>(WebViewMessages.toVscode.getFileContents, layout).then((templateHtml) => {
         if (templateHtml) {
-          let html = await convertTemplateToHtml(templateHtml, {
+          let html = convertTemplateToHtml(templateHtml, {
             metadata,
             content: renderToString(markdown),
           });
