@@ -1,8 +1,8 @@
 name: MAIN Release
 on:
-  push:
-    branches:
-      - main
+  release:
+    types:
+      - published
   workflow_dispatch:
 
 jobs:
@@ -24,9 +24,7 @@ jobs:
         run: node .github/scripts/verify-actions.mjs
 
       - name: Publish
-        if: contains(github.event.head_commit.message, '#release')
         run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }}
 
       - name: Publish to open-vsx.org
-        if: contains(github.event.head_commit.message, '#release')
         run: npx ovsx publish -p ${{ secrets.OPEN_VSX_PAT }}
