@@ -2,7 +2,7 @@
   "name": "vscode-demo-time",
   "displayName": "Demo Time - Live demos & slides in VS Code",
   "description": "Script your coding demos to perfection and present slides — all within VS Code! No typos, no missteps—just flawless, stress-free presentations. Seamlessly execute each demo step and advance through slides like a pro, keeping your audience engaged without ever leaving your coding environment.",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "publisher": "eliostruyf",
   "galleryBanner": {
     "color": "#0D1321",
@@ -170,6 +170,15 @@
           "type": "string",
           "default": "",
           "description": "Provide a path to a CSS file for loading your custom theme. The path should point to a CSS file."
+        },
+        "demoTime.nextActionBehaviour": {
+          "type": "string",
+          "enum": [
+            "lastExecuted",
+            "currentPosition"
+          ],
+          "default": "lastExecuted",
+          "description": "Define the behavior of the next action. Possible values are 'lastExecuted', or 'currentPosition'."
         }
       }
     },
@@ -282,6 +291,11 @@
       {
         "command": "demo-time.resetCountdown",
         "title": "Reset countdown",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.pauseCountdown",
+        "title": "Pause or resume countdown",
         "category": "Demo Time"
       },
       {
@@ -545,6 +559,11 @@
         "when": "demo-time.presentation && demo-time.previousEnabled"
       },
       {
+        "command": "demo-time.previous",
+        "key": "left",
+        "when": "demo-time.presentation && demo-time.hasPreviousSlide == true"
+      },
+      {
         "command": "demo-time.toggleSelectionHighlight",
         "key": "alt+h"
       },
@@ -623,9 +642,11 @@
     }
   },
   "devDependencies": {
+    "@actions/core": "^1.11.1",
     "@estruyf/vscode": "^1.1.0",
     "@types/cors": "^2.8.17",
     "@types/diff": "^7.0.1",
+    "@types/js-yaml": "^4.0.9",
     "@types/mocha": "^10.0.3",
     "@types/node": "18.x",
     "@types/react": "^18.3.16",
@@ -642,6 +663,7 @@
     "express": "^4.21.2",
     "glob": "^10.3.10",
     "handlebars": "^4.7.8",
+    "js-yaml": "^4.1.0",
     "jsonc-parser": "^3.3.1",
     "mermaid": "^11.6.0",
     "mlly": "^1.7.4",

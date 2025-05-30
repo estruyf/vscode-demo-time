@@ -8,4 +8,5 @@ export const ContextKeys = {
   hasCodeHighlighting: "demo-time.hasCodeHighlighting",
   hasNotes: "demo-time.hasNotes",
   isSlide: "demo-time.isSlide",
+  hasPreviousSlide: "demo-time.hasPreviousSlide",
 };

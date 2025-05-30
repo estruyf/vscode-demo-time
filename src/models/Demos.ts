@@ -1,12 +1,13 @@
-import { Action } from ".";
+import { Action, Version } from ".";
 
 export interface DemoFiles {
-  [filePath: string]: Demos;
+  [filePath: string]: DemoFile;
 }
 
-export interface Demos {
+export interface DemoFile {
   title: string;
   description: string;
+  version?: Version;
   demos: Demo[];
 }
 

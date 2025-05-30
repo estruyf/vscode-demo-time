@@ -1,16 +1,19 @@
 import { Uri, Webview, WebviewPanel, window, ViewColumn, commands } from "vscode";
 import { Extension } from "../services/Extension";
-import { COMMAND, Config, WebViewMessages } from "../constants";
+import { COMMAND, Config, ContextKeys, WebViewMessages } from "../constants";
 import { MessageHandlerData } from "@estruyf/vscode";
-import { getAbsolutePath, getTheme, getWebviewUrl, readFile, togglePresentationView } from "../utils";
+import { getAbsolutePath, getTheme, getWebviewUrl, readFile, setContext, togglePresentationView } from "../utils";
 import { DemoRunner } from "../services";
 
 export class Preview {
   private static webview: WebviewPanel | null = null;
   private static isDisposed = true;
   private static hasClickListener = false;
+  private static hasPreviousSlide = false;
+  private static hasNextSlide = false;
   private static crntFile: string | null = null;
   private static crntCss: string | null = null;
+  private static currentSlideIndex: number = 0;
 
   public static register() {
     const subscriptions = Extension.getInstance().subscriptions;
@@ -31,16 +34,35 @@ export class Preview {
     return Preview.hasClickListener;
   }
 
-  public static show(fileUri: string, css?: string) {
+  public static checkIfHasNextSlide(): boolean {
+    if (!Preview.isOpen) {
+      return false;
+    }
+    return Preview.hasNextSlide;
+  }
+
+  public static checkIfHasPreviousSlide(): boolean {
+    if (!Preview.isOpen) {
+      return false;
+    }
+    return Preview.hasPreviousSlide;
+  }
+
+  public static async show(fileUri: string, css?: string) {
+    if (Preview.crntFile !== fileUri) {
+      Preview.currentSlideIndex = 0;
+    }
+
     Preview.crntFile = fileUri ?? null;
     Preview.crntCss = css ?? null;
 
     if (Preview.isOpen) {
       Preview.reveal();
 
-      if (Preview.webview?.webview) {
+      // Use the fileUri argument for triggerUpdate, as it's the most current.
+      if (Preview.webview?.webview && fileUri) {
         const fileWebviewPath = getWebviewUrl(Preview.webview?.webview, fileUri);
-        Preview.postMessage(WebViewMessages.toWebview.updateFileUri, fileWebviewPath);
+        Preview.triggerUpdate(fileWebviewPath);
 
         if (css) {
           const cssWebviewPath = getWebviewUrl(Preview.webview?.webview, css);
@@ -50,16 +72,32 @@ export class Preview {
         }
       }
     } else {
-      Preview.create();
+      await Preview.create();
+      // After creating, if fileUri is available, trigger update
+      if (fileUri && Preview.webview?.webview) {
+        // Use fileUri from argument
+        const fileWebviewPath = getWebviewUrl(Preview.webview.webview, fileUri);
+        Preview.triggerUpdate(fileWebviewPath); // Convert string to Uri
+      }
     }
   }
 
-  public static triggerUpdate(fileUri: Uri) {
+  public static triggerUpdate(fileUri?: Uri | string) {
+    if (!fileUri || !Preview.webview?.webview) {
+      return;
+    }
+
+    if (typeof fileUri !== "string") {
+      fileUri = Preview.webview.webview.asWebviewUri(fileUri).toString();
+    }
+
+    // Ensure fileUri is a Uri object
     if (Preview.isOpen && Preview.webview?.webview) {
-      Preview.postMessage(
-        WebViewMessages.toWebview.triggerUpdate,
-        Preview.webview.webview.asWebviewUri(fileUri).toString()
-      );
+      const payload = {
+        fileUriString: fileUri,
+        slideIndex: Preview.currentSlideIndex,
+      };
+      Preview.postMessage(WebViewMessages.toWebview.triggerUpdate, payload);
     }
   }
 
@@ -95,6 +133,8 @@ export class Preview {
     Preview.webview.onDidDispose(async () => {
       Preview.isDisposed = true;
       Preview.hasClickListener = false;
+      Preview.hasPreviousSlide = false;
+      Preview.hasNextSlide = false;
     });
 
     Preview.webview.webview.onDidReceiveMessage(Preview.messageListener);
@@ -145,13 +185,20 @@ export class Preview {
       }
     } else if (command === WebViewMessages.toVscode.setHasClickListener) {
       Preview.hasClickListener = payload.listening ?? false;
+    } else if (command === WebViewMessages.toVscode.hasNextSlide) {
+      Preview.hasNextSlide = payload;
+    } else if (command === WebViewMessages.toVscode.hasPreviousSlide) {
+      Preview.hasPreviousSlide = payload;
+      setContext(ContextKeys.hasPreviousSlide, payload);
     } else if (command === WebViewMessages.toVscode.openFile && payload) {
       const fileUri = getAbsolutePath(payload);
       await window.showTextDocument(fileUri, { preview: false });
+    } else if (command === WebViewMessages.toVscode.updateSlideIndex) {
+      Preview.currentSlideIndex = payload;
     }
   }
 
-  public static async postMessage(command: string, payload: any) {
+  public static async postMessage(command: string, payload?: any) {
     if (Preview.isDisposed) {
       return;
     }

@@ -28,4 +28,7 @@ export const Config = {
   webcomponents: {
     scripts: "customWebComponents",
   },
+  demoRunner: {
+    nextActionBehaviour: "nextActionBehaviour",
+  },
 };

@@ -5,29 +5,27 @@ import rehypePrettyCode from 'rehype-pretty-code';
 import { usePrevious } from '../hooks/usePrevious';
 import { messageHandler } from '@estruyf/vscode/dist/client/webview';
 import { SlideTransition, WebViewMessages } from '../../constants';
-import { renderToString } from 'react-dom/server';
 import { convertTemplateToHtml } from '../../utils/convertTemplateToHtml';
 import { SlideMetadata } from '../../models';
+import { renderToString } from 'react-dom/server';
 
 export interface IMarkdownProps {
   filePath?: string;
   content?: string;
+  matter?: SlideMetadata;
   vsCodeTheme: any;
   isDarkTheme: boolean;
   webviewUrl: string | null;
-  updateTheme: (theme: string) => void;
-  updateLayout: (layout: string) => void;
   updateBgStyles: (styles: any) => void;
 }
 
 export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   filePath,
   content,
+  matter,
   vsCodeTheme,
   isDarkTheme,
   webviewUrl,
-  updateTheme,
-  updateLayout,
   updateBgStyles
 }: React.PropsWithChildren<IMarkdownProps>) => {
   const prevFilePath = usePrevious(filePath);
@@ -40,8 +38,9 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
 
   const {
     markdown,
+    textContent,
     setMarkdown,
-    matter
+    processMarkdown
   } = useRemark({
     rehypeReactOptions: {
       components: {
@@ -66,9 +65,15 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     if (layout) {
       messageHandler.request<string>(WebViewMessages.toVscode.getFileContents, layout).then(async (templateHtml) => {
         if (templateHtml) {
+          let crntSlideContent = textContent;
+          if (!textContent && content) {
+            const processedContent = await processMarkdown(content);
+            crntSlideContent = renderToString(processedContent.reactContent);
+          }
+
           let html = await convertTemplateToHtml(templateHtml, {
             metadata,
-            content: renderToString(markdown),
+            content: crntSlideContent,
           });
 
           // Replace all the `<style>` tags with `<style type="text/tailwindcss">`
@@ -83,7 +88,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     } else {
       setIsReady(true);
     }
-  }, [content, markdown]);
+  }, [content, textContent]);
 
   const updateCustomThemePath = React.useCallback((customThemePath?: string) => {
     if (!customThemePath) {
@@ -121,8 +126,6 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     const cLayout = matter?.customLayout || undefined;
     updateCustomLayout(matter, cLayout);
 
-    updateTheme(matter?.theme || "default");
-    updateLayout(cLayout || matter?.layout || "default");
     updateCustomThemePath(matter?.customTheme || undefined);
 
     if (matter?.image) {
@@ -137,7 +140,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     } else {
       updateBgStyles(undefined);
     }
-  }, [isReady, prevContent, matter, updateTheme, updateLayout, updateCustomThemePath, updateBgStyles, webviewUrl]);
+  }, [isReady, prevContent, matter, updateCustomThemePath, updateBgStyles, webviewUrl]);
 
   React.useEffect(() => {
     if (content && content !== prevContent) {

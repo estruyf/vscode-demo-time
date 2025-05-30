@@ -1,5 +1,5 @@
 import { commands, FileType, ProgressLocation, Uri, window, workspace } from "vscode";
-import { Action, Demos, Subscription } from "../models";
+import { Action, DemoFile, Subscription } from "../models";
 import { Extension } from "./Extension";
 import { COMMAND, General } from "../constants";
 import { Notifications } from "./Notifications";
@@ -73,7 +73,7 @@ export class ImportService {
           return;
         }
 
-        let demo: Demos | undefined;
+        let demo: DemoFile | undefined;
         if (createNewDemoFile === "Yes") {
           demo = {
             title: slideFolderName,
@@ -119,7 +119,7 @@ export class ImportService {
         if (demo) {
           const demoFileUri = Uri.joinPath(wsFolder.uri, General.demoFolder, `${slideFolderName}.json`);
           try {
-            await workspace.fs.writeFile(demoFileUri, Buffer.from(JSON.stringify(demo, null, 2)));
+            await workspace.fs.writeFile(demoFileUri, new TextEncoder().encode(JSON.stringify(demo, null, 2)));
             await window.showTextDocument(demoFileUri, { preview: false });
           } catch (error) {
             Notifications.error("Failed to create demo file.");

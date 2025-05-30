@@ -4,6 +4,7 @@ import { Extension } from "./Extension";
 import { COMMAND, Config, General, SlideLayout, SlideTheme, SlideTransition } from "../constants";
 import {
   addStepsToDemo,
+  chooseDemoFile,
   fileExists,
   getRelPath,
   parseWinPath,
@@ -109,7 +110,8 @@ layout: ${layout.toLowerCase()}
       },
     ];
 
-    await addStepsToDemo(steps, slideTitle, "", {
+    const demoFile = await chooseDemoFile();
+    await addStepsToDemo(steps, demoFile, slideTitle, "", {
       start: "vm",
       end: "pass-filled",
     });

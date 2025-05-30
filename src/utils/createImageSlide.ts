@@ -16,7 +16,7 @@ image: ${imageRelativePath}
 ---`;
 
   try {
-    await workspace.fs.writeFile(slideFileUri, Buffer.from(contents));
+    await workspace.fs.writeFile(slideFileUri, new TextEncoder().encode(contents));
     const slideRelativePath = getRelPath(slideFileUri.fsPath);
     return slideRelativePath;
   } catch (error) {

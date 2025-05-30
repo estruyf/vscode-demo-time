@@ -3,7 +3,7 @@
 @import "tailwindcss/utilities";
 
 .notes-container {
-  @apply p-4;
+  @apply p-4 bg-[var(--vscode-sideBar-background)];
 
   h1 {
     @apply text-2xl font-bold mb-4;

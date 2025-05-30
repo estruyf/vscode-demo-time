@@ -2,6 +2,7 @@ import * as jsxRuntime from "react/jsx-runtime";
 import rehypeRaw from "rehype-raw";
 import rehypeReact, { Components } from "rehype-react";
 import remarkFrontmatter from "remark-frontmatter";
+import remarkGfm from "remark-gfm";
 import remarkParse, { type Options as RemarkParseOptions } from "remark-parse";
 import remarRehype from "remark-rehype";
 import { matter } from "vfile-matter";
@@ -30,6 +31,7 @@ export const transformMarkdown = async (
 }> => {
   const vFile = await unified()
     .use(remarkParse, remarkParseOptions)
+    .use(remarkGfm)
     .use(() => (tree) => {
       visit(tree, (node: any) => {
         if (node.type === "code" && node.lang === "mermaid") {

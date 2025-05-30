@@ -1,0 +1,30 @@
+name: MAIN Release
+on:
+  release:
+    types:
+      - published
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: "Build and release"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
+
+      - name: Install the dependencies
+        run: npm ci
+
+      - name: Verify actions
+        run: node .github/scripts/verify-actions.mjs
+
+      - name: Publish
+        run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }}
+
+      - name: Publish to open-vsx.org
+        run: npx ovsx publish -p ${{ secrets.OPEN_VSX_PAT }}

@@ -1,6 +1,16 @@
 import { PresenterView } from "./../presenterView/PresenterView";
 import { COMMAND, Config, ContextKeys, StateKeys, WebViewMessages } from "../constants";
-import { Action, Demo, DemoFileCache, Demos, IImagePreview, ISlidePreview, Step, Subscription } from "../models";
+import {
+  Action,
+  Demo,
+  DemoFileCache,
+  DemoFile,
+  IImagePreview,
+  ISlidePreview,
+  Step,
+  Subscription,
+  Version,
+} from "../models";
 import { Extension } from "./Extension";
 import {
   Position,
@@ -41,6 +51,7 @@ import {
   applyPatch,
   updateConfig,
   togglePresentationView,
+  removeDemosForCurrentPosition,
 } from "../utils";
 import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
 import { DecoratorService } from "./DecoratorService";
@@ -55,6 +66,7 @@ import { DemoStatusBar } from "./DemoStatusBar";
 
 const DEFAULT_START_VALUE = {
   filePath: "",
+  version: 2 as Version,
   demo: [],
 };
 
@@ -156,6 +168,26 @@ export class DemoRunner {
   }
 
   /**
+   * Retrieves the current version of the executing demo file.
+   *
+   * @returns {Version} The detected version of the current demo file.
+   */
+  public static getCurrentVersion(): Version {
+    const executingFile = Extension.getInstance().getState<DemoFileCache>(StateKeys.executingDemoFile);
+    if (!executingFile) {
+      return 2;
+    }
+
+    const lastDemo = executingFile.demo[executingFile.demo.length - 1];
+    if (!lastDemo) {
+      return 2;
+    }
+
+    // Only old demo files without a version property should be version 1
+    return typeof executingFile.version === "number" ? (executingFile.version as Version) : 1;
+  }
+
+  /**
    * Toggles the presentation mode for the demo runner.
    * If `enable` parameter is provided, it sets the presentation mode to the specified value.
    * If `enable` parameter is not provided, it toggles the presentation mode.
@@ -201,6 +233,11 @@ export class DemoRunner {
    */
   private static async start(item: ActionTreeItem | { demoFilePath: string; description: string }): Promise<void> {
     if (Preview.isListening()) {
+      return;
+    }
+
+    if (Preview.checkIfHasNextSlide()) {
+      await Preview.postMessage(WebViewMessages.toWebview.nextSlide);
       return;
     }
 
@@ -258,6 +295,7 @@ export class DemoRunner {
     });
 
     executingFile.demo = removeDemoDuplicates(executingFile.demo);
+    executingFile.demo = removeDemosForCurrentPosition(executingFile.demo, nextDemoIdx);
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     DemoRunner.currentDemo = nextDemo;
@@ -271,6 +309,11 @@ export class DemoRunner {
    * @returns {Promise<void>} A promise that resolves when the previous demo step has been executed.
    */
   private static async previous(): Promise<void> {
+    if (Preview.checkIfHasPreviousSlide()) {
+      await Preview.postMessage(WebViewMessages.toWebview.previousSlide);
+      return;
+    }
+
     const executingFile = await DemoRunner.getExecutedDemoFile();
     const filePath = executingFile.filePath;
     if (!filePath) {
@@ -304,13 +347,15 @@ export class DemoRunner {
       executingFile.demo = [];
       // Get the last demo step of the previous file
       const lastDemo = previousFile.demo.demos[previousFile.demo.demos.length - 1];
+      const crntIdx = previousFile.demo.demos.length - 1;
       executingFile.demo.push({
-        idx: previousFile.demo.demos.length - 1,
+        idx: crntIdx,
         title: lastDemo.title,
         id: lastDemo.id,
       });
 
       executingFile.demo = removeDemoDuplicates(executingFile.demo);
+      executingFile.demo = removeDemosForCurrentPosition(executingFile.demo, crntIdx);
 
       await DemoRunner.setExecutedDemoFile(executingFile);
       DemoRunner.currentDemo = lastDemo;
@@ -332,6 +377,7 @@ export class DemoRunner {
     });
 
     executingFile.demo = removeDemoDuplicates(executingFile.demo);
+    executingFile.demo = removeDemosForCurrentPosition(executingFile.demo, previousDemoIdx);
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     DemoRunner.currentDemo = previousDemo;
@@ -357,6 +403,9 @@ export class DemoRunner {
     if (executingFile.filePath !== demoToRun.filePath) {
       executingFile.filePath = demoToRun.filePath;
       executingFile.demo = [];
+
+      const demoFile = await FileProvider.getFile(Uri.file(demoToRun.filePath));
+      executingFile.version = demoFile?.version || 1;
     }
 
     executingFile.demo.push({
@@ -366,6 +415,7 @@ export class DemoRunner {
     });
 
     executingFile.demo = removeDemoDuplicates(executingFile.demo);
+    executingFile.demo = removeDemosForCurrentPosition(executingFile.demo, demoToRun.idx);
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     DemoRunner.currentDemo = demoToRun.demo;
@@ -425,6 +475,7 @@ export class DemoRunner {
     });
 
     executingFile.demo = removeDemoDuplicates(executingFile.demo);
+    executingFile.demo = removeDemosForCurrentPosition(executingFile.demo, demoIdx);
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     DemoRunner.currentDemo = demoToRun;
@@ -437,6 +488,12 @@ export class DemoRunner {
    * @param demoSteps An array of Step objects representing the steps to be executed.
    */
   private static async runSteps(demoSteps: Step[]): Promise<void> {
+    // Unselect the current selection
+    const textEditor = window.activeTextEditor;
+    if (textEditor) {
+      DecoratorService.unselect(textEditor);
+    }
+
     // Reset the highlight
     await setContext(ContextKeys.hasCodeHighlighting, false);
     DemoRunner.setCrntHighlighting();
@@ -1210,7 +1267,7 @@ export class DemoRunner {
   ): Promise<
     | {
         filePath: string;
-        demo: Demos;
+        demo: DemoFile;
       }
     | undefined
   > {

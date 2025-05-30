@@ -1,16 +1,18 @@
-import { Messenger } from '@estruyf/vscode/dist/client/webview';
+import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import * as React from 'react';
-import { WebViewMessages } from '../../constants';
+import { COMMAND, WebViewMessages } from '../../constants';
 import { EventData } from '@estruyf/vscode';
+import { Button } from 'vscrui';
 
 export interface ICountdownProps {
-  isStarted: Date | undefined;
+  time: number | undefined;
 }
 
 export const Countdown: React.FunctionComponent<ICountdownProps> = ({
-  isStarted
+  time
 }: React.PropsWithChildren<ICountdownProps>) => {
   const [countdown, setCountdown] = React.useState("");
+  const [isPaused, setIsPaused] = React.useState<boolean | undefined>(undefined);
 
   const messageListener = (message: MessageEvent<EventData<any>>) => {
     const { command, payload } = message.data;
@@ -20,8 +22,24 @@ export const Countdown: React.FunctionComponent<ICountdownProps> = ({
 
     if (command === WebViewMessages.toWebview.updateCountdown) {
       setCountdown(payload);
+    } else if (command === WebViewMessages.toWebview.resetCountdown) {
+      setCountdown("");
+    } else if (command === WebViewMessages.toWebview.updateCountdownStatus) {
+      setIsPaused(payload);
     }
   };
+
+  const resetCountdown = React.useCallback(() => {
+    messageHandler.send(WebViewMessages.toVscode.runCommand, { command: COMMAND.resetCountdown });
+  }, []);
+
+  const pauseCountdown = React.useCallback(() => {
+    messageHandler.send(WebViewMessages.toVscode.runCommand, { command: COMMAND.pauseCountdown });
+  }, []);
+
+  const startCountdown = React.useCallback(() => {
+    messageHandler.send(WebViewMessages.toVscode.runCommand, { command: COMMAND.startCountdown });
+  }, []);
 
   const isNegative = countdown && countdown.startsWith('-');
 
@@ -33,7 +51,7 @@ export const Countdown: React.FunctionComponent<ICountdownProps> = ({
     };
   }, []);
 
-  if (!countdown || !isStarted) {
+  if (!time) {
     return null;
   }
 
@@ -43,7 +61,32 @@ export const Countdown: React.FunctionComponent<ICountdownProps> = ({
         <h3 className="text-xl font-semibold leading-none tracking-tight">Countdown</h3>
       </div>
       <div className="p-4 pt-0">
-        <p className={`text-2xl font-bold ${isNegative ? 'text-[var(--vscode-notificationsErrorIcon-foreground)]' : ''}`}>{countdown}</p>
+        <p className={`text-2xl font-bold ${isNegative ? 'text-[var(--vscode-notificationsErrorIcon-foreground)]' : ''}`}>{countdown || time}</p>
+      </div>
+      <div className="flex space-x-2 p-4 pt-0">
+        {
+          (!countdown || isPaused) && (
+            <Button
+              onClick={countdown ? pauseCountdown : startCountdown}
+            >
+              {countdown ? "Resume" : "Start"}
+            </Button>
+          )
+        }
+
+        {(!isPaused && countdown) && (
+          <Button
+            onClick={pauseCountdown}
+          >
+            Pause
+          </Button>
+        )}
+
+        <Button
+          onClick={resetCountdown}
+        >
+          Reset
+        </Button>
       </div>
     </div>
   );

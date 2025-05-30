@@ -11,6 +11,7 @@ import { Page } from "playwright-chromium";
 import { COMMAND, Config, General, SlideLayout } from "../constants";
 import { twoColumnFormatting } from "../preview/utils";
 import { renderToString } from "react-dom/server";
+import { SlideParser } from "./SlideParser";
 
 export class PdfExportService {
   private static workspaceFolder: WorkspaceFolder | undefined;
@@ -182,52 +183,60 @@ export class PdfExportService {
     const slideContents = [];
 
     let idx = 0;
+    const parser = new SlideParser();
     for (const slide of slides) {
       try {
-        const vfile = await transformMarkdown(
-          slide.content,
-          undefined,
-          undefined,
-          undefined,
-          [[rehypePrettyCode, { theme: theme ? theme : {} }]],
-          undefined
-        );
-        let { metadata, reactContent } = vfile;
+        const allSlides = parser.parseSlides(slide.content);
+        for (const crntSlide of allSlides) {
+          const vfile = await transformMarkdown(
+            crntSlide.content,
+            undefined,
+            undefined,
+            undefined,
+            [[rehypePrettyCode, { theme: theme ? theme : {} }]],
+            undefined
+          );
+          let { reactContent } = vfile;
 
-        const slideTheme = metadata?.theme || SlideTheme.default;
-        const layout = metadata?.customLayout ? metadata?.customLayout : metadata?.layout || SlideLayout.Default;
-        const image = metadata?.image || undefined;
-        const customTheme = metadata?.customTheme || undefined;
-        const customLayout = metadata?.customLayout || undefined;
+          const slideTheme = crntSlide.frontmatter.theme || SlideTheme.default;
+          const layout = crntSlide.frontmatter.customLayout
+            ? crntSlide.frontmatter.customLayout
+            : crntSlide.frontmatter.layout || SlideLayout.Default;
+          const image = crntSlide.frontmatter.image || undefined;
+          const customTheme = crntSlide.frontmatter.customTheme || undefined;
+          const customLayout = crntSlide.frontmatter.customLayout || undefined;
 
-        let html = renderToString(reactContent);
-        if (customLayout) {
-          const customLayoutPath = Uri.joinPath(PdfExportService.workspaceFolder?.uri as Uri, customLayout);
-          const customLayoutContent = await readFile(customLayoutPath);
+          let html = renderToString(reactContent);
+          if (customLayout) {
+            const customLayoutPath = Uri.joinPath(PdfExportService.workspaceFolder?.uri as Uri, customLayout);
+            const customLayoutContent = await readFile(customLayoutPath);
 
-          html = await convertTemplateToHtml(customLayoutContent, {
-            metadata,
-            content: html,
-          });
+            html = await convertTemplateToHtml(customLayoutContent, {
+              metadata: { ...crntSlide.frontmatter },
+              content: html,
+            });
+          }
 
           // Isolate the styles for the custom layout to the slide
           html = html.replace(/<style>/g, `<style type="text/tailwindcss">#slide-${idx + 1} {`);
           html = html.replace(/<\/style>/g, "}</style>");
-        }
 
-        slideContents.push({
-          html,
-          theme: slideTheme,
-          layout,
-          image,
-          customTheme,
-          customLayout,
-        });
+          slideContents.push({
+            html,
+            theme: slideTheme,
+            layout,
+            image,
+            customTheme,
+            customLayout,
+          });
+
+          idx++;
+        }
       } catch (error) {
         Logger.error(`Error processing slide content: ${(error as Error).message}`);
-      }
 
-      idx++;
+        idx++;
+      }
     }
 
     const extensionPath = Extension.getInstance().extensionPath;
@@ -342,7 +351,7 @@ export class PdfExportService {
 
     for (const slide of allSlides) {
       if (slide) {
-        const css = await PdfExportService.getCustomTheme(slide.customTheme);
+        const css = await PdfExportService.getCustomTheme(slide.customTheme || "");
         const slideBg =
           slide.image && slide.layout !== SlideLayout.ImageLeft && slide.layout !== SlideLayout.ImageRight
             ? `background-image: url(${slide.image});`

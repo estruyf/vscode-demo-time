@@ -10,12 +10,20 @@ import { EventData } from '@estruyf/vscode';
 export interface ISlideControlsProps {
   show: boolean;
   path?: string;
+  slides: number;
+  currentSlide?: number;
+  updateSlideIdx: (index: number) => void;
+  triggerMouseMove: (value: boolean) => void;
 }
 
 export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISlideControlsProps>> = ({
   show,
   path,
-  children
+  children,
+  slides,
+  currentSlide = 0,
+  updateSlideIdx,
+  triggerMouseMove
 }: React.PropsWithChildren<ISlideControlsProps>) => {
   const [previousEnabled, setPreviousEnabled] = React.useState(false);
   const [isPresentationMode, setIsPresentationMode] = React.useState(false);
@@ -33,14 +41,34 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   };
 
   const previous = React.useCallback(() => {
-    if (previousEnabled) {
+    if (slides === 1 && previousEnabled) {
+      messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.previous);
+      return;
+    }
+
+    const prevSlide = currentSlide - 1;
+    if (prevSlide >= 0) {
+      updateSlideIdx(prevSlide);
+      messageHandler.send(WebViewMessages.toVscode.updateSlideIndex, prevSlide);
+    } else if (previousEnabled) {
       messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.previous);
     }
-  }, [previousEnabled]);
+  }, [slides, currentSlide, updateSlideIdx]);
 
   const next = React.useCallback(() => {
-    messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.start);
-  }, []);
+    if (slides === 1) {
+      messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.start);
+      return;
+    }
+
+    const nextSlide = currentSlide + 1;
+    if (nextSlide < slides) {
+      updateSlideIdx(nextSlide);
+      messageHandler.send(WebViewMessages.toVscode.updateSlideIndex, nextSlide);
+    } else {
+      messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.start);
+    }
+  }, [slides, currentSlide, updateSlideIdx]);
 
   const toggleFullscreen = React.useCallback(() => {
     messageHandler.send(WebViewMessages.toVscode.runCommand, "workbench.action.toggleFullScreen");
@@ -112,20 +140,36 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
 
         <div className="flex items-center justify-center gap-4">
           {
-            previousEnabled && (
+            (previousEnabled || (slides > 1 && currentSlide >= 1)) ? (
               <SlideControl title="Previous" iconName="arrow-left" action={previous} isSlideControl />
+            ) : (
+              <div style={{ width: "32px" }} />
             )
           }
 
           <SlideControl title="Next" iconName="arrow-right" action={next} isSlideControl />
         </div>
         <div className="flex items-center justify-end">
+          {slides > 1 && (
+            <div className="slide-info text-sm px-2 py-1 text-[var(--vscode-editorWidget-foreground)]">
+              Slide {currentSlide + 1} of {slides}
+            </div>
+          )}
+
           {
             showPosition && (
               children
             )
           }
-          <SlideControl title="Toggle mouse position" className='-rotate-90 hover:bg-[var(--vscode-toolbar-hoverBackground)]' iconName="symbol-ruler" action={() => setShowPosition(prev => !prev)} />
+          <SlideControl
+            title="Toggle mouse position"
+            className='-rotate-90 hover:bg-[var(--vscode-toolbar-hoverBackground)]'
+            iconName="symbol-ruler"
+            action={() => {
+              setShowPosition(prev => !prev);
+              triggerMouseMove(!showPosition);
+            }}
+          />
           {
             path && (
               <SlideControl title="Open slide source" iconName="preview" action={openSlideSource} />
