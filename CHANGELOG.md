@@ -2,6 +2,8 @@
 
 ## [1.x.x] - 2025-06-xx
 
+- [#116](https://github.com/estruyf/vscode-demo-time/issues/116): Added support for slide header and
+  footer
 - [#130](https://github.com/estruyf/vscode-demo-time/issues/130): Fix slide transitions with images
 - [#131](https://github.com/estruyf/vscode-demo-time/issues/131): Added the new `dt-list` component
   to show list items on click
