@@ -4,7 +4,7 @@ import { transformImageUrl, twoColumnFormatting } from '../utils';
 import rehypePrettyCode from 'rehype-pretty-code';
 import { usePrevious } from '../hooks/usePrevious';
 import { messageHandler } from '@estruyf/vscode/dist/client/webview';
-import { SlideTransition, WebViewMessages } from '../../constants';
+import { WebViewMessages } from '../../constants';
 import { convertTemplateToHtml } from '../../utils/convertTemplateToHtml';
 import { SlideMetadata } from '../../models';
 import { renderToString } from 'react-dom/server';

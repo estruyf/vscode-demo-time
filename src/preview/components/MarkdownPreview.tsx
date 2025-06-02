@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
-import { SlideLayout, SlideTheme, SlideTransition, WebViewMessages } from '../../constants';
+import { Config, SlideLayout, SlideTheme, SlideTransition, WebViewMessages } from '../../constants';
 import { Markdown } from './Markdown';
 import { EventData } from '@estruyf/vscode';
 import { useScale } from '../hooks/useScale';
@@ -12,6 +12,7 @@ import useTheme from '../hooks/useTheme';
 import { Slide } from '../../models';
 import { SlideParser } from '../../services/SlideParser';
 import { useMousePosition } from '../hooks/useMousePosition';
+import { convertTemplateToHtml } from '../../utils/convertTemplateToHtml';
 
 export interface IMarkdownPreviewProps {
   fileUri: string;
@@ -30,6 +31,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const [crntSlide, setCrntSlide] = React.useState<Slide | null>(null);
   const [isMouseMoveEnabled, setIsMouseMoveEnabled] = React.useState(false);
   const [transition, setTransition] = React.useState<SlideTransition | undefined>(undefined);
+  const [header, setHeader] = React.useState<string | undefined>(undefined);
+  const [footer, setFooter] = React.useState<string | undefined>(undefined);
 
   const { content, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();
   const ref = React.useRef<HTMLDivElement>(null);
@@ -38,6 +41,35 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const { vsCodeTheme, isDarkTheme } = useTheme();
   const { scale } = useScale(ref, slideRef);
   const { mousePosition, handleMouseMove } = useMousePosition(slideRef, scale, resetCursorTimeout);
+
+  const fetchTemplate = React.useCallback(
+    async (
+      configKey: string,
+      setter: React.Dispatch<React.SetStateAction<string | undefined>>
+    ) => {
+      try {
+        const template = await messageHandler.request<string>(
+          WebViewMessages.toVscode.getSetting,
+          configKey
+        );
+        if (template && crntSlide?.frontmatter) {
+          const processed = convertTemplateToHtml(template, crntSlide.frontmatter, webviewUrl);
+          setter(processed);
+        }
+      } catch {
+        setter(undefined);
+      }
+    },
+    [crntSlide, webviewUrl]
+  );
+
+  const fetchHeader = React.useCallback(() => {
+    fetchTemplate(Config.slides.slideHeaderTemplate, setHeader);
+  }, [fetchTemplate]);
+
+  const fetchFooter = React.useCallback(() => {
+    fetchTemplate(Config.slides.slideFooterTemplate, setFooter);
+  }, [fetchTemplate]);
 
   React.useEffect(() => {
     // If slides are loaded and initialSlideIndex is a valid number
@@ -105,7 +137,19 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     setTheme(crntSlide?.frontmatter.theme || SlideTheme.default);
     setLayout(crntSlide?.frontmatter.layout || SlideLayout.Default);
     setTransition(crntSlide?.frontmatter.transition || undefined);
-  }, [crntSlide]);
+
+    if (crntSlide && crntSlide.frontmatter.header) {
+      setHeader(convertTemplateToHtml(crntSlide.frontmatter.header, crntSlide.frontmatter, webviewUrl));
+    } else {
+      fetchHeader();
+    }
+
+    if (crntSlide && crntSlide.frontmatter.footer) {
+      setFooter(convertTemplateToHtml(crntSlide.frontmatter.footer, crntSlide.frontmatter, webviewUrl));
+    } else {
+      fetchFooter();
+    }
+  }, [crntSlide, webviewUrl]);
 
   React.useEffect(() => {
     Messenger.listen(slidesListener);
@@ -149,6 +193,12 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             className={`slide__layout ${layout || "default"} ${transition || ""}`}
             style={getBgStyles()}>
             {
+              header && (
+                <header className={`slide__header z-20`} dangerouslySetInnerHTML={{ __html: header }}></header>
+              )
+            }
+
+            {
               layout === SlideLayout.ImageLeft && (
                 <div className={`slide__image_left w-full h-full`} style={bgStyles}></div>
               )
@@ -176,6 +226,12 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             {
               layout === SlideLayout.ImageRight && (
                 <div className={`slide__image_right w-full h-full`} style={bgStyles}></div>
+              )
+            }
+
+            {
+              footer && (
+                <footer className={`slide__footer z-20`} dangerouslySetInnerHTML={{ __html: footer }}></footer>
               )
             }
           </div>

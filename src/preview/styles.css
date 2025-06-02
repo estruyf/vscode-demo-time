@@ -59,6 +59,14 @@ table td {
   @apply h-full w-full relative;
 }
 
+.slide__header {
+  @apply absolute top-0 left-0 w-full h-[2rem] text-[0.75rem] px-8 flex items-center justify-center opacity-75 text-[var(--vscode-editor-foreground)];
+}
+
+.slide__footer {
+  @apply absolute bottom-0 left-0 w-full h-[2rem] text-[0.75rem] px-8 flex items-center justify-between opacity-75 text-[var(--vscode-editor-foreground)];
+}
+
 .slide__content {
   @apply h-full w-full text-base overflow-hidden z-20;
 

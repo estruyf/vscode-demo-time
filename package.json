@@ -179,6 +179,16 @@
           ],
           "default": "lastExecuted",
           "description": "Define the behavior of the next action. Possible values are 'lastExecuted', or 'currentPosition'."
+        },
+        "demoTime.slideHeaderTemplate": {
+          "type": "string",
+          "default": "",
+          "description": "HTML template for slide headers. Supports Handlebars syntax with frontmatter variables. Example: '<header><h1>{{title}}</h1> <span>{{date}}</span></header>'"
+        },
+        "demoTime.slideFooterTemplate": {
+          "type": "string",
+          "default": "",
+          "description": "HTML template for slide footers. Supports Handlebars syntax with frontmatter variables. Example: '<footer><span>{{name}}</span> <span>{{date}}</span></footer>'"
         }
       }
     },

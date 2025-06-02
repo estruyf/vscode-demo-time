@@ -24,6 +24,8 @@ export const Config = {
   },
   slides: {
     customTheme: "customTheme",
+    slideHeaderTemplate: "slideHeaderTemplate",
+    slideFooterTemplate: "slideFooterTemplate",
   },
   webcomponents: {
     scripts: "customWebComponents",
