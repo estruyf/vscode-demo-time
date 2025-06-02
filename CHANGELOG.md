@@ -1,6 +1,6 @@
 # Change Log
 
-## [1.x.x] - 2025-06-xx
+## [1.5.0] - 2025-06-xx
 
 - [#116](https://github.com/estruyf/vscode-demo-time/issues/116): Added support for slide header and
   footer
