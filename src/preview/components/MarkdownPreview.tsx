@@ -194,7 +194,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             style={getBgStyles()}>
             {
               header && (
-                <header className={`slide__header`} dangerouslySetInnerHTML={{ __html: header }}></header>
+                <header className={`slide__header z-20`} dangerouslySetInnerHTML={{ __html: header }}></header>
               )
             }
 
@@ -231,7 +231,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
 
             {
               footer && (
-                <footer className={`slide__footer`} dangerouslySetInnerHTML={{ __html: footer }}></footer>
+                <footer className={`slide__footer z-20`} dangerouslySetInnerHTML={{ __html: footer }}></footer>
               )
             }
           </div>
