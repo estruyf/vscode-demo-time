@@ -61,10 +61,12 @@ table td {
 
 .slide__content {
   @apply h-full w-full text-base overflow-hidden;
+  z-index: 2;
 
   .slide__content__custom,
   .slide__content__inner {
     @apply relative h-full w-full;
+    z-index: 2;
   }
 }
 
@@ -198,4 +200,9 @@ table td {
 .image-left,
 .image-right {
   @apply grid grid-cols-2 w-full h-full auto-rows-fr;
+}
+
+.slide__image_left,
+.slide__image_right {
+  z-index: 1;
 }

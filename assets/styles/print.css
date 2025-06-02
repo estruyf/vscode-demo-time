@@ -66,10 +66,12 @@ pre code {
 
 .slide__content {
   @apply h-full w-full text-base;
+  z-index: 2;
 
   .slide__content__custom,
   .slide__content__inner {
     @apply relative h-full w-full;
+    z-index: 2;
   }
 }
 
@@ -101,6 +103,7 @@ div.image {
 .slide__image_left,
 .slide__image_right {
   @apply w-full h-full bg-cover bg-center;
+  z-index: 1;
 }
 
 dt-show,
