@@ -215,11 +215,11 @@ export class PdfExportService {
               metadata: { ...crntSlide.frontmatter },
               content: html,
             });
-
-            // Isolate the styles for the custom layout to the slide
-            html = html.replace(/<style>/g, `<style type="text/tailwindcss">#slide-${idx + 1} {`);
-            html = html.replace(/<\/style>/g, "}</style>");
           }
+
+          // Isolate the styles for the custom layout to the slide
+          html = html.replace(/<style>/g, `<style type="text/tailwindcss">#slide-${idx + 1} {`);
+          html = html.replace(/<\/style>/g, "}</style>");
 
           slideContents.push({
             html,

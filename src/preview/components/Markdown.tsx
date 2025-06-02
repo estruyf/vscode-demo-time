@@ -4,10 +4,10 @@ import { transformImageUrl, twoColumnFormatting } from '../utils';
 import rehypePrettyCode from 'rehype-pretty-code';
 import { usePrevious } from '../hooks/usePrevious';
 import { messageHandler } from '@estruyf/vscode/dist/client/webview';
-import { SlideTransition, WebViewMessages } from '../../constants';
-import { renderToString } from 'react-dom/server';
+import { WebViewMessages } from '../../constants';
 import { convertTemplateToHtml } from '../../utils/convertTemplateToHtml';
 import { SlideMetadata } from '../../models';
+import { renderToString } from 'react-dom/server';
 
 export interface IMarkdownProps {
   filePath?: string;
@@ -33,12 +33,13 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   const [isReady, setIsReady] = React.useState(false);
   const [customTheme, setCustomTheme] = React.useState<string | undefined>(undefined);
   const [customLayout, setCustomLayout] = React.useState<string | undefined>(undefined);
-  const [transition, setTransition] = React.useState<SlideTransition | undefined>(undefined);
   const [template, setTemplate] = React.useState<string | undefined>(undefined);
 
   const {
     markdown,
-    setMarkdown
+    textContent,
+    setMarkdown,
+    processMarkdown
   } = useRemark({
     rehypeReactOptions: {
       components: {
@@ -61,11 +62,17 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
 
   const updateCustomLayout = React.useCallback((metadata: SlideMetadata, layout?: string) => {
     if (layout) {
-      messageHandler.request<string>(WebViewMessages.toVscode.getFileContents, layout).then((templateHtml) => {
+      messageHandler.request<string>(WebViewMessages.toVscode.getFileContents, layout).then(async (templateHtml) => {
         if (templateHtml) {
-          let html = convertTemplateToHtml(templateHtml, {
+          let crntSlideContent = textContent;
+          if (!textContent && content) {
+            const processedContent = await processMarkdown(content);
+            crntSlideContent = renderToString(processedContent.reactContent);
+          }
+
+          let html = await convertTemplateToHtml(templateHtml, {
             metadata,
-            content: renderToString(markdown),
+            content: crntSlideContent,
           });
 
           // Replace all the `<style>` tags with `<style type="text/tailwindcss">`
@@ -80,7 +87,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     } else {
       setIsReady(true);
     }
-  }, [content, markdown]);
+  }, [content, textContent]);
 
   const updateCustomThemePath = React.useCallback((customThemePath?: string) => {
     if (!customThemePath) {
@@ -112,7 +119,6 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     setIsReady(false);
     setCustomLayout(undefined);
     setCustomTheme(undefined);
-    setTransition(matter?.transition || undefined);
     setTemplate(undefined);
 
     const cLayout = matter?.customLayout || undefined;
@@ -155,9 +161,9 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
 
       {
         template ? (
-          <div key={filePath} className={`slide__content__custom ${transition || ""}`} dangerouslySetInnerHTML={{ __html: template }} />
+          <div key={filePath} className={`slide__content__custom`} dangerouslySetInnerHTML={{ __html: template }} />
         ) : (
-          <div key={filePath} className={`slide__content__inner ${transition || ""}`}>{markdown}</div>
+          <div key={filePath} className={`slide__content__inner`}>{markdown}</div>
         )
       }
     </>

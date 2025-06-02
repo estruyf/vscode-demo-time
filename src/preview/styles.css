@@ -1,6 +1,6 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
 :root {
   --demotime-transition-duration: 0.5s;
@@ -37,8 +37,26 @@ pre code {
   background: var(--vscode-editor-background);
 }
 
+/* Table styling */
+table {
+  @apply w-full border-collapse my-4;
+}
+
+table th {
+  @apply font-bold text-left p-2 border;
+  background-color: var(--vscode-keybindingTable-headerBackground);
+  color: var(--vscode-editor-foreground);
+  border-color: var(--vscode-panel-border);
+}
+
+table td {
+  @apply p-2 border;
+  border-color: var(--vscode-panel-border);
+  color: var(--vscode-editor-foreground);
+}
+
 .slide__layout {
-  @apply h-full w-full;
+  @apply h-full w-full relative;
 }
 
 .slide__header {
@@ -50,12 +68,17 @@ pre code {
 }
 
 .slide__content {
-  @apply h-full w-full text-base overflow-hidden;
+  @apply h-full w-full text-base overflow-hidden z-20;
 
   .slide__content__custom,
   .slide__content__inner {
-    @apply relative h-full w-full;
+    @apply relative h-full w-full z-20;
   }
+}
+
+.slide__image_left,
+.slide__image_right {
+  @apply z-10;
 }
 
 /* Transitions */
