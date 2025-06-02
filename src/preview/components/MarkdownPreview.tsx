@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
-import { SlideLayout, SlideTheme, WebViewMessages } from '../../constants';
+import { SlideLayout, SlideTheme, SlideTransition, WebViewMessages } from '../../constants';
 import { Markdown } from './Markdown';
 import { EventData } from '@estruyf/vscode';
 import { useScale } from '../hooks/useScale';
@@ -22,20 +22,22 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   fileUri,
   webviewUrl
 }: React.PropsWithChildren<IMarkdownPreviewProps>) => {
-  const { content, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();
   const [theme, setTheme] = React.useState<string | undefined>(undefined);
   const [layout, setLayout] = React.useState<string | undefined>(undefined);
   const [bgStyles, setBgStyles] = React.useState<any | null>(null);
   const [showControls, setShowControls] = React.useState(false);
+  const [slides, setSlides] = React.useState<Slide[]>([]);
+  const [crntSlide, setCrntSlide] = React.useState<Slide | null>(null);
+  const [isMouseMoveEnabled, setIsMouseMoveEnabled] = React.useState(false);
+  const [transition, setTransition] = React.useState<SlideTransition | undefined>(undefined);
+
+  const { content, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();
   const ref = React.useRef<HTMLDivElement>(null);
   const slideRef = React.useRef<HTMLDivElement>(null);
   const { cursorVisible, resetCursorTimeout } = useCursor();
   const { vsCodeTheme, isDarkTheme } = useTheme();
-  const [slides, setSlides] = React.useState<Slide[]>([]);
-  const [crntSlide, setCrntSlide] = React.useState<Slide | null>(null);
   const { scale } = useScale(ref, slideRef);
   const { mousePosition, handleMouseMove } = useMousePosition(slideRef, scale, resetCursorTimeout);
-  const [isMouseMoveEnabled, setIsMouseMoveEnabled] = React.useState(false);
 
   React.useEffect(() => {
     // If slides are loaded and initialSlideIndex is a valid number
@@ -102,6 +104,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   React.useEffect(() => {
     setTheme(crntSlide?.frontmatter.theme || SlideTheme.default);
     setLayout(crntSlide?.frontmatter.layout || SlideLayout.Default);
+    setTransition(crntSlide?.frontmatter.transition || undefined);
   }, [crntSlide]);
 
   React.useEffect(() => {
@@ -143,7 +146,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           style={{ transform: 'translate(-50%, -50%) scale(var(--demotime-scale, 1))' }}>
           <div
             ref={slideRef}
-            className={`slide__layout ${layout || "default"}`}
+            className={`slide__layout ${layout || "default"} ${transition || ""}`}
             style={getBgStyles()}>
             {
               layout === SlideLayout.ImageLeft && (

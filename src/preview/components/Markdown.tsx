@@ -33,7 +33,6 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   const [isReady, setIsReady] = React.useState(false);
   const [customTheme, setCustomTheme] = React.useState<string | undefined>(undefined);
   const [customLayout, setCustomLayout] = React.useState<string | undefined>(undefined);
-  const [transition, setTransition] = React.useState<SlideTransition | undefined>(undefined);
   const [template, setTemplate] = React.useState<string | undefined>(undefined);
 
   const {
@@ -120,7 +119,6 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     setIsReady(false);
     setCustomLayout(undefined);
     setCustomTheme(undefined);
-    setTransition(matter?.transition || undefined);
     setTemplate(undefined);
 
     const cLayout = matter?.customLayout || undefined;
@@ -163,9 +161,9 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
 
       {
         template ? (
-          <div key={filePath} className={`slide__content__custom ${transition || ""}`} dangerouslySetInnerHTML={{ __html: template }} />
+          <div key={filePath} className={`slide__content__custom`} dangerouslySetInnerHTML={{ __html: template }} />
         ) : (
-          <div key={filePath} className={`slide__content__inner ${transition || ""}`}>{markdown}</div>
+          <div key={filePath} className={`slide__content__inner`}>{markdown}</div>
         )
       }
     </>
