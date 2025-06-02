@@ -1,21 +1,28 @@
-import { Uri, WorkspaceFolder, workspace, env } from "vscode";
-import { General, StateKeys } from "../constants";
 import { parse as jsonParse } from "jsonc-parser";
+import { env, UIKind, Uri, workspace, WorkspaceFolder } from "vscode";
+import { Config, General, StateKeys } from "../constants";
+import { Extension } from "../services/Extension";
 import { Logger } from "../services/Logger";
 import { fileExists } from "./fileExists";
-import { Extension } from "../services/Extension";
 
 export const getVariables = async (workspaceFolder: WorkspaceFolder): Promise<{ [key: string]: any } | undefined> => {
   try {
-    // Set the default variables
+    const ext = Extension.getInstance();
+
+    if (ext.getSetting<boolean>(Config.api.enabled) && env.uiKind === UIKind.Web) {
+      // otherwise clipboard is not readable in the browser
+      // if request is triggered from another window
+      window.focus();
+    }
     const clipboard = await env.clipboard.readText();
+    // Set the default variables
     const defaultVariables: { [key: string]: string } = {
-      DT_CLIPBOARD: clipboard,
       DT_INPUT: "",
+      DT_CLIPBOARD: clipboard
     };
 
     // Get the state variables
-    const ext = Extension.getInstance();
+
     const stateVariables = ext.getState<{ [key: string]: string }>(StateKeys.variables) || {};
     for (const key of Object.keys(stateVariables)) {
       defaultVariables[key] = stateVariables[key];
