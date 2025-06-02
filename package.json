@@ -633,14 +633,7 @@
     "watch:preview": "webpack serve --mode development --config ./preview.config.js",
     "lint": "eslint src --ext ts"
   },
-  "peerDependencies": {
-    "playwright-chromium": "^1.51.1"
-  },
-  "peerDependenciesMeta": {
-    "playwright-chromium": {
-      "optional": true
-    }
-  },
+
   "devDependencies": {
     "@actions/core": "^1.11.1",
     "@estruyf/vscode": "^1.1.0",
@@ -669,7 +662,7 @@
     "mlly": "^1.7.4",
     "mocha": "^10.2.0",
     "npm-run-all": "^4.1.5",
-    "playwright-chromium": "^1.51.1",
+
     "postcss": "^8.4.49",
     "postcss-loader": "^8.1.1",
     "react": "^18.3.1",
