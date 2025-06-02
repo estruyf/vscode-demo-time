@@ -11,6 +11,8 @@
     file action
 - [#133](https://github.com/estruyf/vscode-demo-time/issues/133): Fix positioning issue on image
   layouts
+- [#136](https://github.com/estruyf/vscode-demo-time/issues/136): Focus window before reading
+  clipboard in browser instances. Thanks to [Thomas Kratz](https://github.com/eiswind).
 
 ## [1.4.0] - 2025-05-30
 
