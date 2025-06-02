@@ -1,6 +1,6 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
 :root {
   --demotime-transition-duration: 0.5s;
@@ -56,16 +56,21 @@ table td {
 }
 
 .slide__layout {
-  @apply h-full w-full;
+  @apply h-full w-full relative;
 }
 
 .slide__content {
-  @apply h-full w-full text-base overflow-hidden;
+  @apply h-full w-full text-base overflow-hidden z-20;
 
   .slide__content__custom,
   .slide__content__inner {
-    @apply relative h-full w-full;
+    @apply relative h-full w-full z-20;
   }
+}
+
+.slide__image_left,
+.slide__image_right {
+  @apply z-10;
 }
 
 /* Transitions */

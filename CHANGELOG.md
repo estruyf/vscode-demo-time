@@ -3,6 +3,8 @@
 ## [1.x.x] - 2025-06-xx
 
 - [#130](https://github.com/estruyf/vscode-demo-time/issues/130): Fix slide transitions with images
+- [#133](https://github.com/estruyf/vscode-demo-time/issues/133): Fix positioning issue on image
+  layouts
 
 ## [1.4.0] - 2025-05-30
 
