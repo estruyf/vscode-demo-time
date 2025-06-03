@@ -1,11 +1,11 @@
-import { workspace, window, StatusBarAlignment, StatusBarItem, commands } from "vscode";
-import { Extension } from "./Extension";
-import { COMMAND, Config } from "../constants";
-import { Server } from "http";
-import express, { Request, Response } from "express";
-import cors from "cors";
-import { Logger } from "./Logger";
-import { bringToFront } from "../utils";
+import { workspace, window, StatusBarAlignment, StatusBarItem, commands } from 'vscode';
+import { Extension } from './Extension';
+import { COMMAND, Config } from '../constants';
+import { Server } from 'http';
+import express, { Request, Response } from 'express';
+import cors from 'cors';
+import { Logger } from './Logger';
+import { bringToFront } from '../utils';
 
 export class DemoApi {
   private static statusBarItem: StatusBarItem;
@@ -57,12 +57,12 @@ export class DemoApi {
     app.use(express.json());
     app.use(cors());
 
-    app.get("/api/next", DemoApi.next);
-    app.get("/api/runById", DemoApi.runById);
-    app.post("/api/runById", DemoApi.runById);
+    app.get('/api/next', DemoApi.next);
+    app.get('/api/runById', DemoApi.runById);
+    app.post('/api/runById', DemoApi.runById);
 
     DemoApi.server = app.listen(port, () => {
-      DemoApi.statusBarItem = window.createStatusBarItem("api", StatusBarAlignment.Left, 100005);
+      DemoApi.statusBarItem = window.createStatusBarItem('api', StatusBarAlignment.Left, 100005);
       DemoApi.statusBarItem.name = `${Config.title} - API`;
       DemoApi.statusBarItem.text = `$(dt-logo) API: ${port}`;
       DemoApi.statusBarItem.show();
@@ -78,8 +78,8 @@ export class DemoApi {
    * @returns A promise that resolves when the demo has been brought to the front and started.
    */
   private static async next(req: Request, res: Response) {
-    Logger.info("Received trigger for next demo");
-    res.status(200).send("OK");
+    Logger.info('Received trigger for next demo');
+    res.status(200).send('OK');
 
     const show = DemoApi.toFront(req);
     if (show) {
@@ -100,22 +100,22 @@ export class DemoApi {
     let id = undefined;
     const show = DemoApi.toFront(req);
 
-    if (req.method === "POST") {
+    if (req.method === 'POST') {
       id = req.body.id;
-    } else if (req.method === "GET") {
+    } else if (req.method === 'GET') {
       id = req.query.id;
     } else {
-      res.status(405).send("Method not allowed");
+      res.status(405).send('Method not allowed');
       return;
     }
 
     if (!id) {
-      res.status(400).send("Missing demo ID");
+      res.status(400).send('Missing demo ID');
       return;
     }
 
     Logger.info(`Received trigger for ID: ${id}`);
-    res.status(200).send("OK");
+    res.status(200).send('OK');
 
     if (show) {
       await bringToFront();
@@ -131,16 +131,16 @@ export class DemoApi {
    * @returns A boolean indicating whether the application should be brought to the front.
    */
   private static toFront(req: Request) {
-    if (req.method === "POST") {
+    if (req.method === 'POST') {
       return !!req.body.bringToFront;
-    } else if (req.method === "GET") {
-      return req.query.bringToFront ? req.query.bringToFront === "true" : false;
+    } else if (req.method === 'GET') {
+      return req.query.bringToFront ? req.query.bringToFront === 'true' : false;
     }
   }
 
   private static async stop() {
-    Logger.info("Stopping API");
+    Logger.info('Stopping API');
     DemoApi.server?.close();
-    DemoApi.statusBarItem.hide();
+    DemoApi.statusBarItem?.hide();
   }
 }
