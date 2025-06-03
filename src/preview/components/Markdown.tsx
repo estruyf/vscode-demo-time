@@ -70,7 +70,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
             crntSlideContent = renderToString(processedContent.reactContent);
           }
 
-          let html = await convertTemplateToHtml(templateHtml, {
+          let html = convertTemplateToHtml(templateHtml, {
             metadata,
             content: crntSlideContent,
           });

@@ -2,6 +2,8 @@ import { messageHandler } from '@estruyf/vscode/dist/client/webview';
 import * as React from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import { WebViewMessages } from '../../constants';
+import { transformMarkdown } from '../../utils/transformMarkdown';
+import { renderToString } from 'react-dom/server';
 
 export interface IProgressiveListProps {
   totalItems: number;
@@ -51,9 +53,9 @@ export const ProgressiveList: React.FunctionComponent<IProgressiveListProps> = (
   const visibleChildren = React.Children.toArray(children).slice(0, visibleCount);
 
   return (
-    <div>
+    <>
       {visibleChildren}
-    </div>
+    </>
   );
 };
 
@@ -71,8 +73,39 @@ class ListWebComponent extends HTMLElement {
     // Create a ShadowDOM
     this.root = this.attachShadow({ mode: 'open' });
 
+    // Inject default list styles
+    const style = document.createElement('style');
+    style.textContent = `
+      ul,
+      ol {
+        padding: 0;
+        margin-left: 1.5rem;
+
+        li {
+          margin-bottom: 0.5rem;
+        }
+
+        ul,
+        ol {
+          margin-top: 0.5rem;
+        }
+      }
+
+      ul {
+        list-style-type: disc;
+      }
+
+      ol {
+        list-style-type: decimal;
+      }
+    `;
+    this.root.appendChild(style);
+
+    // Determine list type
+    const listType = this.getAttribute('type') === 'ol' ? 'ol' : 'ul';
+
     // Create a mount element
-    const mountPoint = document.createElement('div');
+    const mountPoint = document.createElement(listType);
     this.root.appendChild(mountPoint);
 
     this.rootElm = createRoot(mountPoint);
@@ -92,16 +125,35 @@ class ListWebComponent extends HTMLElement {
     });
   }
 
-  renderComponent() {
+  async renderComponent() {
     if (this.rootElm) {
       // Get all child elements and convert them to React elements
-      const childElements = Array.from(this.children);
-      const totalItems = childElements.length;
+      let childElements = Array.from(this.children);
+      let totalItems = childElements.length;
+
+      if (!childElements.length && this.innerHTML) {
+        const parsedContent = await transformMarkdown(this.innerHTML);
+        const html = renderToString(parsedContent.reactContent);
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        childElements = Array.from(tempDiv.querySelectorAll('li')) || [];
+        totalItems = childElements.length;
+      }
 
       // Convert HTML elements to React elements
-      const reactChildren = childElements.map((element, index) => (
-        <div key={index} dangerouslySetInnerHTML={{ __html: element.outerHTML }} />
-      ));
+      const reactChildren = childElements.map((element, index) =>
+        React.cloneElement(
+          React.createElement(element.tagName.toLowerCase(), {
+            key: index,
+            ...Array.from(element.attributes).reduce((acc, attr) => {
+              acc[attr.name] = attr.value;
+              return acc;
+            }, {} as Record<string, string>)
+          }),
+          {},
+          element.innerHTML
+        )
+      );
 
       this.rootElm.render(
         <ProgressiveList totalItems={totalItems}>
