@@ -14,7 +14,7 @@
 - [#136](https://github.com/estruyf/vscode-demo-time/issues/136): Focus window before reading
   clipboard in browser instances. Thanks to [Thomas Kratz](https://github.com/eiswind).
 - [#139](https://github.com/estruyf/vscode-demo-time/issues/139): Fix the hide status bar item error
-  when it is not initialized
+  when it is not initialized. Thanks to [Tom Bell](https://github.com/tjbell).
 
 ## [1.4.0] - 2025-05-30
 
