@@ -15,6 +15,8 @@
   clipboard in browser instances. Thanks to [Thomas Kratz](https://github.com/eiswind).
 - [#139](https://github.com/estruyf/vscode-demo-time/issues/139): Fix the hide status bar item error
   when it is not initialized. Thanks to [Tom Bell](https://github.com/tjbell).
+- [#140](https://github.com/estruyf/vscode-demo-time/issues/140): Added the ability to search and
+  filter in the Demo Time treeview
 
 ## [1.4.0] - 2025-05-30
 

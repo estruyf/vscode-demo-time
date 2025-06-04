@@ -375,6 +375,12 @@
         "title": "Import PowerPoint Images as Slides",
         "category": "Demo Time",
         "icon": "$(file-media)"
+      },
+      {
+        "command": "demo-time.treeviewFind",
+        "title": "Find in Tree View",
+        "category": "Demo Time",
+        "icon": "$(search)"
       }
     ],
     "menus": {
@@ -459,7 +465,7 @@
           "group": "navigation@3"
         },
         {
-          "command": "demo-time.collapseAll",
+          "command": "demo-time.treeviewFind",
           "when": "view == demo-time",
           "group": "navigation@4"
         },
