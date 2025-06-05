@@ -60,6 +60,7 @@ export class DemoApi {
     app.get('/api/next', DemoApi.next);
     app.get('/api/runById', DemoApi.runById);
     app.post('/api/runById', DemoApi.runById);
+    app.get('/api/redirect', DemoApi.redirect);
 
     DemoApi.server = app.listen(port, () => {
       DemoApi.statusBarItem = window.createStatusBarItem('api', StatusBarAlignment.Left, 100005);
@@ -122,6 +123,35 @@ export class DemoApi {
     }
 
     await commands.executeCommand(COMMAND.runById, id);
+  }
+
+  /**
+   * Handles the redirect request to open a VSCode URL.
+   *
+   * @param req - The HTTP request object.
+   * @param res - The HTTP response object.
+   */
+  private static async redirect(req: Request, res: Response) {
+    const path = req.query.path as string;
+
+    if (!path) {
+      res.status(400).send('Missing path parameter');
+      return;
+    }
+
+    // Remove single or double quotes if the path is wrapped
+    const unwrappedPath = path.replace(/^['"]|['"]$/g, '');
+
+    // Check if the path contains the correct extension name
+    if (!unwrappedPath.includes('://eliostruyf.vscode-demo-time')) {
+      res.status(400).send('Invalid extension name: must be eliostruyf.vscode-demo-time');
+      return;
+    }
+
+    Logger.info(`Redirecting to VSCode URL: ${unwrappedPath}`);
+
+    // Render an HTML page that opens the link
+    res.redirect(302, unwrappedPath);
   }
 
   /**

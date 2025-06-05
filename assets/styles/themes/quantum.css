@@ -7,8 +7,6 @@
   --demotime-secondary: #8338ec;
   --demotime-accent: #ff006e;
   --demotime-light: #f8f9fa;
-  --demotime-dark: #212529;
-  --demotime-gray: #6c757d;
 
   --demotime-color: var(--demotime-light);
   --demotime-background: linear-gradient(135deg, #1a1b26 0%, #24283b 100%);
@@ -70,7 +68,6 @@
   background: var(--demotime-background);
   color: var(--demotime-color);
   font-size: var(--demotime-font-size);
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 
   .slide__content__inner {
     @apply p-8 space-y-6;
@@ -81,7 +78,6 @@
   h3,
   h4,
   h5 {
-    font-family: "Segoe UI", sans-serif;
     font-weight: 600;
     letter-spacing: -0.02em;
   }
@@ -186,9 +182,7 @@
 
   code {
     @apply px-1.5 py-0.5 rounded;
-    background-color: rgba(0, 0, 0, 0.3);
     color: var(--demotime-accent);
-    font-family: "Cascadia Code", monospace;
   }
 
   pre {
@@ -222,6 +216,7 @@
 
     h1 {
       @apply text-6xl mb-6;
+      line-height: 1.2;
       color: var(--demotime-intro-heading-color);
       background: var(--demotime-intro-heading-background);
       -webkit-background-clip: text;
@@ -251,13 +246,13 @@
 
       &::before,
       &::after {
-        content: "" ";
+        content: "“ ";
         font-size: 1.5em;
         opacity: 0.5;
       }
-      
+
       &::after {
-        content: " "";
+        content: " ”";
       }
     }
 
@@ -277,6 +272,7 @@
 
     h1 {
       @apply text-6xl mb-6;
+      line-height: 1.2;
       color: var(--demotime-section-heading-color);
       background: var(--demotime-section-heading-background);
       -webkit-background-clip: text;
