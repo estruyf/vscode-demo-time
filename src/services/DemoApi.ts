@@ -139,20 +139,14 @@ export class DemoApi {
       return;
     }
 
-    // Validate that the path is a vscode:// URL
-    if (!path.startsWith('vscode://')) {
-      res.status(400).send('Invalid path: must start with vscode://');
-      return;
-    }
-
     // Extract and validate the extension name
-    const urlMatch = path.match(/^vscode:\/\/([^?\/]+)/);
+    const urlMatch = path.match(/^(vscode|vscode-insiders|code):\/\/([^?\/]+)/);
     if (!urlMatch) {
-      res.status(400).send('Invalid vscode URL format');
+      res.status(400).send('Invalid URL format: must be a valid editor URL (vscode://, vscode-insiders://, or code://)');
       return;
     }
 
-    const extensionName = urlMatch[1];
+    const extensionName = urlMatch[2];
     if (extensionName !== 'eliostruyf.vscode-demo-time') {
       res.status(400).send('Invalid extension name: must be eliostruyf.vscode-demo-time');
       return;
