@@ -139,23 +139,19 @@ export class DemoApi {
       return;
     }
 
-    // Extract and validate the extension name
-    const urlMatch = path.match(/^(vscode|vscode-insiders|code):\/\/([^?\/]+)/);
-    if (!urlMatch) {
-      res.status(400).send('Invalid URL format: must be a valid editor URL (vscode://, vscode-insiders://, or code://)');
-      return;
-    }
+    // Remove single or double quotes if the path is wrapped
+    const unwrappedPath = path.replace(/^['"]|['"]$/g, '');
 
-    const extensionName = urlMatch[2];
-    if (extensionName !== 'eliostruyf.vscode-demo-time') {
+    // Check if the path contains the correct extension name
+    if (!unwrappedPath.includes('://eliostruyf.vscode-demo-time')) {
       res.status(400).send('Invalid extension name: must be eliostruyf.vscode-demo-time');
       return;
     }
 
-    Logger.info(`Redirecting to VSCode URL: ${path}`);
-    
-    // Redirect to the VSCode URL
-    res.redirect(302, path);
+    Logger.info(`Redirecting to VSCode URL: ${unwrappedPath}`);
+
+    // Render an HTML page that opens the link
+    res.redirect(302, unwrappedPath);
   }
 
   /**
