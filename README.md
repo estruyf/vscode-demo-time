@@ -99,6 +99,17 @@ You can also explore a comprehensive example in the following GitHub Repositorie
 - [presentation-github-actions](https://github.com/estruyf/presentation-github-actions)
 - [presentation-m365-playwright-github-actions](https://github.com/estruyf/presentation-m365-playwright-github-actions)
 
+## Testing
+
+Run linting and unit tests with:
+
+```bash
+npm run lint
+npm test
+```
+
+Tests use [Jest](https://jestjs.io/) with built-in coverage. New tests are located in the `tests/` directory.
+
 ## Support
 
 If you enjoy my work and find them useful, consider sponsor me and the ecosystem to help Open Source sustainable. Thank you!
