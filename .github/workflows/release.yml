@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: "Build and release"
+    name: 'Build and release'
     runs-on: ubuntu-latest
 
     steps:
@@ -19,6 +19,9 @@ jobs:
 
       - name: Install the dependencies
         run: npm ci
+
+      - name: Linting
+        run: npm run lint
 
       - name: Verify actions
         run: node .github/scripts/verify-actions.mjs
