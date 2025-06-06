@@ -37,7 +37,7 @@
 
 1. **Installation**: Install the extension.​
 2. **Initialization**: After installation, initialize the extension in your project by opening the Explorer panel in VS Code. Locate the **Demo Time** view and click on the "**Initialize**" button. This action creates a `.demo` folder in your workspace containing a `demo.json` file.​
-3. **Creating Demos**: Populate the `demo.json` file with your actions, defining each step and action as required.​ More information about the available actions can be found in the [supported actions](https://demotime.elio.dev/actions/) documenation section.
+3. **Creating Demos**: Populate the `demo.json` file with your actions, defining each step and action as required.​ More information about the available actions can be found in the [supported actions](https://demotime.elio.dev/actions/) documentation section.
 
 ## Documentation
 
