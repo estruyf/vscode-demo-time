@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Demo Time Trigger</title>
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <script defer src="app.js"></script>
+    <style>
+      body { font-family: sans-serif; margin: 20px; }
+      label { display:block; margin-top:10px; }
+      input[type="text"] { width: 100%; }
+    </style>
+</head>
+<body>
+    <h2>Demo Time Trigger</h2>
+    <label>Server URL
+      <input id="serverUrl" type="text" placeholder="http://localhost:3000" />
+    </label>
+    <label>Command ID
+      <input id="commandId" type="text" />
+    </label>
+    <label>
+      <input id="bringToFront" type="checkbox" /> Bring to front
+    </label>
+    <button id="saveBtn">Save</button>
+</body>
+</html>
