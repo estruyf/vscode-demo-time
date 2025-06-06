@@ -196,10 +196,6 @@ layout: ${layout.toLowerCase()}
                 return new Hover(
                   "Specifies the image URL or path for the slide. Provide a relative path to the image file."
                 );
-              } else if (line.startsWith("customTheme:")) {
-                return new Hover(
-                  "Specifies a custom theme for the slide. Provide a relative path or URL to a CSS file."
-                );
               } else if (line.startsWith("customLayout:")) {
                 return new Hover(
                   "Specifies a custom layout for the slide. Provide a relative path to the Handlebars template."

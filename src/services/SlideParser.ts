@@ -176,6 +176,9 @@ export class SlideParser {
       if (slide.docFrontMatter.customTheme) {
         slide.frontmatter.customTheme = slide.docFrontMatter.customTheme;
       }
+      if (slide.docFrontMatter.customLayout) {
+        slide.frontmatter.customLayout = slide.docFrontMatter.customLayout;
+      }
       if (slide.docFrontMatter.transition && !slide.frontmatter.transition) {
         slide.frontmatter.transition = slide.docFrontMatter.transition;
       }
@@ -189,7 +192,7 @@ export class SlideParser {
 
       for (const [key, value] of Object.entries(slide.docFrontMatter)) {
         if (
-          !['theme', 'customTheme', 'transition', 'header', 'footer', 'layout'].includes(key) &&
+          !['theme', 'customTheme', 'customLayout', 'transition', 'header', 'footer', 'layout'].includes(key) &&
           slide.frontmatter[key] === undefined
         ) {
           slide.frontmatter[key] = value;
