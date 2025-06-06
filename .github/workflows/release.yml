@@ -20,8 +20,8 @@ jobs:
       - name: Install the dependencies
         run: npm ci
 
-      - name: Linting
-        run: npm run lint
+      - name: Linting and testing
+        run: npm run lint && npm test
 
       - name: Verify actions
         run: node .github/scripts/verify-actions.mjs
