@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Demo Time Trigger</title>
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <script type="text/javascript" src="trigger.js"></script>
+    <style>
+      :root {
+        --primary-color: #0078d4;
+        --primary-hover: #106ebe;
+        --text-color: #333;
+        --bg-color: #f5f5f5;
+        --border-color: #ddd;
+        --success-color: #107c10;
+        --error-color: #d13438;
+      }
+      
+      body { 
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        height: 100vh;
+        overflow: hidden;
+      }
+      
+      /* Loading screen styles */
+      #loadingScreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: var(--bg-color);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        transition: opacity 0.5s ease-in-out;
+      }
+      
+      #loadingScreen.fade-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+      
+      .logo-container {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      
+      .logo-container img {
+        width: 120px;
+        height: auto;
+      }
+      
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(0, 120, 212, 0.2);
+        border-radius: 50%;
+        border-top-color: var(--primary-color);
+        animation: spin 1s ease-in-out infinite;
+      }
+      
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      
+      /* Form styles */
+      #formContainer {
+        display: none;
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      
+      .header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      
+      .header img {
+        width: 80px;
+        height: auto;
+        margin-bottom: 10px;
+      }
+      
+      h2 {
+        margin: 0;
+        color: var(--primary-color);
+        font-weight: 500;
+      }
+      
+      .form-group {
+        margin-bottom: 15px;
+      }
+      
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+      }
+      
+      input[type="text"] {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        font-size: 14px;
+        box-sizing: border-box;
+        transition: border-color 0.2s;
+      }
+      
+      input[type="text"]:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2);
+      }
+      
+      .checkbox-container {
+        display: flex;
+        align-items: center;
+      }
+      
+      .checkbox-container input[type="checkbox"] {
+        margin-right: 8px;
+      }
+      
+      .button-container {
+        margin-top: 20px;
+      }
+      
+      button {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        font-size: 14px;
+        font-weight: 500;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      
+      button:hover {
+        background-color: var(--primary-hover);
+      }
+      
+      #statusMessage {
+        margin-top: 15px;
+        padding: 10px;
+        border-radius: 4px;
+        font-size: 14px;
+        display: none;
+      }
+      
+      .success {
+        background-color: rgba(16, 124, 16, 0.1);
+        color: var(--success-color);
+        border: 1px solid rgba(16, 124, 16, 0.3);
+      }
+      
+      .error {
+        background-color: rgba(209, 52, 56, 0.1);
+        color: var(--error-color);
+        border: 1px solid rgba(209, 52, 56, 0.3);
+      }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen">
+        <div class="logo-container">
+            <img src="https://raw.githubusercontent.com/estruyf/vscode-demo-time/main/assets/logo/demotime-square.png" alt="Demo Time Logo" />
+        </div>
+        <div class="spinner"></div>
+    </div>
+    
+    <!-- Form Container -->
+    <div id="formContainer">
+        <div class="header">
+            <img src="https://raw.githubusercontent.com/estruyf/vscode-demo-time/main/assets/logo/demotime-square.png" alt="Demo Time Logo" />
+            <h2>Demo Time Trigger</h2>
+        </div>
+        
+        <div class="form-group">
+            <label for="serverUrl">Server URL</label>
+            <input id="serverUrl" type="text" placeholder="http://localhost:3710" />
+        </div>
+        
+        <div class="form-group">
+            <label for="commandId">Command ID</label>
+            <input id="commandId" type="text" />
+        </div>
+        
+        <div class="form-group checkbox-container">
+            <input id="bringToFront" type="checkbox" />
+            <label for="bringToFront">Bring to front</label>
+        </div>
+        
+        <div class="button-container">
+            <button id="saveBtn">Test</button>
+        </div>
+        
+        <div id="statusMessage"></div>
+    </div>
+</body>
+</html>
