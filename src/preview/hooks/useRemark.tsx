@@ -15,7 +15,7 @@ export type UseRemarkOptions = {
   };
   remarkParseOptions?: RemarkParseOptions;
   remarkPlugins?: PluggableList;
-  remarRehypeOptions?: RemarkRehypeOptions;
+  remarkRehypeOptions?: RemarkRehypeOptions;
 };
 
 export const useRemark = ({
@@ -25,7 +25,7 @@ export const useRemark = ({
   rehypeReactOptions,
   remarkParseOptions,
   remarkPlugins = [],
-  remarRehypeOptions,
+  remarkRehypeOptions,
 }: UseRemarkOptions = {}): {
   markdown: null | ReactElement,
   textContent: string,
@@ -59,7 +59,7 @@ export const useRemark = ({
     metadata: SlideMetadata | null,
   }> => {
     try {
-      const vfile = await transformMarkdown(source, remarkParseOptions, remarRehypeOptions, remarkPlugins, [...rehypePlugins, ...(customPlugins || [])], rehypeReactOptions, { isWebComponent: true, isDark });
+      const vfile = await transformMarkdown(source, remarkParseOptions, remarkRehypeOptions, remarkPlugins, [...rehypePlugins, ...(customPlugins || [])], rehypeReactOptions, { isWebComponent: true, isDark });
       return vfile;
     } catch (err) {
       onError(err as Error);
