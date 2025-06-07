@@ -10,35 +10,59 @@ import { DemoTimeService } from '../services/DemoTimeService';
 export const FormContainer: React.FC = () => {
   const [serverUrl, setServerUrl] = useState<string>('http://localhost:3710');
   const [commandId, setCommandId] = useState<string>('');
-  const [slideId, setSlideId] = useState<string>('');
+  const [slideId, setSlideId] = useState<number | null>(null);
+  const [currentSlide, setCurrentSlide] = useState<number | null>(null);
+  const [crntTimeout, setCrntTimeout] = useState<number | null>(null);
+  const [executed, setExecuted] = useState<boolean>(false);
   const { statusMessage, showStatus } = useStatusMessage();
 
-  useEffect(() => {
-    const validateSlide = () => {
-      Office.context.document.getSelectedDataAsync<{ slides?: any[] }>(
-        Office.CoercionType.SlideRange,
-        (slideResult) => {
-          if (
-            slideResult.status === Office.AsyncResultStatus.Succeeded &&
-            slideResult.value &&
-            slideResult.value.slides &&
-            slideResult.value.slides.length > 0
-          ) {
-            const currentSlide = slideResult.value.slides[0];
-            const slideIndex = currentSlide.index;
-            if (typeof slideIndex === 'number' && slideId !== slideIndex.toString()) {
-              setSlideId(slideIndex.toString());
-            }
-          } else if (slideId !== '') {
-            setSlideId('');
-          }
-        }
-      );
-    };
+  const validateSlide = React.useCallback(async () => {
+    const isInPresentationMode = await DemoTimeService.checkPresentationMode();
+    if (!isInPresentationMode) {
+      clearTimeout(crntTimeout);
+      setCrntTimeout(null);
+      setExecuted(false);
+      return;
+    }
 
-    const interval = setInterval(validateSlide, 500);
-    return () => clearInterval(interval);
-  }, [slideId]);
+    if (crntTimeout) {
+      clearTimeout(crntTimeout);
+    }
+
+    const timeout = window.setTimeout(async () => {
+      const crntSlide = await DemoTimeService.getCurrentSlideIndex();
+      if (crntSlide === -1) {
+        showStatus("No slide selected or in edit mode", "error");
+        setExecuted(false);
+        return;
+      }
+
+      setCurrentSlide(crntSlide);
+
+      // Reset executed flag if we're on a different slide
+      if (crntSlide !== slideId) {
+        setExecuted(false);
+      }
+
+      showStatus(`Current slide changed to ${crntSlide} and ${slideId}`, "info");
+
+      // Only run the command if we're on the target slide and it hasn't been executed yet
+      if (slideId !== null && slideId === crntSlide && !executed) {
+        try {
+          // await DemoTimeService.runCommand(serverUrl, commandId);
+          setExecuted(true);
+          showStatus(`Command executed for slide ${slideId}`, "success");
+        } catch (err) {
+          console.error("Error executing command:", err);
+          showStatus("Failed to execute command", "error");
+        }
+      }
+
+      validateSlide();
+    }, 500);
+
+    setCrntTimeout(timeout);
+  }, [crntTimeout, slideId, serverUrl, commandId, executed, showStatus]);
 
   const loadSettings = () => {
     // Load saved settings
@@ -46,19 +70,38 @@ export const FormContainer: React.FC = () => {
     setServerUrl(settings.serverUrl);
     setCommandId(settings.commandId);
     setSlideId(settings.slideId);
+    setExecuted(false); // Reset executed flag when loading settings
   };
 
   // Handler for ActiveViewChanged event
-  const startPresentationModeHandler = async () => {
+  const startPresentationModeHandler = React.useCallback(async () => {
     const isInPresentationMode = await DemoTimeService.checkPresentationMode();
     if (isInPresentationMode) {
-      showStatus("Presentation mode started", "info");
+      setExecuted(false);
+      validateSlide();
     } else {
-      showStatus("Presentation mode not started", "warning");
+      if (crntTimeout) {
+        clearTimeout(crntTimeout);
+        setCrntTimeout(null);
+      }
+      setExecuted(false);
+      Office.context.document.removeHandlerAsync(
+        Office.EventType.ActiveViewChanged,
+        startPresentationModeHandler,
+      );
     }
-  };
+  }, [crntTimeout, validateSlide, setExecuted]);
 
-  const addActiveViewChangedHandler = () => {
+  const addActiveViewChangedHandler = React.useCallback(() => {
+    Office.context.document.removeHandlerAsync(
+      Office.EventType.ActiveViewChanged,
+      startPresentationModeHandler,
+    );
+
+    if (executed || !slideId) {
+      return;
+    }
+
     try {
       if (Office.context.document) {
         // @ts-ignore - The event might not be properly typed
@@ -70,12 +113,14 @@ export const FormContainer: React.FC = () => {
     } catch (err) {
       console.error("Failed to add view change handler:", err);
     }
-  };
+  }, [crntTimeout, slideId, executed]);
+
+  useEffect(() => {
+    addActiveViewChangedHandler();
+  }, [slideId, executed]);
 
   useEffect(() => {
     loadSettings();
-
-    addActiveViewChangedHandler();
   }, []);
 
   const handleRunCommand = async () => {
@@ -103,31 +148,12 @@ export const FormContainer: React.FC = () => {
     }
   };
 
-  const handleSaveSettings = () => {
-    Office.context.document.getSelectedDataAsync<{ slides?: any[] }>(
-      Office.CoercionType.SlideRange,
-      (slideResult) => {
-        if (
-          slideResult.status === Office.AsyncResultStatus.Succeeded &&
-          slideResult.value &&  // Verify we have slide data
-          slideResult.value.slides &&
-          slideResult.value.slides.length > 0
-        ) {
-          // Extract slide information
-          const slidesValue = slideResult.value;
-          const currentSlide = slidesValue.slides[0];
-          const slideIndex = currentSlide.index;
-
-          if (typeof slideIndex === 'number') {
-            DemoTimeService.saveSettings(serverUrl, commandId, slideIndex.toString());
-            loadSettings();
-            showStatus("Settings saved successfully!", "success");
-          }
-        } else {
-          showStatus("No slide selected or failed to retrieve slide data", "error");
-        }
-      }
-    );
+  const handleSaveSettings = async () => {
+    const slideIndex = await DemoTimeService.getCurrentSlideIndex();
+    DemoTimeService.saveSettings(serverUrl, commandId, slideIndex);
+    loadSettings();
+    setExecuted(false);
+    showStatus("Settings saved successfully!", "success");
   };
 
   return (
@@ -152,7 +178,14 @@ export const FormContainer: React.FC = () => {
       <div className="flex gap-2 mt-4 items-center justify-end">
         <div className="flex-1 text-left text-sm text-gray-600">
           {slideId ? (
-            <>Current Slide ID: <span className="font-mono">{slideId}</span></>
+            <>
+              Current Slide ID: <span className="font-mono">{slideId}</span>
+              {currentSlide && currentSlide !== slideId && (
+                <>
+                  {" | "}Active Slide: <span className="font-mono">{currentSlide}</span>
+                </>
+              )}
+            </>
           ) : (
             <>No slide selected</>
           )}

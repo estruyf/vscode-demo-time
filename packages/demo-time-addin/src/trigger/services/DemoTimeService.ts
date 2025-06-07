@@ -36,10 +36,10 @@ export class DemoTimeService {
    * @param serverUrl - The server URL to save
    * @param commandId - The command ID to save
    */
-  static saveSettings(serverUrl: string, commandId: string, slideId: string): void {
+  static saveSettings(serverUrl: string, commandId: string, slideId: number): void {
     this.setSetting("dtServerUrl", serverUrl);
     this.setSetting("dtCommandId", commandId);
-    this.setSetting("dtAddInSlideId", slideId);
+    this.setSetting("dtAddInSlideId", slideId.toString());
   }
 
   /**
@@ -47,11 +47,14 @@ export class DemoTimeService {
    *
    * @returns Object containing the saved settings
    */
-  static loadSettings(): { serverUrl: string; commandId: string; slideId: string } {
+  static loadSettings(): { serverUrl: string; commandId: string; slideId: number } {
+    const slideIdStr = this.getSetting("dtAddInSlideId");
+    const slideId = slideIdStr !== null ? parseInt(slideIdStr, 10) : -1;
+
     return {
       serverUrl: this.getSetting("dtServerUrl") || "http://localhost:3710",
       commandId: this.getSetting("dtCommandId") || "",
-      slideId: this.getSetting("dtAddInSlideId") || "",
+      slideId: isNaN(slideId) ? -1 : slideId,
     };
   }
 
@@ -86,6 +89,32 @@ export class DemoTimeService {
       } else {
         resolve(false); // Default to not in presentation mode if Office.context.document is not available
       }
+    });
+  }
+
+  static async getCurrentSlideIndex(): Promise<number | null> {
+    return new Promise((resolve, reject) => {
+      Office.context.document.getSelectedDataAsync<{ slides?: any[] }>(
+        Office.CoercionType.SlideRange,
+        (slideResult) => {
+          if (
+            slideResult.status === Office.AsyncResultStatus.Succeeded &&
+            slideResult.value &&
+            slideResult.value.slides &&
+            slideResult.value.slides.length > 0
+          ) {
+            const currentSlide = slideResult.value.slides[0];
+            const slideIndex = currentSlide.index;
+            if (typeof slideIndex === "number") {
+              resolve(slideIndex);
+            } else {
+              resolve(null);
+            }
+          } else {
+            resolve(null);
+          }
+        }
+      );
     });
   }
 
