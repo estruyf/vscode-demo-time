@@ -55,11 +55,45 @@ export class DemoTimeService {
     };
   }
 
-  static getSetting(name: string): string | null {
+  /**
+   * Checks whether the current Office document is in presentation (read) mode.
+   *
+   * This method uses the Office.js API to asynchronously determine if the document
+   * is currently being presented (i.e., in "read" view). It resolves to `true` if
+   * the document is in presentation mode, and `false` otherwise. If an error occurs
+   * or the Office context is unavailable, it defaults to resolving `false`.
+   *
+   * @returns Promise<boolean> A promise that resolves to `true` if in presentation mode, otherwise `false`.
+   */
+  static checkPresentationMode(): Promise<boolean> {
+    return new Promise((resolve) => {
+      if (Office.context.document) {
+        try {
+          Office.context.document.getActiveViewAsync((viewResult) => {
+            if (
+              viewResult.status === Office.AsyncResultStatus.Succeeded &&
+              viewResult.value === "read"
+            ) {
+              resolve(true); // In presentation mode
+            } else {
+              resolve(false); // Not in presentation mode
+            }
+          });
+        } catch (error) {
+          console.error("Error checking presentation mode:", error);
+          resolve(false); // Default to not in presentation mode on error
+        }
+      } else {
+        resolve(false); // Default to not in presentation mode if Office.context.document is not available
+      }
+    });
+  }
+
+  private static getSetting(name: string): string | null {
     return Office.context.document.settings.get(name) || null;
   }
 
-  static setSetting(name: string, value: string): Promise<void> {
+  private static setSetting(name: string, value: string): Promise<void> {
     return new Promise((resolve, reject) => {
       Office.context.document.settings.set(name, value);
       Office.context.document.settings.saveAsync((result) => {

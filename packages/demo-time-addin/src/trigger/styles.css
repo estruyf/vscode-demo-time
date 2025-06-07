@@ -130,22 +130,6 @@ input[type="text"]:focus {
   margin-top: 20px;
 }
 
-button {
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  font-size: 14px;
-  font-weight: 500;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-button:hover {
-  background-color: var(--primary-hover);
-}
-
 #statusMessage {
   margin-top: 15px;
   padding: 10px;

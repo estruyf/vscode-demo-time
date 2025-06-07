@@ -10,13 +10,72 @@ import { DemoTimeService } from '../services/DemoTimeService';
 export const FormContainer: React.FC = () => {
   const [serverUrl, setServerUrl] = useState<string>('http://localhost:3710');
   const [commandId, setCommandId] = useState<string>('');
+  const [slideId, setSlideId] = useState<string>('');
   const { statusMessage, showStatus } = useStatusMessage();
 
   useEffect(() => {
+    const validateSlide = () => {
+      Office.context.document.getSelectedDataAsync<{ slides?: any[] }>(
+        Office.CoercionType.SlideRange,
+        (slideResult) => {
+          if (
+            slideResult.status === Office.AsyncResultStatus.Succeeded &&
+            slideResult.value &&
+            slideResult.value.slides &&
+            slideResult.value.slides.length > 0
+          ) {
+            const currentSlide = slideResult.value.slides[0];
+            const slideIndex = currentSlide.index;
+            if (typeof slideIndex === 'number' && slideId !== slideIndex.toString()) {
+              setSlideId(slideIndex.toString());
+            }
+          } else if (slideId !== '') {
+            setSlideId('');
+          }
+        }
+      );
+    };
+
+    const interval = setInterval(validateSlide, 500);
+    return () => clearInterval(interval);
+  }, [slideId]);
+
+  const loadSettings = () => {
     // Load saved settings
     const settings = DemoTimeService.loadSettings();
     setServerUrl(settings.serverUrl);
     setCommandId(settings.commandId);
+    setSlideId(settings.slideId);
+  };
+
+  // Handler for ActiveViewChanged event
+  const startPresentationModeHandler = async () => {
+    const isInPresentationMode = await DemoTimeService.checkPresentationMode();
+    if (isInPresentationMode) {
+      showStatus("Presentation mode started", "info");
+    } else {
+      showStatus("Presentation mode not started", "warning");
+    }
+  };
+
+  const addActiveViewChangedHandler = () => {
+    try {
+      if (Office.context.document) {
+        // @ts-ignore - The event might not be properly typed
+        Office.context.document.addHandlerAsync(
+          Office.EventType.ActiveViewChanged,
+          startPresentationModeHandler,
+        );
+      }
+    } catch (err) {
+      console.error("Failed to add view change handler:", err);
+    }
+  };
+
+  useEffect(() => {
+    loadSettings();
+
+    addActiveViewChangedHandler();
   }, []);
 
   const handleRunCommand = async () => {
@@ -45,30 +104,30 @@ export const FormContainer: React.FC = () => {
   };
 
   const handleSaveSettings = () => {
-    DemoTimeService.saveSettings(serverUrl, commandId, "");
+    Office.context.document.getSelectedDataAsync<{ slides?: any[] }>(
+      Office.CoercionType.SlideRange,
+      (slideResult) => {
+        if (
+          slideResult.status === Office.AsyncResultStatus.Succeeded &&
+          slideResult.value &&  // Verify we have slide data
+          slideResult.value.slides &&
+          slideResult.value.slides.length > 0
+        ) {
+          // Extract slide information
+          const slidesValue = slideResult.value;
+          const currentSlide = slidesValue.slides[0];
+          const slideIndex = currentSlide.index;
 
-    // Uncomment if you want to handle PowerPoint slide ID saving
-    // if (Office?.context?.document) {
-    //   Office.context.document.getSelectedDataAsync(
-    //     Office.CoercionType.SlideRange,
-    //     (slideResult) => {
-    //       if (
-    //         slideResult.status === Office.AsyncResultStatus.Succeeded &&
-    //         slideResult.value &&
-    //         slideResult.value.slides &&
-    //         slideResult.value.slides.length > 0
-    //       ) {
-    //         // Extract slide information
-    //         const currentSlide = slideResult.value.slides[0];
-    //         const slideIndex = currentSlide.index;
-    //         localStorage.setItem("dtAddInSlideId", slideIndex.toString());
-    //       }
-    //     }
-    //   );
-    // }
-
-    console.log("Settings saved");
-    showStatus("Settings saved successfully!", "success");
+          if (typeof slideIndex === 'number') {
+            DemoTimeService.saveSettings(serverUrl, commandId, slideIndex.toString());
+            loadSettings();
+            showStatus("Settings saved successfully!", "success");
+          }
+        } else {
+          showStatus("No slide selected or failed to retrieve slide data", "error");
+        }
+      }
+    );
   };
 
   return (
@@ -90,7 +149,14 @@ export const FormContainer: React.FC = () => {
         onChange={setCommandId}
       />
 
-      <div className="flex gap-2 mt-4 justify-end">
+      <div className="flex gap-2 mt-4 items-center justify-end">
+        <div className="flex-1 text-left text-sm text-gray-600">
+          {slideId ? (
+            <>Current Slide ID: <span className="font-mono">{slideId}</span></>
+          ) : (
+            <>No slide selected</>
+          )}
+        </div>
         <Button
           id="testBtn"
           onClick={handleRunCommand}
