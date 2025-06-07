@@ -6,18 +6,18 @@
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Demo Time Add-in"/>
   <Description DefaultValue="Demo Time integration for PowerPoint"/>
-  <IconUrl DefaultValue="http://localhost:3000/assets/icon-32.png"/>
-  <HighResolutionIconUrl DefaultValue="http://localhost:3000/assets/icon-64.png"/>
-  <SupportUrl DefaultValue="https://www.contoso.com/help"/>
+  <IconUrl DefaultValue="https://demotime.elio.dev/addin/assets/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://demotime.elio.dev/addin/assets/icon-64.png"/>
+  <SupportUrl DefaultValue="https://demotime.elio.dev"/>
   <AppDomains>
-    <AppDomain>https://www.contoso.com</AppDomain>
+    <AppDomain>https://demotime.elio.dev</AppDomain>
   </AppDomains>
   <Hosts>
     <Host Name="Workbook" />
     <Host Name="Presentation" />
   </Hosts>
   <DefaultSettings>
-    <SourceLocation DefaultValue="http://localhost:3000/trigger.html" />
+    <SourceLocation DefaultValue="https://demotime.elio.dev/addin/trigger.html" />
     <RequestedHeight>550</RequestedHeight>
     <RequestedWidth>300</RequestedWidth>
   </DefaultSettings>
