@@ -1,3 +1,5 @@
+// @ts-check
+
 (function () {
   // Wait for Office to be ready
   Office.onReady(function () {
@@ -15,11 +17,25 @@
           document.getElementById('formContainer').style.display = 'block';
       }, 1500);
 
+
+      Office.context.document.settings.set("TestSetting", "TestValue");
+      Office.context.document.settings.saveAsync(function (asyncResult) {
+        if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+          console.error("Failed to save settings:", asyncResult.error.message);
+        } else {
+          console.log("Settings saved successfully");
+        }
+      });
+
+      const testSetting = Office.context.document.settings.get("TestSetting");
+      console.log("Loaded TestSetting:", testSetting);
+
       // Get form elements and add null checks
       var urlInput = document.getElementById("serverUrl");
       var idInput = document.getElementById("commandId");
       var bringInput = document.getElementById("bringToFront");
       var saveBtn = document.getElementById("saveBtn");
+      var testBtn = document.getElementById("testBtn");
 
       // Check if elements exist before accessing them
       if (!urlInput || !idInput || !bringInput || !saveBtn) {
@@ -112,46 +128,116 @@
       function checkPresentationMode() {
         if (Office.context.document) {
           try {
-        // Check if in presentation mode
-        Office.context.document.getActiveViewAsync((viewResult) => {
-          if (
-            viewResult.status === Office.AsyncResultStatus.Succeeded &&
-            viewResult.value === "read"
-          ) {
-            // Now check if the add-in's slide is currently shown
-            Office.context.document.getSelectedDataAsync(
-          Office.CoercionType.SlideRange,
-          (slideResult) => {
-            if (
-              slideResult.status === Office.AsyncResultStatus.Succeeded
-            ) {
-              // If we get a slide, assume the add-in is visible on the current slide
-              // (You may want to add more checks here if needed)
-              console.log(
-            "Presentation mode and add-in slide is shown, running command"
-              );
-              runCommand();
-            } else {
-              // Not on the slide with the add-in
-              console.log(
-            "Presentation mode, but add-in slide is not shown"
-              );
-            }
-          }
-            );
-          }
-        });
+            // Step 1: Check if in presentation mode (reading view/slide show)
+            Office.context.document.getActiveViewAsync((viewResult) => {
+              if (
+                viewResult.status === Office.AsyncResultStatus.Succeeded &&
+                viewResult.value === "read"  // "read" means slide show/presentation mode
+              ) {
+                console.log("Detected presentation mode (slide show view)");
+
+                // PowerPoint.run(async (context) => {
+                //   const selectedSlides = context.presentation.getSelectedSlides();
+                //   const currentSlide = selectedSlides.items[0];
+                //   const slideId = currentSlide.id;
+
+                //   const allSlides = context.presentation.slides;
+
+                //   await context.sync();
+                //   const slideIndex = currentSlide.index;
+                //   localStorage.setItem("dtAddInSlideIndex", slideIndex.toString());
+                //   console.log(`Add-in is on slide index: ${slideIndex}`);
+                // });
+                
+                // Step 2: Check if the add-in's slide is currently visible
+                Office.context.document.getSelectedDataAsync(
+                  Office.CoercionType.SlideRange,
+                  (slideResult) => {
+                    if (
+                      slideResult.status === Office.AsyncResultStatus.Succeeded &&
+                      slideResult.value &&  // Verify we have slide data
+                      slideResult.value.slides && 
+                      slideResult.value.slides.length > 0
+                    ) {
+                      // Extract slide information
+                      const currentSlide = slideResult.value.slides[0];
+                      const slideIndex = currentSlide.index;
+                      
+                      const controlSlide = localStorage.getItem("dtAddInSlideId");
+
+                      updateSlideInfoDisplay(slideIndex, controlSlide);
+                      
+                      // We have confirmed:
+                      // 1. We're in presentation mode
+                      // 2. We can detect the current slide
+                      // 3. The add-in is visible (otherwise we wouldn't get slide data)
+                      console.log(
+                        "Presentation mode confirmed and add-in slide is shown, running command"
+                      );
+
+                      // runCommand();
+                    } else {
+                      // Either not on the slide with the add-in or couldn't get slide data
+                      console.log(
+                        "Presentation mode active, but add-in slide is not currently shown"
+                      );
+                    }
+                  }
+                );
+              }
+            });
           } catch (err) {
-        console.error("Failed to check presentation mode:", err);
+            console.error("Failed to check presentation mode:", err);
           }
         }
       }
+
+      testBtn.addEventListener("click", function () {
+        runCommand();
+      });
 
       saveBtn.addEventListener("click", function () {
         localStorage.setItem("dtServerUrl", urlInput.value);
         localStorage.setItem("dtCommandId", idInput.value);
         localStorage.setItem("dtBringToFront", bringInput.checked.toString());
-        runCommand();
+
+        // PowerPoint.run(async (context) => {
+        //   const slides = context.presentation.getSelectedSlides()
+        //   const currentSlide = slides.items[0];
+        //   localStorage.setItem("dtAddInSlideIndex", currentSlide.index.toString());
+        //   console.log(`Saved add-in slide index: ${currentSlide.index}`);
+        // });
+
+        Office.context.document.getSelectedDataAsync(
+          Office.CoercionType.SlideRange,
+          (slideResult) => {
+            if (
+              slideResult.status === Office.AsyncResultStatus.Succeeded &&
+              slideResult.value &&  // Verify we have slide data
+              slideResult.value.slides && 
+              slideResult.value.slides.length > 0
+            ) {
+              // Extract slide information
+              const currentSlide = slideResult.value.slides[0];
+              const slideIndex = currentSlide.index;
+
+              localStorage.setItem("dtAddInSlideId", slideIndex.toString());
+              // Office.context.document.settings.set("CurrentSlide", currentSlide);
+              // Office.context.document.settings.saveAsync(function (asyncResult) { });
+            }
+          }
+        );
+
+        console.log("Settings saved");
+        const statusMessage = document.getElementById("statusMessage");
+        if (statusMessage) {
+          statusMessage.className = "success";
+          statusMessage.style.display = "block";
+          statusMessage.textContent = "Settings saved successfully!";
+          setTimeout(() => {
+            statusMessage.style.display = "none";
+          }, 3000);
+        }
       });
 
       // Listen for slide show start events
@@ -167,13 +253,77 @@
         console.error("Failed to add view change handler:", err);
       }
 
-      // Automatically run on load only if we have saved settings
-      if (savedCommandId) {
-        runCommand();
-      }
-
       // Check if already in presentation mode when loaded
       checkPresentationMode();
+
+      // Add function to update slide information display
+      function updateSlideInfoDisplay(currentSlideNum, addInSlideNum) {
+        // Create slide info container if it doesn't exist
+        let slideInfoContainer = document.getElementById("slideInfoContainer");
+        if (!slideInfoContainer) {
+          slideInfoContainer = document.createElement("div");
+          slideInfoContainer.id = "slideInfoContainer";
+          slideInfoContainer.className = "slide-info-container";
+          
+          // Add CSS for the slide info container
+          const style = document.createElement("style");
+          style.textContent = `
+            .slide-info-container {
+              margin-top: 10px;
+              padding: 8px;
+              background-color: #f5f5f5;
+              border-radius: 4px;
+              font-size: 12px;
+              color: #555;
+            }
+            .slide-info {
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 4px;
+            }
+            .slide-info-label {
+              font-weight: bold;
+            }
+            .slide-current {
+              color: #4CAF50;
+            }
+            .slide-addin {
+              color: #2196F3;
+            }
+          `;
+          document.head.appendChild(style);
+          
+          // Create the slide info elements
+          const currentSlideInfo = document.createElement("div");
+          currentSlideInfo.className = "slide-info slide-current";
+          currentSlideInfo.innerHTML = `<span class="slide-info-label">Current Slide:</span> <span id="currentSlideNum"></span>`;
+          
+          const addInSlideInfo = document.createElement("div");
+          addInSlideInfo.className = "slide-info slide-addin";
+          addInSlideInfo.innerHTML = `<span class="slide-info-label">Add-in Slide:</span> <span id="addInSlideNum"></span>`;
+          
+          slideInfoContainer.appendChild(currentSlideInfo);
+          slideInfoContainer.appendChild(addInSlideInfo);
+          
+          // Insert before the save button or at the end of the form
+          const formContainer = document.getElementById("formContainer");
+          if (formContainer) {
+            formContainer.appendChild(slideInfoContainer);
+          }
+        }
+        
+        // Update the slide numbers
+        const currentSlideNumElement = document.getElementById("currentSlideNum");
+        const addInSlideNumElement = document.getElementById("addInSlideNum");
+        
+        if (currentSlideNumElement) {
+          currentSlideNumElement.textContent = currentSlideNum;
+        }
+        
+        if (addInSlideNumElement) {
+          addInSlideNumElement.textContent = addInSlideNum;
+        }
+      }
     }
   });
 })();

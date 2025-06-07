@@ -18,22 +18,26 @@ module.exports = async (env, options) => {
     devtool: "source-map",
     entry: {
       polyfill: ["core-js/stable", "regenerator-runtime/runtime"],
-      taskpane: ["./src/trigger/trigger.js", "./src/trigger/trigger.html"]
+      trigger: ["./src/trigger/index.tsx", "./src/trigger/trigger.html"]
     },
     output: {
       clean: true,
     },
     resolve: {
-      extensions: [".ts", ".html", ".js"],
+      extensions: ['.ts', '.js', '.tsx', '.jsx', '.html'],
     },
     module: {
       rules: [
         {
-          test: /\.ts$/,
+          test: /\.(ts|tsx)$/,
           exclude: /node_modules/,
-          use: {
-            loader: "babel-loader"
-          },
+          use: [{
+            loader: 'ts-loader'
+          }]
+        },
+        {
+          test: /\.css$/,
+          use: ['style-loader', 'css-loader', 'postcss-loader']
         },
         {
           test: /\.html$/,

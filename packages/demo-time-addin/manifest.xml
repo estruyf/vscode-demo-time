@@ -18,7 +18,7 @@
   </Hosts>
   <DefaultSettings>
     <SourceLocation DefaultValue="http://localhost:3000/trigger.html" />
-    <RequestedHeight>250</RequestedHeight>
+    <RequestedHeight>550</RequestedHeight>
     <RequestedWidth>300</RequestedWidth>
   </DefaultSettings>
   <Permissions>ReadWriteDocument</Permissions>
