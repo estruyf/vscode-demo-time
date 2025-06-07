@@ -6,6 +6,7 @@ import { FormField } from './FormField';
 import { StatusMessage } from './StatusMessage';
 import { useStatusMessage } from '../hooks/useStatusMessage';
 import { DemoTimeService } from '../services/DemoTimeService';
+import { ExecutionTrackingService } from '../services/ExecutionTrackingService';
 
 export const FormContainer: React.FC = () => {
   const [serverUrl, setServerUrl] = useState<string>('http://localhost:3710');
@@ -13,56 +14,67 @@ export const FormContainer: React.FC = () => {
   const [slideId, setSlideId] = useState<number | null>(null);
   const [currentSlide, setCurrentSlide] = useState<number | null>(null);
   const [crntTimeout, setCrntTimeout] = useState<number | null>(null);
-  const [executed, setExecuted] = useState<boolean>(false);
   const { statusMessage, showStatus } = useStatusMessage();
+
+  // Force re-render when execution status changes
+  const [_, forceRender] = useState({});
 
   const validateSlide = React.useCallback(async () => {
     const isInPresentationMode = await DemoTimeService.checkPresentationMode();
     if (!isInPresentationMode) {
-      clearTimeout(crntTimeout);
-      setCrntTimeout(null);
-      setExecuted(false);
+      if (crntTimeout) {
+        clearTimeout(crntTimeout);
+        setCrntTimeout(null);
+      }
+      ExecutionTrackingService.resetExecution(slideId);
+      forceRender({});
       return;
     }
 
+    // Always clear any existing timeout before setting a new one
     if (crntTimeout) {
       clearTimeout(crntTimeout);
     }
 
-    const timeout = window.setTimeout(async () => {
-      const crntSlide = await DemoTimeService.getCurrentSlideIndex();
-      if (crntSlide === -1) {
-        showStatus("No slide selected or in edit mode", "error");
-        setExecuted(false);
-        return;
+    const crntSlide = await DemoTimeService.getCurrentSlideIndex();
+    if (crntSlide === -1) {
+      showStatus("No slide selected or in edit mode", "error");
+      ExecutionTrackingService.resetExecution(slideId);
+      forceRender({});
+      return;
+    }
+
+    setCurrentSlide(crntSlide);
+
+    // Reset executed flag if we're on a different slide
+    if (crntSlide !== slideId) {
+      ExecutionTrackingService.resetExecution(slideId);
+      forceRender({});
+    }
+
+    // Only run the command if we're on the target slide and it hasn't been executed yet
+    const isExecuted = ExecutionTrackingService.isCommandExecuted(slideId);
+    if (slideId !== null && slideId === crntSlide && !isExecuted) {
+      try {
+        // await DemoTimeService.runCommand(serverUrl, commandId);
+        console.log(`Executing command for slide ${slideId}, executed was: ${isExecuted}`);
+        ExecutionTrackingService.markCommandExecuted(slideId);
+        forceRender({});
+        // Use the previous state pattern to get the latest executed value in the status message
+        showStatus(`Command executed for slide`, "success");
+      } catch (err) {
+        console.error("Error executing command:", err);
+        showStatus("Failed to execute command", "error");
       }
+    }
 
-      setCurrentSlide(crntSlide);
-
-      // Reset executed flag if we're on a different slide
-      if (crntSlide !== slideId) {
-        setExecuted(false);
-      }
-
-      showStatus(`Current slide changed to ${crntSlide} and ${slideId}`, "info");
-
-      // Only run the command if we're on the target slide and it hasn't been executed yet
-      if (slideId !== null && slideId === crntSlide && !executed) {
-        try {
-          // await DemoTimeService.runCommand(serverUrl, commandId);
-          setExecuted(true);
-          showStatus(`Command executed for slide ${slideId}`, "success");
-        } catch (err) {
-          console.error("Error executing command:", err);
-          showStatus("Failed to execute command", "error");
-        }
-      }
-
+    // Set a new timeout for the next check, but store the ID so we can cancel it if needed
+    const newTimeout = window.setTimeout(() => {
       validateSlide();
     }, 500);
 
-    setCrntTimeout(timeout);
-  }, [crntTimeout, slideId, serverUrl, commandId, executed, showStatus]);
+    setCrntTimeout(newTimeout);
+  }, [crntTimeout, slideId, serverUrl, commandId, showStatus]);
 
   const loadSettings = () => {
     // Load saved settings
@@ -70,35 +82,39 @@ export const FormContainer: React.FC = () => {
     setServerUrl(settings.serverUrl);
     setCommandId(settings.commandId);
     setSlideId(settings.slideId);
-    setExecuted(false); // Reset executed flag when loading settings
+    ExecutionTrackingService.resetExecution(settings.slideId); // Reset executed flag when loading settings
+    forceRender({});
   };
 
   // Handler for ActiveViewChanged event
   const startPresentationModeHandler = React.useCallback(async () => {
     const isInPresentationMode = await DemoTimeService.checkPresentationMode();
     if (isInPresentationMode) {
-      setExecuted(false);
+      ExecutionTrackingService.resetExecution(slideId);
+      forceRender({});
       validateSlide();
     } else {
       if (crntTimeout) {
         clearTimeout(crntTimeout);
         setCrntTimeout(null);
       }
-      setExecuted(false);
+      ExecutionTrackingService.resetExecution(slideId);
+      forceRender({});
       Office.context.document.removeHandlerAsync(
         Office.EventType.ActiveViewChanged,
         startPresentationModeHandler,
       );
     }
-  }, [crntTimeout, validateSlide, setExecuted]);
+  }, [crntTimeout, validateSlide]);
 
   const addActiveViewChangedHandler = React.useCallback(() => {
+    // First, remove any existing handler to avoid duplicates
     Office.context.document.removeHandlerAsync(
       Office.EventType.ActiveViewChanged,
       startPresentationModeHandler,
     );
 
-    if (executed || !slideId) {
+    if (ExecutionTrackingService.isCommandExecuted(slideId) || typeof slideId !== 'number' || slideId === null) {
       return;
     }
 
@@ -113,15 +129,7 @@ export const FormContainer: React.FC = () => {
     } catch (err) {
       console.error("Failed to add view change handler:", err);
     }
-  }, [crntTimeout, slideId, executed]);
-
-  useEffect(() => {
-    addActiveViewChangedHandler();
-  }, [slideId, executed]);
-
-  useEffect(() => {
-    loadSettings();
-  }, []);
+  }, [startPresentationModeHandler, slideId]);
 
   const handleRunCommand = async () => {
     // Only proceed if we have a command ID
@@ -129,9 +137,6 @@ export const FormContainer: React.FC = () => {
       showStatus("Please enter a command ID", "error");
       return;
     }
-
-    // Show loading message
-    showStatus("Sending command...", "");
 
     try {
       const response = await DemoTimeService.runCommand(serverUrl, commandId);
@@ -152,9 +157,24 @@ export const FormContainer: React.FC = () => {
     const slideIndex = await DemoTimeService.getCurrentSlideIndex();
     DemoTimeService.saveSettings(serverUrl, commandId, slideIndex);
     loadSettings();
-    setExecuted(false);
+    ExecutionTrackingService.resetExecution(slideIndex);
     showStatus("Settings saved successfully!", "success");
   };
+
+  useEffect(() => {
+    if (!slideId || ExecutionTrackingService.isCommandExecuted(slideId)) {
+      Office.context.document.removeHandlerAsync(
+        Office.EventType.ActiveViewChanged,
+        startPresentationModeHandler,
+      );
+      return;
+    }
+    addActiveViewChangedHandler();
+  }, [slideId]);
+
+  useEffect(() => {
+    loadSettings();
+  }, []);
 
   return (
     <div id="formContainer">
