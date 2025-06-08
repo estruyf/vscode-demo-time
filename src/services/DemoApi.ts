@@ -2,6 +2,8 @@ import { workspace, window, StatusBarAlignment, StatusBarItem, commands } from '
 import { Extension } from './Extension';
 import { COMMAND, Config } from '../constants';
 import { Server } from 'http';
+import https from 'https';
+import selfsigned from 'selfsigned';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { Logger } from './Logger';
@@ -10,6 +12,7 @@ import { bringToFront } from '../utils';
 export class DemoApi {
   private static statusBarItem: StatusBarItem;
   private static server: Server;
+  private static httpsServer: https.Server;
 
   static register() {
     const ext = Extension.getInstance();
@@ -67,6 +70,14 @@ export class DemoApi {
       DemoApi.statusBarItem.text = `$(dt-logo) API: ${port}`;
       DemoApi.statusBarItem.show();
     });
+
+    const httpsPort = port + 1;
+    const pems = selfsigned.generate(null, { days: 365 });
+    DemoApi.httpsServer = https
+      .createServer({ key: pems.private, cert: pems.cert }, app)
+      .listen(httpsPort, () => {
+        Logger.info(`API HTTPS on port ${httpsPort}`);
+      });
   }
 
   /**
@@ -141,6 +152,7 @@ export class DemoApi {
   private static async stop() {
     Logger.info('Stopping API');
     DemoApi.server?.close();
+    DemoApi.httpsServer?.close();
     DemoApi.statusBarItem?.hide();
   }
 }
