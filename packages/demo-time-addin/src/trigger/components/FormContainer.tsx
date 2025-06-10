@@ -54,9 +54,9 @@ export const FormContainer: React.FC = () => {
 
     // Only run the command if we're on the target slide and it hasn't been executed yet
     const isExecuted = ExecutionTrackingService.isCommandExecuted(slideId);
-    if (slideId !== null && slideId === crntSlide && !isExecuted) {
+    if (slideId !== null && slideId >= 0 && slideId === crntSlide && !isExecuted) {
       try {
-        // await DemoTimeService.runCommand(serverUrl, commandId);
+        await DemoTimeService.runCommand(serverUrl, commandId);
         console.log(`Executing command for slide ${slideId}, executed was: ${isExecuted}`);
         ExecutionTrackingService.markCommandExecuted(slideId);
         forceRender({});
@@ -82,12 +82,13 @@ export const FormContainer: React.FC = () => {
     setServerUrl(settings.serverUrl);
     setCommandId(settings.commandId);
     setSlideId(settings.slideId);
-    ExecutionTrackingService.resetExecution(settings.slideId); // Reset executed flag when loading settings
+    ExecutionTrackingService.resetExecution(settings.slideId);
     forceRender({});
   };
 
   // Handler for ActiveViewChanged event
-  const startPresentationModeHandler = React.useCallback(async () => {
+  const startPresentationModeHandler = React.useCallback(async (result) => {
+    console.log("ActiveViewChanged event triggered:", result);
     const isInPresentationMode = await DemoTimeService.checkPresentationMode();
     if (isInPresentationMode) {
       ExecutionTrackingService.resetExecution(slideId);
@@ -100,21 +101,11 @@ export const FormContainer: React.FC = () => {
       }
       ExecutionTrackingService.resetExecution(slideId);
       forceRender({});
-      Office.context.document.removeHandlerAsync(
-        Office.EventType.ActiveViewChanged,
-        startPresentationModeHandler,
-      );
     }
   }, [crntTimeout, validateSlide]);
 
   const addActiveViewChangedHandler = React.useCallback(() => {
-    // First, remove any existing handler to avoid duplicates
-    Office.context.document.removeHandlerAsync(
-      Office.EventType.ActiveViewChanged,
-      startPresentationModeHandler,
-    );
-
-    if (ExecutionTrackingService.isCommandExecuted(slideId) || typeof slideId !== 'number' || slideId === null) {
+    if (ExecutionTrackingService.isCommandExecuted(slideId) || typeof slideId !== 'number' || slideId === null || slideId < 0) {
       return;
     }
 
@@ -129,7 +120,7 @@ export const FormContainer: React.FC = () => {
     } catch (err) {
       console.error("Failed to add view change handler:", err);
     }
-  }, [startPresentationModeHandler, slideId]);
+  }, [slideId]);
 
   const handleRunCommand = async () => {
     // Only proceed if we have a command ID
@@ -139,12 +130,7 @@ export const FormContainer: React.FC = () => {
     }
 
     try {
-      const response = await DemoTimeService.runCommand(serverUrl, commandId);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error ${response.status}`);
-      }
-
+      await DemoTimeService.runCommand(serverUrl, commandId);
       // Success message
       showStatus("Command executed successfully!", "success");
     } catch (err: any) {

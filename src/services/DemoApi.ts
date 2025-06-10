@@ -2,6 +2,7 @@ import { workspace, window, StatusBarAlignment, StatusBarItem, commands } from '
 import { Extension } from './Extension';
 import { COMMAND, Config } from '../constants';
 import { Server } from 'http';
+import https from 'https';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { Logger } from './Logger';
@@ -10,6 +11,7 @@ import { bringToFront } from '../utils';
 export class DemoApi {
   private static statusBarItem: StatusBarItem;
   private static server: Server;
+  private static httpsServer: https.Server;
 
   static register() {
     const ext = Extension.getInstance();
@@ -57,17 +59,41 @@ export class DemoApi {
     app.use(express.json());
     app.use(cors());
 
+    app.get('/', DemoApi.home);
     app.get('/api/next', DemoApi.next);
     app.get('/api/runById', DemoApi.runById);
     app.post('/api/runById', DemoApi.runById);
-    app.get('/api/redirect', DemoApi.redirect);
 
     DemoApi.server = app.listen(port, () => {
       DemoApi.statusBarItem = window.createStatusBarItem('api', StatusBarAlignment.Left, 100005);
       DemoApi.statusBarItem.name = `${Config.title} - API`;
       DemoApi.statusBarItem.text = `$(dt-logo) API: ${port}`;
+      DemoApi.statusBarItem.tooltip = `http://localhost:${port} | https://localhost:${port + 1}`;
       DemoApi.statusBarItem.show();
     });
+  }
+
+  private static async home(req: Request, res: Response) {
+    Logger.info('Received request for home');
+    res.status(200).send(`
+      <html>
+        <head>
+          <title>Demo API</title>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body>
+          <h1>Demo API</h1>
+          <p>Welcome to the Demo API!</p>
+          <p>Use the following endpoints:</p>
+          <ul>
+            <li><a href="/api/next">/api/next</a> - Trigger the next demo</li>
+            <li><a href="/api/runById?id=demoId">/api/runById</a> - Run a demo by ID (replace <code>demoId</code> with the actual ID)</li>
+          </ul>
+          <p>To bring the application to the front, you can add <code>?bringToFront=true</code> to the URL.</p>
+        </body>
+      </html>
+    `);
   }
 
   /**
@@ -126,35 +152,6 @@ export class DemoApi {
   }
 
   /**
-   * Handles the redirect request to open a VSCode URL.
-   *
-   * @param req - The HTTP request object.
-   * @param res - The HTTP response object.
-   */
-  private static async redirect(req: Request, res: Response) {
-    const path = req.query.path as string;
-
-    if (!path) {
-      res.status(400).send('Missing path parameter');
-      return;
-    }
-
-    // Remove single or double quotes if the path is wrapped
-    const unwrappedPath = path.replace(/^['"]|['"]$/g, '');
-
-    // Check if the path contains the correct extension name
-    if (!unwrappedPath.includes('://eliostruyf.vscode-demo-time')) {
-      res.status(400).send('Invalid extension name: must be eliostruyf.vscode-demo-time');
-      return;
-    }
-
-    Logger.info(`Redirecting to VSCode URL: ${unwrappedPath}`);
-
-    // Render an HTML page that opens the link
-    res.redirect(302, unwrappedPath);
-  }
-
-  /**
    * Determines whether the request should bring the application to the front.
    *
    * @param req - The HTTP request object.
@@ -171,6 +168,7 @@ export class DemoApi {
   private static async stop() {
     Logger.info('Stopping API');
     DemoApi.server?.close();
+    DemoApi.httpsServer?.close();
     DemoApi.statusBarItem?.hide();
   }
 }
