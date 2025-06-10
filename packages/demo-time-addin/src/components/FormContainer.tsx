@@ -57,6 +57,7 @@ export const FormContainer: React.FC = () => {
     if (slideId !== null && slideId >= 0 && slideId === crntSlide && !isExecuted) {
       try {
         await DemoTimeService.runCommand(serverUrl, commandId);
+        console.log(`Executing command for slide ${slideId}, executed was: ${isExecuted}`);
         ExecutionTrackingService.markCommandExecuted(slideId);
         forceRender({});
         // Use the previous state pattern to get the latest executed value in the status message
@@ -100,7 +101,7 @@ export const FormContainer: React.FC = () => {
       ExecutionTrackingService.resetExecution(slideId);
       forceRender({});
     }
-  }, [crntTimeout, slideId, validateSlide]);
+  }, [crntTimeout, validateSlide]);
 
   const addActiveViewChangedHandler = React.useCallback(() => {
     if (ExecutionTrackingService.isCommandExecuted(slideId) || typeof slideId !== 'number' || slideId === null || slideId < 0) {
@@ -109,6 +110,7 @@ export const FormContainer: React.FC = () => {
 
     try {
       if (Office.context.document) {
+        // @ts-ignore - The event might not be properly typed
         Office.context.document.addHandlerAsync(
           Office.EventType.ActiveViewChanged,
           startPresentationModeHandler,
@@ -117,7 +119,7 @@ export const FormContainer: React.FC = () => {
     } catch (err) {
       console.error("Failed to add view change handler:", err);
     }
-  }, [slideId, startPresentationModeHandler]);
+  }, [slideId]);
 
   const handleRunCommand = async () => {
     // Only proceed if we have a command ID
@@ -157,7 +159,7 @@ export const FormContainer: React.FC = () => {
       return;
     }
     addActiveViewChangedHandler();
-  }, [addActiveViewChangedHandler, slideId, startPresentationModeHandler]);
+  }, [slideId]);
 
   useEffect(() => {
     loadSettings();
@@ -195,7 +197,7 @@ export const FormContainer: React.FC = () => {
         <Button
           id="testBtn"
           onClick={handleRunCommand}
-          className="px-2 py-1 text-white rounded cursor-pointer bg-accent border border-accent-low hover:bg-accent/90"
+          className="px-2 py-1 text-white rounded cursor-pointer bg-[#6290C8] border border-[#4A7FBF] hover:bg-[#6290C8]/90"
         >
           Test
         </Button>
@@ -203,7 +205,7 @@ export const FormContainer: React.FC = () => {
         <Button
           id="saveBtn"
           onClick={handleSaveSettings}
-          className="px-2 py-1 text-white rounded cursor-pointer bg-accent-high border border-accent-high hover:bg-accent-high/90"
+          className="px-2 py-1 text-black rounded cursor-pointer bg-accent-high border border-accent-high hover:bg-accent-high/90"
         >
           Save
         </Button>
