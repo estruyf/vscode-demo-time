@@ -17,6 +17,8 @@
   when it is not initialized. Thanks to [Tom Bell](https://github.com/tjbell).
 - [#140](https://github.com/estruyf/vscode-demo-time/issues/140): Added the ability to search and
   filter in the Demo Time treeview
+- [#152](https://github.com/estruyf/vscode-demo-time/issues/152): Added the `openPowerPoint` action
+  to open/focus the Microsoft PowerPoint application
 
 ## [1.4.0] - 2025-05-30
 
