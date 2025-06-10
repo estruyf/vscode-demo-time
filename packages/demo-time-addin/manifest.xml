@@ -6,8 +6,8 @@
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Demo Time Add-in"/>
   <Description DefaultValue="Demo Time integration for PowerPoint"/>
-  <IconUrl DefaultValue="https://demotime.elio.dev/addin/assets/icon-32.png"/>
-  <HighResolutionIconUrl DefaultValue="https://demotime.elio.dev/addin/assets/icon-64.png"/>
+  <IconUrl DefaultValue="https://demo-time-addin-csg0h6h7hcfpf8e2.westeurope-01.azurewebsites.net/assets/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://demo-time-addin-csg0h6h7hcfpf8e2.westeurope-01.azurewebsites.net/assets/icon-64.png"/>
   <SupportUrl DefaultValue="https://demotime.elio.dev"/>
   <AppDomains>
     <AppDomain>https://demotime.elio.dev</AppDomain>
@@ -17,7 +17,7 @@
     <Host Name="Presentation" />
   </Hosts>
   <DefaultSettings>
-    <SourceLocation DefaultValue="https://demotime.elio.dev/addin/trigger.html" />
+    <SourceLocation DefaultValue="https://demo-time-addin-csg0h6h7hcfpf8e2.westeurope-01.azurewebsites.net/trigger.html" />
     <RequestedHeight>550</RequestedHeight>
     <RequestedWidth>300</RequestedWidth>
   </DefaultSettings>

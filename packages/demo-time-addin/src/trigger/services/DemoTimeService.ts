@@ -14,20 +14,37 @@ export class DemoTimeService {
    * @param commandId - The command ID to run
    * @returns Promise with the response
    */
-  static async runCommand(serverUrl: string, commandId: string): Promise<Response> {
+  static async runCommand(serverUrl: string, commandId: string): Promise<void> {
     const url = serverUrl.replace(/\/$/, "");
     const payload: CommandPayload = {
       id: commandId,
       bringToFront: true,
     };
 
-    return fetch(`${url}/api/runbyid`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+    // try {
+    //   const response = await fetch(`${url}/api/runbyid`, {
+    //     method: "POST",
+    //     mode: "cors",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(payload),
+    //   });
+
+    //   if (!response.ok) {
+    //     const errorText = await response.text();
+    //     throw new Error(`Request failed: ${response.status} ${response.statusText} - ${errorText}`);
+    //   }
+
+    //   return response;
+    // } catch (error: any) {
+    //   throw new Error(`Error running command: ${error.message}`);
+    // }
+
+    window.location.href = `${url}/api/runById?id=${commandId}&bringToFront=true`;
+    // window.location.href = `vscode://eliostruyf.vscode-demo-time?command=${commandId}`;
+    // window.open(`${url}/api/runById?id=${commandId}&bringToFront=true`);
+    // window.open(`vscode://eliostruyf.vscode-demo-time?command=${commandId}`);
   }
 
   /**
