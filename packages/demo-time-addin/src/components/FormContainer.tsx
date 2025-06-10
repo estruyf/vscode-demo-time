@@ -12,7 +12,7 @@ export const FormContainer: React.FC = () => {
   const [serverUrl, setServerUrl] = useState<string>('http://localhost:3710');
   const [commandId, setCommandId] = useState<string>('');
   const [slideId, setSlideId] = useState<number | null>(null);
-  const [currentSlide, setCurrentSlide] = useState<number | null>(null);
+  const [, setCurrentSlide] = useState<number | null>(null);
   const [crntTimeout, setCrntTimeout] = useState<number | null>(null);
   const { statusMessage, showStatus } = useStatusMessage();
 
@@ -57,7 +57,6 @@ export const FormContainer: React.FC = () => {
     if (slideId !== null && slideId >= 0 && slideId === crntSlide && !isExecuted) {
       try {
         await DemoTimeService.runCommand(serverUrl, commandId);
-        console.log(`Executing command for slide ${slideId}, executed was: ${isExecuted}`);
         ExecutionTrackingService.markCommandExecuted(slideId);
         forceRender({});
         // Use the previous state pattern to get the latest executed value in the status message
@@ -87,8 +86,7 @@ export const FormContainer: React.FC = () => {
   };
 
   // Handler for ActiveViewChanged event
-  const startPresentationModeHandler = React.useCallback(async (result) => {
-    console.log("ActiveViewChanged event triggered:", result);
+  const startPresentationModeHandler = React.useCallback(async () => {
     const isInPresentationMode = await DemoTimeService.checkPresentationMode();
     if (isInPresentationMode) {
       ExecutionTrackingService.resetExecution(slideId);
@@ -102,7 +100,7 @@ export const FormContainer: React.FC = () => {
       ExecutionTrackingService.resetExecution(slideId);
       forceRender({});
     }
-  }, [crntTimeout, validateSlide]);
+  }, [crntTimeout, slideId, validateSlide]);
 
   const addActiveViewChangedHandler = React.useCallback(() => {
     if (ExecutionTrackingService.isCommandExecuted(slideId) || typeof slideId !== 'number' || slideId === null || slideId < 0) {
@@ -111,7 +109,6 @@ export const FormContainer: React.FC = () => {
 
     try {
       if (Office.context.document) {
-        // @ts-ignore - The event might not be properly typed
         Office.context.document.addHandlerAsync(
           Office.EventType.ActiveViewChanged,
           startPresentationModeHandler,
@@ -120,7 +117,7 @@ export const FormContainer: React.FC = () => {
     } catch (err) {
       console.error("Failed to add view change handler:", err);
     }
-  }, [slideId]);
+  }, [slideId, startPresentationModeHandler]);
 
   const handleRunCommand = async () => {
     // Only proceed if we have a command ID
@@ -133,18 +130,22 @@ export const FormContainer: React.FC = () => {
       await DemoTimeService.runCommand(serverUrl, commandId);
       // Success message
       showStatus("Command executed successfully!", "success");
-    } catch (err: any) {
+    } catch (err) {
       console.error("Demo Time trigger failed", err);
-      showStatus(`Error: ${err.message || "Failed to execute command"}`, "error");
+      showStatus(`Error: ${(err as Error).message || "Failed to execute command"}`, "error");
     }
   };
 
   const handleSaveSettings = async () => {
     const slideIndex = await DemoTimeService.getCurrentSlideIndex();
-    DemoTimeService.saveSettings(serverUrl, commandId, slideIndex);
-    loadSettings();
-    ExecutionTrackingService.resetExecution(slideIndex);
-    showStatus("Settings saved successfully!", "success");
+    if (slideIndex !== null) {
+      DemoTimeService.saveSettings(serverUrl, commandId, slideIndex);
+      loadSettings();
+      ExecutionTrackingService.resetExecution(slideIndex);
+      showStatus("Settings saved successfully!", "success");
+    } else {
+      showStatus("No slide selected to save settings.", "error");
+    }
   };
 
   useEffect(() => {
@@ -156,7 +157,7 @@ export const FormContainer: React.FC = () => {
       return;
     }
     addActiveViewChangedHandler();
-  }, [slideId]);
+  }, [addActiveViewChangedHandler, slideId, startPresentationModeHandler]);
 
   useEffect(() => {
     loadSettings();
@@ -182,24 +183,19 @@ export const FormContainer: React.FC = () => {
       />
 
       <div className="flex gap-2 mt-4 items-center justify-end">
-        <div className="flex-1 text-left text-sm text-gray-600">
-          {slideId ? (
+        <div className="flex-1 text-left text-gray-2">
+          {slideId && slideId >= 0 ? (
             <>
               Current Slide ID: <span className="font-mono">{slideId}</span>
-              {currentSlide && currentSlide !== slideId && (
-                <>
-                  {" | "}Active Slide: <span className="font-mono">{currentSlide}</span>
-                </>
-              )}
             </>
           ) : (
-            <>No slide selected</>
+            <>Settings not yet saved.</>
           )}
         </div>
         <Button
           id="testBtn"
           onClick={handleRunCommand}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+          className="px-2 py-1 text-white rounded cursor-pointer bg-accent border border-accent-low hover:bg-accent/90"
         >
           Test
         </Button>
@@ -207,7 +203,7 @@ export const FormContainer: React.FC = () => {
         <Button
           id="saveBtn"
           onClick={handleSaveSettings}
-          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+          className="px-2 py-1 text-white rounded cursor-pointer bg-accent-high border border-accent-high hover:bg-accent-high/90"
         >
           Save
         </Button>

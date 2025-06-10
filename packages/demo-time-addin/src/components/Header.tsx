@@ -10,9 +10,9 @@ export const Header: React.FC<HeaderProps> = ({
   title = "Demo Time Trigger"
 }) => {
   return (
-    <div className="header">
-      <img className='mx-auto h-4 w-4' src={logoUrl} alt={`${title} Logo`} />
-      <h2>{title}</h2>
-    </div>
+    <header className="text-center mb-5 flex items-center justify-center gap-2">
+      <img className='h-10 w-10' src={logoUrl} alt={`${title} Logo`} />
+      <h2 className='sr-only'>{title}</h2>
+    </header>
   );
 };

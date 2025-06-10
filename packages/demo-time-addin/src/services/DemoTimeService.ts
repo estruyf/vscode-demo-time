@@ -1,6 +1,6 @@
-interface CommandPayload {
-  id: string;
-  bringToFront: boolean;
+interface SlideData {
+  index: number;
+  [key: string]: unknown;
 }
 
 /**
@@ -15,11 +15,11 @@ export class DemoTimeService {
    * @returns Promise with the response
    */
   static async runCommand(serverUrl: string, commandId: string): Promise<void> {
-    const url = serverUrl.replace(/\/$/, "");
-    const payload: CommandPayload = {
-      id: commandId,
-      bringToFront: true,
-    };
+    const url = serverUrl.replace(/\/$/, '');
+    // const payload: CommandPayload = {
+    //   id: commandId,
+    //   bringToFront: true,
+    // };
 
     // try {
     //   const response = await fetch(`${url}/api/runbyid`, {
@@ -54,9 +54,9 @@ export class DemoTimeService {
    * @param commandId - The command ID to save
    */
   static saveSettings(serverUrl: string, commandId: string, slideId: number): void {
-    this.setSetting("dtServerUrl", serverUrl);
-    this.setSetting("dtCommandId", commandId);
-    this.setSetting("dtAddInSlideId", slideId.toString());
+    this.setSetting('dtServerUrl', serverUrl);
+    this.setSetting('dtCommandId', commandId);
+    this.setSetting('dtAddInSlideId', slideId.toString());
   }
 
   /**
@@ -65,12 +65,12 @@ export class DemoTimeService {
    * @returns Object containing the saved settings
    */
   static loadSettings(): { serverUrl: string; commandId: string; slideId: number } {
-    const slideIdStr = this.getSetting("dtAddInSlideId");
+    const slideIdStr = this.getSetting('dtAddInSlideId');
     const slideId = slideIdStr !== null ? parseInt(slideIdStr, 10) : -1;
 
     return {
-      serverUrl: this.getSetting("dtServerUrl") || "http://localhost:3710",
-      commandId: this.getSetting("dtCommandId") || "",
+      serverUrl: this.getSetting('dtServerUrl') || 'http://localhost:3710',
+      commandId: this.getSetting('dtCommandId') || '',
       slideId: isNaN(slideId) ? -1 : slideId,
     };
   }
@@ -92,7 +92,7 @@ export class DemoTimeService {
           Office.context.document.getActiveViewAsync((viewResult) => {
             if (
               viewResult.status === Office.AsyncResultStatus.Succeeded &&
-              viewResult.value === "read"
+              viewResult.value === 'read'
             ) {
               resolve(true); // In presentation mode
             } else {
@@ -100,7 +100,7 @@ export class DemoTimeService {
             }
           });
         } catch (error) {
-          console.error("Error checking presentation mode:", error);
+          console.error('Error checking presentation mode:', error);
           resolve(false); // Default to not in presentation mode on error
         }
       } else {
@@ -110,8 +110,8 @@ export class DemoTimeService {
   }
 
   static async getCurrentSlideIndex(): Promise<number | null> {
-    return new Promise((resolve, reject) => {
-      Office.context.document.getSelectedDataAsync<{ slides?: any[] }>(
+    return new Promise((resolve) => {
+      Office.context.document.getSelectedDataAsync<{ slides?: SlideData[] }>(
         Office.CoercionType.SlideRange,
         (slideResult) => {
           if (
@@ -122,7 +122,7 @@ export class DemoTimeService {
           ) {
             const currentSlide = slideResult.value.slides[0];
             const slideIndex = currentSlide.index;
-            if (typeof slideIndex === "number") {
+            if (typeof slideIndex === 'number') {
               resolve(slideIndex);
             } else {
               resolve(null);
@@ -130,7 +130,7 @@ export class DemoTimeService {
           } else {
             resolve(null);
           }
-        }
+        },
       );
     });
   }
@@ -142,11 +142,11 @@ export class DemoTimeService {
   private static setSetting(name: string, value: string): Promise<void> {
     return new Promise((resolve, reject) => {
       Office.context.document.settings.set(name, value);
-      Office.context.document.settings.saveAsync((result) => {
+      Office.context.document.settings.saveAsync((result: Office.AsyncResult<void>) => {
         if (result.status === Office.AsyncResultStatus.Succeeded) {
           resolve();
         } else {
-          reject(new Error(`Failed to save setting ${name}: ${result.error.message}`));
+          reject(new Error(`Failed to save setting ${name}: ${result.error?.message}`));
         }
       });
     });

@@ -18,7 +18,7 @@
   </Hosts>
   <DefaultSettings>
     <SourceLocation DefaultValue="https://demo-time-addin-csg0h6h7hcfpf8e2.westeurope-01.azurewebsites.net/trigger.html" />
-    <RequestedHeight>550</RequestedHeight>
+    <RequestedHeight>500</RequestedHeight>
     <RequestedWidth>300</RequestedWidth>
   </DefaultSettings>
   <Permissions>ReadWriteDocument</Permissions>
