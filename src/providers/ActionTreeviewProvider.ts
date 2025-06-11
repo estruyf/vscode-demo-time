@@ -75,10 +75,8 @@ export class ActionTreeItem extends TreeItem {
       ? !image.custom
         ? new ThemeIcon(image.name, image.color)
         : {
-            light: Uri.joinPath(Uri.file(extPath), 'assets', 'icons', 'light', `${image.name}.svg`)
-              .fsPath,
-            dark: Uri.joinPath(Uri.file(extPath), 'assets', 'icons', 'dark', `${image.name}.svg`)
-              .fsPath,
+            light: Uri.joinPath(Uri.file(extPath), 'assets', 'icons', 'light', `${image.name}.svg`),
+            dark: Uri.joinPath(Uri.file(extPath), 'assets', 'icons', 'dark', `${image.name}.svg`),
           }
       : undefined;
 
