@@ -9,7 +9,7 @@ export class ExternalAppsService {
     if (platform === 'darwin') {
       command = `osascript -e 'tell application "Microsoft PowerPoint"' -e 'activate' -e 'end tell'`;
     } else if (platform === 'win32') {
-      command = `powershell -Command "& { $powerpoint = Get-Process -Name POWERPNT; if ($powerpoint) { Add-Type -TypeDefinition \\"using System; using System.Runtime.InteropServices; public class User32 { [DllImport('user32.dll')] public static extern bool SetForegroundWindow(IntPtr hWnd); }\\"; $handle = $powerpoint.MainWindowHandle; [User32]::SetForegroundWindow($handle); } }"`;
+      command = `powershell -Command "& { $powerpoint = Get-Process -Name POWERPNT -ErrorAction SilentlyContinue; if ($powerpoint) { Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('%{TAB}'); $powerpoint.MainWindowHandle | ForEach-Object { (New-Object -ComObject WScript.Shell).AppActivate($powerpoint.Id) } } }"`;
     } else {
       throw new Error('Unsupported platform');
     }
