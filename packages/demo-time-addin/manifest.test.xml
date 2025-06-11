@@ -11,8 +11,8 @@
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Demo Time for PowerPoint"/>
   <Description DefaultValue="Easily trigger live demos directly within PowerPoint using the Demo Time add-in."/>
-  <IconUrl DefaultValue="http://localhost:5173/assets/icon-32.png"/>
-  <HighResolutionIconUrl DefaultValue="http://localhost:5173/assets/icon-64.png"/>
+  <IconUrl DefaultValue="https://demo-time-addin-csg0h6h7hcfpf8e2.westeurope-01.azurewebsites.net/assets/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://demo-time-addin-csg0h6h7hcfpf8e2.westeurope-01.azurewebsites.net/assets/icon-64.png"/>
   <SupportUrl DefaultValue="https://demotime.elio.dev"/>
   <AppDomains>
     <AppDomain>https://demotime.elio.dev</AppDomain>
@@ -21,7 +21,7 @@
     <Host Name="Presentation" />
   </Hosts>
   <DefaultSettings>
-    <SourceLocation DefaultValue="http://localhost:5173" />
+    <SourceLocation DefaultValue="https://demo-time-addin-csg0h6h7hcfpf8e2.westeurope-01.azurewebsites.net" />
     <RequestedHeight>500</RequestedHeight>
   </DefaultSettings>
   <Permissions>ReadWriteDocument</Permissions>
