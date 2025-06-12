@@ -41,7 +41,15 @@ export class DemoTimeService {
     //   throw new Error(`Error running command: ${error.message}`);
     // }
 
-    window.location.href = `${url}/api/runById?id=${commandId}&bringToFront=true`;
+    const commandUrl = `${url}/api/runById?id=${commandId}&bringToFront=true`;
+    if (
+      Office.context.host === Office.HostType.PowerPoint &&
+      Office.context.platform === Office.PlatformType.OfficeOnline
+    ) {
+      window.open(commandUrl);
+    } else {
+      window.location.href = commandUrl;
+    }
     // window.location.href = `vscode://eliostruyf.vscode-demo-time?command=${commandId}`;
     // window.open(`${url}/api/runById?id=${commandId}&bringToFront=true`);
     // window.open(`vscode://eliostruyf.vscode-demo-time?command=${commandId}`);
