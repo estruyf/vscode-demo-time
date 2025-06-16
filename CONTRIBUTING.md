@@ -24,8 +24,7 @@ high-quality project.
 ## Requirements & Documentation
 
 - Reference related issues or requirements in your PR.
-- Update documentation (`README.md`, `docs/`, [demotime.elio.dev](https://demotime.elio.dev)) as
-  needed.
+- Update documentation (`README.md`, `docs/`, [demotime.show](https://demotime.show)) as needed.
 
 ## Git Branching
 

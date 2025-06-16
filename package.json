@@ -26,7 +26,7 @@
       "href": "https://github.com/sponsors/estruyf"
     }
   ],
-  "homepage": "https://demotime.elio.dev/",
+  "homepage": "https://demotime.show/",
   "sponsor": {
     "url": "https://github.com/sponsors/estruyf"
   },
@@ -593,7 +593,7 @@
     "viewsWelcome": [
       {
         "view": "demo-time",
-        "contents": "Welcome to Demo Time! Start by creating a `.demo/demo.json` file or clicking the initialize button.\n\n[Initialize](command:demo-time.initialize)\n\n[Learn More](https://demotime.elio.dev)"
+        "contents": "Welcome to Demo Time! Start by creating a `.demo/demo.json` file or clicking the initialize button.\n\n[Initialize](command:demo-time.initialize)\n\n[Learn More](https://demotime.show)"
       }
     ],
     "walkthroughs": [
@@ -624,7 +624,7 @@
           {
             "id": "demo-time.documentation",
             "title": "Explore Documentation",
-            "description": "Visit the [Demo Time Documentation](https://demotime.elio.dev) for more details.",
+            "description": "Visit the [Demo Time Documentation](https://demotime.show) for more details.",
             "media": {
               "image": "assets/logo/demotime-bg.svg",
               "altText": "Demo Time Logo"

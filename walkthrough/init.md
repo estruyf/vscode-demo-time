@@ -7,7 +7,8 @@ Welcome to **Demo Time**! Follow these steps to get started:
 - Go to the **Explorer** panel in Visual Studio Code.
 - Locate the **Demo Time** view.
 
-> You can also trigger it by executing the [Focus on Demo Time View](command:demo-time.focus) command in the command palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS).
+> You can also trigger it by executing the [Focus on Demo Time View](command:demo-time.focus)
+> command in the command palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS).
 
 ## Step 2: Initialize the extension
 
@@ -19,4 +20,4 @@ Welcome to **Demo Time**! Follow these steps to get started:
 - Ensure the `.demo/demo.json` file is created in your workspace.
 - You can now start adding steps to your demo.
 
-For more details, check out the [Demo Time documentation](https://demotime.elio.dev).
+For more details, check out the [Demo Time documentation](https://demotime.show).
