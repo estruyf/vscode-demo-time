@@ -48,10 +48,24 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       setter: React.Dispatch<React.SetStateAction<string | undefined>>
     ) => {
       try {
-        const template = await messageHandler.request<string>(
+        const templatePath = await messageHandler.request<string>(
           WebViewMessages.toVscode.getSetting,
           configKey
         );
+        if (!templatePath) {
+          setter(undefined);
+          return;
+        }
+
+        const template = await messageHandler.request<string>(
+          WebViewMessages.toVscode.getFileContents,
+          templatePath
+        );
+        if (!template) {
+          setter(undefined);
+          return;
+        }
+
         if (template && crntSlide?.frontmatter) {
           const processed = convertTemplateToHtml(template, crntSlide.frontmatter, webviewUrl);
           setter(processed);
