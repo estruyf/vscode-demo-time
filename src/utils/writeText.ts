@@ -3,7 +3,7 @@ import { getLineInsertionSpeed } from "./getLineInsertionSpeed";
 import { sleep } from "./sleep";
 
 export const writeText = async (editor: TextEditor, text: string, position: Position, speed: number = 25) => {
-  // Write leter by letter
+  // Write letter by letter
   const lineSpeed = getLineInsertionSpeed(speed) || 25;
   const contentArray = text.split("");
   let i = 0;

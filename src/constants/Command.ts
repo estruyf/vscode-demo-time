@@ -1,4 +1,4 @@
-export const EXTENSION_NAME = "demo-time";
+export const EXTENSION_NAME = 'demo-time';
 
 export const COMMAND = {
   // Documentation
@@ -28,6 +28,7 @@ export const COMMAND = {
   showOutputChannel: `${EXTENSION_NAME}.showOutputChannel`,
   // Panel view
   collapseAll: `${EXTENSION_NAME}.collapseAll`,
+  treeviewFind: `${EXTENSION_NAME}.treeviewFind`,
   // Countdown
   startCountdown: `${EXTENSION_NAME}.startCountdown`,
   resetCountdown: `${EXTENSION_NAME}.resetCountdown`,

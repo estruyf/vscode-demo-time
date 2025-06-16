@@ -1,10 +1,10 @@
-import { Uri, window, workspace } from "vscode";
-import { Extension } from "./Extension";
-import { DemoFiles, DemoFile } from "../models";
-import { Config, General } from "../constants";
-import { parse as jsonParse } from "jsonc-parser";
-import { createDemoFile, readFile, sanitizeFileName, sortFiles, writeFile } from "../utils";
-import { Preview } from "../preview/Preview";
+import { Uri, window, workspace } from 'vscode';
+import { Extension } from './Extension';
+import { DemoFiles, DemoFile } from '../models';
+import { Config, General } from '../constants';
+import { parse as jsonParse } from 'jsonc-parser';
+import { createDemoFile, readFile, sanitizeFileName, sortFiles, writeFile } from '../utils';
+import { Preview } from '../preview/Preview';
 
 export class FileProvider {
   public static register() {
@@ -15,7 +15,7 @@ export class FileProvider {
         if (e.uri.fsPath.endsWith(`.md`)) {
           Preview.triggerUpdate(e.uri);
         }
-      })
+      }),
     );
   }
 
@@ -80,15 +80,15 @@ export class FileProvider {
     const demoFileOptions = files.map((path) => {
       return {
         label: (demoFiles as any)[path].title,
-        description: path.split("/").pop(),
+        description: path.split('/').pop(),
       };
     });
 
-    demoFileOptions.push({ label: "Create new file", description: "" });
+    demoFileOptions.push({ label: 'Create new file', description: '' });
 
     const demoFilePick = await window.showQuickPick(demoFileOptions, {
       title: Config.title,
-      placeHolder: "Select a demo file",
+      placeHolder: 'Select a demo file',
     });
 
     if (!demoFilePick) {
@@ -96,7 +96,7 @@ export class FileProvider {
     }
 
     let demoFilePath: string | undefined = undefined;
-    if (demoFilePick.label === "Create new file") {
+    if (demoFilePick.label === 'Create new file') {
       const file = await createDemoFile();
       if (!file) {
         return;
@@ -107,7 +107,9 @@ export class FileProvider {
     } else if (!demoFilePick.description) {
       return;
     } else {
-      demoFilePath = sortFiles(demoFiles).find((path) => path.endsWith(demoFilePick.description as string));
+      demoFilePath = sortFiles(demoFiles).find((path) =>
+        path.endsWith(demoFilePick.description as string),
+      );
       if (!demoFilePath) {
         return;
       }
@@ -131,12 +133,15 @@ export class FileProvider {
       return;
     }
 
-    const demoTitle = fileName || "Demo";
+    const demoTitle = fileName || 'Demo';
     if (fileName) {
       fileName = sanitizeFileName(fileName);
     }
 
-    const files = await workspace.findFiles(`${General.demoFolder}/${fileName || `demo.json`}`, `**/node_modules/**`);
+    const files = await workspace.findFiles(
+      `${General.demoFolder}/${fileName || `demo.json`}`,
+      `**/node_modules/**`,
+    );
 
     if (files.length > 0) {
       return;
@@ -144,7 +149,7 @@ export class FileProvider {
 
     const file = Uri.joinPath(workspaceFolder.uri, General.demoFolder, fileName || `demo.json`);
     const content = `{
-  "$schema": "https://demotime.elio.dev/demo-time.schema.json",
+  "$schema": "https://demotime.show/demo-time.schema.json",
   "title": "${demoTitle}",
   "description": "",
   "version": 2,

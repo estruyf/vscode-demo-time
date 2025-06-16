@@ -4,7 +4,7 @@ import { transformImageUrl, twoColumnFormatting } from '../utils';
 import rehypePrettyCode from 'rehype-pretty-code';
 import { usePrevious } from '../hooks/usePrevious';
 import { messageHandler } from '@estruyf/vscode/dist/client/webview';
-import { SlideTransition, WebViewMessages } from '../../constants';
+import { WebViewMessages } from '../../constants';
 import { convertTemplateToHtml } from '../../utils/convertTemplateToHtml';
 import { SlideMetadata } from '../../models';
 import { renderToString } from 'react-dom/server';
@@ -33,7 +33,6 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   const [isReady, setIsReady] = React.useState(false);
   const [customTheme, setCustomTheme] = React.useState<string | undefined>(undefined);
   const [customLayout, setCustomLayout] = React.useState<string | undefined>(undefined);
-  const [transition, setTransition] = React.useState<SlideTransition | undefined>(undefined);
   const [template, setTemplate] = React.useState<string | undefined>(undefined);
 
   const {
@@ -71,7 +70,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
             crntSlideContent = renderToString(processedContent.reactContent);
           }
 
-          let html = await convertTemplateToHtml(templateHtml, {
+          let html = convertTemplateToHtml(templateHtml, {
             metadata,
             content: crntSlideContent,
           });
@@ -120,7 +119,6 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     setIsReady(false);
     setCustomLayout(undefined);
     setCustomTheme(undefined);
-    setTransition(matter?.transition || undefined);
     setTemplate(undefined);
 
     const cLayout = matter?.customLayout || undefined;
@@ -163,9 +161,9 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
 
       {
         template ? (
-          <div key={filePath} className={`slide__content__custom ${transition || ""}`} dangerouslySetInnerHTML={{ __html: template }} />
+          <div key={filePath} className={`slide__content__custom`} dangerouslySetInnerHTML={{ __html: template }} />
         ) : (
-          <div key={filePath} className={`slide__content__inner ${transition || ""}`}>{markdown}</div>
+          <div key={filePath} className={`slide__content__inner`}>{markdown}</div>
         )
       }
     </>

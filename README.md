@@ -17,8 +17,8 @@
 </p>
 
 <h2 align="center">
-  <a href="https://demotime.elio.dev/" title="Demo Time Documentation">
-    Documentation 👉 demotime.elio.dev
+  <a href="https://demotime.show/" title="Demo Time Documentation">
+    Documentation 👉 demotime.show
   </a>
 </h2>
 
@@ -36,12 +36,18 @@
 ## Getting Started
 
 1. **Installation**: Install the extension.​
-2. **Initialization**: After installation, initialize the extension in your project by opening the Explorer panel in VS Code. Locate the **Demo Time** view and click on the "**Initialize**" button. This action creates a `.demo` folder in your workspace containing a `demo.json` file.​
-3. **Creating Demos**: Populate the `demo.json` file with your actions, defining each step and action as required.​ More information about the available actions can be found in the [supported actions](https://demotime.elio.dev/actions/) documenation section.
+2. **Initialization**: After installation, initialize the extension in your project by opening the
+   Explorer panel in VS Code. Locate the **Demo Time** view and click on the "**Initialize**"
+   button. This action creates a `.demo` folder in your workspace containing a `demo.json` file.​
+3. **Creating Demos**: Populate the `demo.json` file with your actions, defining each step and
+   action as required.​ More information about the available actions can be found in the
+   [supported actions](https://demotime.show/actions/) documentation section.
 
 ## Documentation
 
-For detailed instructions, advanced configurations, and best practices, please refer to the comprehensive documentation available at [https://demotime.elio.dev](https://demotime.elio.dev). This resource offers in-depth guides and examples to help you maximize the extension's capabilities.
+For detailed instructions, advanced configurations, and best practices, please refer to the
+comprehensive documentation available at [https://demotime.show](https://demotime.show). This
+resource offers in-depth guides and examples to help you maximize the extension's capabilities.
 
 ## Example demo file
 
@@ -49,7 +55,7 @@ Here is an example demo:
 
 ```json
 {
-  "$schema": "https://demotime.elio.dev/demo-time.schema.json",
+  "$schema": "https://demotime.show/demo-time.schema.json",
   "title": "Sample demo",
   "description": "This is a sample demo configuration to show the capabilities of the extension.",
   "demos": [
@@ -99,9 +105,22 @@ You can also explore a comprehensive example in the following GitHub Repositorie
 - [presentation-github-actions](https://github.com/estruyf/presentation-github-actions)
 - [presentation-m365-playwright-github-actions](https://github.com/estruyf/presentation-m365-playwright-github-actions)
 
+## Testing
+
+Run linting and unit tests with:
+
+```bash
+npm run lint
+npm test
+```
+
+Tests use [Jest](https://jestjs.io/) with built-in coverage. New tests are located in the `tests/`
+directory.
+
 ## Support
 
-If you enjoy my work and find them useful, consider sponsor me and the ecosystem to help Open Source sustainable. Thank you!
+If you enjoy my work and find them useful, consider sponsor me and the ecosystem to help Open Source
+sustainable. Thank you!
 
 <p align="center">
   <a href="https://github.com/sponsors/estruyf" title="Sponsor Elio Struyf" target="_blank">

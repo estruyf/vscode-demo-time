@@ -1,6 +1,6 @@
-import { FrontMatterParser } from "./FrontMatterParser";
-import { ParserOptions, Slide, InternalSlide, SlideMetadata } from "../models";
-import { SlideLayout } from "../constants";
+import { FrontMatterParser } from './FrontMatterParser';
+import { ParserOptions, Slide, InternalSlide, SlideMetadata } from '../models';
+import { SlideLayout } from '../constants';
 
 export class SlideParser {
   private defaultOptions: Required<ParserOptions> = {
@@ -23,12 +23,13 @@ export class SlideParser {
       ...this.options,
     };
 
-    if (!markdown || markdown.trim() === "") {
+    if (!markdown || markdown.trim() === '') {
       return [];
     }
 
     // Extract document-level frontmatter
-    const { frontmatter: docFrontMatter, remainingContent } = FrontMatterParser.extractFrontmatter(markdown);
+    const { frontmatter: docFrontMatter, remainingContent } =
+      FrontMatterParser.extractFrontmatter(markdown);
     let processedMarkdown = remainingContent || markdown;
 
     // Split the markdown content into lines
@@ -46,7 +47,7 @@ export class SlideParser {
       docFrontMatter: { ...docFrontMatter },
       frontmatter: {},
       inCodeBlock: false,
-      codeBlockMarker: "```",
+      codeBlockMarker: '```',
     };
 
     let slideStarted = true; // Set to true to capture the first slide content
@@ -59,9 +60,9 @@ export class SlideParser {
       const trimmedLine = line.trim();
 
       // Handle code blocks (to avoid misinterpreting code block content as delimiters)
-      if (!currentSlide.inCodeBlock && trimmedLine.startsWith("```")) {
+      if (!currentSlide.inCodeBlock && trimmedLine.startsWith('```')) {
         currentSlide.inCodeBlock = true;
-        currentSlide.codeBlockMarker = trimmedLine.match(/^`+/)?.[0] || "```";
+        currentSlide.codeBlockMarker = trimmedLine.match(/^`+/)?.[0] || '```';
         currentSlide.content.push(line);
         continue;
       }
@@ -75,7 +76,7 @@ export class SlideParser {
       }
 
       // Check for slide delimiter
-      if (trimmedLine === "---") {
+      if (trimmedLine === '---') {
         if (collectingFrontmatter) {
           // End of frontmatter section
           collectingFrontmatter = false;
@@ -87,7 +88,7 @@ export class SlideParser {
         } else {
           // End of current slide, if not the first delimiter after frontmatter parsing
           if (slideStarted && (currentSlide.content.length > 0 || mergedOptions.includeEmpty)) {
-            const slideContent = currentSlide.content.join("\n");
+            const slideContent = currentSlide.content.join('\n');
             slides.push({
               content: mergedOptions.trimContent ? slideContent.trim() : slideContent,
               rawContent: slideContent,
@@ -103,7 +104,7 @@ export class SlideParser {
             docFrontMatter: { ...docFrontMatter },
             frontmatter: {},
             inCodeBlock: false,
-            codeBlockMarker: "```",
+            codeBlockMarker: '```',
           };
           collectingFrontmatter = true;
         }
@@ -122,11 +123,11 @@ export class SlideParser {
             value = keyValueMatch[3];
           } else {
             // Unquoted value, strip inline comments (anything after #)
-            value = keyValueMatch[4].replace(/\s+#.*$/, "");
+            value = keyValueMatch[4].replace(/\s+#.*$/, '');
           }
           currentFrontmatter[key] = value.trim();
           continue;
-        } else if (trimmedLine === "") {
+        } else if (trimmedLine === '') {
           // Empty line within frontmatter is allowed
           continue;
         } else {
@@ -147,7 +148,7 @@ export class SlideParser {
 
     // Add the last slide if there's content
     if (currentSlide.content.length > 0 || mergedOptions.includeEmpty) {
-      const slideContent = currentSlide.content.join("\n");
+      const slideContent = currentSlide.content.join('\n');
       slides.push({
         content: mergedOptions.trimContent ? slideContent.trim() : slideContent,
         rawContent: slideContent,
@@ -175,8 +176,27 @@ export class SlideParser {
       if (slide.docFrontMatter.customTheme) {
         slide.frontmatter.customTheme = slide.docFrontMatter.customTheme;
       }
+      if (slide.docFrontMatter.customLayout) {
+        slide.frontmatter.customLayout = slide.docFrontMatter.customLayout;
+      }
       if (slide.docFrontMatter.transition && !slide.frontmatter.transition) {
         slide.frontmatter.transition = slide.docFrontMatter.transition;
+      }
+
+      if (slide.docFrontMatter.header && !slide.frontmatter.header) {
+        slide.frontmatter.header = slide.docFrontMatter.header;
+      }
+      if (slide.docFrontMatter.footer && !slide.frontmatter.footer) {
+        slide.frontmatter.footer = slide.docFrontMatter.footer;
+      }
+
+      for (const [key, value] of Object.entries(slide.docFrontMatter)) {
+        if (
+          !['theme', 'customTheme', 'customLayout', 'transition', 'header', 'footer', 'layout'].includes(key) &&
+          slide.frontmatter[key] === undefined
+        ) {
+          slide.frontmatter[key] = value;
+        }
       }
 
       return slide;
@@ -211,19 +231,19 @@ export class SlideParser {
     return slides
       .map((slide, index) => {
         // Convert frontmatter to YAML string
-        let frontmatterStr = "";
+        let frontmatterStr = '';
         if (Object.keys(slide.frontmatter).length > 0) {
           frontmatterStr = `---\n${Object.entries(slide.frontmatter)
             .map(([key, value]) => `${key}: ${value}`)
-            .join("\n")}\n---\n\n`;
+            .join('\n')}\n---\n\n`;
         }
 
         // Add slide delimiter if not the first slide
-        const delimiter = index > 0 ? "---\n\n" : "";
+        const delimiter = index > 0 ? '---\n\n' : '';
 
         // Combine parts
         return `${delimiter}${frontmatterStr}${slide.content}`;
       })
-      .join("\n\n");
+      .join('\n\n');
   }
 }
