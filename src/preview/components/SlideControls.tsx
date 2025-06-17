@@ -14,6 +14,7 @@ export interface ISlideControlsProps {
   currentSlide?: number;
   updateSlideIdx: (index: number) => void;
   triggerMouseMove: (value: boolean) => void;
+  hideControls: () => void;
 }
 
 export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISlideControlsProps>> = ({
@@ -23,7 +24,8 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   slides,
   currentSlide = 0,
   updateSlideIdx,
-  triggerMouseMove
+  triggerMouseMove,
+  hideControls
 }: React.PropsWithChildren<ISlideControlsProps>) => {
   const [previousEnabled, setPreviousEnabled] = React.useState(false);
   const [isPresentationMode, setIsPresentationMode] = React.useState(false);
@@ -136,6 +138,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
             </div>
           )} action={closeSidebar} />
           <SlideControl title="Show demos" iconName='list-unordered' action={focusPanel} />
+          <SlideControl title="Hide controls" iconName='eye-closed' action={hideControls} />
         </div>
 
         <div className="flex items-center justify-center gap-4">
