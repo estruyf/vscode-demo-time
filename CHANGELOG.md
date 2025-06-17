@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.6.0] - 2025-06-17
+
+- [#156](https://github.com/estruyf/vscode-demo-time/issues/156): Add preview action to hide the mouse cursor and action bar
+
 ## [1.5.1] - 2025-06-17
 
 - fix: add 'image' to allowed frontmatter properties in SlideParser
