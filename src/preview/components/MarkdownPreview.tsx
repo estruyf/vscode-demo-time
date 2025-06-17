@@ -37,7 +37,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const { content, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();
   const ref = React.useRef<HTMLDivElement>(null);
   const slideRef = React.useRef<HTMLDivElement>(null);
-  const { cursorVisible, resetCursorTimeout } = useCursor();
+  const { cursorVisible, resetCursorTimeout, hideCursor } = useCursor();
   const { vsCodeTheme, isDarkTheme } = useTheme();
   const { scale } = useScale(ref, slideRef);
   const { mousePosition, handleMouseMove } = useMousePosition(slideRef, scale, resetCursorTimeout);
@@ -258,6 +258,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           currentSlide={crntSlide?.index}
           updateSlideIdx={updateSlideIdx}
           triggerMouseMove={setIsMouseMoveEnabled}
+          hideCursor={hideCursor}
         >
           {/* Mouse Position */}
           {mousePosition && showControls && cursorVisible && (

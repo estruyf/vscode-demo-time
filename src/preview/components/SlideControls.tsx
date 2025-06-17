@@ -14,6 +14,7 @@ export interface ISlideControlsProps {
   currentSlide?: number;
   updateSlideIdx: (index: number) => void;
   triggerMouseMove: (value: boolean) => void;
+  hideCursor: () => void;
 }
 
 export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISlideControlsProps>> = ({
@@ -23,7 +24,8 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   slides,
   currentSlide = 0,
   updateSlideIdx,
-  triggerMouseMove
+  triggerMouseMove,
+  hideCursor
 }: React.PropsWithChildren<ISlideControlsProps>) => {
   const [previousEnabled, setPreviousEnabled] = React.useState(false);
   const [isPresentationMode, setIsPresentationMode] = React.useState(false);
@@ -94,6 +96,10 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
     messageHandler.send(WebViewMessages.toVscode.openFile, path);
   }, [path]);
 
+  const hidePresentation = React.useCallback(() => {
+    hideCursor();
+  }, [hideCursor]);
+
   React.useEffect(() => {
     if (show) {
       messageHandler.request<boolean>(WebViewMessages.toVscode.getPreviousEnabled).then((previous) => {
@@ -127,6 +133,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
           <SlideControl title="Toggle presentation mode" className={`${isPresentationMode ? `bg-[var(--vscode-statusBarItem-errorBackground)] hover:-[var(--vscode-statusBarItem-errorHoverBackground)]` : ''}`} icon={<ProjectorIcon className={`w-4 h-4 inline-flex justify-center items-center ${isPresentationMode ? `text-[var(--vscode-statusBarItem-errorForeground)] hover:text-[var(--vscode-statusBarItem-errorHoverForeground)]` : `text-[var(--vscode-editorWidget-foreground)]`}`} />} action={togglePresentationMode} />
           <SlideControl title="Toggle fullscreen" iconName="screen-full" action={toggleFullscreen} />
           <SlideControl title="Toggle presentation view" icon={<WhiteboardIcon className="w-4 h-4 text-[var(--vscode-editorWidget-foreground)] inline-flex justify-center items-center" />} action={togglePresentationView} />
+          <SlideControl title="Hide mouse and action bar" iconName="eye-closed" action={hidePresentation} />
           <SlideControl title="Close sidebar" icon={(
             <div className='relative inline-flex justify-center items-center'>
               <div className='absolute -top-[2px] -right-[2px] w-2 h-2 bg-[var(--vscode-editorWidget-foreground)] rounded-full inline-flex justify-center items-center'>

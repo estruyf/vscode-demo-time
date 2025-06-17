@@ -14,6 +14,13 @@ export default function useCursor() {
     }, 5000);
   }, []);
 
+  const hideCursor = useCallback(() => {
+    if (cursorTimeoutRef.current) {
+      window.clearTimeout(cursorTimeoutRef.current);
+    }
+    setCursorVisible(false);
+  }, []);
+
   useEffect(() => {
     return () => {
       if (cursorTimeoutRef.current) {
@@ -24,6 +31,7 @@ export default function useCursor() {
 
   return {
     cursorVisible,
-    resetCursorTimeout
+    resetCursorTimeout,
+    hideCursor
   };
 }
