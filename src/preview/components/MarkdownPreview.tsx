@@ -37,10 +37,23 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const { content, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();
   const ref = React.useRef<HTMLDivElement>(null);
   const slideRef = React.useRef<HTMLDivElement>(null);
-  const { cursorVisible, resetCursorTimeout } = useCursor();
+  const { cursorVisible, resetCursorTimeout, hideCursor } = useCursor();
   const { vsCodeTheme, isDarkTheme } = useTheme();
   const { scale } = useScale(ref, slideRef);
   const { mousePosition, handleMouseMove } = useMousePosition(slideRef, scale, resetCursorTimeout);
+
+  const handlePreviewMouseMove = React.useCallback((ev: React.MouseEvent<HTMLDivElement>) => {
+    setShowControls(true);
+    resetCursorTimeout();
+    if (isMouseMoveEnabled) {
+      handleMouseMove(ev);
+    }
+  }, [isMouseMoveEnabled, handleMouseMove, resetCursorTimeout]);
+
+  const hidePreviewControls = React.useCallback(() => {
+    setShowControls(false);
+    hideCursor();
+  }, [hideCursor]);
 
   const fetchTemplate = React.useCallback(
     async (
@@ -196,7 +209,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         className={`slide ${theme || "default"} relative w-full h-full overflow-hidden`}
         onMouseEnter={() => setShowControls(true)}
         onMouseLeave={() => setShowControls(false)}
-        onMouseMove={isMouseMoveEnabled ? handleMouseMove : undefined}
+        onMouseMove={handlePreviewMouseMove}
         style={{ cursor: cursorVisible ? 'default' : 'none' }}
       >
         <div
@@ -258,6 +271,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           currentSlide={crntSlide?.index}
           updateSlideIdx={updateSlideIdx}
           triggerMouseMove={setIsMouseMoveEnabled}
+          hideControls={hidePreviewControls}
         >
           {/* Mouse Position */}
           {mousePosition && showControls && cursorVisible && (

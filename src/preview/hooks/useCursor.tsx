@@ -4,6 +4,13 @@ export default function useCursor() {
   const [cursorVisible, setCursorVisible] = useState(true);
   const cursorTimeoutRef = useRef<number | null>(null);
 
+  const hideCursor = useCallback(() => {
+    if (cursorTimeoutRef.current) {
+      window.clearTimeout(cursorTimeoutRef.current);
+    }
+    setCursorVisible(false);
+  }, []);
+
   const resetCursorTimeout = useCallback(() => {
     if (cursorTimeoutRef.current) {
       window.clearTimeout(cursorTimeoutRef.current);
@@ -24,6 +31,7 @@ export default function useCursor() {
 
   return {
     cursorVisible,
-    resetCursorTimeout
+    resetCursorTimeout,
+    hideCursor
   };
 }
