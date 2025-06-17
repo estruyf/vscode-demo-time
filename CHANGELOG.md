@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.5.1] - 2025-06-17
+
+- fix: add 'image' to allowed frontmatter properties in SlideParser
+
 ## [1.5.0] - 2025-06-16
 
 - [#116](https://github.com/estruyf/vscode-demo-time/issues/116): Added support for slide header and
