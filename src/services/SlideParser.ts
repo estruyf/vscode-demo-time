@@ -1,6 +1,7 @@
 import { FrontMatterParser } from './FrontMatterParser';
 import { ParserOptions, Slide, InternalSlide, SlideMetadata } from '../models';
 import { SlideLayout } from '../constants';
+import YAML from 'yaml';
 
 export class SlideParser {
   private defaultOptions: Required<ParserOptions> = {
@@ -242,9 +243,7 @@ export class SlideParser {
         // Convert frontmatter to YAML string
         let frontmatterStr = '';
         if (Object.keys(slide.frontmatter).length > 0) {
-          frontmatterStr = `---\n${Object.entries(slide.frontmatter)
-            .map(([key, value]) => `${key}: ${value}`)
-            .join('\n')}\n---\n\n`;
+          frontmatterStr = `---\n${YAML.stringify(slide.frontmatter)}---\n\n`;
         }
 
         // Add slide delimiter if not the first slide
