@@ -10,7 +10,7 @@ import { ExecutionTrackingService } from '../services/ExecutionTrackingService';
 
 export const FormContainer: React.FC = () => {
   const [serverUrl, setServerUrl] = useState<string>('http://localhost:3710');
-  const [commandId, setCommandId] = useState<string>('');
+  const [demoId, setDemoId] = useState<string>('');
   const [slideId, setSlideId] = useState<number | null>(null);
   const [, setCurrentSlide] = useState<number | null>(null);
   const [crntTimeout, setCrntTimeout] = useState<number | null>(null);
@@ -56,7 +56,7 @@ export const FormContainer: React.FC = () => {
     const isExecuted = ExecutionTrackingService.isCommandExecuted(slideId);
     if (slideId !== null && slideId >= 0 && slideId === crntSlide && !isExecuted) {
       try {
-        await DemoTimeService.runCommand(serverUrl, commandId);
+        await DemoTimeService.runCommand(serverUrl, demoId);
         console.log(`Executing command for slide ${slideId}, executed was: ${isExecuted}`);
         ExecutionTrackingService.markCommandExecuted(slideId);
         forceRender({});
@@ -74,13 +74,13 @@ export const FormContainer: React.FC = () => {
     }, 500);
 
     setCrntTimeout(newTimeout);
-  }, [crntTimeout, slideId, serverUrl, commandId, showStatus]);
+  }, [crntTimeout, slideId, serverUrl, demoId, showStatus]);
 
   const loadSettings = () => {
     // Load saved settings
     const settings = DemoTimeService.loadSettings();
     setServerUrl(settings.serverUrl);
-    setCommandId(settings.commandId);
+    setDemoId(settings.demoId);
     setSlideId(settings.slideId);
     ExecutionTrackingService.resetExecution(settings.slideId);
     forceRender({});
@@ -122,14 +122,14 @@ export const FormContainer: React.FC = () => {
   }, [slideId]);
 
   const handleRunCommand = async () => {
-    // Only proceed if we have a command ID
-    if (!commandId) {
-      showStatus("Please enter a command ID", "error");
+    // Only proceed if we have a demo ID
+    if (!demoId) {
+      showStatus("Please enter a demo ID", "error");
       return;
     }
 
     try {
-      await DemoTimeService.runCommand(serverUrl, commandId);
+      await DemoTimeService.runCommand(serverUrl, demoId);
       // Success message
       showStatus("Command executed successfully!", "success");
     } catch (err) {
@@ -141,7 +141,7 @@ export const FormContainer: React.FC = () => {
   const handleSaveSettings = async () => {
     const slideIndex = await DemoTimeService.getCurrentSlideIndex();
     if (slideIndex !== null) {
-      DemoTimeService.saveSettings(serverUrl, commandId, slideIndex);
+      DemoTimeService.saveSettings(serverUrl, demoId, slideIndex);
       loadSettings();
       ExecutionTrackingService.resetExecution(slideIndex);
       showStatus("Settings saved successfully!", "success");
@@ -171,17 +171,17 @@ export const FormContainer: React.FC = () => {
 
       <FormField
         id="serverUrl"
-        label="Server URL"
+        label="Demo Time - API URL"
         value={serverUrl}
         placeholder="http://localhost:3710"
         onChange={setServerUrl}
       />
 
       <FormField
-        id="commandId"
-        label="Command ID"
-        value={commandId}
-        onChange={setCommandId}
+        id="demoId"
+        label="Demo ID"
+        value={demoId}
+        onChange={setDemoId}
       />
 
       <div className="flex gap-2 mt-4 items-center justify-end">

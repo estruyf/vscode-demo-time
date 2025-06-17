@@ -11,10 +11,10 @@ export class DemoTimeService {
    * Run a command on the server
    *
    * @param serverUrl - The server URL
-   * @param commandId - The command ID to run
+   * @param demoId - The Demo ID to run
    * @returns Promise with the response
    */
-  static async runCommand(serverUrl: string, commandId: string): Promise<void> {
+  static async runCommand(serverUrl: string, demoId: string): Promise<void> {
     const url = serverUrl.replace(/\/$/, '');
     // const payload: CommandPayload = {
     //   id: commandId,
@@ -41,7 +41,7 @@ export class DemoTimeService {
     //   throw new Error(`Error running command: ${error.message}`);
     // }
 
-    const commandUrl = `${url}/api/runById?id=${commandId}&bringToFront=true`;
+    const commandUrl = `${url}/api/runById?id=${demoId}&bringToFront=true`;
     if (
       Office.context.host === Office.HostType.PowerPoint &&
       Office.context.platform === Office.PlatformType.OfficeOnline
@@ -50,20 +50,20 @@ export class DemoTimeService {
     } else {
       window.location.href = commandUrl;
     }
-    // window.location.href = `vscode://eliostruyf.vscode-demo-time?command=${commandId}`;
-    // window.open(`${url}/api/runById?id=${commandId}&bringToFront=true`);
-    // window.open(`vscode://eliostruyf.vscode-demo-time?command=${commandId}`);
+    // window.location.href = `vscode://eliostruyf.vscode-demo-time?command=${demoId}`;
+    // window.open(`${url}/api/runById?id=${demoId}&bringToFront=true`);
+    // window.open(`vscode://eliostruyf.vscode-demo-time?command=${demoId}`);
   }
 
   /**
    * Save settings to localStorage
    *
    * @param serverUrl - The server URL to save
-   * @param commandId - The command ID to save
+   * @param demoId - The demo ID to save
    */
-  static saveSettings(serverUrl: string, commandId: string, slideId: number): void {
+  static saveSettings(serverUrl: string, demoId: string, slideId: number): void {
     this.setSetting('dtServerUrl', serverUrl);
-    this.setSetting('dtCommandId', commandId);
+    this.setSetting('dtDemoId', demoId);
     this.setSetting('dtAddInSlideId', slideId.toString());
   }
 
@@ -72,13 +72,13 @@ export class DemoTimeService {
    *
    * @returns Object containing the saved settings
    */
-  static loadSettings(): { serverUrl: string; commandId: string; slideId: number } {
+  static loadSettings(): { serverUrl: string; demoId: string; slideId: number } {
     const slideIdStr = this.getSetting('dtAddInSlideId');
     const slideId = slideIdStr !== null ? parseInt(slideIdStr, 10) : -1;
 
     return {
       serverUrl: this.getSetting('dtServerUrl') || 'http://localhost:3710',
-      commandId: this.getSetting('dtCommandId') || '',
+      demoId: this.getSetting('dtDemoId') || '',
       slideId: isNaN(slideId) ? -1 : slideId,
     };
   }

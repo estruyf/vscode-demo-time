@@ -1,37 +1,37 @@
 import React from "react";
 import { useLoadingScreen } from "./hooks/useLoadingScreen";
 
-const getCommandId = () => {
+const getDemoId = () => {
   if (typeof window === "undefined") return "";
   const params = new URLSearchParams(window.location.search);
   return params.get("id") || "";
 };
 
 export const RunByIdPage: React.FC = () => {
-  const [commandId, setCommandId] = React.useState<string>("");
+  const [demoId, setDemoId] = React.useState<string>("");
   useLoadingScreen();
 
   React.useEffect(() => {
-    setCommandId(getCommandId());
+    setDemoId(getDemoId());
   }, []);
 
   return (
     <div className="centered-container">
       <h1>You are about to open the Demo Time - Visual Studio Code extension.</h1>
-      {commandId ? (
+      {demoId ? (
         <>
           <p>The demo you want to run is:</p>
-          <div className="command-id">{commandId}</div>
+          <div className="demo-id">{demoId}</div>
           <p>Click to open Visual Studio Code:</p>
           <a
             className="vscode-link"
-            href={`vscode://eliostruyf.vscode-demo-time?command=${encodeURIComponent(commandId)}`}
+            href={`vscode://eliostruyf.vscode-demo-time?command=${encodeURIComponent(demoId)}`}
           >
             Open in Visual Studio Code
           </a>
         </>
       ) : (
-        <p style={{ color: "#fc5130" }}>No command id provided in the URL.</p>
+        <p style={{ color: "#fc5130" }}>No demo id provided in the URL.</p>
       )}
       <style>{`
         .centered-container {

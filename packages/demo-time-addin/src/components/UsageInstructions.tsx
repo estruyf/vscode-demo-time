@@ -9,10 +9,10 @@ export const UsageInstructions: React.FC = () => {
           In your VSCode project, set <code className="bg-gray-6 px-1 rounded">demoTime.api.enabled</code> to <code className="bg-gray-6 px-1 rounded">true</code> in your settings.
         </li>
         <li>
-          Set IDs to your demo steps.
+          Set an ID for your demo in one of your demo files.
         </li>
         <li>
-          Use these IDs in the <strong>Command ID</strong> input.
+          Use the ID in the <strong>Demo ID</strong> input.
         </li>
         <li>
           Save the settings and you are ready to go!
