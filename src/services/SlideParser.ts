@@ -192,7 +192,16 @@ export class SlideParser {
 
       for (const [key, value] of Object.entries(slide.docFrontMatter)) {
         if (
-          !['theme', 'customTheme', 'customLayout', 'transition', 'header', 'footer', 'layout'].includes(key) &&
+          ![
+            'theme',
+            'customTheme',
+            'customLayout',
+            'transition',
+            'header',
+            'footer',
+            'layout',
+            'image',
+          ].includes(key) &&
           slide.frontmatter[key] === undefined
         ) {
           slide.frontmatter[key] = value;
