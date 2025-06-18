@@ -12,6 +12,8 @@ import useTheme from '../hooks/useTheme';
 import { Slide } from '../../models';
 import { SlideParser } from '../../services/SlideParser';
 import { useMousePosition } from '../hooks/useMousePosition';
+import { useZoomCircle } from '../hooks/useZoomCircle';
+import { ZoomCircle } from './ZoomCircle';
 import { convertTemplateToHtml } from '../../utils/convertTemplateToHtml';
 
 export interface IMarkdownPreviewProps {
@@ -41,6 +43,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const { vsCodeTheme, isDarkTheme } = useTheme();
   const { scale } = useScale(ref, slideRef);
   const { mousePosition, handleMouseMove } = useMousePosition(slideRef, scale, resetCursorTimeout);
+  const { isZoomEnabled, circleWidth, toggleZoom } = useZoomCircle(slideRef, scale);
 
   const fetchTemplate = React.useCallback(
     async (
@@ -196,7 +199,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         className={`slide ${theme || "default"} relative w-full h-full overflow-hidden`}
         onMouseEnter={() => setShowControls(true)}
         onMouseLeave={() => setShowControls(false)}
-        onMouseMove={isMouseMoveEnabled ? handleMouseMove : undefined}
+        onMouseMove={isMouseMoveEnabled || isZoomEnabled ? handleMouseMove : undefined}
         style={{ cursor: cursorVisible ? 'default' : 'none' }}
       >
         <div
@@ -258,6 +261,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           currentSlide={crntSlide?.index}
           updateSlideIdx={updateSlideIdx}
           triggerMouseMove={setIsMouseMoveEnabled}
+          toggleZoom={toggleZoom}
+          isZoomEnabled={isZoomEnabled}
         >
           {/* Mouse Position */}
           {mousePosition && showControls && cursorVisible && (
@@ -266,6 +271,14 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             </div>
           )}
         </SlideControls>
+
+        {/* Zoom Circle */}
+        <ZoomCircle
+          mousePosition={mousePosition}
+          isVisible={isZoomEnabled && cursorVisible}
+          circleWidth={circleWidth}
+          scale={scale}
+        />
       </div>
     </>
   );

@@ -189,6 +189,13 @@
           "type": "string",
           "default": "",
           "description": "HTML template for slide footers. Supports Handlebars syntax with frontmatter variables. Example: '<footer><span>{{name}}</span> <span>{{date}}</span></footer>'"
+        },
+        "demoTime.slideZoomCircleWidth": {
+          "type": "number",
+          "default": 200,
+          "minimum": 50,
+          "maximum": 500,
+          "description": "Width of the zoom circle in pixels when hovering over slides"
         }
       }
     },

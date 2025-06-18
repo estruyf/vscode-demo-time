@@ -212,3 +212,9 @@ table td {
 .image-right {
   @apply grid grid-cols-2 w-full h-full auto-rows-fr;
 }
+
+/* Zoom Circle Effect */
+.zoom-circle {
+  backdrop-filter: brightness(1.5) contrast(1.2) saturate(1.3);
+  -webkit-backdrop-filter: brightness(1.5) contrast(1.2) saturate(1.3);
+}

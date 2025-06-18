@@ -14,6 +14,8 @@ export interface ISlideControlsProps {
   currentSlide?: number;
   updateSlideIdx: (index: number) => void;
   triggerMouseMove: (value: boolean) => void;
+  toggleZoom?: () => void;
+  isZoomEnabled?: boolean;
 }
 
 export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISlideControlsProps>> = ({
@@ -23,7 +25,9 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   slides,
   currentSlide = 0,
   updateSlideIdx,
-  triggerMouseMove
+  triggerMouseMove,
+  toggleZoom,
+  isZoomEnabled = false
 }: React.PropsWithChildren<ISlideControlsProps>) => {
   const [previousEnabled, setPreviousEnabled] = React.useState(false);
   const [isPresentationMode, setIsPresentationMode] = React.useState(false);
@@ -170,6 +174,16 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
               triggerMouseMove(!showPosition);
             }}
           />
+          {
+            toggleZoom && (
+              <SlideControl
+                title="Toggle zoom circle"
+                className={`hover:bg-[var(--vscode-toolbar-hoverBackground)] ${isZoomEnabled ? 'bg-[var(--vscode-toolbar-activeBackground)]' : ''}`}
+                iconName="search"
+                action={toggleZoom}
+              />
+            )
+          }
           {
             path && (
               <SlideControl title="Open slide source" iconName="preview" action={openSlideSource} />

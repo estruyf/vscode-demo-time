@@ -26,6 +26,7 @@ export const Config = {
     customTheme: "customTheme",
     slideHeaderTemplate: "slideHeaderTemplate",
     slideFooterTemplate: "slideFooterTemplate",
+    zoomCircleWidth: "slideZoomCircleWidth",
   },
   webcomponents: {
     scripts: "customWebComponents",
