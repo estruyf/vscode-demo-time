@@ -27,133 +27,89 @@ export class SlideParser {
       return [];
     }
 
-    // Extract document-level frontmatter
     const { frontmatter: docFrontMatter, remainingContent } =
       FrontMatterParser.extractFrontmatter(markdown);
-    let processedMarkdown = remainingContent || markdown;
+    const processedMarkdown = remainingContent || markdown;
 
-    // Split the markdown content into lines
     const lines = processedMarkdown.split(/\r?\n/);
-    const slides: InternalSlide[] = [];
 
-    let currentSlide: {
-      content: string[];
-      docFrontMatter: SlideMetadata;
-      frontmatter: SlideMetadata;
-      inCodeBlock: boolean;
-      codeBlockMarker: string;
-    } = {
-      content: [],
-      docFrontMatter: { ...docFrontMatter },
-      frontmatter: {},
-      inCodeBlock: false,
-      codeBlockMarker: '```',
-    };
+    const slideBlocks: string[] = [];
+    let buffer: string[] = [];
+    let inCodeBlock = false;
+    let codeBlockMarker = '```';
 
-    let slideStarted = true; // Set to true to capture the first slide content
-    let collectingFrontmatter = false;
-    let currentFrontmatter: SlideMetadata = {};
-
-    // Process each line
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      const trimmedLine = line.trim();
+      const trimmed = line.trim();
 
-      // Handle code blocks (to avoid misinterpreting code block content as delimiters)
-      if (!currentSlide.inCodeBlock && trimmedLine.startsWith('```')) {
-        currentSlide.inCodeBlock = true;
-        currentSlide.codeBlockMarker = trimmedLine.match(/^`+/)?.[0] || '```';
-        currentSlide.content.push(line);
+      if (!inCodeBlock && /^`{3,}/.test(trimmed)) {
+        inCodeBlock = true;
+        codeBlockMarker = trimmed.match(/^`+/)?.[0] || '```';
+        buffer.push(line);
         continue;
       }
 
-      if (currentSlide.inCodeBlock) {
-        currentSlide.content.push(line);
-        if (trimmedLine.startsWith(currentSlide.codeBlockMarker)) {
-          currentSlide.inCodeBlock = false;
+      if (inCodeBlock) {
+        buffer.push(line);
+        if (trimmed.startsWith(codeBlockMarker)) {
+          inCodeBlock = false;
         }
         continue;
       }
 
-      // Check for slide delimiter
-      if (trimmedLine === '---') {
-        if (collectingFrontmatter) {
-          // End of frontmatter section
-          collectingFrontmatter = false;
-          currentSlide.frontmatter = {
-            ...currentSlide.frontmatter,
-            ...currentFrontmatter,
-          };
-          currentFrontmatter = {};
-        } else {
-          // End of current slide, if not the first delimiter after frontmatter parsing
-          if (slideStarted && (currentSlide.content.length > 0 || mergedOptions.includeEmpty)) {
-            const slideContent = currentSlide.content.join('\n');
-            slides.push({
-              content: mergedOptions.trimContent ? slideContent.trim() : slideContent,
-              rawContent: slideContent,
-              docFrontMatter: { ...currentSlide.docFrontMatter },
-              frontmatter: { ...currentSlide.frontmatter },
-              index: slides.length,
-            });
+      if (trimmed === '---') {
+        // Possible start of frontmatter for the next slide
+        if (i + 1 < lines.length && /^\w+\s*:/m.test(lines[i + 1])) {
+          if (buffer.length > 0 || mergedOptions.includeEmpty) {
+            slideBlocks.push(buffer.join('\n'));
+            buffer = [];
           }
 
-          // Start a new slide and begin collecting frontmatter
-          currentSlide = {
-            content: [],
-            docFrontMatter: { ...docFrontMatter },
-            frontmatter: {},
-            inCodeBlock: false,
-            codeBlockMarker: '```',
-          };
-          collectingFrontmatter = true;
+          buffer.push(line);
+          i++;
+          while (i < lines.length) {
+            buffer.push(lines[i]);
+            if (lines[i].trim() === '---') {
+              break;
+            }
+            i++;
+          }
+          continue;
         }
+
+        slideBlocks.push(buffer.join('\n'));
+        buffer = [];
         continue;
       }
 
-      // Check for frontmatter key-value pairs when we're collecting frontmatter
-      if (collectingFrontmatter) {
-        // Match key-value pairs, allowing quoted values with colons and hashes
-        const keyValueMatch = trimmedLine.match(/^(\w+):\s*(?:(["'])([\s\S]*?)\2|([^\n]+))$/);
-        if (keyValueMatch) {
-          const key = keyValueMatch[1];
-          let value: string;
-          if (keyValueMatch[3] !== undefined) {
-            // Quoted value (may contain colons, hashes, etc.)
-            value = keyValueMatch[3];
-          } else {
-            // Unquoted value, strip inline comments (anything after #)
-            value = keyValueMatch[4].replace(/\s+#.*$/, '');
-          }
-          currentFrontmatter[key] = value.trim();
-          continue;
-        } else if (trimmedLine === '') {
-          // Empty line within frontmatter is allowed
-          continue;
-        } else {
-          // No more frontmatter, add what we've collected to the slide
-          collectingFrontmatter = false;
-          currentSlide.frontmatter = {
-            ...currentSlide.frontmatter,
-            ...currentFrontmatter,
-          };
-          currentFrontmatter = {};
-          currentSlide.content.push(line);
-        }
-      } else {
-        // Regular content line
-        currentSlide.content.push(line);
-      }
+      buffer.push(line);
     }
 
-    // Add the last slide if there's content
-    if (currentSlide.content.length > 0 || mergedOptions.includeEmpty) {
-      const slideContent = currentSlide.content.join('\n');
+    if (buffer.length > 0 || mergedOptions.includeEmpty) {
+      slideBlocks.push(buffer.join('\n'));
+    }
+
+    const slides: InternalSlide[] = [];
+
+    for (const block of slideBlocks) {
+      const trimmedBlock = mergedOptions.trimContent ? block.trimStart() : block;
+      const { frontmatter, remainingContent: content } =
+        FrontMatterParser.extractFrontmatter(trimmedBlock);
+      const slideContent = content ?? trimmedBlock;
+
+      if (
+        slideContent.trim() === '' &&
+        !mergedOptions.includeEmpty &&
+        (!frontmatter || Object.keys(frontmatter).length === 0)
+      ) {
+        continue;
+      }
+
       slides.push({
         content: mergedOptions.trimContent ? slideContent.trim() : slideContent,
         rawContent: slideContent,
-        docFrontMatter: { ...currentSlide.docFrontMatter },
-        frontmatter: { ...currentSlide.frontmatter },
+        docFrontMatter: { ...docFrontMatter },
+        frontmatter: frontmatter || {},
         index: slides.length,
       });
     }
