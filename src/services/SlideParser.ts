@@ -1,5 +1,5 @@
 import { FrontMatterParser } from './FrontMatterParser';
-import { ParserOptions, Slide, InternalSlide, SlideMetadata } from '../models';
+import { ParserOptions, Slide, InternalSlide } from '../models';
 import { SlideLayout } from '../constants';
 
 export class SlideParser {
@@ -66,14 +66,15 @@ export class SlideParser {
           }
 
           buffer.push(line);
-          i++;
-          while (i < lines.length) {
-            buffer.push(lines[i]);
-            if (lines[i].trim() === '---') {
+          let j = i + 1;
+          while (j < lines.length) {
+            buffer.push(lines[j]);
+            if (lines[j].trim() === '---') {
               break;
             }
-            i++;
+            j++;
           }
+          i = j;
           continue;
         }
 
