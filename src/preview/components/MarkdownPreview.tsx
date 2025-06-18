@@ -42,7 +42,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const { cursorVisible, resetCursorTimeout } = useCursor();
   const { vsCodeTheme, isDarkTheme } = useTheme();
   const { scale } = useScale(ref, slideRef);
-  const { mousePosition, handleMouseMove } = useMousePosition(slideRef, scale, resetCursorTimeout);
+  const { mousePosition, handleMouseMove, handleMouseLeave } = useMousePosition(slideRef, scale, resetCursorTimeout);
 
   const fetchTemplate = React.useCallback(
     async (
@@ -197,7 +197,12 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         ref={ref}
         className={`slide ${theme || "default"} relative w-full h-full overflow-hidden`}
         onMouseEnter={() => setShowControls(true)}
-        onMouseLeave={() => setShowControls(false)}
+        onMouseLeave={() => {
+          setShowControls(false);
+          if (laserPointerEnabled) {
+            handleMouseLeave();
+          }
+        }}
         onMouseMove={(isMouseMoveEnabled || laserPointerEnabled) ? handleMouseMove : undefined}
         style={{ cursor: cursorVisible ? 'default' : 'none' }}
       >

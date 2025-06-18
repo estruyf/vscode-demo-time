@@ -29,17 +29,8 @@ export const LaserPointer: React.FunctionComponent<ILaserPointerProps> = ({
         boxShadow: '0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000',
         pointerEvents: 'none',
         zIndex: 1000,
-        transform: 'translate(-50%, -50%)',
-        animation: 'pulse 1s infinite'
+        transform: 'translate(-50%, -50%)'
       }}
-    >
-      <style>{`
-        @keyframes pulse {
-          0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-          50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.1); }
-          100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        }
-      `}</style>
-    </div>
+    />
   );
 };
