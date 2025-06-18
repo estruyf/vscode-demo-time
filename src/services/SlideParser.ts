@@ -44,7 +44,8 @@ export class SlideParser {
 
       if (!inCodeBlock && /^`{3,}/.test(trimmed)) {
         inCodeBlock = true;
-        codeBlockMarker = trimmed.match(/^`+/)?.[0] ?? '```';
+        const match = /^`+/.exec(trimmed);
+        codeBlockMarker = match ? match[0] : '```';
         buffer.push(line);
         continue;
       }
