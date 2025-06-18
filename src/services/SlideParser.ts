@@ -44,8 +44,7 @@ export class SlideParser {
 
       if (!inCodeBlock && /^`{3,}/.test(trimmed)) {
         inCodeBlock = true;
-        const match = /^`+/.exec(trimmed);
-        codeBlockMarker = match ? match[0] : '```';
+        codeBlockMarker = trimmed.match(/^`+/)?.[0] ?? '```';
         buffer.push(line);
         continue;
       }
@@ -67,15 +66,14 @@ export class SlideParser {
           }
 
           buffer.push(line);
-          let j = i + 1;
-          while (j < lines.length) {
-            buffer.push(lines[j]);
-            if (lines[j].trim() === '---') {
+          i++;
+          while (i < lines.length) {
+            buffer.push(lines[i]);
+            if (lines[i].trim() === '---') {
               break;
             }
-            j++;
+            i++;
           }
-          i = j;
           continue;
         }
 
