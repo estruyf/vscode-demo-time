@@ -109,6 +109,10 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
       return;
     }
+    // Reset zoom and pan when changing slides
+    setIsZoomed(false);
+    setPanOffset({ x: 0, y: 0 });
+    
     const slide = slides[slideIdx];
     setCrntSlide(slide);
   }, [slides]);
@@ -134,13 +138,13 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     const mouseX = event.clientX - rect.left;
     const mouseY = event.clientY - rect.top;
     
-    // Convert to normalized coordinates (-1 to 1)
-    const normalizedX = (mouseX - centerX) / centerX;
-    const normalizedY = (mouseY - centerY) / centerY;
+    // Convert to normalized coordinates (-1 to 1) with reduced sensitivity
+    const normalizedX = Math.max(-1, Math.min(1, (mouseX - centerX) / centerX * 0.8));
+    const normalizedY = Math.max(-1, Math.min(1, (mouseY - centerY) / centerY * 0.8));
     
-    // Calculate pan offset based on zoom level
-    const maxPanX = (960 * (zoomLevel - 1)) / 2;
-    const maxPanY = (540 * (zoomLevel - 1)) / 2;
+    // Calculate pan offset based on zoom level - less aggressive
+    const maxPanX = (960 * (zoomLevel - 1)) / 3;
+    const maxPanY = (540 * (zoomLevel - 1)) / 3;
     
     setPanOffset({
       x: -normalizedX * maxPanX,
