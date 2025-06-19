@@ -204,7 +204,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           }
         }}
         onMouseMove={(isMouseMoveEnabled || laserPointerEnabled) ? handleMouseMove : undefined}
-        style={{ cursor: cursorVisible ? 'default' : 'none' }}
+        style={{ cursor: laserPointerEnabled ? 'none' : (cursorVisible ? 'default' : 'none') }}
       >
         <div
           className='slide__container absolute top-[50%] left-[50%] w-[960px] h-[540px]'
@@ -276,6 +276,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           triggerMouseMove={setIsMouseMoveEnabled}
           laserPointerEnabled={laserPointerEnabled}
           onLaserPointerToggle={setLaserPointerEnabled}
+          style={{ cursor: 'default' }}
         >
           {/* Mouse Position */}
           {mousePosition && showControls && cursorVisible && (
