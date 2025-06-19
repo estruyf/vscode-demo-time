@@ -167,11 +167,11 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     const normalizedX = Math.max(-1, Math.min(1, (mouseX - centerX) / centerX));
     const normalizedY = Math.max(-1, Math.min(1, (mouseY - centerY) / centerY));
 
-    // Calculate proper pan limits to reach all edges of zoomed content
-    // When zoomed, slide content is 960*zoomLevel x 540*zoomLevel
-    // We need to pan by (slideSize * (zoomLevel - 1)) / 2 to reach edges
-    const maxPanX = (960 * (zoomLevel - 1)) / 2;
-    const maxPanY = (540 * (zoomLevel - 1)) / 2;
+    // Calculate pan limits to reach all edges of zoomed content
+    // The visible area is 960x540, but the zoomed content is larger.
+    // To reach the edge, pan by (zoomLevel - 1) * (slideSize / zoomLevel) / 2
+    const maxPanX = ((960 * zoomLevel) - 960) / 2;
+    const maxPanY = ((540 * zoomLevel) - 540) / 2;
 
     setPanOffset({
       x: -normalizedX * maxPanX,
