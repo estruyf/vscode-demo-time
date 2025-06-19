@@ -156,26 +156,25 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     if (!isZoomed || !ref.current) return;
 
     const rect = ref.current.getBoundingClientRect();
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
 
-    // Calculate mouse position relative to center
+    // Calculate mouse position relative to viewport (0 to 1 range)
     const mouseX = event.clientX - rect.left;
     const mouseY = event.clientY - rect.top;
 
-    // Convert to normalized coordinates (-1 to 1) - full sensitivity for better control
-    const normalizedX = Math.max(-1, Math.min(1, (mouseX - centerX) / centerX));
-    const normalizedY = Math.max(-1, Math.min(1, (mouseY - centerY) / centerY));
+    // Normalize to 0-1 range based on viewport dimensions
+    const normalizedX = Math.max(0, Math.min(1, mouseX / rect.width));
+    const normalizedY = Math.max(0, Math.min(1, mouseY / rect.height));
 
     // Calculate pan limits to reach all edges of zoomed content
     // The visible area is 960x540, but the zoomed content is larger.
-    // To reach the edge, pan by (zoomLevel - 1) * (slideSize / zoomLevel) / 2
     const maxPanX = ((960 * zoomLevel) - 960) / 2;
     const maxPanY = ((540 * zoomLevel) - 540) / 2;
 
+    // Direct mapping: mouse position determines which part of slide to show
+    // Mouse at (0,0) shows top-left corner, mouse at (1,1) shows bottom-right corner
     setPanOffset({
-      x: -normalizedX * maxPanX,
-      y: -normalizedY * maxPanY
+      x: maxPanX * (1 - 2 * normalizedX),
+      y: maxPanY * (1 - 2 * normalizedY)
     });
   }, [isZoomed, zoomLevel]);
 
