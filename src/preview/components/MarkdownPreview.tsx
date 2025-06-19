@@ -12,8 +12,7 @@ import useTheme from '../hooks/useTheme';
 import { Slide } from '../../models';
 import { SlideParser } from '../../services/SlideParser';
 import { useMousePosition } from '../hooks/useMousePosition';
-import { useZoomCircle } from '../hooks/useZoomCircle';
-import { ZoomCircle } from './ZoomCircle';
+import { useSlideZoom } from '../hooks/useSlideZoom';
 import { convertTemplateToHtml } from '../../utils/convertTemplateToHtml';
 import { LaserPointer } from './LaserPointer';
 
@@ -44,7 +43,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const { cursorVisible, resetCursorTimeout, hideCursor } = useCursor();
   const { vsCodeTheme, isDarkTheme } = useTheme();
   const { scale } = useScale(ref, slideRef);
-  const { isZoomEnabled, circleWidth, toggleZoom } = useZoomCircle(slideRef, scale);
+  const { isZoomEnabled, zoomLevel, panX, panY, toggleZoom, updatePan } = useSlideZoom(slideRef, scale);
   const { mousePosition, handleMouseMove, handleMouseLeave } = useMousePosition(slideRef, scale, resetCursorTimeout);
 
   const handlePreviewMouseMove = React.useCallback((ev: React.MouseEvent<HTMLDivElement>) => {
@@ -52,8 +51,16 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     resetCursorTimeout();
     if (isMouseMoveEnabled || laserPointerEnabled || isZoomEnabled) {
       handleMouseMove(ev);
+      
+      // Update pan for zoom mode
+      if (isZoomEnabled && slideRef.current) {
+        const rect = slideRef.current.getBoundingClientRect();
+        const mouseX = ev.clientX - rect.left;
+        const mouseY = ev.clientY - rect.top;
+        updatePan(mouseX, mouseY);
+      }
     }
-  }, [isMouseMoveEnabled, laserPointerEnabled, handleMouseMove, resetCursorTimeout]);
+  }, [isMouseMoveEnabled, laserPointerEnabled, isZoomEnabled, handleMouseMove, resetCursorTimeout, updatePan, slideRef]);
 
   const hidePreviewControls = React.useCallback(() => {
     setShowControls(false);
@@ -214,6 +221,16 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     getFileContents(fileUri);
   }, [fileUri]);
 
+  const getSlideTransform = React.useCallback(() => {
+    let transform = 'translate(-50%, -50%) scale(var(--demotime-scale, 1))';
+    
+    if (isZoomEnabled) {
+      transform += ` scale(${zoomLevel}) translate(${panX}%, ${panY}%)`;
+    }
+    
+    return transform;
+  }, [isZoomEnabled, zoomLevel, panX, panY]);
+
   return (
     <>
       <div
@@ -232,7 +249,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       >
         <div
           className='slide__container absolute top-[50%] left-[50%] w-[960px] h-[540px]'
-          style={{ transform: 'translate(-50%, -50%) scale(var(--demotime-scale, 1))' }}>
+          style={{ transform: getSlideTransform() }}>
           <div
             ref={slideRef}
             className={`slide__layout ${layout || "default"} ${transition || ""}`}
@@ -312,14 +329,6 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             </div>
           )}
         </SlideControls>
-
-        {/* Zoom Circle */}
-        <ZoomCircle
-          mousePosition={mousePosition}
-          isVisible={isZoomEnabled && cursorVisible}
-          circleWidth={circleWidth}
-          scale={scale}
-        />
       </div>
     </>
   );

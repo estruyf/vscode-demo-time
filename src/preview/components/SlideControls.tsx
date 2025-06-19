@@ -197,9 +197,9 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
           {
             toggleZoom && (
               <SlideControl
-                title="Toggle zoom circle"
+                title="Toggle slide zoom"
                 className={`hover:bg-[var(--vscode-toolbar-hoverBackground)] ${isZoomEnabled ? 'bg-[var(--vscode-toolbar-activeBackground)]' : ''}`}
-                iconName="search"
+                iconName="zoom-in"
                 action={toggleZoom}
               />
             )
