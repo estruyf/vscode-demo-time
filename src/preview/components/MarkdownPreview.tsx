@@ -47,15 +47,23 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const handlePreviewMouseMove = React.useCallback((ev: React.MouseEvent<HTMLDivElement>) => {
     setShowControls(true);
     resetCursorTimeout();
-    if (isMouseMoveEnabled) {
+    if (isMouseMoveEnabled || laserPointerEnabled) {
       handleMouseMove(ev);
     }
-  }, [isMouseMoveEnabled, handleMouseMove, resetCursorTimeout]);
+  }, [isMouseMoveEnabled, laserPointerEnabled, handleMouseMove, resetCursorTimeout]);
 
   const hidePreviewControls = React.useCallback(() => {
     setShowControls(false);
     hideCursor();
   }, [hideCursor]);
+
+  const handleLaserPointerToggle = React.useCallback((enabled: boolean) => {
+    setLaserPointerEnabled(enabled);
+
+    if (!enabled) {
+      resetCursorTimeout();
+    }
+  }, [resetCursorTimeout]);
 
   const fetchTemplate = React.useCallback(
     async (
@@ -216,7 +224,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             handleMouseLeave();
           }
         }}
-        onMouseMove={(isMouseMoveEnabled || laserPointerEnabled) ? handleMouseMove : undefined}
+        onMouseMove={handlePreviewMouseMove}
         style={{ cursor: laserPointerEnabled ? 'none' : (cursorVisible ? 'default' : 'none') }}
       >
         <div
@@ -289,7 +297,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           triggerMouseMove={setIsMouseMoveEnabled}
           hideControls={hidePreviewControls}
           laserPointerEnabled={laserPointerEnabled}
-          onLaserPointerToggle={setLaserPointerEnabled}
+          onLaserPointerToggle={handleLaserPointerToggle}
           style={{ cursor: 'default' }}
         >
           {/* Mouse Position */}
