@@ -16,6 +16,8 @@ export interface ISlideControlsProps {
   triggerMouseMove: (value: boolean) => void;
   laserPointerEnabled?: boolean;
   onLaserPointerToggle?: (enabled: boolean) => void;
+  isZoomed?: boolean;
+  onZoomToggle?: () => void;
   style?: React.CSSProperties;
 }
 
@@ -29,6 +31,8 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   triggerMouseMove,
   laserPointerEnabled = false,
   onLaserPointerToggle,
+  isZoomed = false,
+  onZoomToggle,
   style
 }: React.PropsWithChildren<ISlideControlsProps>) => {
   const [previousEnabled, setPreviousEnabled] = React.useState(false);
@@ -184,6 +188,16 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
             action={() => {
               if (onLaserPointerToggle) {
                 onLaserPointerToggle(!laserPointerEnabled);
+              }
+            }}
+          />
+          <SlideControl
+            title={isZoomed ? "Exit zoom" : "Zoom in"}
+            className={`hover:bg-[var(--vscode-toolbar-hoverBackground)] ${isZoomed ? 'bg-[var(--vscode-statusBarItem-errorBackground)]' : ''}`}
+            iconName={isZoomed ? "zoom-out" : "zoom-in"}
+            action={() => {
+              if (onZoomToggle) {
+                onZoomToggle();
               }
             }}
           />

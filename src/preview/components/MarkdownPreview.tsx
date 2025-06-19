@@ -35,6 +35,9 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const [transition, setTransition] = React.useState<SlideTransition | undefined>(undefined);
   const [header, setHeader] = React.useState<string | undefined>(undefined);
   const [footer, setFooter] = React.useState<string | undefined>(undefined);
+  const [isZoomed, setIsZoomed] = React.useState(false);
+  const [zoomLevel, setZoomLevel] = React.useState(2.0); // 2x zoom by default
+  const [panOffset, setPanOffset] = React.useState({ x: 0, y: 0 });
 
   const { content, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();
   const ref = React.useRef<HTMLDivElement>(null);
@@ -109,6 +112,41 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     const slide = slides[slideIdx];
     setCrntSlide(slide);
   }, [slides]);
+
+  const toggleZoom = React.useCallback(() => {
+    setIsZoomed(prev => {
+      if (prev) {
+        // Exit zoom - reset pan offset
+        setPanOffset({ x: 0, y: 0 });
+      }
+      return !prev;
+    });
+  }, []);
+
+  const handleZoomedMouseMove = React.useCallback((event: React.MouseEvent) => {
+    if (!isZoomed || !ref.current) return;
+
+    const rect = ref.current.getBoundingClientRect();
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    
+    // Calculate mouse position relative to center
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+    
+    // Convert to normalized coordinates (-1 to 1)
+    const normalizedX = (mouseX - centerX) / centerX;
+    const normalizedY = (mouseY - centerY) / centerY;
+    
+    // Calculate pan offset based on zoom level
+    const maxPanX = (960 * (zoomLevel - 1)) / 2;
+    const maxPanY = (540 * (zoomLevel - 1)) / 2;
+    
+    setPanOffset({
+      x: -normalizedX * maxPanX,
+      y: -normalizedY * maxPanY
+    });
+  }, [isZoomed, zoomLevel]);
 
   const slidesListener = React.useCallback((message: MessageEvent<EventData<any>>) => {
     const { command } = message.data;
@@ -190,6 +228,20 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     getFileContents(fileUri);
   }, [fileUri]);
 
+  // ESC key handler for zoom
+  React.useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isZoomed) {
+        toggleZoom();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isZoomed, toggleZoom]);
+
   return (
     <>
       <div
@@ -203,12 +255,14 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             handleMouseLeave();
           }
         }}
-        onMouseMove={(isMouseMoveEnabled || laserPointerEnabled) ? handleMouseMove : undefined}
+        onMouseMove={(isMouseMoveEnabled || laserPointerEnabled || isZoomed) ? (isZoomed ? handleZoomedMouseMove : handleMouseMove) : undefined}
         style={{ cursor: laserPointerEnabled ? 'none' : (cursorVisible ? 'default' : 'none') }}
       >
         <div
-          className='slide__container absolute top-[50%] left-[50%] w-[960px] h-[540px]'
-          style={{ transform: 'translate(-50%, -50%) scale(var(--demotime-scale, 1))' }}>
+          className='slide__container absolute top-[50%] left-[50%] w-[960px] h-[540px] transition-transform duration-300'
+          style={{ 
+            transform: `translate(-50%, -50%) scale(${isZoomed ? scale * zoomLevel : 'var(--demotime-scale, 1)'}) translate(${isZoomed ? panOffset.x / (scale * zoomLevel) : 0}px, ${isZoomed ? panOffset.y / (scale * zoomLevel) : 0}px)`
+          }}>
           <div
             ref={slideRef}
             className={`slide__layout ${layout || "default"} ${transition || ""}`}
@@ -276,6 +330,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           triggerMouseMove={setIsMouseMoveEnabled}
           laserPointerEnabled={laserPointerEnabled}
           onLaserPointerToggle={setLaserPointerEnabled}
+          isZoomed={isZoomed}
+          onZoomToggle={toggleZoom}
           style={{ cursor: 'default' }}
         >
           {/* Mouse Position */}
