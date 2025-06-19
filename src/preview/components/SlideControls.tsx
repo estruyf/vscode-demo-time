@@ -15,6 +15,9 @@ export interface ISlideControlsProps {
   updateSlideIdx: (index: number) => void;
   triggerMouseMove: (value: boolean) => void;
   hideControls: () => void;
+  laserPointerEnabled?: boolean;
+  onLaserPointerToggle?: (enabled: boolean) => void;
+  style?: React.CSSProperties;
 }
 
 export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISlideControlsProps>> = ({
@@ -25,7 +28,10 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   currentSlide = 0,
   updateSlideIdx,
   triggerMouseMove,
-  hideControls
+  hideControls,
+  laserPointerEnabled = false,
+  onLaserPointerToggle,
+  style
 }: React.PropsWithChildren<ISlideControlsProps>) => {
   const [previousEnabled, setPreviousEnabled] = React.useState(false);
   const [isPresentationMode, setIsPresentationMode] = React.useState(false);
@@ -120,6 +126,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
     <div
       className={`absolute bottom-0 w-full transition-opacity duration-300 ${show ? 'opacity-90' : 'opacity-0 pointer-events-none'
         }`}
+      style={style}
     >
       <div
         className="bg-[var(--vscode-editorWidget-background)] p-2 grid grid-cols-3 gap-4"
@@ -171,6 +178,16 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
             action={() => {
               setShowPosition(prev => !prev);
               triggerMouseMove(!showPosition);
+            }}
+          />
+          <SlideControl
+            title="Toggle laser pointer"
+            className={`hover:bg-[var(--vscode-toolbar-hoverBackground)] ${laserPointerEnabled ? 'bg-[var(--vscode-statusBarItem-errorBackground)]' : ''}`}
+            iconName="record"
+            action={() => {
+              if (onLaserPointerToggle) {
+                onLaserPointerToggle(!laserPointerEnabled);
+              }
             }}
           />
           {
