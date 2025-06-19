@@ -42,10 +42,29 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const { content, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();
   const ref = React.useRef<HTMLDivElement>(null);
   const slideRef = React.useRef<HTMLDivElement>(null);
-  const { cursorVisible, resetCursorTimeout } = useCursor();
+  const { cursorVisible, resetCursorTimeout, hideCursor } = useCursor();
   const { vsCodeTheme, isDarkTheme } = useTheme();
   const { scale } = useScale(ref, slideRef);
   const { mousePosition, handleMouseMove, handleMouseLeave } = useMousePosition(slideRef, scale, resetCursorTimeout);
+
+  const handlePreviewMouseMove = React.useCallback((ev: React.MouseEvent<HTMLDivElement>) => {
+    setShowControls(true);
+    resetCursorTimeout();
+    (isMouseMoveEnabled || laserPointerEnabled || isZoomed) ? (isZoomed ? handleZoomedMouseMove : handleMouseMove;
+  }, [isMouseMoveEnabled, laserPointerEnabled, handleMouseMove, isZoomed, resetCursorTimeout]);
+
+  const hidePreviewControls = React.useCallback(() => {
+    setShowControls(false);
+    hideCursor();
+  }, [hideCursor]);
+
+  const handleLaserPointerToggle = React.useCallback((enabled: boolean) => {
+    setLaserPointerEnabled(enabled);
+
+    if (!enabled) {
+      resetCursorTimeout();
+    }
+  }, [resetCursorTimeout]);
 
   const fetchTemplate = React.useCallback(
     async (
@@ -259,7 +278,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             handleMouseLeave();
           }
         }}
-        onMouseMove={(isMouseMoveEnabled || laserPointerEnabled || isZoomed) ? (isZoomed ? handleZoomedMouseMove : handleMouseMove) : undefined}
+        onMouseMove={handlePreviewMouseMove}
         style={{ cursor: laserPointerEnabled ? 'none' : (cursorVisible ? 'default' : 'none') }}
       >
         <div
@@ -332,6 +351,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           currentSlide={crntSlide?.index}
           updateSlideIdx={updateSlideIdx}
           triggerMouseMove={setIsMouseMoveEnabled}
+          hideControls={hidePreviewControls}
           laserPointerEnabled={laserPointerEnabled}
           onLaserPointerToggle={setLaserPointerEnabled}
           isZoomed={isZoomed}

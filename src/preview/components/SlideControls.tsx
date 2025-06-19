@@ -14,6 +14,7 @@ export interface ISlideControlsProps {
   currentSlide?: number;
   updateSlideIdx: (index: number) => void;
   triggerMouseMove: (value: boolean) => void;
+  hideControls: () => void;
   laserPointerEnabled?: boolean;
   onLaserPointerToggle?: (enabled: boolean) => void;
   isZoomed?: boolean;
@@ -29,6 +30,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   currentSlide = 0,
   updateSlideIdx,
   triggerMouseMove,
+  hideControls,
   laserPointerEnabled = false,
   onLaserPointerToggle,
   isZoomed = false,
@@ -147,6 +149,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
             </div>
           )} action={closeSidebar} />
           <SlideControl title="Show demos" iconName='list-unordered' action={focusPanel} />
+          <SlideControl title="Hide controls" iconName='eye-closed' action={hideControls} />
         </div>
 
         <div className="flex items-center justify-center gap-4">
