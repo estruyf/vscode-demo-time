@@ -16,6 +16,10 @@ export interface ISlideControlsProps {
   triggerMouseMove: (value: boolean) => void;
   toggleZoom?: () => void;
   isZoomEnabled?: boolean;
+  hideControls: () => void;
+  laserPointerEnabled?: boolean;
+  onLaserPointerToggle?: (enabled: boolean) => void;
+  style?: React.CSSProperties;
 }
 
 export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISlideControlsProps>> = ({
@@ -28,6 +32,10 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   triggerMouseMove,
   toggleZoom,
   isZoomEnabled = false
+  hideControls,
+  laserPointerEnabled = false,
+  onLaserPointerToggle,
+  style
 }: React.PropsWithChildren<ISlideControlsProps>) => {
   const [previousEnabled, setPreviousEnabled] = React.useState(false);
   const [isPresentationMode, setIsPresentationMode] = React.useState(false);
@@ -122,6 +130,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
     <div
       className={`absolute bottom-0 w-full transition-opacity duration-300 ${show ? 'opacity-90' : 'opacity-0 pointer-events-none'
         }`}
+      style={style}
     >
       <div
         className="bg-[var(--vscode-editorWidget-background)] p-2 grid grid-cols-3 gap-4"
@@ -140,6 +149,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
             </div>
           )} action={closeSidebar} />
           <SlideControl title="Show demos" iconName='list-unordered' action={focusPanel} />
+          <SlideControl title="Hide controls" iconName='eye-closed' action={hideControls} />
         </div>
 
         <div className="flex items-center justify-center gap-4">
@@ -172,6 +182,16 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
             action={() => {
               setShowPosition(prev => !prev);
               triggerMouseMove(!showPosition);
+            }}
+          />
+          <SlideControl
+            title="Toggle laser pointer"
+            className={`hover:bg-[var(--vscode-toolbar-hoverBackground)] ${laserPointerEnabled ? 'bg-[var(--vscode-statusBarItem-errorBackground)]' : ''}`}
+            iconName="record"
+            action={() => {
+              if (onLaserPointerToggle) {
+                onLaserPointerToggle(!laserPointerEnabled);
+              }
             }}
           />
           {

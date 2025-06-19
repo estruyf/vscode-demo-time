@@ -15,6 +15,7 @@ import { useMousePosition } from '../hooks/useMousePosition';
 import { useZoomCircle } from '../hooks/useZoomCircle';
 import { ZoomCircle } from './ZoomCircle';
 import { convertTemplateToHtml } from '../../utils/convertTemplateToHtml';
+import { LaserPointer } from './LaserPointer';
 
 export interface IMarkdownPreviewProps {
   fileUri: string;
@@ -32,6 +33,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const [slides, setSlides] = React.useState<Slide[]>([]);
   const [crntSlide, setCrntSlide] = React.useState<Slide | null>(null);
   const [isMouseMoveEnabled, setIsMouseMoveEnabled] = React.useState(false);
+  const [laserPointerEnabled, setLaserPointerEnabled] = React.useState(false);
   const [transition, setTransition] = React.useState<SlideTransition | undefined>(undefined);
   const [header, setHeader] = React.useState<string | undefined>(undefined);
   const [footer, setFooter] = React.useState<string | undefined>(undefined);
@@ -39,11 +41,33 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const { content, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();
   const ref = React.useRef<HTMLDivElement>(null);
   const slideRef = React.useRef<HTMLDivElement>(null);
-  const { cursorVisible, resetCursorTimeout } = useCursor();
+  const { cursorVisible, resetCursorTimeout, hideCursor } = useCursor();
   const { vsCodeTheme, isDarkTheme } = useTheme();
   const { scale } = useScale(ref, slideRef);
   const { mousePosition, handleMouseMove } = useMousePosition(slideRef, scale, resetCursorTimeout);
   const { isZoomEnabled, circleWidth, toggleZoom } = useZoomCircle(slideRef, scale);
+  const { mousePosition, handleMouseMove, handleMouseLeave } = useMousePosition(slideRef, scale, resetCursorTimeout);
+
+  const handlePreviewMouseMove = React.useCallback((ev: React.MouseEvent<HTMLDivElement>) => {
+    setShowControls(true);
+    resetCursorTimeout();
+    if (isMouseMoveEnabled || laserPointerEnabled) {
+      handleMouseMove(ev);
+    }
+  }, [isMouseMoveEnabled, laserPointerEnabled, handleMouseMove, resetCursorTimeout]);
+
+  const hidePreviewControls = React.useCallback(() => {
+    setShowControls(false);
+    hideCursor();
+  }, [hideCursor]);
+
+  const handleLaserPointerToggle = React.useCallback((enabled: boolean) => {
+    setLaserPointerEnabled(enabled);
+
+    if (!enabled) {
+      resetCursorTimeout();
+    }
+  }, [resetCursorTimeout]);
 
   const fetchTemplate = React.useCallback(
     async (
@@ -201,6 +225,14 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         onMouseLeave={() => setShowControls(false)}
         onMouseMove={isMouseMoveEnabled || isZoomEnabled ? handleMouseMove : undefined}
         style={{ cursor: cursorVisible ? 'default' : 'none' }}
+        onMouseLeave={() => {
+          setShowControls(false);
+          if (laserPointerEnabled) {
+            handleMouseLeave();
+          }
+        }}
+        onMouseMove={handlePreviewMouseMove}
+        style={{ cursor: laserPointerEnabled ? 'none' : (cursorVisible ? 'default' : 'none') }}
       >
         <div
           className='slide__container absolute top-[50%] left-[50%] w-[960px] h-[540px]'
@@ -251,6 +283,15 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
                 <footer className={`slide__footer z-20`} dangerouslySetInnerHTML={{ __html: footer }}></footer>
               )
             }
+
+            {/* Laser Pointer */}
+            {mousePosition && laserPointerEnabled && (
+              <LaserPointer
+                x={mousePosition.x}
+                y={mousePosition.y}
+                visible={true}
+              />
+            )}
           </div>
         </div>
 
@@ -263,6 +304,10 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           triggerMouseMove={setIsMouseMoveEnabled}
           toggleZoom={toggleZoom}
           isZoomEnabled={isZoomEnabled}
+          hideControls={hidePreviewControls}
+          laserPointerEnabled={laserPointerEnabled}
+          onLaserPointerToggle={handleLaserPointerToggle}
+          style={{ cursor: 'default' }}
         >
           {/* Mouse Position */}
           {mousePosition && showControls && cursorVisible && (
