@@ -50,7 +50,13 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const handlePreviewMouseMove = React.useCallback((ev: React.MouseEvent<HTMLDivElement>) => {
     setShowControls(true);
     resetCursorTimeout();
-    (isMouseMoveEnabled || laserPointerEnabled || isZoomed) ? (isZoomed ? handleZoomedMouseMove : handleMouseMove;
+    if (isMouseMoveEnabled || laserPointerEnabled || isZoomed) {
+      if (isZoomed) {
+        handleZoomedMouseMove(ev);
+      } else {
+        handleMouseMove(ev);
+      }
+    }
   }, [isMouseMoveEnabled, laserPointerEnabled, handleMouseMove, isZoomed, resetCursorTimeout]);
 
   const hidePreviewControls = React.useCallback(() => {
@@ -131,7 +137,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     // Reset zoom and pan when changing slides
     setIsZoomed(false);
     setPanOffset({ x: 0, y: 0 });
-    
+
     const slide = slides[slideIdx];
     setCrntSlide(slide);
   }, [slides]);
@@ -152,19 +158,19 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     const rect = ref.current.getBoundingClientRect();
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    
+
     // Calculate mouse position relative to center
     const mouseX = event.clientX - rect.left;
     const mouseY = event.clientY - rect.top;
-    
+
     // Convert to normalized coordinates (-1 to 1) with reduced sensitivity
     const normalizedX = Math.max(-1, Math.min(1, (mouseX - centerX) / centerX * 0.8));
     const normalizedY = Math.max(-1, Math.min(1, (mouseY - centerY) / centerY * 0.8));
-    
+
     // Calculate pan offset based on zoom level - less aggressive
     const maxPanX = (960 * (zoomLevel - 1)) / 3;
     const maxPanY = (540 * (zoomLevel - 1)) / 3;
-    
+
     setPanOffset({
       x: -normalizedX * maxPanX,
       y: -normalizedY * maxPanY
@@ -283,7 +289,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       >
         <div
           className='slide__container absolute top-[50%] left-[50%] w-[960px] h-[540px] transition-transform duration-300'
-          style={{ 
+          style={{
             transform: `translate(-50%, -50%) scale(${isZoomed ? scale * zoomLevel : 'var(--demotime-scale, 1)'}) translate(${isZoomed ? panOffset.x / (scale * zoomLevel) : 0}px, ${isZoomed ? panOffset.y / (scale * zoomLevel) : 0}px)`
           }}>
           <div
