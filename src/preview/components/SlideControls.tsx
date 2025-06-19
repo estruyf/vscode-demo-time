@@ -31,7 +31,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   updateSlideIdx,
   triggerMouseMove,
   toggleZoom,
-  isZoomEnabled = false
+  isZoomEnabled = false,
   hideControls,
   laserPointerEnabled = false,
   onLaserPointerToggle,
