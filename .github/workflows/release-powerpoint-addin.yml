@@ -51,5 +51,5 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_PUBLISH }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID_PUBLISH }}
-          command: pages deploy ${{ env.OUTPUT_DIR }} --project-name=${{ env.PROJECT }}
+          command: pages deploy ${{ env.OUTPUT_DIR }} --project-name=${{ env.PROJECT }} --branch=production
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
