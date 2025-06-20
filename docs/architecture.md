@@ -74,7 +74,7 @@ presentations.
 - `assets/` — Images, icons, fonts, and static assets
 - `scripts/` — Build and asset management scripts
 - `docs/` — Code documentation like this file, all other documentation can be found here:
-  [demotime.elio.dev](https://demotime.elio.dev)
+  [demotime.show](https://demotime.show)
 
 ## References
 

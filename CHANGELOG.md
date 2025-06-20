@@ -1,6 +1,19 @@
 # Change Log
 
-## [1.5.0] - 2025-06-xx
+## [1.6.0] - 2025-06-xx
+
+- New slide parser logic to support more complex front matter slide structures
+- [#156](https://github.com/estruyf/vscode-demo-time/issues/156): Add preview action to hide the
+  mouse cursor and action bar
+- [#162](https://github.com/estruyf/vscode-demo-time/issues/162): Added a laser pointer action to
+  the slide view
+- [#164](https://github.com/estruyf/vscode-demo-time/issues/164): Added a slide zoom feature
+
+## [1.5.1] - 2025-06-17
+
+- fix: add 'image' to allowed frontmatter properties in SlideParser
+
+## [1.5.0] - 2025-06-16
 
 - [#116](https://github.com/estruyf/vscode-demo-time/issues/116): Added support for slide header and
   footer
@@ -17,6 +30,8 @@
   when it is not initialized. Thanks to [Tom Bell](https://github.com/tjbell).
 - [#140](https://github.com/estruyf/vscode-demo-time/issues/140): Added the ability to search and
   filter in the Demo Time treeview
+- [#152](https://github.com/estruyf/vscode-demo-time/issues/152): Added the `openPowerPoint` action
+  to open/focus the Microsoft PowerPoint application
 
 ## [1.4.0] - 2025-05-30
 

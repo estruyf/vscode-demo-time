@@ -19,5 +19,9 @@ export const useMousePosition = (slideRef: React.RefObject<HTMLDivElement | null
     [slideRef, scale, callback]
   );
 
-  return { mousePosition, handleMouseMove };
+  const handleMouseLeave = useCallback(() => {
+    setMousePosition(null);
+  }, []);
+
+  return { mousePosition, handleMouseMove, handleMouseLeave };
 };

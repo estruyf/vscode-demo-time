@@ -24,4 +24,4 @@ Follow these steps to create your first demo using **Demo Time**:
 - Add titles, descriptions, and custom icons for each step to make your demo more engaging.
 - Use the `my-demo.json` file to manually edit or fine-tune your demo steps.
 
-For more details, visit the [Demo Time Documentation](https://demotime.elio.dev).
+For more details, visit the [Demo Time Documentation](https://demotime.show).
