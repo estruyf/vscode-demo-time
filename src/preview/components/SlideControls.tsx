@@ -17,6 +17,8 @@ export interface ISlideControlsProps {
   hideControls: () => void;
   laserPointerEnabled?: boolean;
   onLaserPointerToggle?: (enabled: boolean) => void;
+  isZoomed?: boolean;
+  onZoomToggle?: () => void;
   style?: React.CSSProperties;
 }
 
@@ -31,6 +33,8 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   hideControls,
   laserPointerEnabled = false,
   onLaserPointerToggle,
+  isZoomed = false,
+  onZoomToggle,
   style
 }: React.PropsWithChildren<ISlideControlsProps>) => {
   const [previousEnabled, setPreviousEnabled] = React.useState(false);
@@ -165,21 +169,6 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
               Slide {currentSlide + 1} of {slides}
             </div>
           )}
-
-          {
-            showPosition && (
-              children
-            )
-          }
-          <SlideControl
-            title="Toggle mouse position"
-            className='-rotate-90 hover:bg-[var(--vscode-toolbar-hoverBackground)]'
-            iconName="symbol-ruler"
-            action={() => {
-              setShowPosition(prev => !prev);
-              triggerMouseMove(!showPosition);
-            }}
-          />
           <SlideControl
             title="Toggle laser pointer"
             className={`hover:bg-[var(--vscode-toolbar-hoverBackground)] ${laserPointerEnabled ? 'bg-[var(--vscode-statusBarItem-errorBackground)]' : ''}`}
@@ -190,8 +179,36 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
               }
             }}
           />
+          <SlideControl
+            title={isZoomed ? "Exit zoom" : "Zoom in"}
+            className={`hover:bg-[var(--vscode-toolbar-hoverBackground)] ${isZoomed ? 'bg-[var(--vscode-statusBarItem-errorBackground)]' : ''}`}
+            iconName={isZoomed ? "zoom-out" : "zoom-in"}
+            action={() => {
+              if (onZoomToggle) {
+                onZoomToggle();
+              }
+            }}
+          />
+
           {
-            path && (
+            !isPresentationMode && (
+              <>
+                {showPosition && children}
+                <SlideControl
+                  title="Toggle mouse position"
+                  className='-rotate-90 hover:bg-[var(--vscode-toolbar-hoverBackground)]'
+                  iconName="symbol-ruler"
+                  action={() => {
+                    setShowPosition(prev => !prev);
+                    triggerMouseMove(!showPosition);
+                  }}
+                />
+              </>
+            )
+          }
+
+          {
+            path && !isPresentationMode && (
               <SlideControl title="Open slide source" iconName="preview" action={openSlideSource} />
             )
           }

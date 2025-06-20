@@ -35,6 +35,9 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const [transition, setTransition] = React.useState<SlideTransition | undefined>(undefined);
   const [header, setHeader] = React.useState<string | undefined>(undefined);
   const [footer, setFooter] = React.useState<string | undefined>(undefined);
+  const [isZoomed, setIsZoomed] = React.useState(false);
+  const [zoomLevel, setZoomLevel] = React.useState(2.0); // 2x zoom by default
+  const [panOffset, setPanOffset] = React.useState({ x: 0, y: 0 });
 
   const { content, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();
   const ref = React.useRef<HTMLDivElement>(null);
@@ -47,10 +50,14 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const handlePreviewMouseMove = React.useCallback((ev: React.MouseEvent<HTMLDivElement>) => {
     setShowControls(true);
     resetCursorTimeout();
-    if (isMouseMoveEnabled || laserPointerEnabled) {
-      handleMouseMove(ev);
+    if (isMouseMoveEnabled || laserPointerEnabled || isZoomed) {
+      if (isZoomed) {
+        handleZoomedMouseMove(ev);
+      } else {
+        handleMouseMove(ev);
+      }
     }
-  }, [isMouseMoveEnabled, laserPointerEnabled, handleMouseMove, resetCursorTimeout]);
+  }, [isMouseMoveEnabled, laserPointerEnabled, handleMouseMove, isZoomed, resetCursorTimeout]);
 
   const hidePreviewControls = React.useCallback(() => {
     setShowControls(false);
@@ -127,9 +134,52 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
       return;
     }
+    // Reset zoom and pan when changing slides
+    setIsZoomed(false);
+    setPanOffset({ x: 0, y: 0 });
+
     const slide = slides[slideIdx];
     setCrntSlide(slide);
   }, [slides]);
+
+  const toggleZoom = React.useCallback(() => {
+    setIsZoomed(prev => {
+      if (prev) {
+        // Exit zoom - reset pan offset
+        setPanOffset({ x: 0, y: 0 });
+      }
+      return !prev;
+    });
+  }, []);
+
+  const handleZoomedMouseMove = React.useCallback((event: React.MouseEvent) => {
+    if (!isZoomed || !ref.current) return;
+
+    const rect = ref.current.getBoundingClientRect();
+
+    // Calculate mouse position relative to viewport (0 to 1 range)
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    // Normalize to 0-1 range based on viewport dimensions
+    const normalizedX = Math.max(0, Math.min(1, mouseX / rect.width));
+    const normalizedY = Math.max(0, Math.min(1, mouseY / rect.height));
+
+    // Calculate pan limits to reach all edges of zoomed content, factoring in scale
+    // The visible area is 960x540, but the zoomed content is larger by zoomLevel * scale
+    const effectiveZoom = zoomLevel * scale;
+    const maxPanX = Math.max(0, ((960 * effectiveZoom) - rect.width) / 2);
+    const maxPanY = Math.max(0, ((540 * effectiveZoom) - rect.height) / 2);
+
+    // Clamp panOffset so the slide edges never go beyond the viewport
+    const panX = maxPanX * (1 - 2 * normalizedX);
+    const panY = maxPanY * (1 - 2 * normalizedY);
+
+    setPanOffset({
+      x: Math.max(-maxPanX, Math.min(maxPanX, panX)),
+      y: Math.max(-maxPanY, Math.min(maxPanY, panY))
+    });
+  }, [isZoomed, zoomLevel, scale]);
 
   const slidesListener = React.useCallback((message: MessageEvent<EventData<any>>) => {
     const { command } = message.data;
@@ -211,6 +261,20 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     getFileContents(fileUri);
   }, [fileUri]);
 
+  // ESC key handler for zoom
+  React.useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isZoomed) {
+        toggleZoom();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isZoomed, toggleZoom]);
+
   return (
     <>
       <div
@@ -228,8 +292,10 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         style={{ cursor: laserPointerEnabled ? 'none' : (cursorVisible ? 'default' : 'none') }}
       >
         <div
-          className='slide__container absolute top-[50%] left-[50%] w-[960px] h-[540px]'
-          style={{ transform: 'translate(-50%, -50%) scale(var(--demotime-scale, 1))' }}>
+          className='slide__container absolute top-[50%] left-[50%] w-[960px] h-[540px] transition-transform duration-300'
+          style={{
+            transform: `translate(-50%, -50%) scale(${isZoomed ? scale * zoomLevel : 'var(--demotime-scale, 1)'}) translate(${isZoomed ? panOffset.x / (scale * zoomLevel) : 0}px, ${isZoomed ? panOffset.y / (scale * zoomLevel) : 0}px)`
+          }}>
           <div
             ref={slideRef}
             className={`slide__layout ${layout || "default"} ${transition || ""}`}
@@ -297,7 +363,9 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           triggerMouseMove={setIsMouseMoveEnabled}
           hideControls={hidePreviewControls}
           laserPointerEnabled={laserPointerEnabled}
-          onLaserPointerToggle={handleLaserPointerToggle}
+          onLaserPointerToggle={setLaserPointerEnabled}
+          isZoomed={isZoomed}
+          onZoomToggle={toggleZoom}
           style={{ cursor: 'default' }}
         >
           {/* Mouse Position */}
