@@ -17,7 +17,7 @@ env:
 
 jobs:
   release-powerpoint-addin:
-    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '#release')
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '#powerpoint')
     runs-on: ubuntu-latest
     permissions:
       contents: read
