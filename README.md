@@ -32,6 +32,8 @@
 - **Code Highlighting**: Emphasize specific code segments to draw audience attention.​
 - **Integrated Slides**: Present slides directly within VS Code for a cohesive experience.​
 - **Customizable Actions**: Execute various VS Code commands and tasks as part of your demo.
+- **PowerPoint Integration**: Seamlessly move from slides to code using the
+  [PowerPoint integration](https://demotime.show/integrations/powerpoint/).
 
 ## Getting Started
 
