@@ -1,10 +1,16 @@
-import { Extension } from "../services";
+import path from "node:path";
+import { Extension } from "../services/Extension";
+import { parseWinPath } from "./parseWinPath";
 
-export const getRelPath = (path: string) => {
+export const getRelPath = (fsPath: string) => {
   const workspaceFolder = Extension.getInstance().workspaceFolder;
   if (!workspaceFolder) {
-    return path;
+    return fsPath;
   }
-  const relativePath = path.replace(workspaceFolder.uri.path, "");
-  return relativePath.startsWith("/") ? relativePath.slice(1) : relativePath;
+
+  const from = parseWinPath(workspaceFolder.uri.fsPath);
+  const to = parseWinPath(fsPath);
+
+  const relative = path.posix.relative(from, to);
+  return relative;
 };
