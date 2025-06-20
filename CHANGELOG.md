@@ -7,6 +7,7 @@
   mouse cursor and action bar
 - [#162](https://github.com/estruyf/vscode-demo-time/issues/162): Added a laser pointer action to
   the slide view
+- [#164](https://github.com/estruyf/vscode-demo-time/issues/164): Added a slide zoom feature
 
 ## [1.5.1] - 2025-06-17
 
