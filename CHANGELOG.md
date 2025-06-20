@@ -8,6 +8,7 @@
 - [#162](https://github.com/estruyf/vscode-demo-time/issues/162): Added a laser pointer action to
   the slide view
 - [#164](https://github.com/estruyf/vscode-demo-time/issues/164): Added a slide zoom feature
+- [#167](https://github.com/estruyf/vscode-demo-time/issues/167): Added Apple Keynote support
 
 ### Demo Time PowerPoint Add-in
 
