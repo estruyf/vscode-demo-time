@@ -13,11 +13,11 @@ on:
 
 env:
   PROJECT: demotime-powerpoint
-  OUTPUT_DIR: dist
+  OUTPUT_DIR: packages/powerpoint-addin/dist
 
 jobs:
   release-powerpoint-addin:
-    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '#powerpoint')
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '#powerpo')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: powerpoint-addin
-          path: dist
+          path: ${{ env.OUTPUT_DIR }}
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
