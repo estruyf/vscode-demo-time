@@ -9,6 +9,11 @@
   the slide view
 - [#164](https://github.com/estruyf/vscode-demo-time/issues/164): Added a slide zoom feature
 
+### Demo Time PowerPoint Add-in
+
+- Implemented check to see if the slide on which the add-in was configured is moved. When it is
+  moved, the add-in will show a message to let the user know the settings need to be saved again.
+
 ## [1.5.1] - 2025-06-17
 
 - fix: add 'image' to allowed frontmatter properties in SlideParser
