@@ -1,0 +1,69 @@
+@import 'tailwindcss';
+
+@theme {
+  --text-base: 12px;
+
+  --color-accent-low: #2d2200;
+  --color-accent: #816600;
+  --color-accent-high: #ffd43b;
+  --color-white: #ffffff;
+  --color-gray-1: #eaeef6;
+  --color-gray-2: #c4c8d3;
+  --color-gray-3: #9ba4b7;
+  --color-gray-4: #505869;
+  --color-gray-5: #313848;
+  --color-gray-6: #202736;
+  --color-black: #15181f;
+}
+
+body {
+  @apply font-sans bg-black text-white text-base;
+}
+
+/* Loading screen styles */
+#loadingScreen {
+  @apply fixed top-0 left-0 w-full h-full bg-gray-1 flex flex-col items-center justify-center z-50 transition-opacity ease-in-out;
+}
+
+#loadingScreen.fade-out {
+  @apply opacity-0 pointer-events-none;
+}
+
+.logo-container {
+  @apply text-center mb-5;
+}
+
+.spinner {
+  @apply w-10 h-10 border-4 border-gray-3 border-t-accent rounded-full animate-spin;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Form styles */
+#formContainer {
+  @apply max-w-lg mx-auto p-5;
+}
+
+.form-group {
+  @apply mb-4;
+}
+
+input[type='text'] {
+  @apply w-full p-1 border border-gray-3 rounded text-base transition duration-200;
+}
+
+input[type='text']:focus {
+  @apply outline-none border-accent-high shadow-md;
+}
+
+.success {
+  @apply bg-[#307351] text-white border border-[#307351] rounded px-4 py-2 mb-2 shadow-sm;
+}
+
+.error {
+  @apply bg-[#FC5130] text-white border border-[#FC5130] rounded px-4 py-2 mb-2 shadow-sm;
+}
