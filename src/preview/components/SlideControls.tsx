@@ -169,21 +169,6 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
               Slide {currentSlide + 1} of {slides}
             </div>
           )}
-
-          {
-            showPosition && (
-              children
-            )
-          }
-          <SlideControl
-            title="Toggle mouse position"
-            className='-rotate-90 hover:bg-[var(--vscode-toolbar-hoverBackground)]'
-            iconName="symbol-ruler"
-            action={() => {
-              setShowPosition(prev => !prev);
-              triggerMouseMove(!showPosition);
-            }}
-          />
           <SlideControl
             title="Toggle laser pointer"
             className={`hover:bg-[var(--vscode-toolbar-hoverBackground)] ${laserPointerEnabled ? 'bg-[var(--vscode-statusBarItem-errorBackground)]' : ''}`}
@@ -204,8 +189,26 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
               }
             }}
           />
+
           {
-            path && (
+            !isPresentationMode && (
+              <>
+                {showPosition && children}
+                <SlideControl
+                  title="Toggle mouse position"
+                  className='-rotate-90 hover:bg-[var(--vscode-toolbar-hoverBackground)]'
+                  iconName="symbol-ruler"
+                  action={() => {
+                    setShowPosition(prev => !prev);
+                    triggerMouseMove(!showPosition);
+                  }}
+                />
+              </>
+            )
+          }
+
+          {
+            path && !isPresentationMode && (
               <SlideControl title="Open slide source" iconName="preview" action={openSlideSource} />
             )
           }

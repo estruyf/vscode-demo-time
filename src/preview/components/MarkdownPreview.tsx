@@ -165,18 +165,21 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     const normalizedX = Math.max(0, Math.min(1, mouseX / rect.width));
     const normalizedY = Math.max(0, Math.min(1, mouseY / rect.height));
 
-    // Calculate pan limits to reach all edges of zoomed content
-    // The visible area is 960x540, but the zoomed content is larger.
-    const maxPanX = ((960 * zoomLevel) - 960) / 2;
-    const maxPanY = ((540 * zoomLevel) - 540) / 2;
+    // Calculate pan limits to reach all edges of zoomed content, factoring in scale
+    // The visible area is 960x540, but the zoomed content is larger by zoomLevel * scale
+    const effectiveZoom = zoomLevel * scale;
+    const maxPanX = Math.max(0, ((960 * effectiveZoom) - rect.width) / 2);
+    const maxPanY = Math.max(0, ((540 * effectiveZoom) - rect.height) / 2);
 
-    // Direct mapping: mouse position determines which part of slide to show
-    // Mouse at (0,0) shows top-left corner, mouse at (1,1) shows bottom-right corner
+    // Clamp panOffset so the slide edges never go beyond the viewport
+    const panX = maxPanX * (1 - 2 * normalizedX);
+    const panY = maxPanY * (1 - 2 * normalizedY);
+
     setPanOffset({
-      x: maxPanX * (1 - 2 * normalizedX),
-      y: maxPanY * (1 - 2 * normalizedY)
+      x: Math.max(-maxPanX, Math.min(maxPanX, panX)),
+      y: Math.max(-maxPanY, Math.min(maxPanY, panY))
     });
-  }, [isZoomed, zoomLevel]);
+  }, [isZoomed, zoomLevel, scale]);
 
   const slidesListener = React.useCallback((message: MessageEvent<EventData<any>>) => {
     const { command } = message.data;
