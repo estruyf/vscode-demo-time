@@ -7,17 +7,19 @@ import { StatusMessage } from './StatusMessage';
 import { useStatusMessage } from '../hooks/useStatusMessage';
 import { DemoTimeService } from '../services/DemoTimeService';
 import { ExecutionTrackingService } from '../services/ExecutionTrackingService';
+import { useVisibility } from '../hooks/useVisibility';
 
 export const FormContainer: React.FC = () => {
   const [serverUrl, setServerUrl] = useState<string>('http://localhost:3710');
   const [demoId, setDemoId] = useState<string>('');
   const [slideId, setSlideId] = useState<number | null>(null);
-  const [, setCurrentSlide] = useState<number | null>(null);
+  const [currentSlide, setCurrentSlide] = useState<number | null>(null);
   const [crntTimeout, setCrntTimeout] = useState<number | null>(null);
   const { statusMessage, showStatus } = useStatusMessage();
+  const isVisible = useVisibility();
 
   // Force re-render when execution status changes
-  const [_, forceRender] = useState({});
+  const [, forceRender] = useState({});
 
   const validateSlide = React.useCallback(async () => {
     const isInPresentationMode = await DemoTimeService.checkPresentationMode();
@@ -110,7 +112,6 @@ export const FormContainer: React.FC = () => {
 
     try {
       if (Office.context.document) {
-        // @ts-ignore - The event might not be properly typed
         Office.context.document.addHandlerAsync(
           Office.EventType.ActiveViewChanged,
           startPresentationModeHandler,
@@ -162,6 +163,22 @@ export const FormContainer: React.FC = () => {
   }, [slideId]);
 
   useEffect(() => {
+    if (isVisible) {
+      console.log("FormContainer is visible, starting validation");
+      // If not in presentation mode, get the current slide id
+      DemoTimeService.checkPresentationMode().then(isInPresentationMode => {
+        if (!isInPresentationMode) {
+          DemoTimeService.getCurrentSlideIndex().then(slideIndex => {
+            setCurrentSlide(slideIndex);
+          });
+        }
+      });
+    } else {
+      console.log("FormContainer is not visible, stopping validation");
+    }
+  }, [isVisible]);
+
+  useEffect(() => {
     loadSettings();
   }, []);
 
@@ -187,9 +204,15 @@ export const FormContainer: React.FC = () => {
       <div className="flex gap-2 mt-4 items-center justify-end">
         <div className="flex-1 text-left text-gray-2">
           {slideId && slideId >= 0 ? (
-            <>
-              Current Slide ID: <span className="font-mono">{slideId}</span>
-            </>
+            currentSlide !== null && currentSlide !== slideId ? (
+              <>
+                <span className="text-yellow-600">Slide order got moved, please save settings.</span>
+              </>
+            ) : (
+              <>
+                Saved Slide ID: <span className="font-mono">{slideId}</span>
+              </>
+            )
           ) : (
             <>Settings not yet saved.</>
           )}
