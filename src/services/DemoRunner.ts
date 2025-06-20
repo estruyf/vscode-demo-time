@@ -1234,6 +1234,10 @@ export class DemoRunner {
 
     terminal.show();
     terminal.sendText(command, true);
+    
+    // Focus back to the editor after executing the terminal command
+    // This allows the presenter to continue using keyboard navigation during presentations
+    await commands.executeCommand('workbench.action.focusActiveEditorGroup');
   }
 
   /**
