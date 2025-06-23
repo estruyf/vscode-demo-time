@@ -1,6 +1,6 @@
 # Change Log
 
-## [1.6.0] - 2025-06-xx
+## [1.6.0] - 2025-06-23
 
 - New slide parser logic to support more complex front matter slide structures
 - [#156](https://github.com/estruyf/vscode-demo-time/issues/156): Add preview action to hide the
