@@ -45,4 +45,5 @@ export enum Action {
   Snippet = 'snippet',
   // External applications
   openPowerPoint = 'openPowerPoint',
+  openKeynote = 'openKeynote',
 }

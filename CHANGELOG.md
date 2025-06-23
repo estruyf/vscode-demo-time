@@ -1,5 +1,20 @@
 # Change Log
 
+## [1.6.0] - 2025-06-23
+
+- New slide parser logic to support more complex front matter slide structures
+- [#156](https://github.com/estruyf/vscode-demo-time/issues/156): Add preview action to hide the
+  mouse cursor and action bar
+- [#162](https://github.com/estruyf/vscode-demo-time/issues/162): Added a laser pointer action to
+  the slide view
+- [#164](https://github.com/estruyf/vscode-demo-time/issues/164): Added a slide zoom feature
+- [#167](https://github.com/estruyf/vscode-demo-time/issues/167): Added Apple Keynote support
+
+### Demo Time PowerPoint Add-in
+
+- Implemented check to see if the slide on which the add-in was configured is moved. When it is
+  moved, the add-in will show a message to let the user know the settings need to be saved again.
+
 ## [1.5.1] - 2025-06-17
 
 - fix: add 'image' to allowed frontmatter properties in SlideParser

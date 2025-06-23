@@ -607,6 +607,13 @@ export class DemoRunner {
           Notifications.error(`Failed to open PowerPoint: ${(error as Error).message}`);
         }
         continue;
+      } else if (step.action === Action.openKeynote) {
+        try {
+          await ExternalAppsService.openKeynote();
+        } catch (error) {
+          Notifications.error(`Failed to open Keynote: ${(error as Error).message}`);
+        }
+        continue;
       }
 
       // Update settings

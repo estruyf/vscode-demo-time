@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Demo Time Trigger</title>
+  <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <link rel="icon" type="image/svg+xml" href="/demotime.svg" />
+</head>
+
+<body class="overflow-auto h-full w-full">
+  <img style="display:none" src="https://api.visitorbadge.io/api/combined?path=https:%2f%2fgithub.com%2festruyf%2fvscode-demo-time&labelColor=%23202736&countColor=%23FFD23F&slug=powerpoint-addin" alt="PowerPoint Addin" />
+
+  <!-- Loading Screen -->
+  <div id="loadingScreen" class="flex flex-col items-center justify-center min-h-screen">
+    <div class="logo-container mb-6">
+      <img src="https://raw.githubusercontent.com/estruyf/vscode-demo-time/main/assets/logo/demotime-square.png"
+        alt="Demo Time Logo" class="w-32 h-32" />
+    </div>
+    <div class="spinner"></div>
+  </div>
+
+  <!-- React App Container -->
+  <div id="app"></div>
+
+  <script type="module" src="/src/index.tsx"></script>
+</body>
+
+</html>

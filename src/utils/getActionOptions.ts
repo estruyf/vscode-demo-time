@@ -279,5 +279,10 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: 'Open PowerPoint',
   } as QuickPickItem);
 
+  actions.push({
+    label: Action.openKeynote,
+    description: 'Open Keynote',
+  } as QuickPickItem);
+
   return actions;
 };

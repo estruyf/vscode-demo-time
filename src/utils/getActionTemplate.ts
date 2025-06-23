@@ -305,5 +305,11 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  if (action === Action.openKeynote) {
+    return {
+      action: Action.openKeynote,
+    };
+  }
+
   return;
 };
