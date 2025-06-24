@@ -1,5 +1,6 @@
 import { commands, window } from 'vscode';
 
+// Ref: https://github.com/microsoft/vscode/blob/main/src/vs/workbench/contrib/chat/browser/actions/chatActions.ts
 export class ChatActionsService {
   static async openChat() {
     // Open the Chat view using the correct command
