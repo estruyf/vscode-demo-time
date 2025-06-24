@@ -16,7 +16,6 @@ import {
   Position,
   Range,
   Selection,
-  Terminal,
   TextDocument,
   TextEditor,
   TextEditorRevealType,
@@ -64,6 +63,7 @@ import { StateManager } from './StateManager';
 import { Preview } from '../preview/Preview';
 import { DemoStatusBar } from './DemoStatusBar';
 import { ExternalAppsService } from './ExternalAppsService';
+import { TerminalService } from './TerminalService';
 
 const DEFAULT_START_VALUE = {
   filePath: '',
@@ -73,8 +73,6 @@ const DEFAULT_START_VALUE = {
 
 export class DemoRunner {
   private static isPresentationMode = false;
-  private static terminal: { [id: string]: Terminal | null } = {};
-  private static readonly terminalName = 'DemoTime';
   private static crntFilePath: string | undefined;
   private static crntHighlightRange: Range | undefined;
   private static crntZoom: number | undefined;
@@ -709,13 +707,13 @@ export class DemoRunner {
 
       // Run the specified terminal command
       if (step.action === Action.ExecuteTerminalCommand) {
-        await DemoRunner.executeTerminalCommand(step.command, step.terminalId);
+        await TerminalService.executeCommand(step.command, step.terminalId);
         continue;
       }
 
       // Run the specified terminal command
       if (step.action === Action.CloseTerminal) {
-        DemoRunner.closeTerminal(step.terminalId);
+        await TerminalService.closeTerminal(step.terminalId);
         continue;
       }
 
@@ -1209,56 +1207,6 @@ export class DemoRunner {
    */
   private static async unselect(textEditor: TextEditor): Promise<void> {
     DecoratorService.unselect(textEditor);
-  }
-
-  /**
-   * Executes a terminal command.
-   * @param command - The command to be executed.
-   * @returns A promise that resolves when the command execution is complete.
-   */
-  private static async executeTerminalCommand(
-    command?: string,
-    terminalId?: string,
-  ): Promise<void> {
-    if (!command) {
-      Notifications.error('No command specified');
-      return;
-    }
-
-    terminalId = terminalId || DemoRunner.terminalName;
-    let terminal = DemoRunner.terminal[terminalId];
-
-    if (!terminal) {
-      terminal = window.createTerminal(terminalId);
-      DemoRunner.terminal[terminalId] = terminal;
-
-      window.onDidCloseTerminal((term) => {
-        if (term.name && DemoRunner.terminal[term.name]) {
-          delete DemoRunner.terminal[term.name];
-        }
-      });
-    }
-
-    terminal.show();
-    terminal.sendText(command, true);
-  }
-
-  /**
-   * Closes the terminal.
-   * @param terminalId - The ID of the terminal to be closed.
-   * @returns A promise that resolves when the terminal is closed.
-   */
-  private static closeTerminal(terminalId?: string): void {
-    terminalId = terminalId || DemoRunner.terminalName;
-    const terminal = DemoRunner.terminal[terminalId];
-
-    if (!terminal) {
-      return;
-    }
-
-    terminal.sendText('exit', true);
-    terminal.dispose();
-    delete DemoRunner.terminal[terminalId];
   }
 
   /**

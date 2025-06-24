@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.7.0] - 2025-07-xx
+
+- [#169](https://github.com/estruyf/vscode-demo-time/issues/169): Refocus the editor after executing
+  a terminal command
+
 ## [1.6.0] - 2025-06-23
 
 - New slide parser logic to support more complex front matter slide structures

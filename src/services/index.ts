@@ -17,4 +17,5 @@ export * from './ScriptExecutor';
 export * from './SlideParser';
 export * from './Slides';
 export * from './StateManager';
+export * from './TerminalService';
 export * from './UriHandler';
