@@ -47,10 +47,10 @@ export enum Action {
   openPowerPoint = 'openPowerPoint',
   openKeynote = 'openKeynote',
   // GitHub Copilot
-  openChat = 'openChat',
-  newChat = 'newChat',
-  askChat = 'askChat',
-  editChat = 'editChat',
-  agentChat = 'agentChat',
-  closeChat = 'closeChat',
+  openChat = 'openCopilotChat',
+  newChat = 'newCopilotChat',
+  askChat = 'askCopilotChat',
+  editChat = 'editCopilotChat',
+  agentChat = 'agentCopilotChat',
+  closeChat = 'closeCopilotChat',
 }
