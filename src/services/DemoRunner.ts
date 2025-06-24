@@ -64,6 +64,7 @@ import { Preview } from '../preview/Preview';
 import { DemoStatusBar } from './DemoStatusBar';
 import { ExternalAppsService } from './ExternalAppsService';
 import { TerminalService } from './TerminalService';
+import { ChatActionsService } from './ChatActionsService';
 
 const DEFAULT_START_VALUE = {
   filePath: '',
@@ -583,6 +584,26 @@ export class DemoRunner {
       ) {
         stepJson = await insertVariables(stepJson, variables);
         step = jsonParse(stepJson);
+      }
+
+      if (step.action === Action.openChat) {
+        await ChatActionsService.openChat();
+        continue;
+      } else if (step.action === Action.newChat) {
+        await ChatActionsService.newChat();
+        continue;
+      } else if (step.action === Action.askChat) {
+        await ChatActionsService.askChat(step);
+        continue;
+      } else if (step.action === Action.editChat) {
+        await ChatActionsService.editChat(step);
+        continue;
+      } else if (step.action === Action.agentChat) {
+        await ChatActionsService.agentChat(step);
+        continue;
+      } else if (step.action === Action.closeChat) {
+        await ChatActionsService.closeChat();
+        continue;
       }
 
       // Wait for the specified timeout

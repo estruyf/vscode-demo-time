@@ -284,5 +284,42 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: 'Open Keynote',
   } as QuickPickItem);
 
+  // GitHub Copilot actions
+  actions.push({
+    label: 'GitHub Copilot',
+    description: 'GitHub Copilot actions',
+    kind: QuickPickItemKind.Separator,
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.openChat,
+    description: 'Open the GitHub Copilot Chat',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.newChat,
+    description: 'Start a new chat in GitHub Copilot',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.askChat,
+    description: 'Ask a question in GitHub Copilot Chat',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.editChat,
+    description: 'Start an edit chat in GitHub Copilot Chat',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.agentChat,
+    description: 'Start an agent chat in GitHub Copilot Chat',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.closeChat,
+    description: 'Close the GitHub Copilot Chat',
+  } as QuickPickItem);
+
   return actions;
 };

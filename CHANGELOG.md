@@ -4,6 +4,9 @@
 
 - [#169](https://github.com/estruyf/vscode-demo-time/issues/169): Refocus the editor after executing
   a terminal command
+- [#176](https://github.com/estruyf/vscode-demo-time/issues/176): Add support for GitHub Copilot
+  Chat integration by adding `openChat`, `newChat`, `askChat`, `editChat`, `agentChat` and
+  `closeChat` actions
 
 ## [1.6.0] - 2025-06-23
 

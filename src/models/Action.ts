@@ -46,4 +46,11 @@ export enum Action {
   // External applications
   openPowerPoint = 'openPowerPoint',
   openKeynote = 'openKeynote',
+  // GitHub Copilot
+  openChat = 'openChat',
+  newChat = 'newChat',
+  askChat = 'askChat',
+  editChat = 'editChat',
+  agentChat = 'agentChat',
+  closeChat = 'closeChat',
 }
