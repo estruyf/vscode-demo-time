@@ -20,4 +20,21 @@ describe('CopyToClipboard Action', () => {
   test('should include CopyToClipboard in Action enum', () => {
     expect(Action.CopyToClipboard).toBe('copyToClipboard');
   });
+
+  test('should have expected action properties in template', () => {
+    const mockAction = {
+      label: Action.CopyToClipboard,
+      description: 'Copy text to clipboard',
+    };
+
+    const template = getActionTemplate(mockAction);
+
+    // Verify the template has the expected structure
+    expect(template).toHaveProperty('action');
+    expect(template).toHaveProperty('content');
+    expect(template).toHaveProperty('contentPath');
+    expect(template.action).toBe(Action.CopyToClipboard);
+    expect(typeof template.content).toBe('string');
+    expect(typeof template.contentPath).toBe('string');
+  });
 });
