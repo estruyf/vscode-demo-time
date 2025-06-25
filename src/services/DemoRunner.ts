@@ -24,6 +24,7 @@ import {
   WorkspaceEdit,
   WorkspaceFolder,
   commands,
+  env,
   window,
   workspace,
 } from 'vscode';
@@ -761,6 +762,38 @@ export class DemoRunner {
 
       if (step.action === Action.CloseAll) {
         await commands.executeCommand('workbench.action.closeAllEditors');
+        continue;
+      }
+
+      if (step.action === Action.CopyToClipboard) {
+        let content = step.content || '';
+        
+        // If contentPath is provided, read content from file
+        if (step.contentPath) {
+          const fileContent = await getFileContents(workspaceFolder, step.contentPath);
+          if (!fileContent) {
+            Notifications.error(`Could not read content from file: ${step.contentPath}`);
+            continue;
+          }
+          content = fileContent;
+        }
+
+        // Replace variables in content if any
+        if (variables && Object.keys(variables).length > 0) {
+          content = await insertVariables(content, variables);
+        }
+
+        if (!content) {
+          Notifications.error('No content to copy to clipboard');
+          continue;
+        }
+
+        try {
+          await env.clipboard.writeText(content);
+          Notifications.info(`Copied to clipboard: ${content.length > 50 ? content.substring(0, 50) + '...' : content}`);
+        } catch (error) {
+          Notifications.error(`Failed to copy to clipboard: ${(error as Error).message}`);
+        }
         continue;
       }
 

@@ -311,5 +311,16 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  /**
+   * Clipboard actions
+   */
+  if (action === Action.CopyToClipboard) {
+    return {
+      action: Action.CopyToClipboard,
+      content: '',
+      contentPath: '',
+    };
+  }
+
   return;
 };
