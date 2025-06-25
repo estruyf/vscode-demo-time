@@ -46,4 +46,6 @@ export enum Action {
   // External applications
   openPowerPoint = 'openPowerPoint',
   openKeynote = 'openKeynote',
+  // Clipboard
+  CopyToClipboard = 'copyToClipboard',
 }

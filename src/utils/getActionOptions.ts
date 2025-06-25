@@ -145,6 +145,11 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: 'Delete text',
   } as QuickPickItem);
 
+  actions.push({
+    label: Action.CopyToClipboard,
+    description: 'Copy text to clipboard',
+  } as QuickPickItem);
+
   /**
    * Settings actions
    */
