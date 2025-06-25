@@ -6,6 +6,8 @@
   a terminal command
 - [#173](https://github.com/estruyf/vscode-demo-time/issues/173): Allow to set the timer on the demo
   file level
+- [#175](https://github.com/estruyf/vscode-demo-time/issues/175): Add some sample demos to the
+  extension initialization to help users get started
 - [#176](https://github.com/estruyf/vscode-demo-time/issues/176): Add support for GitHub Copilot
   Chat integration by adding `openChat`, `newChat`, `askChat`, `editChat`, `agentChat` and
   `closeChat` actions

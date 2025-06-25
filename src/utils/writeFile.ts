@@ -1,10 +1,13 @@
 import { Uri, workspace } from 'vscode';
 import { sleep } from './sleep';
+import { parseWinPath } from './parseWinPath';
 
 export const writeFile = async (filePath: Uri, text: string) => {
+  const parsedPath = parseWinPath(filePath.fsPath);
+  filePath = Uri.file(parsedPath);
   await workspace.fs.writeFile(filePath, new TextEncoder().encode(text));
   // Added some sleep to ensure the file is written before proceeding
   // This is a workaround for the issue where the file is not written immediately
   // and the next operation fails.
-  await sleep(200);
+  await sleep(500);
 };

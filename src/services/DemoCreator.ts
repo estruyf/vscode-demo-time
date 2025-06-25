@@ -77,15 +77,17 @@ export class DemoCreator {
    * information message.
    */
   private static async initialize() {
-    const demoFiles = await FileProvider.getFiles();
-    let fileUri: Uri | undefined;
-    if (!demoFiles) {
-      fileUri = await FileProvider.createFile();
-    }
+    // const demoFiles = await FileProvider.getFiles();
+    // let fileUri: Uri | undefined;
+    // if (!demoFiles) {
+    //   fileUri = await FileProvider.createFile();
+    // }
 
-    if (fileUri) {
-      await window.showTextDocument(fileUri);
-    }
+    // if (fileUri) {
+    //   await window.showTextDocument(fileUri);
+    // }
+
+    await createDemoFile();
 
     await addExtensionRecommendation();
 

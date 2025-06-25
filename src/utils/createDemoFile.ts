@@ -1,8 +1,8 @@
-import { Uri, window } from "vscode";
-import { Config, General } from "../constants";
-import { Extension, FileProvider } from "../services";
-import { sanitizeFileName } from "./sanitizeFileName";
-import { fileExists } from "./fileExists";
+import { Uri, window } from 'vscode';
+import { Config, General, Templates } from '../constants';
+import { Extension, FileProvider, TemplateCreator } from '../services';
+import { sanitizeFileName } from './sanitizeFileName';
+import { fileExists } from './fileExists';
 
 export const createDemoFile = async (openFile = false) => {
   const wsFolder = Extension.getInstance().workspaceFolder;
@@ -10,13 +10,40 @@ export const createDemoFile = async (openFile = false) => {
     return;
   }
 
+  const option = await window.showQuickPick(
+    [
+      'Create empty demo file',
+      ...Templates.map((template) => `Create demo file from template: ${template}`),
+    ],
+    {
+      title: 'Select how to create the demo file',
+      placeHolder: 'Choose an option',
+    },
+  );
+
+  if (!option) {
+    return;
+  }
+
+  if (option !== 'Create empty demo file') {
+    const templateName = option.replace('Create demo file from template: ', '');
+    const template = Templates.find((t) => t === templateName);
+    if (!template) {
+      window.showErrorMessage(`Template "${templateName}" not found.`);
+      return;
+    }
+
+    await TemplateCreator.createTemplate(templateName);
+    return;
+  }
+
   const demoName = await window.showInputBox({
     title: Config.title,
-    placeHolder: "Enter the name of the demo file",
+    placeHolder: 'Enter the name of the demo file',
     validateInput: async (value) => {
       value = sanitizeFileName(value);
       if (!value) {
-        return "File name is required";
+        return 'File name is required';
       }
 
       const newFilePath = Uri.joinPath(wsFolder.uri, General.demoFolder, value);

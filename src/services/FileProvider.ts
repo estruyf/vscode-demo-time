@@ -127,7 +127,7 @@ export class FileProvider {
    * The file is created at `.demo/demo.json` with initial content.
    * @returns A promise that resolves when the file is created.
    */
-  public static async createFile(fileName?: string): Promise<Uri | undefined> {
+  public static async createFile(fileName?: string, content?: string): Promise<Uri | undefined> {
     const workspaceFolder = Extension.getInstance().workspaceFolder;
     if (!workspaceFolder) {
       return;
@@ -148,7 +148,9 @@ export class FileProvider {
     }
 
     const file = Uri.joinPath(workspaceFolder.uri, General.demoFolder, fileName || `demo.json`);
-    const content = `{
+    content =
+      content ||
+      `{
   "$schema": "https://demotime.show/demo-time.schema.json",
   "title": "${demoTitle}",
   "description": "",

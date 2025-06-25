@@ -1,3 +1,4 @@
+export * from './ChatActionsService';
 export * from './DecoratorService';
 export * from './DemoApi';
 export * from './DemoCreator';
@@ -17,5 +18,6 @@ export * from './ScriptExecutor';
 export * from './SlideParser';
 export * from './Slides';
 export * from './StateManager';
+export * from './TemplateCreator';
 export * from './TerminalService';
 export * from './UriHandler';
