@@ -650,14 +650,7 @@
     "lint": "eslint src --ext ts",
     "test": "jest --coverage"
   },
-  "peerDependencies": {
-    "playwright-chromium": "^1.51.1"
-  },
-  "peerDependenciesMeta": {
-    "playwright-chromium": {
-      "optional": true
-    }
-  },
+
   "devDependencies": {
     "@actions/core": "^1.11.1",
     "@estruyf/vscode": "^1.1.0",
@@ -687,7 +680,7 @@
     "jest": "^29.7.0",
     "ts-jest": "^29.1.1",
     "npm-run-all": "^4.1.5",
-    "playwright-chromium": "^1.51.1",
+
     "postcss": "^8.4.49",
     "postcss-loader": "^8.1.1",
     "react": "^18.3.1",
