@@ -1,4 +1,4 @@
-import { Action, Version } from ".";
+import { Action, Version } from '.';
 
 export interface DemoFiles {
   [filePath: string]: DemoFile;
@@ -8,6 +8,7 @@ export interface DemoFile {
   title: string;
   description: string;
   version?: Version;
+  timer?: number;
   demos: Demo[];
 }
 

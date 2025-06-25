@@ -4,6 +4,8 @@
 
 - [#169](https://github.com/estruyf/vscode-demo-time/issues/169): Refocus the editor after executing
   a terminal command
+- [#173](https://github.com/estruyf/vscode-demo-time/issues/173): Allow to set the timer on the demo
+  file level
 - [#176](https://github.com/estruyf/vscode-demo-time/issues/176): Add support for GitHub Copilot
   Chat integration by adding `openChat`, `newChat`, `askChat`, `editChat`, `agentChat` and
   `closeChat` actions

@@ -226,6 +226,7 @@ export class DemoRunner {
     } else {
       DemoPanel.updateMessage();
       Preview.postMessage(WebViewMessages.toWebview.updateIsInPresentationMode, false);
+      await commands.executeCommand(COMMAND.resetCountdown);
     }
     DemoPanel.update();
   }

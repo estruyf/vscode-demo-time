@@ -1,12 +1,12 @@
-import { commands, StatusBarAlignment, StatusBarItem, ThemeColor, window } from "vscode";
-import { DemoRunner } from "./DemoRunner";
-import { FileProvider } from "./FileProvider";
-import { COMMAND, Config, ContextKeys, WebViewMessages } from "../constants";
-import { Demo, Subscription } from "../models";
-import { Extension } from "./Extension";
-import { getNextDemoFile, setContext } from "../utils";
-import { PresenterView } from "../presenterView/PresenterView";
-import { Logger } from "./Logger";
+import { commands, StatusBarAlignment, StatusBarItem, ThemeColor, Uri, window } from 'vscode';
+import { DemoRunner } from './DemoRunner';
+import { FileProvider } from './FileProvider';
+import { COMMAND, Config, ContextKeys, WebViewMessages } from '../constants';
+import { Demo, Subscription } from '../models';
+import { Extension } from './Extension';
+import { getNextDemoFile, setContext } from '../utils';
+import { PresenterView } from '../presenterView/PresenterView';
+import { Logger } from './Logger';
 
 export class DemoStatusBar {
   private static statusPresenting: StatusBarItem;
@@ -21,9 +21,15 @@ export class DemoStatusBar {
 
   public static register() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
-    subscriptions.push(commands.registerCommand(COMMAND.startCountdown, DemoStatusBar.startCountdown));
-    subscriptions.push(commands.registerCommand(COMMAND.resetCountdown, DemoStatusBar.resetCountdown));
-    subscriptions.push(commands.registerCommand(COMMAND.pauseCountdown, DemoStatusBar.pauseCountdown));
+    subscriptions.push(
+      commands.registerCommand(COMMAND.startCountdown, DemoStatusBar.startCountdown),
+    );
+    subscriptions.push(
+      commands.registerCommand(COMMAND.resetCountdown, DemoStatusBar.resetCountdown),
+    );
+    subscriptions.push(
+      commands.registerCommand(COMMAND.pauseCountdown, DemoStatusBar.pauseCountdown),
+    );
     setContext(ContextKeys.countdown, false);
 
     DemoStatusBar.createStatusBarItems();
@@ -44,16 +50,26 @@ export class DemoStatusBar {
 
   public static createStatusBarItems() {
     if (!DemoStatusBar.statusBarItem) {
-      DemoStatusBar.statusBarItem = window.createStatusBarItem("next-demo", StatusBarAlignment.Left, 100001);
+      DemoStatusBar.statusBarItem = window.createStatusBarItem(
+        'next-demo',
+        StatusBarAlignment.Left,
+        100001,
+      );
       DemoStatusBar.statusBarItem.name = `${Config.title} - Next Demo`;
       DemoStatusBar.statusBarItem.command = COMMAND.start;
 
-      DemoStatusBar.statusBarItem.backgroundColor = new ThemeColor("statusBarItem.warningBackground");
-      DemoStatusBar.statusBarItem.color = new ThemeColor("statusBarItem.warningForeground");
+      DemoStatusBar.statusBarItem.backgroundColor = new ThemeColor(
+        'statusBarItem.warningBackground',
+      );
+      DemoStatusBar.statusBarItem.color = new ThemeColor('statusBarItem.warningForeground');
     }
 
     if (!DemoStatusBar.statusBarNotes) {
-      DemoStatusBar.statusBarNotes = window.createStatusBarItem("notes", StatusBarAlignment.Left, 100000);
+      DemoStatusBar.statusBarNotes = window.createStatusBarItem(
+        'notes',
+        StatusBarAlignment.Left,
+        100000,
+      );
       DemoStatusBar.statusBarNotes.name = `${Config.title} - Notes`;
       DemoStatusBar.statusBarNotes.command = COMMAND.viewNotes;
       DemoStatusBar.statusBarNotes.text = `$(book) Notes`;
@@ -61,17 +77,21 @@ export class DemoStatusBar {
     }
 
     if (!DemoStatusBar.statusBarPause) {
-      DemoStatusBar.statusBarPause = window.createStatusBarItem("pause-countdown", StatusBarAlignment.Right, 99999);
+      DemoStatusBar.statusBarPause = window.createStatusBarItem(
+        'pause-countdown',
+        StatusBarAlignment.Right,
+        99999,
+      );
       DemoStatusBar.statusBarPause.name = `${Config.title} - Pause/Resume Countdown`;
       DemoStatusBar.statusBarPause.command = COMMAND.pauseCountdown;
       DemoStatusBar.statusBarPause.text = `$(debug-pause) Pause`;
-      DemoStatusBar.statusBarPause.tooltip = "Pause the countdown timer";
+      DemoStatusBar.statusBarPause.tooltip = 'Pause the countdown timer';
     }
   }
 
   public static async showTimer() {
-    const showTimer = Extension.getInstance().getSetting<number>(Config.clock.timer);
-    await setContext(ContextKeys.showTimer, !!showTimer);
+    const timer = await DemoStatusBar.getTimer();
+    await setContext(ContextKeys.showTimer, !!timer);
   }
 
   public static async update() {
@@ -82,7 +102,9 @@ export class DemoStatusBar {
       let executingDemos = demoFiles[executingFile.filePath].demos;
       const lastDemo = executingFile.demo[executingFile.demo.length - 1];
 
-      let crntDemoIdx = executingDemos.findIndex((d, idx) => (d.id ? d.id === lastDemo.id : idx === lastDemo.idx));
+      let crntDemoIdx = executingDemos.findIndex((d, idx) =>
+        d.id ? d.id === lastDemo.id : idx === lastDemo.idx,
+      );
 
       // Show the notes action
       const crntDemo = executingDemos[crntDemoIdx];
@@ -100,7 +122,10 @@ export class DemoStatusBar {
         if (!nextFile) {
           DemoStatusBar.statusBarItem.hide();
           DemoStatusBar.nextDemo = undefined;
-          PresenterView.postMessage(WebViewMessages.toWebview.updateNextDemo, DemoStatusBar.nextDemo);
+          PresenterView.postMessage(
+            WebViewMessages.toWebview.updateNextDemo,
+            DemoStatusBar.nextDemo,
+          );
           return;
         }
 
@@ -118,15 +143,16 @@ export class DemoStatusBar {
         Logger.info(`Next demo: ${nextDemo.title}`);
         DemoStatusBar.nextDemo = nextDemo;
         DemoStatusBar.statusBarItem.text = `$(dt-logo) ${nextDemo.title}`;
-        DemoStatusBar.statusBarItem.tooltip = nextDemo.description || `Next demo: ${nextDemo.title}`;
+        DemoStatusBar.statusBarItem.tooltip =
+          nextDemo.description || `Next demo: ${nextDemo.title}`;
         DemoStatusBar.statusBarItem.show();
       } else {
-        Logger.info("No next demo found");
+        Logger.info('No next demo found');
         DemoStatusBar.nextDemo = undefined;
         DemoStatusBar.statusBarItem.hide();
       }
     } else {
-      Logger.info("No next demo file path found");
+      Logger.info('No next demo file path found');
       DemoStatusBar.nextDemo = undefined;
       DemoStatusBar.statusBarItem.hide();
       DemoStatusBar.statusBarNotes.hide();
@@ -137,13 +163,19 @@ export class DemoStatusBar {
 
   public static async setPresenting(enabled: boolean) {
     if (!DemoStatusBar.statusPresenting) {
-      DemoStatusBar.statusPresenting = window.createStatusBarItem("presenting", StatusBarAlignment.Left, 100002);
+      DemoStatusBar.statusPresenting = window.createStatusBarItem(
+        'presenting',
+        StatusBarAlignment.Left,
+        100002,
+      );
       DemoStatusBar.statusPresenting.name = `${Config.title} - presenting`;
       DemoStatusBar.statusPresenting.text = `$(record)`;
-      DemoStatusBar.statusPresenting.tooltip = "Presenting";
+      DemoStatusBar.statusPresenting.tooltip = 'Presenting';
       DemoStatusBar.statusPresenting.command = COMMAND.togglePresentationMode;
-      DemoStatusBar.statusPresenting.backgroundColor = new ThemeColor("statusBarItem.errorBackground");
-      DemoStatusBar.statusPresenting.color = new ThemeColor("statusBarItem.errorForeground");
+      DemoStatusBar.statusPresenting.backgroundColor = new ThemeColor(
+        'statusBarItem.errorBackground',
+      );
+      DemoStatusBar.statusPresenting.color = new ThemeColor('statusBarItem.errorForeground');
     }
 
     if (enabled) {
@@ -153,8 +185,23 @@ export class DemoStatusBar {
     }
   }
 
+  /**
+   * Retrieves the timer setting from the current demo file or falls back to the extension setting.
+   */
+  public static async getTimer(): Promise<number | undefined> {
+    const executingFile = await DemoRunner.getExecutedDemoFile();
+    if (executingFile.filePath) {
+      const demoFile = await FileProvider.getFile(Uri.file(executingFile.filePath));
+      const timer = demoFile?.timer;
+      if (typeof timer === 'number') {
+        return timer;
+      }
+    }
+    return Extension.getInstance().getSetting<number>(Config.clock.timer);
+  }
+
   private static async startCountdown() {
-    const timer = Extension.getInstance().getSetting<number>(Config.clock.timer);
+    const timer = await DemoStatusBar.getTimer();
     if (!timer) {
       return;
     }
@@ -163,9 +210,12 @@ export class DemoStatusBar {
     DemoStatusBar.updatePause(false);
     DemoStatusBar.pausedTimeRemaining = undefined;
     await setContext(ContextKeys.countdown, true);
-    DemoStatusBar.startClock();
+    await DemoStatusBar.startClock();
     DemoStatusBar.statusBarPause.show();
-    PresenterView.postMessage(WebViewMessages.toWebview.updateCountdownStarted, DemoStatusBar.countdownStarted);
+    PresenterView.postMessage(
+      WebViewMessages.toWebview.updateCountdownStarted,
+      DemoStatusBar.countdownStarted,
+    );
   }
 
   private static async resetCountdown() {
@@ -182,7 +232,7 @@ export class DemoStatusBar {
   }
 
   private static async pauseCountdown() {
-    const timer = Extension.getInstance().getSetting<number>(Config.clock.timer);
+    const timer = await DemoStatusBar.getTimer();
     if (!timer) {
       return;
     }
@@ -192,11 +242,11 @@ export class DemoStatusBar {
       DemoStatusBar.updatePause(false);
       if (DemoStatusBar.pausedTimeRemaining !== undefined) {
         DemoStatusBar.countdownStarted = new Date(
-          new Date().getTime() - (timer * 60 * 1000 - DemoStatusBar.pausedTimeRemaining)
+          new Date().getTime() - (timer * 60 * 1000 - DemoStatusBar.pausedTimeRemaining),
         );
       }
       DemoStatusBar.statusBarPause.text = `$(debug-pause) Pause`;
-      DemoStatusBar.statusBarPause.tooltip = "Pause the countdown timer";
+      DemoStatusBar.statusBarPause.tooltip = 'Pause the countdown timer';
     } else {
       // Pause countdown
       DemoStatusBar.updatePause(true);
@@ -205,13 +255,17 @@ export class DemoStatusBar {
         DemoStatusBar.pausedTimeRemaining = timer * 60 * 1000 - diff;
       }
       DemoStatusBar.statusBarPause.text = `$(debug-start) Resume`;
-      DemoStatusBar.statusBarPause.tooltip = "Resume the countdown timer";
+      DemoStatusBar.statusBarPause.tooltip = 'Resume the countdown timer';
     }
   }
 
-  private static startClock() {
+  private static async startClock() {
     if (!DemoStatusBar.statusBarClock) {
-      DemoStatusBar.statusBarClock = window.createStatusBarItem("clock", StatusBarAlignment.Right, 100000);
+      DemoStatusBar.statusBarClock = window.createStatusBarItem(
+        'clock',
+        StatusBarAlignment.Right,
+        100000,
+      );
       DemoStatusBar.statusBarClock.name = `${Config.title} - Clock & Countdown`;
     }
 
@@ -219,7 +273,7 @@ export class DemoStatusBar {
     const time = date.toTimeString();
 
     const showClock = Extension.getInstance().getSetting<number>(Config.clock.show);
-    const timer = Extension.getInstance().getSetting<number>(Config.clock.timer);
+    const timer = await DemoStatusBar.getTimer();
     if (timer) {
       if (DemoStatusBar.countdownStarted) {
         DemoStatusBar.statusBarClock.command = COMMAND.resetCountdown;
@@ -229,8 +283,8 @@ export class DemoStatusBar {
     }
 
     // Only show hour and minute
-    const clock = time.split(":").slice(0, 2).join(":");
-    let text = showClock ? `$(dt-clock) ${clock}` : "";
+    const clock = time.split(':').slice(0, 2).join(':');
+    let text = showClock ? `$(dt-clock) ${clock}` : '';
 
     // Send the clock to the presenter view
     PresenterView.postMessage(WebViewMessages.toWebview.updateClock, clock);
@@ -258,8 +312,10 @@ export class DemoStatusBar {
 
         if (seconds <= 0) {
           isNegative = true;
-          DemoStatusBar.statusBarClock.backgroundColor = new ThemeColor("statusBarItem.errorBackground");
-          DemoStatusBar.statusBarClock.color = new ThemeColor("statusBarItem.errorForeground");
+          DemoStatusBar.statusBarClock.backgroundColor = new ThemeColor(
+            'statusBarItem.errorBackground',
+          );
+          DemoStatusBar.statusBarClock.color = new ThemeColor('statusBarItem.errorForeground');
 
           if (minutes < 0) {
             // To show the correct overtime
@@ -273,7 +329,7 @@ export class DemoStatusBar {
         // Add leading zero
         const min = Math.abs(minutes) < 10 ? `0${Math.abs(minutes)}` : minutes;
         const sec = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
-        countdown = `${isNegative ? "-" : ""}${min}:${sec}`;
+        countdown = `${isNegative ? '-' : ''}${min}:${sec}`;
       }
 
       text += `    $(dt-timer-off) ${countdown}`;
@@ -283,7 +339,7 @@ export class DemoStatusBar {
     }
 
     DemoStatusBar.statusBarClock.text = text.trim();
-    DemoStatusBar.statusBarClock.tooltip = "Click to start/reset the countdown timer";
+    DemoStatusBar.statusBarClock.tooltip = 'Click to start/reset the countdown timer';
 
     if (!DemoStatusBar.statusBarClock.text) {
       DemoStatusBar.statusBarClock.hide();
