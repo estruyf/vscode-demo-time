@@ -4,6 +4,7 @@ import { writeFile } from '../utils';
 import { General, Templates } from '../constants';
 import { Notifications } from './Notifications';
 import { Action } from '../models';
+import { DemoPanel } from '../panels/DemoPanel';
 
 export class TemplateCreator {
   public static async createTemplate(templateName: string): Promise<void> {
@@ -22,12 +23,16 @@ export class TemplateCreator {
     // Call the appropriate template method based on the template name
     switch (templateName) {
       case 'Template 1':
-        return this.createTemplate1(wsFolder);
+        await this.createTemplate1(wsFolder);
+        break;
       case 'Template 2':
-        return this.createTemplate2(wsFolder);
+        await this.createTemplate2(wsFolder);
+        break;
       default:
         Notifications.error(`Template "${templateName}" not implemented.`);
     }
+
+    DemoPanel.update();
   }
 
   /**
@@ -109,6 +114,12 @@ layout: default
 - Opened a slide
 - Highlighted the \`helloWorld\` function in the code
 - Showed the end slide
+
+---
+layout: section
+---
+
+# Have a great time with Demo Time! 🎉
 `;
 
     await writeFile(
@@ -244,6 +255,12 @@ layout: default
 - Trigger a Visual Studio Code command to show the file in the explorer
 
 Great job!
+
+---
+layout: section
+---
+
+# Have a great time with Demo Time! 🎉
     `;
 
     await writeFile(Uri.joinPath(slidesFolderUri, 'advanced-end.md'), endSlideContent);
