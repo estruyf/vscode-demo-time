@@ -104,7 +104,7 @@ theme: default
 layout: default
 ---
 
-## What did we do?
+# What did we do?
 
 - Opened a slide
 - Highlighted the \`helloWorld\` function in the code
@@ -234,7 +234,7 @@ theme: default
 layout: default
 ---
 
-## What did we do?
+# What did we do?
 
 - Opened a slide
 - Added a \`multiply()\` function in TypeScript
