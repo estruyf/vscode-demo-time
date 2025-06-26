@@ -155,7 +155,8 @@ export class PdfExportService {
           await context.close();
           await browser.close();
 
-          if (Extension.getInstance().isProductionMode) {
+          const isDebug = Extension.getInstance().getSetting<boolean>('demoTime.debug');
+          if (Extension.getInstance().isProductionMode && !isDebug) {
             // Delete the temporary HTML file
             await workspace.fs.delete(tempHtmlOutputPath);
           }
