@@ -189,6 +189,11 @@
           "type": "string",
           "default": "",
           "description": "HTML template for slide footers. Supports Handlebars syntax with frontmatter variables. Example: '<footer><span>{{name}}</span> <span>{{date}}</span></footer>'"
+        },
+        "demoTime.debug": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable debug mode for Demo Time."
         }
       }
     },
