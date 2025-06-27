@@ -51,6 +51,7 @@ import {
   updateConfig,
   togglePresentationView,
   removeDemosForCurrentPosition,
+  copyToClipboard,
 } from '../utils';
 import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
 import { DecoratorService } from './DecoratorService';
@@ -781,6 +782,18 @@ export class DemoRunner {
 
       if (step.action === Action.CloseAll) {
         await commands.executeCommand('workbench.action.closeAllEditors');
+        continue;
+      }
+
+      if (step.action === Action.CopyToClipboard) {
+        await copyToClipboard({
+          content: step.content,
+          contentPath: step.contentPath,
+          variables,
+          workspaceFolder,
+          getFileContents,
+          insertVariables,
+        });
         continue;
       }
 

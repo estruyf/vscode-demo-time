@@ -11,6 +11,8 @@
 - [#176](https://github.com/estruyf/vscode-demo-time/issues/176): Add support for GitHub Copilot
   Chat integration by adding `openChat`, `newChat`, `askChat`, `editChat`, `agentChat` and
   `closeChat` actions
+- [#177](https://github.com/estruyf/vscode-demo-time/issues/177): Added the `copyToClipboard` action
+  to copy text to the clipboard and it supports both text, file content, and variables
 - [#180](https://github.com/estruyf/vscode-demo-time/issues/180): Fix path parsing for Windows
 
 ## [1.6.0] - 2025-06-23

@@ -251,6 +251,11 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: 'Open a website in the browser or the editor',
   } as QuickPickItem);
 
+  actions.push({
+    label: Action.CopyToClipboard,
+    description: 'Copy text to clipboard',
+  } as QuickPickItem);
+
   /**
    * Extensibility actions
    */

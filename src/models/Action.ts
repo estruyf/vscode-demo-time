@@ -37,6 +37,7 @@ export enum Action {
   ShowInfoMessage = 'showInfoMessage',
   SetState = 'setState',
   OpenWebsite = 'openWebsite',
+  CopyToClipboard = 'copyToClipboard',
   // Terminal
   ExecuteTerminalCommand = 'executeTerminalCommand',
   CloseTerminal = 'closeTerminal',
