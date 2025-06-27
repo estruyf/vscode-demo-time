@@ -8,8 +8,8 @@ import { DemoPanel } from '../panels/DemoPanel';
 
 export class TemplateCreator {
   public static async createTemplate(templateName: string): Promise<void> {
-    const included = Templates.includes(templateName);
-    if (!included) {
+    const template = Templates.find((template) => template.id === templateName);
+    if (!template) {
       Notifications.error(`Template "${templateName}" not found.`);
       return;
     }
@@ -22,10 +22,10 @@ export class TemplateCreator {
 
     // Call the appropriate template method based on the template name
     switch (templateName) {
-      case 'Template 1':
+      case 'Sample 1':
         await this.createTemplate1(wsFolder);
         break;
-      case 'Template 2':
+      case 'Sample 2':
         await this.createTemplate2(wsFolder);
         break;
       default:
@@ -139,7 +139,7 @@ sayHello();`;
       await window.showTextDocument(demoFile);
     }
 
-    Notifications.info('Template 1 created successfully');
+    Notifications.info('Sample 1 created successfully');
   }
 
   /**
@@ -279,6 +279,6 @@ export function multiply(x: number, y: number): number {
     if (demoFile) {
       await window.showTextDocument(demoFile);
     }
-    Notifications.info('Template 2 created successfully');
+    Notifications.info('Sample 2 created successfully');
   }
 }

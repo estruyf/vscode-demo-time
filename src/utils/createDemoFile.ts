@@ -10,30 +10,35 @@ export const createDemoFile = async (openFile = false) => {
     return;
   }
 
-  const option = await window.showQuickPick(
-    [
-      'Create empty demo file',
-      ...Templates.map((template) => `Create demo file from template: ${template}`),
-    ],
+  const options = [
     {
-      title: 'Select how to create the demo file',
-      placeHolder: 'Choose an option',
+      label: 'Create empty demo file',
+      detail: 'Blank demo file',
     },
-  );
+    ...Templates.map((sample) => ({
+      label: sample.id,
+      detail: sample.description || 'Use this sample to create a demo file',
+    })),
+  ];
+
+  const option = await window.showQuickPick(options, {
+    title: 'Select how to create the demo file',
+    placeHolder: 'Choose an option',
+  });
 
   if (!option) {
     return;
   }
 
-  if (option !== 'Create empty demo file') {
-    const templateName = option.replace('Create demo file from template: ', '');
-    const template = Templates.find((t) => t === templateName);
-    if (!template) {
-      window.showErrorMessage(`Template "${templateName}" not found.`);
+  if (option.label !== 'Create empty demo file') {
+    const sampleName = option.label;
+    const sample = Templates.find((s) => s.id === sampleName);
+    if (!sample) {
+      window.showErrorMessage(`Sample "${sampleName}" not found.`);
       return;
     }
 
-    await TemplateCreator.createTemplate(templateName);
+    await TemplateCreator.createTemplate(sampleName);
     return;
   }
 
