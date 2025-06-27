@@ -1,5 +1,7 @@
 import { env } from 'vscode';
 import { Notifications } from '../services/Notifications';
+import { getFileContents } from './getFileContents';
+import { insertVariables } from './insertVariables';
 
 /**
  * Copies content to the clipboard, optionally reading from a file and replacing variables.
@@ -7,23 +9,17 @@ import { Notifications } from '../services/Notifications';
  * @param contentPath Optional file path to read content from
  * @param variables Optional variables to replace in the content
  * @param workspaceFolder The workspace folder context
- * @param getFileContents Function to read file contents
- * @param insertVariables Function to replace variables in content
  */
 export async function copyToClipboard({
   content = '',
   contentPath,
   variables,
   workspaceFolder,
-  getFileContents,
-  insertVariables,
 }: {
   content?: string;
   contentPath?: string;
   variables?: Record<string, any>;
   workspaceFolder: any;
-  getFileContents: (workspaceFolder: any, path: string) => Promise<string | undefined>;
-  insertVariables: (content: string, variables: Record<string, any>) => Promise<string>;
 }): Promise<void> {
   // If contentPath is provided, read content from file
   if (contentPath) {

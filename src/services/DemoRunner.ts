@@ -791,8 +791,6 @@ export class DemoRunner {
           contentPath: step.contentPath,
           variables,
           workspaceFolder,
-          getFileContents,
-          insertVariables,
         });
         continue;
       }
