@@ -19,6 +19,10 @@ export const Config = {
   insert: {
     speed: 'lineInsertionDelay',
   },
+  patch: {
+    useTypingEffect: 'patchTypingEffect',
+    typingSpeed: 'patchTypingSpeed',
+  },
   api: {
     enabled: 'api.enabled',
     port: 'api.port',

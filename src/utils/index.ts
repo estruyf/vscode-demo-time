@@ -1,5 +1,6 @@
 export * from './addExtensionRecommendation';
 export * from './addStepsToDemo';
+export * from './applyDiffWithTyping';
 export * from './applyPatch';
 export * from './bringToFront';
 export * from './chooseDemoFile';

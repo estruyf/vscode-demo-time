@@ -143,6 +143,16 @@
           "default": 0,
           "description": "The delay between inserting lines of code (in milliseconds)"
         },
+        "demoTime.patchTypingEffect": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable typewriter effect when applying patches"
+        },
+        "demoTime.patchTypingSpeed": {
+          "type": "number",
+          "default": 50,
+          "description": "Characters per second for the patch typing effect"
+        },
         "demoTime.api.enabled": {
           "type": "boolean",
           "default": false,
