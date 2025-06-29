@@ -43,8 +43,7 @@
     "vscode": "^1.84.0"
   },
   "categories": [
-    "Education",
-    "Other"
+    "Education"
   ],
   "activationEvents": [
     "workspaceContains:**/.demo/*"
