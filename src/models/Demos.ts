@@ -1,5 +1,10 @@
 import { Action, Version } from '.';
 
+/**
+ * Types for different insertion modes
+ */
+export type InsertTypingMode = 'instant' | 'line-by-line' | 'character-by-character';
+
 export interface DemoFiles {
   [filePath: string]: DemoFile;
 }
@@ -52,6 +57,8 @@ export interface Step extends IOpenWebsite, IImagePreview {
   message?: string;
   args?: any;
   lineInsertionDelay?: number;
+  insertTypingMode?: InsertTypingMode;
+  insertTypingSpeed?: number;
   setting?: Setting;
   state?: State;
   dest?: string;

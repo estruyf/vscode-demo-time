@@ -18,6 +18,8 @@ export const Config = {
   },
   insert: {
     speed: 'lineInsertionDelay',
+    typingMode: 'insertTypingMode',
+    typingSpeed: 'insertTypingSpeed',
   },
   patch: {
     useTypingEffect: 'patchTypingEffect',

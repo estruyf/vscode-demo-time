@@ -1,8 +1,7 @@
 import { Uri, window, CancellationToken } from 'vscode';
-import { Extension, Notifications } from '../services';
+import { Extension, Notifications, TextTypingService } from '../services';
 import { applyPatch as applyFilePatch } from 'diff';
 import { getFileContents, writeFile } from '.';
-import { applyDiffWithTyping } from './applyDiffWithTyping';
 import { Config } from '../constants';
 
 export const applyPatch = async (
@@ -43,7 +42,7 @@ export const applyPatch = async (
     );
 
     if (editor) {
-      await applyDiffWithTyping(editor, content, patched, token);
+      await TextTypingService.applyDiff(editor, content, patched, token);
     } else {
       // Fallback to direct file write if no editor is open
       await writeFile(filePath, patched);

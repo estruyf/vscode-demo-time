@@ -15,6 +15,7 @@
   to copy text to the clipboard and it supports both text, file content, and variables
 - [#180](https://github.com/estruyf/vscode-demo-time/issues/180): Fix path parsing for Windows and
   two-column slides
+- [#183](https://github.com/estruyf/vscode-demo-time/issues/183): Improve text typing simulation
 
 ## [1.6.0] - 2025-06-23
 

@@ -143,6 +143,21 @@
           "default": 0,
           "description": "The delay between inserting lines of code (in milliseconds)"
         },
+        "demoTime.insertTypingMode": {
+          "type": "string",
+          "enum": [
+            "instant",
+            "line-by-line",
+            "character-by-character"
+          ],
+          "default": "instant",
+          "description": "Mode for inserting content: instant (all at once), line-by-line, or character-by-character"
+        },
+        "demoTime.insertTypingSpeed": {
+          "type": "number",
+          "default": 50,
+          "description": "Characters per second for character-by-character typing mode"
+        },
         "demoTime.patchTypingEffect": {
           "type": "boolean",
           "default": false,

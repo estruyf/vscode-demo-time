@@ -20,4 +20,5 @@ export * from './Slides';
 export * from './StateManager';
 export * from './TemplateCreator';
 export * from './TerminalService';
+export * from './TextTypingService';
 export * from './UriHandler';

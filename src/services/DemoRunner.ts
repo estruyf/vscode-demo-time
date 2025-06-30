@@ -66,6 +66,7 @@ import { DemoStatusBar } from './DemoStatusBar';
 import { ExternalAppsService } from './ExternalAppsService';
 import { TerminalService } from './TerminalService';
 import { ChatActionsService } from './ChatActionsService';
+import { TextTypingService } from './TextTypingService';
 
 const DEFAULT_START_VALUE = {
   filePath: '',
@@ -892,14 +893,7 @@ export class DemoRunner {
 
       // Code actions
       if (step.action === Action.Insert) {
-        await DemoRunner.insert(
-          textEditor,
-          editor,
-          fileUri,
-          content,
-          crntPosition,
-          step.lineInsertionDelay,
-        );
+        await DemoRunner.insert(textEditor, editor, fileUri, content, crntPosition, step);
         continue;
       }
 
@@ -926,7 +920,7 @@ export class DemoRunner {
           content,
           crntRange,
           crntPosition,
-          step.lineInsertionDelay,
+          step,
         );
         continue;
       }
@@ -960,6 +954,7 @@ export class DemoRunner {
    * @param fileUri The URI of the file where the content should be inserted.
    * @param content The content to be inserted.
    * @param position The position at which the content should be inserted.
+   * @param step The current step being executed (for accessing action-level properties).
    */
   private static async insert(
     textEditor: TextEditor,
@@ -967,7 +962,7 @@ export class DemoRunner {
     fileUri: Uri,
     content: string,
     position: Position | undefined,
-    lineInsertionDelay?: number,
+    step: Step,
   ): Promise<void> {
     if (!position) {
       return;
@@ -982,14 +977,28 @@ export class DemoRunner {
       // do nothing
     }
 
-    const lineSpeed = getLineInsertionSpeed(lineInsertionDelay);
+    // Get typing mode: step-level overrides global setting
+    const typingMode =
+      step.insertTypingMode ||
+      Extension.getInstance().getSetting<string>(Config.insert.typingMode) ||
+      'instant';
+
+    // Get typing speed: step-level overrides global setting
+    const typingSpeed =
+      step.insertTypingSpeed ||
+      Extension.getInstance().getSetting<number>(Config.insert.typingSpeed) ||
+      50;
+
+    const lineSpeed = getLineInsertionSpeed(step.lineInsertionDelay);
 
     let range = new Range(position, position);
+
     if (!lineContent) {
       // Insert the content at the specified position
-      if (!lineSpeed) {
-        await insertContent(fileUri, position, content);
-      } else {
+      if (typingMode === 'character-by-character') {
+        textEditor.revealRange(new Range(position, position), TextEditorRevealType.InCenter);
+        await TextTypingService.insert(textEditor, content, position, typingSpeed);
+      } else if (lineSpeed && typingMode === 'line-by-line') {
         const lineRange = getLineRange(editor, position);
         if (!lineRange) {
           Logger.error('Line range not found');
@@ -997,21 +1006,31 @@ export class DemoRunner {
         }
         textEditor.revealRange(lineRange, TextEditorRevealType.InCenter);
         await insertLineByLine(fileUri, lineRange.start.line, content, lineSpeed);
+      } else {
+        // Instant mode (default)
+        await insertContent(fileUri, position, content);
       }
     } else {
-      if (!lineSpeed) {
+      // Replace content on existing line
+      if (typingMode === 'character-by-character') {
         const line = editor.lineAt(position);
         range = line.range;
-        await replaceContent(fileUri, line.range, content);
-      } else {
-        const range = getLineRange(editor, position);
-        if (!range) {
+        textEditor.revealRange(range, TextEditorRevealType.InCenter);
+        await TextTypingService.replace(textEditor, line.range, content, typingSpeed);
+      } else if (lineSpeed && typingMode === 'line-by-line') {
+        const lineRange = getLineRange(editor, position);
+        if (!lineRange) {
           Logger.error('Line range not found');
           return;
         }
-        await replaceContent(fileUri, range, '');
-        textEditor.revealRange(range, TextEditorRevealType.InCenter);
-        await insertLineByLine(fileUri, range.start.line, content, lineSpeed);
+        await replaceContent(fileUri, lineRange, '');
+        textEditor.revealRange(lineRange, TextEditorRevealType.InCenter);
+        await insertLineByLine(fileUri, lineRange.start.line, content, lineSpeed);
+      } else {
+        // Instant mode (default)
+        const line = editor.lineAt(position);
+        range = line.range;
+        await replaceContent(fileUri, line.range, content);
       }
     }
 
@@ -1033,6 +1052,7 @@ export class DemoRunner {
    * @param content The content to replace with.
    * @param range The range within which the content should be replaced.
    * @param position The position within the line where the content should be replaced.
+   * @param step The current step being executed (for accessing action-level properties).
    */
   private static async replace(
     textEditor: TextEditor,
@@ -1041,46 +1061,65 @@ export class DemoRunner {
     content: string,
     range: Range | undefined,
     position: Position | undefined,
-    lineInsertionDelay?: number,
+    step: Step,
   ): Promise<void> {
     if (!range && !position) {
       return;
     }
 
-    const lineSpeed = getLineInsertionSpeed(lineInsertionDelay);
+    // Get typing mode: step-level overrides global setting
+    const typingMode =
+      step.insertTypingMode ||
+      Extension.getInstance().getSetting<string>(Config.insert.typingMode) ||
+      'instant';
+
+    // Get typing speed: step-level overrides global setting
+    const typingSpeed =
+      step.insertTypingSpeed ||
+      Extension.getInstance().getSetting<number>(Config.insert.typingSpeed) ||
+      50;
+
+    const lineSpeed = getLineInsertionSpeed(step.lineInsertionDelay);
 
     if (range) {
-      if (!lineSpeed) {
-        await replaceContent(fileUri, range, content);
-      } else {
+      if (typingMode === 'character-by-character') {
+        textEditor.revealRange(range, TextEditorRevealType.InCenter);
+        await TextTypingService.replace(textEditor, range, content, typingSpeed);
+      } else if (lineSpeed && typingMode === 'line-by-line') {
         const startLine = editor.lineAt(range.start);
         const endLine = editor.lineAt(range.end);
         const start = new Position(startLine.lineNumber, 0);
         const end = new Position(endLine.lineNumber, endLine.text.length);
+        const fullRange = new Range(start, end);
 
-        await replaceContent(fileUri, new Range(start, end), '');
-
-        textEditor.revealRange(new Range(start, end), TextEditorRevealType.InCenter);
+        await replaceContent(fileUri, fullRange, '');
+        textEditor.revealRange(fullRange, TextEditorRevealType.InCenter);
         await insertLineByLine(fileUri, startLine.lineNumber, content, lineSpeed);
+      } else {
+        // Instant mode (default)
+        await replaceContent(fileUri, range, content);
       }
     } else if (position) {
-      if (!lineSpeed) {
+      if (typingMode === 'character-by-character') {
         const line = editor.lineAt(position);
         range = line.range;
-
-        await replaceContent(fileUri, line.range, content);
-      } else {
+        textEditor.revealRange(range, TextEditorRevealType.InCenter);
+        await TextTypingService.replace(textEditor, line.range, content, typingSpeed);
+      } else if (lineSpeed && typingMode === 'line-by-line') {
         range = getLineRange(editor, position);
-
         if (!range) {
           Logger.error('Line range not found');
           return;
         }
 
         await replaceContent(fileUri, range, '');
-
         textEditor.revealRange(range, TextEditorRevealType.InCenter);
         await insertLineByLine(fileUri, range.start.line, content, lineSpeed);
+      } else {
+        // Instant mode (default)
+        const line = editor.lineAt(position);
+        range = line.range;
+        await replaceContent(fileUri, line.range, content);
       }
     }
 
