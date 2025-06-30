@@ -105,9 +105,7 @@ export class PdfExportService {
               slideAction.path as string,
             );
             const content = await readFile(slideUri);
-            slideContents.push({
-              content: twoColumnFormatting(content),
-            });
+            slideContents.push({ content });
           }
 
           if (slideContents.length === 0) {
@@ -224,7 +222,7 @@ export class PdfExportService {
         const allSlides = parser.parseSlides(slide.content);
         for (const crntSlide of allSlides) {
           const vfile = await transformMarkdown(
-            crntSlide.content,
+            twoColumnFormatting(crntSlide.content),
             undefined,
             undefined,
             undefined,
