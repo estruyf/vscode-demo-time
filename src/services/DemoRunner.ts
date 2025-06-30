@@ -10,6 +10,7 @@ import {
   Step,
   Subscription,
   Version,
+  InsertTypingMode,
 } from '../models';
 import { Extension } from './Extension';
 import {
@@ -47,7 +48,6 @@ import {
   clearVariablesState,
   setContext,
   writeFile,
-  applyPatch,
   updateConfig,
   togglePresentationView,
   removeDemosForCurrentPosition,
@@ -860,7 +860,7 @@ export class DemoRunner {
       }
 
       if (step.action === Action.ApplyPatch) {
-        await applyPatch(fileUri, content, step.patch);
+        await TextTypingService.applyPatch(fileUri, content, step);
         continue;
       }
 
@@ -977,17 +977,8 @@ export class DemoRunner {
       // do nothing
     }
 
-    // Get typing mode: step-level overrides global setting
-    const typingMode =
-      step.insertTypingMode ||
-      Extension.getInstance().getSetting<string>(Config.insert.typingMode) ||
-      'instant';
-
-    // Get typing speed: step-level overrides global setting
-    const typingSpeed =
-      step.insertTypingSpeed ||
-      Extension.getInstance().getSetting<number>(Config.insert.typingSpeed) ||
-      50;
+    const typingMode = TextTypingService.getInsertTypingMode(step);
+    const typingSpeed = TextTypingService.getInsertTypingSpeed(step);
 
     const lineSpeed = getLineInsertionSpeed(step.lineInsertionDelay);
 
@@ -1067,17 +1058,8 @@ export class DemoRunner {
       return;
     }
 
-    // Get typing mode: step-level overrides global setting
-    const typingMode =
-      step.insertTypingMode ||
-      Extension.getInstance().getSetting<string>(Config.insert.typingMode) ||
-      'instant';
-
-    // Get typing speed: step-level overrides global setting
-    const typingSpeed =
-      step.insertTypingSpeed ||
-      Extension.getInstance().getSetting<number>(Config.insert.typingSpeed) ||
-      50;
+    const typingMode = TextTypingService.getInsertTypingMode(step);
+    const typingSpeed = TextTypingService.getInsertTypingSpeed(step);
 
     const lineSpeed = getLineInsertionSpeed(step.lineInsertionDelay);
 

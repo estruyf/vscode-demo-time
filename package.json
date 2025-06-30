@@ -158,11 +158,6 @@
           "default": 50,
           "description": "Characters per second for character-by-character typing mode"
         },
-        "demoTime.patchTypingEffect": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable typewriter effect when applying patches"
-        },
         "demoTime.patchTypingSpeed": {
           "type": "number",
           "default": 50,

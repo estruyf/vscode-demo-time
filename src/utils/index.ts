@@ -1,6 +1,5 @@
 export * from './addExtensionRecommendation';
 export * from './addStepsToDemo';
-export * from './applyPatch';
 export * from './bringToFront';
 export * from './chooseDemoFile';
 export * from './clearVariablesState';

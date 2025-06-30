@@ -1,4 +1,4 @@
-import { diffChars } from 'diff';
+import { diffChars, applyPatch } from 'diff';
 import { Extension, Notifications } from '../services';
 import { Config } from '../constants';
 import {
@@ -10,7 +10,11 @@ import {
   Range,
   Selection,
   TextEditorRevealType,
+  Uri,
+  window,
 } from 'vscode';
+import { getFileContents, writeFile } from '../utils';
+import { InsertTypingMode, Step } from '../models';
 
 export class TextTypingService {
   /**
@@ -114,9 +118,84 @@ export class TextTypingService {
   }
 
   /**
+   * Applies a patch to the given file content, optionally displaying a typing effect in the editor.
+   *
+   * @param filePath - The URI of the file to patch.
+   * @param content - The current content of the file.
+   * @param step - The step object containing patch information.
+   * @param token - (Optional) A cancellation token to cancel the operation.
+   * @returns A promise that resolves when the patch has been applied.
+   */
+  public static async applyPatch(
+    filePath: Uri,
+    content: string,
+    step: Step,
+    token?: CancellationToken,
+  ) {
+    if (!step?.patch) {
+      Notifications.error('No patch provided');
+      return;
+    }
+
+    const wsFolder = Extension.getInstance().workspaceFolder;
+    if (!wsFolder) {
+      return;
+    }
+
+    const patchContent = await getFileContents(wsFolder, step.patch);
+    if (!patchContent) {
+      Notifications.error('No file content retrieved for the patch');
+      return;
+    }
+
+    const patched = applyPatch(content, patchContent);
+    if (!patched) {
+      Notifications.error('Could not apply patch to the file');
+      return;
+    }
+
+    const typingMode = TextTypingService.getInsertTypingMode(step);
+    if (typingMode === 'character-by-character') {
+      const editor = TextTypingService.findEditorForFile(filePath);
+
+      if (editor) {
+        await TextTypingService.applyDiff(editor, content, patched, token);
+      } else {
+        // Fallback to direct file write if no editor is open
+        await writeFile(filePath, patched);
+      }
+    } else {
+      // Apply patch directly by writing to file
+      await writeFile(filePath, patched);
+    }
+  }
+
+  /**
+   * Gets the insert typing mode for a step or global config.
+   */
+  public static getInsertTypingMode(step?: Step): InsertTypingMode {
+    return (
+      step?.insertTypingMode ||
+      Extension.getInstance().getSetting<InsertTypingMode>(Config.insert.typingMode) ||
+      'instant'
+    );
+  }
+
+  /**
+   * Gets the insert typing speed for a step or global config.
+   */
+  public static getInsertTypingSpeed(step?: Step): number {
+    return (
+      step?.insertTypingSpeed ||
+      Extension.getInstance().getSetting<number>(Config.insert.typingSpeed) ||
+      50
+    );
+  }
+
+  /**
    * Applies patch changes with a typewriter effect to simulate live coding
    */
-  public static async applyDiff(
+  private static async applyDiff(
     editor: TextEditor,
     currentContent: string,
     targetContent: string,
@@ -146,5 +225,18 @@ export class TextTypingService {
     } catch (error) {
       Notifications.error('Error applying patch with typing effect', (error as Error).message);
     }
+  }
+
+  /**
+   * Finds and returns the visible text editor associated with the specified file URI.
+   *
+   * @param filePath - The URI of the file to find the editor for.
+   * @returns The {@link TextEditor} instance if found; otherwise, `undefined`.
+   */
+  private static findEditorForFile(filePath: Uri) {
+    const editor = window.visibleTextEditors.find(
+      (e) => e.document.uri.toString() === filePath.toString(),
+    );
+    return editor;
   }
 }
