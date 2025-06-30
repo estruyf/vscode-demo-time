@@ -194,26 +194,36 @@ export class TextTypingService {
   }
 
   /**
-   * Removes text character by character
+   * Deletes the specified range or line in the given editor.
+   * If a range is provided, it deletes the range.
+   * If a position is provided, it deletes the line at that position.
+   * @param editor The text document editor.
+   * @param fileUri The URI of the file being edited.
+   * @param range The range to delete (optional).
+   * @param position The position of the line to delete (optional).
    */
-  public static async removeText(
-    editor: TextEditor,
-    textToRemove: string,
-    startPosition: number,
-    delayMs: number,
-    token?: CancellationToken,
+  public static async delete(
+    editor: TextDocument,
+    fileUri: Uri,
+    range: Range | undefined,
+    position: Position | undefined,
   ): Promise<void> {
-    for (let i = textToRemove.length - 1; i >= 0; i--) {
-      if (token?.isCancellationRequested) {
-        return;
-      }
-      const currentPos = editor.document.positionAt(startPosition + i);
-      const nextPos = currentPos.translate(0, 1);
-      const edit = new WorkspaceEdit();
-      edit.delete(editor.document.uri, new Range(currentPos, nextPos));
-      await workspace.applyEdit(edit);
-      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    if (!range && !position) {
+      return;
     }
+
+    const edit = new WorkspaceEdit();
+
+    if (range) {
+      edit.delete(fileUri, range);
+    } else if (position) {
+      const line = editor.lineAt(position);
+      edit.delete(fileUri, line.range);
+    }
+
+    await workspace.applyEdit(edit);
+
+    await saveFiles();
   }
 
   /**
@@ -263,6 +273,29 @@ export class TextTypingService {
     } else {
       // Instant mode (default)
       await writeFile(filePath, patched);
+    }
+  }
+
+  /**
+   * Removes text character by character
+   */
+  private static async removeText(
+    editor: TextEditor,
+    textToRemove: string,
+    startPosition: number,
+    delayMs: number,
+    token?: CancellationToken,
+  ): Promise<void> {
+    for (let i = textToRemove.length - 1; i >= 0; i--) {
+      if (token?.isCancellationRequested) {
+        return;
+      }
+      const currentPos = editor.document.positionAt(startPosition + i);
+      const nextPos = currentPos.translate(0, 1);
+      const edit = new WorkspaceEdit();
+      edit.delete(editor.document.uri, new Range(currentPos, nextPos));
+      await workspace.applyEdit(edit);
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
     }
   }
 

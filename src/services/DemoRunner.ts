@@ -934,45 +934,12 @@ export class DemoRunner {
       }
 
       if (step.action === Action.Delete) {
-        await DemoRunner.delete(editor, fileUri, crntRange, crntPosition);
+        await TextTypingService.delete(editor, fileUri, crntRange, crntPosition);
         continue;
       }
     }
 
     DemoPanel.update();
-  }
-
-  /**
-   * Deletes the specified range or line in the given editor.
-   * If a range is provided, it deletes the range.
-   * If a position is provided, it deletes the line at that position.
-   * @param editor The text document editor.
-   * @param fileUri The URI of the file being edited.
-   * @param range The range to delete (optional).
-   * @param position The position of the line to delete (optional).
-   */
-  private static async delete(
-    editor: TextDocument,
-    fileUri: Uri,
-    range: Range | undefined,
-    position: Position | undefined,
-  ): Promise<void> {
-    if (!range && !position) {
-      return;
-    }
-
-    const edit = new WorkspaceEdit();
-
-    if (range) {
-      edit.delete(fileUri, range);
-    } else if (position) {
-      const line = editor.lineAt(position);
-      edit.delete(fileUri, line.range);
-    }
-
-    await workspace.applyEdit(edit);
-
-    await saveFiles();
   }
 
   /**
