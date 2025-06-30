@@ -141,7 +141,8 @@
         "demoTime.lineInsertionDelay": {
           "type": "number",
           "default": 0,
-          "description": "The delay between inserting lines of code (in milliseconds)"
+          "description": "The delay between inserting lines of code (in milliseconds)",
+          "deprecationMessage": "This setting is deprecated. Use 'demoTime.insertTypingMode' and 'demoTime.insertTypingSpeed' instead."
         },
         "demoTime.insertTypingMode": {
           "type": "string",
