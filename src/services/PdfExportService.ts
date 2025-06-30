@@ -4,7 +4,7 @@ import { resolve } from 'mlly';
 import { Notifications } from './Notifications';
 import { Action, Step, Subscription } from '../models';
 import { Extension } from './Extension';
-import { FileProvider, Logger } from '.';
+import { DemoFileProvider, Logger } from '.';
 import {
   convertTemplateToHtml,
   getTheme,
@@ -70,7 +70,7 @@ export class PdfExportService {
           const page = await context.newPage();
 
           // Get all demo files
-          let demoFiles = await FileProvider.getFiles();
+          let demoFiles = await DemoFileProvider.getFiles();
           if (!demoFiles) {
             Notifications.error('No demo files found.');
             return;

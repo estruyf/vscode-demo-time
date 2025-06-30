@@ -1,6 +1,6 @@
 import { Uri, window } from 'vscode';
 import { Config, General, Templates } from '../constants';
-import { Extension, FileProvider, TemplateCreator } from '../services';
+import { Extension, DemoFileProvider, TemplateCreator } from '../services';
 import { sanitizeFileName } from './sanitizeFileName';
 import { fileExists } from './fileExists';
 
@@ -63,7 +63,7 @@ export const createDemoFile = async (openFile = false) => {
     return;
   }
 
-  const file = await FileProvider.createFile(demoName.trim());
+  const file = await DemoFileProvider.createFile(demoName.trim());
   if (!file) {
     return;
   }

@@ -1,6 +1,6 @@
-import { sortFiles } from ".";
-import { DemoFiles, DemoFile } from "../models";
-import { FileProvider } from "../services/FileProvider";
+import { sortFiles } from '.';
+import { DemoFiles, DemoFile } from '../models';
+import { DemoFileProvider } from '../services/DemoFileProvider';
 
 export const getPreviousDemoFile = async (demoFile?: {
   filePath: string;
@@ -16,7 +16,7 @@ export const getPreviousDemoFile = async (demoFile?: {
   }
 
   // Get the next demo file
-  const demoFiles: DemoFiles = (await FileProvider.getFiles()) || {};
+  const demoFiles: DemoFiles = (await DemoFileProvider.getFiles()) || {};
   const files = sortFiles(demoFiles);
   const fileIdx = files.findIndex((file) => file === demoFile.filePath);
   const previousIdx = fileIdx - 1;

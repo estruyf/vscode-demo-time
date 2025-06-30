@@ -1,5 +1,5 @@
-import * as vscode from "vscode";
-import { clearVariablesState } from "./utils";
+import * as vscode from 'vscode';
+import { clearVariablesState } from './utils';
 import {
   DecoratorService,
   DemoApi,
@@ -8,17 +8,17 @@ import {
   DemoRunner,
   DemoStatusBar,
   Extension,
-  FileProvider,
+  DemoFileProvider,
   ImportService,
   NotesService,
   PdfExportService,
   Slides,
   UriHandler,
-} from "./services";
-import { DemoPanel } from "./panels/DemoPanel";
-import { Preview } from "./preview/Preview";
-import { PresenterView } from "./presenterView/PresenterView";
-import { Config } from "./constants";
+} from './services';
+import { DemoPanel } from './panels/DemoPanel';
+import { Preview } from './preview/Preview';
+import { PresenterView } from './presenterView/PresenterView';
+import { Config } from './constants';
 
 export async function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);
@@ -35,7 +35,7 @@ export async function activate(context: vscode.ExtensionContext) {
   DemoStatusBar.register();
   Preview.register();
   PresenterView.register();
-  FileProvider.register();
+  DemoFileProvider.register();
   Slides.register();
   NotesService.registerCommands();
   DemoApi.register();

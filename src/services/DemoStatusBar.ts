@@ -1,6 +1,6 @@
 import { commands, StatusBarAlignment, StatusBarItem, ThemeColor, Uri, window } from 'vscode';
 import { DemoRunner } from './DemoRunner';
-import { FileProvider } from './FileProvider';
+import { DemoFileProvider } from './DemoFileProvider';
 import { COMMAND, Config, ContextKeys, WebViewMessages } from '../constants';
 import { Demo, Subscription } from '../models';
 import { Extension } from './Extension';
@@ -95,7 +95,7 @@ export class DemoStatusBar {
   }
 
   public static async update() {
-    const demoFiles = await FileProvider.getFiles();
+    const demoFiles = await DemoFileProvider.getFiles();
     const executingFile = await DemoRunner.getExecutedDemoFile();
 
     if (demoFiles && executingFile.filePath) {
@@ -191,7 +191,7 @@ export class DemoStatusBar {
   public static async getTimer(): Promise<number | undefined> {
     const executingFile = await DemoRunner.getExecutedDemoFile();
     if (executingFile.filePath) {
-      const demoFile = await FileProvider.getFile(Uri.file(executingFile.filePath));
+      const demoFile = await DemoFileProvider.getFile(Uri.file(executingFile.filePath));
       const timer = demoFile?.timer;
       if (typeof timer === 'number') {
         return timer;

@@ -6,7 +6,7 @@ import { parse as jsonParse } from 'jsonc-parser';
 import { createDemoFile, readFile, sanitizeFileName, sortFiles, writeFile } from '../utils';
 import { Preview } from '../preview/Preview';
 
-export class FileProvider {
+export class DemoFileProvider {
   public static register() {
     const subscriptions = Extension.getInstance().subscriptions;
 
@@ -55,7 +55,7 @@ export class FileProvider {
     const demoFiles: DemoFiles = {};
 
     for (const file of files) {
-      const content = await FileProvider.getFile(file);
+      const content = await DemoFileProvider.getFile(file);
       if (!content) {
         continue;
       }
@@ -71,7 +71,7 @@ export class FileProvider {
    * @returns The selected demo file, or undefined if no file was selected.
    */
   public static async demoQuickPick(): Promise<{ filePath: string; demo: DemoFile } | undefined> {
-    let demoFiles = await FileProvider.getFiles();
+    let demoFiles = await DemoFileProvider.getFiles();
     if (!demoFiles) {
       return;
     }
@@ -103,7 +103,7 @@ export class FileProvider {
       }
 
       demoFilePath = file.path;
-      demoFiles = await FileProvider.getFiles();
+      demoFiles = await DemoFileProvider.getFiles();
     } else if (!demoFilePick.description) {
       return;
     } else {

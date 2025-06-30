@@ -2,7 +2,7 @@ import { QuickPickItem, QuickPickItemKind, Uri, commands, window, workspace } fr
 import { COMMAND, Config, ContextKeys } from '../constants';
 import { Action, Demo, DemoFile, Icons, Step, Subscription } from '../models';
 import { Extension } from './Extension';
-import { FileProvider } from './FileProvider';
+import { DemoFileProvider } from './DemoFileProvider';
 import { DemoPanel } from '../panels/DemoPanel';
 import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
 import { DemoRunner } from './DemoRunner';
@@ -77,10 +77,10 @@ export class DemoCreator {
    * information message.
    */
   private static async initialize() {
-    // const demoFiles = await FileProvider.getFiles();
+    // const demoFiles = await DemoFileProvider.getFiles();
     // let fileUri: Uri | undefined;
     // if (!demoFiles) {
-    //   fileUri = await FileProvider.createFile();
+    //   fileUri = await DemoFileProvider.createFile();
     // }
 
     // if (fileUri) {
@@ -138,7 +138,7 @@ export class DemoCreator {
 
     // If there are multiple matches and we have a stepIndex, find the correct occurrence
     if (matchingLineNumbers.length > 1) {
-      const demoFile = await FileProvider.getFile(fileUri);
+      const demoFile = await DemoFileProvider.getFile(fileUri);
       if (!demoFile?.demos) {
         return;
       }
@@ -172,10 +172,10 @@ export class DemoCreator {
    * The modified demo file is saved after the step is added.
    */
   private static async addToStep() {
-    let demoFiles = await FileProvider.getFiles();
+    let demoFiles = await DemoFileProvider.getFiles();
     if (!demoFiles) {
-      await FileProvider.createFile();
-      demoFiles = await FileProvider.getFiles();
+      await DemoFileProvider.createFile();
+      demoFiles = await DemoFileProvider.getFiles();
     }
 
     if (demoFiles === null) {
@@ -301,7 +301,7 @@ export class DemoCreator {
 
     demo.demos = demoFile.demos;
 
-    await FileProvider.saveFile(editor.document.uri.fsPath, JSON.stringify(demo, null, 2));
+    await DemoFileProvider.saveFile(editor.document.uri.fsPath, JSON.stringify(demo, null, 2));
 
     // Trigger a refresh of the treeview
     DemoPanel.update();
@@ -417,7 +417,7 @@ export class DemoCreator {
       return;
     }
 
-    const demoFile = await FileProvider.getFile(Uri.file(item.demoFilePath));
+    const demoFile = await DemoFileProvider.getFile(Uri.file(item.demoFilePath));
     if (!demoFile) {
       return;
     }
@@ -437,7 +437,7 @@ export class DemoCreator {
     steps.splice(stepIndex, 1);
     steps.splice(direction === 'up' ? stepIndex - 1 : stepIndex + 1, 0, stepToMove);
 
-    await FileProvider.saveFile(item.demoFilePath, JSON.stringify(demoFile, null, 2));
+    await DemoFileProvider.saveFile(item.demoFilePath, JSON.stringify(demoFile, null, 2));
 
     // Trigger a refresh of the treeview
     DemoPanel.update();

@@ -1,5 +1,5 @@
 import { Uri, WorkspaceFolder, window } from 'vscode';
-import { Extension, FileProvider } from '.';
+import { Extension, DemoFileProvider } from '.';
 import { writeFile } from '../utils';
 import { General, Templates } from '../constants';
 import { Notifications } from './Notifications';
@@ -84,7 +84,7 @@ export class TemplateCreator {
       ],
     };
 
-    const demoFile = await FileProvider.createFile(
+    const demoFile = await DemoFileProvider.createFile(
       'hello-world-demo.json',
       JSON.stringify(template, null, 2),
     );
@@ -221,7 +221,7 @@ sayHello();`;
       ],
     };
 
-    const demoFile = await FileProvider.createFile(
+    const demoFile = await DemoFileProvider.createFile(
       'advanced-demo.json',
       JSON.stringify(template, null, 2),
     );

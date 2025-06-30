@@ -3,7 +3,7 @@ import { Subscription } from '../models';
 import { Extension } from '../services/Extension';
 import { COMMAND, Config, EXTENSION_NAME, General, WebViewMessages } from '../constants';
 import { MessageHandlerData } from '@estruyf/vscode';
-import { FileProvider } from '../services/FileProvider';
+import { DemoFileProvider } from '../services/DemoFileProvider';
 import { DemoRunner } from '../services/DemoRunner';
 import { DemoStatusBar } from '../services/DemoStatusBar';
 import { NotesService } from '../services/NotesService';
@@ -90,7 +90,7 @@ export class PresenterView {
       const timer = await DemoStatusBar.getTimer();
       PresenterView.postRequestMessage(command, requestId, timer);
     } else if (command === WebViewMessages.toVscode.getDemoFiles) {
-      const demoFiles = await FileProvider.getFiles();
+      const demoFiles = await DemoFileProvider.getFiles();
       PresenterView.postRequestMessage(command, requestId, demoFiles);
     } else if (command === WebViewMessages.toVscode.getRunningDemos) {
       const executingFile = await DemoRunner.getExecutedDemoFile();

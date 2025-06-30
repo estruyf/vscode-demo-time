@@ -26,7 +26,7 @@ import {
   window,
   workspace,
 } from 'vscode';
-import { FileProvider } from './FileProvider';
+import { DemoFileProvider } from './DemoFileProvider';
 import { DemoPanel } from '../panels/DemoPanel';
 import {
   getVariables,
@@ -349,7 +349,7 @@ export class DemoRunner {
       return;
     }
 
-    const demoFile = await FileProvider.getFile(Uri.file(filePath));
+    const demoFile = await DemoFileProvider.getFile(Uri.file(filePath));
     const demos = demoFile?.demos || [];
 
     if (demos.length <= 0) {
@@ -437,7 +437,7 @@ export class DemoRunner {
       executingFile.filePath = demoToRun.filePath;
       executingFile.demo = [];
 
-      const demoFile = await FileProvider.getFile(Uri.file(demoToRun.filePath));
+      const demoFile = await DemoFileProvider.getFile(Uri.file(demoToRun.filePath));
       executingFile.version = demoFile?.version || 1;
     }
 
@@ -465,7 +465,7 @@ export class DemoRunner {
     Logger.info(`Running demo with id: ${id}`);
 
     // Get all the demo files
-    const demoFiles = await FileProvider.getFiles();
+    const demoFiles = await DemoFileProvider.getFiles();
     if (!demoFiles) {
       return;
     }
@@ -1376,7 +1376,7 @@ export class DemoRunner {
       }
     | undefined
   > {
-    const demoFiles = await FileProvider.getFiles();
+    const demoFiles = await DemoFileProvider.getFiles();
     const executingFile = await DemoRunner.getExecutedDemoFile();
 
     const itemPath = item instanceof Uri ? item.fsPath : item?.demoFilePath;
@@ -1387,7 +1387,7 @@ export class DemoRunner {
         return;
       }
 
-      const demoFile = await FileProvider.getFile(Uri.file(itemPath));
+      const demoFile = await DemoFileProvider.getFile(Uri.file(itemPath));
       if (!demoFile) {
         const demoFileName = itemPath.split('/').pop();
         Notifications.warning(`No demo file found with the name ${demoFileName}`);
@@ -1408,7 +1408,7 @@ export class DemoRunner {
       if (demoFiles && Object.keys(demoFiles).length === 1) {
         demoFilePath = Object.keys(demoFiles)[0];
       } else {
-        const demoFile = await FileProvider.demoQuickPick();
+        const demoFile = await DemoFileProvider.demoQuickPick();
         if (!demoFile?.demo) {
           return;
         }
