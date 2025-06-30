@@ -64,6 +64,7 @@ import { ExternalAppsService } from './ExternalAppsService';
 import { TerminalService } from './TerminalService';
 import { ChatActionsService } from './ChatActionsService';
 import { TextTypingService } from './TextTypingService';
+import { FileActionService } from './FileActionService';
 
 const DEFAULT_START_VALUE = {
   filePath: '',
@@ -813,7 +814,7 @@ export class DemoRunner {
       }
 
       if (step.action === Action.Open) {
-        await commands.executeCommand('vscode.open', fileUri);
+        FileActionService.open(fileUri);
         continue;
       }
 
@@ -822,23 +823,18 @@ export class DemoRunner {
         continue;
       }
 
-      if (step.action === Action.Rename) {
-        DemoRunner.rename(workspaceFolder, fileUri, step);
-        continue;
-      }
-
       if (step.action === Action.Copy) {
-        DemoRunner.copy(workspaceFolder, fileUri, step);
+        FileActionService.copy(workspaceFolder, fileUri, step);
         continue;
       }
 
-      if (step.action === Action.Move) {
-        DemoRunner.rename(workspaceFolder, fileUri, step);
+      if (step.action === Action.Move || step.action === Action.Rename) {
+        FileActionService.rename(workspaceFolder, fileUri, step);
         continue;
       }
 
       if (step.action === Action.DeleteFile) {
-        await DemoRunner.deleteFile(workspaceFolder, fileUri);
+        await FileActionService.delete(fileUri);
         continue;
       }
 
@@ -1057,77 +1053,6 @@ export class DemoRunner {
    */
   private static async unselect(textEditor: TextEditor): Promise<void> {
     DecoratorService.unselect(textEditor);
-  }
-
-  /**
-   * Renames a file within the specified workspace folder.
-   *
-   * @param workspaceFolder - The workspace folder containing the file to be renamed.
-   * @param fileUri - The URI of the file to be renamed.
-   * @param step - The step containing the destination path for the renamed file.
-   * @returns A promise that resolves when the file has been renamed.
-   *
-   * @throws Will throw an error if the destination is not specified or if the rename operation fails.
-   */
-  private static async rename(
-    workspaceFolder: WorkspaceFolder,
-    fileUri: Uri,
-    step: Step,
-  ): Promise<void> {
-    if (!step.dest) {
-      Notifications.error('No destination specified');
-      return;
-    }
-
-    try {
-      const newUri = Uri.joinPath(workspaceFolder.uri, step.dest);
-      await workspace.fs.rename(fileUri, newUri, { overwrite: !!step.overwrite });
-    } catch (error) {
-      Notifications.error((error as Error).message);
-    }
-  }
-
-  /**
-   * Copies a file from the specified URI to a new destination within the workspace folder.
-   *
-   * @param workspaceFolder - The workspace folder where the file will be copied.
-   * @param fileUri - The URI of the file to be copied.
-   * @param step - The step object containing the destination path.
-   * @returns A promise that resolves when the copy operation is complete.
-   * @throws Will throw an error if the destination is not specified or if the copy operation fails.
-   */
-  private static async copy(
-    workspaceFolder: WorkspaceFolder,
-    fileUri: Uri,
-    step: Step,
-  ): Promise<void> {
-    if (!step.dest) {
-      Notifications.error('No destination specified');
-      return;
-    }
-
-    try {
-      const newUri = Uri.joinPath(workspaceFolder.uri, step.dest);
-      await workspace.fs.copy(fileUri, newUri, { overwrite: !!step.overwrite });
-    } catch (error) {
-      Notifications.error((error as Error).message);
-    }
-  }
-
-  /**
-   * Deletes a file from the given workspace folder.
-   *
-   * @param workspaceFolder - The workspace folder containing the file to be deleted.
-   * @param fileUri - The URI of the file to be deleted.
-   * @returns A promise that resolves when the file has been deleted.
-   * @throws Will throw an error if the file deletion fails.
-   */
-  private static async deleteFile(workspaceFolder: WorkspaceFolder, fileUri: Uri): Promise<void> {
-    try {
-      await workspace.fs.delete(fileUri);
-    } catch (error) {
-      Notifications.error((error as Error).message);
-    }
   }
 
   /**

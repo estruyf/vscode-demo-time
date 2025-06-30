@@ -8,6 +8,7 @@ export * from './DemoRunner';
 export * from './DemoStatusBar';
 export * from './Extension';
 export * from './ExternalAppsService';
+export * from './FileActionService';
 export * from './FrontMatterParser';
 export * from './ImportService';
 export * from './Logger';
