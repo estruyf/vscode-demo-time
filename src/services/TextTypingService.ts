@@ -155,17 +155,14 @@ export class TextTypingService {
     }
 
     const typingMode = TextTypingService.getInsertTypingMode(step);
-    if (typingMode === 'character-by-character') {
-      const editor = TextTypingService.findEditorForFile(filePath);
+    const typingSpeed = TextTypingService.getInsertTypingSpeed(step);
 
-      if (editor) {
-        await TextTypingService.applyDiff(editor, content, patched, token);
-      } else {
-        // Fallback to direct file write if no editor is open
-        await writeFile(filePath, patched);
-      }
+    if (typingMode === 'character-by-character') {
+      await TextTypingService.applyDiffByChar(filePath, content, patched, token);
+    } else if (typingMode === 'line-by-line') {
+      await TextTypingService.applyDiffByLine(filePath, patched, typingSpeed, token);
     } else {
-      // Apply patch directly by writing to file
+      // Instant mode (default)
       await writeFile(filePath, patched);
     }
   }
@@ -195,35 +192,75 @@ export class TextTypingService {
   /**
    * Applies patch changes with a typewriter effect to simulate live coding
    */
-  private static async applyDiff(
-    editor: TextEditor,
+  private static async applyDiffByChar(
+    filePath: Uri,
     currentContent: string,
     targetContent: string,
     token?: CancellationToken,
   ): Promise<void> {
-    const delayMs = Extension.getInstance().getSetting<number>(Config.patch.typingSpeed) || 50;
-    try {
-      const differences = diffChars(currentContent, targetContent);
-      let currentPosition = 0;
+    const editor = TextTypingService.findEditorForFile(filePath);
+    if (editor) {
+      const delayMs = Extension.getInstance().getSetting<number>(Config.patch.typingSpeed) || 50;
+      try {
+        const differences = diffChars(currentContent, targetContent);
+        let currentPosition = 0;
 
-      for (const diff of differences) {
+        for (const diff of differences) {
+          if (token?.isCancellationRequested) {
+            return;
+          }
+          if (!diff.added && !diff.removed) {
+            currentPosition += diff.count!;
+            continue;
+          }
+          if (diff.removed) {
+            await TextTypingService.removeText(editor, diff.value, currentPosition, delayMs, token);
+          }
+          if (diff.added) {
+            await TextTypingService.typeText(editor, diff.value, currentPosition, delayMs, token);
+            currentPosition += diff.value.length;
+          }
+        }
+      } catch (error) {
+        Notifications.error('Error applying patch with typing effect', (error as Error).message);
+      }
+    } else {
+      await writeFile(filePath, targetContent);
+    }
+  }
+
+  /**
+   * Applies patch changes line by line with a typing effect.
+   */
+  private static async applyDiffByLine(
+    filePath: Uri,
+    targetContent: string,
+    typingSpeed: number,
+    token?: CancellationToken,
+  ): Promise<void> {
+    const editor = TextTypingService.findEditorForFile(filePath);
+    if (editor) {
+      const lines = targetContent.split(/\r?\n/);
+      let doc = editor.document;
+      // Remove all content first
+      const edit = new WorkspaceEdit();
+      const fullRange = new Range(doc.positionAt(0), doc.positionAt(doc.getText().length));
+      edit.delete(filePath, fullRange);
+      await workspace.applyEdit(edit);
+      let pos = new Position(0, 0);
+      for (let i = 0; i < lines.length; i++) {
         if (token?.isCancellationRequested) {
           return;
         }
-        if (!diff.added && !diff.removed) {
-          currentPosition += diff.count!;
-          continue;
-        }
-        if (diff.removed) {
-          await TextTypingService.removeText(editor, diff.value, currentPosition, delayMs, token);
-        }
-        if (diff.added) {
-          await TextTypingService.typeText(editor, diff.value, currentPosition, delayMs, token);
-          currentPosition += diff.value.length;
-        }
+        const line = lines[i] + (i < lines.length - 1 ? '\n' : '');
+        const editLine = new WorkspaceEdit();
+        editLine.insert(filePath, pos, line);
+        await workspace.applyEdit(editLine);
+        pos = new Position(i + 1, 0);
+        await new Promise((resolve) => setTimeout(resolve, typingSpeed));
       }
-    } catch (error) {
-      Notifications.error('Error applying patch with typing effect', (error as Error).message);
+    } else {
+      await writeFile(filePath, targetContent);
     }
   }
 
