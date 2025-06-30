@@ -1,5 +1,5 @@
 import { diffChars, applyPatch } from 'diff';
-import { Extension, Notifications } from '../services';
+import { Extension, Logger, Notifications } from '../services';
 import { Config } from '../constants';
 import {
   CancellationToken,
@@ -12,53 +12,185 @@ import {
   TextEditorRevealType,
   Uri,
   window,
+  TextDocument,
 } from 'vscode';
-import { getFileContents, writeFile } from '../utils';
+import { getFileContents, getLineRange, saveFiles, sleep, writeFile } from '../utils';
 import { InsertTypingMode, Step } from '../models';
 
 export class TextTypingService {
   /**
-   * Inserts text character by character
+   * Inserts content into a text editor at the specified position or range.
+   * If a position is provided, the content is inserted at that position.
+   * If a range is provided, the content replaces the text within that range.
+   * @param textEditor The text editor where the content should be inserted.
+   * @param editor The text document associated with the text editor.
+   * @param fileUri The URI of the file where the content should be inserted.
+   * @param content The content to be inserted.
+   * @param position The position at which the content should be inserted.
+   * @param step The current step being executed (for accessing action-level properties).
    */
-  public static async typeText(
-    editor: TextEditor,
-    text: string,
-    startPosition: Position | number,
-    delayMs: number,
-    token?: CancellationToken,
+  public static async insert(
+    textEditor: TextEditor,
+    editor: TextEditor['document'],
+    fileUri: Uri,
+    content: string,
+    position: Position | undefined,
+    step: Step,
   ): Promise<void> {
-    let i = 0;
-    let currentPos: Position =
-      typeof startPosition === 'number' ? editor.document.positionAt(startPosition) : startPosition;
-
-    while (i < text.length) {
-      if (token?.isCancellationRequested) {
-        return;
-      }
-      let char = text[i];
-      if (char === '\r' && i + 1 < text.length && text[i + 1] === '\n') {
-        char = '\r\n';
-        i += 2;
-      } else {
-        i += 1;
-      }
-      const edit = new WorkspaceEdit();
-      edit.insert(editor.document.uri, currentPos, char);
-      await workspace.applyEdit(edit);
-      // Update cursor position
-      if (typeof startPosition === 'number') {
-        startPosition += char.length;
-        currentPos = editor.document.positionAt(startPosition);
-      } else {
-        if (char === '\r\n' || char === '\n') {
-          currentPos = new Position(currentPos.line + 1, 0);
-        } else {
-          currentPos = new Position(currentPos.line, currentPos.character + char.length);
-        }
-      }
-      editor.selection = new Selection(currentPos, currentPos);
-      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    if (!position) {
+      return;
     }
+
+    let lineContent = null;
+
+    try {
+      const line = editor.lineAt(position);
+      lineContent = line.text;
+    } catch (error) {
+      // do nothing
+    }
+
+    const typingMode = TextTypingService.getInsertTypingMode(step);
+    const typingSpeed = TextTypingService.getInsertTypingSpeed(step);
+
+    let range = new Range(position, position);
+
+    if (!lineContent) {
+      // Insert the content at the specified position
+      if (typingMode === 'character-by-character') {
+        textEditor.revealRange(new Range(position, position), TextEditorRevealType.InCenter);
+        await TextTypingService.insertCharByChar(textEditor, content, position, typingSpeed);
+      } else if (typingSpeed && typingMode === 'line-by-line') {
+        const lineRange = editor.lineAt(position).range;
+        textEditor.revealRange(lineRange, TextEditorRevealType.InCenter);
+        await TextTypingService.insertLineByLine(
+          fileUri,
+          lineRange.start.line,
+          content,
+          typingSpeed,
+        );
+      } else {
+        // Instant mode (default)
+        await TextTypingService.insertInstant(fileUri, position, content);
+      }
+    } else {
+      // Replace content on existing line
+      if (typingMode === 'character-by-character') {
+        const line = editor.lineAt(position);
+        range = line.range;
+        textEditor.revealRange(range, TextEditorRevealType.InCenter);
+        await TextTypingService.replaceCharByChar(textEditor, line.range, content, typingSpeed);
+      } else if (typingSpeed && typingMode === 'line-by-line') {
+        const lineRange = getLineRange(editor, position);
+        if (!lineRange) {
+          Logger.error('Line range not found');
+          return;
+        }
+        await TextTypingService.replaceInstant(fileUri, lineRange, '');
+        textEditor.revealRange(lineRange, TextEditorRevealType.InCenter);
+        await TextTypingService.insertLineByLine(
+          fileUri,
+          lineRange.start.line,
+          content,
+          typingSpeed,
+        );
+      } else {
+        // Instant mode (default)
+        const line = editor.lineAt(position);
+        range = line.range;
+        await TextTypingService.replaceInstant(fileUri, range, content);
+      }
+    }
+
+    if (textEditor) {
+      textEditor.revealRange(range, TextEditorRevealType.InCenter);
+      textEditor.selection = new Selection(range.start, range.start);
+    }
+
+    await saveFiles();
+  }
+
+  /**
+   * Replaces the specified range or position in the text editor with the given content.
+   * If a range is provided, it replaces the content within that range.
+   * If a position is provided, it replaces the content within the line of that position.
+   * @param textEditor The text editor in which the replacement should occur.
+   * @param editor The text document associated with the text editor.
+   * @param fileUri The URI of the file being edited.
+   * @param content The content to replace with.
+   * @param range The range within which the content should be replaced.
+   * @param position The position within the line where the content should be replaced.
+   * @param step The current step being executed (for accessing action-level properties).
+   */
+  public static async replace(
+    textEditor: TextEditor,
+    editor: TextDocument,
+    fileUri: Uri,
+    content: string,
+    range: Range | undefined,
+    position: Position | undefined,
+    step: Step,
+  ): Promise<void> {
+    if (!range && !position) {
+      return;
+    }
+
+    const typingMode = TextTypingService.getInsertTypingMode(step);
+    const typingSpeed = TextTypingService.getInsertTypingSpeed(step);
+
+    if (range) {
+      if (typingMode === 'character-by-character') {
+        textEditor.revealRange(range, TextEditorRevealType.InCenter);
+        await TextTypingService.replaceCharByChar(textEditor, range, content, typingSpeed);
+      } else if (typingSpeed && typingMode === 'line-by-line') {
+        const startLine = editor.lineAt(range.start);
+        const endLine = editor.lineAt(range.end);
+        const start = new Position(startLine.lineNumber, 0);
+        const end = new Position(endLine.lineNumber, endLine.text.length);
+        const fullRange = new Range(start, end);
+
+        await TextTypingService.replaceInstant(fileUri, fullRange, '');
+        textEditor.revealRange(fullRange, TextEditorRevealType.InCenter);
+        await TextTypingService.insertLineByLine(
+          fileUri,
+          startLine.lineNumber,
+          content,
+          typingSpeed,
+        );
+      } else {
+        // Instant mode (default)
+        await TextTypingService.replaceInstant(fileUri, range, content);
+      }
+    } else if (position) {
+      if (typingMode === 'character-by-character') {
+        const line = editor.lineAt(position);
+        range = line.range;
+        textEditor.revealRange(range, TextEditorRevealType.InCenter);
+        await TextTypingService.replaceCharByChar(textEditor, line.range, content, typingSpeed);
+      } else if (typingSpeed && typingMode === 'line-by-line') {
+        range = getLineRange(editor, position);
+        if (!range) {
+          Logger.error('Line range not found');
+          return;
+        }
+
+        await TextTypingService.replaceInstant(fileUri, range, '');
+        textEditor.revealRange(range, TextEditorRevealType.InCenter);
+        await TextTypingService.insertLineByLine(fileUri, range.start.line, content, typingSpeed);
+      } else {
+        // Instant mode (default)
+        const line = editor.lineAt(position);
+        range = line.range;
+        await TextTypingService.replaceInstant(fileUri, line.range, content);
+      }
+    }
+
+    if (textEditor && range) {
+      textEditor.revealRange(range, TextEditorRevealType.InCenter);
+      textEditor.selection = new Selection(range.start, range.start);
+    }
+
+    await saveFiles();
   }
 
   /**
@@ -82,39 +214,6 @@ export class TextTypingService {
       await workspace.applyEdit(edit);
       await new Promise((resolve) => setTimeout(resolve, delayMs));
     }
-  }
-
-  /**
-   * Inserts content with character-by-character typing effect
-   */
-  public static async insert(
-    editor: TextEditor,
-    content: string,
-    position: Position,
-    typingSpeed?: number,
-    token?: CancellationToken,
-  ): Promise<void> {
-    const delayMs =
-      typingSpeed || Extension.getInstance().getSetting<number>(Config.insert.typingSpeed) || 50;
-    editor.revealRange(new Range(position, position), TextEditorRevealType.InCenter);
-    editor.selection = new Selection(position, position);
-    await TextTypingService.typeText(editor, content, position, delayMs, token);
-  }
-
-  /**
-   * Replaces content with character-by-character typing effect
-   */
-  public static async replace(
-    editor: TextEditor,
-    range: Range,
-    content: string,
-    typingSpeed?: number,
-    token?: CancellationToken,
-  ): Promise<void> {
-    const deleteEdit = new WorkspaceEdit();
-    deleteEdit.delete(editor.document.uri, range);
-    await workspace.applyEdit(deleteEdit);
-    await TextTypingService.insert(editor, content, range.start, typingSpeed, token);
   }
 
   /**
@@ -168,25 +267,148 @@ export class TextTypingService {
   }
 
   /**
-   * Gets the insert typing mode for a step or global config.
+   * Inserts content with character-by-character typing effect
    */
-  public static getInsertTypingMode(step?: Step): InsertTypingMode {
-    return (
-      step?.insertTypingMode ||
-      Extension.getInstance().getSetting<InsertTypingMode>(Config.insert.typingMode) ||
-      'instant'
-    );
+  private static async insertCharByChar(
+    editor: TextEditor,
+    content: string,
+    position: Position,
+    typingSpeed?: number,
+    token?: CancellationToken,
+  ): Promise<void> {
+    const delayMs =
+      typingSpeed || Extension.getInstance().getSetting<number>(Config.insert.typingSpeed) || 50;
+    editor.revealRange(new Range(position, position), TextEditorRevealType.InCenter);
+    editor.selection = new Selection(position, position);
+    await TextTypingService.typeText(editor, content, position, delayMs, token);
   }
 
   /**
-   * Gets the insert typing speed for a step or global config.
+   * Inserts content line by line with a typing effect.
    */
-  public static getInsertTypingSpeed(step?: Step): number {
-    return (
-      step?.insertTypingSpeed ||
-      Extension.getInstance().getSetting<number>(Config.insert.typingSpeed) ||
-      50
-    );
+  private static async insertLineByLine(
+    fileUri: Uri,
+    startLine: number,
+    content: string,
+    delayMs: number,
+  ): Promise<void> {
+    const lines = content.split('\n');
+    const totalLines = lines.length;
+    const lastLine = lines[totalLines - 1];
+
+    let crntPosition = new Position(startLine, 0);
+    let i = 0;
+    for await (const line of lines) {
+      let lineContent = line;
+
+      if (totalLines > 1) {
+        if (i === totalLines - 1 && lastLine.trim() === '') {
+          lineContent = ``;
+        } else if (i < totalLines - 1) {
+          lineContent = `${lineContent}\n`;
+        } else {
+          lineContent = `${lineContent}`;
+        }
+      }
+
+      await TextTypingService.insertInstant(fileUri, crntPosition, lineContent);
+
+      crntPosition = new Position(crntPosition.line + 1, 0);
+      await sleep(delayMs);
+      ++i;
+    }
+  }
+
+  /**
+   * Instantly inserts the specified content at the given position in the provided file.
+   *
+   * @param fileUri - The URI of the file where the content will be inserted.
+   * @param position - The position within the file to insert the content.
+   * @param content - The string content to insert.
+   * @returns A promise that resolves when the edit has been applied.
+   */
+  private static async insertInstant(
+    fileUri: Uri,
+    position: Position,
+    content: string,
+  ): Promise<void> {
+    const edit = new WorkspaceEdit();
+    edit.insert(fileUri, position, content);
+    await workspace.applyEdit(edit);
+  }
+
+  /**
+   * Instantly replaces the text within the specified range of a file with the provided content.
+   *
+   * @param fileUri - The URI of the file to edit.
+   * @param range - The range within the file to replace.
+   * @param content - The new content to insert in the specified range.
+   * @returns A promise that resolves when the edit has been applied.
+   */
+  private static async replaceInstant(fileUri: Uri, range: Range, content: string): Promise<void> {
+    const edit = new WorkspaceEdit();
+    edit.replace(fileUri, range, content);
+    await workspace.applyEdit(edit);
+  }
+
+  /**
+   * Inserts text character by character
+   */
+  private static async typeText(
+    editor: TextEditor,
+    text: string,
+    startPosition: Position | number,
+    delayMs: number,
+    token?: CancellationToken,
+  ): Promise<void> {
+    let i = 0;
+    let currentPos: Position =
+      typeof startPosition === 'number' ? editor.document.positionAt(startPosition) : startPosition;
+
+    while (i < text.length) {
+      if (token?.isCancellationRequested) {
+        return;
+      }
+      let char = text[i];
+      if (char === '\r' && i + 1 < text.length && text[i + 1] === '\n') {
+        char = '\r\n';
+        i += 2;
+      } else {
+        i += 1;
+      }
+      const edit = new WorkspaceEdit();
+      edit.insert(editor.document.uri, currentPos, char);
+      await workspace.applyEdit(edit);
+      // Update cursor position
+      if (typeof startPosition === 'number') {
+        startPosition += char.length;
+        currentPos = editor.document.positionAt(startPosition);
+      } else {
+        if (char === '\r\n' || char === '\n') {
+          currentPos = new Position(currentPos.line + 1, 0);
+        } else {
+          currentPos = new Position(currentPos.line, currentPos.character + char.length);
+        }
+      }
+      editor.selection = new Selection(currentPos, currentPos);
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+  }
+
+  /**
+   * Replaces content with character-by-character typing effect
+   */
+  public static async replaceCharByChar(
+    editor: TextEditor,
+    range: Range,
+    content: string,
+    typingSpeed?: number,
+    token?: CancellationToken,
+  ): Promise<void> {
+    const deleteEdit = new WorkspaceEdit();
+    deleteEdit.delete(editor.document.uri, range);
+    await workspace.applyEdit(deleteEdit);
+    await TextTypingService.insertCharByChar(editor, content, range.start, typingSpeed, token);
   }
 
   /**
@@ -200,7 +422,7 @@ export class TextTypingService {
   ): Promise<void> {
     const editor = TextTypingService.findEditorForFile(filePath);
     if (editor) {
-      const delayMs = Extension.getInstance().getSetting<number>(Config.patch.typingSpeed) || 50;
+      const delayMs = Extension.getInstance().getSetting<number>(Config.insert.typingSpeed) || 50;
       try {
         const differences = diffChars(currentContent, targetContent);
         let currentPosition = 0;
@@ -275,5 +497,27 @@ export class TextTypingService {
       (e) => e.document.uri.toString() === filePath.toString(),
     );
     return editor;
+  }
+
+  /**
+   * Gets the insert typing mode for a step or global config.
+   */
+  public static getInsertTypingMode(step?: Step): InsertTypingMode {
+    return (
+      step?.insertTypingMode ||
+      Extension.getInstance().getSetting<InsertTypingMode>(Config.insert.typingMode) ||
+      'instant'
+    );
+  }
+
+  /**
+   * Gets the insert typing speed for a step or global config.
+   */
+  public static getInsertTypingSpeed(step?: Step): number {
+    return (
+      step?.insertTypingSpeed ||
+      Extension.getInstance().getSetting<number>(Config.insert.typingSpeed) ||
+      50
+    );
   }
 }

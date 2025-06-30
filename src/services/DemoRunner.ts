@@ -10,7 +10,6 @@ import {
   Step,
   Subscription,
   Version,
-  InsertTypingMode,
 } from '../models';
 import { Extension } from './Extension';
 import {
@@ -35,10 +34,7 @@ import {
   getLineInsertionSpeed,
   getLineRange,
   getPositionAndRange,
-  insertContent,
-  insertLineByLine,
   insertVariables,
-  replaceContent,
   sleep,
   getNextDemoFile,
   getPreviousDemoFile,
@@ -52,6 +48,7 @@ import {
   togglePresentationView,
   removeDemosForCurrentPosition,
   copyToClipboard,
+  saveFiles,
 } from '../utils';
 import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
 import { DecoratorService } from './DecoratorService';
@@ -773,7 +770,7 @@ export class DemoRunner {
       }
 
       if (step.action === Action.Save) {
-        await DemoRunner.saveFile();
+        await saveFiles();
       }
 
       if (step.action === Action.Close) {
@@ -893,7 +890,7 @@ export class DemoRunner {
 
       // Code actions
       if (step.action === Action.Insert) {
-        await DemoRunner.insert(textEditor, editor, fileUri, content, crntPosition, step);
+        await TextTypingService.insert(textEditor, editor, fileUri, content, crntPosition, step);
         continue;
       }
 
@@ -913,7 +910,7 @@ export class DemoRunner {
       }
 
       if (step.action === Action.Replace) {
-        await DemoRunner.replace(
+        await TextTypingService.replace(
           textEditor,
           editor,
           fileUri,
@@ -946,174 +943,6 @@ export class DemoRunner {
   }
 
   /**
-   * Inserts content into a text editor at the specified position or range.
-   * If a position is provided, the content is inserted at that position.
-   * If a range is provided, the content replaces the text within that range.
-   * @param textEditor The text editor where the content should be inserted.
-   * @param editor The text document associated with the text editor.
-   * @param fileUri The URI of the file where the content should be inserted.
-   * @param content The content to be inserted.
-   * @param position The position at which the content should be inserted.
-   * @param step The current step being executed (for accessing action-level properties).
-   */
-  private static async insert(
-    textEditor: TextEditor,
-    editor: TextDocument,
-    fileUri: Uri,
-    content: string,
-    position: Position | undefined,
-    step: Step,
-  ): Promise<void> {
-    if (!position) {
-      return;
-    }
-
-    let lineContent = null;
-
-    try {
-      const line = editor.lineAt(position);
-      lineContent = line.text;
-    } catch (error) {
-      // do nothing
-    }
-
-    const typingMode = TextTypingService.getInsertTypingMode(step);
-    const typingSpeed = TextTypingService.getInsertTypingSpeed(step);
-
-    const lineSpeed = getLineInsertionSpeed(step.lineInsertionDelay);
-
-    let range = new Range(position, position);
-
-    if (!lineContent) {
-      // Insert the content at the specified position
-      if (typingMode === 'character-by-character') {
-        textEditor.revealRange(new Range(position, position), TextEditorRevealType.InCenter);
-        await TextTypingService.insert(textEditor, content, position, typingSpeed);
-      } else if (lineSpeed && typingMode === 'line-by-line') {
-        const lineRange = getLineRange(editor, position);
-        if (!lineRange) {
-          Logger.error('Line range not found');
-          return;
-        }
-        textEditor.revealRange(lineRange, TextEditorRevealType.InCenter);
-        await insertLineByLine(fileUri, lineRange.start.line, content, lineSpeed);
-      } else {
-        // Instant mode (default)
-        await insertContent(fileUri, position, content);
-      }
-    } else {
-      // Replace content on existing line
-      if (typingMode === 'character-by-character') {
-        const line = editor.lineAt(position);
-        range = line.range;
-        textEditor.revealRange(range, TextEditorRevealType.InCenter);
-        await TextTypingService.replace(textEditor, line.range, content, typingSpeed);
-      } else if (lineSpeed && typingMode === 'line-by-line') {
-        const lineRange = getLineRange(editor, position);
-        if (!lineRange) {
-          Logger.error('Line range not found');
-          return;
-        }
-        await replaceContent(fileUri, lineRange, '');
-        textEditor.revealRange(lineRange, TextEditorRevealType.InCenter);
-        await insertLineByLine(fileUri, lineRange.start.line, content, lineSpeed);
-      } else {
-        // Instant mode (default)
-        const line = editor.lineAt(position);
-        range = line.range;
-        await replaceContent(fileUri, line.range, content);
-      }
-    }
-
-    if (textEditor) {
-      textEditor.revealRange(range, TextEditorRevealType.InCenter);
-      textEditor.selection = new Selection(range.start, range.start);
-    }
-
-    await DemoRunner.saveFile();
-  }
-
-  /**
-   * Replaces the specified range or position in the text editor with the given content.
-   * If a range is provided, it replaces the content within that range.
-   * If a position is provided, it replaces the content within the line of that position.
-   * @param textEditor The text editor in which the replacement should occur.
-   * @param editor The text document associated with the text editor.
-   * @param fileUri The URI of the file being edited.
-   * @param content The content to replace with.
-   * @param range The range within which the content should be replaced.
-   * @param position The position within the line where the content should be replaced.
-   * @param step The current step being executed (for accessing action-level properties).
-   */
-  private static async replace(
-    textEditor: TextEditor,
-    editor: TextDocument,
-    fileUri: Uri,
-    content: string,
-    range: Range | undefined,
-    position: Position | undefined,
-    step: Step,
-  ): Promise<void> {
-    if (!range && !position) {
-      return;
-    }
-
-    const typingMode = TextTypingService.getInsertTypingMode(step);
-    const typingSpeed = TextTypingService.getInsertTypingSpeed(step);
-
-    const lineSpeed = getLineInsertionSpeed(step.lineInsertionDelay);
-
-    if (range) {
-      if (typingMode === 'character-by-character') {
-        textEditor.revealRange(range, TextEditorRevealType.InCenter);
-        await TextTypingService.replace(textEditor, range, content, typingSpeed);
-      } else if (lineSpeed && typingMode === 'line-by-line') {
-        const startLine = editor.lineAt(range.start);
-        const endLine = editor.lineAt(range.end);
-        const start = new Position(startLine.lineNumber, 0);
-        const end = new Position(endLine.lineNumber, endLine.text.length);
-        const fullRange = new Range(start, end);
-
-        await replaceContent(fileUri, fullRange, '');
-        textEditor.revealRange(fullRange, TextEditorRevealType.InCenter);
-        await insertLineByLine(fileUri, startLine.lineNumber, content, lineSpeed);
-      } else {
-        // Instant mode (default)
-        await replaceContent(fileUri, range, content);
-      }
-    } else if (position) {
-      if (typingMode === 'character-by-character') {
-        const line = editor.lineAt(position);
-        range = line.range;
-        textEditor.revealRange(range, TextEditorRevealType.InCenter);
-        await TextTypingService.replace(textEditor, line.range, content, typingSpeed);
-      } else if (lineSpeed && typingMode === 'line-by-line') {
-        range = getLineRange(editor, position);
-        if (!range) {
-          Logger.error('Line range not found');
-          return;
-        }
-
-        await replaceContent(fileUri, range, '');
-        textEditor.revealRange(range, TextEditorRevealType.InCenter);
-        await insertLineByLine(fileUri, range.start.line, content, lineSpeed);
-      } else {
-        // Instant mode (default)
-        const line = editor.lineAt(position);
-        range = line.range;
-        await replaceContent(fileUri, line.range, content);
-      }
-    }
-
-    if (textEditor && range) {
-      textEditor.revealRange(range, TextEditorRevealType.InCenter);
-      textEditor.selection = new Selection(range.start, range.start);
-    }
-
-    await DemoRunner.saveFile();
-  }
-
-  /**
    * Deletes the specified range or line in the given editor.
    * If a range is provided, it deletes the range.
    * If a position is provided, it deletes the line at that position.
@@ -1143,7 +972,7 @@ export class DemoRunner {
 
     await workspace.applyEdit(edit);
 
-    await DemoRunner.saveFile();
+    await saveFiles();
   }
 
   /**
@@ -1332,14 +1161,6 @@ export class DemoRunner {
     } catch (error) {
       Notifications.error((error as Error).message);
     }
-  }
-
-  /**
-   * Saves the file in the workspace.
-   * @returns A promise that resolves when the file is saved.
-   */
-  private static async saveFile(): Promise<void> {
-    await commands.executeCommand('workbench.action.files.save');
   }
 
   /**

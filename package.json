@@ -158,11 +158,6 @@
           "default": 50,
           "description": "Characters per second for character-by-character typing mode"
         },
-        "demoTime.patchTypingSpeed": {
-          "type": "number",
-          "default": 50,
-          "description": "Characters per second for the patch typing effect"
-        },
         "demoTime.api.enabled": {
           "type": "boolean",
           "default": false,

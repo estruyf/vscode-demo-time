@@ -21,10 +21,6 @@ export const Config = {
     typingMode: 'insertTypingMode',
     typingSpeed: 'insertTypingSpeed',
   },
-  patch: {
-    useTypingEffect: 'patchTypingEffect',
-    typingSpeed: 'patchTypingSpeed',
-  },
   api: {
     enabled: 'api.enabled',
     port: 'api.port',
