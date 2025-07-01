@@ -36,7 +36,7 @@ export interface Icons {
   end: string;
 }
 
-export interface Step extends IOpenWebsite, IImagePreview {
+export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
   action: Action;
 
   path?: string;
@@ -65,6 +65,10 @@ export interface Step extends IOpenWebsite, IImagePreview {
   overwrite?: boolean;
   terminalId?: string;
   theme?: string;
+}
+
+export interface ITerminal {
+  autoExecute?: boolean;
 }
 
 export interface IOpenWebsite {

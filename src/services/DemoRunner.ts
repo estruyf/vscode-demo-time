@@ -729,7 +729,7 @@ export class DemoRunner {
 
       // Run the specified terminal command
       if (step.action === Action.ExecuteTerminalCommand) {
-        await TerminalService.executeCommand(step.command, step.terminalId);
+        await TerminalService.executeCommand(step);
         continue;
       }
 

@@ -16,6 +16,11 @@
 - [#180](https://github.com/estruyf/vscode-demo-time/issues/180): Fix path parsing for Windows and
   two-column slides
 - [#182](https://github.com/estruyf/vscode-demo-time/issues/182): Improve text typing simulation
+- [#184](https://github.com/estruyf/vscode-demo-time/issues/184): Allow the user to choose if they
+  want to manually run the command or have it run automatically (default) by using the `autoExecute`
+  option
+- [#185](https://github.com/estruyf/vscode-demo-time/issues/185): Allow the `insertTypingMode` and
+  `insertTypingSpeed` options to be used for the `executeTerminalCommand` action
 
 ## [1.6.0] - 2025-06-23
 

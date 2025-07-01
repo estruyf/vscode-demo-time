@@ -2,6 +2,7 @@ import { commands, Terminal, window } from 'vscode';
 import { Notifications } from './Notifications';
 import { sleep } from '../utils';
 import { DemoRunner } from './DemoRunner';
+import { Step } from '../models';
 
 /**
  * Service to manage terminal operations for demo execution.
@@ -16,7 +17,9 @@ export class TerminalService {
    * @param terminalId - The ID of the terminal to use (optional).
    * @returns A promise that resolves when the command execution is complete.
    */
-  public static async executeCommand(command?: string, terminalId?: string): Promise<void> {
+  public static async executeCommand(step: Step): Promise<void> {
+    let { command, terminalId, autoExecute, insertTypingMode, insertTypingSpeed } = step;
+
     if (!command) {
       Notifications.error('No command specified');
       return;
@@ -37,7 +40,34 @@ export class TerminalService {
     }
 
     terminal.show();
-    terminal.sendText(command, true);
+    // Wait for the terminal to be ready before sending the command
+    await new Promise<void>((resolve) => {
+      const checkTerminal = () => {
+        // VSCode terminals are usually ready immediately, but we can check if the processId is available
+        (terminal!.processId as Promise<any>)
+          ?.then(() => resolve())
+          .catch(() => setTimeout(checkTerminal, 50));
+      };
+      checkTerminal();
+    });
+
+    autoExecute = typeof autoExecute !== 'undefined' ? autoExecute : true;
+
+    const typeMode = insertTypingMode || 'instant';
+    const typeSpeed = insertTypingSpeed || 50;
+    if (typeMode === 'character-by-character') {
+      terminal.sendText('', false);
+      for (const char of command) {
+        terminal.sendText(char, false);
+        await sleep(typeSpeed);
+      }
+      if (autoExecute) {
+        terminal.sendText('', true);
+      }
+      return;
+    } else {
+      terminal.sendText(command, autoExecute);
+    }
 
     // Wait for the command to be sent
     await TerminalService.refocusOnEditor();
