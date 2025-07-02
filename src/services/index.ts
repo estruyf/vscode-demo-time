@@ -11,6 +11,7 @@ export * from './ExternalAppsService';
 export * from './FileActionService';
 export * from './FrontMatterParser';
 export * from './ImportService';
+export * from './InteractionService';
 export * from './Logger';
 export * from './NotesService';
 export * from './Notifications';

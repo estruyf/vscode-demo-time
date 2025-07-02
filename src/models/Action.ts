@@ -37,7 +37,6 @@ export enum Action {
   ShowInfoMessage = 'showInfoMessage',
   SetState = 'setState',
   OpenWebsite = 'openWebsite',
-  CopyToClipboard = 'copyToClipboard',
   // Terminal
   ExecuteTerminalCommand = 'executeTerminalCommand',
   CloseTerminal = 'closeTerminal',
@@ -54,4 +53,9 @@ export enum Action {
   editChat = 'editCopilotChat',
   agentChat = 'agentCopilotChat',
   closeChat = 'closeCopilotChat',
+  // Interaction
+  TypeText = 'typeText',
+  CopyToClipboard = 'copyToClipboard',
+  PasteFromClipboard = 'pasteFromClipboard',
+  PressEnter = 'pressEnter',
 }

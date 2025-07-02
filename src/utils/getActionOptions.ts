@@ -251,11 +251,6 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: 'Open a website in the browser or the editor',
   } as QuickPickItem);
 
-  actions.push({
-    label: Action.CopyToClipboard,
-    description: 'Copy text to clipboard',
-  } as QuickPickItem);
-
   /**
    * Extensibility actions
    */
@@ -324,6 +319,33 @@ export const getActionOptions = (): QuickPickItem[] => {
   actions.push({
     label: Action.closeChat,
     description: 'Close the GitHub Copilot Chat',
+  } as QuickPickItem);
+
+  // Interaction actions
+  actions.push({
+    label: 'Interaction',
+    description: 'Interaction actions',
+    kind: QuickPickItemKind.Separator,
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.TypeText,
+    description: 'Type text',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.CopyToClipboard,
+    description: 'Copy text to clipboard',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.PasteFromClipboard,
+    description: 'Paste text from clipboard',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.PressEnter,
+    description: 'Press the Enter key',
   } as QuickPickItem);
 
   return actions;

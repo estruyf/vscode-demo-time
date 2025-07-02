@@ -21,6 +21,12 @@
   option
 - [#185](https://github.com/estruyf/vscode-demo-time/issues/185): Allow the `insertTypingMode` and
   `insertTypingSpeed` options to be used for the `executeTerminalCommand` action
+- [#186](https://github.com/estruyf/vscode-demo-time/issues/186): Added the `typeText` action to
+  simulate typing text in the editor
+- [#187](https://github.com/estruyf/vscode-demo-time/issues/187): Added the `pasteFromClipboard`
+  action to paste the clipboard content into the editor
+- [#188](https://github.com/estruyf/vscode-demo-time/issues/188): Added the `pressEnter` action to
+  simulate pressing the Enter key in the editor
 
 ## [1.6.0] - 2025-06-23
 

@@ -285,13 +285,6 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
-  if (action === Action.CopyToClipboard) {
-    return {
-      action: Action.CopyToClipboard,
-      content: '',
-    };
-  }
-
   /**
    * Extensibility actions
    */
@@ -352,6 +345,33 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.closeChat) {
     return {
       action: Action.closeChat,
+    };
+  }
+
+  // Interaction actions
+  if (action === Action.TypeText) {
+    return {
+      action: Action.TypeText,
+      content: '',
+    };
+  }
+
+  if (action === Action.CopyToClipboard) {
+    return {
+      action: Action.CopyToClipboard,
+      content: '',
+    };
+  }
+
+  if (action === Action.PasteFromClipboard) {
+    return {
+      action: Action.PasteFromClipboard,
+    };
+  }
+
+  if (action === Action.PressEnter) {
+    return {
+      action: Action.PressEnter,
     };
   }
 

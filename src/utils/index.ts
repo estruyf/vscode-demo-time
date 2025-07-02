@@ -4,7 +4,6 @@ export * from './bringToFront';
 export * from './chooseDemoFile';
 export * from './clearVariablesState';
 export * from './convertTemplateToHtml';
-export * from './copyToClipboard';
 export * from './createDemoFile';
 export * from './createImageSlide';
 export * from './createPatch';

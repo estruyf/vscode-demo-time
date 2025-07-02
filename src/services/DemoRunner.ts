@@ -16,12 +16,9 @@ import {
   Position,
   Range,
   Selection,
-  TextDocument,
   TextEditor,
   TextEditorRevealType,
   Uri,
-  WorkspaceEdit,
-  WorkspaceFolder,
   commands,
   window,
   workspace,
@@ -31,8 +28,6 @@ import { DemoPanel } from '../panels/DemoPanel';
 import {
   getVariables,
   getFileContents,
-  getLineInsertionSpeed,
-  getLineRange,
   getPositionAndRange,
   insertVariables,
   sleep,
@@ -47,7 +42,6 @@ import {
   updateConfig,
   togglePresentationView,
   removeDemosForCurrentPosition,
-  copyToClipboard,
   saveFiles,
 } from '../utils';
 import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
@@ -65,6 +59,7 @@ import { TerminalService } from './TerminalService';
 import { ChatActionsService } from './ChatActionsService';
 import { TextTypingService } from './TextTypingService';
 import { FileActionService } from './FileActionService';
+import { InteractionService } from './InteractionService';
 
 const DEFAULT_START_VALUE = {
   filePath: '',
@@ -784,13 +779,28 @@ export class DemoRunner {
         continue;
       }
 
+      if (step.action === Action.TypeText) {
+        await InteractionService.typeText(step.content, step.insertTypingSpeed);
+        continue;
+      }
+
+      if (step.action === Action.PressEnter) {
+        await InteractionService.pressEnter();
+        continue;
+      }
+
       if (step.action === Action.CopyToClipboard) {
-        await copyToClipboard({
+        await InteractionService.copyToClipboard({
           content: step.content,
           contentPath: step.contentPath,
           variables,
           workspaceFolder,
         });
+        continue;
+      }
+
+      if (step.action === Action.PasteFromClipboard) {
+        await InteractionService.pasteFromClipboard();
         continue;
       }
 
