@@ -14,7 +14,14 @@ import {
   window,
   TextDocument,
 } from 'vscode';
-import { getFileContents, getLineRange, saveFiles, sleep, writeFile } from '../utils';
+import {
+  getFileContents,
+  getInsertionSpeed,
+  getLineRange,
+  saveFiles,
+  sleep,
+  writeFile,
+} from '../utils';
 import { InsertTypingMode, Step } from '../models';
 
 export class TextTypingService {
@@ -51,7 +58,7 @@ export class TextTypingService {
     }
 
     const typingMode = TextTypingService.getInsertTypingMode(step);
-    const typingSpeed = TextTypingService.getInsertTypingSpeed(step);
+    const typingSpeed = getInsertionSpeed(step.insertTypingSpeed);
 
     let range = new Range(position, position);
 
@@ -136,7 +143,7 @@ export class TextTypingService {
     }
 
     const typingMode = TextTypingService.getInsertTypingMode(step);
-    const typingSpeed = TextTypingService.getInsertTypingSpeed(step);
+    const typingSpeed = getInsertionSpeed(step.insertTypingSpeed);
 
     if (range) {
       if (typingMode === 'character-by-character') {
@@ -264,10 +271,10 @@ export class TextTypingService {
     }
 
     const typingMode = TextTypingService.getInsertTypingMode(step);
-    const typingSpeed = TextTypingService.getInsertTypingSpeed(step);
+    const typingSpeed = getInsertionSpeed(step.insertTypingSpeed);
 
     if (typingMode === 'character-by-character') {
-      await TextTypingService.applyDiffByChar(filePath, content, patched, token);
+      await TextTypingService.applyDiffByChar(filePath, content, patched, typingSpeed, token);
     } else if (typingMode === 'line-by-line') {
       await TextTypingService.applyDiffByLine(filePath, patched, typingSpeed, token);
     } else {
@@ -309,8 +316,7 @@ export class TextTypingService {
     typingSpeed?: number,
     token?: CancellationToken,
   ): Promise<void> {
-    const delayMs =
-      typingSpeed || Extension.getInstance().getSetting<number>(Config.insert.typingSpeed) || 50;
+    const delayMs = getInsertionSpeed(typingSpeed);
     editor.revealRange(new Range(position, position), TextEditorRevealType.InCenter);
     editor.selection = new Selection(position, position);
     await TextTypingService.typeText(editor, content, position, delayMs, token);
@@ -451,11 +457,12 @@ export class TextTypingService {
     filePath: Uri,
     currentContent: string,
     targetContent: string,
+    typingSpeed?: number,
     token?: CancellationToken,
   ): Promise<void> {
     const editor = TextTypingService.findEditorForFile(filePath);
     if (editor) {
-      const delayMs = Extension.getInstance().getSetting<number>(Config.insert.typingSpeed) || 50;
+      const delayMs = getInsertionSpeed(typingSpeed);
       try {
         const differences = diffChars(currentContent, targetContent);
         let currentPosition = 0;
@@ -540,17 +547,6 @@ export class TextTypingService {
       step?.insertTypingMode ||
       Extension.getInstance().getSetting<InsertTypingMode>(Config.insert.typingMode) ||
       'instant'
-    );
-  }
-
-  /**
-   * Gets the insert typing speed for a step or global config.
-   */
-  public static getInsertTypingSpeed(step?: Step): number {
-    return (
-      step?.insertTypingSpeed ||
-      Extension.getInstance().getSetting<number>(Config.insert.typingSpeed) ||
-      50
     );
   }
 }

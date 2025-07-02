@@ -17,6 +17,9 @@ export const Config = {
     timer: 'timer',
   },
   insert: {
+    /**
+     * @deprecated Use `insertTypingSpeed` instead.
+     */
     speed: 'lineInsertionDelay',
     typingMode: 'insertTypingMode',
     typingSpeed: 'insertTypingSpeed',
