@@ -19,6 +19,16 @@ export const createDemoFile = async (openFile = false) => {
         return "File name is required";
       }
 
+      // Get the configured file type and extension
+      const ext = Extension.getInstance();
+      const fileType = ext.getSetting<'json' | 'yaml'>(Config.defaultFileType) || 'json';
+      const fileExtension = fileType === 'yaml' ? '.yaml' : '.json';
+      
+      // Add extension if not already present
+      if (!value.endsWith('.json') && !value.endsWith('.yaml') && !value.endsWith('.yml')) {
+        value += fileExtension;
+      }
+
       const newFilePath = Uri.joinPath(wsFolder.uri, General.demoFolder, value);
       if (await fileExists(newFilePath)) {
         return `Demo file with name "${value}" already exists`;
