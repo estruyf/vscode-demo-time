@@ -1,0 +1,49 @@
+$schema: https://demotime.show/demo-time.schema.json
+title: Sample demo
+description: This is a sample demo configuration to show the capabilities of the extension.
+demos:
+  - title: Step 1
+    description: This is step 1
+    steps:
+      - action: create
+        path: sample.json
+        content: |-
+          {
+            "firstName": "Elio",
+            "lastName": "Struyf"
+          }
+      - action: open
+        path: sample.json
+      - action: highlight
+        path: sample.json
+        position: '2:3'
+  - title: Step 2
+    description: This is step 2
+    steps:
+      - action: snippet
+        contentPath: ./snippets/insert_and_highlight.json
+        args:
+          MAIN_FILE: sample.json
+          CONTENT_PATH: content.txt
+          CONTENT_POSITION: '3'
+          HIGHLIGHT_POSITION: '4'
+  - title: Highlight firstName
+    description: ''
+    steps:
+      - action: unselect
+        path: sample.json
+      - action: highlight
+        path: sample.json
+        position: '2'
+  - title: Highlight lastName
+    description: ''
+    steps:
+      - action: highlight
+        path: sample.json
+        position: '3'
+  - title: Highlight location
+    description: ''
+    steps:
+      - action: highlight
+        path: sample.json
+        position: '4'

@@ -80,7 +80,8 @@
   "contributes": {
     "configurationDefaults": {
       "files.associations": {
-        "**/.demo/*.json": "jsonc"
+        "**/.demo/*.json": "jsonc",
+        "**/.demo/*.yaml": "yaml"
       }
     },
     "icons": {
@@ -233,6 +234,12 @@
           "type": "string",
           "default": "",
           "description": "HTML template for slide footers. Supports Handlebars syntax with frontmatter variables. Example: '<footer><span>{{name}}</span> <span>{{date}}</span></footer>'"
+        },
+        "demoTime.defaultDemoFileType": {
+          "type": "string",
+          "enum": ["json", "yaml"],
+          "default": "json",
+          "description": "File type to use for new demo files."
         },
         "demoTime.debug": {
           "type": "boolean",

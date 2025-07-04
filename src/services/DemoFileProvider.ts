@@ -3,6 +3,7 @@ import { Extension } from './Extension';
 import { DemoFiles, DemoFile } from '../models';
 import { Config, General } from '../constants';
 import { parse as jsonParse } from 'jsonc-parser';
+import { load as yamlLoad, dump as yamlDump } from 'js-yaml';
 import { createDemoFile, readFile, sanitizeFileName, sortFiles, writeFile } from '../utils';
 import { Preview } from '../preview/Preview';
 
@@ -30,12 +31,18 @@ export class DemoFileProvider {
       return;
     }
 
-    const json = jsonParse(content);
-    if (!json) {
+    let parsed: any;
+    if (filePath.fsPath.endsWith('.yaml')) {
+      parsed = yamlLoad(content);
+    } else {
+      parsed = jsonParse(content);
+    }
+
+    if (!parsed) {
       return;
     }
 
-    return json;
+    return parsed as DemoFile;
   }
 
   /**
@@ -43,10 +50,19 @@ export class DemoFileProvider {
    * @returns A promise that resolves to an object containing the demo files, or null if no files are found.
    */
   public static async getFiles(): Promise<DemoFiles | null> {
-    let files = await workspace.findFiles(`${General.demoFolder}/*.json`, `**/node_modules/**`);
+    const fileType = Extension.getInstance().getSetting<string>(Config.defaultDemoFileType) || 'json';
+    let files = await workspace.findFiles(
+      `${General.demoFolder}/*.${fileType}`,
+      `**/node_modules/**`,
+    );
 
     if (files.length <= 0) {
-      return null;
+      const jsonFiles = await workspace.findFiles(`${General.demoFolder}/*.json`, `**/node_modules/**`);
+      const yamlFiles = await workspace.findFiles(`${General.demoFolder}/*.yaml`, `**/node_modules/**`);
+      files = [...jsonFiles, ...yamlFiles];
+      if (files.length <= 0) {
+        return null;
+      }
     }
 
     // Exclude the constants file
@@ -134,12 +150,16 @@ export class DemoFileProvider {
     }
 
     const demoTitle = fileName || 'Demo';
+    const fileType = Extension.getInstance().getSetting<string>(Config.defaultDemoFileType) || 'json';
+
     if (fileName) {
-      fileName = sanitizeFileName(fileName);
+      fileName = sanitizeFileName(fileName).replace(/\.(json|yaml)$/i, '');
     }
 
+    const targetFileName = `${fileName || 'demo'}.${fileType}`;
+
     const files = await workspace.findFiles(
-      `${General.demoFolder}/${fileName || `demo.json`}`,
+      `${General.demoFolder}/${targetFileName}`,
       `**/node_modules/**`,
     );
 
@@ -147,16 +167,27 @@ export class DemoFileProvider {
       return;
     }
 
-    const file = Uri.joinPath(workspaceFolder.uri, General.demoFolder, fileName || `demo.json`);
-    content =
-      content ||
-      `{
+    const file = Uri.joinPath(workspaceFolder.uri, General.demoFolder, targetFileName);
+
+    if (!content) {
+      if (fileType === 'yaml') {
+        content = yamlDump({
+          $schema: 'https://demotime.show/demo-time.schema.json',
+          title: demoTitle,
+          description: '',
+          version: 2,
+          demos: [],
+        });
+      } else {
+        content = `{
   "$schema": "https://demotime.show/demo-time.schema.json",
   "title": "${demoTitle}",
   "description": "",
   "version": 2,
   "demos": []
 }`;
+      }
+    }
 
     await writeFile(file, content);
 

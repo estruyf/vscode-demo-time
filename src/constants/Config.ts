@@ -2,6 +2,7 @@ export const Config = {
   title: 'Demo Time',
   root: 'demoTime',
   debug: 'debug',
+  defaultDemoFileType: 'defaultDemoFileType',
   presentationMode: {
     previousEnabled: 'previousEnabled',
   },

@@ -1,5 +1,6 @@
 import { Uri, WorkspaceFolder, window } from 'vscode';
 import { Extension, DemoFileProvider } from '.';
+import { dump as yamlDump } from 'js-yaml';
 import { writeFile } from '../utils';
 import { General, Templates } from '../constants';
 import { Notifications } from './Notifications';
@@ -84,10 +85,10 @@ export class TemplateCreator {
       ],
     };
 
-    const demoFile = await DemoFileProvider.createFile(
-      'hello-world-demo.json',
-      JSON.stringify(template, null, 2),
-    );
+    const fileType = Extension.getInstance().getSetting<string>(Config.defaultDemoFileType) || 'json';
+    const templateContent =
+      fileType === 'yaml' ? yamlDump(template) : JSON.stringify(template, null, 2);
+    const demoFile = await DemoFileProvider.createFile('hello-world-demo', templateContent);
 
     const slideContent = `---
 theme: default
@@ -221,10 +222,10 @@ sayHello();`;
       ],
     };
 
-    const demoFile = await DemoFileProvider.createFile(
-      'advanced-demo.json',
-      JSON.stringify(template, null, 2),
-    );
+    const fileType2 = Extension.getInstance().getSetting<string>(Config.defaultDemoFileType) || 'json';
+    const templateContent2 =
+      fileType2 === 'yaml' ? yamlDump(template) : JSON.stringify(template, null, 2);
+    const demoFile = await DemoFileProvider.createFile('advanced-demo', templateContent2);
 
     const slidesFolderUri = Uri.joinPath(wsFolder.uri, General.demoFolder, General.slidesFolder);
 

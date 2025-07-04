@@ -51,7 +51,8 @@ export const createDemoFile = async (openFile = false) => {
         return 'File name is required';
       }
 
-      const newFilePath = Uri.joinPath(wsFolder.uri, General.demoFolder, value);
+      const fileType = Extension.getInstance().getSetting<string>(Config.defaultDemoFileType) || 'json';
+      const newFilePath = Uri.joinPath(wsFolder.uri, General.demoFolder, `${value}.${fileType}`);
       if (await fileExists(newFilePath)) {
         return `Demo file with name "${value}" already exists`;
       }

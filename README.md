@@ -44,6 +44,8 @@
 3. **Creating Demos**: Populate the `demo.json` file with your actions, defining each step and
    action as required.​ More information about the available actions can be found in the
    [supported actions](https://demotime.show/actions/) documentation section.
+4. **File Type**: New demo files are created as JSON by default. Set `demoTime.defaultDemoFileType`
+   to `yaml` if you prefer YAML demo files.
 
 ## Documentation
 
@@ -99,6 +101,27 @@ Here is an example demo:
     }
   ]
 }
+  ```
+
+The same example written in YAML:
+
+```yaml
+$schema: https://demotime.show/demo-time.schema.json
+title: Sample demo
+description: This is a sample demo configuration to show the capabilities of the extension.
+demos:
+  - title: Step 1
+    description: This is step 1
+    steps:
+      - action: create
+        path: sample.json
+        content: |-
+          { "firstName": "Elio", "lastName": "Struyf" }
+      - action: open
+        path: sample.json
+      - action: highlight
+        path: sample.json
+        position: '2:3'
 ```
 
 You can also explore a comprehensive example in the following GitHub Repositories:
