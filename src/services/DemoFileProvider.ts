@@ -26,7 +26,7 @@ export class DemoFileProvider {
    */
   private static getDefaultFileType(): DemoFileType {
     const ext = Extension.getInstance();
-    return ext.getSetting<DemoFileType>(Config.defaultFileType) || 'json';
+    return ext.getSetting<DemoFileType>(Config.defaultFileType) ?? 'json';
   }
 
   /**
@@ -214,7 +214,7 @@ export class DemoFileProvider {
       return;
     }
 
-    const demoTitle = fileName || 'Demo';
+    const demoTitle = fileName ?? 'Demo';
     const fileType = this.getDefaultFileType();
     const fileExtension = this.getFileExtension(fileType);
 

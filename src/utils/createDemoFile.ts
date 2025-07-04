@@ -54,7 +54,7 @@ export const createDemoFile = async (openFile = false) => {
 
       // Get the configured file type and extension
       const ext = Extension.getInstance();
-      const fileType = ext.getSetting<DemoFileType>(Config.defaultFileType) || 'json';
+      const fileType = ext.getSetting<DemoFileType>(Config.defaultFileType) ?? 'json';
       const fileExtension = fileType === 'yaml' ? '.yaml' : '.json';
 
       // Add extension if not already present
