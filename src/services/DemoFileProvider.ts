@@ -46,7 +46,7 @@ export class DemoFileProvider {
    */
   private static parseFileContent(content: string, filePath: Uri): DemoFile | undefined {
     const path = filePath.fsPath.toLowerCase();
-    
+
     if (path.endsWith('.yaml') || path.endsWith('.yml')) {
       try {
         const parsed = yamlLoad(content) as DemoFile;
@@ -70,20 +70,31 @@ export class DemoFileProvider {
    */
   private static generateFileContent(fileType: DemoFileType, title: string): string {
     const demoContent = {
-      $schema: "https://demotime.show/demo-time.schema.json",
+      $schema: 'https://demotime.show/demo-time.schema.json',
       title: title,
-      description: "",
+      description: '',
       version: 2,
-      demos: []
+      demos: [],
     };
 
+    return this.formatContent(fileType, demoContent);
+  }
+
+  /**
+   * Formats the provided demo content based on the specified file type.
+   *
+   * @param fileType - The type of file to format the content for ('yaml' or other).
+   * @param demoContent - The content to be formatted.
+   * @returns The formatted content as a string.
+   */
+  private static formatContent(fileType: DemoFileType, demoContent: any): string {
     if (fileType === 'yaml') {
       delete (demoContent as { $schema?: string }).$schema;
-      
-      return yamlDump(demoContent, { 
+
+      return yamlDump(demoContent, {
         indent: 2,
         lineWidth: -1,
-        noRefs: true
+        noRefs: true,
       });
     } else {
       return JSON.stringify(demoContent, null, 2);
@@ -112,7 +123,7 @@ export class DemoFileProvider {
     let jsonFiles = await workspace.findFiles(`${General.demoFolder}/*.json`, `**/node_modules/**`);
     let yamlFiles = await workspace.findFiles(`${General.demoFolder}/*.yaml`, `**/node_modules/**`);
     let ymlFiles = await workspace.findFiles(`${General.demoFolder}/*.yml`, `**/node_modules/**`);
-    
+
     let files = [...jsonFiles, ...yamlFiles, ...ymlFiles];
 
     if (files.length <= 0) {
@@ -197,7 +208,7 @@ export class DemoFileProvider {
    * The file is created at `.demo/demo.json` or `.demo/demo.yaml` based on configuration.
    * @returns A promise that resolves when the file is created.
    */
-  public static async createFile(fileName?: string): Promise<Uri | undefined> {
+  public static async createFile(fileName?: string, content?: string): Promise<Uri | undefined> {
     const workspaceFolder = Extension.getInstance().workspaceFolder;
     if (!workspaceFolder) {
       return;
@@ -206,11 +217,15 @@ export class DemoFileProvider {
     const demoTitle = fileName || 'Demo';
     const fileType = this.getDefaultFileType();
     const fileExtension = this.getFileExtension(fileType);
-    
+
     if (fileName) {
       fileName = sanitizeFileName(fileName);
       // Add the appropriate extension if not already present
-      if (!fileName.endsWith('.json') && !fileName.endsWith('.yaml') && !fileName.endsWith('.yml')) {
+      if (
+        !fileName.endsWith('.json') &&
+        !fileName.endsWith('.yaml') &&
+        !fileName.endsWith('.yml')
+      ) {
         fileName += fileExtension;
       }
     } else {
@@ -227,7 +242,8 @@ export class DemoFileProvider {
     }
 
     const file = Uri.joinPath(workspaceFolder.uri, General.demoFolder, fileName);
-    const content = this.generateFileContent(fileType, demoTitle);
+    content =
+      this.formatContent(fileType, content) || this.generateFileContent(fileType, demoTitle);
 
     await writeFile(file, content);
 
