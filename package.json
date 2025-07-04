@@ -55,6 +55,9 @@
         "**/.demo/*.json": "jsonc",
         "**/.demo/*.yaml": "yaml",
         "**/.demo/*.yml": "yaml"
+      },
+      "yaml.schemas": {
+        "https://demotime.show/demo-time.schema.json": ".demo/*"
       }
     },
     "icons": {
