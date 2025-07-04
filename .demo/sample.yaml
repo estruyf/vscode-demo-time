@@ -1,0 +1,13 @@
+$schema: https://demotime.show/demo-time.schema.json
+title: Sample YAML Demo
+description: This is a test YAML demo file
+version: 2
+demos:
+  - title: Step 1
+    description: This is step 1
+    steps:
+      - action: create
+        path: test.txt
+        content: Hello YAML World
+      - action: open
+        path: test.txt

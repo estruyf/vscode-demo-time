@@ -33,4 +33,5 @@ export const Config = {
   demoRunner: {
     nextActionBehaviour: "nextActionBehaviour",
   },
+  defaultFileType: "defaultFileType",
 };
