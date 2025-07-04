@@ -1,6 +1,6 @@
 import { Uri, window, workspace } from 'vscode';
 import { Extension } from './Extension';
-import { DemoFiles, DemoFile } from '../models';
+import { DemoFiles, DemoFile, DemoFileType } from '../models';
 import { Config, General } from '../constants';
 import { parse as jsonParse } from 'jsonc-parser';
 import { load as yamlLoad, dump as yamlDump } from 'js-yaml';
@@ -12,9 +12,9 @@ export class FileProvider {
    * Gets the configured default file type for demo files
    * @returns The default file type ('json' or 'yaml')
    */
-  private static getDefaultFileType(): 'json' | 'yaml' {
+  private static getDefaultFileType(): DemoFileType {
     const ext = Extension.getInstance();
-    return ext.getSetting<'json' | 'yaml'>(Config.defaultFileType) || 'json';
+    return ext.getSetting<DemoFileType>(Config.defaultFileType) || 'json';
   }
 
   /**
@@ -22,7 +22,7 @@ export class FileProvider {
    * @param fileType The file type ('json' or 'yaml')
    * @returns The file extension ('.json' or '.yaml')
    */
-  private static getFileExtension(fileType: 'json' | 'yaml'): string {
+  private static getFileExtension(fileType: DemoFileType): string {
     return fileType === 'yaml' ? '.yaml' : '.json';
   }
 
@@ -56,7 +56,7 @@ export class FileProvider {
    * @param title The demo title
    * @returns The formatted content string
    */
-  private static generateFileContent(fileType: 'json' | 'yaml', title: string): string {
+  private static generateFileContent(fileType: DemoFileType, title: string): string {
     const demoContent = {
       $schema: "https://demotime.show/demo-time.schema.json",
       title: title,
