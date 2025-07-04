@@ -1,6 +1,7 @@
 import { Uri, window } from 'vscode';
 import { Config, General, Templates } from '../constants';
-import { Extension, DemoFileProvider, TemplateCreator } from '../services';
+import { DemoFileProvider, Extension, TemplateCreator } from '../services';
+import { DemoFileType } from '../models';
 import { sanitizeFileName } from './sanitizeFileName';
 import { fileExists } from './fileExists';
 
@@ -49,6 +50,16 @@ export const createDemoFile = async (openFile = false) => {
       value = sanitizeFileName(value);
       if (!value) {
         return 'File name is required';
+      }
+
+      // Get the configured file type and extension
+      const ext = Extension.getInstance();
+      const fileType = ext.getSetting<DemoFileType>(Config.defaultFileType) ?? 'json';
+      const fileExtension = fileType === 'yaml' ? '.yaml' : '.json';
+
+      // Add extension if not already present
+      if (!value.endsWith('.json') && !value.endsWith('.yaml') && !value.endsWith('.yml')) {
+        value += fileExtension;
       }
 
       const newFilePath = Uri.joinPath(wsFolder.uri, General.demoFolder, value);

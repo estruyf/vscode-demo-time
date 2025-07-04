@@ -80,7 +80,12 @@
   "contributes": {
     "configurationDefaults": {
       "files.associations": {
-        "**/.demo/*.json": "jsonc"
+        "**/.demo/*.json": "jsonc",
+        "**/.demo/*.yaml": "yaml",
+        "**/.demo/*.yml": "yaml"
+      },
+      "yaml.schemas": {
+        "https://demotime.show/demo-time.schema.json": ".demo/*"
       }
     },
     "icons": {
@@ -233,6 +238,15 @@
           "type": "string",
           "default": "",
           "description": "HTML template for slide footers. Supports Handlebars syntax with frontmatter variables. Example: '<footer><span>{{name}}</span> <span>{{date}}</span></footer>'"
+        },
+        "demoTime.defaultFileType": {
+          "type": "string",
+          "enum": [
+            "json",
+            "yaml"
+          ],
+          "default": "json",
+          "description": "Default file type for new demo files. Choose between JSON and YAML formats."
         },
         "demoTime.debug": {
           "type": "boolean",
@@ -436,7 +450,7 @@
       "commandPalette": [
         {
           "command": "demo-time.addStepToDemo",
-          "when": "(editorLangId == jsonc || editorLangId == json) && resourceDirname =~ /\\.demo$/"
+          "when": "((editorLangId == jsonc || editorLangId == json) || editorLangId == yaml) && resourceDirname =~ /\\.demo$/"
         },
         {
           "command": "demo-time.previous",
@@ -567,17 +581,17 @@
       "editor/title": [
         {
           "command": "demo-time.addStepToDemo",
-          "when": "(editorLangId == jsonc || editorLangId == json) && resourceDirname =~ /\\.demo$/",
+          "when": "((editorLangId == jsonc || editorLangId == json) || editorLangId == yaml) && resourceDirname =~ /\\.demo$/",
           "group": "navigation@-1"
         },
         {
           "command": "demo-time.start",
-          "when": "(editorLangId == jsonc || editorLangId == json) && resourceDirname =~ /\\.demo$/",
+          "when": "((editorLangId == jsonc || editorLangId == json) || editorLangId == yaml) && resourceDirname =~ /\\.demo$/",
           "group": "navigation@0"
         },
         {
           "command": "demo-time.docs",
-          "when": "(editorLangId == jsonc || editorLangId == json) && resourceDirname =~ /\\.demo$/",
+          "when": "((editorLangId == jsonc || editorLangId == json) || editorLangId == yaml) && resourceDirname =~ /\\.demo$/",
           "group": "navigation@1"
         },
         {
@@ -642,7 +656,7 @@
     "viewsWelcome": [
       {
         "view": "demo-time",
-        "contents": "Welcome to Demo Time! Start by creating a `.demo/demo.json` file or clicking the initialize button.\n\n[Initialize](command:demo-time.initialize)\n\n[Learn More](https://demotime.show)"
+        "contents": "Welcome to Demo Time! Start by creating a demo file in JSON or YAML format, or click the initialize button.\n\n[Initialize](command:demo-time.initialize)\n\n[Learn More](https://demotime.show)"
       }
     ],
     "walkthroughs": [
