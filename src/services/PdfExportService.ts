@@ -4,7 +4,7 @@ import { resolve } from 'mlly';
 import { Notifications } from './Notifications';
 import { Action, Step, Subscription } from '../models';
 import { Extension } from './Extension';
-import { FileProvider, Logger } from '.';
+import { DemoFileProvider, Logger } from '.';
 import {
   convertTemplateToHtml,
   getTheme,
@@ -70,7 +70,7 @@ export class PdfExportService {
           const page = await context.newPage();
 
           // Get all demo files
-          let demoFiles = await FileProvider.getFiles();
+          let demoFiles = await DemoFileProvider.getFiles();
           if (!demoFiles) {
             Notifications.error('No demo files found.');
             return;
@@ -105,9 +105,7 @@ export class PdfExportService {
               slideAction.path as string,
             );
             const content = await readFile(slideUri);
-            slideContents.push({
-              content: twoColumnFormatting(content),
-            });
+            slideContents.push({ content });
           }
 
           if (slideContents.length === 0) {
@@ -155,7 +153,8 @@ export class PdfExportService {
           await context.close();
           await browser.close();
 
-          if (Extension.getInstance().isProductionMode) {
+          const isDebug = Extension.getInstance().getSetting<boolean>(Config.debug);
+          if (Extension.getInstance().isProductionMode && !isDebug) {
             // Delete the temporary HTML file
             await workspace.fs.delete(tempHtmlOutputPath);
           }
@@ -223,7 +222,7 @@ export class PdfExportService {
         const allSlides = parser.parseSlides(slide.content);
         for (const crntSlide of allSlides) {
           const vfile = await transformMarkdown(
-            crntSlide.content,
+            twoColumnFormatting(crntSlide.content),
             undefined,
             undefined,
             undefined,

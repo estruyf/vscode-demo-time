@@ -7,7 +7,19 @@ import { load as yamlLoad, dump as yamlDump } from 'js-yaml';
 import { createDemoFile, readFile, sanitizeFileName, sortFiles, writeFile } from '../utils';
 import { Preview } from '../preview/Preview';
 
-export class FileProvider {
+export class DemoFileProvider {
+  public static register() {
+    const subscriptions = Extension.getInstance().subscriptions;
+
+    subscriptions.push(
+      workspace.onDidSaveTextDocument((e) => {
+        if (e.uri.fsPath.endsWith(`.md`)) {
+          Preview.triggerUpdate(e.uri);
+        }
+      }),
+    );
+  }
+
   /**
    * Gets the configured default file type for demo files
    * @returns The default file type ('json' or 'yaml')
@@ -66,6 +78,8 @@ export class FileProvider {
     };
 
     if (fileType === 'yaml') {
+      delete (demoContent as { $schema?: string }).$schema;
+      
       return yamlDump(demoContent, { 
         indent: 2,
         lineWidth: -1,
@@ -74,18 +88,6 @@ export class FileProvider {
     } else {
       return JSON.stringify(demoContent, null, 2);
     }
-  }
-
-  public static register() {
-    const subscriptions = Extension.getInstance().subscriptions;
-
-    subscriptions.push(
-      workspace.onDidSaveTextDocument((e) => {
-        if (e.uri.fsPath.endsWith(`.md`)) {
-          Preview.triggerUpdate(e.uri);
-        }
-      }),
-    );
   }
 
   /**
@@ -123,7 +125,7 @@ export class FileProvider {
     const demoFiles: DemoFiles = {};
 
     for (const file of files) {
-      const content = await FileProvider.getFile(file);
+      const content = await DemoFileProvider.getFile(file);
       if (!content) {
         continue;
       }
@@ -139,7 +141,7 @@ export class FileProvider {
    * @returns The selected demo file, or undefined if no file was selected.
    */
   public static async demoQuickPick(): Promise<{ filePath: string; demo: DemoFile } | undefined> {
-    let demoFiles = await FileProvider.getFiles();
+    let demoFiles = await DemoFileProvider.getFiles();
     if (!demoFiles) {
       return;
     }
@@ -171,7 +173,7 @@ export class FileProvider {
       }
 
       demoFilePath = file.path;
-      demoFiles = await FileProvider.getFiles();
+      demoFiles = await DemoFileProvider.getFiles();
     } else if (!demoFilePick.description) {
       return;
     } else {

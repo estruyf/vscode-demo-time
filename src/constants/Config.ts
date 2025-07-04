@@ -1,37 +1,43 @@
 export const Config = {
-  title: "Demo Time",
-  root: "demoTime",
+  title: 'Demo Time',
+  root: 'demoTime',
+  debug: 'debug',
   presentationMode: {
-    previousEnabled: "previousEnabled",
+    previousEnabled: 'previousEnabled',
   },
   highlight: {
-    borderColor: "highlightBorderColor",
-    background: "highlightBackground",
-    blur: "highlightBlur",
-    opacity: "highlightOpacity",
-    zoom: "highlightZoomEnabled",
+    borderColor: 'highlightBorderColor',
+    background: 'highlightBackground',
+    blur: 'highlightBlur',
+    opacity: 'highlightOpacity',
+    zoom: 'highlightZoomEnabled',
   },
   clock: {
-    show: "showClock",
-    timer: "timer",
+    show: 'showClock',
+    timer: 'timer',
   },
   insert: {
-    speed: "lineInsertionDelay",
+    /**
+     * @deprecated Use `insertTypingSpeed` instead.
+     */
+    speed: 'lineInsertionDelay',
+    typingMode: 'insertTypingMode',
+    typingSpeed: 'insertTypingSpeed',
   },
   api: {
-    enabled: "api.enabled",
-    port: "api.port",
+    enabled: 'api.enabled',
+    port: 'api.port',
   },
   slides: {
-    customTheme: "customTheme",
-    slideHeaderTemplate: "slideHeaderTemplate",
-    slideFooterTemplate: "slideFooterTemplate",
+    customTheme: 'customTheme',
+    slideHeaderTemplate: 'slideHeaderTemplate',
+    slideFooterTemplate: 'slideFooterTemplate',
   },
   webcomponents: {
-    scripts: "customWebComponents",
+    scripts: 'customWebComponents',
   },
   demoRunner: {
-    nextActionBehaviour: "nextActionBehaviour",
+    nextActionBehaviour: 'nextActionBehaviour',
   },
   defaultFileType: "defaultFileType",
 };

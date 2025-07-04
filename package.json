@@ -1,9 +1,37 @@
 {
   "name": "vscode-demo-time",
-  "displayName": "Demo Time - Live demos & slides in VS Code",
-  "description": "Script your coding demos to perfection and present slides — all within VS Code! No typos, no missteps—just flawless, stress-free presentations. Seamlessly execute each demo step and advance through slides like a pro, keeping your audience engaged without ever leaving your coding environment.",
+  "displayName": "Demo Time — Presentations & Demos in VS Code",
+  "description": "Script your coding demos and presentations to perfection and present slides — all within VS Code! No typos, no missteps—just flawless, stress-free presentations. Seamlessly execute each demo step and advance through slides like a pro, keeping your audience engaged without ever leaving your coding environment.",
   "version": "1.6.0",
   "publisher": "eliostruyf",
+  "keywords": [
+    "demo",
+    "presentation",
+    "slides",
+    "coding demo",
+    "workshop",
+    "training",
+    "automation",
+    "scripted demo",
+    "presenter",
+    "conference",
+    "tutorial",
+    "education",
+    "teaching",
+    "live coding",
+    "presentation mode",
+    "slides viewer",
+    "demo runner",
+    "step-by-step",
+    "highlighting",
+    "presenter view",
+    "timer",
+    "countdown",
+    "notes",
+    "pdf export",
+    "powerpoint",
+    "markdown slides"
+  ],
   "galleryBanner": {
     "color": "#0D1321",
     "theme": "dark"
@@ -43,7 +71,7 @@
     "vscode": "^1.84.0"
   },
   "categories": [
-    "Other"
+    "Education"
   ],
   "activationEvents": [
     "workspaceContains:**/.demo/*"
@@ -146,7 +174,23 @@
         "demoTime.lineInsertionDelay": {
           "type": "number",
           "default": 0,
-          "description": "The delay between inserting lines of code (in milliseconds)"
+          "description": "The delay between inserting lines of code (in milliseconds)",
+          "deprecationMessage": "This setting is deprecated. Use 'demoTime.insertTypingMode' and 'demoTime.insertTypingSpeed' instead."
+        },
+        "demoTime.insertTypingMode": {
+          "type": "string",
+          "enum": [
+            "instant",
+            "line-by-line",
+            "character-by-character"
+          ],
+          "default": "instant",
+          "description": "Mode for inserting content: instant (all at once), line-by-line, or character-by-character"
+        },
+        "demoTime.insertTypingSpeed": {
+          "type": "number",
+          "default": 50,
+          "description": "Characters per second for character-by-character typing mode"
         },
         "demoTime.api.enabled": {
           "type": "boolean",
@@ -203,6 +247,11 @@
           ],
           "default": "json",
           "description": "Default file type for new demo files. Choose between JSON and YAML formats."
+        },
+        "demoTime.debug": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable debug mode for Demo Time."
         }
       }
     },

@@ -1,6 +1,6 @@
 import { ThemeColor, TreeItem, TreeView, commands, window } from 'vscode';
 import { ContextKeys } from '../constants/ContextKeys';
-import { FileProvider } from '../services/FileProvider';
+import { DemoFileProvider } from '../services/DemoFileProvider';
 import { Action, DemoFileCache, DemoFiles, DemoFile, Subscription } from '../models';
 import { ActionTreeItem, ActionTreeviewProvider } from '../providers/ActionTreeviewProvider';
 import { DemoRunner } from '../services/DemoRunner';
@@ -191,7 +191,7 @@ export class DemoPanel {
    * @returns {Promise<boolean>} True if demo files are available, false otherwise
    */
   private static async setDemoFiles(): Promise<boolean> {
-    const demoFiles = await FileProvider.getFiles();
+    const demoFiles = await DemoFileProvider.getFiles();
     DemoPanel.demoFiles = demoFiles;
     return !!demoFiles;
   }
