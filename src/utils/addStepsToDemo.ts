@@ -29,7 +29,10 @@ export const addStepsToDemo = async (
 
   demoFile.demo.demos = demoFileToUpdate.demos;
 
-  await DemoFileProvider.saveFile(demoFile.filePath, JSON.stringify(demoFile.demo, null, 2));
+  const fileExtension = demoFile.filePath.split('.').pop() || 'json';
+  const fileType = fileExtension === 'yaml' || fileExtension === 'yml' ? 'yaml' : 'json';
+  const content = DemoFileProvider.formatContent(fileType, demoFile.demo);
+  await DemoFileProvider.saveFile(demoFile.filePath, content);
 
   // Trigger a refresh of the treeview
   DemoPanel.update();

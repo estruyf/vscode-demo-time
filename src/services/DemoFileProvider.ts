@@ -87,7 +87,7 @@ export class DemoFileProvider {
    * @param demoContent - The content to be formatted.
    * @returns The formatted content as a string.
    */
-  private static formatContent(fileType: DemoFileType, demoContent: any): string {
+  public static formatContent(fileType: DemoFileType, demoContent: any): string {
     if (fileType === 'yaml') {
       delete (demoContent as { $schema?: string }).$schema;
 
