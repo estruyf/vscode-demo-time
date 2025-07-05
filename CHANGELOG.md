@@ -27,8 +27,10 @@
   action to paste the clipboard content into the editor
 - [#188](https://github.com/estruyf/vscode-demo-time/issues/188): Added the `pressEnter` action to
   simulate pressing the Enter key in the editor
-- [[#189](https://github.com/estruyf/vscode-demo-time/issues/189): Added `YAML` demo file support
+- [#189](https://github.com/estruyf/vscode-demo-time/issues/189): Added `YAML` demo file support
   with configurable file type by using the `demoTime.defaultFileType` setting
+- [#193](https://github.com/estruyf/vscode-demo-time/issues/193): Ask the user which demo file type
+  they want to use when initializing the extension. The user can choose between `JSON` and `YAML`.
 
 ## [1.6.0] - 2025-06-23
 

@@ -1,6 +1,14 @@
-import { QuickPickItem, QuickPickItemKind, Uri, commands, window, workspace } from 'vscode';
+import {
+  ConfigurationTarget,
+  QuickPickItem,
+  QuickPickItemKind,
+  Uri,
+  commands,
+  window,
+  workspace,
+} from 'vscode';
 import { COMMAND, Config, ContextKeys } from '../constants';
-import { Action, Demo, DemoFile, Icons, Step, Subscription } from '../models';
+import { Action, Demo, DemoFile, DemoFileType, Icons, Step, Subscription } from '../models';
 import { Extension } from './Extension';
 import { DemoFileProvider } from './DemoFileProvider';
 import { DemoPanel } from '../panels/DemoPanel';
@@ -77,15 +85,12 @@ export class DemoCreator {
    * information message.
    */
   private static async initialize() {
-    // const demoFiles = await DemoFileProvider.getFiles();
-    // let fileUri: Uri | undefined;
-    // if (!demoFiles) {
-    //   fileUri = await DemoFileProvider.createFile();
-    // }
-
-    // if (fileUri) {
-    //   await window.showTextDocument(fileUri);
-    // }
+    const fileType = await DemoCreator.askFileType();
+    if (fileType) {
+      await workspace
+        .getConfiguration(Config.root)
+        .update(Config.defaultFileType, fileType, ConfigurationTarget.Workspace);
+    }
 
     await createDemoFile();
 
@@ -441,5 +446,25 @@ export class DemoCreator {
 
     // Trigger a refresh of the treeview
     DemoPanel.update();
+  }
+
+  /**
+   * Asks the user which demo file format they want to use.
+   * @returns The selected file type or undefined if the prompt was cancelled.
+   */
+  private static async askFileType(): Promise<DemoFileType | undefined> {
+    const options: QuickPickItem[] = [{ label: 'JSON' }, { label: 'YAML' }];
+
+    const pick = await window.showQuickPick(options, {
+      title: Config.title,
+      placeHolder: 'In which format do you want to create the demo file(s)?',
+      ignoreFocusOut: true,
+    });
+
+    if (!pick) {
+      return;
+    }
+
+    return pick.label.toLowerCase() as DemoFileType;
   }
 }
