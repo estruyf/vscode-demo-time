@@ -851,7 +851,7 @@ export class DemoRunner {
       let content = step.content || '';
       if (step.contentPath) {
         const fileContent = await getFileContents(workspaceFolder, step.contentPath);
-        if (!fileContent) {
+        if (typeof fileContent !== 'string') {
           continue;
         }
         content = fileContent;
