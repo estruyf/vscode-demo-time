@@ -138,7 +138,7 @@ export class TerminalService {
       // Wait for the command to be sent
       await sleep(500);
       // Focus the terminal after sending the command
-      await commands.executeCommand('workbench.action.focusStatusBar');
+      await commands.executeCommand('workbench.action.focusActiveEditorGroup');
     }
   }
 }
