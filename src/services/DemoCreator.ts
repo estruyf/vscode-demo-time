@@ -58,9 +58,7 @@ export class DemoCreator {
     );
     subscriptions.push(commands.registerCommand(COMMAND.createSnapshot, createSnapshot));
     subscriptions.push(commands.registerCommand(COMMAND.createPatch, createPatch));
-    subscriptions.push(
-      commands.registerCommand(COMMAND.createDemoFile, () => createDemoFile(true)),
-    );
+    subscriptions.push(commands.registerCommand(COMMAND.createDemoFile, createDemoFile));
 
     // Check if the workspace is initialized
     const demoFolder = workspace.workspaceFolders?.find((folder) =>
