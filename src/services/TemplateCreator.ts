@@ -3,7 +3,7 @@ import { Extension, DemoFileProvider } from '.';
 import { writeFile } from '../utils';
 import { General, Templates } from '../constants';
 import { Notifications } from './Notifications';
-import { Action } from '../models';
+import { Action, DemoFileType } from '../models';
 import { DemoPanel } from '../panels/DemoPanel';
 
 export class TemplateCreator {
@@ -20,13 +20,15 @@ export class TemplateCreator {
       return;
     }
 
+    const fileType = DemoFileProvider.getDefaultFileType();
+
     // Call the appropriate template method based on the template name
     switch (templateName) {
       case 'Sample 1':
-        await this.createTemplate1(wsFolder);
+        await this.createTemplate1(wsFolder, fileType);
         break;
       case 'Sample 2':
-        await this.createTemplate2(wsFolder);
+        await this.createTemplate2(wsFolder, fileType);
         break;
       default:
         Notifications.error(`Template "${templateName}" not implemented.`);
@@ -39,7 +41,10 @@ export class TemplateCreator {
    * Creates Template 1: Hello World Demo
    * Simple intro with a slide and code highlight
    */
-  public static async createTemplate1(wsFolder: WorkspaceFolder): Promise<void> {
+  public static async createTemplate1(
+    wsFolder: WorkspaceFolder,
+    fileType: DemoFileType,
+  ): Promise<void> {
     const template = {
       $schema: 'https://demotime.show/demo-time.schema.json',
       title: 'Hello World Demo',
@@ -84,10 +89,7 @@ export class TemplateCreator {
       ],
     };
 
-    const demoFile = await DemoFileProvider.createFile(
-      'hello-world-demo.json',
-      JSON.stringify(template, null, 2),
-    );
+    const demoFile = await DemoFileProvider.createFile(`hello-world-demo.${fileType}`, template);
 
     const slideContent = `---
 theme: default
@@ -146,7 +148,10 @@ sayHello();`;
    * Creates Template 2: Advanced Demo
    * Demonstrates opening a slide and adding a function in TypeScript
    */
-  public static async createTemplate2(wsFolder: WorkspaceFolder): Promise<void> {
+  public static async createTemplate2(
+    wsFolder: WorkspaceFolder,
+    fileType: DemoFileType,
+  ): Promise<void> {
     const template = {
       $schema: 'https://demotime.show/demo-time.schema.json',
       title: 'Advanced Demo: TypeScript Function Walkthrough',
@@ -221,10 +226,7 @@ sayHello();`;
       ],
     };
 
-    const demoFile = await DemoFileProvider.createFile(
-      'advanced-demo.json',
-      JSON.stringify(template, null, 2),
-    );
+    const demoFile = await DemoFileProvider.createFile(`advanced-demo.${fileType}`, template);
 
     const slidesFolderUri = Uri.joinPath(wsFolder.uri, General.demoFolder, General.slidesFolder);
 

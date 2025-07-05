@@ -24,7 +24,7 @@ export class DemoFileProvider {
    * Gets the configured default file type for demo files
    * @returns The default file type ('json' or 'yaml')
    */
-  private static getDefaultFileType(): DemoFileType {
+  public static getDefaultFileType(): DemoFileType {
     const ext = Extension.getInstance();
     return ext.getSetting<DemoFileType>(Config.defaultFileType) ?? 'json';
   }
@@ -208,18 +208,17 @@ export class DemoFileProvider {
    * The file is created at `.demo/demo.json` or `.demo/demo.yaml` based on configuration.
    * @returns A promise that resolves when the file is created.
    */
-  public static async createFile(fileName?: string, content?: string): Promise<Uri | undefined> {
+  public static async createFile(fileName?: string, content?: unknown): Promise<Uri | undefined> {
     const workspaceFolder = Extension.getInstance().workspaceFolder;
     if (!workspaceFolder) {
       return;
     }
 
-    const demoTitle = fileName ?? 'Demo';
     const fileType = this.getDefaultFileType();
     const fileExtension = this.getFileExtension(fileType);
 
     if (fileName) {
-      fileName = sanitizeFileName(fileName);
+      fileName = sanitizeFileName(fileName, fileExtension);
       // Add the appropriate extension if not already present
       if (
         !fileName.endsWith('.json') &&
@@ -242,10 +241,9 @@ export class DemoFileProvider {
     }
 
     const file = Uri.joinPath(workspaceFolder.uri, General.demoFolder, fileName);
-    content =
-      this.formatContent(fileType, content) || this.generateFileContent(fileType, demoTitle);
+    const formattedContent = this.formatContent(fileType, content);
 
-    await writeFile(file, content);
+    await writeFile(file, formattedContent);
 
     return file;
   }

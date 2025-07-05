@@ -5,7 +5,7 @@ import { DemoFileType } from '../models';
 import { sanitizeFileName } from './sanitizeFileName';
 import { fileExists } from './fileExists';
 
-export const createDemoFile = async (openFile = false) => {
+export const createDemoFile = async () => {
   const wsFolder = Extension.getInstance().workspaceFolder;
   if (!wsFolder) {
     return;
@@ -79,9 +79,7 @@ export const createDemoFile = async (openFile = false) => {
     return;
   }
 
-  if (openFile) {
-    await window.showTextDocument(file);
-  }
+  await window.showTextDocument(file);
 
   return file;
 };
