@@ -1,0 +1,64 @@
+{
+  "name": "vscode-demo-time-lite",
+  "displayName": "Demo Time Lite",
+  "description": "Run Demo Time presentations and demos in VS Code for the Web.",
+  "version": "0.1.0",
+  "publisher": "eliostruyf",
+  "engines": {
+    "vscode": "^1.84.0"
+  },
+  "categories": [
+    "Education"
+  ],
+  "activationEvents": [
+    "workspaceContains:**/.demo/*"
+  ],
+  "main": "./out/extension.js",
+  "browser": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "demo-time-lite.start",
+        "title": "Demo Time Lite: Start/Next Action",
+        "category": "Demo Time Lite"
+      },
+      {
+        "command": "demo-time-lite.showSlide",
+        "title": "Demo Time Lite: Show Slide",
+        "category": "Demo Time Lite"
+      },
+      {
+        "command": "demo-time-lite.nextSlide",
+        "title": "Demo Time Lite: Next Slide",
+        "category": "Demo Time Lite"
+      },
+      {
+        "command": "demo-time-lite.previousSlide",
+        "title": "Demo Time Lite: Previous Slide",
+        "category": "Demo Time Lite"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "demo-time-lite.start",
+          "when": "workspaceContains:**/.demo/*"
+        },
+        {
+          "command": "demo-time-lite.showSlide",
+          "when": "workspaceContains:**/.demo/*"
+        }
+      ]
+    },
+    "views": {}
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.84.0",
+    "typescript": "^5.2.2"
+  }
+}
