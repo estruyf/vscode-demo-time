@@ -260,82 +260,15 @@ export class DemoStatusBar {
   }
 
   private static async startClock() {
-    if (!DemoStatusBar.statusBarClock) {
-      DemoStatusBar.statusBarClock = window.createStatusBarItem(
-        'clock',
-        StatusBarAlignment.Right,
-        100000,
-      );
-      DemoStatusBar.statusBarClock.name = `${Config.title} - Clock & Countdown`;
-    }
-
-    const date = new Date();
-    const time = date.toTimeString();
-
-    const showClock = Extension.getInstance().getSetting<number>(Config.clock.show);
+    DemoStatusBar.ensureStatusBarClock();
+    const clock = DemoStatusBar.getCurrentClock();
     const timer = await DemoStatusBar.getTimer();
-    if (timer) {
-      if (DemoStatusBar.countdownStarted) {
-        DemoStatusBar.statusBarClock.command = COMMAND.resetCountdown;
-      } else {
-        DemoStatusBar.statusBarClock.command = COMMAND.startCountdown;
-      }
-    }
-
-    // Only show hour and minute
-    const clock = time.split(':').slice(0, 2).join(':');
-    let text = showClock ? `$(dt-clock) ${clock}` : '';
-
-    // Send the clock to the presenter view
-    PresenterView.postMessage(WebViewMessages.toWebview.updateClock, clock);
+    DemoStatusBar.setStatusBarClockCommand(timer);
+    DemoStatusBar.sendClockToPresenter(clock);
+    let text = DemoStatusBar.getClockText(clock);
 
     if (DemoStatusBar.countdownStarted && timer) {
-      let countdown: string;
-      let isNegative = false;
-
-      if (DemoStatusBar.countdownPaused) {
-        // If paused, use the paused time remaining
-        const seconds = Math.floor(DemoStatusBar.pausedTimeRemaining! / 1000);
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = Math.abs(seconds % 60);
-
-        // Add leading zero
-        const min = Math.abs(minutes) < 10 ? `0${Math.abs(minutes)}` : minutes;
-        const sec = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
-        countdown = `${min}:${sec}`;
-      } else {
-        // Calculate the countdown normally
-        const diff = new Date().getTime() - DemoStatusBar.countdownStarted.getTime();
-        const seconds = Math.floor((timer * 60 * 1000 - diff) / 1000);
-        let minutes = Math.floor(seconds / 60);
-        const remainingSeconds = Math.abs(seconds % 60);
-
-        if (seconds <= 0) {
-          isNegative = true;
-          DemoStatusBar.statusBarClock.backgroundColor = new ThemeColor(
-            'statusBarItem.errorBackground',
-          );
-          DemoStatusBar.statusBarClock.color = new ThemeColor('statusBarItem.errorForeground');
-
-          if (minutes < 0) {
-            // To show the correct overtime
-            minutes = minutes + 1;
-          }
-        } else {
-          DemoStatusBar.statusBarClock.backgroundColor = undefined;
-          DemoStatusBar.statusBarClock.color = undefined;
-        }
-
-        // Add leading zero
-        const min = Math.abs(minutes) < 10 ? `0${Math.abs(minutes)}` : minutes;
-        const sec = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
-        countdown = `${isNegative ? '-' : ''}${min}:${sec}`;
-      }
-
-      text += `    $(dt-timer-off) ${countdown}`;
-
-      // Send the countdown to the presenter view
-      PresenterView.postMessage(WebViewMessages.toWebview.updateCountdown, countdown);
+      text += DemoStatusBar.getCountdownText(timer);
     }
 
     DemoStatusBar.statusBarClock.text = text.trim();
@@ -350,6 +283,82 @@ export class DemoStatusBar {
     setTimeout(() => {
       DemoStatusBar.startClock();
     }, 1000);
+  }
+
+  private static ensureStatusBarClock() {
+    if (!DemoStatusBar.statusBarClock) {
+      DemoStatusBar.statusBarClock = window.createStatusBarItem(
+        'clock',
+        StatusBarAlignment.Right,
+        100000,
+      );
+      DemoStatusBar.statusBarClock.name = `${Config.title} - Clock & Countdown`;
+    }
+  }
+
+  private static getCurrentClock(): string {
+    const date = new Date();
+    const time = date.toTimeString();
+    // Only show hour and minute
+    return time.split(':').slice(0, 2).join(':');
+  }
+
+  private static setStatusBarClockCommand(timer: number | undefined) {
+    const showClock = Extension.getInstance().getSetting<number>(Config.clock.show);
+    if (timer) {
+      if (DemoStatusBar.countdownStarted) {
+        DemoStatusBar.statusBarClock.command = COMMAND.resetCountdown;
+      } else {
+        DemoStatusBar.statusBarClock.command = COMMAND.startCountdown;
+      }
+    }
+  }
+
+  private static sendClockToPresenter(clock: string) {
+    PresenterView.postMessage(WebViewMessages.toWebview.updateClock, clock);
+  }
+
+  private static getClockText(clock: string): string {
+    const showClock = Extension.getInstance().getSetting<number>(Config.clock.show);
+    return showClock ? `$(dt-clock) ${clock}` : '';
+  }
+
+  private static getCountdownText(timer: number): string {
+    let countdown: string;
+    let isNegative = false;
+
+    if (DemoStatusBar.countdownPaused) {
+      const seconds = Math.floor(DemoStatusBar.pausedTimeRemaining! / 1000);
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = Math.abs(seconds % 60);
+      const min = Math.abs(minutes) < 10 ? `0${Math.abs(minutes)}` : minutes;
+      const sec = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
+      countdown = `${min}:${sec}`;
+    } else {
+      const diff = new Date().getTime() - DemoStatusBar.countdownStarted!.getTime();
+      const seconds = Math.floor((timer * 60 * 1000 - diff) / 1000);
+      let minutes = Math.floor(seconds / 60);
+      const remainingSeconds = Math.abs(seconds % 60);
+      if (seconds <= 0) {
+        isNegative = true;
+        DemoStatusBar.statusBarClock.backgroundColor = new ThemeColor(
+          'statusBarItem.errorBackground',
+        );
+        DemoStatusBar.statusBarClock.color = new ThemeColor('statusBarItem.errorForeground');
+        if (minutes < 0) {
+          minutes = minutes + 1;
+        }
+      } else {
+        DemoStatusBar.statusBarClock.backgroundColor = undefined;
+        DemoStatusBar.statusBarClock.color = undefined;
+      }
+      const min = Math.abs(minutes) < 10 ? `0${Math.abs(minutes)}` : minutes;
+      const sec = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
+      countdown = `${isNegative ? '-' : ''}${min}:${sec}`;
+    }
+    // Send the countdown to the presenter view
+    PresenterView.postMessage(WebViewMessages.toWebview.updateCountdown, countdown);
+    return `    $(dt-timer-off) ${countdown}`;
   }
 
   private static updatePause(status: boolean) {

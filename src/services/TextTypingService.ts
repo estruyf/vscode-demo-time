@@ -49,7 +49,6 @@ export class TextTypingService {
     }
 
     let lineContent = null;
-
     try {
       const line = editor.lineAt(position);
       lineContent = line.text;
@@ -59,54 +58,27 @@ export class TextTypingService {
 
     const typingMode = TextTypingService.getInsertTypingMode(step);
     const typingSpeed = getInsertionSpeed(step.insertTypingSpeed);
-
     let range = new Range(position, position);
 
     if (!lineContent) {
-      // Insert the content at the specified position
-      if (typingMode === 'character-by-character') {
-        textEditor.revealRange(new Range(position, position), TextEditorRevealType.InCenter);
-        await TextTypingService.insertCharByChar(textEditor, content, position, typingSpeed);
-      } else if (typingSpeed && typingMode === 'line-by-line') {
-        const lineRange = editor.lineAt(position).range;
-        textEditor.revealRange(lineRange, TextEditorRevealType.InCenter);
-        await TextTypingService.insertLineByLine(
-          fileUri,
-          lineRange.start.line,
-          content,
-          typingSpeed,
-        );
-      } else {
-        // Instant mode (default)
-        await TextTypingService.insertInstant(fileUri, position, content);
-      }
+      await TextTypingService.insertAtPosition(
+        textEditor,
+        fileUri,
+        content,
+        position,
+        typingMode,
+        typingSpeed,
+      );
     } else {
-      // Replace content on existing line
-      if (typingMode === 'character-by-character') {
-        const line = editor.lineAt(position);
-        range = line.range;
-        textEditor.revealRange(range, TextEditorRevealType.InCenter);
-        await TextTypingService.replaceCharByChar(textEditor, line.range, content, typingSpeed);
-      } else if (typingSpeed && typingMode === 'line-by-line') {
-        const lineRange = getLineRange(editor, position);
-        if (!lineRange) {
-          Logger.error('Line range not found');
-          return;
-        }
-        await TextTypingService.replaceInstant(fileUri, lineRange, '');
-        textEditor.revealRange(lineRange, TextEditorRevealType.InCenter);
-        await TextTypingService.insertLineByLine(
-          fileUri,
-          lineRange.start.line,
-          content,
-          typingSpeed,
-        );
-      } else {
-        // Instant mode (default)
-        const line = editor.lineAt(position);
-        range = line.range;
-        await TextTypingService.replaceInstant(fileUri, range, content);
-      }
+      await TextTypingService.replaceAtPosition(
+        textEditor,
+        editor,
+        fileUri,
+        content,
+        position,
+        typingMode,
+        typingSpeed,
+      );
     }
 
     if (textEditor) {
@@ -115,6 +87,58 @@ export class TextTypingService {
     }
 
     await saveFiles();
+  }
+
+  private static async insertAtPosition(
+    textEditor: TextEditor,
+    fileUri: Uri,
+    content: string,
+    position: Position,
+    typingMode: InsertTypingMode,
+    typingSpeed: number | undefined,
+  ) {
+    if (typingMode === 'character-by-character') {
+      textEditor.revealRange(new Range(position, position), TextEditorRevealType.InCenter);
+      await TextTypingService.insertCharByChar(textEditor, content, position, typingSpeed);
+    } else if (typingSpeed && typingMode === 'line-by-line') {
+      const lineRange = textEditor.document.lineAt(position).range;
+      textEditor.revealRange(lineRange, TextEditorRevealType.InCenter);
+      await TextTypingService.insertLineByLine(fileUri, lineRange.start.line, content, typingSpeed);
+    } else {
+      // Instant mode (default)
+      await TextTypingService.insertInstant(fileUri, position, content);
+    }
+  }
+
+  private static async replaceAtPosition(
+    textEditor: TextEditor,
+    editor: TextDocument,
+    fileUri: Uri,
+    content: string,
+    position: Position,
+    typingMode: InsertTypingMode,
+    typingSpeed: number | undefined,
+  ) {
+    if (typingMode === 'character-by-character') {
+      const line = editor.lineAt(position);
+      const range = line.range;
+      textEditor.revealRange(range, TextEditorRevealType.InCenter);
+      await TextTypingService.replaceCharByChar(textEditor, range, content, typingSpeed);
+    } else if (typingSpeed && typingMode === 'line-by-line') {
+      const lineRange = getLineRange(editor, position);
+      if (!lineRange) {
+        Logger.error('Line range not found');
+        return;
+      }
+      await TextTypingService.replaceInstant(fileUri, lineRange, '');
+      textEditor.revealRange(lineRange, TextEditorRevealType.InCenter);
+      await TextTypingService.insertLineByLine(fileUri, lineRange.start.line, content, typingSpeed);
+    } else {
+      // Instant mode (default)
+      const line = editor.lineAt(position);
+      const range = line.range;
+      await TextTypingService.replaceInstant(fileUri, range, content);
+    }
   }
 
   /**
@@ -146,58 +170,93 @@ export class TextTypingService {
     const typingSpeed = getInsertionSpeed(step.insertTypingSpeed);
 
     if (range) {
-      if (typingMode === 'character-by-character') {
-        textEditor.revealRange(range, TextEditorRevealType.InCenter);
-        await TextTypingService.replaceCharByChar(textEditor, range, content, typingSpeed);
-      } else if (typingSpeed && typingMode === 'line-by-line') {
-        const startLine = editor.lineAt(range.start);
-        const endLine = editor.lineAt(range.end);
-        const start = new Position(startLine.lineNumber, 0);
-        const end = new Position(endLine.lineNumber, endLine.text.length);
-        const fullRange = new Range(start, end);
-
-        await TextTypingService.replaceInstant(fileUri, fullRange, '');
-        textEditor.revealRange(fullRange, TextEditorRevealType.InCenter);
-        await TextTypingService.insertLineByLine(
-          fileUri,
-          startLine.lineNumber,
-          content,
-          typingSpeed,
-        );
-      } else {
-        // Instant mode (default)
-        await TextTypingService.replaceInstant(fileUri, range, content);
-      }
+      await TextTypingService.replaceWithRange(
+        textEditor,
+        editor,
+        fileUri,
+        content,
+        range,
+        typingMode,
+        typingSpeed,
+      );
     } else if (position) {
-      if (typingMode === 'character-by-character') {
-        const line = editor.lineAt(position);
-        range = line.range;
-        textEditor.revealRange(range, TextEditorRevealType.InCenter);
-        await TextTypingService.replaceCharByChar(textEditor, line.range, content, typingSpeed);
-      } else if (typingSpeed && typingMode === 'line-by-line') {
-        range = getLineRange(editor, position);
-        if (!range) {
-          Logger.error('Line range not found');
-          return;
-        }
-
-        await TextTypingService.replaceInstant(fileUri, range, '');
-        textEditor.revealRange(range, TextEditorRevealType.InCenter);
-        await TextTypingService.insertLineByLine(fileUri, range.start.line, content, typingSpeed);
-      } else {
-        // Instant mode (default)
-        const line = editor.lineAt(position);
-        range = line.range;
-        await TextTypingService.replaceInstant(fileUri, line.range, content);
-      }
+      await TextTypingService.replaceWithPosition(
+        textEditor,
+        editor,
+        fileUri,
+        content,
+        position,
+        typingMode,
+        typingSpeed,
+      );
     }
 
-    if (textEditor && range) {
-      textEditor.revealRange(range, TextEditorRevealType.InCenter);
-      textEditor.selection = new Selection(range.start, range.start);
+    if (textEditor && (range || position)) {
+      const revealRange = range ? range : editor.lineAt(position!).range;
+      textEditor.revealRange(revealRange, TextEditorRevealType.InCenter);
+      textEditor.selection = new Selection(revealRange.start, revealRange.start);
     }
 
     await saveFiles();
+  }
+
+  private static async replaceWithRange(
+    textEditor: TextEditor,
+    editor: TextDocument,
+    fileUri: Uri,
+    content: string,
+    range: Range,
+    typingMode: InsertTypingMode,
+    typingSpeed: number | undefined,
+  ) {
+    if (typingMode === 'character-by-character') {
+      textEditor.revealRange(range, TextEditorRevealType.InCenter);
+      await TextTypingService.replaceCharByChar(textEditor, range, content, typingSpeed);
+    } else if (typingSpeed && typingMode === 'line-by-line') {
+      const startLine = editor.lineAt(range.start);
+      const endLine = editor.lineAt(range.end);
+      const start = new Position(startLine.lineNumber, 0);
+      const end = new Position(endLine.lineNumber, endLine.text.length);
+      const fullRange = new Range(start, end);
+
+      await TextTypingService.replaceInstant(fileUri, fullRange, '');
+      textEditor.revealRange(fullRange, TextEditorRevealType.InCenter);
+      await TextTypingService.insertLineByLine(fileUri, startLine.lineNumber, content, typingSpeed);
+    } else {
+      // Instant mode (default)
+      await TextTypingService.replaceInstant(fileUri, range, content);
+    }
+  }
+
+  private static async replaceWithPosition(
+    textEditor: TextEditor,
+    editor: TextDocument,
+    fileUri: Uri,
+    content: string,
+    position: Position,
+    typingMode: InsertTypingMode,
+    typingSpeed: number | undefined,
+  ) {
+    if (typingMode === 'character-by-character') {
+      const line = editor.lineAt(position);
+      const range = line.range;
+      textEditor.revealRange(range, TextEditorRevealType.InCenter);
+      await TextTypingService.replaceCharByChar(textEditor, range, content, typingSpeed);
+    } else if (typingSpeed && typingMode === 'line-by-line') {
+      const range = getLineRange(editor, position);
+      if (!range) {
+        Logger.error('Line range not found');
+        return;
+      }
+      await TextTypingService.replaceInstant(fileUri, range, '');
+      textEditor.revealRange(range, TextEditorRevealType.InCenter);
+      await TextTypingService.insertLineByLine(fileUri, range.start.line, content, typingSpeed);
+    } else {
+      // Instant mode (default)
+      const line = editor.lineAt(position);
+      const range = line.range;
+      await TextTypingService.replaceInstant(fileUri, range, content);
+    }
   }
 
   /**
@@ -337,7 +396,7 @@ export class TextTypingService {
 
     let crntPosition = new Position(startLine, 0);
     let i = 0;
-    for await (const line of lines) {
+    for (const line of lines) {
       let lineContent = line;
 
       if (totalLines > 1) {
@@ -422,12 +481,10 @@ export class TextTypingService {
       if (typeof startPosition === 'number') {
         startPosition += char.length;
         currentPos = editor.document.positionAt(startPosition);
+      } else if (char === '\r\n' || char === '\n') {
+        currentPos = new Position(currentPos.line + 1, 0);
       } else {
-        if (char === '\r\n' || char === '\n') {
-          currentPos = new Position(currentPos.line + 1, 0);
-        } else {
-          currentPos = new Position(currentPos.line, currentPos.character + char.length);
-        }
+        currentPos = new Position(currentPos.line, currentPos.character + char.length);
       }
       editor.selection = new Selection(currentPos, currentPos);
       await new Promise((resolve) => setTimeout(resolve, delayMs));
@@ -544,8 +601,8 @@ export class TextTypingService {
    */
   public static getInsertTypingMode(step?: Step): InsertTypingMode {
     return (
-      step?.insertTypingMode ||
-      Extension.getInstance().getSetting<InsertTypingMode>(Config.insert.typingMode) ||
+      step?.insertTypingMode ??
+      Extension.getInstance().getSetting<InsertTypingMode>(Config.insert.typingMode) ??
       'instant'
     );
   }

@@ -25,7 +25,7 @@ export class TerminalService {
       return;
     }
 
-    terminalId = terminalId || TerminalService.terminalName;
+    terminalId = terminalId ?? TerminalService.terminalName;
     let terminal = TerminalService.terminal[terminalId];
 
     if (!terminal) {
@@ -53,8 +53,8 @@ export class TerminalService {
 
     autoExecute = typeof autoExecute !== 'undefined' ? autoExecute : true;
 
-    const typeMode = insertTypingMode || 'instant';
-    const typeSpeed = insertTypingSpeed || 50;
+    const typeMode = insertTypingMode ?? 'instant';
+    const typeSpeed = insertTypingSpeed ?? 50;
     if (typeMode === 'character-by-character') {
       terminal.sendText('', false);
       for (const char of command) {
@@ -79,7 +79,7 @@ export class TerminalService {
    * @returns A promise that resolves when the terminal is closed.
    */
   public static async closeTerminal(terminalId?: string): Promise<void> {
-    terminalId = terminalId || TerminalService.terminalName;
+    terminalId = terminalId ?? TerminalService.terminalName;
     const terminal = TerminalService.terminal[terminalId];
 
     if (!terminal) {
@@ -100,8 +100,8 @@ export class TerminalService {
    * @returns The terminal instance or null if not found.
    */
   public static getTerminal(terminalId?: string): Terminal | null {
-    terminalId = terminalId || TerminalService.terminalName;
-    return TerminalService.terminal[terminalId] || null;
+    terminalId = terminalId ?? TerminalService.terminalName;
+    return TerminalService.terminal[terminalId] ?? null;
   }
 
   /**
@@ -110,7 +110,7 @@ export class TerminalService {
    * @returns True if the terminal exists, false otherwise.
    */
   public static hasTerminal(terminalId?: string): boolean {
-    terminalId = terminalId || TerminalService.terminalName;
+    terminalId = terminalId ?? TerminalService.terminalName;
     return !!TerminalService.terminal[terminalId];
   }
 

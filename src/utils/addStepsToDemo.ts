@@ -29,7 +29,7 @@ export const addStepsToDemo = async (
 
   demoFile.demo.demos = demoFileToUpdate.demos;
 
-  const fileExtension = demoFile.filePath.split('.').pop() || 'json';
+  const fileExtension = demoFile.filePath.split('.').pop() ?? 'json';
   const fileType = fileExtension === 'yaml' || fileExtension === 'yml' ? 'yaml' : 'json';
   const content = DemoFileProvider.formatContent(fileType, demoFile.demo);
   await DemoFileProvider.saveFile(demoFile.filePath, content);
