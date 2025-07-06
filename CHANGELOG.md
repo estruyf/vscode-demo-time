@@ -31,6 +31,8 @@
   with configurable file type by using the `demoTime.defaultFileType` setting
 - [#193](https://github.com/estruyf/vscode-demo-time/issues/193): Ask the user which demo file type
   they want to use when initializing the extension. The user can choose between `JSON` and `YAML`.
+- [#196](https://github.com/estruyf/vscode-demo-time/issues/196): Added an API documentation page
+  that can be viewed within Visual Studio Code or your browser.
 
 ## [1.6.0] - 2025-06-23
 
