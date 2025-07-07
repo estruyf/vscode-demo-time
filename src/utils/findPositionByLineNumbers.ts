@@ -18,8 +18,8 @@ export const findPositionByLineNumbers = (editor: TextDocument, position: string
         end = editor.lineCount.toString();
       }
 
-      const startPosition = getLineAndCharacterPosition(start);
-      const endPosition = getLineAndCharacterPosition(end);
+      const startPosition = getLineAndCharacterPosition(editor, start);
+      const endPosition = getLineAndCharacterPosition(editor, end);
 
       let lastLine = new Position(Number(endPosition.line), endPosition.character);
       try {
@@ -34,7 +34,7 @@ export const findPositionByLineNumbers = (editor: TextDocument, position: string
 
       crntRange = new Range(new Position(startPosition.line, startPosition.character), lastLine);
     } else {
-      const startPosition = getLineAndCharacterPosition(position);
+      const startPosition = getLineAndCharacterPosition(editor, position);
       crntPosition = new Position(startPosition.line, startPosition.character);
     }
   } else {

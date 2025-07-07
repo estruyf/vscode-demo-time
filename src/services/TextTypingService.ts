@@ -70,9 +70,8 @@ export class TextTypingService {
         typingSpeed,
       );
     } else {
-      await TextTypingService.replaceAtPosition(
+      await TextTypingService.insertAtPosition(
         textEditor,
-        editor,
         fileUri,
         content,
         position,

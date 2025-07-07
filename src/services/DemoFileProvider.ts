@@ -64,11 +64,10 @@ export class DemoFileProvider {
 
   /**
    * Generates demo file content based on the file type
-   * @param fileType The file type ('json' or 'yaml')
    * @param title The demo title
    * @returns The formatted content string
    */
-  private static generateFileContent(fileType: DemoFileType, title: string): string {
+  private static generateFileContent(title: string): unknown {
     const demoContent = {
       $schema: 'https://demotime.show/demo-time.schema.json',
       title: title,
@@ -77,7 +76,7 @@ export class DemoFileProvider {
       demos: [],
     };
 
-    return this.formatContent(fileType, demoContent);
+    return demoContent;
   }
 
   /**
@@ -209,6 +208,7 @@ export class DemoFileProvider {
    * @returns A promise that resolves when the file is created.
    */
   public static async createFile(fileName?: string, content?: unknown): Promise<Uri | undefined> {
+    const demoName = fileName;
     const workspaceFolder = Extension.getInstance().workspaceFolder;
     if (!workspaceFolder) {
       return;
@@ -241,6 +241,11 @@ export class DemoFileProvider {
     }
 
     const file = Uri.joinPath(workspaceFolder.uri, General.demoFolder, fileName);
+
+    if (!content) {
+      content = this.generateFileContent(demoName || 'Demo');
+    }
+
     const formattedContent = this.formatContent(fileType, content);
 
     await writeFile(file, formattedContent);
