@@ -304,7 +304,6 @@ export class DemoStatusBar {
   }
 
   private static setStatusBarClockCommand(timer: number | undefined) {
-    const showClock = Extension.getInstance().getSetting<number>(Config.clock.show);
     if (timer) {
       if (DemoStatusBar.countdownStarted) {
         DemoStatusBar.statusBarClock.command = COMMAND.resetCountdown;

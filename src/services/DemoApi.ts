@@ -1,12 +1,4 @@
-import {
-  workspace,
-  window,
-  StatusBarAlignment,
-  StatusBarItem,
-  commands,
-  MarkdownString,
-  Uri,
-} from 'vscode';
+import { workspace, window, StatusBarAlignment, StatusBarItem, commands, Uri } from 'vscode';
 import { Extension } from './Extension';
 import { COMMAND, Config } from '../constants';
 import { Server } from 'http';

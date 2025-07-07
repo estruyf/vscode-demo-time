@@ -53,7 +53,7 @@ export class TextTypingService {
       const line = editor.lineAt(position);
       lineContent = line.text;
     } catch (error) {
-      // do nothing
+      Logger.error(`Error getting line content: ${(error as Error).message}`);
     }
 
     const typingMode = TextTypingService.getInsertTypingMode(step);
@@ -192,7 +192,7 @@ export class TextTypingService {
     }
 
     if (textEditor && (range || position)) {
-      const revealRange = range ? range : editor.lineAt(position!).range;
+      const revealRange = range ?? editor.lineAt(position!).range;
       textEditor.revealRange(revealRange, TextEditorRevealType.InCenter);
       textEditor.selection = new Selection(revealRange.start, revealRange.start);
     }
