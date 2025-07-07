@@ -329,15 +329,13 @@ export class DemoStatusBar {
     if (DemoStatusBar.countdownPaused) {
       const seconds = Math.floor(DemoStatusBar.pausedTimeRemaining! / 1000);
       const minutes = Math.floor(seconds / 60);
-      const remainingSeconds = Math.abs(seconds % 60);
-      const min = Math.abs(minutes) < 10 ? `0${Math.abs(minutes)}` : minutes;
-      const sec = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
-      countdown = `${min}:${sec}`;
+      const remainingSeconds = seconds % 60;
+      countdown = this.formatTime(minutes, remainingSeconds);
     } else {
       const diff = new Date().getTime() - DemoStatusBar.countdownStarted!.getTime();
       const seconds = Math.floor((timer * 60 * 1000 - diff) / 1000);
       let minutes = Math.floor(seconds / 60);
-      const remainingSeconds = Math.abs(seconds % 60);
+      const remainingSeconds = seconds % 60;
       if (seconds <= 0) {
         isNegative = true;
         DemoStatusBar.statusBarClock.backgroundColor = new ThemeColor(
@@ -351,13 +349,17 @@ export class DemoStatusBar {
         DemoStatusBar.statusBarClock.backgroundColor = undefined;
         DemoStatusBar.statusBarClock.color = undefined;
       }
-      const min = Math.abs(minutes) < 10 ? `0${Math.abs(minutes)}` : minutes;
-      const sec = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
-      countdown = `${isNegative ? '-' : ''}${min}:${sec}`;
+      countdown = this.formatTime(minutes, remainingSeconds, isNegative);
     }
     // Send the countdown to the presenter view
     PresenterView.postMessage(WebViewMessages.toWebview.updateCountdown, countdown);
     return `    $(dt-timer-off) ${countdown}`;
+  }
+
+  private static formatTime(minutes: number, seconds: number, negative = false) {
+    const min = Math.abs(minutes) < 10 ? `0${Math.abs(minutes)}` : Math.abs(minutes);
+    const sec = Math.abs(seconds) < 10 ? `0${Math.abs(seconds)}` : Math.abs(seconds);
+    return `${negative ? '-' : ''}${min}:${sec}`;
   }
 
   private static updatePause(status: boolean) {
