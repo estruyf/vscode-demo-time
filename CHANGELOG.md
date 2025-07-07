@@ -1,6 +1,6 @@
 # Change Log
 
-## [1.7.0] - 2025-07-xx
+## [1.7.0] - 2025-07-07
 
 - [#169](https://github.com/estruyf/vscode-demo-time/issues/169): Refocus the editor after executing
   a terminal command
