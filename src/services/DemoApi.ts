@@ -1,4 +1,4 @@
-import { workspace, window, StatusBarAlignment, StatusBarItem, commands } from 'vscode';
+import { workspace, window, StatusBarAlignment, StatusBarItem, commands, Uri } from 'vscode';
 import { Extension } from './Extension';
 import { COMMAND, Config } from '../constants';
 import { Server } from 'http';
@@ -6,7 +6,7 @@ import https from 'https';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { Logger } from './Logger';
-import { bringToFront } from '../utils';
+import { bringToFront, readFile } from '../utils';
 
 export class DemoApi {
   private static statusBarItem: StatusBarItem;
@@ -68,32 +68,39 @@ export class DemoApi {
       DemoApi.statusBarItem = window.createStatusBarItem('api', StatusBarAlignment.Left, 100005);
       DemoApi.statusBarItem.name = `${Config.title} - API`;
       DemoApi.statusBarItem.text = `$(dt-logo) API: ${port}`;
-      DemoApi.statusBarItem.tooltip = `http://localhost:${port} | https://localhost:${port + 1}`;
+
+      const tooltipContent = `API is running on port ${port}. Click to open the API documentation.`;
+      const apiUrl = `http://localhost:${port}`;
+
+      DemoApi.statusBarItem.command = {
+        title: 'Open API in VS Code',
+        command: 'simpleBrowser.show',
+        arguments: [apiUrl],
+      };
+
+      DemoApi.statusBarItem.tooltip = tooltipContent;
       DemoApi.statusBarItem.show();
     });
   }
 
   private static async home(req: Request, res: Response) {
     Logger.info('Received request for home');
-    res.status(200).send(`
-      <html>
-        <head>
-          <title>Demo API</title>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        </head>
-        <body>
-          <h1>Demo API</h1>
-          <p>Welcome to the Demo API!</p>
-          <p>Use the following endpoints:</p>
-          <ul>
-            <li><a href="/api/next">/api/next</a> - Trigger the next demo</li>
-            <li><a href="/api/runById?id=demoId">/api/runById</a> - Run a demo by ID (replace <code>demoId</code> with the actual ID)</li>
-          </ul>
-          <p>To bring the application to the front, you can add <code>?bringToFront=true</code> to the URL.</p>
-        </body>
-      </html>
-    `);
+    const ext = Extension.getInstance();
+    const extensionPath = ext.extensionPath;
+
+    try {
+      let apiHtml = await readFile(
+        Uri.joinPath(Uri.parse(extensionPath), 'assets', 'api', 'index.html'),
+      );
+      apiHtml = apiHtml.replace(
+        /{{API_URL}}/g,
+        `http://localhost:${ext.getSetting<number>(Config.api.port)}`,
+      );
+      res.status(200).send(apiHtml);
+    } catch (err) {
+      Logger.error(`Failed to load API documentation - ${(err as Error).message}`);
+      res.status(500).send('Failed to load API documentation');
+    }
   }
 
   /**

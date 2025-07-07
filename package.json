@@ -1,9 +1,37 @@
 {
   "name": "vscode-demo-time",
-  "displayName": "Demo Time - Live demos & slides in VS Code",
-  "description": "Script your coding demos to perfection and present slides — all within VS Code! No typos, no missteps—just flawless, stress-free presentations. Seamlessly execute each demo step and advance through slides like a pro, keeping your audience engaged without ever leaving your coding environment.",
-  "version": "1.6.0",
+  "displayName": "Demo Time — Presentations & Demos in VS Code",
+  "description": "Script your coding demos and presentations to perfection and present slides — all within VS Code! No typos, no missteps—just flawless, stress-free presentations. Seamlessly execute each demo step and advance through slides like a pro, keeping your audience engaged without ever leaving your coding environment.",
+  "version": "1.7.0",
   "publisher": "eliostruyf",
+  "keywords": [
+    "demo",
+    "presentation",
+    "slides",
+    "coding demo",
+    "workshop",
+    "training",
+    "automation",
+    "scripted demo",
+    "presenter",
+    "conference",
+    "tutorial",
+    "education",
+    "teaching",
+    "live coding",
+    "presentation mode",
+    "slides viewer",
+    "demo runner",
+    "step-by-step",
+    "highlighting",
+    "presenter view",
+    "timer",
+    "countdown",
+    "notes",
+    "pdf export",
+    "powerpoint",
+    "markdown slides"
+  ],
   "galleryBanner": {
     "color": "#0D1321",
     "theme": "dark"
@@ -43,7 +71,7 @@
     "vscode": "^1.84.0"
   },
   "categories": [
-    "Other"
+    "Education"
   ],
   "activationEvents": [
     "workspaceContains:**/.demo/*"
@@ -52,7 +80,12 @@
   "contributes": {
     "configurationDefaults": {
       "files.associations": {
-        "**/.demo/*.json": "jsonc"
+        "**/.demo/*.json": "jsonc",
+        "**/.demo/*.yaml": "yaml",
+        "**/.demo/*.yml": "yaml"
+      },
+      "yaml.schemas": {
+        "https://demotime.show/demo-time.schema.json": ".demo/*"
       }
     },
     "icons": {
@@ -141,7 +174,23 @@
         "demoTime.lineInsertionDelay": {
           "type": "number",
           "default": 0,
-          "description": "The delay between inserting lines of code (in milliseconds)"
+          "description": "The delay between inserting lines of code (in milliseconds)",
+          "deprecationMessage": "This setting is deprecated. Use 'demoTime.insertTypingMode' and 'demoTime.insertTypingSpeed' instead."
+        },
+        "demoTime.insertTypingMode": {
+          "type": "string",
+          "enum": [
+            "instant",
+            "line-by-line",
+            "character-by-character"
+          ],
+          "default": "instant",
+          "description": "Mode for inserting content: instant (all at once), line-by-line, or character-by-character"
+        },
+        "demoTime.insertTypingSpeed": {
+          "type": "number",
+          "default": 50,
+          "description": "Characters per second for character-by-character typing mode"
         },
         "demoTime.api.enabled": {
           "type": "boolean",
@@ -189,6 +238,20 @@
           "type": "string",
           "default": "",
           "description": "HTML template for slide footers. Supports Handlebars syntax with frontmatter variables. Example: '<footer><span>{{name}}</span> <span>{{date}}</span></footer>'"
+        },
+        "demoTime.defaultFileType": {
+          "type": "string",
+          "enum": [
+            "json",
+            "yaml"
+          ],
+          "default": "json",
+          "description": "Default file type for new demo files. Choose between JSON and YAML formats."
+        },
+        "demoTime.debug": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable debug mode for Demo Time."
         }
       }
     },
@@ -387,7 +450,7 @@
       "commandPalette": [
         {
           "command": "demo-time.addStepToDemo",
-          "when": "(editorLangId == jsonc || editorLangId == json) && resourceDirname =~ /\\.demo$/"
+          "when": "((editorLangId == jsonc || editorLangId == json) || editorLangId == yaml) && resourceDirname =~ /\\.demo$/"
         },
         {
           "command": "demo-time.previous",
@@ -518,17 +581,17 @@
       "editor/title": [
         {
           "command": "demo-time.addStepToDemo",
-          "when": "(editorLangId == jsonc || editorLangId == json) && resourceDirname =~ /\\.demo$/",
+          "when": "((editorLangId == jsonc || editorLangId == json) || editorLangId == yaml) && resourceDirname =~ /\\.demo$/",
           "group": "navigation@-1"
         },
         {
           "command": "demo-time.start",
-          "when": "(editorLangId == jsonc || editorLangId == json) && resourceDirname =~ /\\.demo$/",
+          "when": "((editorLangId == jsonc || editorLangId == json) || editorLangId == yaml) && resourceDirname =~ /\\.demo$/",
           "group": "navigation@0"
         },
         {
           "command": "demo-time.docs",
-          "when": "(editorLangId == jsonc || editorLangId == json) && resourceDirname =~ /\\.demo$/",
+          "when": "((editorLangId == jsonc || editorLangId == json) || editorLangId == yaml) && resourceDirname =~ /\\.demo$/",
           "group": "navigation@1"
         },
         {
@@ -593,7 +656,7 @@
     "viewsWelcome": [
       {
         "view": "demo-time",
-        "contents": "Welcome to Demo Time! Start by creating a `.demo/demo.json` file or clicking the initialize button.\n\n[Initialize](command:demo-time.initialize)\n\n[Learn More](https://demotime.show)"
+        "contents": "Welcome to Demo Time! Start by creating a demo file in JSON or YAML format, or click the initialize button.\n\n[Initialize](command:demo-time.initialize)\n\n[Learn More](https://demotime.show)"
       }
     ],
     "walkthroughs": [

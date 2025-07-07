@@ -3,6 +3,7 @@ export * from "./ArrowHeadType";
 export * from "./BaseShapeProps";
 export * from "./CommandType";
 export * from "./DemoFileCache";
+export * from "./DemoFileType";
 export * from "./Demos";
 export * from "./ShellSetting";
 export * from "./SlideMetadata";

@@ -1,5 +1,39 @@
 # Change Log
 
+## [1.7.0] - 2025-07-07
+
+- [#169](https://github.com/estruyf/vscode-demo-time/issues/169): Refocus the editor after executing
+  a terminal command
+- [#173](https://github.com/estruyf/vscode-demo-time/issues/173): Allow to set the timer on the demo
+  file level
+- [#175](https://github.com/estruyf/vscode-demo-time/issues/175): Add some sample demos to the
+  extension initialization to help users get started
+- [#176](https://github.com/estruyf/vscode-demo-time/issues/176): Add support for GitHub Copilot
+  Chat integration by adding `openChat`, `newChat`, `askChat`, `editChat`, `agentChat` and
+  `closeChat` actions
+- [#177](https://github.com/estruyf/vscode-demo-time/issues/177): Added the `copyToClipboard` action
+  to copy text to the clipboard and it supports both text, file content, and variables
+- [#180](https://github.com/estruyf/vscode-demo-time/issues/180): Fix path parsing for Windows and
+  two-column slides
+- [#182](https://github.com/estruyf/vscode-demo-time/issues/182): Improve text typing simulation
+- [#184](https://github.com/estruyf/vscode-demo-time/issues/184): Allow the user to choose if they
+  want to manually run the command or have it run automatically (default) by using the `autoExecute`
+  option
+- [#185](https://github.com/estruyf/vscode-demo-time/issues/185): Allow the `insertTypingMode` and
+  `insertTypingSpeed` options to be used for the `executeTerminalCommand` action
+- [#186](https://github.com/estruyf/vscode-demo-time/issues/186): Added the `typeText` action to
+  simulate typing text in the editor
+- [#187](https://github.com/estruyf/vscode-demo-time/issues/187): Added the `pasteFromClipboard`
+  action to paste the clipboard content into the editor
+- [#188](https://github.com/estruyf/vscode-demo-time/issues/188): Added the `pressEnter` action to
+  simulate pressing the Enter key in the editor
+- [#189](https://github.com/estruyf/vscode-demo-time/issues/189): Added `YAML` demo file support
+  with configurable file type by using the `demoTime.defaultFileType` setting
+- [#193](https://github.com/estruyf/vscode-demo-time/issues/193): Ask the user which demo file type
+  they want to use when initializing the extension. The user can choose between `JSON` and `YAML`.
+- [#196](https://github.com/estruyf/vscode-demo-time/issues/196): Added an API documentation page
+  that can be viewed within Visual Studio Code or your browser.
+
 ## [1.6.0] - 2025-06-23
 
 - New slide parser logic to support more complex front matter slide structures
