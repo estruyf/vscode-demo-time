@@ -192,7 +192,15 @@ export class TextTypingService {
     }
 
     if (textEditor && (range || position)) {
-      const revealRange = range ?? editor.lineAt(position!).range;
+      let revealRange: Range;
+      if (range) {
+        revealRange = range;
+      } else if (position) {
+        revealRange = editor.lineAt(position).range;
+      } else {
+        Logger.error('No range or position provided for reveal');
+        return;
+      }
       textEditor.revealRange(revealRange, TextEditorRevealType.InCenter);
       textEditor.selection = new Selection(revealRange.start, revealRange.start);
     }
