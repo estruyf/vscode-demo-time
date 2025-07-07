@@ -8,7 +8,8 @@ Follow these steps to create your first demo using **Demo Time**:
 - Search for and select `Demo Time: Create a new demo file`.
 - You will be prompted to choose a name for your demo file.
 - Enter a name (e.g., `my-demo`) and press `Enter`.
-- A new `my-demo.json` file will be created in the `.demo` folder of your workspace.
+- A new `my-demo.json` or `my-demo.yaml` file will be created in the `.demo` folder of your
+  workspace, depending on your preferred format.
 
 ## Step 2: Add steps to your demo
 
@@ -22,6 +23,6 @@ Follow these steps to create your first demo using **Demo Time**:
 ## Step 3: Customize Your Demo
 
 - Add titles, descriptions, and custom icons for each step to make your demo more engaging.
-- Use the `my-demo.json` file to manually edit or fine-tune your demo steps.
+- - Use the created demo file to manually edit or fine-tune your demo steps.
 
 For more details, visit the [Demo Time Documentation](https://demotime.show).

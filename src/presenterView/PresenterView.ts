@@ -1,13 +1,13 @@
-import { commands, Uri, Webview, WebviewPanel, window, ViewColumn } from "vscode";
-import { Subscription } from "../models";
-import { Extension } from "../services/Extension";
-import { COMMAND, Config, EXTENSION_NAME, General, WebViewMessages } from "../constants";
-import { MessageHandlerData } from "@estruyf/vscode";
-import { FileProvider } from "../services/FileProvider";
-import { DemoRunner } from "../services/DemoRunner";
-import { DemoStatusBar } from "../services/DemoStatusBar";
-import { NotesService } from "../services/NotesService";
-import { readFile } from "../utils";
+import { commands, Uri, Webview, WebviewPanel, window, ViewColumn } from 'vscode';
+import { Subscription } from '../models';
+import { Extension } from '../services/Extension';
+import { COMMAND, Config, EXTENSION_NAME, General, WebViewMessages } from '../constants';
+import { MessageHandlerData } from '@estruyf/vscode';
+import { DemoFileProvider } from '../services/DemoFileProvider';
+import { DemoRunner } from '../services/DemoRunner';
+import { DemoStatusBar } from '../services/DemoStatusBar';
+import { NotesService } from '../services/NotesService';
+import { readFile } from '../utils';
 
 export class PresenterView {
   private static webview: WebviewPanel | null = null;
@@ -46,25 +46,27 @@ export class PresenterView {
 
     // Create the preview webview
     PresenterView.webview = window.createWebviewPanel(
-      "demoTime:presenterView",
+      'demoTime:presenterView',
       `${Config.title}: Presenter View`,
       ViewColumn.One,
       {
         enableScripts: true,
         retainContextWhenHidden: true,
         enableCommandUris: true,
-      }
+      },
     );
 
     PresenterView.isDisposed = false;
     PresenterView.isDetached = false;
 
     PresenterView.webview.iconPath = {
-      dark: Uri.joinPath(Uri.file(extensionUri), "assets", "logo", "demotime-bg.svg"),
-      light: Uri.joinPath(Uri.file(extensionUri), "assets", "logo", "demotime-bg.svg"),
+      dark: Uri.joinPath(Uri.file(extensionUri), 'assets', 'logo', 'demotime-bg.svg'),
+      light: Uri.joinPath(Uri.file(extensionUri), 'assets', 'logo', 'demotime-bg.svg'),
     };
 
-    PresenterView.webview.webview.html = await PresenterView.getWebviewContent(PresenterView.webview.webview);
+    PresenterView.webview.webview.html = await PresenterView.getWebviewContent(
+      PresenterView.webview.webview,
+    );
 
     PresenterView.webview.onDidDispose(async () => {
       PresenterView.isDisposed = true;
@@ -84,8 +86,11 @@ export class PresenterView {
     if (command === WebViewMessages.toVscode.getSetting && requestId) {
       const setting = Extension.getInstance().getSetting(payload);
       PresenterView.postRequestMessage(command, requestId, setting);
+    } else if (command === WebViewMessages.toVscode.getTimer && requestId) {
+      const timer = await DemoStatusBar.getTimer();
+      PresenterView.postRequestMessage(command, requestId, timer);
     } else if (command === WebViewMessages.toVscode.getDemoFiles) {
-      const demoFiles = await FileProvider.getFiles();
+      const demoFiles = await DemoFileProvider.getFiles();
       PresenterView.postRequestMessage(command, requestId, demoFiles);
     } else if (command === WebViewMessages.toVscode.getRunningDemos) {
       const executingFile = await DemoRunner.getExecutedDemoFile();
@@ -120,7 +125,7 @@ export class PresenterView {
       const panel = PresenterView.webview;
       if (panel?.viewColumn === ViewColumn.One && !PresenterView.isDetached) {
         PresenterView.isDetached = true;
-        commands.executeCommand("workbench.action.moveEditorToNewWindow");
+        commands.executeCommand('workbench.action.moveEditorToNewWindow');
       }
     } else if (command === WebViewMessages.toVscode.openNotes && payload) {
       await commands.executeCommand(`workbench.action.focusActivityBar`);
@@ -180,8 +185,8 @@ export class PresenterView {
   }
 
   private static async getWebviewContent(webview: Webview) {
-    const jsFile = "main.bundle.js";
-    const localServerUrl = "http://localhost:9000";
+    const jsFile = 'main.bundle.js';
+    const localServerUrl = 'http://localhost:9000';
 
     let scriptUrl = [];
 
@@ -189,13 +194,15 @@ export class PresenterView {
     if (extension.isProductionMode) {
       // Get the manifest file from the dist folder
       const extPath = Uri.file(extension.extensionPath);
-      const manifestPath = Uri.joinPath(extPath, "out", "presenter", "manifest.json");
+      const manifestPath = Uri.joinPath(extPath, 'out', 'presenter', 'manifest.json');
       const manifest = await readFile(manifestPath);
       const manifestJson = JSON.parse(manifest);
 
       for (const [key, value] of Object.entries<string>(manifestJson)) {
-        if (key.endsWith(".js")) {
-          scriptUrl.push(webview.asWebviewUri(Uri.joinPath(extPath, "out", "presenter", value)).toString());
+        if (key.endsWith('.js')) {
+          scriptUrl.push(
+            webview.asWebviewUri(Uri.joinPath(extPath, 'out', 'presenter', value)).toString(),
+          );
         }
       }
     } else {
@@ -211,7 +218,7 @@ export class PresenterView {
     <body>
       <div id="root"></div>
   
-      ${scriptUrl.map((url) => `<script src="${url}"></script>`).join("\n")}
+      ${scriptUrl.map((url) => `<script src="${url}"></script>`).join('\n')}
 
       <img style="display:none" src="https://api.visitorbadge.io/api/combined?path=https:%2f%2fgithub.com%2festruyf%2fvscode-demo-time&labelColor=%23202736&countColor=%23FFD23F&slug=presenter-view" alt="Presenter view usage" />
     </body>

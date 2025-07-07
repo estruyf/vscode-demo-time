@@ -1,15 +1,17 @@
-import { workspace, window, StatusBarAlignment, StatusBarItem, commands } from 'vscode';
+import { workspace, window, StatusBarAlignment, StatusBarItem, commands, Uri } from 'vscode';
 import { Extension } from './Extension';
 import { COMMAND, Config } from '../constants';
 import { Server } from 'http';
+import https from 'https';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { Logger } from './Logger';
-import { bringToFront } from '../utils';
+import { bringToFront, readFile } from '../utils';
 
 export class DemoApi {
   private static statusBarItem: StatusBarItem;
   private static server: Server;
+  private static httpsServer: https.Server;
 
   static register() {
     const ext = Extension.getInstance();
@@ -57,6 +59,7 @@ export class DemoApi {
     app.use(express.json());
     app.use(cors());
 
+    app.get('/', DemoApi.home);
     app.get('/api/next', DemoApi.next);
     app.get('/api/runById', DemoApi.runById);
     app.post('/api/runById', DemoApi.runById);
@@ -65,8 +68,39 @@ export class DemoApi {
       DemoApi.statusBarItem = window.createStatusBarItem('api', StatusBarAlignment.Left, 100005);
       DemoApi.statusBarItem.name = `${Config.title} - API`;
       DemoApi.statusBarItem.text = `$(dt-logo) API: ${port}`;
+
+      const tooltipContent = `API is running on port ${port}. Click to open the API documentation.`;
+      const apiUrl = `http://localhost:${port}`;
+
+      DemoApi.statusBarItem.command = {
+        title: 'Open API in VS Code',
+        command: 'simpleBrowser.show',
+        arguments: [apiUrl],
+      };
+
+      DemoApi.statusBarItem.tooltip = tooltipContent;
       DemoApi.statusBarItem.show();
     });
+  }
+
+  private static async home(req: Request, res: Response) {
+    Logger.info('Received request for home');
+    const ext = Extension.getInstance();
+    const extensionPath = ext.extensionPath;
+
+    try {
+      let apiHtml = await readFile(
+        Uri.joinPath(Uri.parse(extensionPath), 'assets', 'api', 'index.html'),
+      );
+      apiHtml = apiHtml.replace(
+        /{{API_URL}}/g,
+        `http://localhost:${ext.getSetting<number>(Config.api.port)}`,
+      );
+      res.status(200).send(apiHtml);
+    } catch (err) {
+      Logger.error(`Failed to load API documentation - ${(err as Error).message}`);
+      res.status(500).send('Failed to load API documentation');
+    }
   }
 
   /**
@@ -141,6 +175,7 @@ export class DemoApi {
   private static async stop() {
     Logger.info('Stopping API');
     DemoApi.server?.close();
+    DemoApi.httpsServer?.close();
     DemoApi.statusBarItem?.hide();
   }
 }

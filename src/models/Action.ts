@@ -45,4 +45,17 @@ export enum Action {
   Snippet = 'snippet',
   // External applications
   openPowerPoint = 'openPowerPoint',
+  openKeynote = 'openKeynote',
+  // GitHub Copilot
+  openChat = 'openCopilotChat',
+  newChat = 'newCopilotChat',
+  askChat = 'askCopilotChat',
+  editChat = 'editCopilotChat',
+  agentChat = 'agentCopilotChat',
+  closeChat = 'closeCopilotChat',
+  // Interaction
+  TypeText = 'typeText',
+  CopyToClipboard = 'copyToClipboard',
+  PasteFromClipboard = 'pasteFromClipboard',
+  PressEnter = 'pressEnter',
 }

@@ -305,5 +305,75 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  if (action === Action.openKeynote) {
+    return {
+      action: Action.openKeynote,
+    };
+  }
+
+  /**
+   * GitHub Copilot actions
+   */
+  if (action === Action.openChat) {
+    return {
+      action: Action.openChat,
+    };
+  }
+  if (action === Action.newChat) {
+    return {
+      action: Action.newChat,
+    };
+  }
+  if (action === Action.askChat) {
+    return {
+      action: Action.askChat,
+      message: '',
+    };
+  }
+  if (action === Action.editChat) {
+    return {
+      action: Action.editChat,
+      message: '',
+    };
+  }
+  if (action === Action.agentChat) {
+    return {
+      action: Action.agentChat,
+      message: '',
+    };
+  }
+  if (action === Action.closeChat) {
+    return {
+      action: Action.closeChat,
+    };
+  }
+
+  // Interaction actions
+  if (action === Action.TypeText) {
+    return {
+      action: Action.TypeText,
+      content: '',
+    };
+  }
+
+  if (action === Action.CopyToClipboard) {
+    return {
+      action: Action.CopyToClipboard,
+      content: '',
+    };
+  }
+
+  if (action === Action.PasteFromClipboard) {
+    return {
+      action: Action.PasteFromClipboard,
+    };
+  }
+
+  if (action === Action.PressEnter) {
+    return {
+      action: Action.PressEnter,
+    };
+  }
+
   return;
 };

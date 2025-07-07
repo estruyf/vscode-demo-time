@@ -3,11 +3,14 @@ import { useEffect, useCallback, useState } from 'react';
 const Slide_Width = 960;
 const Slide_Height = 540;
 
-export const useScale = (ref: React.RefObject<HTMLDivElement>, slideRef: React.RefObject<HTMLDivElement>) => {
+export const useScale = (
+  ref: React.RefObject<HTMLDivElement | null>,
+  slideRef: React.RefObject<HTMLDivElement | null>
+) => {
   const [value, setValue] = useState(0);
 
   const updateScale = useCallback(() => {
-    if (!slideRef.current || !ref.current) {
+    if (!slideRef?.current || !ref?.current) {
       return;
     }
 

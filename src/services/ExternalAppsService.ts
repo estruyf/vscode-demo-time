@@ -21,4 +21,20 @@ export class ExternalAppsService {
       throw error;
     }
   }
+
+  public static async openKeynote() {
+    const platform = os.platform();
+    if (platform !== 'darwin') {
+      throw new Error('Keynote is only supported on macOS');
+    }
+
+    const command = `osascript -e 'tell application "Keynote"' -e 'activate' -e 'end tell'`;
+
+    try {
+      await ScriptExecutor.executeScriptAsync(command, os.homedir());
+    } catch (error) {
+      console.error('Failed to open Keynote:', error);
+      throw error;
+    }
+  }
 }
