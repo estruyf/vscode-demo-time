@@ -26,7 +26,7 @@ export const findPositionByLineNumbers = (editor: TextDocument, position: string
         const line = editor.lineAt(lastLine);
         lastLine = new Position(
           line.range.end.line,
-          lastLine.character ?? line.range.end.character + 1,
+          lastLine.character || line.range.end.character + 1,
         );
       } catch (error) {
         Logger.error(`Error getting line content: ${(error as Error).message}`);

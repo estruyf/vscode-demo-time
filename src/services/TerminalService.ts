@@ -54,7 +54,7 @@ export class TerminalService {
     autoExecute = typeof autoExecute !== 'undefined' ? autoExecute : true;
 
     const typeMode = insertTypingMode ?? 'instant';
-    const typeSpeed = insertTypingSpeed ?? 50;
+    const typeSpeed = insertTypingSpeed || 50;
     if (typeMode === 'character-by-character') {
       terminal.sendText('', false);
       for (const char of command) {

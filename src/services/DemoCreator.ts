@@ -160,7 +160,7 @@ export class DemoCreator {
         occurrenceIndex++;
       }
 
-      lineNr = matchingLineNumbers[occurrenceIndex] ?? matchingLineNumbers[0];
+      lineNr = matchingLineNumbers[occurrenceIndex] || matchingLineNumbers[0];
     }
 
     await DemoRunner.highlight(editor, editor.document.lineAt(lineNr).range, undefined);
