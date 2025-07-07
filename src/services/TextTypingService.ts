@@ -475,27 +475,44 @@ export class TextTypingService {
       if (token?.isCancellationRequested) {
         return;
       }
-      let char = text[i];
-      if (char === '\r' && i + 1 < text.length && text[i + 1] === '\n') {
-        char = '\r\n';
-        i += 2;
-      } else {
-        i += 1;
-      }
+      const { char, nextIndex } = TextTypingService.getNextChar(text, i);
+      i = nextIndex;
       const edit = new WorkspaceEdit();
       edit.insert(editor.document.uri, currentPos, char);
       await workspace.applyEdit(edit);
-      // Update cursor position
-      if (typeof startPosition === 'number') {
-        startPosition += char.length;
-        currentPos = editor.document.positionAt(startPosition);
-      } else if (char === '\r\n' || char === '\n') {
-        currentPos = new Position(currentPos.line + 1, 0);
-      } else {
-        currentPos = new Position(currentPos.line, currentPos.character + char.length);
-      }
+      currentPos = TextTypingService.getNextPosition(currentPos, char, editor, startPosition);
       editor.selection = new Selection(currentPos, currentPos);
       await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+  }
+
+  /**
+   * Helper to get the next character (handles CRLF as one char)
+   */
+  private static getNextChar(text: string, index: number): { char: string; nextIndex: number } {
+    if (text[index] === '\r' && index + 1 < text.length && text[index + 1] === '\n') {
+      return { char: '\r\n', nextIndex: index + 2 };
+    }
+    return { char: text[index], nextIndex: index + 1 };
+  }
+
+  /**
+   * Helper to get the next cursor position after inserting a char
+   */
+  private static getNextPosition(
+    currentPos: Position,
+    char: string,
+    editor: TextEditor,
+    startPosition: Position | number,
+  ): Position {
+    if (typeof startPosition === 'number') {
+      // If using offset, update offset and recalculate position
+      const offset = editor.document.offsetAt(currentPos) + char.length;
+      return editor.document.positionAt(offset);
+    } else if (char === '\r\n' || char === '\n') {
+      return new Position(currentPos.line + 1, 0);
+    } else {
+      return new Position(currentPos.line, currentPos.character + char.length);
     }
   }
 
