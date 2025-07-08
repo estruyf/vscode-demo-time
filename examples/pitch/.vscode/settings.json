@@ -1,0 +1,17 @@
+{
+  "editor.formatOnSave": false,
+  "editor.hover.enabled": false,
+  "github.copilot.nextEditSuggestions.enabled": false,
+  "workbench.colorTheme": "Demo Time Dark",
+  "editor.fontSize": 20,
+  "terminal.integrated.fontSize": 25,
+  "editor.cursorStyle": "block",
+  "editor.cursorBlinking": "expand",
+  "workbench.colorCustomizations": {
+    "editorCursor.foreground": "#F141A8"
+  },
+  "demoTime.highlightBorderColor": "transparent",
+  "demoTime.highlightBackground": "rgba(19, 142, 151, 0.2)",
+  "demoTime.highlightOpacity": 0.5,
+  "demoTime.highlightBlur": 2,
+}
