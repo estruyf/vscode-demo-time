@@ -3,7 +3,7 @@ theme: unnamed
 layout: intro
 ---
 
-# Present like a pro: code, demo, and slides — all in VS Code, Cursor, , and more!
+# Present like a pro: code, demo, and slides — all in VS Code, Cursor, Windsurf, and more!
 
 Demo Time &mdash; Elio Struyf
 
