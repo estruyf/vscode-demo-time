@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.7.1] - 2025-07-10
+
+- [#202](https://github.com/estruyf/vscode-demo-time/issues/202): Fix an issue with the demo parsing
+  during add demo step
+
 ## [1.7.0] - 2025-07-07
 
 - [#169](https://github.com/estruyf/vscode-demo-time/issues/169): Refocus the editor after executing

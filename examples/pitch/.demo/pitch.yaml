@@ -1,0 +1,209 @@
+title: "Pitch"
+description: ""
+version: 2
+demos:
+  - title: "Demo Time"
+    steps:
+      - action: setTheme
+        theme: Demo Time Dark
+      - action: openSlide
+        path: .demo/slides/intro.md
+    icons:
+      start: vm
+      end: pass-filled
+
+  - title: "Wrong settings"
+    steps:
+      - action: setTheme
+        theme: Demo Time Dark
+      - action: setSetting
+        setting:
+          key: editor.fontSize
+          value: 12
+      - action: setSetting
+        setting:
+          key: terminal.integrated.fontSize
+          value: 12
+      - action: setSetting
+        setting:
+          key: editor.cursorStyle
+          value: line-thin
+      - action: setSetting
+        setting:
+          key: editor.cursorBlinking
+          value: blink
+      - action: setSetting
+        setting:
+          key: workbench.colorCustomizations
+          value:
+            editorCursor.foreground: null
+      - action: setSetting
+        setting:
+          key: editor.hover.enabled
+          value: true
+      - action: open
+        path: demo.ts
+
+  - title: "Correct settings"
+    steps:
+      - action: setTheme
+        theme: Demo Time Light
+      - action: setSetting
+        setting:
+          key: editor.fontSize
+          value: 20
+      - action: setSetting
+        setting:
+          key: terminal.integrated.fontSize
+          value: 25
+      - action: setSetting
+        setting:
+          key: editor.cursorStyle
+          value: block
+      - action: setSetting
+        setting:
+          key: editor.cursorBlinking
+          value: expand
+      - action: setSetting
+        setting:
+          key: workbench.colorCustomizations
+          value:
+            editorCursor.foreground: "#F141A8"
+      - action: setSetting
+        setting:
+          key: editor.hover.enabled
+          value: false
+      - action: open
+        path: demo.ts
+
+  - title: "Stress"
+    steps:
+      - action: setTheme
+        theme: Demo Time Dark
+      - action: openSlide
+        path: .demo/slides/stress.md
+    icons:
+      start: vm
+      end: pass-filled
+
+  - title: "File action"
+    steps:
+      - action: setTheme
+        theme: Demo Time Light
+      - action: create
+        path: app.ts
+        content: ""
+      - action: open
+        path: app.ts
+
+  - title: "Add content"
+    steps:
+      - action: applyPatch
+        path: app.ts
+        contentPath: .demo/snapshots/app.snapshot.ts
+        patch: .demo/patches/app.patch
+        insertTypingSpeed: 10
+        insertTypingMode: character-by-character
+      - action: save
+
+  - title: Highlight 1
+    steps:
+      - action: highlight
+        path: app.ts
+        position: 1:3
+        zoom: 3
+
+  - title: Highlight 2
+    steps:
+      - action: unselect
+        path: app.ts
+      - action: highlight
+        path: app.ts
+        position: 5:7
+        zoom: 3
+      
+
+  - title: "Use-case 2"
+    steps:
+      - action: setTheme
+        theme: Demo Time Dark
+      - action: openSlide
+        path: .demo/slides/use-case-2.md
+    icons:
+      start: vm
+      end: pass-filled
+
+  - title: "Execute VSCode commands"
+    steps:
+      - action: executeVSCodeCommand
+        command: workbench.action.toggleFullScreen
+      - action: executeVSCodeCommand
+        command: hideCustomTitleBarInFullScreen
+      - action: executeVSCodeCommand
+        command: workbench.action.hideEditorTabs
+
+  - title: Run terminal commands
+    steps: 
+      - action: executeTerminalCommand
+        command: npm run build
+        insertTypingMode: character-by-character
+
+  - title: Run the app
+    steps: 
+      - action: executeTerminalCommand
+        command: node app.js
+        insertTypingMode: character-by-character
+
+  - title: "Slides"
+    steps:
+      - action: setTheme
+        theme: Demo Time Dark
+      - action: closeTerminal
+      - action: openSlide
+        path: .demo/slides/use-case-3.md
+    icons:
+      start: vm
+      end: pass-filled
+
+  - title: "Insert open slide action"
+    steps:
+      - action: create
+        path: want-to-know-more.md
+        content: ""
+      - action: open
+        path: want-to-know-more.md
+      - action: applyPatch
+        path: want-to-know-more.md
+        contentPath: .demo/snapshots/want-to-know-more.snapshot.md
+        patch: .demo/patches/want-to-know-more.patch
+        insertTypingMode: character-by-character
+        insertTypingSpeed: 10
+      - action: save
+
+  - title: "Highlight the slide metadata"
+    steps:
+      - action: highlight
+        path: want-to-know-more.md
+        position: 1:4
+        zoom: 3
+
+  - title: "Open the slide"
+    steps:
+      - action: openSlide
+        path: want-to-know-more.md
+
+  - title: "Thank you"
+    steps:
+      - action: openSlide
+        path: .demo/slides/thank-you.md
+
+  - title: "The end"
+    steps:
+      - action: executeVSCodeCommand
+        command: workbench.action.toggleFullScreen
+      - action: executeVSCodeCommand
+        command: showCustomTitleBar
+      - action: executeVSCodeCommand
+        command: workbench.action.showMultipleEditorTabs
+      - action: executeTerminalCommand
+        command: rm app.js want-to-know-more.md app.ts

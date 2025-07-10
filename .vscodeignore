@@ -10,6 +10,7 @@ scripts
 snippets
 src
 tests
+examples
 
 # Files
 **/.eslintrc.json

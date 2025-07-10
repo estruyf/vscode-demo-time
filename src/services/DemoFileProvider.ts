@@ -44,7 +44,7 @@ export class DemoFileProvider {
    * @param filePath The file path to determine the format
    * @returns The parsed content as DemoFile object
    */
-  private static parseFileContent(content: string, filePath: Uri): DemoFile | undefined {
+  public static parseFileContent(content: string, filePath: Uri): DemoFile | undefined {
     const path = filePath.fsPath.toLowerCase();
 
     if (path.endsWith('.yaml') || path.endsWith('.yml')) {

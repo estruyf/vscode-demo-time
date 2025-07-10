@@ -278,8 +278,9 @@ export class DemoCreator {
       return;
     }
 
+    const fileUri = editor.document.uri;
     const fileContents = editor.document.getText();
-    const demo = jsonParse(fileContents) as DemoFile;
+    const demo = DemoFileProvider.parseFileContent(fileContents, fileUri) as DemoFile;
 
     const actions = getActionOptions();
     const action = await window.showQuickPick(actions, {
@@ -304,7 +305,10 @@ export class DemoCreator {
 
     demo.demos = demoFile.demos;
 
-    await DemoFileProvider.saveFile(editor.document.uri.fsPath, JSON.stringify(demo, null, 2));
+    const fileType =
+      fileUri.fsPath.endsWith('.yaml') || fileUri.fsPath.endsWith('.yml') ? 'yaml' : 'json';
+    const updatedContent = DemoFileProvider.formatContent(fileType, demo);
+    await DemoFileProvider.saveFile(editor.document.uri.fsPath, updatedContent);
 
     // Trigger a refresh of the treeview
     DemoPanel.update();
