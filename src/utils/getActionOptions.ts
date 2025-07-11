@@ -194,6 +194,11 @@ export const getActionOptions = (): QuickPickItem[] => {
   } as QuickPickItem);
 
   actions.push({
+    label: Action.OpenTerminal,
+    description: 'Open a new terminal',
+  } as QuickPickItem);
+
+  actions.push({
     label: Action.ExecuteScript,
     description: 'Execute a script',
   } as QuickPickItem);

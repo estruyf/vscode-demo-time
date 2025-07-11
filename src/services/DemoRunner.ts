@@ -722,6 +722,12 @@ export class DemoRunner {
         }
       }
 
+      // Open a new terminal
+      if (step.action === Action.OpenTerminal) {
+        await TerminalService.openTerminal(step.terminalId);
+        continue;
+      }
+
       // Run the specified terminal command
       if (step.action === Action.ExecuteTerminalCommand) {
         await TerminalService.executeCommand(step);

@@ -25,21 +25,8 @@ export class TerminalService {
       return;
     }
 
-    terminalId = terminalId ?? TerminalService.terminalName;
-    let terminal = TerminalService.terminal[terminalId];
+    const terminal = await TerminalService.openTerminal(terminalId);
 
-    if (!terminal) {
-      terminal = window.createTerminal(terminalId);
-      TerminalService.terminal[terminalId] = terminal;
-
-      window.onDidCloseTerminal((term) => {
-        if (term.name && TerminalService.terminal[term.name]) {
-          delete TerminalService.terminal[term.name];
-        }
-      });
-    }
-
-    terminal.show();
     // Wait for the terminal to be ready before sending the command
     await new Promise<void>((resolve) => {
       const checkTerminal = () => {
@@ -140,5 +127,25 @@ export class TerminalService {
       // Focus the terminal after sending the command
       await commands.executeCommand('workbench.action.focusActiveEditorGroup');
     }
+  }
+
+  /**
+   * Opens a new terminal with the given ID or the default DemoTime terminal.
+   */
+  public static async openTerminal(terminalId?: string): Promise<Terminal> {
+    terminalId = terminalId ?? TerminalService.terminalName;
+    let terminal = TerminalService.terminal[terminalId];
+    if (!terminal) {
+      terminal = window.createTerminal(terminalId);
+      TerminalService.terminal[terminalId] = terminal;
+
+      window.onDidCloseTerminal((term) => {
+        if (term.name && TerminalService.terminal[term.name]) {
+          delete TerminalService.terminal[term.name];
+        }
+      });
+    }
+    terminal.show();
+    return terminal;
   }
 }

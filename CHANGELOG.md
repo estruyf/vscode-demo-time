@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.8.0] - 2025-07-xx
+
+- [#204](https://github.com/estruyf/vscode-demo-time/issues/204): Added the `openTerminal` action to
+  open a the terminal
+
 ## [1.7.1] - 2025-07-10
 
 - [#202](https://github.com/estruyf/vscode-demo-time/issues/202): Fix an issue with the demo parsing
