@@ -147,6 +147,15 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     }
   }, [content, vsCodeTheme, isDarkTheme]);
 
+  React.useEffect(() => {
+    if (isReady) {
+      // Sent a reveal message to the extension when the slide is ready.
+      setTimeout(() => {
+        messageHandler.send(WebViewMessages.toVscode.slideReady);
+      }, 100);
+    }
+  }, [isReady]);
+
   if (!isReady) {
     return null;
   }

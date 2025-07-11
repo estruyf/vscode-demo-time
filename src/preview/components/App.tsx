@@ -31,6 +31,10 @@ export const App: React.FunctionComponent<IAppProps> = ({
       setCustomTheme(payload);
     } else if (command === WebViewMessages.toWebview.updateFileUri) {
       setFileUri(payload);
+    } else if (command === WebViewMessages.toWebview.triggerUpdate) {
+      if (payload && typeof payload.fileUriString === 'string') {
+        setFileUri(payload.fileUriString);
+      }
     }
   };
 

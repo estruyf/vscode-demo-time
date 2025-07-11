@@ -2,6 +2,8 @@
 
 ## [1.8.0] - 2025-07-xx
 
+- [#199](https://github.com/estruyf/vscode-demo-time/issues/199): Improve loading the slides when
+  switching between demo and slides
 - [#204](https://github.com/estruyf/vscode-demo-time/issues/204): Added the `openTerminal` action to
   open a the terminal
 
