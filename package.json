@@ -182,15 +182,21 @@
           "enum": [
             "instant",
             "line-by-line",
-            "character-by-character"
+            "character-by-character",
+            "hacker-typer"
           ],
           "default": "instant",
-          "description": "Mode for inserting content: instant (all at once), line-by-line, or character-by-character"
+          "description": "Mode for inserting content: instant (all at once), line-by-line, character-by-character, or hacker-typer (chunks of content on each keystroke)"
         },
         "demoTime.insertTypingSpeed": {
           "type": "number",
           "default": 50,
           "description": "Characters per second for character-by-character typing mode"
+        },
+        "demoTime.hackerTyperChunkSize": {
+          "type": "number",
+          "default": 3,
+          "description": "Number of characters to insert per 'keystroke' in hacker-typer mode"
         },
         "demoTime.api.enabled": {
           "type": "boolean",
