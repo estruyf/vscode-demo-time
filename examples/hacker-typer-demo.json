@@ -1,0 +1,85 @@
+{
+  "title": "Hacker-Typer Mode Demo",
+  "description": "Demonstration of the new hacker-typer typing mode",
+  "version": 2,
+  "demos": [
+    {
+      "title": "Instant Mode (Default)",
+      "description": "Shows instant insertion - all text appears at once",
+      "steps": [
+        {
+          "action": "create",
+          "path": "example.js"
+        },
+        {
+          "action": "insert",
+          "path": "example.js",
+          "content": "// This text appears instantly\nfunction hello() {\n  console.log('Hello, World!');\n}\nhello();",
+          "position": 0,
+          "insertTypingMode": "instant"
+        }
+      ]
+    },
+    {
+      "title": "Character-by-Character Mode",
+      "description": "Shows character-by-character insertion",
+      "steps": [
+        {
+          "action": "create",
+          "path": "example-char.js"
+        },
+        {
+          "action": "insert",
+          "path": "example-char.js",
+          "content": "// This text appears character by character\nfunction goodbye() {\n  console.log('Goodbye, World!');\n}\ngoodbye();",
+          "position": 0,
+          "insertTypingMode": "character-by-character",
+          "insertTypingSpeed": 30
+        }
+      ]
+    },
+    {
+      "title": "Hacker-Typer Mode",
+      "description": "Shows chunk-based insertion - simulates super-fast typing",
+      "steps": [
+        {
+          "action": "create",
+          "path": "example-hacker.js"
+        },
+        {
+          "action": "insert",
+          "path": "example-hacker.js",
+          "content": "// This text appears in chunks like hackertyper.net\nfunction hackerTyper() {\n  const skills = ['HTML', 'CSS', 'JavaScript', 'TypeScript', 'React', 'Node.js'];\n  \n  skills.forEach((skill, index) => {\n    console.log(`Skill ${index + 1}: ${skill}`);\n  });\n  \n  return 'I am a coding wizard! ✨';\n}\n\nconsole.log(hackerTyper());",
+          "position": 0,
+          "insertTypingMode": "hacker-typer",
+          "insertTypingSpeed": 100
+        }
+      ]
+    },
+    {
+      "title": "Hacker-Typer with Custom Chunk Size",
+      "description": "Shows hacker-typer mode with different chunk sizes",
+      "steps": [
+        {
+          "action": "setSetting",
+          "setting": {
+            "key": "demoTime.hackerTyperChunkSize",
+            "value": 5
+          }
+        },
+        {
+          "action": "create",
+          "path": "example-custom-chunks.js"
+        },
+        {
+          "action": "insert",
+          "path": "example-custom-chunks.js",
+          "content": "// Larger chunks (5 characters per keystroke)\nclass HackerDemo {\n  constructor(name) {\n    this.name = name;\n    this.isAwesome = true;\n  }\n  \n  showOff() {\n    return `${this.name} is writing code at lightning speed!`;\n  }\n}\n\nconst demo = new HackerDemo('Demo Time User');\nconsole.log(demo.showOff());",
+          "position": 0,
+          "insertTypingMode": "hacker-typer",
+          "insertTypingSpeed": 80
+        }
+      ]
+    }
+  ]
+}

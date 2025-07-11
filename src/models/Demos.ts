@@ -3,7 +3,7 @@ import { Action, Version } from '.';
 /**
  * Types for different insertion modes
  */
-export type InsertTypingMode = 'instant' | 'line-by-line' | 'character-by-character';
+export type InsertTypingMode = 'instant' | 'line-by-line' | 'character-by-character' | 'hacker-typer';
 
 export interface DemoFiles {
   [filePath: string]: DemoFile;

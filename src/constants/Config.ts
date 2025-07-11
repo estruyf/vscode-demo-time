@@ -23,6 +23,7 @@ export const Config = {
     speed: 'lineInsertionDelay',
     typingMode: 'insertTypingMode',
     typingSpeed: 'insertTypingSpeed',
+    hackerTyperChunkSize: 'hackerTyperChunkSize',
   },
   api: {
     enabled: 'api.enabled',
