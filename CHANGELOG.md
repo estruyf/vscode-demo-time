@@ -8,6 +8,8 @@
   open a the terminal
 - [#207](https://github.com/estruyf/vscode-demo-time/issues/207): Made the `message` property
   optional for the GitHub Copilot chat actions
+- [#208](https://github.com/estruyf/vscode-demo-time/issues/208): The JSON schema has been
+  refactored to have intellisense per action on which properties are required and optional
 - [#209](https://github.com/estruyf/vscode-demo-time/issues/209): The `path` property is not
   required anymore for the `unselect` action
 
