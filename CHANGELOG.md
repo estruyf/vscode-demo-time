@@ -6,6 +6,8 @@
   switching between demo and slides
 - [#204](https://github.com/estruyf/vscode-demo-time/issues/204): Added the `openTerminal` action to
   open a the terminal
+- [#207](https://github.com/estruyf/vscode-demo-time/issues/207): Made the `message` property
+  optional for the GitHub Copilot chat actions
 - [#209](https://github.com/estruyf/vscode-demo-time/issues/209): The `path` property is not
   required anymore for the `unselect` action
 

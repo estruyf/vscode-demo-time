@@ -14,38 +14,26 @@ export class ChatActionsService {
 
   static async askChat(step: any) {
     // Open a new chat in ask mode with a prompt
-    if (step?.message) {
-      await commands.executeCommand('workbench.action.chat.newChat', {
-        mode: 'ask',
-        query: step.message,
-      });
-    } else {
-      window.showWarningMessage('No message provided for askChat action.');
-    }
+    await commands.executeCommand('workbench.action.chat.newChat', {
+      mode: 'ask',
+      query: step.message || '',
+    });
   }
 
   static async editChat(step: any) {
     // Open a new chat in edit mode with a prompt
-    if (step?.message) {
-      await commands.executeCommand('workbench.action.chat.newChat', {
-        mode: 'edit',
-        query: step.message,
-      });
-    } else {
-      window.showWarningMessage('No message provided for editChat action.');
-    }
+    await commands.executeCommand('workbench.action.chat.newChat', {
+      mode: 'edit',
+      query: step.message || '',
+    });
   }
 
   static async agentChat(step: any) {
     // Open a new chat in agent mode with a prompt
-    if (step?.message) {
-      await commands.executeCommand('workbench.action.chat.newChat', {
-        mode: 'agent',
-        query: step.message,
-      });
-    } else {
-      window.showWarningMessage('No message provided for agentChat action.');
-    }
+    await commands.executeCommand('workbench.action.chat.newChat', {
+      mode: 'agent',
+      query: step.message || '',
+    });
   }
 
   static async closeChat() {
