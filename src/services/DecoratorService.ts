@@ -6,9 +6,9 @@ import {
   TextEditorDecorationType,
   TextEditorSelectionChangeKind,
   window,
-} from "vscode";
-import { Extension } from "./Extension";
-import { Config } from "../constants";
+} from 'vscode';
+import { Extension } from './Extension';
+import { Config } from '../constants';
 
 export class DecoratorService {
   private static lineDecorator: TextEditorDecorationType;
@@ -59,7 +59,12 @@ export class DecoratorService {
     DecoratorService.isHighlighted = isDecorated;
   }
 
-  public static hightlightLines(textEditor: TextEditor, range: Range, zoomLevel?: number, isWholeLine?: boolean) {
+  public static hightlightLines(
+    textEditor: TextEditor,
+    range: Range,
+    zoomLevel?: number,
+    isWholeLine?: boolean,
+  ) {
     const zoomEnabled = Extension.getInstance().getSetting<boolean | number>(Config.highlight.zoom);
 
     // Remove the previous highlight
@@ -71,19 +76,19 @@ export class DecoratorService {
     DecoratorService.setBetweenDecorators();
     DecoratorService.setAfterDecorators();
 
-    if (typeof zoomLevel !== "undefined" || zoomEnabled) {
+    if (typeof zoomLevel !== 'undefined' || zoomEnabled) {
       DecoratorService.isZoomed = true;
       let level = zoomEnabled;
-      if (typeof zoomLevel === "number") {
+      if (typeof zoomLevel === 'number') {
         level = zoomLevel;
       }
 
-      if (typeof level === "number") {
+      if (typeof level === 'number') {
         for (let i = 0; i < level; i++) {
-          commands.executeCommand("editor.action.fontZoomIn");
+          commands.executeCommand('editor.action.fontZoomIn');
         }
       } else {
-        commands.executeCommand("editor.action.fontZoomIn");
+        commands.executeCommand('editor.action.fontZoomIn');
       }
     }
 
@@ -165,7 +170,15 @@ export class DecoratorService {
     DecoratorService.isHighlighted = true;
   }
 
-  public static unselect(textEditor: TextEditor) {
+  public static unselect(textEditor?: TextEditor) {
+    if (!textEditor) {
+      textEditor = window.activeTextEditor;
+
+      if (!textEditor) {
+        return;
+      }
+    }
+
     DecoratorService.isHighlighted = false;
     textEditor.setDecorations(DecoratorService.blurDecorator, []);
     textEditor.setDecorations(DecoratorService.lineDecorator, []);
@@ -175,20 +188,21 @@ export class DecoratorService {
 
     if (DecoratorService.isZoomed) {
       DecoratorService.isZoomed = false;
-      commands.executeCommand("editor.action.fontZoomReset");
+      commands.executeCommand('editor.action.fontZoomReset');
     }
   }
 
   private static getGenericStyles(): DecorationRenderOptions {
     const borderColor =
-      Extension.getInstance().getSetting<string>(Config.highlight.borderColor) || "rgba(255, 0, 0, 0.5)";
+      Extension.getInstance().getSetting<string>(Config.highlight.borderColor) ||
+      'rgba(255, 0, 0, 0.5)';
     const background =
       Extension.getInstance().getSetting<string>(Config.highlight.background) ||
-      "var(--vscode-editor-selectionBackground)";
+      'var(--vscode-editor-selectionBackground)';
 
     const borderStyles = {
       borderColor,
-      borderStyle: "solid;",
+      borderStyle: 'solid;',
     };
 
     const genericStyles: DecorationRenderOptions = {
@@ -203,7 +217,7 @@ export class DecoratorService {
     const genericStyles = DecoratorService.getGenericStyles();
     const lineStyles = {
       ...genericStyles,
-      borderWidth: "2px;",
+      borderWidth: '2px;',
       isWholeLine,
     };
 
@@ -214,14 +228,14 @@ export class DecoratorService {
     const genericStyles = DecoratorService.getGenericStyles();
     const lineStyles = {
       ...genericStyles,
-      textDecoration: "none;",
-      borderWidth: "2px 2px 0 2px",
-      opacity: "1; filter: blur(0);",
+      textDecoration: 'none;',
+      borderWidth: '2px 2px 0 2px',
+      opacity: '1; filter: blur(0);',
       isWholeLine,
     };
 
     if (!isWholeLine) {
-      lineStyles.borderColor = "transparent";
+      lineStyles.borderColor = 'transparent';
     }
 
     DecoratorService.startBlockDecorator = window.createTextEditorDecorationType(lineStyles);
@@ -231,12 +245,12 @@ export class DecoratorService {
     const genericStyles = DecoratorService.getGenericStyles();
     const lineStyles = {
       ...genericStyles,
-      borderWidth: "0 2px 0 2px",
-      opacity: "1; filter: blur(0);",
+      borderWidth: '0 2px 0 2px',
+      opacity: '1; filter: blur(0);',
     };
 
     if (!isWholeLine) {
-      lineStyles.borderColor = "transparent";
+      lineStyles.borderColor = 'transparent';
     }
 
     DecoratorService.betweenBlockDecorator = window.createTextEditorDecorationType(lineStyles);
@@ -246,14 +260,14 @@ export class DecoratorService {
     const genericStyles = DecoratorService.getGenericStyles();
     const lineStyles = {
       ...genericStyles,
-      textDecoration: "none;",
-      borderWidth: "0 2px 2px 2px",
-      opacity: "1; filter: blur(0);",
+      textDecoration: 'none;',
+      borderWidth: '0 2px 2px 2px',
+      opacity: '1; filter: blur(0);',
       isWholeLine,
     };
 
     if (!isWholeLine) {
-      lineStyles.borderColor = "transparent";
+      lineStyles.borderColor = 'transparent';
     }
 
     DecoratorService.endBlockDecorator = window.createTextEditorDecorationType(lineStyles);

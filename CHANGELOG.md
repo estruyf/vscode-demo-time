@@ -6,6 +6,8 @@
   switching between demo and slides
 - [#204](https://github.com/estruyf/vscode-demo-time/issues/204): Added the `openTerminal` action to
   open a the terminal
+- [#209](https://github.com/estruyf/vscode-demo-time/issues/209): The `path` property is not
+  required anymore for the `unselect` action
 
 ## [1.7.1] - 2025-07-10
 

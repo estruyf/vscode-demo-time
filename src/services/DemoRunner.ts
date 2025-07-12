@@ -515,10 +515,7 @@ export class DemoRunner {
    */
   private static async runSteps(demoSteps: Step[]): Promise<void> {
     // Unselect the current selection
-    const textEditor = window.activeTextEditor;
-    if (textEditor) {
-      DecoratorService.unselect(textEditor);
-    }
+    DecoratorService.unselect();
 
     // Reset the highlight
     await setContext(ContextKeys.hasCodeHighlighting, false);
@@ -810,6 +807,11 @@ export class DemoRunner {
         continue;
       }
 
+      if (step.action === Action.Unselect) {
+        await DemoRunner.unselect();
+        continue;
+      }
+
       /**
        * All the following actions require a file path.
        */
@@ -877,11 +879,6 @@ export class DemoRunner {
       const textEditor = await window.showTextDocument(editor);
 
       const { crntPosition, crntRange, usesPlaceholders } = await getPositionAndRange(editor, step);
-
-      if (step.action === Action.Unselect) {
-        await DemoRunner.unselect(textEditor);
-        continue;
-      }
 
       if (step.action === Action.Highlight && (crntRange || crntPosition)) {
         let highlightWholeLine = step.highlightWholeLine;
@@ -1067,7 +1064,7 @@ export class DemoRunner {
    * Unselects the current selection in the given text editor.
    * @param textEditor The text editor to perform the unselect operation on.
    */
-  private static async unselect(textEditor: TextEditor): Promise<void> {
+  private static async unselect(textEditor?: TextEditor): Promise<void> {
     DecoratorService.unselect(textEditor);
   }
 
