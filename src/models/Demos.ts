@@ -11,7 +11,7 @@ export interface DemoFiles {
 
 export interface DemoFile {
   title: string;
-  description: string;
+  description?: string;
   version?: Version;
   timer?: number;
   demos: Demo[];

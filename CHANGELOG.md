@@ -12,6 +12,8 @@
   refactored to have intellisense per action on which properties are required and optional
 - [#209](https://github.com/estruyf/vscode-demo-time/issues/209): The `path` property is not
   required anymore for the `unselect` action
+- [#211](https://github.com/estruyf/vscode-demo-time/issues/211): Make the description property
+  optional on the demo root
 
 ## [1.7.1] - 2025-07-10
 
