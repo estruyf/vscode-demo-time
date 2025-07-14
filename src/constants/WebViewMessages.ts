@@ -34,6 +34,7 @@ export const WebViewMessages = {
       newFile: 'newConfigEditorFile',
       saveFile: 'saveConfigEditorFile',
       openSource: 'openConfigEditorSource',
+      filePicker: 'openConfigEditorFilePicker',
     },
   },
   toWebview: {

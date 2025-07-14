@@ -11,6 +11,7 @@ import {
 import { Subscription } from '../models';
 import { DemoFileProvider, Extension } from '../services';
 import { COMMAND, Config, WebViewMessages } from '../constants';
+import { parseWinPath } from '../utils';
 
 export class ConfigEditorProvider implements CustomTextEditorProvider {
   private static readonly viewType = 'demoTime.configEditor';
@@ -41,13 +42,7 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     );
 
     subscriptions.push(
-      commands.registerCommand(COMMAND.openConfigEditor, () => {
-        commands.executeCommand(
-          'vscode.openWith',
-          window.activeTextEditor?.document.uri,
-          ConfigEditorProvider.viewType,
-        );
-      }),
+      commands.registerCommand(COMMAND.openConfigEditor, ConfigEditorProvider.openInConfigEditor),
     );
   }
 
@@ -114,6 +109,44 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           }
 
           await DemoFileProvider.saveFile(document.uri.fsPath, demo);
+          webviewPanel.webview.postMessage({
+            command: 'configEditorFileSaved',
+            requestId: requestId,
+          });
+          return;
+        } else if (command === WebViewMessages.toVscode.configEditor.filePicker) {
+          // Open the file picker and return the relative workspace path
+          const uris = await window.showOpenDialog({
+            canSelectFiles: true,
+            canSelectFolders: false,
+            canSelectMany: false,
+            openLabel: 'Select File',
+          });
+
+          if (!uris || uris.length === 0) {
+            webviewPanel.webview.postMessage({
+              command: 'configEditorFilePickerResult',
+              requestId: requestId,
+              payload: null,
+            });
+            return;
+          }
+
+          const extension = Extension.getInstance();
+          const workspaceFolder = extension.workspaceFolder;
+          let relativePath = parseWinPath(uris[0].fsPath);
+          if (workspaceFolder) {
+            const workspacePath = parseWinPath(workspaceFolder.uri.fsPath);
+            if (relativePath.startsWith(workspacePath)) {
+              relativePath = relativePath.substring(workspacePath.length + 1);
+            }
+          }
+
+          webviewPanel.webview.postMessage({
+            command: 'configEditorFilePickerResult',
+            requestId: requestId,
+            payload: relativePath,
+          });
           return;
         } else {
           console.warn(`Unknown message command: ${command}`);
@@ -174,7 +207,12 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     return patchedHtml.toString();
   }
 
-  private static openInTextEditor(uri?: Uri) {
+  public static openInConfigEditor(uri?: Uri) {
+    uri = uri || window.activeTextEditor?.document.uri;
+    commands.executeCommand('vscode.openWith', uri, ConfigEditorProvider.viewType);
+  }
+
+  public static openInTextEditor(uri?: Uri) {
     uri = uri || window.activeTextEditor?.document.uri;
     commands.executeCommand('vscode.openWith', uri, 'default');
   }

@@ -4,6 +4,7 @@ import { DemoFileProvider, Extension, TemplateCreator } from '../services';
 import { DemoFileType } from '../models';
 import { sanitizeFileName } from './sanitizeFileName';
 import { fileExists } from './fileExists';
+import { ConfigEditorProvider } from '../providers/ConfigEditorProvider';
 
 export const createDemoFile = async () => {
   const wsFolder = Extension.getInstance().workspaceFolder;
@@ -79,7 +80,8 @@ export const createDemoFile = async () => {
     return;
   }
 
-  await window.showTextDocument(file);
+  // await window.showTextDocument(file);
+  ConfigEditorProvider.openInConfigEditor(file);
 
   return file;
 };
