@@ -1,0 +1,58 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "targetDefaults": {
+    "compile:ext": {
+      "outputs": ["{projectRoot}/out/extension"],
+      "cache": true
+    },
+    "compile:wc": {
+      "outputs": ["{projectRoot}/out/webcomponents"],
+      "cache": true
+    },
+    "compile:wv": {
+      "outputs": ["{projectRoot}/out/presenter"],
+      "cache": true
+    },
+    "compile:preview": {
+      "outputs": ["{projectRoot}/out/preview"],
+      "cache": true
+    },
+    "compile:copy": {
+      "outputs": ["{projectRoot}/assets/styles/themes"],
+      "cache": true
+    },
+    "vscode:prepublish": {
+      "cache": true
+    },
+    "compile": {
+      "cache": true
+    },
+    "lint": {
+      "cache": true
+    },
+    "test": {
+      "cache": true
+    }
+  },
+  "nxCloudId": "68753044874bdb115b711fe8",
+  "includedScripts": [
+    "vscode:prepublish",
+    "compile",
+    "compile:ext",
+    "compile:wc",
+    "compile:wv",
+    "compile:preview",
+    "compile:copy",
+    "lint",
+    "test",
+    "watch",
+    "watch:ext",
+    "watch:wc",
+    "watch:wv",
+    "watch:preview"
+  ],
+  "namedInputs": {
+    "sharedGlobals": ["{workspaceRoot}/.github/workflows/pr-checks.yml"],
+    "default": ["sharedGlobals"]
+  }
+}
