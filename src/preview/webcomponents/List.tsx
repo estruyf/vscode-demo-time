@@ -140,18 +140,18 @@ class ListWebComponent extends HTMLElement {
         totalItems = childElements.length;
       }
 
-      // Convert HTML elements to React elements
+      // Convert HTML elements to React elements, rendering HTML content inside list items
       const reactChildren = childElements.map((element, index) =>
-        React.cloneElement(
-          React.createElement(element.tagName.toLowerCase(), {
+        React.createElement(
+          element.tagName.toLowerCase(),
+          {
             key: index,
             ...Array.from(element.attributes).reduce((acc, attr) => {
               acc[attr.name] = attr.value;
               return acc;
-            }, {} as Record<string, string>)
-          }),
-          {},
-          element.innerHTML
+            }, {} as Record<string, string>),
+            dangerouslySetInnerHTML: { __html: element.innerHTML }
+          }
         )
       );
 

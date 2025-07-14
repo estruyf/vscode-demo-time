@@ -14,6 +14,8 @@
   required anymore for the `unselect` action
 - [#211](https://github.com/estruyf/vscode-demo-time/issues/211): Make the description property
   optional on the demo root
+- [#212](https://github.com/estruyf/vscode-demo-time/issues/212): Fix encoding issue with ampersands
+  in the `dt-list` component
 
 ## [1.7.1] - 2025-07-10
 
