@@ -28,6 +28,13 @@ export const WebViewMessages = {
     hasPreviousSlide: 'hasPreviousSlide',
     updateSlideIndex: 'updateSlideIndex',
     slideReady: 'slideReady',
+    // Config editor
+    configEditor: {
+      getContents: 'getConfigEditorContents',
+      newFile: 'newConfigEditorFile',
+      saveFile: 'saveConfigEditorFile',
+      openSource: 'openConfigEditorSource',
+    },
   },
   toWebview: {
     updateClock: 'updateClock',

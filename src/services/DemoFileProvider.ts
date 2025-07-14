@@ -79,6 +79,13 @@ export class DemoFileProvider {
     return demoContent;
   }
 
+  public static formatFileContent(content: any, filePath: Uri): string {
+    const path = filePath.fsPath.toLowerCase();
+    const fileType = path.endsWith('.yaml') || path.endsWith('.yml') ? 'yaml' : 'json';
+
+    return this.formatContent(fileType as DemoFileType, content);
+  }
+
   /**
    * Formats the provided demo content based on the specified file type.
    *

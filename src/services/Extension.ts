@@ -1,5 +1,5 @@
-import { ExtensionContext, ExtensionMode, SecretStorage, workspace } from "vscode";
-import { Config } from "../constants";
+import { ExtensionContext, ExtensionMode, SecretStorage, workspace } from 'vscode';
+import { Config } from '../constants';
 
 export class Extension {
   private static instance: Extension;
@@ -23,6 +23,10 @@ export class Extension {
    */
   public get id(): string {
     return this.ctx.extension.id;
+  }
+
+  public get context(): ExtensionContext {
+    return this.ctx;
   }
 
   /**

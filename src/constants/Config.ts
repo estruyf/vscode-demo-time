@@ -39,5 +39,8 @@ export const Config = {
   demoRunner: {
     nextActionBehaviour: 'nextActionBehaviour',
   },
-  defaultFileType: "defaultFileType",
+  defaultFileType: 'defaultFileType',
+  configEditor: {
+    openInConfigEditor: 'openInConfigEditor',
+  },
 };

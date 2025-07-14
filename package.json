@@ -86,6 +86,9 @@
       },
       "yaml.schemas": {
         "https://demotime.show/demo-time.schema.json": ".demo/*"
+      },
+      "workbench.editorAssociations": {
+        "{git,gitlens}:/**/*.{yml,json,yaml}": "default"
       }
     },
     "icons": {
@@ -252,6 +255,11 @@
           "type": "boolean",
           "default": false,
           "description": "Enable debug mode for Demo Time."
+        },
+        "demoTime.openInConfigEditor": {
+          "type": "boolean",
+          "default": true,
+          "description": "Open the config file in the custom config editor."
         }
       }
     },
@@ -444,6 +452,18 @@
         "title": "Find in Tree View",
         "category": "Demo Time",
         "icon": "$(search)"
+      },
+      {
+        "command": "demo-time.openConfigInTextEditor",
+        "title": "Open config in text editor",
+        "category": "Demo Time",
+        "icon": "$(file-code)"
+      },
+      {
+        "command": "demo-time.openConfigEditor",
+        "title": "Open config editor",
+        "category": "Demo Time",
+        "icon": "$(settings-gear)"
       }
     ],
     "menus": {
@@ -494,6 +514,14 @@
         },
         {
           "command": "demo-time.viewSlide",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.openConfigInTextEditor",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.openConfigEditor",
           "when": "false"
         },
         {
@@ -579,6 +607,16 @@
         }
       ],
       "editor/title": [
+        {
+          "command": "demo-time.openConfigInTextEditor",
+          "when": "activeCustomEditorId == 'demoTime.configEditor'",
+          "group": "navigation@1"
+        },
+        {
+          "command": "demo-time.openConfigEditor",
+          "when": "((editorLangId == jsonc || editorLangId == json) || editorLangId == yaml) && resourceDirname =~ /\\.demo$/",
+          "group": "navigation@-1"
+        },
         {
           "command": "demo-time.addStepToDemo",
           "when": "((editorLangId == jsonc || editorLangId == json) || editorLangId == yaml) && resourceDirname =~ /\\.demo$/",
@@ -694,6 +732,24 @@
             }
           }
         ]
+      }
+    ],
+    "customEditors": [
+      {
+        "viewType": "demoTime.configEditor",
+        "displayName": "Demo Time Config Editor",
+        "selector": [
+          {
+            "filenamePattern": "**/.demo/*.json"
+          },
+          {
+            "filenamePattern": "**/.demo/*.yaml"
+          },
+          {
+            "filenamePattern": "**/.demo/*.yml"
+          }
+        ],
+        "priority": "default"
       }
     ]
   },
