@@ -1,18 +1,15 @@
 {
-	"compilerOptions": {
-		"module": "commonjs",
-		"target": "ES2022",
-		"outDir": "out",
-		"lib": [
-			"ES2022",
-			"DOM"
-		],
-		"sourceMap": true,
-		"rootDir": "src",
-		"strict": true,
-		"esModuleInterop": true,
-		"jsx": "react"
-	},
-	"include": ["src/**/*"],
-	"exclude": ["tsup.config.ts", "tsup.wc.config.ts", "node_modules", "out"],
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2022",
+    "outDir": "out",
+    "lib": ["ES2022", "DOM"],
+    "sourceMap": true,
+    "rootDir": "src",
+    "strict": true,
+    "esModuleInterop": true,
+    "jsx": "react"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["tsup.config.ts", "tsup.wc.config.ts", "node_modules", "out"]
 }
