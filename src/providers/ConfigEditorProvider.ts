@@ -102,101 +102,119 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     webviewPanel.webview.onDidReceiveMessage(
       async (message: { command: string; requestId?: string; payload?: any }) => {
         const { command, requestId, payload } = message;
-
         if (command === WebViewMessages.toVscode.configEditor.getContents) {
-          webviewPanel.webview.postMessage({
-            command: WebViewMessages.toVscode.configEditor.getContents,
-            requestId: requestId,
-            payload: getContent(),
-          });
+          handleGetContents(webviewPanel, requestId, getContent);
         } else if (command === WebViewMessages.toVscode.runCommand) {
-          const { command: cmd, args } = payload || {};
-          if (!cmd) {
-            return;
-          }
-
-          if (args) {
-            commands.executeCommand(cmd, args);
-          } else {
-            commands.executeCommand(cmd);
-          }
-          return;
+          await handleRunCommand(payload);
         } else if (command === WebViewMessages.toVscode.configEditor.openSource) {
           ConfigEditorProvider.openInTextEditor(document.uri);
-          return;
         } else if (command === WebViewMessages.toVscode.configEditor.saveFile) {
-          const { config } = payload || {};
-          if (!config) {
-            return;
-          }
-
-          const demo = DemoFileProvider.formatFileContent(config, document.uri);
-          if (!demo) {
-            window.showErrorMessage('Failed to parse the demo configuration.');
-          }
-
-          await DemoFileProvider.saveFile(document.uri.fsPath, demo, false);
-          webviewPanel.webview.postMessage({
-            command: WebViewMessages.toVscode.configEditor.saveFile,
-            requestId: requestId,
-          });
-          return;
+          await handleSaveFile(payload, document, webviewPanel, requestId);
         } else if (command === WebViewMessages.toVscode.configEditor.filePicker) {
-          const { fileTypes } = payload || {};
-
-          const dialogSettings: OpenDialogOptions = {
-            canSelectFiles: true,
-            canSelectFolders: false,
-            canSelectMany: false,
-            openLabel: 'Select File',
-          };
-
-          if (Array.isArray(fileTypes) && fileTypes.length > 0) {
-            dialogSettings.filters = {
-              'Allowed Files': fileTypes.map((ext: string) => ext.replace(/^\./, '')),
-            };
-          }
-
-          // Open the file picker and return the relative workspace path
-          const uris = await window.showOpenDialog(dialogSettings);
-
-          if (!uris || uris.length === 0) {
-            webviewPanel.webview.postMessage({
-              command: WebViewMessages.toVscode.configEditor.filePicker,
-              requestId: requestId,
-              payload: null,
-            });
-            return;
-          }
-
-          const extension = Extension.getInstance();
-          const workspaceFolder = extension.workspaceFolder;
-          let relativePath = parseWinPath(uris[0].fsPath);
-          if (workspaceFolder) {
-            const workspacePath = parseWinPath(workspaceFolder.uri.fsPath);
-            if (relativePath.startsWith(workspacePath)) {
-              relativePath = relativePath.substring(workspacePath.length + 1);
-            }
-          }
-
-          webviewPanel.webview.postMessage({
-            command: WebViewMessages.toVscode.configEditor.filePicker,
-            requestId: requestId,
-            payload: relativePath,
-          });
-          return;
+          await handleFilePicker(payload, webviewPanel, requestId);
         } else if (command === WebViewMessages.toVscode.configEditor.getThemes) {
-          const themes = await getThemes();
-          webviewPanel.webview.postMessage({
-            command: WebViewMessages.toVscode.configEditor.getThemes,
-            requestId: requestId,
-            payload: themes.map((theme) => theme.label),
-          });
+          await handleGetThemes(webviewPanel, requestId);
         } else {
           console.warn(`Unknown message command: ${command}`);
         }
       },
     );
+
+    function handleGetContents(
+      webviewPanel: WebviewPanel,
+      requestId: string | undefined,
+      getContent: (text?: string) => any,
+    ) {
+      webviewPanel.webview.postMessage({
+        command: WebViewMessages.toVscode.configEditor.getContents,
+        requestId: requestId,
+        payload: getContent(),
+      });
+    }
+
+    async function handleRunCommand(payload: any) {
+      const { command: cmd, args } = payload || {};
+      if (!cmd) {
+        return;
+      }
+      if (args) {
+        await commands.executeCommand(cmd, args);
+      } else {
+        await commands.executeCommand(cmd);
+      }
+    }
+
+    async function handleSaveFile(
+      payload: any,
+      document: TextDocument,
+      webviewPanel: WebviewPanel,
+      requestId: string | undefined,
+    ) {
+      const { config } = payload || {};
+      if (!config) {
+        return;
+      }
+      const demo = DemoFileProvider.formatFileContent(config, document.uri);
+      if (!demo) {
+        window.showErrorMessage('Failed to parse the demo configuration.');
+      }
+      await DemoFileProvider.saveFile(document.uri.fsPath, demo, false);
+      webviewPanel.webview.postMessage({
+        command: WebViewMessages.toVscode.configEditor.saveFile,
+        requestId: requestId,
+      });
+    }
+
+    async function handleFilePicker(
+      payload: any,
+      webviewPanel: WebviewPanel,
+      requestId: string | undefined,
+    ) {
+      const { fileTypes } = payload || {};
+      const dialogSettings: OpenDialogOptions = {
+        canSelectFiles: true,
+        canSelectFolders: false,
+        canSelectMany: false,
+        openLabel: 'Select File',
+      };
+      if (Array.isArray(fileTypes) && fileTypes.length > 0) {
+        dialogSettings.filters = {
+          'Allowed Files': fileTypes.map((ext: string) => ext.replace(/^\./, '')),
+        };
+      }
+      const uris = await window.showOpenDialog(dialogSettings);
+      if (!uris || uris.length === 0) {
+        webviewPanel.webview.postMessage({
+          command: WebViewMessages.toVscode.configEditor.filePicker,
+          requestId: requestId,
+          payload: null,
+        });
+        return;
+      }
+      const extension = Extension.getInstance();
+      const workspaceFolder = extension.workspaceFolder;
+      let relativePath = parseWinPath(uris[0].fsPath);
+      if (workspaceFolder) {
+        const workspacePath = parseWinPath(workspaceFolder.uri.fsPath);
+        if (relativePath.startsWith(workspacePath)) {
+          relativePath = relativePath.substring(workspacePath.length + 1);
+        }
+      }
+      webviewPanel.webview.postMessage({
+        command: WebViewMessages.toVscode.configEditor.filePicker,
+        requestId: requestId,
+        payload: relativePath,
+      });
+    }
+
+    async function handleGetThemes(webviewPanel: WebviewPanel, requestId: string | undefined) {
+      const themes = await getThemes();
+      webviewPanel.webview.postMessage({
+        command: WebViewMessages.toVscode.configEditor.getThemes,
+        requestId: requestId,
+        payload: themes.map((theme) => theme.label),
+      });
+    }
   }
 
   private async getHtmlForWebview(): Promise<string> {
