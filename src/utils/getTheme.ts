@@ -1,9 +1,26 @@
-import { extensions, Uri, workspace } from "vscode";
-import { Theme } from "../models";
-import { readFile } from ".";
+import { extensions, Uri, workspace } from 'vscode';
+import { Theme } from '../models';
+import { readFile } from '.';
+
+export const getThemes = async () => {
+  const themes: Theme[] = [];
+  const allExtensions = extensions.all.filter((e) => {
+    const pkg = e.packageJSON;
+    return pkg.contributes && pkg.contributes.themes && pkg.contributes.themes.length > 0;
+  });
+
+  for (const ext of allExtensions) {
+    const pkg = ext.packageJSON;
+    for (const theme of pkg.contributes.themes) {
+      themes.push(theme);
+    }
+  }
+
+  return themes;
+};
 
 export const getTheme = async (themeName?: string) => {
-  let crntTheme = workspace.getConfiguration("workbench").get("colorTheme") as string;
+  let crntTheme = workspace.getConfiguration('workbench').get('colorTheme') as string;
 
   // Get all the theme extensions
   const allExtensions = extensions.all.filter((e) => {
@@ -11,12 +28,14 @@ export const getTheme = async (themeName?: string) => {
     return pkg.contributes && pkg.contributes.themes && pkg.contributes.themes.length > 0;
   });
 
-  themeName = !themeName || themeName === "" ? crntTheme : themeName;
+  themeName = !themeName || themeName === '' ? crntTheme : themeName;
 
   // Get the theme extension that matches the active theme
   const themeExtension = allExtensions.find((e) => {
     const pkg = e.packageJSON;
-    return pkg.contributes.themes.find((theme: Theme) => theme.label === themeName || theme.id === themeName);
+    return pkg.contributes.themes.find(
+      (theme: Theme) => theme.label === themeName || theme.id === themeName,
+    );
   });
 
   if (!themeExtension) {
@@ -25,7 +44,7 @@ export const getTheme = async (themeName?: string) => {
 
   // Get the theme file
   const themeFile: Theme = themeExtension.packageJSON.contributes.themes.find(
-    (theme: Theme) => theme.label === themeName || theme.id === themeName
+    (theme: Theme) => theme.label === themeName || theme.id === themeName,
   );
 
   const themePath = Uri.joinPath(themeExtension.extensionUri, themeFile.path);
@@ -37,7 +56,7 @@ export const getTheme = async (themeName?: string) => {
   }
 
   if (theme.include) {
-    const includePath = Uri.joinPath(themePath, "..", theme.include);
+    const includePath = Uri.joinPath(themePath, '..', theme.include);
     const includeContents = await readFile(includePath);
     return { ...theme, ...JSON.parse(includeContents) };
   }

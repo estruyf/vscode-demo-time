@@ -1,4 +1,4 @@
-import { Uri, window, workspace } from 'vscode';
+import { Uri, window, workspace, Range, ViewColumn } from 'vscode';
 import { Extension } from './Extension';
 import { DemoFiles, DemoFile, DemoFileType } from '../models';
 import { Config, General } from '../constants';
@@ -6,6 +6,7 @@ import { parse as jsonParse } from 'jsonc-parser';
 import { load as yamlLoad, dump as yamlDump } from 'js-yaml';
 import { createDemoFile, readFile, sanitizeFileName, sortFiles, writeFile } from '../utils';
 import { Preview } from '../preview/Preview';
+import { Logger } from './Logger';
 
 export class DemoFileProvider {
   public static register() {
@@ -142,12 +143,17 @@ export class DemoFileProvider {
     const demoFiles: DemoFiles = {};
 
     for (const file of files) {
-      const content = await DemoFileProvider.getFile(file);
-      if (!content) {
+      try {
+        const content = await DemoFileProvider.getFile(file);
+        if (!content) {
+          continue;
+        }
+
+        demoFiles[file.path] = content;
+      } catch (error) {
+        Logger.error(`Error reading demo file ${file.path}: ${(error as Error).message}`);
         continue;
       }
-
-      demoFiles[file.path] = content;
     }
 
     return demoFiles;
@@ -265,13 +271,13 @@ export class DemoFileProvider {
    * @param filePath - The path of the file to save.
    * @param content - The content to write to the file.
    */
-  public static async saveFile(filePath: string, content: any) {
+  public static async saveFile(filePath: string, content: any, shouldWait = true): Promise<void> {
     const workspaceFolder = Extension.getInstance().workspaceFolder;
     if (!workspaceFolder) {
       return;
     }
 
     const file = Uri.file(filePath);
-    await writeFile(file, content);
+    await writeFile(file, content, shouldWait);
   }
 }

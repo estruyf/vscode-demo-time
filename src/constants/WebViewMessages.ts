@@ -35,6 +35,7 @@ export const WebViewMessages = {
       saveFile: 'saveConfigEditorFile',
       openSource: 'openConfigEditorSource',
       filePicker: 'openConfigEditorFilePicker',
+      getThemes: 'getConfigEditorThemes',
     },
   },
   toWebview: {
@@ -55,5 +56,10 @@ export const WebViewMessages = {
     updateIsInPresentationMode: 'updateIsInPresentationMode',
     previousSlide: 'previousSlide',
     nextSlide: 'nextSlide',
+    // Config editor
+    configEditor: {
+      updateConfigContents: 'updateConfigEditorContents',
+      triggerSave: 'triggerConfigEditorSave',
+    },
   },
 };

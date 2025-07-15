@@ -1,4 +1,4 @@
-import { extensions, Uri, ViewColumn } from 'vscode';
+import { OpenDialogOptions, Uri, workspace } from 'vscode';
 import {
   CancellationToken,
   commands,
@@ -11,7 +11,7 @@ import {
 import { Subscription } from '../models';
 import { DemoFileProvider, Extension } from '../services';
 import { COMMAND, Config, WebViewMessages } from '../constants';
-import { parseWinPath } from '../utils';
+import { getThemes, parseWinPath } from '../utils';
 
 export class ConfigEditorProvider implements CustomTextEditorProvider {
   private static readonly viewType = 'demoTime.configEditor';
@@ -70,17 +70,44 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     const html = await this.getHtmlForWebview();
     webviewPanel.webview.html = html;
 
+    function getContent(text?: string) {
+      const content = text ?? document.getText();
+      const contents = DemoFileProvider.parseFileContent(content, document.uri);
+      return contents;
+    }
+
+    function updateWebview(text: string) {
+      webviewPanel.webview.postMessage({
+        command: WebViewMessages.toWebview.configEditor.updateConfigContents,
+        payload: getContent(text),
+      });
+    }
+
+    function triggerSave() {
+      webviewPanel.webview.postMessage({
+        command: WebViewMessages.toWebview.configEditor.triggerSave,
+      });
+    }
+
+    const changeDocumentSubscription = workspace.onDidSaveTextDocument((e) => {
+      if (e.uri.toString() === document.uri.toString() && webviewPanel.active) {
+        triggerSave();
+      }
+    });
+
+    webviewPanel.onDidDispose(() => {
+      changeDocumentSubscription.dispose();
+    });
+
     webviewPanel.webview.onDidReceiveMessage(
       async (message: { command: string; requestId?: string; payload?: any }) => {
         const { command, requestId, payload } = message;
 
         if (command === WebViewMessages.toVscode.configEditor.getContents) {
-          const content = document.getText();
-          const contents = DemoFileProvider.parseFileContent(content, document.uri);
           webviewPanel.webview.postMessage({
-            command: 'configEditorContents',
+            command: WebViewMessages.toVscode.configEditor.getContents,
             requestId: requestId,
-            payload: contents,
+            payload: getContent(),
           });
         } else if (command === WebViewMessages.toVscode.runCommand) {
           const { command: cmd, args } = payload || {};
@@ -108,24 +135,34 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
             window.showErrorMessage('Failed to parse the demo configuration.');
           }
 
-          await DemoFileProvider.saveFile(document.uri.fsPath, demo);
+          await DemoFileProvider.saveFile(document.uri.fsPath, demo, false);
           webviewPanel.webview.postMessage({
-            command: 'configEditorFileSaved',
+            command: WebViewMessages.toVscode.configEditor.saveFile,
             requestId: requestId,
           });
           return;
         } else if (command === WebViewMessages.toVscode.configEditor.filePicker) {
-          // Open the file picker and return the relative workspace path
-          const uris = await window.showOpenDialog({
+          const { fileTypes } = payload || {};
+
+          const dialogSettings: OpenDialogOptions = {
             canSelectFiles: true,
             canSelectFolders: false,
             canSelectMany: false,
             openLabel: 'Select File',
-          });
+          };
+
+          if (Array.isArray(fileTypes) && fileTypes.length > 0) {
+            dialogSettings.filters = {
+              'Allowed Files': fileTypes.map((ext: string) => ext.replace(/^\./, '')),
+            };
+          }
+
+          // Open the file picker and return the relative workspace path
+          const uris = await window.showOpenDialog(dialogSettings);
 
           if (!uris || uris.length === 0) {
             webviewPanel.webview.postMessage({
-              command: 'configEditorFilePickerResult',
+              command: WebViewMessages.toVscode.configEditor.filePicker,
               requestId: requestId,
               payload: null,
             });
@@ -143,11 +180,18 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           }
 
           webviewPanel.webview.postMessage({
-            command: 'configEditorFilePickerResult',
+            command: WebViewMessages.toVscode.configEditor.filePicker,
             requestId: requestId,
             payload: relativePath,
           });
           return;
+        } else if (command === WebViewMessages.toVscode.configEditor.getThemes) {
+          const themes = await getThemes();
+          webviewPanel.webview.postMessage({
+            command: WebViewMessages.toVscode.configEditor.getThemes,
+            requestId: requestId,
+            payload: themes.map((theme) => theme.label),
+          });
         } else {
           console.warn(`Unknown message command: ${command}`);
         }
