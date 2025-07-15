@@ -27,7 +27,7 @@ jobs:
       - run: npm ci --legacy-peer-deps
       - uses: nrwl/nx-set-shas@v4
 
-      - run: npx nx start-ci-run --distribute-on="3 linux-medium-js" --stop-agents-after="build"
+      # - run: npx nx start-ci-run --distribute-on="3 linux-medium-js" --stop-agents-after="build"
 
       - run: npx nx-cloud record -- npx nx format:check
       - run: npx nx affected -t lint test
