@@ -90,8 +90,8 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     }
 
     const changeDocumentSubscription = workspace.onDidSaveTextDocument((e) => {
-      if (e.uri.toString() === document.uri.toString() && webviewPanel.active) {
-        triggerSave();
+      if (e.uri.toString() === document.uri.toString()) {
+        webviewPanel.active ? triggerSave() : updateWebview(e.getText());
       }
     });
 
