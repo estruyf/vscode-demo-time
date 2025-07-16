@@ -9,7 +9,7 @@ import {
   window,
 } from 'vscode';
 import { Subscription } from '../models';
-import { DemoFileProvider, Extension } from '../services';
+import { DemoFileProvider, DemoRunner, Extension, Logger } from '../services';
 import { COMMAND, Config, WebViewMessages } from '../constants';
 import { getThemes, parseWinPath } from '../utils';
 
@@ -114,11 +114,46 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           await handleFilePicker(payload, webviewPanel, requestId);
         } else if (command === WebViewMessages.toVscode.configEditor.getThemes) {
           await handleGetThemes(webviewPanel, requestId);
+        } else if (command === WebViewMessages.toVscode.configEditor.runDemoStep) {
+          await handleRunDemoStep(payload, document, webviewPanel, requestId);
         } else {
           console.warn(`Unknown message command: ${command}`);
         }
       },
     );
+    /**
+     * Handles running a demo step from the config editor webview.
+     */
+    async function handleRunDemoStep(
+      payload: any,
+      document: TextDocument,
+      webviewPanel: WebviewPanel,
+      requestId: string | undefined,
+    ) {
+      // Example: payload could be { step: { ... } }
+      if (!payload || !payload.step) {
+        window.showErrorMessage('No demo step provided to run.');
+        return;
+      }
+      try {
+        Logger.info(`Running demo step from config editor: ${JSON.stringify(payload.step)}`);
+        await DemoRunner.runSteps([payload.step], false);
+        window.showInformationMessage('Demo step triggered from config editor.');
+        // Optionally, send a response back to the webview
+        webviewPanel.webview.postMessage({
+          command: WebViewMessages.toVscode.configEditor.runDemoStep,
+          requestId,
+          payload: { success: true },
+        });
+      } catch (err) {
+        window.showErrorMessage('Failed to run demo step.');
+        webviewPanel.webview.postMessage({
+          command: WebViewMessages.toVscode.configEditor.runDemoStep,
+          requestId,
+          payload: { success: false, error: (err as Error)?.message },
+        });
+      }
+    }
 
     function handleGetContents(
       webviewPanel: WebviewPanel,

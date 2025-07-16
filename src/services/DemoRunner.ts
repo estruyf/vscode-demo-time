@@ -19,6 +19,7 @@ import {
   TextEditor,
   TextEditorRevealType,
   Uri,
+  WorkspaceFolder,
   commands,
   window,
   workspace,
@@ -513,7 +514,7 @@ export class DemoRunner {
    * Runs the given demo steps.
    * @param demoSteps An array of Step objects representing the steps to be executed.
    */
-  private static async runSteps(demoSteps: Step[]): Promise<void> {
+  public static async runSteps(demoSteps: Step[], needsUpdate: boolean = true): Promise<void> {
     // Unselect the current selection
     DecoratorService.unselect();
 
@@ -564,391 +565,401 @@ export class DemoRunner {
 
     // Loop over all the demo steps and execute them.
     for (let step of stepsToExecute) {
-      if (!step.action) {
-        continue;
+      await DemoRunner.runStep(step, variables, workspaceFolder);
+    }
+
+    if (needsUpdate) {
+      DemoPanel.update();
+    }
+  }
+
+  public static async runStep(
+    step: Step,
+    variables: { [key: string]: any } | undefined,
+    workspaceFolder: WorkspaceFolder,
+  ): Promise<void> {
+    if (!step.action) {
+      return;
+    }
+
+    // Verify if the current step has a `STATE_` or `SCRIPT_` variable which needs to be updated
+    // This can happen when the `setState` action is used during the current demo execution (previous step)
+    let stepJson = JSON.stringify(step);
+    if (
+      (stepJson.includes(StateKeys.prefix.state) || stepJson.includes(StateKeys.prefix.script)) &&
+      variables
+    ) {
+      stepJson = await insertVariables(stepJson, variables);
+      step = jsonParse(stepJson);
+    }
+
+    if (step.action === Action.openChat) {
+      await ChatActionsService.openChat();
+      return;
+    } else if (step.action === Action.newChat) {
+      await ChatActionsService.newChat();
+      return;
+    } else if (step.action === Action.askChat) {
+      await ChatActionsService.askChat(step);
+      return;
+    } else if (step.action === Action.editChat) {
+      await ChatActionsService.editChat(step);
+      return;
+    } else if (step.action === Action.agentChat) {
+      await ChatActionsService.agentChat(step);
+      return;
+    } else if (step.action === Action.closeChat) {
+      await ChatActionsService.closeChat();
+      return;
+    }
+
+    // Wait for the specified timeout
+    if (step.action === Action.WaitForTimeout) {
+      await sleep(step.timeout || 1000);
+      return;
+    } else if (step.action === Action.WaitForInput) {
+      const answer = await getUserInput('Press any key to continue');
+      if (answer === undefined) {
+        return;
+      }
+      return;
+    }
+
+    // Open external applications
+    if (step.action === Action.openPowerPoint) {
+      try {
+        await ExternalAppsService.openPowerPoint();
+      } catch (error) {
+        Notifications.error(`Failed to open PowerPoint: ${(error as Error).message}`);
+      }
+      return;
+    } else if (step.action === Action.openKeynote) {
+      try {
+        await ExternalAppsService.openKeynote();
+      } catch (error) {
+        Notifications.error(`Failed to open Keynote: ${(error as Error).message}`);
+      }
+      return;
+    }
+
+    // Update settings
+    if (step.action === Action.SetSetting) {
+      if (!step.setting || !step.setting.key) {
+        Notifications.error('No setting key or value specified');
+        return;
       }
 
-      // Verify if the current step has a `STATE_` or `SCRIPT_` variable which needs to be updated
-      // This can happen when the `setState` action is used during the current demo execution (previous step)
-      let stepJson = JSON.stringify(step);
-      if (
-        (stepJson.includes(StateKeys.prefix.state) || stepJson.includes(StateKeys.prefix.script)) &&
-        variables
-      ) {
-        stepJson = await insertVariables(stepJson, variables);
-        step = jsonParse(stepJson);
+      const { key, value } = step.setting;
+      await updateConfig(key, value === null ? undefined : value);
+      return;
+    }
+
+    if (step.action === Action.SetTheme) {
+      if (!step.theme) {
+        Notifications.error('No theme specified');
+        return;
       }
 
-      if (step.action === Action.openChat) {
-        await ChatActionsService.openChat();
-        continue;
-      } else if (step.action === Action.newChat) {
-        await ChatActionsService.newChat();
-        continue;
-      } else if (step.action === Action.askChat) {
-        await ChatActionsService.askChat(step);
-        continue;
-      } else if (step.action === Action.editChat) {
-        await ChatActionsService.editChat(step);
-        continue;
-      } else if (step.action === Action.agentChat) {
-        await ChatActionsService.agentChat(step);
-        continue;
-      } else if (step.action === Action.closeChat) {
-        await ChatActionsService.closeChat();
-        continue;
+      await updateConfig('workbench.colorTheme', step.theme);
+      return;
+    }
+
+    if (step.action === Action.UnsetTheme) {
+      await updateConfig('workbench.colorTheme', null);
+      return;
+    }
+
+    if (step.action === Action.SetPresentationView) {
+      await togglePresentationView(true);
+      return;
+    }
+
+    if (step.action === Action.UnsetPresentationView) {
+      await togglePresentationView(false);
+      return;
+    }
+
+    // Set state
+    if (step.action === Action.SetState) {
+      if (!step.state || !step.state.key || !step.state.value) {
+        Notifications.error('No state key or value specified');
+        return;
       }
 
-      // Wait for the specified timeout
-      if (step.action === Action.WaitForTimeout) {
-        await sleep(step.timeout || 1000);
-        continue;
-      } else if (step.action === Action.WaitForInput) {
-        const answer = await getUserInput('Press any key to continue');
-        if (answer === undefined) {
-          return;
-        }
-        continue;
+      await StateManager.update(`${StateKeys.prefix.state}${step.state.key}`, step.state.value);
+      variables = await getVariables(workspaceFolder);
+      return;
+    }
+
+    const fileUri = step.path ? Uri.joinPath(workspaceFolder.uri, step.path) : undefined;
+
+    // Execute the specified VSCode command
+    if (step.action === Action.ExecuteVSCodeCommand) {
+      if (!step.command) {
+        Notifications.error('No command specified');
+        return;
       }
 
-      // Open external applications
-      if (step.action === Action.openPowerPoint) {
-        try {
-          await ExternalAppsService.openPowerPoint();
-        } catch (error) {
-          Notifications.error(`Failed to open PowerPoint: ${(error as Error).message}`);
-        }
-        continue;
-      } else if (step.action === Action.openKeynote) {
-        try {
-          await ExternalAppsService.openKeynote();
-        } catch (error) {
-          Notifications.error(`Failed to open Keynote: ${(error as Error).message}`);
-        }
-        continue;
+      if (fileUri) {
+        await commands.executeCommand(step.command, fileUri);
+        return;
       }
 
-      // Update settings
-      if (step.action === Action.SetSetting) {
-        if (!step.setting || !step.setting.key) {
-          Notifications.error('No setting key or value specified');
-          continue;
-        }
+      await commands.executeCommand(step.command, step.args);
+      return;
+    }
 
-        const { key, value } = step.setting;
-        await updateConfig(key, value === null ? undefined : value);
-        continue;
+    if (step.action === Action.ShowInfoMessage) {
+      if (!step.message) {
+        Notifications.error('No message specified');
+        return;
       }
 
-      if (step.action === Action.SetTheme) {
-        if (!step.theme) {
-          Notifications.error('No theme specified');
-          continue;
-        }
+      window.showInformationMessage(step.message);
+      return;
+    }
 
-        await updateConfig('workbench.colorTheme', step.theme);
-        continue;
+    if (step.action === Action.OpenWebsite) {
+      if (!step.url) {
+        Notifications.error('No URL specified');
+        return;
       }
 
-      if (step.action === Action.UnsetTheme) {
-        await updateConfig('workbench.colorTheme', null);
-        continue;
-      }
-
-      if (step.action === Action.SetPresentationView) {
-        await togglePresentationView(true);
-        continue;
-      }
-
-      if (step.action === Action.UnsetPresentationView) {
-        await togglePresentationView(false);
-        continue;
-      }
-
-      // Set state
-      if (step.action === Action.SetState) {
-        if (!step.state || !step.state.key || !step.state.value) {
-          Notifications.error('No state key or value specified');
-          return;
-        }
-
-        await StateManager.update(`${StateKeys.prefix.state}${step.state.key}`, step.state.value);
-        variables = await getVariables(workspaceFolder);
-        continue;
-      }
-
-      const fileUri = step.path ? Uri.joinPath(workspaceFolder.uri, step.path) : undefined;
-
-      // Execute the specified VSCode command
-      if (step.action === Action.ExecuteVSCodeCommand) {
-        if (!step.command) {
-          Notifications.error('No command specified');
-          continue;
-        }
-
-        if (fileUri) {
-          await commands.executeCommand(step.command, fileUri);
-          continue;
-        }
-
-        await commands.executeCommand(step.command, step.args);
-        continue;
-      }
-
-      if (step.action === Action.ShowInfoMessage) {
-        if (!step.message) {
-          Notifications.error('No message specified');
-          continue;
-        }
-
-        window.showInformationMessage(step.message);
-        continue;
-      }
-
-      if (step.action === Action.OpenWebsite) {
-        if (!step.url) {
-          Notifications.error('No URL specified');
-          continue;
-        }
-
-        if (step.openInVSCode) {
-          await commands.executeCommand('simpleBrowser.show', Uri.parse(step.url));
-        } else {
-          await commands.executeCommand('vscode.open', Uri.parse(step.url));
-          continue;
-        }
-      }
-
-      // Open a new terminal
-      if (step.action === Action.OpenTerminal) {
-        await TerminalService.openTerminal(step.terminalId);
-        continue;
-      }
-
-      // Run the specified terminal command
-      if (step.action === Action.ExecuteTerminalCommand) {
-        await TerminalService.executeCommand(step);
-        continue;
-      }
-
-      // Run the specified terminal command
-      if (step.action === Action.CloseTerminal) {
-        await TerminalService.closeTerminal(step.terminalId);
-        continue;
-      }
-
-      if (step.action === Action.ExecuteScript) {
-        await ScriptExecutor.run(step);
-        variables = await getVariables(workspaceFolder);
-        continue;
-      }
-
-      if (step.action === Action.Write && !step.path) {
-        // Write the content at the current position
-        const editor = window.activeTextEditor;
-        if (!editor) {
-          Notifications.error('No active text editor found');
-          return;
-        }
-
-        const position = editor.selection.active;
-        const content = step.content || '';
-
-        if (!content) {
-          Notifications.error('No content to write');
-          return;
-        }
-
-        await writeText(editor, content, position, step.lineInsertionDelay);
-        continue;
-      }
-
-      if (step.action === Action.Format) {
-        await commands.executeCommand('editor.action.formatDocument');
-        continue;
-      }
-
-      if (step.action === Action.Save) {
-        await saveFiles();
-      }
-
-      if (step.action === Action.Close) {
-        await commands.executeCommand('workbench.action.closeActiveEditor');
-        continue;
-      }
-
-      if (step.action === Action.CloseAll) {
-        await commands.executeCommand('workbench.action.closeAllEditors');
-        continue;
-      }
-
-      if (step.action === Action.TypeText) {
-        await InteractionService.typeText(step.content, step.insertTypingSpeed);
-        continue;
-      }
-
-      if (step.action === Action.PressEnter) {
-        await InteractionService.pressEnter();
-        continue;
-      }
-
-      if (step.action === Action.CopyToClipboard) {
-        await InteractionService.copyToClipboard({
-          content: step.content,
-          contentPath: step.contentPath,
-          variables,
-          workspaceFolder,
-        });
-        continue;
-      }
-
-      if (step.action === Action.PasteFromClipboard) {
-        await InteractionService.pasteFromClipboard();
-        continue;
-      }
-
-      if (step.action === Action.Unselect) {
-        await DemoRunner.unselect();
-        continue;
-      }
-
-      /**
-       * All the following actions require a file path.
-       */
-      if (!fileUri) {
-        continue;
-      }
-
-      if (step.action === Action.ImagePreview) {
-        const { path, theme } = step as IImagePreview;
-        Preview.show(path as string, theme);
-        continue;
-      }
-
-      if (step.action === Action.OpenSlide) {
-        const { path } = step as ISlidePreview;
-        Preview.show(path as string);
-        continue;
-      }
-
-      if (step.action === Action.Open) {
-        FileActionService.open(fileUri);
-        continue;
-      }
-
-      if (step.action === Action.MarkdownPreview) {
-        await commands.executeCommand('markdown.showPreview', fileUri);
-        continue;
-      }
-
-      if (step.action === Action.Copy) {
-        FileActionService.copy(workspaceFolder, fileUri, step);
-        continue;
-      }
-
-      if (step.action === Action.Move || step.action === Action.Rename) {
-        FileActionService.rename(workspaceFolder, fileUri, step);
-        continue;
-      }
-
-      if (step.action === Action.DeleteFile) {
-        await FileActionService.delete(fileUri);
-        continue;
-      }
-
-      let content = step.content || '';
-      if (step.contentPath) {
-        const fileContent = await getFileContents(workspaceFolder, step.contentPath);
-        if (typeof fileContent !== 'string') {
-          continue;
-        }
-        content = fileContent;
-      }
-
-      if (step.action === Action.Create) {
-        await writeFile(fileUri, content);
-        continue;
-      }
-
-      if (step.action === Action.ApplyPatch) {
-        await TextTypingService.applyPatch(fileUri, content, step);
-        continue;
-      }
-
-      const editor = await workspace.openTextDocument(fileUri);
-      const textEditor = await window.showTextDocument(editor);
-
-      const { crntPosition, crntRange, usesPlaceholders } = await getPositionAndRange(editor, step);
-
-      if (step.action === Action.Highlight && (crntRange || crntPosition)) {
-        let highlightWholeLine = step.highlightWholeLine;
-        if (usesPlaceholders) {
-          highlightWholeLine =
-            typeof step.highlightWholeLine === 'undefined' ? true : step.highlightWholeLine;
-        }
-
-        await DemoRunner.highlight(
-          textEditor,
-          crntRange,
-          crntPosition,
-          step.zoom,
-          highlightWholeLine,
-        );
-        continue;
-      }
-
-      // Code actions
-      if (step.action === Action.Insert) {
-        await TextTypingService.insert(textEditor, editor, fileUri, content, crntPosition, step);
-        continue;
-      }
-
-      if (step.action === Action.Write) {
-        if (!content) {
-          Notifications.error('No content to write');
-          return;
-        }
-
-        if (!crntPosition) {
-          Notifications.error('No position specified where to write the content');
-          return;
-        }
-
-        await writeText(textEditor, content, crntPosition, step.lineInsertionDelay);
-        continue;
-      }
-
-      if (step.action === Action.Replace) {
-        await TextTypingService.replace(
-          textEditor,
-          editor,
-          fileUri,
-          content,
-          crntRange,
-          crntPosition,
-          step,
-        );
-        continue;
-      }
-
-      if (step.action === Action.PositionCursor) {
-        if (crntPosition) {
-          textEditor.revealRange(
-            new Range(crntPosition, crntPosition),
-            TextEditorRevealType.InCenter,
-          );
-          textEditor.selection = new Selection(crntPosition, crntPosition);
-        }
-        continue;
-      }
-
-      if (step.action === Action.Delete) {
-        await TextTypingService.delete(editor, fileUri, crntRange, crntPosition);
-        continue;
+      if (step.openInVSCode) {
+        await commands.executeCommand('simpleBrowser.show', Uri.parse(step.url));
+      } else {
+        await commands.executeCommand('vscode.open', Uri.parse(step.url));
+        return;
       }
     }
 
-    DemoPanel.update();
+    // Open a new terminal
+    if (step.action === Action.OpenTerminal) {
+      await TerminalService.openTerminal(step.terminalId);
+      return;
+    }
+
+    // Run the specified terminal command
+    if (step.action === Action.ExecuteTerminalCommand) {
+      await TerminalService.executeCommand(step);
+      return;
+    }
+
+    // Run the specified terminal command
+    if (step.action === Action.CloseTerminal) {
+      await TerminalService.closeTerminal(step.terminalId);
+      return;
+    }
+
+    if (step.action === Action.ExecuteScript) {
+      await ScriptExecutor.run(step);
+      variables = await getVariables(workspaceFolder);
+      return;
+    }
+
+    if (step.action === Action.Write && !step.path) {
+      // Write the content at the current position
+      const editor = window.activeTextEditor;
+      if (!editor) {
+        Notifications.error('No active text editor found');
+        return;
+      }
+
+      const position = editor.selection.active;
+      const content = step.content || '';
+
+      if (!content) {
+        Notifications.error('No content to write');
+        return;
+      }
+
+      await writeText(editor, content, position, step.lineInsertionDelay);
+      return;
+    }
+
+    if (step.action === Action.Format) {
+      await commands.executeCommand('editor.action.formatDocument');
+      return;
+    }
+
+    if (step.action === Action.Save) {
+      await saveFiles();
+    }
+
+    if (step.action === Action.Close) {
+      await commands.executeCommand('workbench.action.closeActiveEditor');
+      return;
+    }
+
+    if (step.action === Action.CloseAll) {
+      await commands.executeCommand('workbench.action.closeAllEditors');
+      return;
+    }
+
+    if (step.action === Action.TypeText) {
+      await InteractionService.typeText(step.content, step.insertTypingSpeed);
+      return;
+    }
+
+    if (step.action === Action.PressEnter) {
+      await InteractionService.pressEnter();
+      return;
+    }
+
+    if (step.action === Action.CopyToClipboard) {
+      await InteractionService.copyToClipboard({
+        content: step.content,
+        contentPath: step.contentPath,
+        variables,
+        workspaceFolder,
+      });
+      return;
+    }
+
+    if (step.action === Action.PasteFromClipboard) {
+      await InteractionService.pasteFromClipboard();
+      return;
+    }
+
+    if (step.action === Action.Unselect) {
+      await DemoRunner.unselect();
+      return;
+    }
+
+    /**
+     * All the following actions require a file path.
+     */
+    if (!fileUri) {
+      return;
+    }
+
+    if (step.action === Action.ImagePreview) {
+      const { path, theme } = step as IImagePreview;
+      Preview.show(path as string, theme);
+      return;
+    }
+
+    if (step.action === Action.OpenSlide) {
+      const { path } = step as ISlidePreview;
+      Preview.show(path as string);
+      return;
+    }
+
+    if (step.action === Action.Open) {
+      FileActionService.open(fileUri);
+      return;
+    }
+
+    if (step.action === Action.MarkdownPreview) {
+      await commands.executeCommand('markdown.showPreview', fileUri);
+      return;
+    }
+
+    if (step.action === Action.Copy) {
+      FileActionService.copy(workspaceFolder, fileUri, step);
+      return;
+    }
+
+    if (step.action === Action.Move || step.action === Action.Rename) {
+      FileActionService.rename(workspaceFolder, fileUri, step);
+      return;
+    }
+
+    if (step.action === Action.DeleteFile) {
+      await FileActionService.delete(fileUri);
+      return;
+    }
+
+    let content = step.content || '';
+    if (step.contentPath) {
+      const fileContent = await getFileContents(workspaceFolder, step.contentPath);
+      if (typeof fileContent !== 'string') {
+        return;
+      }
+      content = fileContent;
+    }
+
+    if (step.action === Action.Create) {
+      await writeFile(fileUri, content);
+      return;
+    }
+
+    if (step.action === Action.ApplyPatch) {
+      await TextTypingService.applyPatch(fileUri, content, step);
+      return;
+    }
+
+    const editor = await workspace.openTextDocument(fileUri);
+    const textEditor = await window.showTextDocument(editor);
+
+    const { crntPosition, crntRange, usesPlaceholders } = await getPositionAndRange(editor, step);
+
+    if (step.action === Action.Highlight && (crntRange || crntPosition)) {
+      let highlightWholeLine = step.highlightWholeLine;
+      if (usesPlaceholders) {
+        highlightWholeLine =
+          typeof step.highlightWholeLine === 'undefined' ? true : step.highlightWholeLine;
+      }
+
+      await DemoRunner.highlight(
+        textEditor,
+        crntRange,
+        crntPosition,
+        step.zoom,
+        highlightWholeLine,
+      );
+      return;
+    }
+
+    // Code actions
+    if (step.action === Action.Insert) {
+      await TextTypingService.insert(textEditor, editor, fileUri, content, crntPosition, step);
+      return;
+    }
+
+    if (step.action === Action.Write) {
+      if (!content) {
+        Notifications.error('No content to write');
+        return;
+      }
+
+      if (!crntPosition) {
+        Notifications.error('No position specified where to write the content');
+        return;
+      }
+
+      await writeText(textEditor, content, crntPosition, step.lineInsertionDelay);
+      return;
+    }
+
+    if (step.action === Action.Replace) {
+      await TextTypingService.replace(
+        textEditor,
+        editor,
+        fileUri,
+        content,
+        crntRange,
+        crntPosition,
+        step,
+      );
+      return;
+    }
+
+    if (step.action === Action.PositionCursor) {
+      if (crntPosition) {
+        textEditor.revealRange(
+          new Range(crntPosition, crntPosition),
+          TextEditorRevealType.InCenter,
+        );
+        textEditor.selection = new Selection(crntPosition, crntPosition);
+      }
+      return;
+    }
+
+    if (step.action === Action.Delete) {
+      await TextTypingService.delete(editor, fileUri, crntRange, crntPosition);
+      return;
+    }
   }
 
   /**

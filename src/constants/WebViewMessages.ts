@@ -36,6 +36,7 @@ export const WebViewMessages = {
       openSource: 'openConfigEditorSource',
       filePicker: 'openConfigEditorFilePicker',
       getThemes: 'getConfigEditorThemes',
+      runDemoStep: 'runConfigEditorDemoStep',
     },
   },
   toWebview: {
