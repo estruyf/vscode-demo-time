@@ -119,6 +119,14 @@ export class DemoCreator {
       return;
     }
 
+    const openInConfigEditor = Extension.getInstance().getSetting<boolean>(
+      Config.configEditor.openInConfigEditor,
+    );
+    if (openInConfigEditor) {
+      ConfigEditorProvider.openStepInEditor(fileUri, item);
+      return;
+    }
+
     await window.showTextDocument(fileUri);
     const editor = window.activeTextEditor;
     if (!editor) {

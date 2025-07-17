@@ -12,9 +12,12 @@ import { Subscription } from '../models';
 import { DemoFileProvider, DemoRunner, Extension, Logger } from '../services';
 import { COMMAND, Config, WebViewMessages } from '../constants';
 import { getThemes, parseWinPath } from '../utils';
+import { ActionTreeItem } from './ActionTreeviewProvider';
 
 export class ConfigEditorProvider implements CustomTextEditorProvider {
   private static readonly viewType = 'demoTime.configEditor';
+  private static fileViews: Map<string, WebviewPanel> = new Map();
+  private static pendingStepOpens: Map<string, ActionTreeItem> = new Map();
 
   public static register() {
     const extensions = Extension.getInstance();
@@ -70,6 +73,8 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     const html = await this.getHtmlForWebview();
     webviewPanel.webview.html = html;
 
+    ConfigEditorProvider.fileViews.set(document.uri.toString(), webviewPanel);
+
     function getContent(text?: string) {
       const content = text ?? document.getText();
       const contents = DemoFileProvider.parseFileContent(content, document.uri);
@@ -96,6 +101,8 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     });
 
     webviewPanel.onDidDispose(() => {
+      ConfigEditorProvider.fileViews.delete(document.uri.toString());
+      ConfigEditorProvider.pendingStepOpens.delete(document.uri.toString());
       changeDocumentSubscription.dispose();
     });
 
@@ -116,11 +123,14 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           await handleGetThemes(webviewPanel, requestId);
         } else if (command === WebViewMessages.toVscode.configEditor.runDemoStep) {
           await handleRunDemoStep(payload, document, webviewPanel, requestId);
+        } else if (command === WebViewMessages.toVscode.configEditor.checkStepQueue) {
+          await handleCheckStepQueue(webviewPanel, requestId);
         } else {
           console.warn(`Unknown message command: ${command}`);
         }
       },
     );
+
     /**
      * Handles running a demo step from the config editor webview.
      */
@@ -250,6 +260,15 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
         payload: themes.map((theme) => theme.label),
       });
     }
+
+    async function handleCheckStepQueue(webviewPanel: WebviewPanel, requestId: string | undefined) {
+      const pendingSteps = ConfigEditorProvider.pendingStepOpens.get(document.uri.toString());
+      webviewPanel.webview.postMessage({
+        command: WebViewMessages.toVscode.configEditor.checkStepQueue,
+        requestId: requestId,
+        payload: pendingSteps || null,
+      });
+    }
   }
 
   private async getHtmlForWebview(): Promise<string> {
@@ -312,5 +331,26 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
   public static openInTextEditor(uri?: Uri) {
     uri = uri || window.activeTextEditor?.document.uri;
     commands.executeCommand('vscode.openWith', uri, 'default');
+  }
+
+  public static openStepInEditor(fileUri: Uri, item: ActionTreeItem) {
+    if (!fileUri || !item) {
+      return;
+    }
+
+    const panel = ConfigEditorProvider.fileViews.get(fileUri.toString());
+    if (panel && panel.active) {
+      panel.reveal();
+      panel.webview.postMessage({
+        command: WebViewMessages.toWebview.configEditor.openStep,
+        payload: item,
+      });
+    } else {
+      if (!ConfigEditorProvider.pendingStepOpens) {
+        ConfigEditorProvider.pendingStepOpens = new Map<string, ActionTreeItem>();
+      }
+      ConfigEditorProvider.pendingStepOpens.set(fileUri.toString(), item);
+      ConfigEditorProvider.openInConfigEditor(fileUri);
+    }
   }
 }

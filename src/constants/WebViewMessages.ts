@@ -37,6 +37,7 @@ export const WebViewMessages = {
       filePicker: 'openConfigEditorFilePicker',
       getThemes: 'getConfigEditorThemes',
       runDemoStep: 'runConfigEditorDemoStep',
+      checkStepQueue: 'checkConfigEditorStepQueue',
     },
   },
   toWebview: {
@@ -61,6 +62,7 @@ export const WebViewMessages = {
     configEditor: {
       updateConfigContents: 'updateConfigEditorContents',
       triggerSave: 'triggerConfigEditorSave',
+      openStep: 'openConfigEditorStep',
     },
   },
 };
