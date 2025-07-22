@@ -1,4 +1,4 @@
-import { OpenDialogOptions, Uri, workspace } from 'vscode';
+import { OpenDialogOptions, Uri, workspace, WorkspaceEdit, Range } from 'vscode';
 import {
   CancellationToken,
   commands,
@@ -94,15 +94,22 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       });
     }
 
-    const changeDocumentSubscription = workspace.onDidSaveTextDocument((e) => {
+    const saveDocumentSubscription = workspace.onDidSaveTextDocument((e) => {
       if (e.uri.toString() === document.uri.toString()) {
         webviewPanel.active ? triggerSave() : updateWebview(e.getText());
+      }
+    });
+
+    const changeDocumentSubscription = workspace.onDidChangeTextDocument((e) => {
+      if (e.document.uri.toString() === document.uri.toString()) {
+        updateWebview(e.document.getText());
       }
     });
 
     webviewPanel.onDidDispose(() => {
       ConfigEditorProvider.fileViews.delete(document.uri.toString());
       ConfigEditorProvider.pendingStepOpens.delete(document.uri.toString());
+      saveDocumentSubscription.dispose();
       changeDocumentSubscription.dispose();
     });
 
@@ -115,6 +122,8 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           await handleRunCommand(payload);
         } else if (command === WebViewMessages.toVscode.configEditor.openSource) {
           ConfigEditorProvider.openInTextEditor(document.uri);
+        } else if (command === WebViewMessages.toVscode.configEditor.updateConfig) {
+          await updateConfig(payload, document);
         } else if (command === WebViewMessages.toVscode.configEditor.saveFile) {
           await handleSaveFile(payload, document, webviewPanel, requestId);
         } else if (command === WebViewMessages.toVscode.configEditor.filePicker) {
@@ -187,6 +196,18 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       } else {
         await commands.executeCommand(cmd);
       }
+    }
+
+    async function updateConfig(config: any, document?: TextDocument) {
+      if (!config || !document) {
+        return;
+      }
+
+      const edit = new WorkspaceEdit();
+      const demo = DemoFileProvider.formatFileContent(config, document.uri);
+      edit.replace(document.uri, new Range(0, 0, document.lineCount, 0), demo);
+
+      return workspace.applyEdit(edit);
     }
 
     async function handleSaveFile(
