@@ -10,6 +10,7 @@ export interface DemoFiles {
 }
 
 export interface DemoFile {
+  $schema?: string;
   title: string;
   description?: string;
   version?: Version;

@@ -48,6 +48,10 @@ export class DemoFileProvider {
   public static parseFileContent(content: string, filePath: Uri): DemoFile | undefined {
     const path = filePath.fsPath.toLowerCase();
 
+    if (!content) {
+      content = JSON.stringify(DemoFileProvider.generateFileContent(''));
+    }
+
     if (path.endsWith('.yaml') || path.endsWith('.yml')) {
       try {
         const parsed = yamlLoad(content) as DemoFile;
@@ -68,8 +72,8 @@ export class DemoFileProvider {
    * @param title The demo title
    * @returns The formatted content string
    */
-  private static generateFileContent(title: string): unknown {
-    const demoContent = {
+  private static generateFileContent(title: string): DemoFile {
+    const demoContent: DemoFile = {
       $schema: 'https://demotime.show/demo-time.schema.json',
       title: title,
       description: '',
