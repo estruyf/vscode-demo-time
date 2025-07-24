@@ -6,5 +6,4 @@ export default defineConfig({
   format: ['cjs'],
   outDir: './out/extension',
   external: ['vscode'],
-  sourcemap: true,
 });

@@ -6,5 +6,4 @@ export default defineConfig({
   platform: 'browser',
   format: 'esm',
   outDir: './out/webcomponents',
-  sourcemap: true,
 });
