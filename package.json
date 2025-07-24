@@ -781,6 +781,7 @@
   "devDependencies": {
     "@actions/core": "^1.11.1",
     "@estruyf/vscode": "^1.1.0",
+    "@nx/workspace": "^21.2.3",
     "@types/cors": "^2.8.17",
     "@types/diff": "^7.0.1",
     "@types/jest": "^29.5.11",
@@ -806,6 +807,7 @@
     "mermaid": "^11.6.0",
     "mlly": "^1.7.4",
     "npm-run-all": "^4.1.5",
+    "nx": "21.2.3",
     "playwright-chromium": "^1.51.1",
     "postcss": "^8.4.49",
     "postcss-loader": "^8.1.1",
@@ -832,5 +834,9 @@
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.2.0",
     "webpack-manifest-plugin": "^5.0.1"
+  },
+  "nx": {},
+  "dependencies": {
+    "prettier": "^3.6.2"
   }
 }

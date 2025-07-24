@@ -16,6 +16,8 @@
   optional on the demo root
 - [#212](https://github.com/estruyf/vscode-demo-time/issues/212): Fix encoding issue with ampersands
   in the `dt-list` component
+- [#217](https://github.com/estruyf/vscode-demo-time/issues/217): Fix highlighting whole line when line number and 
+  character positioning is used
 
 ## [1.7.1] - 2025-07-10
 
