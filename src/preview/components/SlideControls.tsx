@@ -14,6 +14,12 @@ export interface ISlideControlsProps {
   currentSlide?: number;
   updateSlideIdx: (index: number) => void;
   triggerMouseMove: (value: boolean) => void;
+  hideControls: () => void;
+  laserPointerEnabled?: boolean;
+  onLaserPointerToggle?: (enabled: boolean) => void;
+  isZoomed?: boolean;
+  onZoomToggle?: () => void;
+  style?: React.CSSProperties;
 }
 
 export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISlideControlsProps>> = ({
@@ -23,7 +29,13 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   slides,
   currentSlide = 0,
   updateSlideIdx,
-  triggerMouseMove
+  triggerMouseMove,
+  hideControls,
+  laserPointerEnabled = false,
+  onLaserPointerToggle,
+  isZoomed = false,
+  onZoomToggle,
+  style
 }: React.PropsWithChildren<ISlideControlsProps>) => {
   const [previousEnabled, setPreviousEnabled] = React.useState(false);
   const [isPresentationMode, setIsPresentationMode] = React.useState(false);
@@ -118,6 +130,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
     <div
       className={`absolute bottom-0 w-full transition-opacity duration-300 ${show ? 'opacity-90' : 'opacity-0 pointer-events-none'
         }`}
+      style={style}
     >
       <div
         className="bg-[var(--vscode-editorWidget-background)] p-2 grid grid-cols-3 gap-4"
@@ -136,6 +149,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
             </div>
           )} action={closeSidebar} />
           <SlideControl title="Show demos" iconName='list-unordered' action={focusPanel} />
+          <SlideControl title="Hide controls" iconName='eye-closed' action={hideControls} />
         </div>
 
         <div className="flex items-center justify-center gap-4">
@@ -155,23 +169,46 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
               Slide {currentSlide + 1} of {slides}
             </div>
           )}
-
-          {
-            showPosition && (
-              children
-            )
-          }
           <SlideControl
-            title="Toggle mouse position"
-            className='-rotate-90 hover:bg-[var(--vscode-toolbar-hoverBackground)]'
-            iconName="symbol-ruler"
+            title="Toggle laser pointer"
+            className={`hover:bg-[var(--vscode-toolbar-hoverBackground)] ${laserPointerEnabled ? 'bg-[var(--vscode-statusBarItem-errorBackground)]' : ''}`}
+            iconName="record"
             action={() => {
-              setShowPosition(prev => !prev);
-              triggerMouseMove(!showPosition);
+              if (onLaserPointerToggle) {
+                onLaserPointerToggle(!laserPointerEnabled);
+              }
             }}
           />
+          <SlideControl
+            title={isZoomed ? "Exit zoom" : "Zoom in"}
+            className={`hover:bg-[var(--vscode-toolbar-hoverBackground)] ${isZoomed ? 'bg-[var(--vscode-statusBarItem-errorBackground)]' : ''}`}
+            iconName={isZoomed ? "zoom-out" : "zoom-in"}
+            action={() => {
+              if (onZoomToggle) {
+                onZoomToggle();
+              }
+            }}
+          />
+
           {
-            path && (
+            !isPresentationMode && (
+              <>
+                {showPosition && children}
+                <SlideControl
+                  title="Toggle mouse position"
+                  className='-rotate-90 hover:bg-[var(--vscode-toolbar-hoverBackground)]'
+                  iconName="symbol-ruler"
+                  action={() => {
+                    setShowPosition(prev => !prev);
+                    triggerMouseMove(!showPosition);
+                  }}
+                />
+              </>
+            )
+          }
+
+          {
+            path && !isPresentationMode && (
               <SlideControl title="Open slide source" iconName="preview" action={openSlideSource} />
             )
           }

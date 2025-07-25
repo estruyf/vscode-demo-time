@@ -1,9 +1,16 @@
-import { Uri, Webview, WebviewPanel, window, ViewColumn, commands } from "vscode";
-import { Extension } from "../services/Extension";
-import { COMMAND, Config, ContextKeys, WebViewMessages } from "../constants";
-import { MessageHandlerData } from "@estruyf/vscode";
-import { getAbsolutePath, getTheme, getWebviewUrl, readFile, setContext, togglePresentationView } from "../utils";
-import { DemoRunner } from "../services";
+import { Uri, Webview, WebviewPanel, window, ViewColumn, commands } from 'vscode';
+import { Extension } from '../services/Extension';
+import { COMMAND, Config, ContextKeys, WebViewMessages } from '../constants';
+import { MessageHandlerData } from '@estruyf/vscode';
+import {
+  getAbsolutePath,
+  getTheme,
+  getWebviewUrl,
+  readFile,
+  setContext,
+  togglePresentationView,
+} from '../utils';
+import { DemoRunner } from '../services';
 
 export class Preview {
   private static webview: WebviewPanel | null = null;
@@ -18,8 +25,12 @@ export class Preview {
   public static register() {
     const subscriptions = Extension.getInstance().subscriptions;
 
-    subscriptions.push(commands.registerCommand(COMMAND.togglePresentationView, togglePresentationView));
-    subscriptions.push(commands.registerCommand(COMMAND.closePresentationView, () => togglePresentationView(false)));
+    subscriptions.push(
+      commands.registerCommand(COMMAND.togglePresentationView, togglePresentationView),
+    );
+    subscriptions.push(
+      commands.registerCommand(COMMAND.closePresentationView, () => togglePresentationView(false)),
+    );
   }
 
   public static get isOpen(): boolean {
@@ -87,7 +98,7 @@ export class Preview {
       return;
     }
 
-    if (typeof fileUri !== "string") {
+    if (typeof fileUri !== 'string') {
       fileUri = Preview.webview.webview.asWebviewUri(fileUri).toString();
     }
 
@@ -115,7 +126,7 @@ export class Preview {
     const extensionUri = Extension.getInstance().extensionPath;
 
     // Create the preview webview
-    Preview.webview = window.createWebviewPanel("demoTime:preview", Config.title, ViewColumn.One, {
+    Preview.webview = window.createWebviewPanel('demoTime:preview', Config.title, ViewColumn.One, {
       enableScripts: true,
       retainContextWhenHidden: true,
       enableCommandUris: true,
@@ -124,8 +135,8 @@ export class Preview {
     Preview.isDisposed = false;
 
     Preview.webview.iconPath = {
-      dark: Uri.joinPath(Uri.file(extensionUri), "assets", "logo", "demotime-bg.svg"),
-      light: Uri.joinPath(Uri.file(extensionUri), "assets", "logo", "demotime-bg.svg"),
+      dark: Uri.joinPath(Uri.file(extensionUri), 'assets', 'logo', 'demotime-bg.svg'),
+      light: Uri.joinPath(Uri.file(extensionUri), 'assets', 'logo', 'demotime-bg.svg'),
     };
 
     Preview.webview.webview.html = await Preview.getWebviewContent(Preview.webview.webview);
@@ -147,18 +158,23 @@ export class Preview {
       return;
     }
 
-    if (command === WebViewMessages.toVscode.getFileUri && requestId) {
+    if (command === WebViewMessages.toVscode.getSetting && requestId) {
+      const setting = Extension.getInstance().getSetting(payload);
+      Preview.postRequestMessage(command, requestId, setting);
+    } else if (command === WebViewMessages.toVscode.getFileUri && requestId) {
       const fileWebviewPath = getWebviewUrl(Preview.webview?.webview, Preview.crntFile);
       Preview.postRequestMessage(WebViewMessages.toVscode.getFileUri, requestId, fileWebviewPath);
     } else if (command === WebViewMessages.toVscode.parseFileUri && requestId && payload) {
       const fileWebviewPath = getWebviewUrl(Preview.webview?.webview, payload);
       Preview.postRequestMessage(WebViewMessages.toVscode.getFileUri, requestId, fileWebviewPath);
     } else if (command === WebViewMessages.toVscode.getStyles && requestId) {
-      const cssWebviewPath = Preview.crntCss ? getWebviewUrl(Preview.webview?.webview, Preview.crntCss) : undefined;
+      const cssWebviewPath = Preview.crntCss
+        ? getWebviewUrl(Preview.webview?.webview, Preview.crntCss)
+        : undefined;
       Preview.postRequestMessage(WebViewMessages.toVscode.getStyles, requestId, cssWebviewPath);
     } else if (command === WebViewMessages.toVscode.getTheme && requestId) {
       try {
-        const themeName = payload || "";
+        const themeName = payload || '';
         const theme = await getTheme(themeName);
         Preview.postRequestMessage(WebViewMessages.toVscode.getTheme, requestId, theme);
       } catch (e) {
@@ -169,8 +185,13 @@ export class Preview {
       Preview.webview.title = `${Config.title}: ${payload}`;
     } else if (command === WebViewMessages.toVscode.getPreviousEnabled && requestId) {
       const previousEnabled =
-        Extension.getInstance().getSetting<boolean>(Config.presentationMode.previousEnabled) || false;
-      Preview.postRequestMessage(WebViewMessages.toVscode.getPreviousEnabled, requestId, previousEnabled);
+        Extension.getInstance().getSetting<boolean>(Config.presentationMode.previousEnabled) ||
+        false;
+      Preview.postRequestMessage(
+        WebViewMessages.toVscode.getPreviousEnabled,
+        requestId,
+        previousEnabled,
+      );
     } else if (command === WebViewMessages.toVscode.runCommand && payload) {
       await commands.executeCommand(payload);
     } else if (command === WebViewMessages.toVscode.getPresentationStarted) {
@@ -218,8 +239,8 @@ export class Preview {
   }
 
   private static async getWebviewContent(webview: Webview) {
-    const jsFile = "main.bundle.js";
-    const localServerUrl = "http://localhost:9001";
+    const jsFile = 'main.bundle.js';
+    const localServerUrl = 'http://localhost:9001';
 
     let scriptUrl = [];
     let moduleUrl = [];
@@ -230,43 +251,51 @@ export class Preview {
 
     if (extension.isProductionMode) {
       // Get the manifest file from the dist folder
-      const manifestPath = Uri.joinPath(extPath, "out", "preview", "manifest.json");
+      const manifestPath = Uri.joinPath(extPath, 'out', 'preview', 'manifest.json');
       const manifest = await readFile(manifestPath);
       const manifestJson = JSON.parse(manifest);
 
       for (const [key, value] of Object.entries<string>(manifestJson)) {
-        if (key.endsWith(".js")) {
-          scriptUrl.push(webview.asWebviewUri(Uri.joinPath(extPath, "out", "preview", value)).toString());
+        if (key.endsWith('.js')) {
+          scriptUrl.push(
+            webview.asWebviewUri(Uri.joinPath(extPath, 'out', 'preview', value)).toString(),
+          );
         }
       }
     } else {
       scriptUrl.push(`${localServerUrl}/${jsFile}`);
     }
 
-    scriptUrl.push(webview.asWebviewUri(Uri.joinPath(extPath, "assets", "slides", "tailwind.js")).toString());
+    scriptUrl.push(
+      webview.asWebviewUri(Uri.joinPath(extPath, 'assets', 'slides', 'tailwind.js')).toString(),
+    );
     const workspaceFolder = extension.workspaceFolder;
 
     const webComponents = extension.getSetting<string[]>(Config.webcomponents.scripts);
     if (webComponents) {
       for (const webComponent of webComponents) {
-        if (webComponent.startsWith("http")) {
+        if (webComponent.startsWith('http')) {
           moduleUrl.push(webComponent);
         } else if (workspaceFolder) {
-          moduleUrl.push(webview.asWebviewUri(Uri.joinPath(workspaceFolder.uri, webComponent)).toString());
+          moduleUrl.push(
+            webview.asWebviewUri(Uri.joinPath(workspaceFolder.uri, webComponent)).toString(),
+          );
         }
       }
     }
 
     const customTheme = extension.getSetting<string>(Config.slides.customTheme);
     if (customTheme) {
-      if (customTheme.startsWith("http")) {
+      if (customTheme.startsWith('http')) {
         styleUrl.push(customTheme);
       } else if (workspaceFolder) {
-        styleUrl.push(webview.asWebviewUri(Uri.joinPath(workspaceFolder.uri, customTheme)).toString());
+        styleUrl.push(
+          webview.asWebviewUri(Uri.joinPath(workspaceFolder.uri, customTheme)).toString(),
+        );
       }
     }
 
-    const webviewUrl = getWebviewUrl(webview, "");
+    const webviewUrl = getWebviewUrl(webview, '');
 
     return `<!DOCTYPE html>
     <html lang="en">
@@ -277,10 +306,10 @@ export class Preview {
     <body>
       <div id="root" data-webview-url="${webviewUrl}"></div>
   
-      ${scriptUrl.map((url) => `<script src="${url}"></script>`).join("\n")}
-      ${moduleUrl.map((url) => `<script src="${url}" type="module"></script>`).join("\n")}
+      ${scriptUrl.map((url) => `<script src="${url}"></script>`).join('\n')}
+      ${moduleUrl.map((url) => `<script src="${url}" type="module"></script>`).join('\n')}
 
-      ${styleUrl.map((url) => `<link rel="stylesheet" href="${url}">`).join("\n")}
+      ${styleUrl.map((url) => `<link rel="stylesheet" href="${url}">`).join('\n')}
 
       <img style="display:none" src="https://api.visitorbadge.io/api/combined?path=https:%2f%2fgithub.com%2festruyf%2fvscode-demo-time&labelColor=%23202736&countColor=%23FFD23F&slug=preview" alt="Preview usage" />
     </body>

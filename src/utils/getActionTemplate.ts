@@ -1,5 +1,5 @@
-import { QuickPickItem } from "vscode";
-import { Action } from "../models";
+import { QuickPickItem } from 'vscode';
+import { Action } from '../models';
 
 export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   const action = selectedAction.label;
@@ -10,15 +10,15 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.Open) {
     return {
       action: Action.Open,
-      path: "",
+      path: '',
     };
   }
 
   if (action === Action.Create) {
     return {
       action: Action.Create,
-      path: "",
-      contentPath: "",
+      path: '',
+      contentPath: '',
     };
   }
 
@@ -31,8 +31,8 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.Rename || action === Action.Move) {
     return {
       action: Action.Rename,
-      path: "",
-      dest: "",
+      path: '',
+      dest: '',
       overwrite: false,
     };
   }
@@ -40,8 +40,8 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.Copy) {
     return {
       action: Action.Copy,
-      path: "",
-      dest: "",
+      path: '',
+      dest: '',
       overwrite: false,
     };
   }
@@ -49,7 +49,7 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.DeleteFile) {
     return {
       action: Action.DeleteFile,
-      path: "",
+      path: '',
     };
   }
 
@@ -71,9 +71,9 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.ApplyPatch) {
     return {
       action: Action.ApplyPatch,
-      path: "",
-      contentPath: "",
-      patch: "",
+      path: '',
+      contentPath: '',
+      patch: '',
     };
   }
 
@@ -83,21 +83,21 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.OpenSlide) {
     return {
       action: Action.OpenSlide,
-      path: "",
+      path: '',
     };
   }
 
   if (action === Action.MarkdownPreview) {
     return {
       action: Action.MarkdownPreview,
-      path: "",
+      path: '',
     };
   }
 
   if (action === Action.ImagePreview) {
     return {
       action: Action.ImagePreview,
-      path: "",
+      path: '',
     };
   }
 
@@ -107,61 +107,61 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.Highlight) {
     return {
       action: Action.Highlight,
-      path: "",
-      startPlaceholder: "",
-      endPlaceholder: "",
+      path: '',
+      startPlaceholder: '',
+      endPlaceholder: '',
     };
   }
 
   if (action === Action.PositionCursor) {
     return {
       action: Action.PositionCursor,
-      path: "",
-      position: "",
+      path: '',
+      position: '',
     };
   }
 
   if (action === Action.Insert) {
     return {
       action: Action.Insert,
-      path: "",
-      startPlaceholder: "",
-      contentPath: "",
+      path: '',
+      startPlaceholder: '',
+      contentPath: '',
     };
   }
 
   if (action === Action.Replace) {
     return {
       action: Action.Replace,
-      path: "",
-      startPlaceholder: "",
-      endPlaceholder: "",
-      contentPath: "",
+      path: '',
+      startPlaceholder: '',
+      endPlaceholder: '',
+      contentPath: '',
     };
   }
 
   if (action === Action.Write) {
     return {
       action: Action.Write,
-      content: "",
-      path: "",
-      position: "",
+      content: '',
+      path: '',
+      position: '',
     };
   }
 
   if (action === Action.Unselect) {
     return {
       action: Action.Unselect,
-      path: "",
+      path: '',
     };
   }
 
   if (action === Action.Delete) {
     return {
       action: Action.Delete,
-      path: "",
-      startPlaceholder: "",
-      endPlaceholder: "",
+      path: '',
+      startPlaceholder: '',
+      endPlaceholder: '',
     };
   }
 
@@ -178,8 +178,8 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     return {
       action: Action.SetSetting,
       setting: {
-        key: "",
-        value: "",
+        key: '',
+        value: '',
       },
     };
   }
@@ -187,7 +187,7 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.SetTheme) {
     return {
       action: Action.SetTheme,
-      theme: "",
+      theme: '',
     };
   }
 
@@ -215,16 +215,16 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.ExecuteTerminalCommand) {
     return {
       action: Action.ExecuteTerminalCommand,
-      command: "",
+      command: '',
     };
   }
 
   if (action === Action.ExecuteScript) {
     return {
       action: Action.ExecuteScript,
-      id: "",
-      path: "",
-      command: "node",
+      id: '',
+      path: '',
+      command: 'node',
     };
   }
 
@@ -256,7 +256,7 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.ExecuteVSCodeCommand) {
     return {
       action: Action.ExecuteVSCodeCommand,
-      command: "",
+      command: '',
     };
   }
 
@@ -264,8 +264,8 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     return {
       action: Action.SetState,
       state: {
-        key: "",
-        value: "",
+        key: '',
+        value: '',
       },
     };
   }
@@ -273,14 +273,14 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.ShowInfoMessage) {
     return {
       action: Action.ShowInfoMessage,
-      message: "",
+      message: '',
     };
   }
 
   if (action === Action.OpenWebsite) {
     return {
       action: Action.OpenWebsite,
-      url: "",
+      url: '',
       openInVSCode: false,
     };
   }
@@ -291,8 +291,87 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.Snippet) {
     return {
       action: Action.Snippet,
-      contentPath: "",
+      contentPath: '',
       args: {},
+    };
+  }
+
+  /**
+   * External applications
+   */
+  if (action === Action.openPowerPoint) {
+    return {
+      action: Action.openPowerPoint,
+    };
+  }
+
+  if (action === Action.openKeynote) {
+    return {
+      action: Action.openKeynote,
+    };
+  }
+
+  /**
+   * GitHub Copilot actions
+   */
+  if (action === Action.openChat) {
+    return {
+      action: Action.openChat,
+    };
+  }
+  if (action === Action.newChat) {
+    return {
+      action: Action.newChat,
+    };
+  }
+  if (action === Action.askChat) {
+    return {
+      action: Action.askChat,
+      message: '',
+    };
+  }
+  if (action === Action.editChat) {
+    return {
+      action: Action.editChat,
+      message: '',
+    };
+  }
+  if (action === Action.agentChat) {
+    return {
+      action: Action.agentChat,
+      message: '',
+    };
+  }
+  if (action === Action.closeChat) {
+    return {
+      action: Action.closeChat,
+    };
+  }
+
+  // Interaction actions
+  if (action === Action.TypeText) {
+    return {
+      action: Action.TypeText,
+      content: '',
+    };
+  }
+
+  if (action === Action.CopyToClipboard) {
+    return {
+      action: Action.CopyToClipboard,
+      content: '',
+    };
+  }
+
+  if (action === Action.PasteFromClipboard) {
+    return {
+      action: Action.PasteFromClipboard,
+    };
+  }
+
+  if (action === Action.PressEnter) {
+    return {
+      action: Action.PressEnter,
     };
   }
 

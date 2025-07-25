@@ -1,12 +1,12 @@
-import { ProgressLocation, Uri, window } from "vscode";
-import { Action, CommandType, Step } from "../models";
-import { Notifications } from "./Notifications";
-import { Config, StateKeys } from "../constants";
-import { evaluateCommand, fileExists, getPlatform } from "../utils";
-import { Extension } from "./Extension";
-import { exec } from "child_process";
-import { Logger } from "./Logger";
-import { StateManager } from "./StateManager";
+import { ProgressLocation, Uri, window } from 'vscode';
+import { Action, CommandType, Step } from '../models';
+import { Notifications } from './Notifications';
+import { Config, StateKeys } from '../constants';
+import { evaluateCommand, fileExists, getPlatform } from '../utils';
+import { Extension } from './Extension';
+import { exec } from 'child_process';
+import { Logger } from './Logger';
+import { StateManager } from './StateManager';
 
 export class ScriptExecutor {
   public static async run(step: Step): Promise<void> {
@@ -37,13 +37,13 @@ export class ScriptExecutor {
         const id = step.id as string;
 
         const platform = getPlatform();
-        if (step.command === CommandType.Node && platform !== "windows") {
+        if (step.command === CommandType.Node && platform !== 'windows') {
           step.command = await evaluateCommand(CommandType.Node);
         }
 
         const wsPath = Extension.getInstance().workspaceFolder;
         if (!wsPath) {
-          Notifications.error("Workspace folder not found.");
+          Notifications.error('Workspace folder not found.');
           return;
         }
 
@@ -53,7 +53,7 @@ export class ScriptExecutor {
           return;
         }
 
-        if (platform === "windows" && command.toLowerCase() === "powershell") {
+        if (platform === 'windows' && command.toLowerCase() === 'powershell') {
           command = `${command} -File`;
         }
 
@@ -64,7 +64,7 @@ export class ScriptExecutor {
         if (output) {
           await StateManager.update(`${StateKeys.prefix.script}${id}`, output);
         }
-      }
+      },
     );
   }
 
@@ -74,7 +74,7 @@ export class ScriptExecutor {
    * @param wsPath
    * @returns
    */
-  private static async executeScriptAsync(fullScript: string, wsPath: string): Promise<string> {
+  public static async executeScriptAsync(fullScript: string, wsPath: string): Promise<string> {
     return new Promise((resolve, reject) => {
       exec(fullScript, { cwd: wsPath }, (error, stdout) => {
         if (error) {

@@ -1,5 +1,5 @@
-import { PresenterView } from "./../presenterView/PresenterView";
-import { COMMAND, Config, ContextKeys, StateKeys, WebViewMessages } from "../constants";
+import { PresenterView } from './../presenterView/PresenterView';
+import { COMMAND, Config, ContextKeys, StateKeys, WebViewMessages } from '../constants';
 import {
   Action,
   Demo,
@@ -10,35 +10,26 @@ import {
   Step,
   Subscription,
   Version,
-} from "../models";
-import { Extension } from "./Extension";
+} from '../models';
+import { Extension } from './Extension';
 import {
   Position,
   Range,
   Selection,
-  Terminal,
-  TextDocument,
   TextEditor,
   TextEditorRevealType,
   Uri,
-  WorkspaceEdit,
-  WorkspaceFolder,
   commands,
   window,
   workspace,
-} from "vscode";
-import { FileProvider } from "./FileProvider";
-import { DemoPanel } from "../panels/DemoPanel";
+} from 'vscode';
+import { DemoFileProvider } from './DemoFileProvider';
+import { DemoPanel } from '../panels/DemoPanel';
 import {
   getVariables,
   getFileContents,
-  getLineInsertionSpeed,
-  getLineRange,
   getPositionAndRange,
-  insertContent,
-  insertLineByLine,
   insertVariables,
-  replaceContent,
   sleep,
   getNextDemoFile,
   getPreviousDemoFile,
@@ -48,32 +39,36 @@ import {
   clearVariablesState,
   setContext,
   writeFile,
-  applyPatch,
   updateConfig,
   togglePresentationView,
   removeDemosForCurrentPosition,
-} from "../utils";
-import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
-import { DecoratorService } from "./DecoratorService";
-import { Notifications } from "./Notifications";
-import { parse as jsonParse } from "jsonc-parser";
-import { Logger } from "./Logger";
-import { NotesService } from "./NotesService";
-import { ScriptExecutor } from "./ScriptExecutor";
-import { StateManager } from "./StateManager";
-import { Preview } from "../preview/Preview";
-import { DemoStatusBar } from "./DemoStatusBar";
+  saveFiles,
+} from '../utils';
+import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
+import { DecoratorService } from './DecoratorService';
+import { Notifications } from './Notifications';
+import { parse as jsonParse } from 'jsonc-parser';
+import { Logger } from './Logger';
+import { NotesService } from './NotesService';
+import { ScriptExecutor } from './ScriptExecutor';
+import { StateManager } from './StateManager';
+import { Preview } from '../preview/Preview';
+import { DemoStatusBar } from './DemoStatusBar';
+import { ExternalAppsService } from './ExternalAppsService';
+import { TerminalService } from './TerminalService';
+import { ChatActionsService } from './ChatActionsService';
+import { TextTypingService } from './TextTypingService';
+import { FileActionService } from './FileActionService';
+import { InteractionService } from './InteractionService';
 
 const DEFAULT_START_VALUE = {
-  filePath: "",
+  filePath: '',
   version: 2 as Version,
   demo: [],
 };
 
 export class DemoRunner {
   private static isPresentationMode = false;
-  private static terminal: { [id: string]: Terminal | null } = {};
-  private static readonly terminalName = "DemoTime";
   private static crntFilePath: string | undefined;
   private static crntHighlightRange: Range | undefined;
   private static crntZoom: number | undefined;
@@ -88,12 +83,21 @@ export class DemoRunner {
 
     subscriptions.push(commands.registerCommand(COMMAND.start, DemoRunner.start));
     subscriptions.push(commands.registerCommand(COMMAND.previous, DemoRunner.previous));
-    subscriptions.push(commands.registerCommand(COMMAND.togglePresentationMode, DemoRunner.togglePresentationMode));
+    subscriptions.push(
+      commands.registerCommand(COMMAND.togglePresentationMode, DemoRunner.togglePresentationMode),
+    );
     subscriptions.push(commands.registerCommand(COMMAND.runStep, DemoRunner.startDemo));
     subscriptions.push(commands.registerCommand(COMMAND.runById, DemoRunner.runById));
     subscriptions.push(commands.registerCommand(COMMAND.reset, DemoRunner.reset));
-    subscriptions.push(commands.registerCommand(COMMAND.toggleHighlight, DemoRunner.toggleHighlight));
-    subscriptions.push(commands.registerCommand(COMMAND.toggleSelectionHighlight, DemoRunner.toggleSelectionHighlight));
+    subscriptions.push(
+      commands.registerCommand(COMMAND.toggleHighlight, DemoRunner.toggleHighlight),
+    );
+    subscriptions.push(
+      commands.registerCommand(
+        COMMAND.toggleSelectionHighlight,
+        DemoRunner.toggleSelectionHighlight,
+      ),
+    );
 
     window.onDidChangeActiveTextEditor(async (editor) => {
       if (editor && editor.document.fileName === DemoRunner.crntFilePath) {
@@ -115,7 +119,12 @@ export class DemoRunner {
    * @param zoom - The zoom level for the highlighting.
    * @param highlightWholeLine - Indicates whether the highlighting should be applied to the whole line.
    */
-  public static setCrntHighlighting(filePath?: string, range?: Range, zoom?: number, highlightWholeLine?: boolean) {
+  public static setCrntHighlighting(
+    filePath?: string,
+    range?: Range,
+    zoom?: number,
+    highlightWholeLine?: boolean,
+  ) {
     DemoRunner.crntFilePath = filePath;
     DemoRunner.crntHighlightRange = range;
     DemoRunner.crntZoom = zoom;
@@ -173,7 +182,9 @@ export class DemoRunner {
    * @returns {Version} The detected version of the current demo file.
    */
   public static getCurrentVersion(): Version {
-    const executingFile = Extension.getInstance().getState<DemoFileCache>(StateKeys.executingDemoFile);
+    const executingFile = Extension.getInstance().getState<DemoFileCache>(
+      StateKeys.executingDemoFile,
+    );
     if (!executingFile) {
       return 2;
     }
@@ -184,7 +195,7 @@ export class DemoRunner {
     }
 
     // Only old demo files without a version property should be version 1
-    return typeof executingFile.version === "number" ? (executingFile.version as Version) : 1;
+    return typeof executingFile.version === 'number' ? (executingFile.version as Version) : 1;
   }
 
   /**
@@ -195,17 +206,22 @@ export class DemoRunner {
    * @returns A promise that resolves when the presentation mode is toggled.
    */
   private static async togglePresentationMode(enable?: boolean): Promise<void> {
-    DemoRunner.isPresentationMode = typeof enable !== "undefined" ? enable : !DemoRunner.isPresentationMode;
+    DemoRunner.isPresentationMode =
+      typeof enable !== 'undefined' ? enable : !DemoRunner.isPresentationMode;
     DemoStatusBar.setPresenting(DemoRunner.isPresentationMode);
     await setContext(ContextKeys.presentation, DemoRunner.isPresentationMode);
-    PresenterView.postMessage(WebViewMessages.toWebview.updatePresentationStarted, DemoRunner.isPresentationMode);
+    PresenterView.postMessage(
+      WebViewMessages.toWebview.updatePresentationStarted,
+      DemoRunner.isPresentationMode,
+    );
     if (DemoRunner.isPresentationMode) {
-      DemoPanel.updateMessage("Presentation mode enabled");
+      DemoPanel.updateMessage('Presentation mode enabled');
       await DemoRunner.getDemoFile(undefined, true);
       Preview.postMessage(WebViewMessages.toWebview.updateIsInPresentationMode, true);
     } else {
       DemoPanel.updateMessage();
       Preview.postMessage(WebViewMessages.toWebview.updateIsInPresentationMode, false);
+      await commands.executeCommand(COMMAND.resetCountdown);
     }
     DemoPanel.update();
   }
@@ -231,7 +247,9 @@ export class DemoRunner {
    *
    * @returns {Promise<void>} A promise that resolves when the demo runner has started.
    */
-  private static async start(item: ActionTreeItem | { demoFilePath: string; description: string }): Promise<void> {
+  private static async start(
+    item: ActionTreeItem | { demoFilePath: string; description: string },
+  ): Promise<void> {
     if (Preview.isListening()) {
       return;
     }
@@ -247,7 +265,7 @@ export class DemoRunner {
     let demos: Demo[] = demoFile?.demo.demos || [];
 
     if (demos.length <= 0) {
-      Notifications.error("No demo steps found");
+      Notifications.error('No demo steps found');
       return;
     }
 
@@ -263,8 +281,12 @@ export class DemoRunner {
       // Check if there is a next demo file
       const nextFile = await getNextDemoFile(demoFile);
       if (!nextFile) {
-        const yesOrNo = await Notifications.info("No next demo steps found. Do you want to reset?", "Yes", "No");
-        if (yesOrNo === "Yes") {
+        const yesOrNo = await Notifications.info(
+          'No next demo steps found. Do you want to reset?',
+          'Yes',
+          'No',
+        );
+        if (yesOrNo === 'Yes') {
           await DemoRunner.reset();
           await commands.executeCommand(COMMAND.start);
         }
@@ -278,7 +300,7 @@ export class DemoRunner {
       // Start the next demo file
       DemoRunner.start({
         demoFilePath: nextFile.filePath,
-        description: nextFile.filePath.split("/").pop(),
+        description: nextFile.filePath.split('/').pop(),
       });
       return;
     }
@@ -320,11 +342,11 @@ export class DemoRunner {
       return;
     }
 
-    const demoFile = await FileProvider.getFile(Uri.file(filePath));
+    const demoFile = await DemoFileProvider.getFile(Uri.file(filePath));
     const demos = demoFile?.demos || [];
 
     if (demos.length <= 0) {
-      Notifications.error("No demo steps found");
+      Notifications.error('No demo steps found');
       return;
     }
 
@@ -339,7 +361,7 @@ export class DemoRunner {
         filePath,
       });
       if (!previousFile) {
-        Notifications.info("No previous demo steps found");
+        Notifications.info('No previous demo steps found');
         return;
       }
 
@@ -390,7 +412,11 @@ export class DemoRunner {
    * @param demoToRun - The demo to run.
    * @returns A promise that resolves when the demo execution is complete.
    */
-  private static async startDemo(demoToRun: { filePath: string; idx: number; demo: Demo }): Promise<void> {
+  private static async startDemo(demoToRun: {
+    filePath: string;
+    idx: number;
+    demo: Demo;
+  }): Promise<void> {
     if (!demoToRun) {
       return;
     }
@@ -404,7 +430,7 @@ export class DemoRunner {
       executingFile.filePath = demoToRun.filePath;
       executingFile.demo = [];
 
-      const demoFile = await FileProvider.getFile(Uri.file(demoToRun.filePath));
+      const demoFile = await DemoFileProvider.getFile(Uri.file(demoToRun.filePath));
       executingFile.version = demoFile?.version || 1;
     }
 
@@ -432,7 +458,7 @@ export class DemoRunner {
     Logger.info(`Running demo with id: ${id}`);
 
     // Get all the demo files
-    const demoFiles = await FileProvider.getFiles();
+    const demoFiles = await DemoFileProvider.getFiles();
     if (!demoFiles) {
       return;
     }
@@ -449,7 +475,7 @@ export class DemoRunner {
     }
 
     if (!filePath) {
-      Notifications.error("No demo found with the specified id");
+      Notifications.error('No demo found with the specified id');
       return;
     }
 
@@ -462,7 +488,7 @@ export class DemoRunner {
     // Get the demo idx
     const demoIdx = demoFiles[filePath].demos.findIndex((demo) => demo.id === id);
     if (demoIdx < 0) {
-      Notifications.error("No demo found with the specified id");
+      Notifications.error('No demo found with the specified id');
       return;
     }
     const demoToRun = demoFiles[filePath].demos[demoIdx];
@@ -548,9 +574,32 @@ export class DemoRunner {
       // Verify if the current step has a `STATE_` or `SCRIPT_` variable which needs to be updated
       // This can happen when the `setState` action is used during the current demo execution (previous step)
       let stepJson = JSON.stringify(step);
-      if ((stepJson.includes(StateKeys.prefix.state) || stepJson.includes(StateKeys.prefix.script)) && variables) {
+      if (
+        (stepJson.includes(StateKeys.prefix.state) || stepJson.includes(StateKeys.prefix.script)) &&
+        variables
+      ) {
         stepJson = await insertVariables(stepJson, variables);
         step = jsonParse(stepJson);
+      }
+
+      if (step.action === Action.openChat) {
+        await ChatActionsService.openChat();
+        continue;
+      } else if (step.action === Action.newChat) {
+        await ChatActionsService.newChat();
+        continue;
+      } else if (step.action === Action.askChat) {
+        await ChatActionsService.askChat(step);
+        continue;
+      } else if (step.action === Action.editChat) {
+        await ChatActionsService.editChat(step);
+        continue;
+      } else if (step.action === Action.agentChat) {
+        await ChatActionsService.agentChat(step);
+        continue;
+      } else if (step.action === Action.closeChat) {
+        await ChatActionsService.closeChat();
+        continue;
       }
 
       // Wait for the specified timeout
@@ -558,9 +607,26 @@ export class DemoRunner {
         await sleep(step.timeout || 1000);
         continue;
       } else if (step.action === Action.WaitForInput) {
-        const answer = await getUserInput("Press any key to continue");
+        const answer = await getUserInput('Press any key to continue');
         if (answer === undefined) {
           return;
+        }
+        continue;
+      }
+
+      // Open external applications
+      if (step.action === Action.openPowerPoint) {
+        try {
+          await ExternalAppsService.openPowerPoint();
+        } catch (error) {
+          Notifications.error(`Failed to open PowerPoint: ${(error as Error).message}`);
+        }
+        continue;
+      } else if (step.action === Action.openKeynote) {
+        try {
+          await ExternalAppsService.openKeynote();
+        } catch (error) {
+          Notifications.error(`Failed to open Keynote: ${(error as Error).message}`);
         }
         continue;
       }
@@ -568,7 +634,7 @@ export class DemoRunner {
       // Update settings
       if (step.action === Action.SetSetting) {
         if (!step.setting || !step.setting.key) {
-          Notifications.error("No setting key or value specified");
+          Notifications.error('No setting key or value specified');
           continue;
         }
 
@@ -579,16 +645,16 @@ export class DemoRunner {
 
       if (step.action === Action.SetTheme) {
         if (!step.theme) {
-          Notifications.error("No theme specified");
+          Notifications.error('No theme specified');
           continue;
         }
 
-        await updateConfig("workbench.colorTheme", step.theme);
+        await updateConfig('workbench.colorTheme', step.theme);
         continue;
       }
 
       if (step.action === Action.UnsetTheme) {
-        await updateConfig("workbench.colorTheme", null);
+        await updateConfig('workbench.colorTheme', null);
         continue;
       }
 
@@ -605,7 +671,7 @@ export class DemoRunner {
       // Set state
       if (step.action === Action.SetState) {
         if (!step.state || !step.state.key || !step.state.value) {
-          Notifications.error("No state key or value specified");
+          Notifications.error('No state key or value specified');
           return;
         }
 
@@ -619,7 +685,7 @@ export class DemoRunner {
       // Execute the specified VSCode command
       if (step.action === Action.ExecuteVSCodeCommand) {
         if (!step.command) {
-          Notifications.error("No command specified");
+          Notifications.error('No command specified');
           continue;
         }
 
@@ -634,7 +700,7 @@ export class DemoRunner {
 
       if (step.action === Action.ShowInfoMessage) {
         if (!step.message) {
-          Notifications.error("No message specified");
+          Notifications.error('No message specified');
           continue;
         }
 
@@ -644,27 +710,27 @@ export class DemoRunner {
 
       if (step.action === Action.OpenWebsite) {
         if (!step.url) {
-          Notifications.error("No URL specified");
+          Notifications.error('No URL specified');
           continue;
         }
 
         if (step.openInVSCode) {
-          await commands.executeCommand("simpleBrowser.show", Uri.parse(step.url));
+          await commands.executeCommand('simpleBrowser.show', Uri.parse(step.url));
         } else {
-          await commands.executeCommand("vscode.open", Uri.parse(step.url));
+          await commands.executeCommand('vscode.open', Uri.parse(step.url));
           continue;
         }
       }
 
       // Run the specified terminal command
       if (step.action === Action.ExecuteTerminalCommand) {
-        await DemoRunner.executeTerminalCommand(step.command, step.terminalId);
+        await TerminalService.executeCommand(step);
         continue;
       }
 
       // Run the specified terminal command
       if (step.action === Action.CloseTerminal) {
-        DemoRunner.closeTerminal(step.terminalId);
+        await TerminalService.closeTerminal(step.terminalId);
         continue;
       }
 
@@ -678,15 +744,15 @@ export class DemoRunner {
         // Write the content at the current position
         const editor = window.activeTextEditor;
         if (!editor) {
-          Notifications.error("No active text editor found");
+          Notifications.error('No active text editor found');
           return;
         }
 
         const position = editor.selection.active;
-        const content = step.content || "";
+        const content = step.content || '';
 
         if (!content) {
-          Notifications.error("No content to write");
+          Notifications.error('No content to write');
           return;
         }
 
@@ -695,21 +761,46 @@ export class DemoRunner {
       }
 
       if (step.action === Action.Format) {
-        await commands.executeCommand("editor.action.formatDocument");
+        await commands.executeCommand('editor.action.formatDocument');
         continue;
       }
 
       if (step.action === Action.Save) {
-        await DemoRunner.saveFile();
+        await saveFiles();
       }
 
       if (step.action === Action.Close) {
-        await commands.executeCommand("workbench.action.closeActiveEditor");
+        await commands.executeCommand('workbench.action.closeActiveEditor');
         continue;
       }
 
       if (step.action === Action.CloseAll) {
-        await commands.executeCommand("workbench.action.closeAllEditors");
+        await commands.executeCommand('workbench.action.closeAllEditors');
+        continue;
+      }
+
+      if (step.action === Action.TypeText) {
+        await InteractionService.typeText(step.content, step.insertTypingSpeed);
+        continue;
+      }
+
+      if (step.action === Action.PressEnter) {
+        await InteractionService.pressEnter();
+        continue;
+      }
+
+      if (step.action === Action.CopyToClipboard) {
+        await InteractionService.copyToClipboard({
+          content: step.content,
+          contentPath: step.contentPath,
+          variables,
+          workspaceFolder,
+        });
+        continue;
+      }
+
+      if (step.action === Action.PasteFromClipboard) {
+        await InteractionService.pasteFromClipboard();
         continue;
       }
 
@@ -733,39 +824,34 @@ export class DemoRunner {
       }
 
       if (step.action === Action.Open) {
-        await commands.executeCommand("vscode.open", fileUri);
+        FileActionService.open(fileUri);
         continue;
       }
 
       if (step.action === Action.MarkdownPreview) {
-        await commands.executeCommand("markdown.showPreview", fileUri);
-        continue;
-      }
-
-      if (step.action === Action.Rename) {
-        DemoRunner.rename(workspaceFolder, fileUri, step);
+        await commands.executeCommand('markdown.showPreview', fileUri);
         continue;
       }
 
       if (step.action === Action.Copy) {
-        DemoRunner.copy(workspaceFolder, fileUri, step);
+        FileActionService.copy(workspaceFolder, fileUri, step);
         continue;
       }
 
-      if (step.action === Action.Move) {
-        DemoRunner.rename(workspaceFolder, fileUri, step);
+      if (step.action === Action.Move || step.action === Action.Rename) {
+        FileActionService.rename(workspaceFolder, fileUri, step);
         continue;
       }
 
       if (step.action === Action.DeleteFile) {
-        await DemoRunner.deleteFile(workspaceFolder, fileUri);
+        await FileActionService.delete(fileUri);
         continue;
       }
 
-      let content = step.content || "";
+      let content = step.content || '';
       if (step.contentPath) {
         const fileContent = await getFileContents(workspaceFolder, step.contentPath);
-        if (!fileContent) {
+        if (typeof fileContent !== 'string') {
           continue;
         }
         content = fileContent;
@@ -777,7 +863,7 @@ export class DemoRunner {
       }
 
       if (step.action === Action.ApplyPatch) {
-        await applyPatch(fileUri, content, step.patch);
+        await TextTypingService.applyPatch(fileUri, content, step);
         continue;
       }
 
@@ -794,27 +880,34 @@ export class DemoRunner {
       if (step.action === Action.Highlight && (crntRange || crntPosition)) {
         let highlightWholeLine = step.highlightWholeLine;
         if (usesPlaceholders) {
-          highlightWholeLine = typeof step.highlightWholeLine === "undefined" ? true : step.highlightWholeLine;
+          highlightWholeLine =
+            typeof step.highlightWholeLine === 'undefined' ? true : step.highlightWholeLine;
         }
 
-        await DemoRunner.highlight(textEditor, crntRange, crntPosition, step.zoom, highlightWholeLine);
+        await DemoRunner.highlight(
+          textEditor,
+          crntRange,
+          crntPosition,
+          step.zoom,
+          highlightWholeLine,
+        );
         continue;
       }
 
       // Code actions
       if (step.action === Action.Insert) {
-        await DemoRunner.insert(textEditor, editor, fileUri, content, crntPosition, step.lineInsertionDelay);
+        await TextTypingService.insert(textEditor, editor, fileUri, content, crntPosition, step);
         continue;
       }
 
       if (step.action === Action.Write) {
         if (!content) {
-          Notifications.error("No content to write");
+          Notifications.error('No content to write');
           return;
         }
 
         if (!crntPosition) {
-          Notifications.error("No position specified where to write the content");
+          Notifications.error('No position specified where to write the content');
           return;
         }
 
@@ -823,207 +916,36 @@ export class DemoRunner {
       }
 
       if (step.action === Action.Replace) {
-        await DemoRunner.replace(
+        await TextTypingService.replace(
           textEditor,
           editor,
           fileUri,
           content,
           crntRange,
           crntPosition,
-          step.lineInsertionDelay
+          step,
         );
         continue;
       }
 
       if (step.action === Action.PositionCursor) {
         if (crntPosition) {
-          textEditor.revealRange(new Range(crntPosition, crntPosition), TextEditorRevealType.InCenter);
+          textEditor.revealRange(
+            new Range(crntPosition, crntPosition),
+            TextEditorRevealType.InCenter,
+          );
           textEditor.selection = new Selection(crntPosition, crntPosition);
         }
         continue;
       }
 
       if (step.action === Action.Delete) {
-        await DemoRunner.delete(editor, fileUri, crntRange, crntPosition);
+        await TextTypingService.delete(editor, fileUri, crntRange, crntPosition);
         continue;
       }
     }
 
     DemoPanel.update();
-  }
-
-  /**
-   * Inserts content into a text editor at the specified position or range.
-   * If a position is provided, the content is inserted at that position.
-   * If a range is provided, the content replaces the text within that range.
-   * @param textEditor The text editor where the content should be inserted.
-   * @param editor The text document associated with the text editor.
-   * @param fileUri The URI of the file where the content should be inserted.
-   * @param content The content to be inserted.
-   * @param position The position at which the content should be inserted.
-   */
-  private static async insert(
-    textEditor: TextEditor,
-    editor: TextDocument,
-    fileUri: Uri,
-    content: string,
-    position: Position | undefined,
-    lineInsertionDelay?: number
-  ): Promise<void> {
-    if (!position) {
-      return;
-    }
-
-    let lineContent = null;
-
-    try {
-      const line = editor.lineAt(position);
-      lineContent = line.text;
-    } catch (error) {
-      // do nothing
-    }
-
-    const lineSpeed = getLineInsertionSpeed(lineInsertionDelay);
-
-    let range = new Range(position, position);
-    if (!lineContent) {
-      // Insert the content at the specified position
-      if (!lineSpeed) {
-        await insertContent(fileUri, position, content);
-      } else {
-        const lineRange = getLineRange(editor, position);
-        if (!lineRange) {
-          Logger.error("Line range not found");
-          return;
-        }
-        textEditor.revealRange(lineRange, TextEditorRevealType.InCenter);
-        await insertLineByLine(fileUri, lineRange.start.line, content, lineSpeed);
-      }
-    } else {
-      if (!lineSpeed) {
-        const line = editor.lineAt(position);
-        range = line.range;
-        await replaceContent(fileUri, line.range, content);
-      } else {
-        const range = getLineRange(editor, position);
-        if (!range) {
-          Logger.error("Line range not found");
-          return;
-        }
-        await replaceContent(fileUri, range, "");
-        textEditor.revealRange(range, TextEditorRevealType.InCenter);
-        await insertLineByLine(fileUri, range.start.line, content, lineSpeed);
-      }
-    }
-
-    if (textEditor) {
-      textEditor.revealRange(range, TextEditorRevealType.InCenter);
-      textEditor.selection = new Selection(range.start, range.start);
-    }
-
-    await DemoRunner.saveFile();
-  }
-
-  /**
-   * Replaces the specified range or position in the text editor with the given content.
-   * If a range is provided, it replaces the content within that range.
-   * If a position is provided, it replaces the content within the line of that position.
-   * @param textEditor The text editor in which the replacement should occur.
-   * @param editor The text document associated with the text editor.
-   * @param fileUri The URI of the file being edited.
-   * @param content The content to replace with.
-   * @param range The range within which the content should be replaced.
-   * @param position The position within the line where the content should be replaced.
-   */
-  private static async replace(
-    textEditor: TextEditor,
-    editor: TextDocument,
-    fileUri: Uri,
-    content: string,
-    range: Range | undefined,
-    position: Position | undefined,
-    lineInsertionDelay?: number
-  ): Promise<void> {
-    if (!range && !position) {
-      return;
-    }
-
-    const lineSpeed = getLineInsertionSpeed(lineInsertionDelay);
-
-    if (range) {
-      if (!lineSpeed) {
-        await replaceContent(fileUri, range, content);
-      } else {
-        const startLine = editor.lineAt(range.start);
-        const endLine = editor.lineAt(range.end);
-        const start = new Position(startLine.lineNumber, 0);
-        const end = new Position(endLine.lineNumber, endLine.text.length);
-
-        await replaceContent(fileUri, new Range(start, end), "");
-
-        textEditor.revealRange(new Range(start, end), TextEditorRevealType.InCenter);
-        await insertLineByLine(fileUri, startLine.lineNumber, content, lineSpeed);
-      }
-    } else if (position) {
-      if (!lineSpeed) {
-        const line = editor.lineAt(position);
-        range = line.range;
-
-        await replaceContent(fileUri, line.range, content);
-      } else {
-        range = getLineRange(editor, position);
-
-        if (!range) {
-          Logger.error("Line range not found");
-          return;
-        }
-
-        await replaceContent(fileUri, range, "");
-
-        textEditor.revealRange(range, TextEditorRevealType.InCenter);
-        await insertLineByLine(fileUri, range.start.line, content, lineSpeed);
-      }
-    }
-
-    if (textEditor && range) {
-      textEditor.revealRange(range, TextEditorRevealType.InCenter);
-      textEditor.selection = new Selection(range.start, range.start);
-    }
-
-    await DemoRunner.saveFile();
-  }
-
-  /**
-   * Deletes the specified range or line in the given editor.
-   * If a range is provided, it deletes the range.
-   * If a position is provided, it deletes the line at that position.
-   * @param editor The text document editor.
-   * @param fileUri The URI of the file being edited.
-   * @param range The range to delete (optional).
-   * @param position The position of the line to delete (optional).
-   */
-  private static async delete(
-    editor: TextDocument,
-    fileUri: Uri,
-    range: Range | undefined,
-    position: Position | undefined
-  ): Promise<void> {
-    if (!range && !position) {
-      return;
-    }
-
-    const edit = new WorkspaceEdit();
-
-    if (range) {
-      edit.delete(fileUri, range);
-    } else if (position) {
-      const line = editor.lineAt(position);
-      edit.delete(fileUri, line.range);
-    }
-
-    await workspace.applyEdit(edit);
-
-    await DemoRunner.saveFile();
   }
 
   /**
@@ -1077,7 +999,8 @@ export class DemoRunner {
     const selection = activeEditor.selection;
     const range = selection.isSingleLine ? selection : new Range(selection.start, selection.end);
     const endLineText = activeEditor.document.lineAt(selection.end).text;
-    let highlightWholeLine = range.start.character === 0 && range.end.character === endLineText.length;
+    let highlightWholeLine =
+      range.start.character === 0 && range.end.character === endLineText.length;
     if (range.start.line === range.end.line && range.start.character === range.end.character) {
       highlightWholeLine = true;
     }
@@ -1104,7 +1027,7 @@ export class DemoRunner {
     position: Position | undefined,
     zoomLevel?: number,
     highlightWholeLine?: boolean,
-    keepInMemory = true
+    keepInMemory = true,
   ): Promise<void> {
     if (!range && !position) {
       return;
@@ -1120,7 +1043,12 @@ export class DemoRunner {
 
     if (range) {
       if (keepInMemory) {
-        DemoRunner.setCrntHighlighting(textEditor.document.fileName, range, zoomLevel, highlightWholeLine);
+        DemoRunner.setCrntHighlighting(
+          textEditor.document.fileName,
+          range,
+          zoomLevel,
+          highlightWholeLine,
+        );
         await setContext(ContextKeys.hasCodeHighlighting, true);
       }
 
@@ -1138,124 +1066,6 @@ export class DemoRunner {
   }
 
   /**
-   * Executes a terminal command.
-   * @param command - The command to be executed.
-   * @returns A promise that resolves when the command execution is complete.
-   */
-  private static async executeTerminalCommand(command?: string, terminalId?: string): Promise<void> {
-    if (!command) {
-      Notifications.error("No command specified");
-      return;
-    }
-
-    terminalId = terminalId || DemoRunner.terminalName;
-    let terminal = DemoRunner.terminal[terminalId];
-
-    if (!terminal) {
-      terminal = window.createTerminal(terminalId);
-      DemoRunner.terminal[terminalId] = terminal;
-
-      window.onDidCloseTerminal((term) => {
-        if (term.name && DemoRunner.terminal[term.name]) {
-          delete DemoRunner.terminal[term.name];
-        }
-      });
-    }
-
-    terminal.show();
-    terminal.sendText(command, true);
-  }
-
-  /**
-   * Closes the terminal.
-   * @param terminalId - The ID of the terminal to be closed.
-   * @returns A promise that resolves when the terminal is closed.
-   */
-  private static closeTerminal(terminalId?: string): void {
-    terminalId = terminalId || DemoRunner.terminalName;
-    const terminal = DemoRunner.terminal[terminalId];
-
-    if (!terminal) {
-      return;
-    }
-
-    terminal.sendText("exit", true);
-    terminal.dispose();
-    delete DemoRunner.terminal[terminalId];
-  }
-
-  /**
-   * Renames a file within the specified workspace folder.
-   *
-   * @param workspaceFolder - The workspace folder containing the file to be renamed.
-   * @param fileUri - The URI of the file to be renamed.
-   * @param step - The step containing the destination path for the renamed file.
-   * @returns A promise that resolves when the file has been renamed.
-   *
-   * @throws Will throw an error if the destination is not specified or if the rename operation fails.
-   */
-  private static async rename(workspaceFolder: WorkspaceFolder, fileUri: Uri, step: Step): Promise<void> {
-    if (!step.dest) {
-      Notifications.error("No destination specified");
-      return;
-    }
-
-    try {
-      const newUri = Uri.joinPath(workspaceFolder.uri, step.dest);
-      await workspace.fs.rename(fileUri, newUri, { overwrite: !!step.overwrite });
-    } catch (error) {
-      Notifications.error((error as Error).message);
-    }
-  }
-
-  /**
-   * Copies a file from the specified URI to a new destination within the workspace folder.
-   *
-   * @param workspaceFolder - The workspace folder where the file will be copied.
-   * @param fileUri - The URI of the file to be copied.
-   * @param step - The step object containing the destination path.
-   * @returns A promise that resolves when the copy operation is complete.
-   * @throws Will throw an error if the destination is not specified or if the copy operation fails.
-   */
-  private static async copy(workspaceFolder: WorkspaceFolder, fileUri: Uri, step: Step): Promise<void> {
-    if (!step.dest) {
-      Notifications.error("No destination specified");
-      return;
-    }
-
-    try {
-      const newUri = Uri.joinPath(workspaceFolder.uri, step.dest);
-      await workspace.fs.copy(fileUri, newUri, { overwrite: !!step.overwrite });
-    } catch (error) {
-      Notifications.error((error as Error).message);
-    }
-  }
-
-  /**
-   * Deletes a file from the given workspace folder.
-   *
-   * @param workspaceFolder - The workspace folder containing the file to be deleted.
-   * @param fileUri - The URI of the file to be deleted.
-   * @returns A promise that resolves when the file has been deleted.
-   * @throws Will throw an error if the file deletion fails.
-   */
-  private static async deleteFile(workspaceFolder: WorkspaceFolder, fileUri: Uri): Promise<void> {
-    try {
-      await workspace.fs.delete(fileUri);
-    } catch (error) {
-      Notifications.error((error as Error).message);
-    }
-  }
-
-  /**
-   * Saves the file in the workspace.
-   * @returns A promise that resolves when the file is saved.
-   */
-  private static async saveFile(): Promise<void> {
-    await commands.executeCommand("workbench.action.files.save");
-  }
-
-  /**
    * Retrieves the demo file associated with the given ActionTreeItem.
    * @param item The ActionTreeItem representing the demo file.
    * @param triggerFirstDemo A boolean indicating whether to trigger the first demo.
@@ -1263,7 +1073,7 @@ export class DemoRunner {
    */
   private static async getDemoFile(
     item?: ActionTreeItem | Uri,
-    triggerFirstDemo: boolean = false
+    triggerFirstDemo: boolean = false,
   ): Promise<
     | {
         filePath: string;
@@ -1271,20 +1081,20 @@ export class DemoRunner {
       }
     | undefined
   > {
-    const demoFiles = await FileProvider.getFiles();
+    const demoFiles = await DemoFileProvider.getFiles();
     const executingFile = await DemoRunner.getExecutedDemoFile();
 
     const itemPath = item instanceof Uri ? item.fsPath : item?.demoFilePath;
 
     if (item && itemPath) {
       if (!demoFiles) {
-        Notifications.warning("No demo files found");
+        Notifications.warning('No demo files found');
         return;
       }
 
-      const demoFile = await FileProvider.getFile(Uri.file(itemPath));
+      const demoFile = await DemoFileProvider.getFile(Uri.file(itemPath));
       if (!demoFile) {
-        const demoFileName = itemPath.split("/").pop();
+        const demoFileName = itemPath.split('/').pop();
         Notifications.warning(`No demo file found with the name ${demoFileName}`);
         return;
       }
@@ -1303,7 +1113,7 @@ export class DemoRunner {
       if (demoFiles && Object.keys(demoFiles).length === 1) {
         demoFilePath = Object.keys(demoFiles)[0];
       } else {
-        const demoFile = await FileProvider.demoQuickPick();
+        const demoFile = await DemoFileProvider.demoQuickPick();
         if (!demoFile?.demo) {
           return;
         }
@@ -1326,7 +1136,7 @@ export class DemoRunner {
     } else if (executingFile.filePath && !item && demoFiles) {
       const demoFile = demoFiles[executingFile.filePath];
       if (!demoFile) {
-        Notifications.warning("No demo file found");
+        Notifications.warning('No demo file found');
         return;
       }
 

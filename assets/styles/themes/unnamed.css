@@ -3,7 +3,7 @@
 */
 .slide.unnamed {
   --demotime-color: var(--vscode-editor-foreground);
-  --demotime-background: var(--vscode-panel-background);
+  --demotime-background: var(--vscode-panel-background, var(--vscode-editor-background));
 
   --demotime-font-size: var(--vscode-editor-font-size, 1.1em);
 
@@ -75,7 +75,7 @@
     &::before {
       background: var(--demotime-heading-background);
       box-shadow: var(--demotime-header-shadow);
-      content: " ";
+      content: ' ';
       display: block;
       position: absolute;
       width: calc(100%);

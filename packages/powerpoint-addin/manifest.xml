@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OfficeApp 
+  xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" 
+  xmlns:ov="http://schemas.microsoft.com/office/contentappversionoverrides" 
+  xsi:type="ContentApp">
+  <Id>660f1eef-7e3d-4ce0-94c8-91b22fc7389a</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>Elio Struyf</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  <DisplayName DefaultValue="Demo Time for PowerPoint"/>
+  <Description DefaultValue="Easily trigger live demos directly within PowerPoint using the Demo Time add-in."/>
+  <IconUrl DefaultValue="http://localhost:5173/assets/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="http://localhost:5173/assets/icon-64.png"/>
+  <SupportUrl DefaultValue="https://demotime.elio.dev"/>
+  <AppDomains>
+    <AppDomain>https://demotime.elio.dev</AppDomain>
+  </AppDomains>
+  <Hosts>
+    <Host Name="Presentation" />
+  </Hosts>
+  <DefaultSettings>
+    <SourceLocation DefaultValue="http://localhost:5173" />
+    <RequestedHeight>500</RequestedHeight>
+  </DefaultSettings>
+  <Permissions>ReadWriteDocument</Permissions>
+</OfficeApp>

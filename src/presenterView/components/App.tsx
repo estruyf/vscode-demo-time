@@ -43,7 +43,7 @@ export const App: React.FunctionComponent<IAppProps> = (props: React.PropsWithCh
       setShowClock(show);
     });
 
-    messageHandler.request<number | undefined>(WebViewMessages.toVscode.getSetting, Config.clock.timer).then((time) => {
+    messageHandler.request<number | undefined>(WebViewMessages.toVscode.getTimer).then((time) => {
       setCountdown(time);
     });
 

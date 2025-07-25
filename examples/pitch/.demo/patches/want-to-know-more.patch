@@ -1,0 +1,13 @@
+Index: /want-to-know-more.md
+===================================================================
+--- /want-to-know-more.md
++++ /want-to-know-more.md
+@@ -0,0 +1,8 @@
++---
++theme: unnamed
++layout: section
++---
++
++# Want to know more?
++
++## Check out the docs at [demotime.elio.dev](https://demotime.elio.dev)

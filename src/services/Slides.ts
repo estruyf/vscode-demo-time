@@ -1,7 +1,15 @@
-import { commands, CompletionItem, CompletionItemKind, Hover, languages, Uri, window } from "vscode";
-import { Action, Step, Subscription } from "../models";
-import { Extension } from "./Extension";
-import { COMMAND, Config, General, SlideLayout, SlideTheme, SlideTransition } from "../constants";
+import {
+  commands,
+  CompletionItem,
+  CompletionItemKind,
+  Hover,
+  languages,
+  Uri,
+  window,
+} from 'vscode';
+import { Action, Step, Subscription } from '../models';
+import { Extension } from './Extension';
+import { COMMAND, Config, General, SlideLayout, SlideTheme, SlideTransition } from '../constants';
 import {
   addStepsToDemo,
   chooseDemoFile,
@@ -11,10 +19,10 @@ import {
   sanitizeFileName,
   upperCaseFirstLetter,
   writeFile,
-} from "../utils";
-import { ActionTreeItem } from "../providers/ActionTreeviewProvider";
-import { FileProvider } from "./FileProvider";
-import { Preview } from "../preview/Preview";
+} from '../utils';
+import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
+import { DemoFileProvider } from './DemoFileProvider';
+import { Preview } from '../preview/Preview';
 
 export class Slides {
   private static frontmatterRegex = /^---(?:[^\r\n]*\r?\n)+?---/;
@@ -38,17 +46,17 @@ export class Slides {
 
     const slideTitle = await window.showInputBox({
       title: Config.title,
-      placeHolder: "What is the title of the slide?",
+      placeHolder: 'What is the title of the slide?',
       validateInput: async (value) => {
         if (!value) {
-          return "File name is required";
+          return 'File name is required';
         }
 
         const newFilePath = Uri.joinPath(
           wsFolder.uri,
           General.demoFolder,
           General.slidesFolder,
-          sanitizeFileName(value, ".md")
+          sanitizeFileName(value, '.md'),
         );
         if (await fileExists(newFilePath)) {
           return `Slide with name "${value}" already exists`;
@@ -65,7 +73,7 @@ export class Slides {
       wsFolder.uri,
       General.demoFolder,
       General.slidesFolder,
-      `${sanitizeFileName(slideTitle, ".md")}`
+      `${sanitizeFileName(slideTitle, '.md')}`,
     );
 
     // Ask for the layout type
@@ -73,8 +81,8 @@ export class Slides {
       Object.values(SlideLayout).map((v) => upperCaseFirstLetter(v)),
       {
         title: Config.title,
-        placeHolder: "Select a layout for the slide",
-      }
+        placeHolder: 'Select a layout for the slide',
+      },
     );
 
     if (!layout) {
@@ -95,14 +103,14 @@ layout: ${layout.toLowerCase()}
     const addStep = await window.showInformationMessage(
       `Slide "${slideTitle}" created. Do you want to add it as a new step to the demo?`,
       { modal: true },
-      "Yes"
+      'Yes',
     );
 
     if (!addStep) {
       return;
     }
 
-    const relFilePath = filePath.path.replace(wsFolder.uri.path, "");
+    const relFilePath = filePath.path.replace(wsFolder.uri.path, '');
     const steps: Step[] = [
       {
         action: Action.OpenSlide,
@@ -111,9 +119,9 @@ layout: ${layout.toLowerCase()}
     ];
 
     const demoFile = await chooseDemoFile();
-    await addStepsToDemo(steps, demoFile, slideTitle, "", {
-      start: "vm",
-      end: "pass-filled",
+    await addStepsToDemo(steps, demoFile, slideTitle, '', {
+      start: 'vm',
+      end: 'pass-filled',
     });
   }
 
@@ -122,7 +130,7 @@ layout: ${layout.toLowerCase()}
       return;
     }
 
-    const demoFiles = await FileProvider.getFiles();
+    const demoFiles = await DemoFileProvider.getFiles();
     if (!demoFiles) {
       return;
     }
@@ -154,7 +162,7 @@ layout: ${layout.toLowerCase()}
 
   private static async openSlidePreview() {
     const editor = window.activeTextEditor;
-    if (!editor || editor.document.languageId !== "markdown") {
+    if (!editor || editor.document.languageId !== 'markdown') {
       return;
     }
 
@@ -164,7 +172,7 @@ layout: ${layout.toLowerCase()}
 
   private static registerHoverProvider() {
     return languages.registerHoverProvider(
-      { language: "markdown", scheme: "file" },
+      { language: 'markdown', scheme: 'file' },
       {
         provideHover(document, position) {
           const text = document.getText();
@@ -178,50 +186,52 @@ layout: ${layout.toLowerCase()}
             if (cursorOffset >= frontmatterStart && cursorOffset <= frontmatterEnd) {
               const line = document.lineAt(position).text.trim();
 
-              if (line.startsWith("theme:")) {
+              if (line.startsWith('theme:')) {
                 const themes = Object.values(SlideTheme)
                   .map((theme) => `- \`${theme}\``)
-                  .join("\n");
-                return new Hover(`Specifies the theme for the slide. Available options:\n${themes}`);
-              } else if (line.startsWith("layout:")) {
+                  .join('\n');
+                return new Hover(
+                  `Specifies the theme for the slide. Available options:\n${themes}`,
+                );
+              } else if (line.startsWith('layout:')) {
                 const layouts = Object.values(SlideLayout)
                   .map((layout) => `- \`${layout}\``)
-                  .join("\n");
-                return new Hover(`Specifies the layout for the slide. Available options:\n${layouts}`);
-              } else if (line.startsWith("customTheme:")) {
+                  .join('\n');
                 return new Hover(
-                  "Specifies a custom theme for the slide. Provide a relative path or URL to a CSS file."
+                  `Specifies the layout for the slide. Available options:\n${layouts}`,
                 );
-              } else if (line.startsWith("image:")) {
+              } else if (line.startsWith('customTheme:')) {
                 return new Hover(
-                  "Specifies the image URL or path for the slide. Provide a relative path to the image file."
+                  'Specifies a custom theme for the slide. Provide a relative path or URL to a CSS file.',
                 );
-              } else if (line.startsWith("customTheme:")) {
+              } else if (line.startsWith('image:')) {
                 return new Hover(
-                  "Specifies a custom theme for the slide. Provide a relative path or URL to a CSS file."
+                  'Specifies the image URL or path for the slide. Provide a relative path to the image file.',
                 );
-              } else if (line.startsWith("customLayout:")) {
+              } else if (line.startsWith('customLayout:')) {
                 return new Hover(
-                  "Specifies a custom layout for the slide. Provide a relative path to the Handlebars template."
+                  'Specifies a custom layout for the slide. Provide a relative path to the Handlebars template.',
                 );
-              } else if (line.startsWith("transition:")) {
+              } else if (line.startsWith('transition:')) {
                 const transitions = Object.values(SlideTransition)
                   .map((transition) => `- \`${transition}\``)
-                  .join("\n");
-                return new Hover(`Specifies the transition for the slide. Available options:\n${transitions}`);
+                  .join('\n');
+                return new Hover(
+                  `Specifies the transition for the slide. Available options:\n${transitions}`,
+                );
               }
             }
           }
 
           return undefined;
         },
-      }
+      },
     );
   }
 
   private static registerCompletionProvider() {
     return languages.registerCompletionItemProvider(
-      { language: "markdown", scheme: "file" },
+      { language: 'markdown', scheme: 'file' },
       {
         provideCompletionItems(document, position) {
           const linePrefix = document.lineAt(position).text.substring(0, position.character);
@@ -236,61 +246,61 @@ layout: ${layout.toLowerCase()}
 
             const cursorOffset = document.offsetAt(position);
             if (cursorOffset >= frontmatterStart && cursorOffset <= frontmatterEnd) {
-              if (!linePrefix.includes(":")) {
+              if (!linePrefix.includes(':')) {
                 // Provide suggestions for frontmatter keys
                 return [
                   new CompletionItem(
                     {
-                      label: "image",
-                      description: "Image URL or path",
+                      label: 'image',
+                      description: 'Image URL or path',
                     },
-                    CompletionItemKind.Property
+                    CompletionItemKind.Property,
                   ),
                   new CompletionItem(
                     {
-                      label: "theme",
-                      description: "Theme for the slide",
+                      label: 'theme',
+                      description: 'Theme for the slide',
                     },
-                    CompletionItemKind.Property
+                    CompletionItemKind.Property,
                   ),
                   new CompletionItem(
                     {
-                      label: "layout",
-                      description: "Layout for the slide",
+                      label: 'layout',
+                      description: 'Layout for the slide',
                     },
-                    CompletionItemKind.Property
+                    CompletionItemKind.Property,
                   ),
                   new CompletionItem(
                     {
-                      label: "customTheme",
-                      description: "Relative path or URL to a CSS file for custom theme",
+                      label: 'customTheme',
+                      description: 'Relative path or URL to a CSS file for custom theme',
                     },
-                    CompletionItemKind.Property
+                    CompletionItemKind.Property,
                   ),
                   new CompletionItem(
                     {
-                      label: "customLayout",
-                      description: "Relative path to the Handlebars template",
+                      label: 'customLayout',
+                      description: 'Relative path to the Handlebars template',
                     },
-                    CompletionItemKind.Property
+                    CompletionItemKind.Property,
                   ),
                   new CompletionItem(
                     {
-                      label: "transition",
-                      description: "Transition for the slide",
+                      label: 'transition',
+                      description: 'Transition for the slide',
                     },
-                    CompletionItemKind.Property
+                    CompletionItemKind.Property,
                   ),
                 ];
-              } else if (linePrefix.startsWith("theme:")) {
+              } else if (linePrefix.startsWith('theme:')) {
                 return Object.values(SlideTheme).map((theme) => {
                   return new CompletionItem(theme, CompletionItemKind.EnumMember);
                 });
-              } else if (linePrefix.startsWith("layout:")) {
+              } else if (linePrefix.startsWith('layout:')) {
                 return Object.values(SlideLayout).map((layout) => {
                   return new CompletionItem(layout, CompletionItemKind.EnumMember);
                 });
-              } else if (linePrefix.startsWith("transition:")) {
+              } else if (linePrefix.startsWith('transition:')) {
                 return Object.values(SlideTransition).map((transition) => {
                   return new CompletionItem(transition, CompletionItemKind.EnumMember);
                 });
@@ -301,8 +311,8 @@ layout: ${layout.toLowerCase()}
           return undefined;
         },
       },
-      ":",
-      " "
+      ':',
+      ' ',
     );
   }
 }
