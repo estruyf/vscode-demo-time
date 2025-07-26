@@ -18,6 +18,8 @@
   in the `dt-list` component
 - [#217](https://github.com/estruyf/vscode-demo-time/issues/217): Fix highlighting whole line when line number and 
   character positioning is used
+- [#218](https://github.com/estruyf/vscode-demo-time/issues/218): Added a new `/api/demos` endpoint to 
+  retrieve the list of demos in the workspace
 
 ## [1.7.1] - 2025-07-10
 
