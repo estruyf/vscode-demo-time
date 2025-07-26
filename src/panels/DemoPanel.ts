@@ -23,6 +23,10 @@ export class DemoPanel {
     subscriptions.push(commands.registerCommand(COMMAND.treeviewFind, DemoPanel.find));
   }
 
+  public static get crntExecutingDemoFile(): DemoFileCache {
+    return DemoPanel.executingDemoFile;
+  }
+
   public static async find() {
     if (!DemoPanel.treeView) {
       return;
