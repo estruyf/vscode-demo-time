@@ -46,4 +46,6 @@ export const COMMAND = {
   exportToPdf: `${EXTENSION_NAME}.exportToPdf`,
   // Importer
   importPowerPointImages: `${EXTENSION_NAME}.importPowerPointImages`,
+  // Hacker Typer
+  hackerTyperNextChunk: `${EXTENSION_NAME}.hackerTyperNextChunk`,
 };

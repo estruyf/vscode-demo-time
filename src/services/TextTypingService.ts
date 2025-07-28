@@ -1,6 +1,6 @@
 import { diffChars, applyPatch } from 'diff';
 import { Extension, Logger, Notifications } from '../services';
-import { Config } from '../constants';
+import { COMMAND, Config, ContextKeys } from '../constants';
 import {
   CancellationToken,
   Position,
@@ -13,18 +13,84 @@ import {
   Uri,
   window,
   TextDocument,
+  commands,
 } from 'vscode';
 import {
   getFileContents,
   getInsertionSpeed,
   getLineRange,
   saveFiles,
+  setContext,
   sleep,
   writeFile,
 } from '../utils';
-import { InsertTypingMode, Step } from '../models';
+import { InsertTypingMode, Step, Subscription } from '../models';
 
 export class TextTypingService {
+  public static crntHackerTyperSession: {
+    editor: TextEditor;
+    content: string;
+    chunkSize: number;
+    currentPos: Position;
+    i: number;
+    token: CancellationToken | undefined;
+    done: boolean;
+    resolve: undefined | ((value?: unknown) => void);
+  };
+
+  public static registerCommands() {
+    const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
+
+    subscriptions.push(
+      commands.registerCommand(COMMAND.hackerTyperNextChunk, async () => {
+        // Start inserting chunks until done or cancelled
+        const session = TextTypingService.crntHackerTyperSession;
+
+        if (
+          session.token?.isCancellationRequested ||
+          session.i >= session.content.length ||
+          session.done
+        ) {
+          if (session.resolve) {
+            session.resolve();
+          }
+          session.done = true;
+          await setContext(ContextKeys.isHackerTyper, false);
+          TextTypingService.crntHackerTyperSession = undefined as any;
+          // Exit the loop if cancelled, done, or finished
+          return;
+        }
+
+        const { char, nextIndex } = TextTypingService.getNextChar(session.content, session.i);
+        const edit = new WorkspaceEdit();
+        edit.insert(session.editor.document.uri, session.currentPos, char);
+        await workspace.applyEdit(edit);
+
+        // Update position accounting for newlines
+        if (char === '\r\n' || char === '\n') {
+          session.currentPos = new Position(session.currentPos.line + 1, 0);
+        } else {
+          session.currentPos = new Position(
+            session.currentPos.line,
+            session.currentPos.character + char.length,
+          );
+        }
+
+        session.editor.selection = new Selection(session.currentPos, session.currentPos);
+        session.i = nextIndex;
+
+        // If finished, resolve and clear session
+        if (session.i >= session.content.length || session.token?.isCancellationRequested) {
+          if (session.resolve) {
+            session.resolve();
+          }
+          session.done = true;
+          await setContext(ContextKeys.isHackerTyper, false);
+          TextTypingService.crntHackerTyperSession = undefined as any;
+        }
+      }),
+    );
+  }
   /**
    * Inserts content into a text editor at the specified position or range.
    * If a position is provided, the content is inserted at that position.
@@ -102,7 +168,7 @@ export class TextTypingService {
       await TextTypingService.insertCharByChar(textEditor, content, position, typingSpeed);
     } else if (typingMode === 'hacker-typer') {
       textEditor.revealRange(new Range(position, position), TextEditorRevealType.InCenter);
-      await TextTypingService.insertHackerTyper(textEditor, content, position, typingSpeed);
+      await TextTypingService.insertHackerTyper(textEditor, content, position);
     } else if (typingSpeed && typingMode === 'line-by-line') {
       const lineRange = textEditor.document.lineAt(position).range;
       textEditor.revealRange(lineRange, TextEditorRevealType.InCenter);
@@ -131,7 +197,7 @@ export class TextTypingService {
       const line = editor.lineAt(position);
       const range = line.range;
       textEditor.revealRange(range, TextEditorRevealType.InCenter);
-      await TextTypingService.replaceHackerTyper(textEditor, range, content, typingSpeed);
+      await TextTypingService.replaceHackerTyper(textEditor, range, content);
     } else if (typingSpeed && typingMode === 'line-by-line') {
       const lineRange = getLineRange(editor, position);
       if (!lineRange) {
@@ -230,7 +296,7 @@ export class TextTypingService {
       await TextTypingService.replaceCharByChar(textEditor, range, content, typingSpeed);
     } else if (typingMode === 'hacker-typer') {
       textEditor.revealRange(range, TextEditorRevealType.InCenter);
-      await TextTypingService.replaceHackerTyper(textEditor, range, content, typingSpeed);
+      await TextTypingService.replaceHackerTyper(textEditor, range, content);
     } else if (typingSpeed && typingMode === 'line-by-line') {
       const startLine = editor.lineAt(range.start);
       const endLine = editor.lineAt(range.end);
@@ -265,7 +331,7 @@ export class TextTypingService {
       const line = editor.lineAt(position);
       const range = line.range;
       textEditor.revealRange(range, TextEditorRevealType.InCenter);
-      await TextTypingService.replaceHackerTyper(textEditor, range, content, typingSpeed);
+      await TextTypingService.replaceHackerTyper(textEditor, range, content);
     } else if (typingSpeed && typingMode === 'line-by-line') {
       const range = getLineRange(editor, position);
       if (!range) {
@@ -359,7 +425,7 @@ export class TextTypingService {
     if (typingMode === 'character-by-character') {
       await TextTypingService.applyDiffByChar(filePath, content, patched, typingSpeed, token);
     } else if (typingMode === 'hacker-typer') {
-      await TextTypingService.applyDiffByHackerTyper(filePath, content, patched, typingSpeed, token);
+      await TextTypingService.applyDiffByHackerTyper(filePath, content, patched, token);
     } else if (typingMode === 'line-by-line') {
       await TextTypingService.applyDiffByLine(filePath, patched, typingSpeed, token);
     } else {
@@ -633,43 +699,28 @@ export class TextTypingService {
     editor: TextEditor,
     content: string,
     position: Position,
-    typingSpeed?: number,
     token?: CancellationToken,
   ): Promise<void> {
-    const delayMs = getInsertionSpeed(typingSpeed);
     const chunkSize = TextTypingService.getHackerTyperChunkSize();
+    await setContext(ContextKeys.isHackerTyper, true);
     editor.revealRange(new Range(position, position), TextEditorRevealType.InCenter);
     editor.selection = new Selection(position, position);
-    
-    let currentPos = position;
-    let i = 0;
-    
-    while (i < content.length) {
-      if (token?.isCancellationRequested) {
-        return;
-      }
-      
-      const chunk = content.slice(i, i + chunkSize);
-      const edit = new WorkspaceEdit();
-      edit.insert(editor.document.uri, currentPos, chunk);
-      await workspace.applyEdit(edit);
-      
-      // Update position accounting for newlines in the chunk
-      const lines = chunk.split('\n');
-      if (lines.length > 1) {
-        // Multi-line chunk
-        const lastLineLength = lines[lines.length - 1].length;
-        currentPos = new Position(currentPos.line + lines.length - 1, lastLineLength);
-      } else {
-        // Single-line chunk
-        currentPos = new Position(currentPos.line, currentPos.character + chunk.length);
-      }
-      
-      editor.selection = new Selection(currentPos, currentPos);
-      i += chunkSize;
-      
-      await new Promise((resolve) => setTimeout(resolve, delayMs));
-    }
+
+    // Store state for the session
+    TextTypingService.crntHackerTyperSession = {
+      editor,
+      content,
+      chunkSize,
+      currentPos: position,
+      i: 0,
+      token,
+      done: false,
+      resolve: undefined as undefined | ((value?: unknown) => void),
+    };
+
+    await new Promise((resolve) => {
+      TextTypingService.crntHackerTyperSession.resolve = resolve;
+    });
   }
 
   /**
@@ -679,13 +730,12 @@ export class TextTypingService {
     editor: TextEditor,
     range: Range,
     content: string,
-    typingSpeed?: number,
     token?: CancellationToken,
   ): Promise<void> {
     const deleteEdit = new WorkspaceEdit();
     deleteEdit.delete(editor.document.uri, range);
     await workspace.applyEdit(deleteEdit);
-    await TextTypingService.insertHackerTyper(editor, content, range.start, typingSpeed, token);
+    await TextTypingService.insertHackerTyper(editor, content, range.start, token);
   }
 
   /**
@@ -695,7 +745,6 @@ export class TextTypingService {
     filePath: Uri,
     currentContent: string,
     targetContent: string,
-    typingSpeed?: number,
     token?: CancellationToken,
   ): Promise<void> {
     const editor = TextTypingService.findEditorForFile(filePath);
@@ -704,7 +753,6 @@ export class TextTypingService {
         const differences = diffChars(currentContent, targetContent);
         let currentPosition = 0;
         const chunkSize = TextTypingService.getHackerTyperChunkSize();
-        const delayMs = getInsertionSpeed(typingSpeed);
 
         for (const diff of differences) {
           if (token?.isCancellationRequested) {
@@ -715,24 +763,32 @@ export class TextTypingService {
             continue;
           }
           if (diff.removed) {
-            await TextTypingService.removeText(editor, diff.value, currentPosition, delayMs, token);
+            await TextTypingService.removeText(editor, diff.value, currentPosition, 0, token);
           }
           if (diff.added) {
-            // Insert in chunks for hacker-typer effect
-            let i = 0;
-            while (i < diff.value.length) {
-              if (token?.isCancellationRequested) {
-                return;
-              }
-              const chunk = diff.value.slice(i, i + chunkSize);
-              await TextTypingService.typeText(editor, chunk, currentPosition, delayMs, token);
-              currentPosition += chunk.length;
-              i += chunkSize;
-            }
+            // Use hacker-typer session for chunked input
+            await setContext(ContextKeys.isHackerTyper, true);
+            TextTypingService.crntHackerTyperSession = {
+              editor,
+              content: diff.value,
+              chunkSize,
+              currentPos: editor.document.positionAt(currentPosition),
+              i: 0,
+              token,
+              done: false,
+              resolve: undefined as undefined | ((value?: unknown) => void),
+            };
+            await new Promise((resolve) => {
+              TextTypingService.crntHackerTyperSession.resolve = resolve;
+            });
+            currentPosition += diff.value.length;
           }
         }
       } catch (error) {
-        Notifications.error('Error applying patch with hacker-typer effect', (error as Error).message);
+        Notifications.error(
+          'Error applying patch with hacker-typer effect',
+          (error as Error).message,
+        );
       }
     } else {
       await writeFile(filePath, targetContent);
