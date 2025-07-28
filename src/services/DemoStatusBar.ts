@@ -14,6 +14,7 @@ export class DemoStatusBar {
   private static statusBarNotes: StatusBarItem;
   private static statusBarClock: StatusBarItem;
   private static statusBarPause: StatusBarItem;
+  private static statusHackerMode: StatusBarItem;
   private static countdownStarted: Date | undefined;
   private static countdownPaused: boolean = false;
   private static pausedTimeRemaining: number | undefined;
@@ -198,6 +199,29 @@ export class DemoStatusBar {
       }
     }
     return Extension.getInstance().getSetting<number>(Config.clock.timer);
+  }
+
+  public static async toggleHackerMode(value: boolean) {
+    if (!DemoStatusBar.statusHackerMode) {
+      DemoStatusBar.statusHackerMode = window.createStatusBarItem(
+        'hacker-mode',
+        StatusBarAlignment.Left,
+        100003,
+      );
+      DemoStatusBar.statusHackerMode.name = `${Config.title} - Hacker Typer Mode`;
+      DemoStatusBar.statusHackerMode.text = `$(record-keys)`;
+      DemoStatusBar.statusHackerMode.tooltip = 'Hacker Typer Mode';
+      DemoStatusBar.statusHackerMode.command = COMMAND.hackerTyperNextChunk;
+      DemoStatusBar.statusHackerMode.backgroundColor = new ThemeColor(
+        'statusBarItem.errorBackground',
+      );
+    }
+
+    if (value) {
+      DemoStatusBar.statusHackerMode.show();
+    } else {
+      DemoStatusBar.statusHackerMode.hide();
+    }
   }
 
   private static async startCountdown() {

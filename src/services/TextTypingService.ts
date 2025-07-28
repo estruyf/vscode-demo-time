@@ -1,5 +1,5 @@
 import { diffChars, applyPatch } from 'diff';
-import { Extension, Logger, Notifications } from '../services';
+import { DemoStatusBar, Extension, Logger, Notifications } from '../services';
 import { COMMAND, Config, ContextKeys } from '../constants';
 import {
   CancellationToken,
@@ -43,7 +43,6 @@ export class TextTypingService {
 
     subscriptions.push(
       commands.registerCommand(COMMAND.hackerTyperNextChunk, async () => {
-        // Start inserting chunks until done or cancelled
         const session = TextTypingService.crntHackerTyperSession;
 
         if (
@@ -57,35 +56,52 @@ export class TextTypingService {
           session.done = true;
           await setContext(ContextKeys.isHackerTyper, false);
           TextTypingService.crntHackerTyperSession = undefined as any;
-          // Exit the loop if cancelled, done, or finished
+          DemoStatusBar.toggleHackerMode(false);
           return;
         }
 
-        const { char, nextIndex } = TextTypingService.getNextChar(session.content, session.i);
-        const edit = new WorkspaceEdit();
-        edit.insert(session.editor.document.uri, session.currentPos, char);
-        await workspace.applyEdit(edit);
+        // Insert chunkSize characters at once
+        const chunkEnd = Math.min(session.i + session.chunkSize, session.content.length);
+        let chunk = '';
+        let nextPos = session.currentPos;
+        let lastChar = '';
 
-        // Update position accounting for newlines
-        if (char === '\r\n' || char === '\n') {
-          session.currentPos = new Position(session.currentPos.line + 1, 0);
-        } else {
-          session.currentPos = new Position(
-            session.currentPos.line,
-            session.currentPos.character + char.length,
-          );
+        for (let idx = session.i; idx < chunkEnd; ) {
+          const { char, nextIndex } = TextTypingService.getNextChar(session.content, idx);
+          chunk += char;
+          lastChar = char;
+          idx = nextIndex;
         }
 
-        session.editor.selection = new Selection(session.currentPos, session.currentPos);
-        session.i = nextIndex;
+        const edit = new WorkspaceEdit();
+        edit.insert(session.editor.document.uri, session.currentPos, chunk);
+        await workspace.applyEdit(edit);
 
-        // If finished, resolve and clear session
+        // Update position accounting for newlines in the chunk
+        for (let i = 0; i < chunk.length; ) {
+          if (chunk[i] === '\r' && chunk[i + 1] === '\n') {
+            nextPos = new Position(nextPos.line + 1, 0);
+            i += 2;
+          } else if (chunk[i] === '\n') {
+            nextPos = new Position(nextPos.line + 1, 0);
+            i += 1;
+          } else {
+            nextPos = new Position(nextPos.line, nextPos.character + 1);
+            i += 1;
+          }
+        }
+
+        session.editor.selection = new Selection(nextPos, nextPos);
+        session.currentPos = nextPos;
+        session.i = chunkEnd;
+
         if (session.i >= session.content.length || session.token?.isCancellationRequested) {
           if (session.resolve) {
             session.resolve();
           }
           session.done = true;
           await setContext(ContextKeys.isHackerTyper, false);
+          DemoStatusBar.toggleHackerMode(false);
           TextTypingService.crntHackerTyperSession = undefined as any;
         }
       }),
@@ -703,6 +719,7 @@ export class TextTypingService {
   ): Promise<void> {
     const chunkSize = TextTypingService.getHackerTyperChunkSize();
     await setContext(ContextKeys.isHackerTyper, true);
+    DemoStatusBar.toggleHackerMode(true);
     editor.revealRange(new Range(position, position), TextEditorRevealType.InCenter);
     editor.selection = new Selection(position, position);
 
@@ -768,6 +785,7 @@ export class TextTypingService {
           if (diff.added) {
             // Use hacker-typer session for chunked input
             await setContext(ContextKeys.isHackerTyper, true);
+            DemoStatusBar.toggleHackerMode(true);
             TextTypingService.crntHackerTyperSession = {
               editor,
               content: diff.value,
