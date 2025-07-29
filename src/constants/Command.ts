@@ -49,4 +49,6 @@ export const COMMAND = {
   // Config editor
   openConfigInTextEditor: `${EXTENSION_NAME}.openConfigInTextEditor`,
   openConfigEditor: `${EXTENSION_NAME}.openConfigEditor`,
+  // Hacker Typer
+  hackerTyperNextChunk: `${EXTENSION_NAME}.hackerTyperNextChunk`,
 };

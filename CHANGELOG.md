@@ -6,6 +6,7 @@
   switching between demo and slides
 - [#204](https://github.com/estruyf/vscode-demo-time/issues/204): Added the `openTerminal` action to
   open a the terminal
+- [#205](https://github.com/estruyf/vscode-demo-time/issues/205): Added the `hacker-typer` typing mode to the `insert`, `replace`, and `patch` actions
 - [#207](https://github.com/estruyf/vscode-demo-time/issues/207): Made the `message` property
   optional for the GitHub Copilot chat actions
 - [#208](https://github.com/estruyf/vscode-demo-time/issues/208): The JSON schema has been

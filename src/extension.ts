@@ -14,6 +14,7 @@ import {
   PdfExportService,
   Slides,
   UriHandler,
+  TextTypingService,
 } from './services';
 import { DemoPanel } from './panels/DemoPanel';
 import { Preview } from './preview/Preview';
@@ -39,6 +40,7 @@ export async function activate(context: vscode.ExtensionContext) {
   DemoFileProvider.register();
   Slides.register();
   NotesService.registerCommands();
+  TextTypingService.registerCommands();
   DemoApi.register();
   UriHandler.register();
   PdfExportService.register();
