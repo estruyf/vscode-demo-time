@@ -51,4 +51,6 @@ export const COMMAND = {
   openConfigEditor: `${EXTENSION_NAME}.openConfigEditor`,
   // Hacker Typer
   hackerTyperNextChunk: `${EXTENSION_NAME}.hackerTyperNextChunk`,
+  // Settings
+  showSettings: `${EXTENSION_NAME}.showSettings`,
 };

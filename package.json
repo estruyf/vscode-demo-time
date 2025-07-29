@@ -475,6 +475,11 @@
         "command": "demo-time.hackerTyperNextChunk",
         "title": "Hacker Typer next chunk",
         "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.showSettings",
+        "title": "Show settings view",
+        "category": "Demo Time"
       }
     ],
     "menus": {

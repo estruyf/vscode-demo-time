@@ -21,6 +21,7 @@ import { Preview } from './preview/Preview';
 import { PresenterView } from './presenterView/PresenterView';
 import { Config } from './constants';
 import { ConfigEditorProvider } from './providers/ConfigEditorProvider';
+import { SettingsView } from './settingsView/SettingsView';
 
 export async function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);
@@ -46,6 +47,7 @@ export async function activate(context: vscode.ExtensionContext) {
   PdfExportService.register();
   ImportService.register();
   ConfigEditorProvider.register();
+  SettingsView.register();
 
   console.log(`${Config.title} is active!`);
 }
