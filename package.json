@@ -478,7 +478,7 @@
       },
       {
         "command": "demo-time.showSettings",
-        "title": "Show settings view",
+        "title": "Settings",
         "category": "Demo Time"
       }
     ],
@@ -586,6 +586,10 @@
         },
         {
           "command": "demo-time.docs",
+          "when": "view == demo-time"
+        },
+        {
+          "command": "demo-time.showSettings",
           "when": "view == demo-time"
         }
       ],
