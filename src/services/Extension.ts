@@ -1,4 +1,10 @@
-import { ExtensionContext, ExtensionMode, SecretStorage, workspace } from 'vscode';
+import {
+  ConfigurationTarget,
+  ExtensionContext,
+  ExtensionMode,
+  SecretStorage,
+  workspace,
+} from 'vscode';
 import { Config } from '../constants';
 
 export class Extension {
@@ -118,5 +124,20 @@ export class Extension {
   public getSetting<T>(key: string): T | undefined {
     const extConfig = workspace.getConfiguration(Config.root);
     return extConfig.get<T>(key);
+  }
+
+  /**
+   * Sets a configuration setting for the extension.
+   * @param key - The configuration key.
+   * @param value - The value to set.
+   * @returns A promise that resolves when the configuration is updated.
+   */
+  public async setSetting<T>(
+    key: string,
+    value: T,
+    target: ConfigurationTarget = ConfigurationTarget.Workspace,
+  ): Promise<void> {
+    const extConfig = workspace.getConfiguration(Config.root);
+    await extConfig.update(key, value, target);
   }
 }

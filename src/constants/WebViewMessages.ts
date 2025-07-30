@@ -43,6 +43,7 @@ export const WebViewMessages = {
     },
     settingsView: {
       getSettings: 'getSettingsViewSettings',
+      saveSettings: 'saveSettingsViewSettings',
     },
   },
   toWebview: {

@@ -2,7 +2,7 @@ import { commands, window, WebviewPanel, ViewColumn, Uri } from 'vscode';
 import { Subscription } from '../models';
 import { Extension } from '../services';
 import { COMMAND, Config, WebViewMessages } from '../constants';
-import { openFilePicker } from '../utils';
+import { openFilePicker, sleep } from '../utils';
 
 export class SettingsView {
   private static webview: WebviewPanel | null = null;
@@ -71,6 +71,8 @@ export class SettingsView {
 
     if (command === WebViewMessages.toVscode.settingsView.getSettings) {
       SettingsView.getAllSettings(command, requestId);
+    } else if (command === WebViewMessages.toVscode.settingsView.saveSettings) {
+      SettingsView.saveSettings(command, requestId, payload);
     } else if (command === WebViewMessages.toVscode.configEditor.filePicker) {
       SettingsView.selectFile(command, requestId, payload);
     }
@@ -98,6 +100,35 @@ export class SettingsView {
     });
   }
 
+  private static async saveSettings(
+    command: string,
+    requestId: string,
+    payload: Record<string, any>,
+  ) {
+    try {
+      const ext = Extension.getInstance();
+      const settings = payload;
+
+      for (const [key, value] of Object.entries(settings)) {
+        await ext.setSetting(key, value);
+        await sleep(100); // Adding a small delay to ensure settings are saved properly
+      }
+
+      SettingsView.webview?.webview.postMessage({
+        command: command,
+        requestId: requestId,
+        payload: true,
+      });
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      SettingsView.webview?.webview.postMessage({
+        command: command,
+        requestId: requestId,
+        payload: false,
+      });
+    }
+  }
+
   private static async getAllSettings(command: string, requestId: string) {
     const ext = Extension.getInstance();
     const settingsObject = {
@@ -113,8 +144,8 @@ export class SettingsView {
       insertTypingMode: ext.getSetting(Config.insert.typingMode),
       insertTypingSpeed: ext.getSetting(Config.insert.typingSpeed),
       hackerTyperChunkSize: ext.getSetting(Config.insert.hackerTyperChunkSize),
-      apiEnabled: ext.getSetting(Config.api.enabled),
-      apiPort: ext.getSetting(Config.api.port),
+      'api.enabled': ext.getSetting(Config.api.enabled),
+      'api.port': ext.getSetting(Config.api.port),
       customTheme: ext.getSetting(Config.slides.customTheme),
       slideHeaderTemplate: ext.getSetting(Config.slides.slideHeaderTemplate),
       slideFooterTemplate: ext.getSetting(Config.slides.slideFooterTemplate),
