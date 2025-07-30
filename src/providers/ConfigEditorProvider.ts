@@ -11,8 +11,9 @@ import {
 import { Subscription } from '../models';
 import { DemoFileProvider, DemoRunner, Extension, Logger } from '../services';
 import { COMMAND, Config, WebViewMessages } from '../constants';
-import { getThemes, parseWinPath } from '../utils';
+import { getThemes, openFilePicker, parseWinPath } from '../utils';
 import { ActionTreeItem } from './ActionTreeviewProvider';
+import { SettingsView } from '../settingsView/SettingsView';
 
 export class ConfigEditorProvider implements CustomTextEditorProvider {
   private static readonly viewType = 'demoTime.configEditor';
@@ -134,6 +135,8 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           await handleRunDemoStep(payload, document, webviewPanel, requestId);
         } else if (command === WebViewMessages.toVscode.configEditor.checkStepQueue) {
           await handleCheckStepQueue(webviewPanel, requestId);
+        } else if (command === WebViewMessages.toVscode.configEditor.openSettings) {
+          SettingsView.show();
         } else {
           console.warn(`Unknown message command: ${command}`);
         }
@@ -236,20 +239,8 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       webviewPanel: WebviewPanel,
       requestId: string | undefined,
     ) {
-      const { fileTypes } = payload || {};
-      const dialogSettings: OpenDialogOptions = {
-        canSelectFiles: true,
-        canSelectFolders: false,
-        canSelectMany: false,
-        openLabel: 'Select File',
-      };
-      if (Array.isArray(fileTypes) && fileTypes.length > 0) {
-        dialogSettings.filters = {
-          'Allowed Files': fileTypes.map((ext: string) => ext.replace(/^\./, '')),
-        };
-      }
-      const uris = await window.showOpenDialog(dialogSettings);
-      if (!uris || uris.length === 0) {
+      const filePath = await openFilePicker(payload?.fileTypes);
+      if (!filePath) {
         webviewPanel.webview.postMessage({
           command: WebViewMessages.toVscode.configEditor.filePicker,
           requestId: requestId,
@@ -257,19 +248,11 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
         });
         return;
       }
-      const extension = Extension.getInstance();
-      const workspaceFolder = extension.workspaceFolder;
-      let relativePath = parseWinPath(uris[0].fsPath);
-      if (workspaceFolder) {
-        const workspacePath = parseWinPath(workspaceFolder.uri.fsPath);
-        if (relativePath.startsWith(workspacePath)) {
-          relativePath = relativePath.substring(workspacePath.length + 1);
-        }
-      }
+
       webviewPanel.webview.postMessage({
         command: WebViewMessages.toVscode.configEditor.filePicker,
         requestId: requestId,
-        payload: relativePath,
+        payload: filePath,
       });
     }
 

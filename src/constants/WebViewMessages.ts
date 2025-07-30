@@ -39,6 +39,10 @@ export const WebViewMessages = {
       getThemes: 'getConfigEditorThemes',
       runDemoStep: 'runConfigEditorDemoStep',
       checkStepQueue: 'checkConfigEditorStepQueue',
+      openSettings: 'openSettings',
+    },
+    settingsView: {
+      getSettings: 'getSettingsViewSettings',
     },
   },
   toWebview: {
