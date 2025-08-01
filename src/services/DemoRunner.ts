@@ -644,7 +644,7 @@ export class DemoRunner {
       await sleep(step.timeout || 1000);
       return;
     } else if (step.action === Action.WaitForInput) {
-      const answer = await getUserInput('Press any key to continue');
+      const answer = await getUserInput('Press any key to continue', step.message);
       if (answer === undefined) {
         return;
       }

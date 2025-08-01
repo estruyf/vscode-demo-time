@@ -1,12 +1,12 @@
-import { Config } from "../constants";
-import { window } from "vscode";
+import { Config } from '../constants';
+import { window } from 'vscode';
 
-export const getUserInput = async (prompt: string) => {
+export const getUserInput = async (prompt: string, title?: string) => {
   const input = await window.showInputBox({
-    title: Config.title,
+    title: title || Config.title,
     prompt,
     ignoreFocusOut: true,
   });
 
-  return input || "";
+  return input || '';
 };
