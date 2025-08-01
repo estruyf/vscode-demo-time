@@ -367,8 +367,16 @@ export class DemoRunner {
     // Get the previous demo step to start
     const lastDemo = executingFile.demo[executingFile.demo.length - 1];
     const demoIdxToRun = !lastDemo ? -1 : lastDemo.idx;
-    const previousDemoIdx = demoIdxToRun - 1;
-    const previousDemo = previousDemoIdx >= 0 ? demos[previousDemoIdx] : null;
+    // Find the previous enabled demo step
+    let previousDemoIdx = demoIdxToRun - 1;
+    let previousDemo: Demo | null = null;
+    while (previousDemoIdx >= 0) {
+      if (!demos[previousDemoIdx].disabled) {
+        previousDemo = demos[previousDemoIdx];
+        break;
+      }
+      previousDemoIdx--;
+    }
 
     if (previousDemoIdx < 0 || !previousDemo) {
       const previousFile = await getPreviousDemoFile({
