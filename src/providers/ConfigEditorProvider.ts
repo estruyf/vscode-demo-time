@@ -19,6 +19,7 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
   private static readonly viewType = 'demoTime.configEditor';
   private static fileViews: Map<string, WebviewPanel> = new Map();
   private static pendingStepOpens: Map<string, ActionTreeItem> = new Map();
+  private static isManualSave = false;
 
   public static register() {
     const extensions = Extension.getInstance();
@@ -90,6 +91,11 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     }
 
     function triggerSave() {
+      if (ConfigEditorProvider.isManualSave) {
+        ConfigEditorProvider.isManualSave = false;
+        return;
+      }
+
       webviewPanel.webview.postMessage({
         command: WebViewMessages.toWebview.configEditor.triggerSave,
       });
@@ -227,7 +233,9 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       if (!demo) {
         window.showErrorMessage('Failed to parse the demo configuration.');
       }
+      ConfigEditorProvider.isManualSave = true; // Indicate that this is a manual save
       await DemoFileProvider.saveFile(document.uri.fsPath, demo, false);
+      await commands.executeCommand(`workbench.action.files.save`);
       webviewPanel.webview.postMessage({
         command: WebViewMessages.toVscode.configEditor.saveFile,
         requestId: requestId,
