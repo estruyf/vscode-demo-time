@@ -109,24 +109,50 @@ export class DemoPanel {
           ctxValue += ` ${ContextKeys.isSlide}`;
         }
 
-        const icons = { start: 'run', end: 'pass-filled' };
-        if (demo.icons?.start) {
-          icons.start = demo.icons.start;
-        }
-        if (demo.icons?.end) {
-          icons.end = demo.icons.end;
+        // If demo is disabled, visually indicate and disable interaction
+        let label = `${idx + 1}. ${demo.title}`;
+        let description = demo.description;
+        let icon = {
+          name: hasExecuted ? 'circle-slash' : 'circle-outline',
+          color: new ThemeColor('disabledForeground'),
+          custom: false,
+        };
+        let command = COMMAND.runStep;
+        let disabled = false;
+        if (demo.disabled) {
+          description = (description ? description + ' ' : '') + '[Disabled]';
+          icon = {
+            name: 'circle-slash',
+            color: new ThemeColor('disabledForeground'),
+            custom: false,
+          };
+          command = '';
+          ctxValue += ' demo-time.disabled';
+          disabled = true;
+        } else {
+          // Use normal icons if not disabled
+          const icons = { start: 'run', end: 'pass-filled' };
+          if (demo.icons?.start) {
+            icons.start = demo.icons.start;
+          }
+          if (demo.icons?.end) {
+            icons.end = demo.icons.end;
+          }
+          icon = {
+            name: hasExecuted ? icons.end : icons.start,
+            color: hasExecuted
+              ? new ThemeColor('notebookStatusSuccessIcon.foreground')
+              : new ThemeColor('disabledForeground'),
+            custom: false,
+          };
         }
 
         return new ActionTreeItem(
-          `${idx + 1}. ${demo.title}`,
-          demo.description,
-          {
-            name: hasExecuted ? icons.end : icons.start,
-            color: hasExecuted ? new ThemeColor('notebookStatusSuccessIcon.foreground') : undefined,
-            custom: false,
-          },
+          label,
+          description,
+          icon,
           undefined,
-          COMMAND.runStep,
+          command,
           {
             filePath: path,
             idx: idx,

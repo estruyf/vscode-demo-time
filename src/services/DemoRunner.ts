@@ -265,6 +265,11 @@ export class DemoRunner {
     const demoFile = await DemoRunner.getDemoFile(item);
     let demos: Demo[] = demoFile?.demo.demos || [];
 
+    // Filter out disabled demos for presentation mode
+    // if (DemoRunner.isPresentationMode) {
+    //   demos = demos.filter((d) => !d.disabled);
+    // }
+
     if (demos.length <= 0) {
       Notifications.error('No demo steps found');
       return;
@@ -275,8 +280,16 @@ export class DemoRunner {
     const lastDemoIdx = !lastDemo
       ? -1
       : demos.findIndex((d, idx) => (d.id ? d.id === lastDemo.id : idx === lastDemo.idx));
-    const nextDemoIdx = lastDemoIdx + 1;
-    const nextDemo = demos[nextDemoIdx];
+
+    // Find the next enabled demo and update nextDemoIdx accordingly
+    let nextDemoIdx = lastDemoIdx + 1;
+    let nextDemo: Demo | undefined = undefined;
+    for (nextDemoIdx; nextDemoIdx < demos.length; nextDemoIdx++) {
+      if (!demos[nextDemoIdx].disabled) {
+        nextDemo = demos[nextDemoIdx];
+        break;
+      }
+    }
 
     if (!nextDemo) {
       // Check if there is a next demo file

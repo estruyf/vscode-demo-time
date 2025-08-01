@@ -29,6 +29,7 @@ export interface Demo {
   steps: Step[];
   icons?: Icons;
   notes?: Notes;
+  disabled?: boolean;
 }
 
 export interface Notes {
