@@ -3,7 +3,11 @@ import { Action, Version } from '.';
 /**
  * Types for different insertion modes
  */
-export type InsertTypingMode = 'instant' | 'line-by-line' | 'character-by-character' | 'hacker-typer';
+export type InsertTypingMode =
+  | 'instant'
+  | 'line-by-line'
+  | 'character-by-character'
+  | 'hacker-typer';
 
 export interface DemoFiles {
   [filePath: string]: DemoFile;
@@ -39,6 +43,7 @@ export interface Icons {
 
 export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
   action: Action;
+  disabled?: boolean;
 
   path?: string;
   content?: string;
