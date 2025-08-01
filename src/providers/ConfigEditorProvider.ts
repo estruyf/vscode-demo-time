@@ -234,7 +234,15 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
         window.showErrorMessage('Failed to parse the demo configuration.');
       }
       ConfigEditorProvider.isManualSave = true; // Indicate that this is a manual save
-      await DemoFileProvider.saveFile(document.uri.fsPath, demo.replace(/\r?\n/g, '\\n'), false);
+      // await DemoFileProvider.saveFile(document.uri.fsPath, demo.replace(/\r?\n/g, '\\n'), false);
+
+      const fullRange = new Range(
+        document.positionAt(0),
+        document.positionAt(document.getText().length),
+      );
+      const edit = new WorkspaceEdit();
+      edit.replace(document.uri, fullRange, demo.replace(/\r?\n/g, '\\n'));
+
       await commands.executeCommand(`workbench.action.files.save`);
       webviewPanel.webview.postMessage({
         command: WebViewMessages.toVscode.configEditor.saveFile,
