@@ -1,6 +1,6 @@
 # Change Log
 
-## [1.8.0] - 2025-07-xx
+## [1.8.0] - 2025-08-02
 
 - [#199](https://github.com/estruyf/vscode-demo-time/issues/199): Improve loading the slides when
   switching between demo and slides
