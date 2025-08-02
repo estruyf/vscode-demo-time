@@ -774,6 +774,7 @@
     "playwright-chromium": "^1.51.1",
     "postcss": "^8.4.49",
     "postcss-loader": "^8.1.1",
+    "prettier": "^3.6.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "rehype-pretty-code": "^0.14.0",
@@ -799,6 +800,5 @@
   },
   "nx": {},
   "dependencies": {
-    "prettier": "^3.6.2"
   }
 }

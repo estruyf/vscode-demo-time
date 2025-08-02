@@ -79,16 +79,16 @@ export class TextTypingService {
         await workspace.applyEdit(edit);
 
         // Update position accounting for newlines in the chunk
-        for (let i = 0; i < chunk.length; ) {
-          if (chunk[i] === '\r' && chunk[i + 1] === '\n') {
+        for (let charIndex = 0; charIndex < chunk.length; ) {
+          if (chunk[charIndex] === '\r' && chunk[charIndex + 1] === '\n') {
             nextPos = new Position(nextPos.line + 1, 0);
-            i += 2;
-          } else if (chunk[i] === '\n') {
+            charIndex += 2;
+          } else if (chunk[charIndex] === '\n') {
             nextPos = new Position(nextPos.line + 1, 0);
-            i += 1;
+            charIndex += 1;
           } else {
             nextPos = new Position(nextPos.line, nextPos.character + 1);
-            i += 1;
+            charIndex += 1;
           }
         }
 
