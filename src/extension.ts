@@ -50,4 +50,6 @@ export async function activate(context: vscode.ExtensionContext) {
   console.log(`${Config.title} is active!`);
 }
 
-export function deactivate() {}
+export function deactivate() {
+  TerminalService.dispose();
+}
