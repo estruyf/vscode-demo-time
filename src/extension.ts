@@ -15,6 +15,7 @@ import {
   Slides,
   UriHandler,
   TextTypingService,
+  TerminalService,
 } from './services';
 import { DemoPanel } from './panels/DemoPanel';
 import { Preview } from './preview/Preview';
@@ -44,6 +45,7 @@ export async function activate(context: vscode.ExtensionContext) {
   UriHandler.register();
   PdfExportService.register();
   ImportService.register();
+  TerminalService.register();
 
   console.log(`${Config.title} is active!`);
 }
