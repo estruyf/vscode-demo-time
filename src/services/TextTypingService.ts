@@ -27,16 +27,18 @@ import {
 import { InsertTypingMode, Step, Subscription } from '../models';
 
 export class TextTypingService {
-  private static crntHackerTyperSession: {
-    editor: TextEditor;
-    content: string;
-    chunkSize: number;
-    currentPos: Position;
-    i: number;
-    token: CancellationToken | undefined;
-    done: boolean;
-    resolve: undefined | ((value?: unknown) => void);
-  } | undefined;
+  private static crntHackerTyperSession:
+    | {
+        editor: TextEditor;
+        content: string;
+        chunkSize: number;
+        currentPos: Position;
+        i: number;
+        token: CancellationToken | undefined;
+        done: boolean;
+        resolve: undefined | ((value?: unknown) => void);
+      }
+    | undefined;
 
   public static registerCommands() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
@@ -733,7 +735,7 @@ export class TextTypingService {
       i: 0,
       token,
       done: false,
-      resolve: undefined as undefined | ((value?: unknown) => void),
+      resolve: undefined,
     };
 
     await new Promise((resolve) => {
@@ -797,7 +799,7 @@ export class TextTypingService {
               i: 0,
               token,
               done: false,
-              resolve: undefined as undefined | ((value?: unknown) => void),
+              resolve: undefined,
             };
             await new Promise((resolve) => {
               if (TextTypingService.crntHackerTyperSession) {
