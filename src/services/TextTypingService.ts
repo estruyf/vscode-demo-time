@@ -27,7 +27,7 @@ import {
 import { InsertTypingMode, Step, Subscription } from '../models';
 
 export class TextTypingService {
-  public static crntHackerTyperSession: {
+  private static crntHackerTyperSession: {
     editor: TextEditor;
     content: string;
     chunkSize: number;
@@ -36,7 +36,7 @@ export class TextTypingService {
     token: CancellationToken | undefined;
     done: boolean;
     resolve: undefined | ((value?: unknown) => void);
-  };
+  } | undefined;
 
   public static registerCommands() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
@@ -46,16 +46,19 @@ export class TextTypingService {
         const session = TextTypingService.crntHackerTyperSession;
 
         if (
+          session === undefined ||
           session.token?.isCancellationRequested ||
           session.i >= session.content.length ||
           session.done
         ) {
-          if (session.resolve) {
+          if (session?.resolve) {
             session.resolve();
           }
-          session.done = true;
+          if (session) {
+            session.done = true;
+          }
           await setContext(ContextKeys.isHackerTyper, false);
-          TextTypingService.crntHackerTyperSession = undefined as any;
+          TextTypingService.crntHackerTyperSession = undefined;
           DemoStatusBar.toggleHackerMode(false);
           return;
         }
@@ -64,12 +67,10 @@ export class TextTypingService {
         const chunkEnd = Math.min(session.i + session.chunkSize, session.content.length);
         let chunk = '';
         let nextPos = session.currentPos;
-        let lastChar = '';
 
         for (let idx = session.i; idx < chunkEnd; ) {
           const { char, nextIndex } = TextTypingService.getNextChar(session.content, idx);
           chunk += char;
-          lastChar = char;
           idx = nextIndex;
         }
 
@@ -102,7 +103,7 @@ export class TextTypingService {
           session.done = true;
           await setContext(ContextKeys.isHackerTyper, false);
           DemoStatusBar.toggleHackerMode(false);
-          TextTypingService.crntHackerTyperSession = undefined as any;
+          TextTypingService.crntHackerTyperSession = undefined;
         }
       }),
     );
@@ -736,7 +737,9 @@ export class TextTypingService {
     };
 
     await new Promise((resolve) => {
-      TextTypingService.crntHackerTyperSession.resolve = resolve;
+      if (TextTypingService.crntHackerTyperSession) {
+        TextTypingService.crntHackerTyperSession.resolve = resolve;
+      }
     });
   }
 
@@ -797,7 +800,9 @@ export class TextTypingService {
               resolve: undefined as undefined | ((value?: unknown) => void),
             };
             await new Promise((resolve) => {
-              TextTypingService.crntHackerTyperSession.resolve = resolve;
+              if (TextTypingService.crntHackerTyperSession) {
+                TextTypingService.crntHackerTyperSession.resolve = resolve;
+              }
             });
             currentPosition += diff.value.length;
           }

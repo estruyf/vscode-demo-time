@@ -133,7 +133,7 @@ export class DemoApi {
     
     const crntFile = DemoPanel.crntExecutingDemoFile;
     let currentDemoFile = undefined;
-    if (crntFile && crntFile.filePath && Array.isArray(crntFile.demo)) {
+    if (crntFile?.filePath && Array.isArray(crntFile.demo)) {
       currentDemoFile = {
         filePath: crntFile.filePath,
         demo: crntFile.demo.map(({ title, id }) => ({
