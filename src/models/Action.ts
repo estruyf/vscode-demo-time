@@ -38,6 +38,7 @@ export enum Action {
   SetState = 'setState',
   OpenWebsite = 'openWebsite',
   // Terminal
+  OpenTerminal = 'openTerminal',
   ExecuteTerminalCommand = 'executeTerminalCommand',
   CloseTerminal = 'closeTerminal',
   ExecuteScript = 'executeScript',

@@ -219,6 +219,13 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  if (action === Action.OpenTerminal) {
+    return {
+      action: Action.OpenTerminal,
+      terminalId: '',
+    };
+  }
+
   if (action === Action.ExecuteScript) {
     return {
       action: Action.ExecuteScript,

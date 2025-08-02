@@ -2,7 +2,7 @@
   "name": "vscode-demo-time",
   "displayName": "Demo Time — Presentations & Demos in VS Code",
   "description": "Script your coding demos and presentations to perfection and present slides — all within VS Code! No typos, no missteps—just flawless, stress-free presentations. Seamlessly execute each demo step and advance through slides like a pro, keeping your audience engaged without ever leaving your coding environment.",
-  "version": "1.7.1",
+  "version": "1.8.0",
   "publisher": "eliostruyf",
   "keywords": [
     "demo",
@@ -182,15 +182,21 @@
           "enum": [
             "instant",
             "line-by-line",
-            "character-by-character"
+            "character-by-character",
+            "hacker-typer"
           ],
           "default": "instant",
-          "description": "Mode for inserting content: instant (all at once), line-by-line, or character-by-character"
+          "description": "Mode for inserting content: instant (all at once), line-by-line, character-by-character, or hacker-typer (chunks of content on each keystroke)"
         },
         "demoTime.insertTypingSpeed": {
           "type": "number",
           "default": 50,
           "description": "Characters per second for character-by-character typing mode"
+        },
+        "demoTime.hackerTyperChunkSize": {
+          "type": "number",
+          "default": 3,
+          "description": "Number of characters to insert per 'keystroke' in hacker-typer mode"
         },
         "demoTime.api.enabled": {
           "type": "boolean",
@@ -444,6 +450,11 @@
         "title": "Find in Tree View",
         "category": "Demo Time",
         "icon": "$(search)"
+      },
+      {
+        "command": "demo-time.hackerTyperNextChunk",
+        "title": "Hacker Typer next chunk",
+        "category": "Demo Time"
       }
     ],
     "menus": {
@@ -495,6 +506,10 @@
         {
           "command": "demo-time.viewSlide",
           "when": "false"
+        },
+        {
+          "command": "demo-time.hackerTyperNextChunk",
+          "when": "demo-time.isHackerTyper == true"
         },
         {
           "command": "demo-time.toggleHighlight",
@@ -651,6 +666,11 @@
         "key": "ctrl+r",
         "mac": "cmd+r",
         "when": "activeWebviewPanelId == demoTime:preview"
+      },
+      {
+        "command": "demo-time.hackerTyperNextChunk",
+        "key": "down",
+        "when": "demo-time.isHackerTyper == true"
       }
     ],
     "viewsWelcome": [
@@ -724,10 +744,11 @@
   "devDependencies": {
     "@actions/core": "^1.11.1",
     "@estruyf/vscode": "^1.1.0",
+    "@nx/workspace": "^21.2.3",
     "@types/cors": "^2.8.17",
     "@types/diff": "^7.0.1",
-    "@types/js-yaml": "^4.0.9",
     "@types/jest": "^29.5.11",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "18.x",
     "@types/react": "^18.3.16",
     "@types/react-dom": "^18.3.5",
@@ -743,16 +764,17 @@
     "express": "^4.21.2",
     "glob": "^10.3.10",
     "handlebars": "^4.7.8",
+    "jest": "^29.7.0",
     "js-yaml": "^4.1.0",
     "jsonc-parser": "^3.3.1",
     "mermaid": "^11.6.0",
     "mlly": "^1.7.4",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.1",
     "npm-run-all": "^4.1.5",
+    "nx": "21.2.3",
     "playwright-chromium": "^1.51.1",
     "postcss": "^8.4.49",
     "postcss-loader": "^8.1.1",
+    "prettier": "^3.6.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "rehype-pretty-code": "^0.14.0",
@@ -764,6 +786,7 @@
     "remark-rehype": "^11.1.1",
     "style-loader": "^4.0.0",
     "tailwindcss": "^3.4.16",
+    "ts-jest": "^29.1.1",
     "ts-loader": "^9.5.1",
     "tsup": "^8.0.1",
     "typescript": "^5.2.2",
@@ -774,5 +797,8 @@
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.2.0",
     "webpack-manifest-plugin": "^5.0.1"
+  },
+  "nx": {},
+  "dependencies": {
   }
 }

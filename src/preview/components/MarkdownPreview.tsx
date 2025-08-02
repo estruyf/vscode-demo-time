@@ -153,7 +153,9 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   }, []);
 
   const handleZoomedMouseMove = React.useCallback((event: React.MouseEvent) => {
-    if (!isZoomed || !ref.current) return;
+    if (!isZoomed || !ref.current) {
+      return;
+    }
 
     const rect = ref.current.getBoundingClientRect();
 

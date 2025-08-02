@@ -1,4 +1,4 @@
-import { commands, Terminal, window } from 'vscode';
+import { commands, Terminal, window, Disposable } from 'vscode';
 import { Notifications } from './Notifications';
 import { sleep } from '../utils';
 import { DemoRunner } from './DemoRunner';
@@ -10,6 +10,20 @@ import { Step } from '../models';
 export class TerminalService {
   private static terminal: { [id: string]: Terminal | null } = {};
   private static readonly terminalName = 'DemoTime';
+  private static closeTerminalDisposable: Disposable | undefined;
+
+  /**
+   * Registers an event listener that tracks the closing of VS Code terminals.
+   * When a terminal is closed, it removes the corresponding terminal entry from the internal terminal map.
+   * This helps manage and clean up terminal references within the `TerminalService`.
+   */
+  public static register(): void {
+    TerminalService.closeTerminalDisposable = window.onDidCloseTerminal((term) => {
+      if (term.name && TerminalService.terminal[term.name]) {
+        delete TerminalService.terminal[term.name];
+      }
+    });
+  }
 
   /**
    * Executes a terminal command.
@@ -25,21 +39,8 @@ export class TerminalService {
       return;
     }
 
-    terminalId = terminalId ?? TerminalService.terminalName;
-    let terminal = TerminalService.terminal[terminalId];
+    const terminal = await TerminalService.openTerminal(terminalId);
 
-    if (!terminal) {
-      terminal = window.createTerminal(terminalId);
-      TerminalService.terminal[terminalId] = terminal;
-
-      window.onDidCloseTerminal((term) => {
-        if (term.name && TerminalService.terminal[term.name]) {
-          delete TerminalService.terminal[term.name];
-        }
-      });
-    }
-
-    terminal.show();
     // Wait for the terminal to be ready before sending the command
     await new Promise<void>((resolve) => {
       const checkTerminal = () => {
@@ -115,6 +116,17 @@ export class TerminalService {
   }
 
   /**
+   * Disposes of terminal-related resources managed by the TerminalService.
+   *
+   * This method disposes the current terminal disposable, if present,
+   * and then disposes all remaining terminal resources.
+   */
+  public static dispose(): void {
+    TerminalService.closeTerminalDisposable?.dispose();
+    TerminalService.disposeAll();
+  }
+
+  /**
    * Disposes all terminals.
    */
   public static disposeAll(): void {
@@ -140,5 +152,19 @@ export class TerminalService {
       // Focus the terminal after sending the command
       await commands.executeCommand('workbench.action.focusActiveEditorGroup');
     }
+  }
+
+  /**
+   * Opens a new terminal with the given ID or the default DemoTime terminal.
+   */
+  public static async openTerminal(terminalId?: string): Promise<Terminal> {
+    terminalId = terminalId ?? TerminalService.terminalName;
+    let terminal = TerminalService.terminal[terminalId];
+    if (!terminal) {
+      terminal = window.createTerminal(terminalId);
+      TerminalService.terminal[terminalId] = terminal;
+    }
+    terminal.show();
+    return terminal;
   }
 }

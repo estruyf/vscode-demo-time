@@ -68,8 +68,6 @@ export class Preview {
     Preview.crntCss = css ?? null;
 
     if (Preview.isOpen) {
-      Preview.reveal();
-
       // Use the fileUri argument for triggerUpdate, as it's the most current.
       if (Preview.webview?.webview && fileUri) {
         const fileWebviewPath = getWebviewUrl(Preview.webview?.webview, fileUri);
@@ -216,6 +214,8 @@ export class Preview {
       await window.showTextDocument(fileUri, { preview: false });
     } else if (command === WebViewMessages.toVscode.updateSlideIndex) {
       Preview.currentSlideIndex = payload;
+    } else if (command === WebViewMessages.toVscode.slideReady) {
+      Preview.reveal();
     }
   }
 

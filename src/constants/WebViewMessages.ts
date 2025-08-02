@@ -27,6 +27,7 @@ export const WebViewMessages = {
     hasNextSlide: 'hasNextSlide',
     hasPreviousSlide: 'hasPreviousSlide',
     updateSlideIndex: 'updateSlideIndex',
+    slideReady: 'slideReady',
   },
   toWebview: {
     updateClock: 'updateClock',
