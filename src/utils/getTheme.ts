@@ -58,7 +58,7 @@ export const getTheme = async (themeName?: string) => {
   const themeFile: Theme | undefined = extThemes.find(
     (theme: Theme) => theme.label === themeName || theme.id === themeName,
   );
-  if (!themeFile || !themeFile.path) {
+  if (!themeFile?.path) {
     throw new Error(`Could not find theme file for ${themeName}`);
   }
 

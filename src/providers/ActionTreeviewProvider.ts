@@ -61,6 +61,7 @@ export class ActionTreeItem extends TreeItem {
     public notes?: string,
     public originalLabel?: string,
     public isActive?: boolean,
+    public disabled?: boolean,
   ) {
     super(label, children ? TreeItemCollapsibleState.Expanded : TreeItemCollapsibleState.None);
 

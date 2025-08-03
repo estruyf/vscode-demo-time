@@ -713,7 +713,6 @@ export class DemoRunner {
       }
 
       await StateManager.update(`${StateKeys.prefix.state}${step.state.key}`, step.state.value);
-      variables = await getVariables(workspaceFolder);
       return;
     }
 
@@ -779,7 +778,6 @@ export class DemoRunner {
 
     if (step.action === Action.ExecuteScript) {
       await ScriptExecutor.run(step);
-      variables = await getVariables(workspaceFolder);
       return;
     }
 
@@ -992,7 +990,6 @@ export class DemoRunner {
 
     if (step.action === Action.Delete) {
       await TextTypingService.delete(editor, fileUri, crntRange, crntPosition);
-      return;
     }
   }
 

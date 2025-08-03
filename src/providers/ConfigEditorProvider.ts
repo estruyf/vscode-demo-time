@@ -1,4 +1,3 @@
-import { OpenDialogOptions, Uri, workspace, WorkspaceEdit, Range } from 'vscode';
 import {
   CancellationToken,
   commands,
@@ -6,18 +5,22 @@ import {
   ExtensionContext,
   TextDocument,
   WebviewPanel,
+  Uri,
   window,
+  workspace,
+  WorkspaceEdit,
+  Range,
 } from 'vscode';
 import { Subscription } from '../models';
 import { DemoFileProvider, DemoRunner, Extension, Logger } from '../services';
 import { COMMAND, Config, WebViewMessages } from '../constants';
-import { getThemes, openFilePicker, parseWinPath } from '../utils';
+import { getThemes, openFilePicker } from '../utils';
 import { ActionTreeItem } from './ActionTreeviewProvider';
 import { SettingsView } from '../settingsView/SettingsView';
 
 export class ConfigEditorProvider implements CustomTextEditorProvider {
   private static readonly viewType = 'demoTime.configEditor';
-  private static fileViews: Map<string, WebviewPanel> = new Map();
+  private static readonly fileViews: Map<string, WebviewPanel> = new Map();
   private static pendingStepOpens: Map<string, ActionTreeItem> = new Map();
   private static isManualSave = false;
 
@@ -154,12 +157,12 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
      */
     async function handleRunDemoStep(
       payload: any,
-      document: TextDocument,
+      _: TextDocument,
       webviewPanel: WebviewPanel,
       requestId: string | undefined,
     ) {
       // Example: payload could be { step: { ... } }
-      if (!payload || !payload.step) {
+      if (!payload?.step) {
         window.showErrorMessage('No demo step provided to run.');
         return;
       }
@@ -361,7 +364,7 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     }
 
     const panel = ConfigEditorProvider.fileViews.get(fileUri.toString());
-    if (panel && panel.active) {
+    if (panel?.active) {
       panel.reveal();
       panel.webview.postMessage({
         command: WebViewMessages.toWebview.configEditor.openStep,

@@ -161,6 +161,7 @@ export class DemoPanel {
           demo.notes?.path,
           demo.title,
           isActive,
+          disabled,
         );
       });
 

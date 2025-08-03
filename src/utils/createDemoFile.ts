@@ -80,7 +80,6 @@ export const createDemoFile = async () => {
     return;
   }
 
-  // await window.showTextDocument(file);
   ConfigEditorProvider.openInConfigEditor(file);
 
   return file;

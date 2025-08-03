@@ -1,4 +1,4 @@
-import { Uri, window, workspace, Range, ViewColumn } from 'vscode';
+import { Uri, window, workspace } from 'vscode';
 import { Extension } from './Extension';
 import { DemoFiles, DemoFile, DemoFileType } from '../models';
 import { Config, General } from '../constants';
