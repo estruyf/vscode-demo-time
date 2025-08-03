@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - dev
+      - alpha
   workflow_dispatch:
 
 jobs:
@@ -27,12 +28,24 @@ jobs:
         run: node .github/scripts/verify-actions.mjs
 
       - name: Prepare BETA
+        if: github.ref != 'refs/heads/alpha'
         run: node .github/scripts/beta-release.mjs $GITHUB_RUN_ID
 
       - name: Publish
-        if: contains(github.event.head_commit.message, '#release')
+        if: contains(github.event.head_commit.message, '#release') && github.ref != 'refs/heads/alpha'
         run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }} --baseImagesUrl https://raw.githubusercontent.com/estruyf/vscode-demo-time/dev --pre-release
 
       - name: Publish to open-vsx.org
-        if: contains(github.event.head_commit.message, '#release')
+        if: contains(github.event.head_commit.message, '#release') && github.ref != 'refs/heads/alpha'
         run: npx ovsx publish -p ${{ secrets.OPEN_VSX_PAT }}
+
+      - name: Package VSIX (alpha branch)
+        if: github.ref == 'refs/heads/alpha'
+        run: npx @vscode/vsce package
+
+      - name: Upload VSIX artifact (alpha branch)
+        if: github.ref == 'refs/heads/alpha'
+        uses: actions/upload-artifact@v4
+        with:
+          name: vscode-demo-time-alpha.vsix
+          path: '*.vsix'

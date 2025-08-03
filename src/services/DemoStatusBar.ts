@@ -135,8 +135,14 @@ export class DemoStatusBar {
         executingDemos = nextFile.demo.demos;
       }
 
-      // Get the next demo
-      const nextDemo = executingDemos[crntDemoIdx + 1];
+      // Get the next enabled demo (skip disabled ones)
+      let nextDemo: Demo | undefined = undefined;
+      for (let i = crntDemoIdx + 1; i < executingDemos.length; i++) {
+        if (!executingDemos[i].disabled) {
+          nextDemo = executingDemos[i];
+          break;
+        }
+      }
 
       if (nextDemo) {
         DemoStatusBar.createStatusBarItems();

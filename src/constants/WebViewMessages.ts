@@ -28,6 +28,23 @@ export const WebViewMessages = {
     hasPreviousSlide: 'hasPreviousSlide',
     updateSlideIndex: 'updateSlideIndex',
     slideReady: 'slideReady',
+    // Config editor
+    configEditor: {
+      getContents: 'getConfigEditorContents',
+      newFile: 'newConfigEditorFile',
+      updateConfig: 'updateConfigEditor',
+      saveFile: 'saveConfigEditorFile',
+      openSource: 'openConfigEditorSource',
+      filePicker: 'openConfigEditorFilePicker',
+      getThemes: 'getConfigEditorThemes',
+      runDemoStep: 'runConfigEditorDemoStep',
+      checkStepQueue: 'checkConfigEditorStepQueue',
+      openSettings: 'openSettings',
+    },
+    settingsView: {
+      getSettings: 'getSettingsViewSettings',
+      saveSettings: 'saveSettingsViewSettings',
+    },
   },
   toWebview: {
     updateClock: 'updateClock',
@@ -47,5 +64,11 @@ export const WebViewMessages = {
     updateIsInPresentationMode: 'updateIsInPresentationMode',
     previousSlide: 'previousSlide',
     nextSlide: 'nextSlide',
+    // Config editor
+    configEditor: {
+      updateConfigContents: 'updateConfigEditorContents',
+      triggerSave: 'triggerConfigEditorSave',
+      openStep: 'openConfigEditorStep',
+    },
   },
 };

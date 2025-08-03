@@ -86,6 +86,9 @@
       },
       "yaml.schemas": {
         "https://demotime.show/demo-time.schema.json": ".demo/*"
+      },
+      "workbench.editorAssociations": {
+        "{git,gitlens}:/**/*.{yml,json,yaml}": "default"
       }
     },
     "icons": {
@@ -258,6 +261,11 @@
           "type": "boolean",
           "default": false,
           "description": "Enable debug mode for Demo Time."
+        },
+        "demoTime.openInConfigEditor": {
+          "type": "boolean",
+          "default": true,
+          "description": "Open the config file in the custom config editor."
         }
       }
     },
@@ -452,8 +460,25 @@
         "icon": "$(search)"
       },
       {
+        "command": "demo-time.openConfigInTextEditor",
+        "title": "Open config in text editor",
+        "category": "Demo Time",
+        "icon": "$(file-code)"
+      },
+      {
+        "command": "demo-time.openConfigEditor",
+        "title": "Open config editor",
+        "category": "Demo Time",
+        "icon": "$(settings-gear)"
+      },
+      {
         "command": "demo-time.hackerTyperNextChunk",
         "title": "Hacker Typer next chunk",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.showSettings",
+        "title": "Settings",
         "category": "Demo Time"
       }
     ],
@@ -508,6 +533,14 @@
           "when": "false"
         },
         {
+          "command": "demo-time.openConfigInTextEditor",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.openConfigEditor",
+          "when": "false"
+        },
+        {
           "command": "demo-time.hackerTyperNextChunk",
           "when": "demo-time.isHackerTyper == true"
         },
@@ -554,6 +587,10 @@
         {
           "command": "demo-time.docs",
           "when": "view == demo-time"
+        },
+        {
+          "command": "demo-time.showSettings",
+          "when": "view == demo-time"
         }
       ],
       "view/item/context": [
@@ -594,6 +631,16 @@
         }
       ],
       "editor/title": [
+        {
+          "command": "demo-time.openConfigInTextEditor",
+          "when": "activeCustomEditorId == 'demoTime.configEditor'",
+          "group": "navigation@1"
+        },
+        {
+          "command": "demo-time.openConfigEditor",
+          "when": "((editorLangId == jsonc || editorLangId == json) || editorLangId == yaml) && resourceDirname =~ /\\.demo$/",
+          "group": "navigation@-1"
+        },
         {
           "command": "demo-time.addStepToDemo",
           "when": "((editorLangId == jsonc || editorLangId == json) || editorLangId == yaml) && resourceDirname =~ /\\.demo$/",
@@ -715,10 +762,28 @@
           }
         ]
       }
+    ],
+    "customEditors": [
+      {
+        "viewType": "demoTime.configEditor",
+        "displayName": "Demo Time Config Editor",
+        "selector": [
+          {
+            "filenamePattern": "**/.demo/*.json"
+          },
+          {
+            "filenamePattern": "**/.demo/*.yaml"
+          },
+          {
+            "filenamePattern": "**/.demo/*.yml"
+          }
+        ],
+        "priority": "default"
+      }
     ]
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "vscode:prepublish": "npm run clean && npm run compile",
     "compile": "npm-run-all --parallel compile:*",
     "compile:ext": "tsup --minify",
     "compile:wc": "tsup --minify --config tsup.wc.config.ts",
@@ -726,12 +791,13 @@
     "compile:preview": "webpack --mode production --config ./preview.config.js",
     "compile:copy": "node ./scripts/copy-assets.mjs",
     "watch": "npm-run-all --parallel watch:*",
-    "watch:ext": "tsup --watch",
-    "watch:wc": "tsup --watch --config tsup.wc.config.ts",
+    "watch:ext": "tsup --watch --sourcemap",
+    "watch:wc": "tsup --watch --sourcemap --config tsup.wc.config.ts ",
     "watch:wv": "webpack serve --mode development --config ./webview.config.js",
     "watch:preview": "webpack serve --mode development --config ./preview.config.js",
     "lint": "eslint src --ext ts",
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "clean": "rimraf out coverage"
   },
   "peerDependencies": {
     "playwright-chromium": "^1.51.1"
@@ -784,11 +850,12 @@
     "remark-frontmatter": "^5.0.0",
     "remark-gfm": "^4.0.1",
     "remark-rehype": "^11.1.1",
+    "rimraf": "^6.0.1",
     "style-loader": "^4.0.0",
     "tailwindcss": "^3.4.16",
     "ts-jest": "^29.1.1",
     "ts-loader": "^9.5.1",
-    "tsup": "^8.0.1",
+    "tsup": "^8.5.0",
     "typescript": "^5.2.2",
     "uuid": "^11.1.0",
     "vfile-matter": "^5.0.0",
@@ -798,7 +865,5 @@
     "webpack-dev-server": "^5.2.0",
     "webpack-manifest-plugin": "^5.0.1"
   },
-  "nx": {},
-  "dependencies": {
-  }
+  "nx": {}
 }

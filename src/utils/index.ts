@@ -36,6 +36,7 @@ export * from './htmlDecode';
 export * from './insertVariables';
 export * from './isProjectInitialized';
 export * from './lowercaseFirstLetter';
+export * from './openFilePicker';
 export * from './parseWinPath';
 export * from './readFile';
 export * from './removeDemoDuplicates';

@@ -1,10 +1,9 @@
-import { defineConfig } from "tsup";
+import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ["./src/extension.ts"],
+  entry: ['./src/extension.ts'],
   clean: true,
-  format: ["cjs"],
-  outDir: "./out/extension",
-  external: ["vscode"],
-  sourcemap: true,
+  format: ['cjs'],
+  outDir: './out/extension',
+  external: ['vscode'],
 });

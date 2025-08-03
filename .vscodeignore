@@ -11,6 +11,7 @@ snippets
 src
 tests
 examples
+.nx
 
 # Files
 **/.eslintrc.json
@@ -26,6 +27,7 @@ tailwind.config.js
 **/tsup.wc.config.ts
 webview.config.js
 **/*.ts
+nx.json
 
 # Assets
 assets/logo.ai

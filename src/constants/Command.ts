@@ -46,6 +46,11 @@ export const COMMAND = {
   exportToPdf: `${EXTENSION_NAME}.exportToPdf`,
   // Importer
   importPowerPointImages: `${EXTENSION_NAME}.importPowerPointImages`,
+  // Config editor
+  openConfigInTextEditor: `${EXTENSION_NAME}.openConfigInTextEditor`,
+  openConfigEditor: `${EXTENSION_NAME}.openConfigEditor`,
   // Hacker Typer
   hackerTyperNextChunk: `${EXTENSION_NAME}.hackerTyperNextChunk`,
+  // Settings
+  showSettings: `${EXTENSION_NAME}.showSettings`,
 };

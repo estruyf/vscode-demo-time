@@ -29,6 +29,7 @@ import {
 } from '../utils';
 import { Notifications } from './Notifications';
 import { parse as jsonParse } from 'jsonc-parser';
+import { ConfigEditorProvider } from '../providers/ConfigEditorProvider';
 
 export class DemoCreator {
   public static ExecutedDemoSteps: string[] = [];
@@ -112,12 +113,21 @@ export class DemoCreator {
     }
 
     const fileUri = Uri.file(item.demoFilePath);
-    await window.showTextDocument(fileUri);
 
     if (!isDemoStep || !item.originalLabel || item.stepIndex === undefined) {
+      ConfigEditorProvider.openInConfigEditor(fileUri);
       return;
     }
 
+    const openInConfigEditor = Extension.getInstance().getSetting<boolean>(
+      Config.configEditor.openInConfigEditor,
+    );
+    if (openInConfigEditor) {
+      ConfigEditorProvider.openStepInEditor(fileUri, item);
+      return;
+    }
+
+    await window.showTextDocument(fileUri);
     const editor = window.activeTextEditor;
     if (!editor) {
       return;

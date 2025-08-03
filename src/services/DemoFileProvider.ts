@@ -6,6 +6,7 @@ import { parse as jsonParse } from 'jsonc-parser';
 import { load as yamlLoad, dump as yamlDump } from 'js-yaml';
 import { createDemoFile, readFile, sanitizeFileName, sortFiles, writeFile } from '../utils';
 import { Preview } from '../preview/Preview';
+import { Logger } from './Logger';
 
 export class DemoFileProvider {
   public static register() {
@@ -47,6 +48,10 @@ export class DemoFileProvider {
   public static parseFileContent(content: string, filePath: Uri): DemoFile | undefined {
     const path = filePath.fsPath.toLowerCase();
 
+    if (!content) {
+      content = JSON.stringify(DemoFileProvider.generateFileContent(''));
+    }
+
     if (path.endsWith('.yaml') || path.endsWith('.yml')) {
       try {
         const parsed = yamlLoad(content) as DemoFile;
@@ -67,8 +72,8 @@ export class DemoFileProvider {
    * @param title The demo title
    * @returns The formatted content string
    */
-  private static generateFileContent(title: string): unknown {
-    const demoContent = {
+  private static generateFileContent(title: string): DemoFile {
+    const demoContent: DemoFile = {
       $schema: 'https://demotime.show/demo-time.schema.json',
       title: title,
       description: '',
@@ -77,6 +82,13 @@ export class DemoFileProvider {
     };
 
     return demoContent;
+  }
+
+  public static formatFileContent(content: any, filePath: Uri): string {
+    const path = filePath.fsPath.toLowerCase();
+    const fileType = path.endsWith('.yaml') || path.endsWith('.yml') ? 'yaml' : 'json';
+
+    return this.formatContent(fileType as DemoFileType, content);
   }
 
   /**
@@ -135,12 +147,17 @@ export class DemoFileProvider {
     const demoFiles: DemoFiles = {};
 
     for (const file of files) {
-      const content = await DemoFileProvider.getFile(file);
-      if (!content) {
+      try {
+        const content = await DemoFileProvider.getFile(file);
+        if (!content) {
+          continue;
+        }
+
+        demoFiles[file.path] = content;
+      } catch (error) {
+        Logger.error(`Error reading demo file ${file.path}: ${(error as Error).message}`);
         continue;
       }
-
-      demoFiles[file.path] = content;
     }
 
     return demoFiles;
@@ -258,13 +275,13 @@ export class DemoFileProvider {
    * @param filePath - The path of the file to save.
    * @param content - The content to write to the file.
    */
-  public static async saveFile(filePath: string, content: any) {
+  public static async saveFile(filePath: string, content: any, shouldWait = true): Promise<void> {
     const workspaceFolder = Extension.getInstance().workspaceFolder;
     if (!workspaceFolder) {
       return;
     }
 
     const file = Uri.file(filePath);
-    await writeFile(file, content);
+    await writeFile(file, content, shouldWait);
   }
 }
