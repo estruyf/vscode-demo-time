@@ -27,16 +27,18 @@ import {
 import { InsertTypingMode, Step, Subscription } from '../models';
 
 export class TextTypingService {
-  public static crntHackerTyperSession: {
-    editor: TextEditor;
-    content: string;
-    chunkSize: number;
-    currentPos: Position;
-    i: number;
-    token: CancellationToken | undefined;
-    done: boolean;
-    resolve: undefined | ((value?: unknown) => void);
-  };
+  private static crntHackerTyperSession:
+    | {
+        editor: TextEditor;
+        content: string;
+        chunkSize: number;
+        currentPos: Position;
+        i: number;
+        token: CancellationToken | undefined;
+        done: boolean;
+        resolve: undefined | ((value?: unknown) => void);
+      }
+    | undefined;
 
   public static registerCommands() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
@@ -46,16 +48,19 @@ export class TextTypingService {
         const session = TextTypingService.crntHackerTyperSession;
 
         if (
+          session === undefined ||
           session.token?.isCancellationRequested ||
           session.i >= session.content.length ||
           session.done
         ) {
-          if (session.resolve) {
+          if (session?.resolve) {
             session.resolve();
           }
-          session.done = true;
+          if (session) {
+            session.done = true;
+          }
           await setContext(ContextKeys.isHackerTyper, false);
-          TextTypingService.crntHackerTyperSession = undefined as any;
+          TextTypingService.crntHackerTyperSession = undefined;
           DemoStatusBar.toggleHackerMode(false);
           return;
         }
@@ -64,12 +69,10 @@ export class TextTypingService {
         const chunkEnd = Math.min(session.i + session.chunkSize, session.content.length);
         let chunk = '';
         let nextPos = session.currentPos;
-        let lastChar = '';
 
         for (let idx = session.i; idx < chunkEnd; ) {
           const { char, nextIndex } = TextTypingService.getNextChar(session.content, idx);
           chunk += char;
-          lastChar = char;
           idx = nextIndex;
         }
 
@@ -78,16 +81,16 @@ export class TextTypingService {
         await workspace.applyEdit(edit);
 
         // Update position accounting for newlines in the chunk
-        for (let i = 0; i < chunk.length; ) {
-          if (chunk[i] === '\r' && chunk[i + 1] === '\n') {
+        for (let charIndex = 0; charIndex < chunk.length; ) {
+          if (chunk[charIndex] === '\r' && chunk[charIndex + 1] === '\n') {
             nextPos = new Position(nextPos.line + 1, 0);
-            i += 2;
-          } else if (chunk[i] === '\n') {
+            charIndex += 2;
+          } else if (chunk[charIndex] === '\n') {
             nextPos = new Position(nextPos.line + 1, 0);
-            i += 1;
+            charIndex += 1;
           } else {
             nextPos = new Position(nextPos.line, nextPos.character + 1);
-            i += 1;
+            charIndex += 1;
           }
         }
 
@@ -102,7 +105,7 @@ export class TextTypingService {
           session.done = true;
           await setContext(ContextKeys.isHackerTyper, false);
           DemoStatusBar.toggleHackerMode(false);
-          TextTypingService.crntHackerTyperSession = undefined as any;
+          TextTypingService.crntHackerTyperSession = undefined;
         }
       }),
     );
@@ -732,11 +735,13 @@ export class TextTypingService {
       i: 0,
       token,
       done: false,
-      resolve: undefined as undefined | ((value?: unknown) => void),
+      resolve: undefined,
     };
 
     await new Promise((resolve) => {
-      TextTypingService.crntHackerTyperSession.resolve = resolve;
+      if (TextTypingService.crntHackerTyperSession) {
+        TextTypingService.crntHackerTyperSession.resolve = resolve;
+      }
     });
   }
 
@@ -794,10 +799,12 @@ export class TextTypingService {
               i: 0,
               token,
               done: false,
-              resolve: undefined as undefined | ((value?: unknown) => void),
+              resolve: undefined,
             };
             await new Promise((resolve) => {
-              TextTypingService.crntHackerTyperSession.resolve = resolve;
+              if (TextTypingService.crntHackerTyperSession) {
+                TextTypingService.crntHackerTyperSession.resolve = resolve;
+              }
             });
             currentPosition += diff.value.length;
           }

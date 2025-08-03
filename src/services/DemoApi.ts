@@ -117,12 +117,7 @@ export class DemoApi {
     
     const demoFilesFormatted = Object.entries(demoFiles).map(([filePath, file]) => ({
       filePath,
-      demos: Array.isArray(file.demos)
-      ? file.demos.map(({ title, id }) => ({
-        id,
-        title
-      }))
-      : []
+      demos: DemoApi.mapDemos(file.demos)
     }));
     
     const nextDemoFull = DemoStatusBar.getNextDemo();
@@ -133,7 +128,7 @@ export class DemoApi {
     
     const crntFile = DemoPanel.crntExecutingDemoFile;
     let currentDemoFile = undefined;
-    if (crntFile && crntFile.filePath && Array.isArray(crntFile.demo)) {
+    if (crntFile?.filePath && Array.isArray(crntFile.demo)) {
       currentDemoFile = {
         filePath: crntFile.filePath,
         demo: crntFile.demo.map(({ title, id }) => ({
@@ -148,6 +143,18 @@ export class DemoApi {
       nextDemo,
       currentDemoFile
     });
+  }
+  
+  /**
+   * Maps an array of demo objects to an array of objects containing only the `id` and `title` properties.
+   *
+   * @param demos - The array of demo objects to map.
+   * @returns An array of objects, each with `id` and `title` properties. Returns an empty array if the input is not an array.
+   */
+  private static mapDemos(demos: any[]): { id: string; title: string }[] {
+    return Array.isArray(demos)
+    ? demos.map(({ title, id }) => ({ id, title }))
+    : [];
   }
   
   /**

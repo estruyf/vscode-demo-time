@@ -15,6 +15,7 @@ import {
   Slides,
   UriHandler,
   TextTypingService,
+  TerminalService,
 } from './services';
 import { DemoPanel } from './panels/DemoPanel';
 import { Preview } from './preview/Preview';
@@ -48,8 +49,11 @@ export async function activate(context: vscode.ExtensionContext) {
   ImportService.register();
   ConfigEditorProvider.register();
   SettingsView.register();
+  TerminalService.register();
 
   console.log(`${Config.title} is active!`);
 }
 
-export function deactivate() {}
+export function deactivate() {
+  TerminalService.dispose();
+}
