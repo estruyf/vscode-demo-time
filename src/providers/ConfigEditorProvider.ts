@@ -214,7 +214,9 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
 
       const edit = new WorkspaceEdit();
       const demo = DemoFileProvider.formatFileContent(config, document.uri);
-      edit.replace(document.uri, new Range(0, 0, document.lineCount, 0), demo);
+      const lastLine = document.lineCount - 1;
+      const lastChar = document.lineAt(lastLine).text.length;
+      edit.replace(document.uri, new Range(0, 0, lastLine, lastChar), demo);
 
       return workspace.applyEdit(edit);
     }

@@ -197,23 +197,35 @@ export class SettingsView {
     }
 
     const URL = `https://config-beta.demotime.show`;
-    const response = await fetch(URL, {
-      headers: {
-        'Content-Type': 'text/html',
-      },
-      cache: 'no-cache',
-    });
+    try {
+      const response = await fetch(URL, {
+        headers: {
+          'Content-Type': 'text/html',
+        },
+        cache: 'no-cache',
+      });
 
-    const html = await response.text();
-    // Patch relative asset URLs to absolute URLs using the base URL
-    const baseUrl = URL.replace(/\/$/, '');
-    const patchedHtml = html
-      .replace(/(src|href)=["'](\/assets\/[^"']+)["']/g, (match, attr, path) => {
-        return `${attr}="${baseUrl}${path}"`;
-      })
-      .replace(/href=["']\/vite\.svg["']/g, `href="${baseUrl}/vite.svg"`)
-      .replace(`id="root"`, `id="root" data-view-type="settings"`);
+      if (!response.ok) {
+        console.error(
+          `Failed to fetch settings webview: HTTP ${response.status} ${response.statusText}`,
+        );
+        return `<html><body><h2>Unable to load settings view (HTTP ${response.status}). Please check your network connection or try again later.</h2></body></html>`;
+      }
 
-    return patchedHtml.toString();
+      const html = await response.text();
+      // Patch relative asset URLs to absolute URLs using the base URL
+      const baseUrl = URL.replace(/\/$/, '');
+      const patchedHtml = html
+        .replace(/(src|href)=["'](\/assets\/[^"']+)["']/g, (match, attr, path) => {
+          return `${attr}="${baseUrl}${path}"`;
+        })
+        .replace(/href=["']\/vite\.svg["']/g, `href="${baseUrl}/vite.svg"`)
+        .replace(`id="root"`, `id="root" data-view-type="settings"`);
+
+      return patchedHtml.toString();
+    } catch (error) {
+      console.error('Error fetching settings webview:', error);
+      return `<html><body><h2>Unable to load settings view. Please check your network connection or try again later.</h2></body></html>`;
+    }
   }
 }

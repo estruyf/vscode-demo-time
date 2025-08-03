@@ -112,11 +112,7 @@ export class DemoPanel {
         // If demo is disabled, visually indicate and disable interaction
         let label = `${idx + 1}. ${demo.title}`;
         let description = demo.description ? demo.description.replace(/\s+/g, ' ') : undefined;
-        let icon = {
-          name: hasExecuted ? 'circle-slash' : 'circle-outline',
-          color: new ThemeColor('disabledForeground'),
-          custom: false,
-        };
+        let icon;
         let command = COMMAND.runStep;
         let disabled = false;
         if (demo.disabled) {

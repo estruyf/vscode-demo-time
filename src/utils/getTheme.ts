@@ -2,17 +2,26 @@ import { extensions, Uri, workspace } from 'vscode';
 import { Theme } from '../models';
 import { readFile } from '.';
 
+// Helper to get all extensions that contribute themes, with error handling
+const getThemeExtensions = () =>
+  extensions.all.filter((e) => {
+    const pkg = e.packageJSON;
+    const contributes = pkg?.contributes;
+    const themes = contributes?.themes;
+    return Array.isArray(themes) && themes.length > 0;
+  });
+
 export const getThemes = async () => {
   const themes: Theme[] = [];
-  const allExtensions = extensions.all.filter((e) => {
-    const pkg = e.packageJSON;
-    return pkg.contributes && pkg.contributes.themes && pkg.contributes.themes.length > 0;
-  });
+  const allExtensions = getThemeExtensions();
 
   for (const ext of allExtensions) {
     const pkg = ext.packageJSON;
-    for (const theme of pkg.contributes.themes) {
-      themes.push(theme);
+    const extThemes = pkg?.contributes?.themes;
+    if (Array.isArray(extThemes)) {
+      for (const theme of extThemes) {
+        themes.push(theme);
+      }
     }
   }
 
@@ -23,19 +32,18 @@ export const getTheme = async (themeName?: string) => {
   let crntTheme = workspace.getConfiguration('workbench').get('colorTheme') as string;
 
   // Get all the theme extensions
-  const allExtensions = extensions.all.filter((e) => {
-    const pkg = e.packageJSON;
-    return pkg.contributes && pkg.contributes.themes && pkg.contributes.themes.length > 0;
-  });
+  const allExtensions = getThemeExtensions();
 
   themeName = !themeName || themeName === '' ? crntTheme : themeName;
 
   // Get the theme extension that matches the active theme
   const themeExtension = allExtensions.find((e) => {
     const pkg = e.packageJSON;
-    return pkg.contributes.themes.find(
-      (theme: Theme) => theme.label === themeName || theme.id === themeName,
-    );
+    const extThemes = pkg?.contributes?.themes;
+    if (!Array.isArray(extThemes)) {
+      return false;
+    }
+    return extThemes.find((theme: Theme) => theme.label === themeName || theme.id === themeName);
   });
 
   if (!themeExtension) {
@@ -43,9 +51,16 @@ export const getTheme = async (themeName?: string) => {
   }
 
   // Get the theme file
-  const themeFile: Theme = themeExtension.packageJSON.contributes.themes.find(
+  const extThemes = themeExtension.packageJSON?.contributes?.themes;
+  if (!Array.isArray(extThemes)) {
+    throw new Error(`Theme extension for ${themeName} has no valid themes array.`);
+  }
+  const themeFile: Theme | undefined = extThemes.find(
     (theme: Theme) => theme.label === themeName || theme.id === themeName,
   );
+  if (!themeFile || !themeFile.path) {
+    throw new Error(`Could not find theme file for ${themeName}`);
+  }
 
   const themePath = Uri.joinPath(themeExtension.extensionUri, themeFile.path);
   const fileContents = await readFile(themePath);
