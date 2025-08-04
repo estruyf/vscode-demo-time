@@ -149,12 +149,7 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
         } else if (command === WebViewMessages.toVscode.openFile && payload) {
           await openFile(payload);
         } else if (command === WebViewMessages.toVscode.configEditor.checkSnippetArgs && payload) {
-          const args = await checkSnippetArgs(payload);
-          webviewPanel.webview.postMessage({
-            command,
-            requestId: requestId,
-            payload: args,
-          });
+          await handleCheckSnippetArgs(payload, webviewPanel, command, requestId);
         } else {
           console.warn(`Unknown message command: ${command}`);
         }
@@ -302,6 +297,29 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
         requestId: requestId,
         payload: pendingSteps || null,
       });
+    }
+
+    async function handleCheckSnippetArgs(
+      payload: any,
+      webviewPanel: WebviewPanel,
+      command: string,
+      requestId: string | undefined,
+    ) {
+      try {
+        const args = await checkSnippetArgs(payload);
+        webviewPanel.webview.postMessage({
+          command,
+          requestId: requestId,
+          payload: args,
+        });
+      } catch (error) {
+        console.error('Failed to check snippet args:', error);
+        webviewPanel.webview.postMessage({
+          command,
+          requestId: requestId,
+          payload: undefined,
+        });
+      }
     }
   }
 
