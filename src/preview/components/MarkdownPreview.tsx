@@ -64,14 +64,6 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     hideCursor();
   }, [hideCursor]);
 
-  const handleLaserPointerToggle = React.useCallback((enabled: boolean) => {
-    setLaserPointerEnabled(enabled);
-
-    if (!enabled) {
-      resetCursorTimeout();
-    }
-  }, [resetCursorTimeout]);
-
   const fetchTemplate = React.useCallback(
     async (
       configKey: string,
@@ -369,6 +361,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           isZoomed={isZoomed}
           onZoomToggle={toggleZoom}
           style={{ cursor: 'default' }}
+          matter={crntSlide?.frontmatter}
         >
           {/* Mouse Position */}
           {mousePosition && showControls && cursorVisible && (

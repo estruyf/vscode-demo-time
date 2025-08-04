@@ -219,6 +219,10 @@ layout: ${layout.toLowerCase()}
                 return new Hover(
                   `Specifies the transition for the slide. Available options:\n${transitions}`,
                 );
+              } else if (line.startsWith('nextSlideAfter:')) {
+                return new Hover(
+                  `Specifies the time (in seconds) to wait before advancing to the next slide.`,
+                );
               }
             }
           }
@@ -288,6 +292,13 @@ layout: ${layout.toLowerCase()}
                     {
                       label: 'transition',
                       description: 'Transition for the slide',
+                    },
+                    CompletionItemKind.Property,
+                  ),
+                  new CompletionItem(
+                    {
+                      label: 'nextSlideAfter',
+                      description: 'Time in seconds to wait before advancing to the next slide',
                     },
                     CompletionItemKind.Property,
                   ),

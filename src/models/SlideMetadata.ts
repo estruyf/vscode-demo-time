@@ -1,4 +1,4 @@
-import { SlideLayout, SlideTheme, SlideTransition } from "../constants";
+import { SlideLayout, SlideTheme, SlideTransition } from '../constants';
 
 export interface SlideMetadata {
   theme?: SlideTheme;
@@ -8,6 +8,7 @@ export interface SlideMetadata {
   customLayout?: string;
   header?: string;
   footer?: string;
+  nextSlideAfter?: number;
 
   [key: string]: any;
 }

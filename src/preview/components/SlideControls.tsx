@@ -6,6 +6,7 @@ import { WhiteboardIcon } from './WhiteboardIcon';
 import { Icon } from 'vscrui';
 import { ProjectorIcon } from './ProjectorIcon';
 import { EventData } from '@estruyf/vscode';
+import { SlideMetadata } from '../../models';
 
 export interface ISlideControlsProps {
   show: boolean;
@@ -20,6 +21,7 @@ export interface ISlideControlsProps {
   isZoomed?: boolean;
   onZoomToggle?: () => void;
   style?: React.CSSProperties;
+  matter?: SlideMetadata;
 }
 
 export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISlideControlsProps>> = ({
@@ -35,7 +37,8 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   onLaserPointerToggle,
   isZoomed = false,
   onZoomToggle,
-  style
+  style,
+  matter
 }: React.PropsWithChildren<ISlideControlsProps>) => {
   const [previousEnabled, setPreviousEnabled] = React.useState(false);
   const [isPresentationMode, setIsPresentationMode] = React.useState(false);
@@ -105,6 +108,20 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   const openSlideSource = React.useCallback(() => {
     messageHandler.send(WebViewMessages.toVscode.openFile, path);
   }, [path]);
+
+  React.useEffect(() => {
+    if (!matter?.nextSlideAfter) {
+      return;
+    }
+
+    if (matter.nextSlideAfter > 0) {
+      const timer = setTimeout(() => {
+        next();
+      }, matter.nextSlideAfter * 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [matter?.nextSlideAfter]);
 
   React.useEffect(() => {
     if (show) {
