@@ -516,6 +516,17 @@ export class DemoRunner {
     const demoToRun = demoFiles[filePath].demos[demoIdx];
     DemoRunner.currentDemo = demoToRun;
 
+    // If in the same file and the demo appears before the last performed action, remove all actions after this demo
+    if (executingFile.filePath === filePath && executingFile.demo.length > 0) {
+      const lastDemo = executingFile.demo[executingFile.demo.length - 1];
+      if (lastDemo && typeof lastDemo.idx === 'number' && demoIdx < lastDemo.idx) {
+        // Remove all actions after demoIdx
+        executingFile.demo = executingFile.demo.filter(
+          (d) => typeof d.idx === 'number' && d.idx <= demoIdx,
+        );
+      }
+    }
+
     executingFile.demo.push({
       idx: demoIdx,
       title: demoToRun.title,
@@ -619,6 +630,7 @@ export class DemoRunner {
       return;
     }
 
+    // GitHub Copilot actions
     if (step.action === Action.openChat) {
       await ChatActionsService.openChat();
       return;
@@ -636,6 +648,16 @@ export class DemoRunner {
       return;
     } else if (step.action === Action.closeChat) {
       await ChatActionsService.closeChat();
+      return;
+    }
+
+    // Demo Time actions
+    if (step.action === Action.runDemoById) {
+      if (!step.id) {
+        Notifications.error('No demo id specified');
+        return;
+      }
+      await DemoRunner.runById(step.id);
       return;
     }
 
@@ -865,6 +887,7 @@ export class DemoRunner {
 
     if (step.action === Action.OpenSlide) {
       const { path } = step as ISlidePreview;
+      Preview.setCurrentSlideIndex(0); // Reset the slide index
       Preview.show(path as string);
       return;
     }

@@ -110,18 +110,19 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   }, [path]);
 
   React.useEffect(() => {
-    if (!matter?.autoAdvanceAfter) {
-      return;
-    }
-
-    if (matter.autoAdvanceAfter > 0) {
-      const timer = setTimeout(() => {
+    // Always clear previous timer on effect run
+    let timer: NodeJS.Timeout | undefined;
+    if (matter?.autoAdvanceAfter && matter.autoAdvanceAfter > 0) {
+      timer = setTimeout(() => {
         next();
       }, matter.autoAdvanceAfter * 1000);
-
-      return () => clearTimeout(timer);
     }
-  }, [matter?.autoAdvanceAfter]);
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [matter?.autoAdvanceAfter, currentSlide]);
 
   React.useEffect(() => {
     if (show) {

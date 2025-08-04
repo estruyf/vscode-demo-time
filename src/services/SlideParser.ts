@@ -158,6 +158,7 @@ export class SlideParser {
             'footer',
             'layout',
             'image',
+            'autoAdvanceAfter',
           ].includes(key) &&
           slide.frontmatter[key] === undefined
         ) {
@@ -177,14 +178,17 @@ export class SlideParser {
    * @returns Object with groups of slides
    */
   public groupSlidesByProperty(slides: Slide[], property: string): Record<string, Slide[]> {
-    return slides.reduce((groups, slide) => {
-      const propertyValue = slide.frontmatter[property] || SlideLayout.Default;
-      if (!groups[propertyValue]) {
-        groups[propertyValue] = [];
-      }
-      groups[propertyValue].push(slide);
-      return groups;
-    }, {} as Record<string, Slide[]>);
+    return slides.reduce(
+      (groups, slide) => {
+        const propertyValue = slide.frontmatter[property] || SlideLayout.Default;
+        if (!groups[propertyValue]) {
+          groups[propertyValue] = [];
+        }
+        groups[propertyValue].push(slide);
+        return groups;
+      },
+      {} as Record<string, Slide[]>,
+    );
   }
 
   /**

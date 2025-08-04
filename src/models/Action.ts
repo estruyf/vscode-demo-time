@@ -59,4 +59,6 @@ export enum Action {
   CopyToClipboard = 'copyToClipboard',
   PasteFromClipboard = 'pasteFromClipboard',
   PressEnter = 'pressEnter',
+  // Demo Time
+  runDemoById = 'runDemoById',
 }

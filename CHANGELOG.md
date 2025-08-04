@@ -12,6 +12,8 @@
   demo or step
 - [#225](https://github.com/estruyf/vscode-demo-time/issues/225): Added a GUI for editing all the
   settings from Demo Time
+- [#226](https://github.com/estruyf/vscode-demo-time/issues/226): New Demo Time action `runDemoById`
+  to allow to trigger a demo from another demo
 
 ## [1.8.0] - 2025-08-02
 

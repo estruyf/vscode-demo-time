@@ -14,6 +14,7 @@ export const App: React.FunctionComponent<IAppProps> = ({
 }: React.PropsWithChildren<IAppProps>) => {
   const [customTheme, setCustomTheme] = React.useState<string | undefined>(undefined);
   const [fileUri, setFileUri] = React.useState<string | undefined>(undefined);
+  const [slideIdx, setSlideIdx] = React.useState<number | undefined>(undefined);
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Escape') {
@@ -21,7 +22,7 @@ export const App: React.FunctionComponent<IAppProps> = ({
     }
   };
 
-  const messageListener = (message: MessageEvent<EventData<any>>) => {
+  const messageListener = React.useCallback((message: MessageEvent<EventData<any>>) => {
     const { command, payload } = message.data;
     if (!command) {
       return;
@@ -33,10 +34,17 @@ export const App: React.FunctionComponent<IAppProps> = ({
       setFileUri(payload);
     } else if (command === WebViewMessages.toWebview.triggerUpdate) {
       if (payload && typeof payload.fileUriString === 'string') {
+        if (payload.slideIndex === 0) {
+          // Reset slide index to force update
+          setSlideIdx(-1);
+          setTimeout(() => setSlideIdx(payload.slideIndex), 0);
+        } else {
+          setSlideIdx(payload.slideIndex);
+        }
         setFileUri(payload.fileUriString);
       }
     }
-  };
+  }, [fileUri, slideIdx]);
 
   const type = React.useMemo(() => {
     if (!fileUri) {
@@ -90,7 +98,7 @@ export const App: React.FunctionComponent<IAppProps> = ({
     <>
       {customTheme && <link href={customTheme} rel="stylesheet" />}
 
-      {type === 'markdown' && <MarkdownPreview fileUri={fileUri} webviewUrl={webviewUrl} />}
+      {type === 'markdown' && <MarkdownPreview fileUri={fileUri} slideIdx={slideIdx} webviewUrl={webviewUrl} />}
       {type === 'image' && <ImagePreview fileUri={fileUri} />}
     </>
   );

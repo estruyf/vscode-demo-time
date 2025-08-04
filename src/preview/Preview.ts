@@ -22,6 +22,16 @@ export class Preview {
   private static crntCss: string | null = null;
   private static currentSlideIndex: number = 0;
 
+  public static getCurrentSlideIndex(): number {
+    return Preview.currentSlideIndex;
+  }
+
+  public static setCurrentSlideIndex(index: number): void {
+    if (index >= 0) {
+      Preview.currentSlideIndex = index;
+    }
+  }
+
   public static register() {
     const subscriptions = Extension.getInstance().subscriptions;
 
@@ -91,7 +101,7 @@ export class Preview {
     }
   }
 
-  public static triggerUpdate(fileUri?: Uri | string) {
+  public static triggerUpdate(fileUri?: Uri | string, reset: boolean = false) {
     if (!fileUri || !Preview.webview?.webview) {
       return;
     }
@@ -104,7 +114,7 @@ export class Preview {
     if (Preview.isOpen && Preview.webview?.webview) {
       const payload = {
         fileUriString: fileUri,
-        slideIndex: Preview.currentSlideIndex,
+        slideIndex: reset ? 0 : Preview.currentSlideIndex,
       };
       Preview.postMessage(WebViewMessages.toWebview.triggerUpdate, payload);
     }

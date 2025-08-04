@@ -17,11 +17,13 @@ import { LaserPointer } from './LaserPointer';
 
 export interface IMarkdownPreviewProps {
   fileUri: string;
+  slideIdx?: number;
   webviewUrl: string | null;
 }
 
 export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = ({
   fileUri,
+  slideIdx,
   webviewUrl
 }: React.PropsWithChildren<IMarkdownPreviewProps>) => {
   const [theme, setTheme] = React.useState<string | undefined>(undefined);
@@ -107,19 +109,21 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     fetchTemplate(Config.slides.slideFooterTemplate, setFooter);
   }, [fetchTemplate]);
 
+
+  // Load the correct slide based on slideIdx prop
   React.useEffect(() => {
-    // If slides are loaded and initialSlideIndex is a valid number
     if (Array.isArray(slides) && slides.length > 0) {
-      if (typeof initialSlideIndex === 'number' && initialSlideIndex >= 0 && initialSlideIndex < slides.length) {
+      if (typeof slideIdx === 'number' && slideIdx >= 0 && slideIdx < slides.length) {
+        setCrntSlide(slides[slideIdx]);
+      } else if (typeof initialSlideIndex === 'number' && initialSlideIndex >= 0 && initialSlideIndex < slides.length) {
         setCrntSlide(slides[initialSlideIndex]);
       } else {
         setCrntSlide(slides[0]);
       }
     } else {
-      // No slides loaded or slides is empty
       setCrntSlide(null);
     }
-  }, [initialSlideIndex, slides]);
+  }, [slideIdx, initialSlideIndex, slides]);
 
   const updateSlideIdx = React.useCallback((slideIdx: number) => {
     if (slideIdx < 0 || slideIdx >= slides.length) {
