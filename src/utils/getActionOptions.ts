@@ -353,5 +353,17 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: 'Press the Enter key',
   } as QuickPickItem);
 
+  // Demo Time actions
+  actions.push({
+    label: 'Demo Time',
+    description: 'Demo Time actions',
+    kind: QuickPickItemKind.Separator,
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.RunDemoById,
+    description: 'Run a demo by its ID',
+  } as QuickPickItem);
+
   return actions;
 };

@@ -652,7 +652,7 @@ export class DemoRunner {
     }
 
     // Demo Time actions
-    if (step.action === Action.runDemoById) {
+    if (step.action === Action.RunDemoById) {
       if (!step.id) {
         Notifications.error('No demo id specified');
         return;

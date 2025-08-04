@@ -60,5 +60,5 @@ export enum Action {
   PasteFromClipboard = 'pasteFromClipboard',
   PressEnter = 'pressEnter',
   // Demo Time
-  runDemoById = 'runDemoById',
+  RunDemoById = 'runDemoById',
 }

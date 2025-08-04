@@ -382,5 +382,13 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  // Demo Time actions
+  if (action === Action.RunDemoById) {
+    return {
+      action: Action.RunDemoById,
+      id: '',
+    };
+  }
+
   return;
 };
