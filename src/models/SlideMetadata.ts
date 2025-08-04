@@ -8,7 +8,7 @@ export interface SlideMetadata {
   customLayout?: string;
   header?: string;
   footer?: string;
-  nextSlideAfter?: number;
+  autoAdvanceAfter?: number;
 
   [key: string]: any;
 }

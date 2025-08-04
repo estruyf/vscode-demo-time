@@ -219,7 +219,7 @@ layout: ${layout.toLowerCase()}
                 return new Hover(
                   `Specifies the transition for the slide. Available options:\n${transitions}`,
                 );
-              } else if (line.startsWith('nextSlideAfter:')) {
+              } else if (line.startsWith('autoAdvanceAfter:')) {
                 return new Hover(
                   `Specifies the time (in seconds) to wait before advancing to the next slide.`,
                 );
@@ -297,8 +297,9 @@ layout: ${layout.toLowerCase()}
                   ),
                   new CompletionItem(
                     {
-                      label: 'nextSlideAfter',
-                      description: 'Time in seconds to wait before advancing to the next slide',
+                      label: 'autoAdvanceAfter',
+                      description:
+                        'Time in seconds to wait before advancing to the next slide or demo',
                     },
                     CompletionItemKind.Property,
                   ),
