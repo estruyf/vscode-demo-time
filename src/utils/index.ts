@@ -1,6 +1,7 @@
 export * from './addExtensionRecommendation';
 export * from './addStepsToDemo';
 export * from './bringToFront';
+export * from './checkSnippetArgs';
 export * from './chooseDemoFile';
 export * from './clearVariablesState';
 export * from './convertTemplateToHtml';
@@ -36,6 +37,7 @@ export * from './htmlDecode';
 export * from './insertVariables';
 export * from './isProjectInitialized';
 export * from './lowercaseFirstLetter';
+export * from './openFile';
 export * from './openFilePicker';
 export * from './parseWinPath';
 export * from './readFile';

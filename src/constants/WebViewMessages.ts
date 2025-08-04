@@ -40,6 +40,7 @@ export const WebViewMessages = {
       runDemoStep: 'runConfigEditorDemoStep',
       checkStepQueue: 'checkConfigEditorStepQueue',
       openSettings: 'openSettings',
+      checkSnippetArgs: 'checkSnippetArgs',
     },
     settingsView: {
       getSettings: 'getSettingsViewSettings',

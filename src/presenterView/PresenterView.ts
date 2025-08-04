@@ -7,7 +7,7 @@ import { DemoFileProvider } from '../services/DemoFileProvider';
 import { DemoRunner } from '../services/DemoRunner';
 import { DemoStatusBar } from '../services/DemoStatusBar';
 import { NotesService } from '../services/NotesService';
-import { readFile } from '../utils';
+import { openFile, readFile } from '../utils';
 
 export class PresenterView {
   private static webview: WebviewPanel | null = null;
@@ -152,16 +152,7 @@ export class PresenterView {
       }
       PresenterView.postRequestMessage(command, requestId, undefined);
     } else if (command === WebViewMessages.toVscode.openFile && payload) {
-      const workspaceFolder = Extension.getInstance().workspaceFolder;
-      const version = DemoRunner.getCurrentVersion();
-      const notesPath = workspaceFolder
-        ? version === 2
-          ? Uri.joinPath(workspaceFolder.uri, payload)
-          : Uri.joinPath(workspaceFolder.uri, General.demoFolder, payload)
-        : undefined;
-      if (notesPath) {
-        await window.showTextDocument(notesPath, { preview: false });
-      }
+      await openFile(payload);
     }
   }
 

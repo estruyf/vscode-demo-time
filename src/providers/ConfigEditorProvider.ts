@@ -14,7 +14,7 @@ import {
 import { Subscription } from '../models';
 import { DemoFileProvider, DemoRunner, Extension, Logger } from '../services';
 import { COMMAND, Config, WebViewMessages } from '../constants';
-import { getThemes, openFilePicker } from '../utils';
+import { checkSnippetArgs, getThemes, openFile, openFilePicker } from '../utils';
 import { ActionTreeItem } from './ActionTreeviewProvider';
 import { SettingsView } from '../settingsView/SettingsView';
 
@@ -146,6 +146,15 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           await handleCheckStepQueue(webviewPanel, requestId);
         } else if (command === WebViewMessages.toVscode.configEditor.openSettings) {
           SettingsView.show();
+        } else if (command === WebViewMessages.toVscode.openFile && payload) {
+          await openFile(payload);
+        } else if (command === WebViewMessages.toVscode.configEditor.checkSnippetArgs && payload) {
+          const args = await checkSnippetArgs(payload);
+          webviewPanel.webview.postMessage({
+            command,
+            requestId: requestId,
+            payload: args,
+          });
         } else {
           console.warn(`Unknown message command: ${command}`);
         }
