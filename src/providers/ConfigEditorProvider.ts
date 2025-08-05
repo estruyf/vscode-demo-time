@@ -14,7 +14,7 @@ import {
 import { Subscription } from '../models';
 import { DemoFileProvider, DemoRunner, Extension, Logger } from '../services';
 import { COMMAND, Config, WebViewMessages } from '../constants';
-import { checkSnippetArgs, getThemes, openFile, openFilePicker } from '../utils';
+import { checkSnippetArgs, getDemoApiData, getThemes, openFile, openFilePicker } from '../utils';
 import { ActionTreeItem } from './ActionTreeviewProvider';
 import { SettingsView } from '../settingsView/SettingsView';
 
@@ -150,11 +150,35 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           await openFile(payload);
         } else if (command === WebViewMessages.toVscode.configEditor.checkSnippetArgs && payload) {
           await handleCheckSnippetArgs(payload, webviewPanel, command, requestId);
+        } else if (command === WebViewMessages.toVscode.configEditor.getDemoIds) {
+          await handleGetDemoIds(webviewPanel, command, requestId);
         } else {
           console.warn(`Unknown message command: ${command}`);
         }
       },
     );
+
+    async function handleGetDemoIds(
+      webviewPanel: WebviewPanel,
+      command: string,
+      requestId: string | undefined,
+    ) {
+      try {
+        const apiData = await getDemoApiData();
+        webviewPanel.webview.postMessage({
+          command,
+          requestId,
+          payload: apiData,
+        });
+      } catch (error) {
+        console.error('Failed to get demo IDs:', error);
+        webviewPanel.webview.postMessage({
+          command,
+          requestId,
+          payload: [],
+        });
+      }
+    }
 
     /**
      * Handles running a demo step from the config editor webview.

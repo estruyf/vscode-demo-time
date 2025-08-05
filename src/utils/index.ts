@@ -17,6 +17,7 @@ export * from './findPositionByPlaceholders';
 export * from './getAbsolutePath';
 export * from './getActionOptions';
 export * from './getActionTemplate';
+export * from './getDemoApiData';
 export * from './getFileContents';
 export * from './getFileName';
 export * from './getInsertionSpeed';
