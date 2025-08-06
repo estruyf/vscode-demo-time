@@ -12,9 +12,17 @@ import {
   Range,
 } from 'vscode';
 import { Subscription } from '../models';
-import { DemoFileProvider, DemoRunner, Extension, Logger } from '../services';
-import { COMMAND, Config, WebViewMessages } from '../constants';
-import { checkSnippetArgs, getDemoApiData, getThemes, openFile, openFilePicker } from '../utils';
+import { DemoFileProvider, DemoRunner, Extension, Logger, Notifications } from '../services';
+import { COMMAND, Config, General, WebViewMessages } from '../constants';
+import {
+  checkSnippetArgs,
+  getDemoApiData,
+  getRelPath,
+  getThemes,
+  openFile,
+  openFilePicker,
+  writeFile,
+} from '../utils';
 import { ActionTreeItem } from './ActionTreeviewProvider';
 import { SettingsView } from '../settingsView/SettingsView';
 
@@ -147,16 +155,64 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
         } else if (command === WebViewMessages.toVscode.configEditor.openSettings) {
           SettingsView.show();
         } else if (command === WebViewMessages.toVscode.openFile && payload) {
-          await openFile(payload);
+          openFile(payload);
         } else if (command === WebViewMessages.toVscode.configEditor.checkSnippetArgs && payload) {
           await handleCheckSnippetArgs(payload, webviewPanel, command, requestId);
         } else if (command === WebViewMessages.toVscode.configEditor.getDemoIds) {
           await handleGetDemoIds(webviewPanel, command, requestId);
+        } else if (command === WebViewMessages.toVscode.configEditor.createNotes) {
+          await handleCreateNotes(webviewPanel, command, requestId, payload);
         } else {
           console.warn(`Unknown message command: ${command}`);
         }
       },
     );
+
+    async function handleCreateNotes(
+      webviewPanel: WebviewPanel,
+      command: string,
+      requestId: string | undefined,
+      payload?: { path: string; content: string },
+    ) {
+      if (!payload?.path || !payload?.content) {
+        webviewPanel.webview.postMessage({
+          command,
+          requestId,
+          payload: undefined,
+        });
+        Notifications.error('Failed to create notes: Path or content is missing.');
+        return;
+      }
+      try {
+        const wsFolder = Extension.getInstance().workspaceFolder;
+        if (!wsFolder) {
+          webviewPanel.webview.postMessage({
+            command,
+            requestId,
+            payload: undefined,
+          });
+          Notifications.error('No workspace folder found. Cannot create notes.');
+          return;
+        }
+
+        const fileUri = Uri.joinPath(wsFolder.uri, General.demoFolder, payload.path);
+        await writeFile(fileUri, payload.content);
+        const relPath = getRelPath(fileUri.fsPath);
+        await openFile(relPath);
+        webviewPanel.webview.postMessage({
+          command,
+          requestId,
+          payload: relPath,
+        });
+      } catch (error) {
+        webviewPanel.webview.postMessage({
+          command,
+          requestId,
+          payload: undefined,
+        });
+        Logger.error(`Failed to create notes: ${(error as Error).message}`);
+      }
+    }
 
     async function handleGetDemoIds(
       webviewPanel: WebviewPanel,

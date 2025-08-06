@@ -42,6 +42,7 @@ export const WebViewMessages = {
       openSettings: 'openSettings',
       checkSnippetArgs: 'checkSnippetArgs',
       getDemoIds: 'getConfigEditorDemoIds',
+      createNotes: 'createConfigEditorNotes',
     },
     settingsView: {
       getSettings: 'getSettingsViewSettings',
