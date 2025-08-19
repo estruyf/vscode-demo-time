@@ -32,7 +32,8 @@
   ],
   "homepage": "https://demotime.show/",
   "directories": {
-    "doc": "docs"
+    "doc": "docs",
+    "example": "examples"
   },
   "sponsor": {
     "url": "https://github.com/sponsors/estruyf"
