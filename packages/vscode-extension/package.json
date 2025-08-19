@@ -36,7 +36,7 @@
     "color": "#0D1321",
     "theme": "dark"
   },
-  "icon": "assets/logo/demotime-128x128.png",
+  "icon": "packages/vscode-extension/assets/logo/demotime-128x128.png",
   "badges": [
     {
       "description": "version",
