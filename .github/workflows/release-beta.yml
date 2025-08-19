@@ -7,9 +7,26 @@ on:
   workflow_dispatch:
 
 jobs:
+  verify:
+    name: Verify actions
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install the dependencies
+        run: npm ci
+
+      - name: Verify actions
+        run: node .github/scripts/verify-actions.mjs
+
   build:
     name: 'Build and release'
     runs-on: ubuntu-latest
+    needs: verify
     defaults:
       run:
         working-directory: packages/vscode-extension
@@ -25,9 +42,6 @@ jobs:
 
       - name: Linting and testing
         run: npm run lint && npm test
-
-      - name: Verify actions
-        run: node ../../.github/scripts/verify-actions.mjs
 
       - name: Prepare BETA
         if: github.ref != 'refs/heads/alpha'
