@@ -2,7 +2,7 @@ import * as core from '@actions/core';
 import { readFile, writeFile } from "fs/promises";
 import { join, resolve } from 'path';
 
-const packageContents = await readFile('packages/vscode-extension/package.json', 'utf8');
+const packageContents = await readFile('package.json', 'utf8');
 const packageJson = JSON.parse(packageContents);
 const version = packageJson.version.split('.');
 
