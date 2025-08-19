@@ -1,5 +1,5 @@
 import { diffChars, applyPatch } from 'diff';
-import { DemoStatusBar, Extension, Logger, Notifications } from '../services';
+import { DemoStatusBar, Extension, Logger, Notifications } from '.';
 import { COMMAND, Config, ContextKeys } from '../constants';
 import {
   CancellationToken,

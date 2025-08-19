@@ -17,5 +17,5 @@
     "demoTime.timer": 10,
     "exportall.config.relExclusion": [
         "/src/preview/webcomponents/BaseShapeComponent.ts"
-    ],
+    ]
 }

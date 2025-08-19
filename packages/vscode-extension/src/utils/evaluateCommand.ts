@@ -1,6 +1,6 @@
-import { exec } from "child_process";
-import { getShellPath } from "../utils";
-import { Logger } from "../services/Logger";
+import { exec } from 'child_process';
+import { getShellPath } from '.';
+import { Logger } from '../services/Logger';
 
 /**
  * Evaluate the command dynamically using `which` command
@@ -10,7 +10,7 @@ import { Logger } from "../services/Logger";
 export const evaluateCommand = (command: string): Promise<string> => {
   const shell = getShellPath();
   let shellPath: string | undefined = undefined;
-  if (typeof shell !== "string" && !!shell) {
+  if (typeof shell !== 'string' && !!shell) {
     shellPath = shell.path;
   } else {
     shellPath = shell || undefined;

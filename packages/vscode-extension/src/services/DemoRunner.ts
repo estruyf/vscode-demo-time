@@ -1,4 +1,4 @@
-import { PresenterView } from './../presenterView/PresenterView';
+import { PresenterView } from '../presenterView/PresenterView';
 import { COMMAND, Config, ContextKeys, StateKeys, WebViewMessages } from '../constants';
 import {
   Action,
