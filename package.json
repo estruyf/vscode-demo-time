@@ -41,6 +41,7 @@
   "license": "MIT",
   "nx": {},
   "devDependencies": {
+    "@actions/core": "^1.11.1",
     "@nx/workspace": "^21.4.0",
     "nx": "^21.4.0"
   }

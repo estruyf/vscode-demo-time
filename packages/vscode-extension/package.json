@@ -808,7 +808,6 @@
     }
   },
   "devDependencies": {
-    "@actions/core": "^1.11.1",
     "@estruyf/vscode": "^1.1.0",
     "@types/cors": "^2.8.17",
     "@types/diff": "^7.0.1",
