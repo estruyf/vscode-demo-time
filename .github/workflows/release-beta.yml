@@ -6,6 +6,9 @@ on:
       - alpha
   workflow_dispatch:
 
+env:
+  VSCODE_EXT_PATH: apps/vscode-extension
+
 jobs:
   verify:
     name: Verify actions
@@ -27,9 +30,6 @@ jobs:
     name: 'Build and release'
     runs-on: ubuntu-latest
     needs: verify
-    defaults:
-      run:
-        working-directory: apps/vscode-extension
 
     steps:
       - uses: actions/checkout@v4
@@ -42,26 +42,31 @@ jobs:
 
       - name: Linting and testing
         run: npm run lint && npm test
+        working-directory: ${{ env.VSCODE_EXT_PATH }}
 
       - name: Prepare BETA
         if: github.ref != 'refs/heads/alpha'
         run: node ./scripts/beta-release.mjs $GITHUB_RUN_ID
+        working-directory: ${{ env.VSCODE_EXT_PATH }}
 
       - name: Publish
         if: contains(github.event.head_commit.message, '#release') && github.ref != 'refs/heads/alpha'
         run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }} --baseImagesUrl https://raw.githubusercontent.com/estruyf/vscode-demo-time/dev --pre-release
+        working-directory: ${{ env.VSCODE_EXT_PATH }}
 
       - name: Publish to open-vsx.org
         if: contains(github.event.head_commit.message, '#release') && github.ref != 'refs/heads/alpha'
         run: npx ovsx publish -p ${{ secrets.OPEN_VSX_PAT }}
+        working-directory: ${{ env.VSCODE_EXT_PATH }}
 
       - name: Package VSIX (alpha branch)
         if: github.ref == 'refs/heads/alpha'
         run: npx @vscode/vsce package
+        working-directory: ${{ env.VSCODE_EXT_PATH }}
 
       - name: Upload VSIX artifact (alpha branch)
         if: github.ref == 'refs/heads/alpha'
         uses: actions/upload-artifact@v4
         with:
           name: vscode-demo-time-alpha.vsix
-          path: '*.vsix'
+          path: '${{ env.VSCODE_EXT_PATH }}/*.vsix'
