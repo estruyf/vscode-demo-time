@@ -1,12 +1,12 @@
 {
-  "name": "demo-time-addin-vite",
+  "name": "powerpoint-demo-time-addin",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "lint": "nx lint",
     "preview": "vite preview"
   },
   "dependencies": {

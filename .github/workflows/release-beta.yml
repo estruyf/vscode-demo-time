@@ -29,7 +29,7 @@ jobs:
     needs: verify
     defaults:
       run:
-        working-directory: packages/vscode-extension
+        working-directory: apps/vscode-extension
 
     steps:
       - uses: actions/checkout@v4
