@@ -55,9 +55,17 @@ const server = new McpServer({
 });
 
 /**
- * Process search results to format as markdown
- * @param {Array<FuseResult<any>>} searchResults - The raw search results from fuse.js
- * @returns {string} - Markdown formatted search results
+ * Convert Fuse.js search results into a single Markdown string.
+ *
+ * Accepts an array of FuseResult objects whose `item` is expected to contain
+ * `id`, `title`, and `content` properties. Results are sorted by score
+ * (lower is better), deduplicated by `id` (first occurrence kept), and then
+ * rendered as Markdown: each document becomes a top-level header (`# Title`)
+ * followed by its content, with documents separated by `---`. If `score` is
+ * absent it is treated as 0. Returns an empty string when no valid items are provided.
+ *
+ * @param searchResults - Raw results returned by Fuse.js
+ * @returns Markdown-formatted concatenation of unique documents
  */
 function squashSearchResults(searchResults: Array<FuseResult<any>>): string {
   // Sort results by score (lowest score = best match)

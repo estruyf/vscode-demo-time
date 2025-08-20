@@ -88,12 +88,25 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
 
     ConfigEditorProvider.fileViews.set(document.uri.toString(), webviewPanel);
 
+    /**
+     * Parse and return the demo file contents for the current document or for provided text.
+     *
+     * If `text` is omitted, the function reads the current document text via `document.getText()` and parses that.
+     *
+     * @param text - Optional raw file text to parse instead of the current document contents.
+     * @returns The parsed configuration/AST produced by `DemoFileProvider.parseFileContent` for the document URI.
+     */
     function getContent(text?: string) {
       const content = text ?? document.getText();
       const contents = DemoFileProvider.parseFileContent(content, document.uri);
       return contents;
     }
 
+    /**
+     * Sends the parsed configuration content to the webview so the config editor UI can update.
+     *
+     * @param text - Raw document text to parse and send to the webview; passed to the local `getContent` parser before posting.
+     */
     function updateWebview(text: string) {
       webviewPanel.webview.postMessage({
         command: WebViewMessages.toWebview.configEditor.updateConfigContents,
@@ -101,6 +114,12 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       });
     }
 
+    /**
+     * Requests the webview to perform a save of the current config unless a manual save flow is active.
+     *
+     * If the shared `isManualSave` flag is true, this call clears the flag and does nothing else.
+     * Otherwise it posts a `triggerSave` message to the associated webview panel.
+     */
     function triggerSave() {
       if (ConfigEditorProvider.isManualSave) {
         ConfigEditorProvider.isManualSave = false;
@@ -168,6 +187,13 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       },
     );
 
+    /**
+     * Creates a notes file in the workspace from webview-provided content and notifies the webview of the result.
+     *
+     * If `payload.path` or `payload.content` is missing, or no workspace folder is available, this posts an undefined payload back to the webview and shows an error notification. On success, writes the file under the configured demo folder, opens the file in the editor, and posts the relative path back to the webview. All runtime errors are caught, logged, and communicated to the webview as a failure (undefined payload).
+     *
+     * @param payload - Object with `path` (relative path under the demo folder) and `content` (file contents) describing the note to create.
+     */
     async function handleCreateNotes(
       webviewPanel: WebviewPanel,
       command: string,
@@ -214,6 +240,16 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       }
     }
 
+    /**
+     * Fetch demo metadata from the remote API and post it to the webview as a response.
+     *
+     * On success posts `{ command, requestId, payload: apiData }`. On failure logs the error
+     * and posts `{ command, requestId, payload: [] }`.
+     *
+     * @param command - The webview message command to use when sending the response.
+     * @param requestId - Optional request identifier used to correlate the response with the original request.
+     * @returns A promise that resolves once the response has been posted to the webview.
+     */
     async function handleGetDemoIds(
       webviewPanel: WebviewPanel,
       command: string,
@@ -237,7 +273,15 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     }
 
     /**
-     * Handles running a demo step from the config editor webview.
+     * Execute a single demo step requested by the config editor webview.
+     *
+     * Parses `payload.step`, runs it via DemoRunner, and posts a success/failure message
+     * back to the originating webview panel. Displays an information message on success
+     * or an error message on failure.
+     *
+     * @param payload - Object expected to contain a `step` property describing the demo step to run.
+     * @param webviewPanel - The webview panel to post the result message to.
+     * @param requestId - Optional request identifier to include in the response message so the webview can correlate replies.
      */
     async function handleRunDemoStep(
       payload: any,
@@ -270,6 +314,14 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       }
     }
 
+    /**
+     * Send the current parsed configuration contents to the webview as a `getContents` response.
+     *
+     * Posts a message to the provided webview panel using the `configEditor.getContents` command.
+     *
+     * @param requestId - Optional request identifier used to correlate this response with the original request.
+     * @param getContent - Callable that returns the content payload to send; invoked without arguments.
+     */
     function handleGetContents(
       webviewPanel: WebviewPanel,
       requestId: string | undefined,
@@ -282,6 +334,16 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       });
     }
 
+    /**
+     * Executes a VS Code command specified in the incoming payload.
+     *
+     * The payload should be an object with a `command` property (string) and an optional `args` property
+     * which will be passed to the command as a single argument. If `command` is missing the function
+     * returns early. Resolves once `commands.executeCommand` completes.
+     *
+     * @param payload - Object containing `command` (required) and optional `args` to forward to the command.
+     * @returns A promise that resolves when the command execution finishes.
+     */
     async function handleRunCommand(payload: any) {
       const { command: cmd, args } = payload || {};
       if (!cmd) {
@@ -294,6 +356,19 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       }
     }
 
+    /**
+     * Replace the given TextDocument's entire contents with the formatted `config`.
+     *
+     * If `config` or `document` is not provided, the function is a no-op.
+     *
+     * The `config` object is formatted using DemoFileProvider.formatFileContent(document.uri)
+     * and then used to replace the whole document text via a WorkspaceEdit.
+     *
+     * @param config - The configuration object to serialize and write into the document.
+     * @param document - The target TextDocument to replace.
+     * @returns A promise that resolves to `true` if the edit was applied, `false` if not,
+     *          or `undefined` when the function early-returns due to missing inputs.
+     */
     async function updateConfig(config: any, document?: TextDocument) {
       if (!config || !document) {
         return;
@@ -308,6 +383,19 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       return workspace.applyEdit(edit);
     }
 
+    /**
+     * Save the provided config payload into the given TextDocument, trigger a workspace save, and notify the webview of completion.
+     *
+     * Formats `payload.config` via DemoFileProvider and replaces the entire document content with the formatted result (newlines escaped for the workspace edit).
+     * Marks the provider as a manual save (ConfigEditorProvider.isManualSave = true), executes the global save command, and posts a save-complete message back to the webview.
+     * If formatting fails, shows an error message and aborts without performing the save or posting success.
+     *
+     * @param payload - Object expected to contain a `config` property with the demo configuration to save.
+     * @param document - The TextDocument to be replaced with the formatted configuration.
+     * @param webviewPanel - The WebviewPanel to which the save result message will be posted.
+     * @param requestId - Optional request identifier propagated back to the webview for correlating responses.
+     * @returns A promise that resolves when the save flow (edit + save command + notification) has been initiated.
+     */
     async function handleSaveFile(
       payload: any,
       document: TextDocument,
@@ -339,6 +427,15 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       });
     }
 
+    /**
+     * Opens a file picker (optionally filtered by `payload.fileTypes`) and posts the chosen path back to the webview.
+     *
+     * If the user cancels, posts a `null` payload. The message uses the `WebViewMessages.toVscode.configEditor.filePicker`
+     * command and includes the original `requestId` when present so the webview can correlate the response.
+     *
+     * @param payload - Optional object that may include a `fileTypes` filter passed to the file picker.
+     * @param requestId - Optional identifier echoed back in the response to correlate requests and replies.
+     */
     async function handleFilePicker(
       payload: any,
       webviewPanel: WebviewPanel,
@@ -361,6 +458,14 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       });
     }
 
+    /**
+     * Fetches available themes and posts their labels to the given webview.
+     *
+     * Posts a message with command `configEditor.getThemes` and a payload containing an array of theme labels.
+     *
+     * @param webviewPanel - Target webview panel to receive the message.
+     * @param requestId - Optional request identifier echoed back to correlate responses with the requestor.
+     */
     async function handleGetThemes(webviewPanel: WebviewPanel, requestId: string | undefined) {
       const themes = await getThemes();
       webviewPanel.webview.postMessage({
@@ -370,6 +475,15 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       });
     }
 
+    /**
+     * Checks for a pending "open step" item for the document associated with the enclosing editor and posts it to the provided webview.
+     *
+     * The message payload is the pending ActionTreeItem if present, or `null` when none is queued. The original `requestId`
+     * (if any) is forwarded so the webview can correlate the response.
+     *
+     * @param webviewPanel - The webview panel to which the check result will be posted.
+     * @param requestId - Optional request identifier forwarded to the webview for correlation.
+     */
     async function handleCheckStepQueue(webviewPanel: WebviewPanel, requestId: string | undefined) {
       const pendingSteps = ConfigEditorProvider.pendingStepOpens.get(document.uri.toString());
       webviewPanel.webview.postMessage({
@@ -379,6 +493,17 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       });
     }
 
+    /**
+     * Validates snippet arguments and sends the result back to the webview.
+     *
+     * Calls checkSnippetArgs(payload) and posts its result to the provided webview panel under the given
+     * command and requestId. If validation fails, posts a payload of `undefined`. Errors are caught and
+     * not rethrown.
+     *
+     * @param payload - Data to be validated by `checkSnippetArgs` (shape depends on snippet requirements).
+     * @param command - Message command name to use when posting the response back to the webview.
+     * @param requestId - Optional correlation identifier echoed back with the response.
+     */
     async function handleCheckSnippetArgs(
       payload: any,
       webviewPanel: WebviewPanel,

@@ -7,7 +7,14 @@ import Fuse from 'fuse.js';
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const docsDir = path.join(__dirname, '../../..', 'docs', 'src', 'content', 'docs');
 
-// Read all markdown files
+/**
+ * Recursively finds all Markdown files under the given directory and returns their paths relative to the module's docsDir.
+ *
+ * Traverses directories synchronously, collecting files that end with `.md` or `.mdx`. Returned paths are relative to `docsDir`.
+ *
+ * @param {string} dir - Absolute or relative directory path to start the recursive search.
+ * @returns {string[]} Array of file paths (relative to `docsDir`) for all discovered `.md` and `.mdx` files.
+ */
 function getMarkdownFiles(dir) {
   let results = [];
   const list = fs.readdirSync(dir);
