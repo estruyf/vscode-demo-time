@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT_CHANGELOG_PATH = path.resolve(__dirname, '../../CHANGELOG.md');
-const LOCAL_CHANGELOG_PATH = path.resolve(__dirname, '../CHANGELOG.md');
+const LOCAL_CHANGELOG_PATH = path.resolve(__dirname, '../changelog.md');
 
 try {
   const data = fs.readFileSync(ROOT_CHANGELOG_PATH, 'utf8');

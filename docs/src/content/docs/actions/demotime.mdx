@@ -1,0 +1,34 @@
+---
+title: Demo Time actions
+description: Actions for controlling the Demo Time extension
+lastmod: 2025-08-20T16:05:19.200Z
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+The Demo Time actions allow you to control the behavior of the Demo Time extension during your demos. You can use these actions to trigger specific behaviors, such as running another demo.
+
+## Trigger another demo by its ID
+
+To trigger another demo by its ID from the current demo, you can use the `runDemoById` action.
+
+<Tabs syncKey="copilot-open-chat">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "runDemoById",
+  "id": "<the id of the demo>"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: runDemoById
+id: <the id of the demo>
+```
+
+</TabItem>
+</Tabs>

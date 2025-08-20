@@ -1,7 +1,7 @@
 ---
 title: Present your slides
 description: From Markdown to slides - present your slides with Demo Time
-lastmod: 2025-07-04T18:00:02.904Z
+lastmod: 2025-08-20T15:59:24.602Z
 ---
 
 import { Code, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
@@ -68,6 +68,7 @@ You can customize your slides using the following properties in the front matter
 - `image` - Set a background image for the slide.
 - `customTheme` - Provide a custom CSS file for the slide.
 - `customLayout` - Specify a custom layout for the slide.
+- `autoAdvanceAfter` - Automatically advance to the next slide or demo after a specified number of seconds.
 
 ### Themes
 
@@ -181,6 +182,24 @@ The following actions are only available when you are not in presentation mode:
 
 - **Toggle mouse position**: Toggles the mouse position overlay on the slide, which can be usefule to position elements on your slides.
 - **Open slide source**: Opens the source file of the slide in the editor, allowing you to edit the slide content directly.
+
+## Auto-advancing to the next slide
+
+You can enable auto-advancing to the next slide after a specified duration by using the `autoAdvanceAfter` property in your slide configuration.
+
+```markdown
+---
+layout: default
+autoAdvanceAfter: 3
+---
+
+# Going to the next slide in 3 seconds
+
+---
+---
+
+# End of the demo
+```
 
 ## Header and Footer
 

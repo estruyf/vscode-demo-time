@@ -1,7 +1,7 @@
 ---
 title: Adding demos
 description: Add your demos to your demo time configuration.
-lastmod: 2025-07-23T10:38:33.877Z
+lastmod: 2025-08-20T15:59:27.800Z
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
@@ -73,6 +73,7 @@ You can start adding your demos in the `demos` array. Each demo should have the 
 {
   "title": "<title>",
   "description": "<description>",
+  "disabled": false, // Disable a demo, when set to true, it will be skipped
   "steps": []
 }
 ```
@@ -83,6 +84,7 @@ You can start adding your demos in the `demos` array. Each demo should have the 
 ```yaml
 title: <title>
 description: <description>
+disabled: false # Disable a demo, when set to true, it will be skipped
 steps: []
 ```
 
