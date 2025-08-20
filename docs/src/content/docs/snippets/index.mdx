@@ -1,0 +1,142 @@
+---
+title: Snippets
+description: Snippets that you can use to automate some tasks in your demo.
+lastmod: 2025-07-12T14:05:04.396Z
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+
+Here are some snippets that you can use to automate some tasks in your demo.
+
+## Prerequisites
+
+Create a `snippets` folder in the `.demo` directory of your project. This is where you will store your snippets.
+
+<Aside>
+You can change name of the snippets folder, but you will need to update the `contentPath` in the snippet action.
+</Aside>
+
+## Insert and highlight code
+
+The `insert_and_highlight.json` snippet contains a couple of steps to insert code and highlight specific lines after inserting the content.
+
+<Code code={`[
+    {
+      "action": "unselect"
+    },
+    {
+      "action": "insert",
+      "path": "{MAIN_FILE}",
+      "contentPath": "{CONTENT_PATH}",
+      "position": "{CONTENT_POSITION}"
+    },
+    {
+      "action": "waitForTimeout",
+      "timeout": 500
+    },
+    {
+      "action": "highlight",
+      "path": "{MAIN_FILE}",
+      "position": "{HIGHLIGHT_POSITION}"
+    }
+]`} 
+  lang="json" 
+  title={`./snippets/insert_and_highlight.json`} />
+
+You can configure the snippet action as follows:
+
+<Code code={`{
+    "action": "snippet",
+    "contentPath": "./snippets/insert_and_highlight.json",
+    "args": {
+      "MAIN_FILE": "<relative path from workspace to the file to update>",
+      "CONTENT_PATH": "<relative path to the file with the contents to insert>",
+      "CONTENT_POSITION": "<line number>",
+      "HIGHLIGHT_POSITION": "<line number>:<line number>"
+    }
+}`} 
+  lang="json"
+  title={`./demo.json`} />
+
+## Show slide
+
+The `show_slide.json` snippet contains a step to show a slide within Visual Studio Code.
+
+<Code code={`[
+    {
+      "action": "executeVSCodeCommand",
+      "command": "workbench.action.closeSidebar"
+    }, {
+      "action": "executeVSCodeCommand",
+      "command": "workbench.action.closePanel"
+    }, {
+      "action": "setSetting",
+      "setting": {
+        "key": "workbench.statusBar.visible",
+        "value": false
+      }
+    }, {
+      "action": "setSetting",
+      "setting": {
+        "key": "workbench.activityBar.location",
+        "value": "hidden"
+      }
+    }, {
+      "action": "executeVSCodeCommand",
+      "command": "simpleBrowser.show",
+      "args": "{SLIDES_URL}"
+    }
+]`} 
+  lang="json" 
+  title={`./snippets/show_slide.json`} />
+
+You can configure the snippet action as follows:
+
+<Code code={`{
+    "action": "snippet",
+    "contentPath": "./snippets/show_slide.json",
+    "args": {
+      "SLIDES_URL": "<URL to the slide>"
+    }
+}`} 
+  lang="json"
+  title={`./demo.json`} />
+
+<Aside>
+I am making use of [Slidev](https://sli.dev/) to create slides and as it generates a site, I can use the URL to show the slide in Visual Studio Code.
+</Aside>
+
+## Reset view after slide
+
+The `[reset_view_after_slide.json` snippet contains the steps to reset the view after showing a slide.
+
+<Code code={`[
+    {
+      "action": "setSetting",
+      "setting": {
+        "key": "workbench.statusBar.visible",
+        "value": null
+      }
+    }, {
+      "action": "setSetting",
+      "setting": {
+        "key": "workbench.activityBar.location",
+        "value": null
+      }
+    }, {
+      "action": "executeVSCodeCommand",
+      "command": "workbench.action.toggleSidebarVisibility"
+    }
+]`} 
+  lang="json" 
+  title={`./snippets/reset_view_after_slide.json`} />
+
+You can configure the snippet action as follows:
+
+<Code code={`{
+    "action": "snippet",
+    "contentPath": "./snippets/reset_view_after_slide.json"
+}`} 
+  lang="json"
+  title={`./demo.json`} />

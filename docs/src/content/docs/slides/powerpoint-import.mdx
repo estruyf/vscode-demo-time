@@ -1,0 +1,66 @@
+---
+title: Import PowerPoint slides
+description: Import images from a PowerPoint presentation as slides
+lastmod: 2025-04-03T13:51:00.150Z
+---
+
+import { Code, Aside } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+
+As some of you make use of PowerPoint for your presentations, we have added a feature to import images from a PowerPoint presentation as slides in Demo Time.
+This feature is useful for those who want to use Demo Time for their presentations but have already created their slides in PowerPoint.
+
+In this part of the documentation, we will explain how to use this feature.
+
+## Export your PowerPoint presentation
+
+To use this feature, you need to export your PowerPoint presentation to images. 
+
+You can do this by following the steps below:
+
+1. Open your PowerPoint presentation.
+2. Go to the `File` menu and select `Export`.
+3. Select `Change File Type`.
+4. Choose `jpg` or `png` as the file type.
+5. Select to save every slide as an image.
+6. Set the image dimensions to `1920x1080` pixels (lower will decrease the image quality).
+7. Choose a folder to save the images in.
+8. Click `Export` to save the images.
+
+Check out the following video for a step-by-step guide on how to export your PowerPoint presentation to images:
+
+<video controls>
+  <source src="/videos/powerpoint-export-to-images.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+
+<Aside type="caution" title='Windows Export'>
+  If you are using Windows, the export process may look slightly different.
+</Aside>
+
+## Import images as slides
+
+Once you have exported your PowerPoint presentation to images, you can import them into Demo Time as slides.
+
+To do this, follow these steps:
+
+1. Open your Demo Time project.
+2. Open the command palette (Ctrl+Shift+P or Cmd+Shift+P).
+3. Type `Demo Time: Import PowerPoint Images as Slides` and select the command.
+4. Select the folder where you saved the images.
+5. Click on the `Select folder with PowerPoint exported slide images` button.
+6. Choose to create a new demo file, or only import the slides.
+    - When you choose to create a new demo file. All the slides will be added as demo steps and you are ready to present.
+7. Let the import process finish.
+    - If you choose to create a new demo file, the import process will open the new demo file.
+
+Check out the following video for a step-by-step guide on how to import images as slides:
+
+<video controls>
+  <source src="/videos/powerpoint-import-images.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+
+<Aside type="caution" title='Importing images'>
+  The import process will only import images that are in the selected folder. If you have other files in the folder, they will not be imported.
+</Aside>

@@ -1,0 +1,31 @@
+{
+  "name": "demo-time-docs",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "prebuild": "node scripts/update-changelog.cjs && node scripts/update-llms.cjs",
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/react": "^4.1.2",
+    "@astrojs/rss": "^4.0.12",
+    "@astrojs/starlight": "^0.30.1",
+    "@astrojs/starlight-tailwind": "^3.0.0",
+    "@astrojs/tailwind": "^5.1.3",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "astro": "^5.0.2",
+    "lucide-react": "^0.487.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^3.4.16"
+  },
+  "devDependencies": {
+    "@frontmatter/extensibility": "^0.0.18",
+    "sharp": "^0.33.5"
+  }
+}

@@ -1,0 +1,99 @@
+---
+title: Demo Time
+head:
+  - tag: title
+    content: Demo Time - Live demos & slides in VS Code
+description: Deliver flawless coding demos with this VS Code extension—no live coding errors, just professional presentations every time.
+template: splash
+hero:
+  title: "Present like a pro: code, demo, and slides — all in your editor."
+  tagline: Transform your coding presentations with seamless demo automation and slide integration—all without leaving your editor. Execute flawless demonstrations step-by-step, advance through slides effortlessly, and keep your audience captivated while eliminating the stress of live coding mishaps. Works in VS Code, Cursor, or any other VS Code-based editor.
+  image:
+    alt: Demo Time
+    file: ../../assets/demotime-bg.svg
+  actions:
+    - text: Get started
+      link: getting-started/
+      icon: right-arrow
+    - text: Get the extension
+      link: https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-demo-time
+      icon: external
+      variant: secondary
+lastmod: 2025-07-09T08:12:03.006Z
+---
+
+import { Image } from 'astro:assets';
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import Reviewers from '../../components/Reviewers.astro';
+import CustomCard from '../../components/CustomCard.astro';
+import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
+import Benefits from '../../components/Benefits.astro';
+import Cta from '../../components/Cta.astro';
+import Preview from '../../components/Preview.astro';
+import Features from '../../components/Features.astro';
+
+<div class="space-y-24">
+	<Preview />
+
+	<Features />
+
+	<section>
+		<h2>Check out the overview video</h2>
+
+		<YouTubeEmbed videoId="uMAIQTV41yQ" title="Demo Time Extension Overview" />
+	</section>
+
+	<section>
+		<h2>Build with the best live coding tips in mind</h2>
+
+		<CardGrid>
+			<CustomCard title="Easily follow your script" icon="rocket">
+				No more written notes/scripts needed. Simply trigger the next demo step and maintain perfect flow throughout your presentation.
+
+				<svg xmlns="http://www.w3.org/2000/svg" slot="icon" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+					<path d="M14 2v6h6"/>
+					<path d="M16 13H8"/>
+					<path d="M16 17H8"/>
+					<path d="M10 9H8"/>
+				</svg>
+			</CustomCard>
+
+			<CustomCard title="Focus on your audience" icon="rocket">
+				Focus entirely on your audience. With automated steps, you'll never lose their attention by opening the wrong files, or making mistakes.
+
+				<svg xmlns="http://www.w3.org/2000/svg" slot="icon" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+					<circle cx="9" cy="7" r="4"/>
+					<path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+					<path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+				</svg>
+			</CustomCard>
+
+			<CustomCard title="Smart highlights" icon="rocket">
+				Simply specify which lines to highlight, and Demo Time handles the rest. Keep your audience focused on the relevant code.
+
+				<svg xmlns="http://www.w3.org/2000/svg" slot="icon" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="m8 3 4 9 4-9"/>
+					<path d="M4 21h16"/>
+					<path d="m4 21 8-8"/>
+					<path d="m20 21-8-8"/>
+				</svg>
+			</CustomCard>
+
+			<CustomCard title="Easier dry-runs" icon="rocket">
+				Create a starting branch, test your demo steps, and ensure everything works perfectly. No more juggling snippets or notes.
+
+				<svg xmlns="http://www.w3.org/2000/svg" slot="icon" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M20 6 9 17l-5-5"/>
+					</svg>
+			</CustomCard>
+		</CardGrid>
+	</section>
+
+	<Benefits />
+
+	<Reviewers />
+
+	<Cta />
+</div>

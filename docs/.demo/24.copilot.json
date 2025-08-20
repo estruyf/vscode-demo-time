@@ -1,0 +1,73 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "GitHub Copilot",
+  "description": "",
+  "version": 2,
+  "timer": 10,
+  "demos": [
+    {
+      "title": "Open GitHub Copilot",
+      "steps": [
+        {
+          "action": "openCopilotChat"
+        }
+      ]
+    },
+    {
+      "title": "Create a new GitHub Copilot chat",
+      "steps": [
+        {
+          "action": "newCopilotChat"
+        }
+      ]
+    },
+    {
+      "title": "Ask GitHub Copilot",
+      "steps": [
+        {
+          "action": "askCopilotChat",
+          "message": "Write a function that returns \"Hello from Demo Time\"."
+        }
+      ]
+    },
+    {
+      "title": "Star an edit chat with GitHub Copilot",
+      "steps": [
+        {
+          "action": "editCopilotChat",
+          "message": "Write a function that returns \"Hello from Demo Time\"."
+        }
+      ]
+    },
+    {
+      "title": "Star an agent chat with GitHub Copilot",
+      "steps": [
+        {
+          "action": "agentCopilotChat",
+          "message": "Write a function that returns \"Hello from Demo Time\"."
+        }
+      ]
+    },
+    {
+    "title": "Chat via VS Code command",
+      "steps": [
+        {
+          "action": "executeVSCodeCommand",
+          "command": "workbench.action.chat.open",
+          "args": {
+            "mode": "ask", // "ask", "agent", "edit"
+            "query": "Write a function that returns \"Hello from Demo Time\"."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Close GitHub Copilot",
+      "steps": [
+        {
+          "action": "closeCopilotChat"
+        }
+      ]
+    }
+  ]
+}

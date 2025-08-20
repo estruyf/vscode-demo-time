@@ -1,0 +1,90 @@
+---
+import HeartIcon from "./HeartIcon.astro";
+import SponsorButton from "./SponsorButton.astro";
+
+// Fetch sponsors data from the API
+const response = await fetch("https://api.frontmatter.codes/sponsors");
+const sponsors = await response.json();
+const oneTimeSponsors = [
+  {
+    name: "Stephan van Rooij",
+    login: "svrooij",
+    url: "https://github.com/svrooij",
+    avatarUrl: "https://avatars.githubusercontent.com/u/1292510?v=4",
+  },
+  {
+    name: "Pieter Nijs",
+    login: "PieEatingNinjas",
+    url: "https://github.com/PieEatingNinjas",
+    avatarUrl: "https://avatars.githubusercontent.com/u/13808075?v=4",
+  },
+  {
+    name: "Marc Duiker",
+    login: "marcduiker",
+    url: "https://github.com/marcduiker",
+    avatarUrl: "https://avatars.githubusercontent.com/u/4191277?v=4",
+  },
+];
+---
+
+<div class="container px-4 mx-auto">
+  <div
+    class="flex flex-col items-center gap-8 py-16 border-t border-[var(--sl-color-gray-6)]"
+  >
+    <div class="flex flex-col items-center max-w-2xl gap-4 text-center">
+      <div
+        class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#FFD43B]/10"
+      >
+        <HeartIcon class="w-6 h-6 text-[#FFD43B]" />
+      </div>
+      <h2 class="text-2xl font-bold text-[var(--sl-color-white)]">
+        Support Demo Time
+      </h2>
+      <p class="text-[var(--sl-color-gray-2)]">
+        Love using Demo Time? Consider becoming a sponsor to help us continue
+        building the best demo experience for developers. Every contribution
+        helps us add new features, fix bugs, and improve the extension.
+      </p>
+      <p class="text-[var(--sl-color-gray-2)]">
+        Support the project and get featured! Become a sponsor, and we'll add
+        your logo to our site to showcase your support.
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-4 pt-2">
+        <SponsorButton />
+      </div>
+
+      {
+        sponsors.length > 0 && (
+          <div class="mt-8">
+            <h3 class="text-xl font-semibold text-[var(--sl-color-white)] mb-4">
+              Current Sponsors
+            </h3>
+            <div class="flex flex-wrap justify-center gap-4">
+              {[...oneTimeSponsors, ...sponsors].map((sponsor) => (
+                <a
+                  href={sponsor.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="group flex flex-col items-center transition-transform hover:scale-105"
+                  title={`${sponsor.name} (${sponsor.login})`}
+                >
+                  <img
+                    src={sponsor.avatarUrl}
+                    alt={sponsor.name}
+                    class="w-16 h-16 rounded-full border-2 border-[#FFD43B]/50 group-hover:border-[#FFD43B]"
+                    width="64"
+                    height="64"
+                    loading="lazy"
+                  />
+                  <span class="mt-2 text-xs text-[var(--sl-color-gray-3)] group-hover:text-[var(--sl-color-white)]">
+                    {sponsor.name || sponsor.login}
+                  </span>
+                </a>
+              ))}
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</div>

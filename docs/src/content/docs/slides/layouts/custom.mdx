@@ -1,0 +1,52 @@
+---
+title: Custom Slide Layout
+description: Learn about creating and using a custom slide layout in Demo Time
+lastmod: 2025-07-04T15:10:34.637Z
+---
+
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+
+You can also create your own custom layout by creating an HTML template that uses [Handlebars](https://handlebarsjs.com/) as the templating engine. Define the relative path to the template in the `customLayout` property in the front matter section of the slide.
+
+All slide properties will be passed to the template, and you can use them in your custom layout by using the following syntax:
+
+```html
+{{metadata.<property>}}
+```
+
+For the slide content, you can use the `{{{content}}}` property to render the content of the slide.
+
+## Custom layout example
+
+```html title="custom-layout.html"
+<div>
+  {{#if metadata.title}}<h1>{{metadata.title}}</h1>{{/if}}
+  <div class="content">
+    {{{content}}}
+  </div>
+</div>
+```
+
+## Using a custom layout
+
+To use a custom layout, you can specify the path to the layout file in the front matter section of the slide:
+
+```md title="slide-with-custom-layout.md"
+---
+customLayout: "custom-layout.html"
+title: My custom layout
+---
+
+# This is my custom layout
+```
+
+## Outcome of the custom layout
+
+```html
+<div>
+  <h1>My custom layout</h1>
+  <div class="content">
+    <h1>This is my custom layout</h1>
+  </div>
+</div>
+```

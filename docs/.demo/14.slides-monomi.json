@@ -1,0 +1,87 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Slides - Monomi theme",
+  "description": "",
+  "demos": [
+    {
+      "title": "Default slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/monomi/default-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Intro slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/monomi/intro.md"
+        }
+      ]
+    },
+    {
+      "title": "Quote slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/monomi/quote-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Section slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/monomi/section-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Image slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/monomi/image-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Image left slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/monomi/image-left-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Image right slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/monomi/image-right-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Two Column Slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/monomi/two-column-slide.md"
+        }
+      ]
+    }
+  ]
+}

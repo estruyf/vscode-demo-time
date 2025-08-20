@@ -1,0 +1,63 @@
+---
+title: Time actions
+description: Perform time actions in your demos like waiting for a specific time, waiting for user input, and more.
+lastmod: 2025-07-04T17:50:40.172Z
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import GitHubFileOpener from '../../../components/GitHubFileOpener.astro';
+
+Time actions are used to perform actions related to time in the editor. You can use these actions to wait for a specific time, wait for user input, and more.
+
+<Aside type="note" title='Samples'>
+  You can find time actions samples on GitHub: 
+  <GitHubFileOpener filePath=".demo/4.time-actions.json" />
+</Aside>
+
+## Wait for a specific time
+
+Wait for a specific time before executing the next action.
+
+<Tabs syncKey="wait-for-time">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "waitForTimeout",
+  "timeout": "<timeout in milliseconds>"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: waitForTimeout
+timeout: <timeout in milliseconds>
+```
+
+</TabItem>
+</Tabs>
+
+## Wait for user input
+
+Wait until the user presses a key.
+
+<Tabs syncKey="wait-for-input">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "waitForInput"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: waitForInput
+```
+
+</TabItem>
+</Tabs>

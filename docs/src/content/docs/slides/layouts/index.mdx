@@ -1,0 +1,34 @@
+---
+title: Slide layouts
+description: Learn about the different slide layouts available in Demo Time
+lastmod: 2025-07-04T15:10:34.641Z
+---
+
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+
+
+On this page you can find the list of built-in slide layouts available in Demo Time. These layouts can be used to structure your slides effectively.
+
+By default, the slide uses the `default` layout, but you can change it per slide by providing the layout name in the front matter section of the slide:
+
+```md
+---
+layout: intro
+---
+
+# Welcome to Demo Time!
+```
+
+Demo Time currently provides the following built-in slide layouts:
+
+- [Default](/slides/layouts/default/)
+- [Intro](/slides/layouts/intro/)
+- [Section](/slides/layouts/section/)
+- [Quote](/slides/layouts/quote/)
+- [Image](/slides/layouts/image/)
+- [Image left](/slides/layouts/image-left/)
+- [Image right](/slides/layouts/image-right/)
+- [Two columns](/slides/layouts/two-columns/)
+- [Custom layout](/slides/layouts/custom/)
+

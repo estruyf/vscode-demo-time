@@ -1,0 +1,24 @@
+---
+title: Image Right Slide Layout
+description: Learn about the image-right slide layout in Demo Time
+lastmod: 2025-07-04T15:10:34.635Z
+---
+
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+import imageRightImg from "../../../../assets/docs/slide-layouts/image-right.webp";
+
+The `image-right` layout is similar to the `image` layout but with the image on the right side, and the content on the left side.
+
+```md
+---
+layout: image-right
+image: "<url to the image>"
+---
+
+# Image right slide
+
+This is an image right slide.
+```
+
+<Image class="mx-auto" src={imageRightImg} alt="Image right" />

@@ -1,0 +1,92 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "VSCode actions",
+  "description": "",
+  "version": 2,
+  "demos": [
+    {
+      "title": "Execute VSCode command (zoom in)",
+      "description": "",
+      "steps": [
+        {
+          "action": "executeVSCodeCommand",
+          "command": "workbench.action.zoomIn"
+        }
+      ]
+    },
+    {
+      "title": "Execute VSCode command (zoom out)",
+      "description": "",
+      "steps": [
+        {
+          "action": "executeVSCodeCommand",
+          "command": "workbench.action.zoomOut"
+        }
+      ]
+    },
+    {
+      "title": "Execute VSCode command (using path)",
+      "description": "",
+      "steps": [
+        {
+          "action": "executeVSCodeCommand",
+          "command": "markdown.showPreview",
+          "path": "README.md"
+        }
+      ]
+    },
+    {
+      "title": "Show information message",
+      "description": "",
+      "steps": [
+        {
+          "action": "showInfoMessage",
+          "message": "Hello from Demo Time!"
+        }
+      ]
+    },
+    {
+      "title": "Set state",
+      "description": "",
+      "steps": [
+        {
+          "action": "setState",
+          "state": {
+            "key": "message",
+            "value": "Hello from Demo Time!"
+          }
+        },
+        {
+            "action": "create",
+            "path": "temp/output.log",
+            "content": "{STATE_message}"
+        },
+        {
+            "action": "open",
+            "path": "temp/output.log"
+        }
+      ]
+    },
+    {
+      "title": "Open website",
+      "description": "",
+      "steps": [
+        {
+          "action": "openWebsite",
+          "url": "https://demotime.show"
+        }
+      ]
+    },
+    {
+      "title": "Open website (in VSCode)",
+      "description": "",
+      "steps": [
+        {
+          "action": "openWebsite",
+          "url": "https://demotime.show",
+          "openInVSCode": true
+        }
+      ]
+    }
+  ]
+}

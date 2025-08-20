@@ -1,0 +1,24 @@
+---
+title: Quote Slide Layout
+description: Learn about the quote slide layout in Demo Time
+lastmod: 2025-07-04T15:10:34.644Z
+---
+
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+import quoteImg from "../../../../assets/docs/slide-layouts/quote.webp";
+
+
+The `quote` layout is perfect for displaying key takeaways or citations. It provides a large quote area and a smaller content area.
+
+```md
+---
+layout: quote
+---
+
+# Quote Slide
+
+&mdash; By somebody
+```
+
+<Image class="mx-auto" src={quoteImg} alt="Quote" />

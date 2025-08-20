@@ -1,0 +1,114 @@
+---
+title: Quantum theme
+description: Overview of the quantum theme in Demo Time.
+lastmod: 2025-07-04T15:10:34.631Z
+---
+
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+
+import defaultquantumImg from "../../../../assets/docs/slide-themes/quantum/default.webp";
+import introquantumImg from "../../../../assets/docs/slide-themes/quantum/intro.webp";
+import sectionquantumImg from "../../../../assets/docs/slide-themes/quantum/section.webp";
+import quotequantumImg from "../../../../assets/docs/slide-themes/quantum/quote.webp";
+import imagequantumImg from "../../../../assets/docs/slide-themes/quantum/image.webp";
+import imageLeftquantumImg from "../../../../assets/docs/slide-themes/quantum/image-left.webp";
+import imageRightquantumImg from "../../../../assets/docs/slide-themes/quantum/image-right.webp";
+import twoColumnsquantumImg from "../../../../assets/docs/slide-themes/quantum/two-columns.webp";
+
+The quantum theme is a simple theme with a background on the slide title.
+
+<div class="relative">
+  <div class="images w-full relative">
+    <div class="slideshow">
+      <Image class="h-full" src={defaultquantumImg} alt="Default" />
+      <Image class="h-full" src={introquantumImg} alt="Intro" />
+      <Image class="h-full" src={sectionquantumImg} alt="Section" />
+      <Image class="h-full" src={quotequantumImg} alt="Quote" />
+      <Image class="h-full" src={imagequantumImg} alt="Image" />
+      <Image class="h-full" src={imageLeftquantumImg} alt="Image Left" />
+      <Image class="h-full" src={imageRightquantumImg} alt="Image Right" />
+      <Image class="h-full" src={twoColumnsquantumImg} alt="Two Columns" />
+    </div>
+  </div>
+</div>
+
+## Name
+
+```md
+---
+theme: quantum
+---
+
+# Slide title
+```
+
+## CSS
+
+Here you can check the CSS of the [Quantum theme](https://github.com/estruyf/vscode-demo-time/blob/dev/src/preview/themes/quantum.css).
+
+### CSS variables
+
+```css
+--demotime-primary: #3a86ff;
+--demotime-secondary: #8338ec;
+--demotime-accent: #ff006e;
+--demotime-light: #f8f9fa;
+
+--demotime-color: var(--demotime-light);
+--demotime-background: linear-gradient(135deg, #1a1b26 0%, #24283b 100%);
+
+--demotime-heading-color: var(--demotime-light);
+--demotime-heading-background: transparent;
+
+--demotime-font-size: var(--vscode-editor-font-size, 1.1em);
+
+--demotime-link-color: var(--demotime-primary);
+--demotime-link-active-color: var(--demotime-accent);
+
+--demotime-blockquote-border: var(--demotime-accent);
+--demotime-blockquote-background: rgba(255, 0, 110, 0.1);
+
+/* Default layout */
+--demotime-default-background: var(--demotime-background);
+--demotime-default-color: var(--demotime-color);
+--demotime-default-heading-color: var(--demotime-heading-color);
+--demotime-default-heading-background: var(--demotime-heading-background);
+
+/* Intro layout */
+--demotime-intro-background: linear-gradient(135deg, #1a1b26 0%, #24283b 100%);
+--demotime-intro-color: var(--demotime-color);
+--demotime-intro-heading-color: transparent;
+--demotime-intro-heading-background: linear-gradient(to right, var(--demotime-primary), var(--demotime-accent));
+
+/* Quote layout */
+--demotime-quote-background: linear-gradient(135deg, #2b2d3e 0%, #1a1b26 100%);
+--demotime-quote-color: var(--demotime-color);
+--demotime-quote-heading-color: var(--demotime-accent);
+--demotime-quote-heading-background: transparent;
+
+/* Section layout */
+--demotime-section-background: linear-gradient(135deg, #24283b 0%, #1a1b26 100%);
+--demotime-section-color: var(--demotime-color);
+--demotime-section-heading-color: transparent;
+--demotime-section-heading-background: linear-gradient(to right, var(--demotime-secondary), var(--demotime-primary));
+
+/* Image layouts */
+--demotime-image-heading-background: rgba(0, 0, 0, 0.8);
+
+--demotime-image-left-background: var(--demotime-background);
+--demotime-image-left-color: var(--demotime-color);
+--demotime-image-left-heading-color: var(--demotime-primary);
+--demotime-image-left-heading-background: transparent;
+
+--demotime-image-right-background: var(--demotime-background);
+--demotime-image-right-color: var(--demotime-color);
+--demotime-image-right-heading-color: var(--demotime-primary);
+--demotime-image-right-heading-background: transparent;
+
+/* Two columns layout */
+--demotime-two-columns-background: var(--demotime-background);
+--demotime-two-columns-color: var(--demotime-color);
+--demotime-two-columns-heading-color: var(--demotime-primary);
+--demotime-two-columns-heading-background: transparent;
+```

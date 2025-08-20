@@ -1,0 +1,44 @@
+name: Publish MCP Package
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/demo-time-mcp
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org/"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Update package version with build number as patch
+        run: |
+          BUILD_NUMBER=${{ github.run_number }}
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. -v b=$BUILD_NUMBER '{print $1"."$2"."b}')
+          npm version $NEW_VERSION --no-git-tag-version --allow-same-version
+
+      - name: Build package
+        run: npm run build
+
+      - name: Build search
+        run: npm run search:build
+
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

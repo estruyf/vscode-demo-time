@@ -1,0 +1,69 @@
+---
+title: Highlighting code
+description: Learn how to highlight code in Demo Time to make it stand out in your demos.
+tableOfContents: false
+lastmod: 2025-07-04T14:53:50.803Z
+---
+
+import { Code } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+import defaultImage from "../../../assets/docs/default-highlight.webp";
+import customImage from "../../../assets/docs/custom-highlight.webp";
+import wholeLineImg from "../../../assets/docs/whole-line-highlight.webp";
+import areaHighlightImg from "../../../assets/docs/area-highlighting.webp";
+import highlightActionImg from "../../../assets/docs/toggle-highlight-action.webp";
+
+Highlights are a great way to draw attention to specific code snippets during your presentation. To ensure a clean transition between demo steps, Demo Time now automatically clears any active highlight when you move to the next step in your demo.
+
+By default, the extension highlights the code in a box with a red border. You can customize how you want to highlight the code with the highlight settings.
+
+<Image class="mx-auto" src={defaultImage} alt="Default code highlighting" />
+
+When the current demo included a highlight action, there will be a highlight button available in the editor title bar on the right. You can use this to toggle the highlight on and off.
+
+<Image class="mx-auto" src={highlightActionImg} alt="Toggle highlight action" />
+
+<Aside type="tip">
+You can also make use of the `Demo Time: Toggle highlight` command to toggle the highlight on and off.
+</Aside>
+
+## Customizing the highlight
+
+Here is an example where the highlight border and background color are customized. Besides these color changes, the text which is not highlighted is blurred and its opacity is reduced to have a better focus on the highlighted code.
+
+<Code code={`{
+    "demoTime.highlightBorderColor": "transparent",
+    "demoTime.highlightBackground": "rgba(19, 142, 151, 0.2)",
+    "demoTime.highlightOpacity": 0.5,
+    "demoTime.highlightBlur": 2,
+}`} 
+  lang="json" 
+  title={`.vscode/settings.json`} />
+
+<Image class="mx-auto" src={customImage} alt="Custom code highlighting colors" width="618" />
+
+## Whole line highlighting
+
+When you use the line only positioning or placeholder positioning, the whole lines will be highlighted.
+
+<Image class="mx-auto" src={wholeLineImg} alt="Whole line highlight" />
+
+When using this type of highlighting, you are able to use a border to highlight the code.
+
+## Code area highlighting
+
+When you use the "line + character" position or setting `highlightWholeLine` property to `false` when using placeholder positioning, the highlighted code will not include a border.
+
+<Image class="mx-auto" src={areaHighlightImg} alt="Whole line highlight" />
+
+This kind of highlighting can be used when you only want to highlight a specific part of the code.
+
+## Highlighting current line or selection
+
+If you want to highlight the current line or selection, you can use the `Demo Time: Toggle highlight of current line or selection` command. This will add a highlight to the current line or selection.
+
+<Aside type="tip">
+  The command is linked with the following keybinding: <kbd>alt</kbd>+<kbd>h</kbd>
+</Aside>

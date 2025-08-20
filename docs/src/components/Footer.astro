@@ -1,0 +1,178 @@
+---
+import type { Props } from "@astrojs/starlight/props";
+
+import EditLink from "virtual:starlight/components/EditLink";
+import LastUpdated from "virtual:starlight/components/LastUpdated";
+import Pagination from "virtual:starlight/components/Pagination";
+import SocialIcons from "virtual:starlight/components/SocialIcons";
+import config from "virtual:starlight/user-config";
+import { Icon } from "@astrojs/starlight/components";
+import Support from "./Support.astro";
+
+const currentUrl = Astro.request.url;
+const isProd = import.meta.env.PROD;
+---
+
+<footer class="sl-flex">
+  <div class="meta sl-flex">
+    <EditLink {...Astro.props} />
+    <LastUpdated {...Astro.props} />
+  </div>
+
+  <Pagination {...Astro.props} />
+
+  <Support />
+
+  <div
+    class="mx-auto gap-4 flex flex-col sm:flex-row justify-center items-center"
+  >
+    <a
+      class="inline-flex"
+      href="https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-demo-time"
+      title="View on Visual Studio Code Marketplace"
+    >
+      <img
+        src="https://vscode-marketplace-badge.vercel.app/api/badge/version/eliostruyf.vscode-demo-time?style=flat-square&color=%23FFD23F&labelColor=%23202736"
+        alt="Visual Studio Marketplace"
+        height="25px"
+      />
+    </a>
+
+    <a
+      class="inline-flex"
+      href="https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-demo-time"
+      title="View on Visual Studio Code Marketplace"
+    >
+      <img
+        src="https://vscode-marketplace-badge.vercel.app/api/badge/installs/eliostruyf.vscode-demo-time?style=flat-square&color=%23FFD23F&labelColor=%23202736"
+        alt="Number of installs"
+        height="25px"
+      />
+    </a>
+
+    {
+      isProd && (
+        <a
+          class="inline-flex"
+          href="https://visitorbadge.io/status?path=https:%2f%2fgithub.com%2festruyf%2fvscode-demo-time"
+        >
+          <img
+            src={`https://api.visitorbadge.io/api/combined?path=https:%2f%2fgithub.com%2festruyf%2fvscode-demo-time&amp;labelColor=%23202736&amp;countColor=%23FFD23F&amp;slug=${currentUrl}`}
+            height="25px"
+            alt="Demo Time Visitors"
+          />
+        </a>
+      )
+    }
+  </div>
+
+  <div class="social-icons flex gap-2 justify-center">
+    <SocialIcons />
+  </div>
+
+  <div class="flex justify-center">
+    <a
+      class="text-[var(--sl-color-gray-2)] hover:text-[var(--sl-color-text-accent)] text-sm"
+      href="/releases/"
+      title="View the releases"
+    >
+      Releases
+    </a>
+    <span class="mx-2 text-[var(--sl-color-gray-3)]">|</span>
+    <a
+      class="text-[var(--sl-color-gray-2)] hover:text-[var(--sl-color-text-accent)] text-sm"
+      href="/releases.xml"
+      title="Subscribe to the releases RSS feed"
+    >
+      RSS
+    </a>
+    <span class="mx-2 text-[var(--sl-color-gray-3)]">|</span>
+    <a
+      class="text-[var(--sl-color-gray-2)] hover:text-[var(--sl-color-text-accent)] text-sm"
+      href="https://marketplace.visualstudio.com/items/eliostruyf.vscode-demo-time/changelog"
+      title="View the changelog"
+    >
+      Changelog
+    </a>
+    <span class="mx-2 text-[var(--sl-color-gray-3)]">|</span>
+    <a
+      class="text-[var(--sl-color-gray-2)] hover:text-[var(--sl-color-text-accent)] text-sm"
+      href="https://stats.demotime.show/"
+      title="View the extension stats"
+    >
+      Stats
+    </a>
+  </div>
+
+  <div class="flex justify-center">
+    <p class="flex items-baseline text-sm text-[var(--sl-color-gray-2)]">
+      <span>Built with ❤️ by</span>
+      <a
+        class="group relative isolate flex items-center rounded-lg px-2 py-0.5 font-medium text-[var(--sl-color-white)] transition-colors hover:text-[#FFD23F] gap-x-2"
+        href="https://www.eliostruyf.com"
+        title="Elio Struyf"
+      >
+        <span
+          class="absolute inset-0 -z-10 scale-75 rounded-lg bg-[var(--sl-color-white)]/5 opacity-0 transition group-hover:scale-100 group-hover:opacity-100"
+        ></span>
+        <span class="self-baseline text-[var(--sl-color-white)]"
+          >Elio Struyf</span
+        >
+      </a>
+    </p>
+  </div>
+
+  <div class="flex justify-center">
+    <a
+      href="https://struyfconsulting.com"
+      title="Hire Elio Struyf via Struyf Consulting"
+    >
+      <img
+        src="/struyf-consulting.svg"
+        alt="Struyf Consulting Logo"
+        height="25px"
+      />
+    </a>
+  </div>
+
+  {
+    config.credits && (
+      <a class="kudos sl-flex" href="https://starlight.astro.build">
+        <Icon name={"starlight"} /> {Astro.locals.t("builtWithStarlight.label")}
+      </a>
+    )
+  }
+
+  <style>
+    footer {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .meta {
+      gap: 0.75rem 3rem;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-top: 3rem;
+      font-size: var(--sl-text-sm);
+      color: var(--sl-color-gray-3);
+    }
+    .meta > :global(p:only-child) {
+      margin-inline-start: auto;
+    }
+
+    .kudos {
+      align-items: center;
+      gap: 0.5em;
+      margin: 1.5rem auto;
+      font-size: var(--sl-text-xs);
+      text-decoration: none;
+      color: var(--sl-color-gray-3);
+    }
+    .kudos :global(svg) {
+      color: var(--sl-color-orange);
+    }
+    .kudos:hover {
+      color: var(--sl-color-white);
+    }
+  </style>
+</footer>

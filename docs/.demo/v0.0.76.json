@@ -1,0 +1,69 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "v0.0.76",
+  "description": "",
+  "demos": [
+    {
+      "title": "Announcement",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": ".demo/v0.0.76/announcement.md"
+        }
+      ]
+    },
+    {
+      "title": "Why",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": ".demo/v0.0.76/why.md"
+        }
+      ]
+    },
+    {
+      "title": "Highlight steps",
+      "description": "",
+      "steps": [
+        {
+          "action": "highlight",
+          "path": "/.demo/v0.0.76/how.md",
+          "position": "6:10",
+          "zoom": 2
+        }
+      ]
+    },
+    {
+      "title": "How",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": ".demo/v0.0.76/how.md"
+        }
+      ]
+    },
+    {
+      "title": "Try",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": ".demo/v0.0.76/try.md"
+        }
+      ]
+    },
+    {
+      "title": "Docs",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": ".demo/v0.0.76/docs.md"
+        }
+      ]
+    }
+  ]
+}

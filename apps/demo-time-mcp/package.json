@@ -1,0 +1,40 @@
+{
+  "name": "@demotime/mcp",
+  "version": "0.0.1",
+  "description": "Model Context Protocol (MCP) server for Demo Time that enables AI assistants to interact with Demo Time.",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "demotime-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "npm run clean && tsc",
+    "watch": "tsc -w ",
+    "clean": "rimraf dist",
+    "start": "node dist/index.js",
+    "inspect": "npx -y @modelcontextprotocol/inspector node dist/index.js",
+    "search:build": "node scripts/build-search-index.js"
+  },
+  "keywords": [
+    "demo-time",
+    "vscode",
+    "mcp",
+    "model-context-protocol",
+    "ai-assistant"
+  ],
+  "author": "Elio Struyf <elio@struyfconsulting.be>",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.11.5",
+    "fuse.js": "^7.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.21",
+    "@types/react": "^18.2.62",
+    "@types/react-dom": "^18.2.18",
+    "debug": "^4.4.1",
+    "gray-matter": "^4.0.3",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.8.3"
+  }
+}

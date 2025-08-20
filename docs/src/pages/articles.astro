@@ -1,0 +1,110 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import { getCollection } from "astro:content";
+import { Aside } from "@astrojs/starlight/components";
+const articles = await getCollection("articles");
+const pinnedArticles = articles.filter((a) => a.data.pinned === true);
+const normalArticles = articles.filter((a) => !a.data.pinned);
+
+import type { CollectionEntry } from "astro:content";
+function sortByDateDesc(
+  a: CollectionEntry<"articles">,
+  b: CollectionEntry<"articles">
+) {
+  return b.data.date.getTime() - a.data.date.getTime();
+}
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "Community Articles",
+    description:
+      "Community articles and tutorials for the Demo Time extension.",
+    tableOfContents: false,
+  }}
+>
+  <div class="articles-page">
+    <article class="articles-content">
+      <Aside type="note" title="Contribute your article">
+        Welcome to the community articles section! Want to contribute? Add a
+        Markdown file to <code>src/content/articles/</code> with your name and GitHub
+        username in the frontmatter.
+      </Aside>
+
+      {
+        pinnedArticles.length > 0 && (
+          <>
+            <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pin-icon lucide-pin"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg>
+              Pinned Articles
+            </h2>
+            <ul class="articles-list list-none p-0 mb-8">
+              {pinnedArticles.sort(sortByDateDesc).map((article) => (
+                <li class="mb-8 p-6 bg-white dark:bg-[var(--sl-color-gray-5)] rounded-lg shadow flex flex-col gap-2">
+                  <a
+                    href={`/articles/${article.id}`}
+                    class="text-xl font-semibold hover:underline"
+                  >
+                    {article.data.title}
+                  </a>
+                  <span class="text-gray-700 dark:text-gray-300 text-base">
+                    {article.data.description}
+                  </span>
+                  <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mt-2">
+                    <img
+                      src={`https://github.com/${article.data.github}.png`}
+                      alt={article.data.author}
+                      class="w-6 h-6 rounded-full mr-2 border border-[var(--sl-color-gray-2)] dark:border-[var(--sl-color-gray-6)]"
+                    />
+                    <span class="font-medium text-gray-800 dark:text-gray-200">
+                      {article.data.author}
+                    </span>
+                    <span class="mx-2">·</span>
+                    <span>
+                      {new Date(article.data.date).toLocaleDateString()}
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </>
+        )
+      }
+
+      {
+        (normalArticles && normalArticles.length > 0) && (
+          <h2 class="text-lg font-bold mb-4">All Articles</h2>
+          <ul class="articles-list list-none p-0">
+            {
+              normalArticles.sort(sortByDateDesc).map((article) => (
+                <li class="mb-8 p-6 bg-white dark:bg-[var(--sl-color-gray-6)] rounded-lg shadow flex flex-col gap-2">
+                  <a
+                    href={`/articles/${article.id}`}
+                    class="text-xl font-semibold hover:underline"
+                  >
+                    {article.data.title}
+                  </a>
+                  <span class="text-gray-700 dark:text-gray-300 text-base">
+                    {article.data.description}
+                  </span>
+                  <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mt-2">
+                    <img
+                      src={`https://github.com/${article.data.github}.png`}
+                      alt={article.data.author}
+                      class="w-6 h-6 rounded-full mr-2 border border-[var(--sl-color-gray-2)] dark:border-[var(--sl-color-gray-6)]"
+                    />
+                    <span class="font-medium text-gray-800 dark:text-gray-200">
+                      {article.data.author}
+                    </span>
+                    <span class="mx-2">·</span>
+                    <span>{new Date(article.data.date).toLocaleDateString()}</span>
+                  </div>
+                </li>
+              ))
+            }
+          </ul>
+        )
+      }
+    </article>
+  </div>
+</StarlightPage>

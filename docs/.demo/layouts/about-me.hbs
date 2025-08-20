@@ -1,0 +1,60 @@
+<style>
+.about_me {  
+  * {
+    line-height: 1 !important;
+  }
+}
+
+.about_me__image {
+  {{#if metadata.imageStyle}}{{metadata.imageStyle}}{{/if}}
+  {{#if metadata.imageSrc}}background-image: url('{{metadata.imageSrc}}');{{/if}}
+}
+</style>
+
+<div class="about_me p-0 h-full">
+  <div class="about_me__wrapper flex h-full {{#if (eq metadata.position "left")}}flex-row-reverse{{else}}flex-row{{/if}}">
+    <div class="about_me__left w-1/2 flex flex-col justify-end">
+      <div class="about_me__image relative h-full flex flex-col justify-end"></div>
+    </div>
+
+    <div class="about_me__right w-1/2 flex flex-col pt-16 px-8">
+      <div>
+      {{#if metadata.helloMsg}}
+        <h1 class="about_me__header !text-6xl p-2 mb-0  w-auto inline-block font-bold !bg-[var(--vscode-editor-foreground)] !text-[var(--vscode-editor-background)]">{{metadata.helloMsg}}</h1>
+      {{/if}}
+      </div>
+
+      <div class="about_me__contents flex flex-col justify-between grow pt-8 pb-[calc(30px+1rem)]">
+        <h2 h2 class="about_me__name !text-4xl">{{metadata.name}}</h2>
+
+        <div class="about_me__contact">
+          <div class="about_me__details text-2xl space-y-2 mt-4">
+            {{#if metadata.job}}
+            <p class="job">{{metadata.job}}</p>
+            {{/if}}
+            {{#if metadata.line1}}
+            <p class="line-1">{{metadata.line1}}</p>
+            {{/if}}
+            {{#if metadata.line2}}
+            <p class="line-2">{{metadata.line2}}</p>
+            {{/if}}
+          </div>
+
+          <div class="about_me__social text-2xl space-y-2 mt-8">
+            {{#if metadata.social1}}
+              <p class="social social-1">{{metadata.social1}}</p>
+            {{/if}}
+            {{#if metadata.social2}}
+              <p class="social social-2">{{metadata.social2}}</p>
+            {{/if}}
+            {{#if metadata.social3}}
+              <p class="social social-3">{{metadata.social3}}</p>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{{content}}}

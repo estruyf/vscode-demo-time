@@ -1,0 +1,35 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Time actions",
+  "description": "",
+  "demos": [
+    {
+      "title": "Wait for timeout",
+      "description": "",
+      "steps": [
+        {
+          "action": "waitForTimeout",
+          "timeout": 2000
+        },
+        {
+          "action": "markdownPreview",
+          "path": ".demo/content/after-timeout.md"
+        }
+      ]
+    },
+    {
+      "title": "Wait for input",
+      "description": "",
+      "steps": [
+        {
+          "action": "waitForInput",
+          "message": "Do you want to continue?"
+        },
+        {
+          "action": "markdownPreview",
+          "path": ".demo/content/after-timeout.md"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,182 @@
+---
+title: GitHub Copilot actions
+description: Actions for integrating GitHub Copilot in Demo Time
+lastmod: 2025-08-02T15:59:43.607Z
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+GitHub Copilot actions allow you to interact with GitHub Copilot directly from your Demo Time steps. You can open GitHub Copilot chat, start new chats, ask questions, and more—all as part of your scripted demo.
+
+<Aside type="note" title="Samples">
+  You can find Copilot actions samples on GitHub:
+  <a href="https://github.com/estruyf/vscode-demo-time/tree/main/.demo">.demo/copilot-actions.json</a>
+</Aside>
+
+## Open Copilot chat
+
+To open the Copilot chat panel, use the `openCopilotChat` action.
+
+<Tabs syncKey="copilot-open-chat">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "openCopilotChat"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: openCopilotChat
+```
+
+</TabItem>
+</Tabs>
+
+## Start a new Copilot chat
+
+To start a new Copilot chat session, use the `newCopilotChat` action.
+
+<Tabs syncKey="copilot-new-chat">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "newCopilotChat"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: newCopilotChat
+```
+
+</TabItem>
+</Tabs>
+
+## Ask a question in Copilot chat
+
+To ask a question, use the `askCopilotChat` action. The `message` property is optional; if omitted, the chat will open without sending a message.
+
+<Tabs syncKey="copilot-ask-chat">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "askCopilotChat"
+}
+
+{
+  "action": "askCopilotChat",
+  "message": "Write a function that returns 'Hello from Demo Time'."
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: askCopilotChat
+```
+
+```yaml
+action: askCopilotChat
+message: "Write a function that returns 'Hello from Demo Time'."
+```
+
+</TabItem>
+</Tabs>
+
+## Start an edit chat with Copilot
+
+To start an edit chat, use the `editCopilotChat` action. The `message` property is optional.
+
+<Tabs syncKey="copilot-edit-chat">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "editCopilotChat"
+}
+
+{
+  "action": "editCopilotChat",
+  "message": "Write a function that returns 'Hello from Demo Time'."
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: editCopilotChat
+```
+
+```yaml
+action: editCopilotChat
+message: "Write a function that returns 'Hello from Demo Time'."
+```
+
+</TabItem>
+</Tabs>
+
+## Start an agent chat with Copilot
+
+To start an agent chat, use the `agentCopilotChat` action. The `message` property is optional.
+
+<Tabs syncKey="copilot-agent-chat">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "agentCopilotChat"
+}
+
+{
+  "action": "agentCopilotChat",
+  "message": "Write a function that returns 'Hello from Demo Time'."
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: agentCopilotChat
+```
+
+```yaml
+action: agentCopilotChat
+message: "Write a function that returns 'Hello from Demo Time'."
+```
+
+</TabItem>
+</Tabs>
+
+## Close Copilot chat
+
+To close the Copilot chat panel, use the `closeCopilotChat` action.
+
+<Tabs syncKey="copilot-close-chat">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "closeCopilotChat"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: closeCopilotChat
+```
+
+</TabItem>
+</Tabs>

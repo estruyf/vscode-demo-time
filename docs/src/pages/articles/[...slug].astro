@@ -1,0 +1,80 @@
+---
+import { getCollection, render } from "astro:content";
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import Pagination from "@astrojs/starlight/components/Pagination.astro";
+
+const { slug } = Astro.params;
+const articles = await getCollection("articles");
+const article = articles.find((a) => a.id === slug);
+if (!article) throw new Error("Article not found");
+const { Content } = await render(article);
+
+export async function getStaticPaths() {
+  const articles = await getCollection("articles");
+  return articles.map((article) => ({
+    params: { slug: article.id },
+    props: {},
+  }));
+}
+---
+
+<StarlightPage
+  frontmatter={{
+    title: article.data.title,
+    description: article.data.description,
+    tableOfContents: false,
+  }}
+>
+  <div class="articles-page">
+    <article class="articles-content max-w-3xl mx-auto">
+      <div class="flex items-center gap-4 mb-6">
+        <img
+          src={`https://github.com/${article.data.github}.png`}
+          alt={article.data.author}
+          class="w-12 h-12 rounded-full border border-[var(--sl-color-gray-2)] dark:border-[var(--sl-color-gray-6)] shadow-sm"
+        />
+        <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+          <span class="font-semibold text-gray-900 dark:text-gray-100"
+            >{article.data.author}</span
+          >
+          <a
+            href={`https://github.com/${article.data.github}`}
+            class="text-gray-500 dark:text-gray-400 hover:underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            @{article.data.github}
+          </a>
+          <span class="hidden sm:inline text-gray-300 dark:text-gray-600"
+            >·</span
+          >
+          <span class="text-gray-400 dark:text-gray-500"
+            >{new Date(article.data.date).toLocaleDateString()}</span
+          >
+        </div>
+      </div>
+      <hr
+        class="mb-6 border-[var(--sl-color-gray-2)] dark:border-[var(--sl-color-gray-6)]"
+      />
+      <div class="prose dark:prose-invert max-w-none">
+        <Content />
+      </div>
+    </article>
+
+    <div class="!mt-16">
+      <Pagination
+        pagination={{
+          prev: {
+            type: "link",
+            label: "All Articles",
+            href: `/articles/`,
+            isCurrent: false,
+            badge: undefined,
+            attrs: {},
+          },
+          next: undefined,
+        }}
+      />
+    </div>
+  </div>
+</StarlightPage>

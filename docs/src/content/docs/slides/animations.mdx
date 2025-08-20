@@ -1,0 +1,144 @@
+---
+title: Animations
+description: Learn how to use animation components in your slides.
+lastmod: 2025-04-09T13:27:30.989Z
+---
+
+import { Code, Aside } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+
+Demo Time provides you a couple of animation components to show or hide content during your presentations. On this page, you will learn how to use them.
+
+## Show Content
+
+The `dt-show` component allows you to reveal content after a specific number of clicks:
+
+```markdown title="Click twice to show content"
+<dt-show clicks="2">
+  This content appears after 2 clicks
+</dt-show>
+```
+
+If no `clicks` attribute is specified, the content will show after 1 click:
+
+```markdown title="Click to show content"
+<dt-show>
+  This content appears after 1 click
+</dt-show>
+```
+
+<Aside type="caution">
+If you insert Markdown content inside the `dt-show` component, make sure to add an extra line break before and after the Markdown content inside the component. Otherwise, the Markdown parser will not work correctly.
+</Aside>
+
+### Properties
+
+The `dt-show` component supports the following properties:
+
+- `clicks`: Number of clicks required to show the content (default is 1)
+
+## Hide Content
+
+The `dt-hide` component allows you to hide content after a specific number of clicks:
+
+```markdown title="Click twice to hide content"
+<dt-hide clicks="2">
+  This content disappears after 2 clicks
+</dt-hide>
+```
+
+<Aside type="caution">
+If you insert Markdown content inside the `dt-hide` component, make sure to add an extra line break before and after the Markdown content inside the component. Otherwise, the Markdown parser will not work correctly.
+</Aside>
+
+### Properties
+
+The `dt-hide` component supports the following properties:
+
+- `clicks`: Number of clicks required to hide the content (default is 1)
+
+## Fade in
+
+<video controls>
+  <source src="/videos/fade-in.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+
+The `fade-in` component allows you to animate content with a fade effect. You can control the direction, duration, and delay of the animation. It can be used for text and other types of elements.
+
+```markdown title="Fade in animation"
+<fade-in direction="right" duration="2000" delay="1000">
+  Content fades in from the right
+</fade-in>
+```
+
+<Aside type="caution">
+If you insert Markdown content inside the `fade-in` component, make sure to add an extra line break before and after the Markdown content inside the component. Otherwise, the Markdown parser will not work correctly.
+</Aside>
+
+### Properties
+
+The component supports the following properties:
+
+- `delay`: Delay before animation starts in milliseconds
+- `direction`: Controls the fade direction - `none`, `right`, `left`, `up`, `down` (optional - default is `none`)
+- `duration`: Animation duration in milliseconds
+- `distance`: Distance of the fade effect in pixels (default is `20`)
+
+## Text animations
+
+### Text typewriter
+
+<video controls>
+  <source src="/videos/text-typewriter.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+
+The `text-typewriter` component creates a typing animation effect:
+
+```markdown title="Typewriter effect"
+<text-typewriter duration="3000" delay="1000" cursor repeat>
+  This text appears as if being typed...
+</text-typewriter>
+```
+
+#### Properties
+
+- `delay`: Delay before typing starts (in milliseconds)
+- `duration`: How long the typing animation takes (in milliseconds)
+- `cursor`: Shows a blinking cursor (optional)
+- `cursor-color`: Color of the cursor (optional - default is `#000`)
+- `cursor-width`: Width of the cursor (optional - default is `2`)
+- `cursor-blink-speed`: Blinking speed of the cursor (optional - default is `500`)
+- `repeat`: Repeats the animation (optional - default is `false`)
+
+### Text highlight
+
+<video controls>
+  <source src="/videos/text-highlight.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+
+The `text-highlight` component animates a highlight effect over text:
+
+```markdown title="Text highlight animation" wrap
+<text-highlight highlight-color="rgba(250, 204, 21, 0.5)" direction="center-out">
+  This text gets highlighted
+</text-highlight>
+```
+
+#### Properties
+
+- `delay`: Delay before typing starts (in milliseconds)
+- `duration`: How long the typing animation takes (in milliseconds)
+- `highlight-color`: Color of the highlight (optional - default is `#ffff00`)
+- `direction`: Direction of the highlight animation - `left-to-right`, `right-to-left`, `center-out` (optional - default is `left-to-right`)
+- `repeat`: Repeats the animation (optional - default is `false`)
+
+## Combining animations
+
+You can combine multiple animations in a single component. For example, you can use the `dt-show` component with the `text-highlight` component to create a highlight effect that appears after a click:
+
+```markdown wrap title="Highlight effect after one click"
+This is some text <dt-hide>with important</dt-hide><dt-show><text-highlight highlight-color="rgba(250, 204, 21, 0.5)" direction="center-out">with important</text-highlight></dt-show> information.
+```

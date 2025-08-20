@@ -1,0 +1,115 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Slides - Web Components",
+  "description": "",
+  "demos": [
+    {
+      "title": "Click component",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/components/click-component.md"
+        }
+      ]
+    },
+    {
+      "title": "Click component 2",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/components/click-component-2.md"
+        }
+      ]
+    },
+    {
+      "title": "Click component 3",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/components/click-component-3.md"
+        }
+      ]
+    },
+    {
+      "title": "Click component 4",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/components/click-component-4.md"
+        }
+      ]
+    },
+    {
+      "title": "Arrow component",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/components/arrow-component.md"
+        }
+      ]
+    },
+    {
+      "title": "Rectangle component",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/components/rectangle-component.md"
+        }
+      ]
+    },
+    {
+      "title": "Circle component",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/components/circle-component.md"
+        }
+      ]
+    },
+    {
+      "title": "Text animation component",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/text-animation-component.md"
+        }
+      ]
+    },
+    {
+      "title": "List component",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/list-component.md"
+        }
+      ],
+      "icons": {
+        "start": "vm",
+        "end": "pass-filled"
+      }
+    },
+    {
+      "title": "List with ampersand",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/list-with-ampersand.md"
+        }
+      ],
+      "icons": {
+        "start": "vm",
+        "end": "pass-filled"
+      }
+    }
+  ]
+}

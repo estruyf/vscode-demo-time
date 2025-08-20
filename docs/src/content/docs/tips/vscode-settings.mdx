@@ -1,0 +1,72 @@
+---
+title: VS Code Settings
+description: Learn about additional VS Code Settings that may be useful
+tableOfContents: false
+lastmod: 2025-07-04T14:53:50.800Z
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+In addition to the [Demo Time VS Code settings](/references/settings/) there are a number of settings that you may find useful to set in your [VS Code settings](https://code.visualstudio.com/docs/configure/settings#_workspace-settings).
+
+## Terminal Placement
+By default VS Code places any new terminal windows at the bottom of the screen. 
+
+When presenting it can be useful to set the default location of new terminal windows to `editor` rather than `view`. This will then create new terminals in an editor tab providing more space.
+
+```json
+{
+  "terminal.integrated.defaultLocation": "editor"
+}
+```
+
+## Font Sizes
+Demo Time allows you to set the zoom level when highlighting text however it can be useful to set a default font size.
+
+This can be done for both the editor and the terminal independently.
+
+```json
+{
+  "editor.fontSize": 20,
+  "terminal.integrated.fontSize": 25
+}
+```
+
+## Cursors
+
+By default, Visual Studio Code uses a thin blinking cursor, which can be hard to spot during demos. 
+
+Changing the cursor to a block which expands gives a better visual cue of where the cursor is located.
+
+```json
+{
+  "editor.cursorStyle": "block",
+  "editor.cursorBlinking": "expand"
+}
+```
+
+You can also give your cursor a different color to make it stand out more. 
+
+```json
+{
+  "workbench.colorCustomizations": {
+    "editorCursor.foreground": "#FF0000"
+  }
+}
+```
+
+## Hover panels
+
+When hovering over code, VS Code shows a hover panel with information about the code. These hover panels can be distracting during demos.
+
+To turn off the hover panels, you can set the following setting:
+
+```json
+{
+  "editor.hover.enabled": false
+}
+```
+
+## References
+
+- [Useful Visual Studio Code settings for better coding demos](https://www.eliostruyf.com/visual-studio-code-settings-coding-demos/) by Elio Struyf

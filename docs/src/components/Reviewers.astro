@@ -1,0 +1,43 @@
+---
+const response = await fetch(
+  "https://marketplace.visualstudio.com/_apis/public/gallery/publishers/eliostruyf/extensions/vscode-demo-time/reviews?count=6&filterOptions=3"
+);
+const data = await response.json();
+const reviews = data.reviews;
+---
+
+<section class="testimonial-wrapper">
+  <h2 class="mb-8">Testimonials</h2>
+
+  <ul class="list-none p-0 grid grid-cols-1 md:grid-cols-2 gap-6">
+    {
+      reviews.map((review: any) => (
+        <li class="gap-8">
+          <blockquote class="">
+            <p>{review.text}</p>
+          </blockquote>
+          <div class="pl-4 flex items-center gap-4">
+            <img
+              src={`https://marketplace.visualstudio.com/avatar?userid=${review.userId}`}
+              class="rounded-full border border-[var(--sl-color-gray-5)]"
+              alt=""
+              style="height: 40px; width: 40px;"
+              width="40px"
+              height="40px"
+              loading="lazy"
+            />
+            <p class="!p-0 !m-0">{review.userDisplayName}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+
+  <div class="mt-8 text-center"></div>
+  <p>
+    Want to be featured on this page? Leave your review on the <a
+      href="https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-demo-time&ssr=false#review-details"
+      class="underline">Visual Studio Code Marketplace</a
+    >!
+  </p>
+</section>

@@ -1,0 +1,70 @@
+---
+// import { Card, CardGrid } from "@astrojs/starlight/components";
+import { Image } from "astro:assets";
+
+import scriptedStepsImg from "../assets/docs/screenshot-scripted-steps.webp";
+import codeHighlightImg from "../assets/docs/screenshot-code-highlight.webp";
+import slideIntegrationImg from "../assets/docs/screenshot-slide-integration.webp";
+---
+
+<section>
+  <h2>Features</h2>
+
+  <!-- <CardGrid stagger>
+    <Card title="Scripted Demos" icon="rocket">
+      Never miss a step or fumble with notes.
+    </Card>
+    <Card title="Smart Highlights" icon="pen">
+      Keep your audience focused on the code that matters.
+    </Card>
+    <Card title="Slide Integration" icon="laptop">
+      Present slides and code seamlessly in one place.
+    </Card>
+    <Card title="Custom Actions" icon="seti:html">
+      Automate commands, open files, and run tasks with a click.
+    </Card>
+  </CardGrid>
+
+  <br /> -->
+
+  <div class="flex flex-col md:flex-row gap-8 justify-center mt-8">
+    <div class="flex-1 text-center">
+      <Image
+        class="mx-auto rounded-lg shadow-md w-[260px] h-[180px] object-cover"
+        src={scriptedStepsImg}
+        alt="Scripted Demo Steps"
+        width={220}
+        height={140}
+      />
+      <p class="mt-4 font-bold">Scripted Demo Steps</p>
+      <p>
+        Advance through your demo step-by-step—no more missed beats or manual
+        notes.
+      </p>
+    </div>
+    <div class="flex-1 text-center !mt-0">
+      <Image
+        class="mx-auto rounded-lg shadow-md w-[260px] h-[180px] object-cover"
+        src={codeHighlightImg}
+        alt="Code Highlighting Feature"
+        width={220}
+        height={140}
+      />
+      <p class="mt-4 font-bold">Smart Code Highlighting</p>
+      <p>Draw attention to the exact lines you want your audience to see.</p>
+    </div>
+    <div class="flex-1 text-center !mt-0">
+      <Image
+        class="mx-auto rounded-lg shadow-md w-[260px] h-[180px] object-cover"
+        src={slideIntegrationImg}
+        alt="Slides in VS Code"
+        width={220}
+        height={140}
+      />
+      <p class="mt-4 font-bold">Slides in VS Code</p>
+      <p>
+        Present slides seamlessly alongside your code—no need to switch windows.
+      </p>
+    </div>
+  </div>
+</section>

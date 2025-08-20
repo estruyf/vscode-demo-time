@@ -1,0 +1,64 @@
+---
+title: Custom theme
+description: Create your own custom theme for your slides
+lastmod: 2025-07-04T15:10:34.626Z
+---
+
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+
+import customThemeImg from "../../../../assets/docs/custom-theme.webp";
+
+## Custom themes
+
+You can also create your own custom themes by providing a CSS file to the `demoTime.customTheme` setting or to the `customTheme` property in the front matter section of your slide. This allows you to customize the look and feel of your slides to match your brand or style.
+
+### Create a custom theme
+
+Start from one of the built-in themes, and customize the CSS to match your style.
+
+```css title=".demo/slides/theme.css"
+body {
+  background: black;
+  color: white;
+}
+
+.intro {
+  h1 {
+    font-size: 2em;
+    font-style: italic;
+  }
+}
+```
+
+<Aside type="tip">
+Each theme also has a predefined set of CSS variables that you can use to customize the theme. The list of CSS variables can be found in the specific theme documentation page.
+</Aside>
+
+### Apply the custom theme globally
+
+To apply the custom theme globally, you can provide the CSS file in the `demoTime.customTheme` setting in your `.vscode/settings.json` file:
+
+```json title=".vscode/settings.json"
+{
+  "demoTime.customTheme": ".demo/slides/theme.css"
+}
+```
+
+### Apply the custom theme on a single slide
+
+To apply the custom theme, you can provide the CSS file in the slide's frontmatter section with the `customTheme` property:
+
+```md title=".demo/slides/slide.md"
+---
+customTheme: .demo/slides/theme.css
+---
+
+# Welcome to Demo Time!
+```
+
+<Image class="mx-auto" src={customThemeImg} alt="Custom theming" />
+
+<Aside type="note">
+If you do not specify a `theme` in the front matter, the `default` theme will be used.
+</Aside>

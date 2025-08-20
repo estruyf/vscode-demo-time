@@ -1,0 +1,914 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import {
+  Heart,
+  Gift,
+  Send,
+  Github,
+  User,
+  Mail,
+  Home,
+  FileText,
+  Check,
+  DollarSign,
+} from "lucide-react";
+
+import { Image } from "astro:assets";
+import stickerImage from "../assets/demo-time-sticker.png";
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "Support Demo Time, get stickers!",
+    description: "Get to know how you can sponsor the Demo Time project",
+    tableOfContents: false,
+  }}
+>
+  <div class="sponsor-page">
+    {/* Hero */}
+    <header class="hero">
+      <p>
+        By showing your support for Demo Time, you receive stickers as a token
+        of our appreciation!
+      </p>
+      <div class="hero-buttons">
+        <a href="#support" class="button">
+          <Heart className="icon" /> Support Now
+        </a>
+      </div>
+    </header>
+
+    {/* About */}
+    <section class="about !mt-0">
+      <div class="about-grid">
+        <div>
+          <h3>Why support Demo Time?</h3>
+          <p>
+            Demo Time is an innovative tool that allows developers, presenters,
+            and educators to deliver impactful presentations and demos from
+            Visual Studio Code. It ensures a distraction-free environment for
+            showcasing your work.
+          </p>
+          <p>
+            Built and maintained by Elio Struyf, Demo Time is open-source and
+            free for everyone. Your support ensures its continuous development
+            and sustainability!
+          </p>
+        </div>
+        <div class="md:!mt-0">
+          <h3>Why Stickers?</h3>
+          <p>
+            Stickers are a fun way to show your support for the tools you love.
+            Put them on your laptop, water bottle, or anywhere you want to
+            showcase your tech preferences.
+          </p>
+          <p>
+            Elio, the creator of Demo Time, loves stickers and even runs a
+            sticker store at
+            <a
+              href="https://pimpyourowndevice.com"
+              target="_blank"
+              rel="noopener noreferrer">Pimp Your Own Device</a
+            >. Supporting Demo Time is not only a great way to contribute to its
+            development but also to share in Elio's passion for stickers!
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sticker-preview">
+      <div class="container">
+        <div class="section-header">
+          <h2>Demo Time Sticker Preview</h2>
+          <p>
+            Here's a sneak peek of the sticker you'll receive for supporting
+            Demo Time!
+          </p>
+        </div>
+        <div class="sticker-image">
+          <Image src={stickerImage} alt="Demo Time Sticker" width={350} />
+        </div>
+      </div>
+    </section>
+
+    {/* Support Tiers */}
+    <section id="support" class="support-tiers !mt-0">
+      <div class="container">
+        <div class="section-header">
+          <h2>Support Demo Time</h2>
+          <p>
+            Choose a support tier on GitHub Sponsors. All supporters receive
+            Demo Time stickers!
+          </p>
+        </div>
+
+        <div class="tiers-grid">
+          {/* Spark Tier */}
+          <div class="tier">
+            <div class="tier-header">
+              <div class="tier-icon">
+                <Gift className="icon" />
+              </div>
+              <h3>Spark</h3>
+              <p class="tier-price">$5</p>
+            </div>
+            <ul class="tier-features">
+              <li>
+                <Check className="icon" /> 1 Demo Time sticker
+              </li>
+              <li>
+                <Check className="icon" /> Support open source
+              </li>
+              <li>
+                <Check className="icon" /> Mentioned on the website
+              </li>
+              <li>
+                <Check className="icon" /> My gratitude
+              </li>
+            </ul>
+            <a
+              href="https://github.com/sponsors/estruyf/sponsorships?sponsor=estruyf&tier_id=57018"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="button primary full-width"
+            >
+              <Heart className="icon" /> Sponsor on GitHub
+            </a>
+          </div>
+
+          {/* Ignite Tier */}
+          <div class="tier !mt-0">
+            <div class="tier-header">
+              <div class="tier-icon">
+                <Gift className="icon" />
+              </div>
+              <h3>Ignite</h3>
+              <p class="tier-price">$25</p>
+            </div>
+            <ul class="tier-features">
+              <li>
+                <Check className="icon" /> 5 Demo Time stickers
+              </li>
+              <li>
+                <Check className="icon" /> Special thanks on GitHub
+              </li>
+              <li>
+                <Check className="icon" /> Support open source
+              </li>
+              <li>
+                <Check className="icon" /> Mentioned on the website
+              </li>
+              <li>
+                <Check className="icon" /> My gratitude
+              </li>
+            </ul>
+            <a
+              href="https://github.com/sponsors/estruyf/sponsorships?sponsor=estruyf&tier_id=456913"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="button primary full-width"
+            >
+              <Heart className="icon" /> Sponsor on GitHub
+            </a>
+          </div>
+
+          {/* Flare Tier */}
+          <div class="tier !mt-0">
+            <div class="tier-header">
+              <div class="tier-icon">
+                <Gift className="icon" />
+              </div>
+              <h3>Flare</h3>
+              <p class="tier-price">$50</p>
+            </div>
+            <ul class="tier-features">
+              <li>
+                <Check className="icon" /> 15 Demo Time stickers
+              </li>
+              <li>
+                <Check className="icon" /> Personalized thank-you message
+              </li>
+              <li>
+                <Check className="icon" /> Special thanks on GitHub
+              </li>
+              <li>
+                <Check className="icon" /> Support open source
+              </li>
+              <li>
+                <Check className="icon" /> Mentioned on the website
+              </li>
+              <li>
+                <Check className="icon" /> My gratitude
+              </li>
+            </ul>
+            <a
+              href="https://github.com/sponsors/estruyf/sponsorships?sponsor=estruyf&tier_id=57019"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="button primary full-width"
+            >
+              <Heart className="icon" /> Sponsor on GitHub
+            </a>
+          </div>
+        </div>
+
+        {/* Custom Tier */}
+        <div class="custom-tier">
+          <div class="custom-tier-content">
+            <div class="custom-tier-info">
+              <div class="tier-icon">
+                <Heart className="icon" />
+              </div>
+              <h3>Custom Amount</h3>
+              <p class="tier-price">Support with any amount</p>
+            </div>
+
+            <div class="custom-tier-input">
+              <p>
+                Want to contribute a different amount? Enter your custom
+                sponsorship value below:
+              </p>
+              <div class="custom-amount-form">
+                <div class="input-group">
+                  <DollarSign className="input-icon" />
+                  <input
+                    type="text"
+                    id="customAmount"
+                    placeholder="Enter amount"
+                  />
+                </div>
+                <a
+                  href="#"
+                  id="customSponsorLink"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="button primary custom-sponsor-button disabled"
+                >
+                  <Heart className="icon" /> Sponsor on GitHub
+                </a>
+              </div>
+              <p class="help-text" id="amountMessage">
+                Minimum $5 to receive stickers.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* Request Form */}
+    <section class="request-form">
+      <div class="container">
+        <div class="section-header">
+          <h2>Get Your Stickers</h2>
+          <p>
+            After sponsoring on GitHub, fill out this form so I can send your
+            Demo Time stickers.
+          </p>
+          <div class="important-notice">
+            <p>
+              <strong>Important:</strong> Please sponsor the project on GitHub first
+              using one of the "Sponsor on GitHub" buttons above, then complete this
+              form.
+            </p>
+          </div>
+        </div>
+
+        <form
+          id="stickerForm"
+          class="sticker-form"
+          action="https://api.staticforms.xyz/submit"
+          method="POST"
+        >
+          <!-- Hidden StaticForms fields -->
+          <input
+            type="hidden"
+            name="apiKey"
+            value="sf_gld699cd736f4ml7e1chgb28"
+          />
+          <input
+            type="hidden"
+            name="subject"
+            value="Demo Time Sticker Request"
+          />
+          <input type="hidden" name="replyTo" value="@replyEmail" />
+          <!-- Anti-spam honeypot field -->
+          <input
+            type="text"
+            name="honeypot"
+            style="display: none"
+            tabindex="-1"
+            autocomplete="off"
+          />
+
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <div class="input-group">
+              <User className="input-icon" />
+              <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="John Doe"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <div class="input-group">
+              <Mail className="input-icon" />
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="john@example.com"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="githubUsername">GitHub Username</label>
+            <div class="input-group">
+              <Github className="input-icon" />
+              <input
+                type="text"
+                id="githubUsername"
+                name="githubUsername"
+                placeholder="johndoe"
+                required
+              />
+            </div>
+            <p class="help-text">
+              We'll verify your sponsorship with this username.
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label for="address">Shipping Address</label>
+            <div class="input-group">
+              <Home className="input-icon" />
+              <textarea
+                id="address"
+                name="address"
+                rows={3}
+                placeholder="Your full shipping address"
+                required></textarea>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="message">Message (Optional)</label>
+            <div class="input-group">
+              <FileText className="input-icon" />
+              <textarea
+                id="message"
+                name="message"
+                rows={3}
+                placeholder="Any additional information or message for us"
+              ></textarea>
+            </div>
+          </div>
+
+          <div
+            class="g-recaptcha"
+            data-sitekey="6Lct-gkrAAAAANXSF_L-hUZUyP-pF4oWzyO0M4jL"
+          >
+          </div>
+
+          <!-- <script src="https://www.google.com/recaptcha/api.js" is:inline
+          ></script> -->
+
+          <button
+            id="stickerSubmitButton"
+            type="submit"
+            class="button primary full-width"
+          >
+            <Send className="icon" /> Request Stickers
+          </button>
+
+          <p class="form-footer">
+            Your GitHub sponsorship will be verified before stickers are
+            shipped. Thank you for supporting Demo Time!
+          </p>
+        </form>
+      </div>
+    </section>
+  </div>
+</StarlightPage>
+
+<style is:global>
+  h1 {
+    text-align: center !important;
+  }
+</style>
+
+<style>
+  :root {
+    --sl-content-width: 65rem;
+  }
+
+  /* Base Styles */
+  .sponsor-page {
+    --primary-color: var(--sl-color-accent);
+    --primary-hover: var(--sl-color-accent-high);
+    --secondary-color: var(--sl-color-white);
+    --text-color: var(--sl-color-text);
+    --background-color: var(--sl-color-bg);
+    --border-color: var(--sl-color-gray-5);
+    --success-color: var(--sl-color-green);
+  }
+
+  section {
+    padding: 4rem 0;
+  }
+
+  .section-header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 3rem;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    gap: 0.5rem;
+    text-decoration: none;
+  }
+
+  .button.primary {
+    background: rgb(255 212 59 / var(--tw-bg-opacity, 1)) !important;
+    border: 1px solid var(--sl-color-text-accent);
+    color: #000;
+
+    &:hover {
+      color: #000;
+      background-color: rgb(255 212 59 / 0.7) !important;
+    }
+  }
+
+  .button.secondary {
+    background-color: transparent;
+    border: 1px solid var(--secondary-color);
+    color: var(--secondary-color);
+
+    &:hover {
+      background-color: var(--primary-hover);
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  .full-width {
+    width: 100%;
+  }
+
+  .icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  /* Hero Section */
+  .hero {
+    text-align: center;
+    padding: 2rem 0 3rem;
+    color: var(--sl-color-white);
+
+    p {
+      font-size: 1.25rem;
+      max-width: 36rem;
+      margin: 0 auto 2rem;
+      color: var(--sl-color-white);
+      opacity: 0.9;
+    }
+  }
+
+  .hero-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+
+    a {
+      background: rgb(255 212 59 / var(--tw-bg-opacity, 1)) !important;
+      border: 1px solid var(--sl-color-text-accent);
+      color: #000;
+      border-radius: 999rem;
+
+      &:hover {
+        color: #000;
+        background-color: rgb(255 212 59 / 0.7) !important;
+      }
+    }
+  }
+
+  /* About Section */
+  .about {
+    background-color: var(--background-color);
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .about-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  /* Sticker preview */
+  .sticker-preview {
+    text-align: center;
+    padding: 2rem 0;
+
+    img {
+      margin: auto;
+    }
+  }
+
+  /* Support Tiers */
+  .support-tiers {
+    background-color: var(--sl-color-black);
+  }
+
+  .tiers-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .tiers-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .tier {
+    background-color: var(--sl-color-gray-6);
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+    border: 2px solid var(--sl-color-gray-5);
+    transition: all 0.3s ease;
+    position: relative;
+
+    &:hover {
+      border-color: var(--primary-color);
+    }
+
+    .tier-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  .tier-icon {
+    width: 4rem;
+    height: 4rem;
+    background-color: var(--sl-color-accent-high);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+
+    .icon {
+      width: 2rem;
+      height: 2rem;
+      color: var(--sl-color-black);
+    }
+  }
+
+  .tier-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--sl-color-accent-high);
+    margin-top: 0.5rem;
+  }
+
+  .tier-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem;
+    space-y: 0.75rem;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .icon {
+      width: 1.25rem;
+      height: 1.25rem;
+      color: var(--success-color);
+      flex-shrink: 0;
+      margin-bottom: 0 !important;
+    }
+  }
+
+  /* Custom Tier */
+  .custom-tier {
+    margin-top: 2rem !important;
+    background-color: var(--sl-color-gray-6);
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+    border: 2px solid var(--sl-color-gray-5);
+    transition: all 0.3s ease;
+  }
+
+  .custom-tier:hover {
+    border-color: var(--primary-color);
+  }
+
+  .custom-tier-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .custom-tier-content {
+      grid-template-columns: 1fr 2fr;
+      align-items: center;
+    }
+  }
+
+  .custom-tier-info {
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .custom-tier-info {
+      text-align: left;
+    }
+
+    .custom-tier-info .tier-icon {
+      margin-left: 0;
+    }
+  }
+
+  .custom-amount-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .custom-amount-form {
+      flex-direction: row;
+      align-items: flex-start;
+    }
+
+    .custom-amount-form .input-group {
+      flex: 1;
+    }
+  }
+
+  .custom-sponsor-button {
+    min-width: 200px;
+  }
+
+  .button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Request Form */
+  .request-form {
+    background-color: var(--background-color);
+  }
+
+  .important-notice {
+    background-color: var(--sl-color-amber-low);
+    border: 1px solid var(--sl-color-amber);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .important-notice p {
+    color: var(--sl-color-amber-high);
+    margin-bottom: 0;
+  }
+
+  .sticker-form {
+    max-width: 36rem;
+    margin: 0 auto;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 0;
+    }
+
+    .input-group {
+      position: relative;
+      margin-top: 0.25em;
+    }
+
+    textarea {
+      margin-top: 0.25em !important;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--sl-color-gray-5);
+    margin-top: 0 !important;
+  }
+
+  textarea + .input-icon {
+    top: 1.25rem;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    padding: 0.75rem 0.75rem 0.75rem 3rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+  }
+
+  input:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px var(--sl-color-accent-low);
+  }
+
+  .help-text {
+    font-size: 0.875rem;
+    color: var(--sl-color-gray-2);
+    margin-top: 0.25rem;
+  }
+
+  .form-footer {
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--sl-color-gray-2);
+    margin-top: 1rem;
+  }
+
+  .g-recaptcha {
+    div {
+      height: auto !important;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("stickerForm") as HTMLFormElement;
+
+    if (form) {
+      // Update reply-to email
+      const emailInput = document.getElementById("email");
+      const replyToField = document.querySelector(
+        'input[name="replyTo"]'
+      ) as HTMLInputElement;
+
+      if (emailInput && replyToField) {
+        emailInput.addEventListener("input", (e: any) => {
+          replyToField.value = e.target.value;
+        });
+      }
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const submitButton = document.getElementById(
+          "stickerSubmitButton"
+        ) as HTMLButtonElement;
+        const buttonText = document.getElementById("buttonText");
+
+        if (submitButton && buttonText) {
+          submitButton.disabled = true;
+          buttonText.innerHTML = "Processing...";
+        }
+
+        // Create FormData from the form
+        const formData = new FormData(form);
+
+        // Convert FormData to URL-encoded string
+        const urlEncodedData = new URLSearchParams();
+        formData.forEach((value, key) => {
+          urlEncodedData.append(key, value);
+        });
+
+        // Send the form data to StaticForms
+        fetch("https://api.staticforms.xyz/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: urlEncodedData.toString(),
+        })
+          .then((response) => response.text())
+          .then((result) => {
+            if (result === "Form submitted successfully") {
+              // Show success message
+              const formContainer = form.parentElement;
+
+              if (formContainer) {
+                formContainer.innerHTML = `
+          <div class="success-message">
+            <div class="success-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            </div>
+            <h2>Thank you for your support!</h2>
+            <p>
+            Your request for Demo Time stickers has been received. We'll verify your GitHub sponsorship and ship the stickers to you as soon as possible.
+            </p>
+          </div>
+          `;
+              }
+            } else {
+              // Handle error
+              alert(
+                "There was an error submitting the form. Please try again."
+              );
+              if (submitButton && buttonText) {
+                submitButton.disabled = false;
+                buttonText.innerHTML =
+                  '<span><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> Request Stickers</span>';
+              }
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("There was an error submitting the form. Please try again.");
+            if (submitButton && buttonText) {
+              submitButton.disabled = false;
+              buttonText.innerHTML =
+                '<span><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> Request Stickers</span>';
+            }
+          });
+      });
+    }
+
+    // Custom amount handling
+    const customAmountInput = document.getElementById("customAmount");
+    const customSponsorLink = document.getElementById("customSponsorLink");
+    const amountMessage = document.getElementById("amountMessage");
+
+    if (customAmountInput && customSponsorLink && amountMessage) {
+      customAmountInput.addEventListener("input", (e) => {
+        // Allow only numbers
+        const value = e.target.value.replace(/[^0-9]/g, "");
+        e.target.value = value;
+
+        // Update sponsor link and message
+        if (value && parseInt(value) >= 1) {
+          const sponsorUrl = `https://github.com/sponsors/estruyf/sponsorships?sponsor=estruyf&preview=true&frequency=recurring&amount=${value}`;
+          customSponsorLink.href = sponsorUrl;
+          customSponsorLink.classList.remove("disabled");
+
+          if (parseInt(value) >= 5) {
+            amountMessage.textContent = `You'll receive stickers based on your contribution amount.`;
+          } else {
+            amountMessage.textContent = "Minimum $5 to receive stickers.";
+          }
+        } else {
+          customSponsorLink.href = "#";
+          customSponsorLink.classList.add("disabled");
+          amountMessage.textContent = "Minimum $5 to receive stickers.";
+        }
+      });
+
+      customSponsorLink.addEventListener("click", (e) => {
+        const value = customAmountInput.value;
+        if (!value || parseInt(value) < 1) {
+          e.preventDefault();
+        }
+      });
+    }
+  });
+</script>

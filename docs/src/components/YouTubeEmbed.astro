@@ -1,0 +1,44 @@
+---
+interface Props {
+  videoId: string;
+  title?: string;
+}
+
+const { videoId, title = "YouTube video player" } = Astro.props;
+---
+
+<div class="video-container">
+  <iframe
+    width="860"
+    height="485"
+    src={`https://www.youtube.com/embed/${videoId}`}
+    title={title}
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen></iframe>
+</div>
+
+<style>
+  .video-container {
+    display: flex;
+    justify-content: center;
+    margin: 3rem auto;
+    max-width: 860px;
+    width: 100%;
+  }
+
+  iframe {
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+
+  @media (max-width: 860px) {
+    .video-container {
+      padding: 0 1rem;
+    }
+  }
+</style>

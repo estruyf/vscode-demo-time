@@ -30,6 +30,9 @@
     "powerpoint",
     "markdown slides"
   ],
+  "scripts": {
+    "docs:serve": "nx dev demo-time-docs"
+  },
   "homepage": "https://demotime.show/",
   "directories": {
     "doc": "docs",
@@ -42,14 +45,13 @@
   "license": "MIT",
   "workspaces": [
     "packages/*",
-    "apps/*"
+    "apps/*",
+    "docs"
   ],
   "devDependencies": {
     "@actions/core": "^1.11.1",
-    "@nx/eslint": "^21.2.3",
-    "@nx/jest": "21.2.3",
+    "@nx/js": "^21.4.0",
     "@nx/web": "21.2.3",
-    "@nx/webpack": "21.2.3",
     "@nx/workspace": "^21.4.0",
     "@typescript-eslint/eslint-plugin": "^8.40.0",
     "@typescript-eslint/parser": "^8.40.0",

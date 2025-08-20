@@ -1,0 +1,86 @@
+---
+title: Working with Variables
+description: Learn how to work with variables in Demo Time to reuse them across your demos.
+lastmod: 2025-01-22T11:25:57.794Z
+---
+
+import { Code } from '@astrojs/starlight/components';
+
+The extension has built-in variables which you can use in your demo steps. These variables are placeholders that get replaced with the actual value when the demo gets executed.
+
+- `{DT_INPUT}`: The extension will ask you to provide a value for this variable when the demo gets executed.
+- `{DT_CLIPBOARD}`: The value in your clipboard will be used for this variable.
+- `{STATE_<key>}`: The value of the state key which you set via the `setState` action, will be used for this variable.
+
+## Examples of using the built-in variables
+
+### Request user input
+
+You can use the `{DT_INPUT}` variable in your demo steps to request user input. When the demo gets executed, the extension will ask you to provide a value for this variable.
+
+<Code code={`
+{
+    "action": "create",
+    "path": "sample.json",
+    "content": "{\\n  \\"firstName\\": \\"{DT_INPUT}\\"\\n}"
+}`} 
+  lang="json" 
+  title={`.demo/demo.json`} />
+
+### Use clipboard content
+
+Similar to the `{DT_INPUT}` variable, you can use the `{DT_CLIPBOARD}` variable in your demo steps to use the value in your clipboard.
+
+<Code code={`
+{
+    "action": "create",
+    "path": "sample.json",
+    "content": "{\\n  \\"firstName\\": \\"{DT_CLIPBOARD}\\"\\n}"
+}`} 
+  lang="json" 
+  title={`.demo/demo.json`} />
+
+### Use state value
+
+You can use the `{STATE_<key>}` variable in your demo steps to use the value of the state key which you set via the `setState` action.
+
+<Code code={`
+[
+    {
+        "action": "setState",
+        "state": {
+            "key": "resourceID",
+            "value": "{DT_CLIPBOARD}"
+        }
+    },
+    {
+        "action": "create",
+        "path": "sample.json",
+        "content": "{\\n  \\"resource\\": \\"{STATE_resourceID}\\"\\n}"
+    }
+]`} 
+  lang="json" 
+  title={`.demo/demo.json`} />
+
+## Define custom variables
+
+You can define variables in a `variables.json` file in the `.demo` folder. Once you created the `variables.json` file and added variables/constants to it, you can use these variables in your demo steps by using curly braces `{variable_name}`.
+
+### Example variables file
+
+<Code code={`{
+    "SLIDES_URL": "http://localhost:3030"
+}`} 
+  lang="json" 
+  title={`.demo/variables.json`} />
+
+### Example usage in demo steps
+
+<Code code={`
+{
+    "action": "executeVSCodeCommand",
+    "command": "simpleBrowser.show",
+    "args": "{SLIDES_URL}"
+}`} 
+  lang="json" 
+  title={`.demo/demo.json`} />

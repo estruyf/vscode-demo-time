@@ -1,0 +1,191 @@
+---
+title: Present your slides
+description: From Markdown to slides - present your slides with Demo Time
+lastmod: 2025-07-04T18:00:02.904Z
+---
+
+import { Code, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+
+import slidesImg from "../../../assets/docs/slides.webp";
+import slideControlsImg from "../../../assets/docs/slide-controls-1.6.0.webp";
+import slidePreviewImg from "../../../assets/docs/slide-preview.webp";
+
+Demo Time is more than just a tool for live demos—it also lets you present slides seamlessly within your editor. With Markdown-based slides, you can deliver presentations without switching between different applications, ensuring a smooth transition between your slides and demos.
+
+<Image class="mx-auto" src={slidesImg} alt="Slides in Demo Time" />
+
+## Creating slides
+
+To create slides, start by creating a new Markdown file and adding your content:
+
+```md
+---
+theme: default
+---
+
+# Title
+
+Hello, **Demo Time**!
+```
+
+You can also create multiple slides within the same Markdown file by separating them with three hyphens (`---`). This is useful for grouping related slides together. For example:
+
+```md
+---
+theme: default
+---
+
+# Slide 1 Title
+
+Content for the first slide.
+
+---
+
+# Slide 2 Title
+
+Content for the second slide.
+```
+
+<Aside type="tip">
+When using **grouped slides**, each slide will inherit the following properties from the front matter of the first slide:
+- `theme`
+- `customTheme`
+- `transition`
+</Aside>
+
+<Aside type="tip">
+To make the process easier, you can use the `Demo Time: Create a slide` command. This command will start the slide creation process where you will be asked for a title and if you want to add it to any of your demos.
+</Aside>
+
+## Slide settings
+
+You can customize your slides using the following properties in the front matter:
+
+- `theme` - Specify the theme for the slide.
+- `layout` - Choose a layout for the slide.
+- `transition` - Set the transition effect for the slide.
+- `image` - Set a background image for the slide.
+- `customTheme` - Provide a custom CSS file for the slide.
+- `customLayout` - Specify a custom layout for the slide.
+
+### Themes
+
+Personalization matters! Demo Time allows you to customize the look and feel of your slides by selecting a built-in theme or creating your own.
+
+To change your slide theme, you can specify a different theme in the slide configuration with the `theme` property or provide a custom CSS file in the demo JSON file.
+
+Demo Time has the following built-in themes:
+
+- `default`
+- `minimal`
+- `monomi`
+- `unnamed`
+
+<Aside>
+More information on theming can be found in the [themes section](/slides/themes/) of the documentation.
+</Aside>
+
+### Layouts
+
+Demo Time supports various slide layouts, with the `layout` property, to help structure your presentation effectively:
+
+- `default` - A standard slide layout
+- `intro` - Ideal for opening slides
+- `quote` - Perfect for displaying key takeaways or citations
+- ... (more layouts available)
+
+<Aside>
+More information on using layouts can be found in the [layouts section](/slides/layouts/) of the documentation.
+</Aside>
+
+### Transitions
+
+Transitions add a dynamic touch to your slides. You can specify the transition effect for your slides using the `transition` property. Demo Time supports various transitions, including:
+
+- `fadeIn`
+- `slideRight`
+- `slideLeft`
+- `slideUp`
+- `slideDown`
+- `zoomIn`
+- `zoomOut`
+- `rotateIn`
+- `rotateOut`
+
+<Aside type="tip">
+You can change the transition effect duration by setting the `--demotime-transition-duration` CSS variable in your custom CSS file.
+</Aside>
+
+## Slide preview
+
+When you create a slide, you can preview it by running the `Demo Time: Open slide preview` command or by clicking on the open preview (eye) action from the editor title bar.
+
+<Image class="mx-auto" src={slidePreviewImg} alt="Slide preview action" width="400" />
+
+## Presenting slides
+
+To incorporate slides into your demo workflow, add them as demo steps in your demo script or configuration files. This ensures you can control when and where your slides appear during the presentation.
+
+Use the `openSlide` action to open a slide in the slide view.
+
+<Tabs syncKey="open-slide">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "openSlide",
+  "path": "<relative path to the file>"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: openSlide
+path: <relative path to the file>
+```
+
+</TabItem>
+</Tabs>
+
+With this approach, you can seamlessly integrate slides into your demos, making your presentations more engaging and dynamic.
+
+## Slide controls
+
+When presenting slides, you have the following control available:
+
+<Image class="mx-auto" src={slideControlsImg} alt="Slide controls" />
+
+### Left section
+
+- **Toggle presentation mode**: This toggles the presentation mode, which allows you to use your clicker or keyboard to navigate through your slides.
+- **Fullscreen mode**: Toggles the fullscreen mode from Visual Studio Code.
+- **Presentation view**: This toggles the presentation view, which hides the status bar, tabs, and activity bar to provide a distraction-free experience. You can also use the `setPresentationView` and `unsetPresentationView` actions to control the presentation view programmatically, or from the `Demo Time: Toggle presentation view (hides status bar, tabs, and activity bar)` command.
+- **Close side panel**: Closes the side panel to provide more space for your slides.
+- **Open the Demo Time panel**: Opens the Demo Time panel to access your demos and slides.
+- **Hide controls**: Hides the slide controls and mouse, allowing you to focus on your presentation without distractions.
+
+### Middle section
+
+- **Previous step**: Triggers the previous demo step (only if the `demo-time.previousEnabled` setting is enabled or when using grouped slides).
+- **Next step**: Triggers the next demo step.
+
+### Right section
+
+- **Toggle laser pointer**: Toggles the laser pointer, which can be used to highlight specific areas on your slides during the presentation.
+- **Toggle zoom**: Toggles the zoom feature, allowing you to zoom in on specific parts of your slides for better visibility.
+
+The following actions are only available when you are not in presentation mode:
+
+- **Toggle mouse position**: Toggles the mouse position overlay on the slide, which can be usefule to position elements on your slides.
+- **Open slide source**: Opens the source file of the slide in the editor, allowing you to edit the slide content directly.
+
+## Header and Footer
+
+Learn how to add and customize headers and footers in your slides for branding, context, or additional information. See the [Header and Footer documentation](./layouts/header-footer/) for details and examples.
+
+## Notes
+
+If you want to add notes to your slides or demos, you can check the [notes section](/features/using-notes/) of the documentation.

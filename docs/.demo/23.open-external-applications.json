@@ -1,0 +1,26 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Open external applications",
+  "description": "",
+  "version": 2,
+  "demos": [
+    {
+      "title": "Open PowerPoint",
+      "description": "",
+      "steps": [
+        {
+          "action": "openPowerPoint"
+        }
+      ]
+    },
+    {
+      "title": "Open Keynote",
+      "description": "",
+      "steps": [
+        {
+          "action": "openKeynote"
+        }
+      ]
+    }
+  ]
+}

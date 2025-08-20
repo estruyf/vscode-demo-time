@@ -1,0 +1,113 @@
+# Demo Time - Live demos & slides in VS Code
+
+> Script your coding demos to perfection with this VS Code extension - no typos, no missteps, just flawless, stress-free presentations every time.
+
+## Actions
+
+- [Supported actions | Demo Time](https://demotime.show/actions/): List of all supported actions in Demo Time
+- [GitHub Copilot actions | Demo Time](https://demotime.show/actions/copilot/): Actions for integrating GitHub Copilot in Demo Time
+- [External application actions | Demo Time](https://demotime.show/actions/external/): Perform actions that interact with external applications from your demos.
+- [File actions | Demo Time](https://demotime.show/actions/file/): File actions are used to open, create, or preview files in the editor.
+- [Interaction actions | Demo Time](https://demotime.show/actions/interactions/): Perform interaction actions in your demos like copying to clipboard, pasting content, typing text, and pressing keys.
+- [Patch actions | Demo Time](https://demotime.show/actions/patch/): File patch actions can be used to insert code based on a snapshot of the file and a patch file.
+- [Preview actions | Demo Time](https://demotime.show/actions/preview/): Preview actions are used to preview files like Markdown and images in the editor.
+- [Setting actions | Demo Time](https://demotime.show/actions/setting/): Perform setting actions in your demos like update settings, change themes, and more.
+- [Snippet actions | Demo Time](https://demotime.show/actions/snippet/): Snippets can be used when you have steps that you want to reuse in multiple demos.
+- [Terminal actions | Demo Time](https://demotime.show/actions/terminal/): Perform terminal actions in your demos like running commands, clearing the terminal, and more.
+- [Text actions | Demo Time](https://demotime.show/actions/text/): Text actions are used to insert, replace, highlight, delete or unselect text in the editor.
+- [Time actions | Demo Time](https://demotime.show/actions/time/): Perform time actions in your demos like waiting for a specific time, waiting for user input, and more.
+- [Visual Studio Code actions | Demo Time](https://demotime.show/actions/vscode/): Perform Visual Studio Code actions in your demos like executing commands or showing an information message.
+
+## Adding-demos
+
+- [Adding demos | Demo Time](https://demotime.show/adding-demos/): Add your demos to your demo time configuration.
+
+## Beta
+
+- [Beta version | Demo Time](https://demotime.show/beta/): How to use the beta version of Demo Time.
+
+## Contribute
+
+- [Contributing | Demo Time](https://demotime.show/contribute/): Learn how you can contribute to the development of Demo Time.
+
+## Examples
+
+- [Projects | Demo Time](https://demotime.show/examples/): Examples of projects that you can use to learn and understand how to use the extension.
+- [Showcases | Demo Time](https://demotime.show/examples/showcases/): Showcases of where Demo Time is used.
+
+## Features
+
+- [MCP server support | Demo Time](https://demotime.show/features/mcp-server/): Learn how to use the Model Context Protocol (MCP) server with Demo Time for AI assistants and automation.
+- [Presenter View | Demo Time](https://demotime.show/features/presenter-view/): Learn how to use the presenter view in Demo Time.
+- [Using clock and timer functions | Demo Time](https://demotime.show/features/timer-clock/): To keep an eye on the time, you can use the clock and timer functions from Demo Time.
+- [Trigger from a link | Demo Time](https://demotime.show/features/uri-handler/): Learn how to trigger a demo from a link.
+- [Using notes | Demo Time](https://demotime.show/features/using-notes/): Learn how to provide notes for your demos in Demo Time.
+
+## Getting-started
+
+- [Getting started | Demo Time](https://demotime.show/getting-started/): Get started with Demo Time
+
+## Integrations
+
+- [Apple Keynote Integration | Demo Time](https://demotime.show/integrations/keynote/): Learn how to integrate and use Demo Time with Apple Keynote for seamless live demos in your presentations.
+- [Demo Time for PowerPoint | Demo Time](https://demotime.show/integrations/powerpoint/): Learn how to integrate and use Demo Time with the PowerPoint Office Add-in for seamless live demos in your presentations.
+- [Slidev | Demo Time](https://demotime.show/integrations/slidev/): Learn more about how to integrate Slidev with Demo Time
+
+## Presentation-mode
+
+- [Start Presenting with Demo Time | Demo Time](https://demotime.show/presentation-mode/): Learn how to use Demo Time to present your demos like a pro.
+
+## References
+
+- [API | Demo Time](https://demotime.show/references/api/): Demo Time provides an API to control the extension programmatically.
+- [Commands | Demo Time](https://demotime.show/references/commands/): Overview of all the Demo Time commands available in the editor.
+- [JSON schema | Demo Time](https://demotime.show/references/json-schema/): JSON schema for the Demo Time configuration.
+- [Settings | Demo Time](https://demotime.show/references/settings/): Customize the settings of Demo Time to fit your needs.
+
+## Releases
+
+- [v1.7.0 | Demo Time](https://demotime.show/releases/1.7.0/): Release notes for version 1.7.0 of the Demo Time extension, including new features, improvements, and bug fixes.
+
+## Slides
+
+- [Present your slides | Demo Time](https://demotime.show/slides/): From Markdown to slides - present your slides with Demo Time
+- [Animations | Demo Time](https://demotime.show/slides/animations/): Learn how to use animation components in your slides.
+- [Components | Demo Time](https://demotime.show/slides/components/): Learn how to use animations and components in your slides.
+- [Custom Components | Demo Time](https://demotime.show/slides/components/custom/): Learn how to use custom components in your slides.
+- [Exporting your slides | Demo Time](https://demotime.show/slides/export/): Export your slides to PDF
+- [Slide layouts | Demo Time](https://demotime.show/slides/layouts/): Learn about the different slide layouts available in Demo Time
+- [Custom Slide Layout | Demo Time](https://demotime.show/slides/layouts/custom/): Learn about creating and using a custom slide layout in Demo Time
+- [Default Slide Layout | Demo Time](https://demotime.show/slides/layouts/default/): Learn about the default slide layout in Demo Time
+- [Header and Footer Support | Demo Time](https://demotime.show/slides/layouts/header-footer/): Learn how to add and customize headers and footers in your slides.
+- [Image Slide Layout | Demo Time](https://demotime.show/slides/layouts/image/): Learn about the image slide layout in Demo Time
+- [Image Left Slide Layout | Demo Time](https://demotime.show/slides/layouts/image-left/): Learn about the image-left slide layout in Demo Time
+- [Image Right Slide Layout | Demo Time](https://demotime.show/slides/layouts/image-right/): Learn about the image-right slide layout in Demo Time
+- [Intro Slide Layout | Demo Time](https://demotime.show/slides/layouts/intro/): Learn about the intro slide layout in Demo Time
+- [Quote Slide Layout | Demo Time](https://demotime.show/slides/layouts/quote/): Learn about the quote slide layout in Demo Time
+- [Section Slide Layout | Demo Time](https://demotime.show/slides/layouts/section/): Learn about the section slide layout in Demo Time
+- [Two Columns Slide Layout | Demo Time](https://demotime.show/slides/layouts/two-columns/): Learn about the two-columns slide layout in Demo Time
+- [Mermaid Diagrams | Demo Time](https://demotime.show/slides/mermaid/): Learn how to use Mermaid diagrams in your slides.
+- [Import PowerPoint slides | Demo Time](https://demotime.show/slides/powerpoint-import/): Import images from a PowerPoint presentation as slides
+- [Slide themes | Demo Time](https://demotime.show/slides/themes/): Learn about the different slide themes available in Demo Time
+- [Custom theme | Demo Time](https://demotime.show/slides/themes/custom/): Create your own custom theme for your slides
+- [Default theme | Demo Time](https://demotime.show/slides/themes/default/): Overview of the default theme in Demo Time.
+- [Frost theme | Demo Time](https://demotime.show/slides/themes/frost/): Overview of the frost theme in Demo Time.
+- [Minimal theme | Demo Time](https://demotime.show/slides/themes/minimal/): Overview of the minimal theme in Demo Time.
+- [Monomi theme | Demo Time](https://demotime.show/slides/themes/monomi/): Overview of the Monomi theme in Demo Time.
+- [Quantum theme | Demo Time](https://demotime.show/slides/themes/quantum/): Overview of the quantum theme in Demo Time.
+- [Unnamed theme | Demo Time](https://demotime.show/slides/themes/unnamed/): Overview of the Unnamed theme in Demo Time.
+- [Slide transitions | Demo Time](https://demotime.show/slides/transitions/): Learn about the different slide transitions available in Demo Time
+
+## Snippets
+
+- [Snippets | Demo Time](https://demotime.show/snippets/): Snippets that you can use to automate some tasks in your demo.
+
+## Tips
+
+- [Adding Content | Demo Time](https://demotime.show/tips/adding-content/): Learn how to add content to a file in Demo Time.
+- [Adding new steps to a demo | Demo Time](https://demotime.show/tips/adding-steps/): Learn how you can add new steps to a demo in Demo Time.
+- [Control the next demo shortcut | Demo Time](https://demotime.show/tips/control-next-demo/): Learn how you can control the next demo during your presentation in Demo Time.
+- [Highlighting code | Demo Time](https://demotime.show/tips/highlighting/): Learn how to highlight code in Demo Time to make it stand out in your demos.
+- [Move panel to activity bar | Demo Time](https://demotime.show/tips/move-to-activity-bar/): You can move the Demo Time panel to the activity bar to have its own dedicated space.
+- [Working with Variables | Demo Time](https://demotime.show/tips/variables/): Learn how to work with variables in Demo Time to reuse them across your demos.
+- [VS Code Settings | Demo Time](https://demotime.show/tips/vscode-settings/): Learn about additional VS Code Settings that may be useful

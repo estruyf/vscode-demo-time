@@ -1,0 +1,40 @@
+{
+  "extensionInstaller.apiUrls": ["https://specflow-vscode-aahghgc6gnb6g3e7.westeurope-01.azurewebsites.net/extension.json"],
+  "demoTime.showClock": true,
+  "demoTime.timer": 45,
+  "demoTime.highlightBorderColor": "#ffd43b",
+  "demoTime.highlightBackground": "#ffd43b4d",
+  "demoTime.highlightOpacity": 0.5,
+  "demoTime.highlightBlur": 2,
+  "demoTime.debug": true,
+  "demoTime.customWebComponents": [
+    ".demo/custom/greeting.js",
+    ".demo/custom/highlight.js",
+  ],
+  "demoTime.api.enabled": true,
+  "demoTime.defaultFileType": "yaml",
+  "demoTime.openInConfigEditor": true,
+  // "demoTime.insertTypingMode": "character-by-character",
+  // "demoTime.lineInsertionDelay": 50,
+  "[markdown]": {
+    "editor.formatOnSave": false
+  },
+  // "demoTime.slideHeaderTemplate": ".demo/header_footer/header.html",
+  // "demoTime.slideFooterTemplate": ".demo/header_footer/footer.html",
+  // "demoTime.customTheme": ".demo/custom/theme.css",
+  "workbench.statusBar.visible": true,
+  "workbench.editor.showTabs": "multiple",
+  "workbench.activityBar.location": "default",
+  "editor.fontSize": 18,
+  // "editor.cursorStyle": "block",
+  // "editor.cursorBlinking": "expand",
+  // "editor.hover.enabled": false,
+  // "workbench.colorCustomizations": {
+  //   "editorCursor.foreground": "#ff0000"
+  // }
+  // "yaml.schemas": {
+  //   "https://demotime.show/demo-time.schema.json": ".demo/*"
+  // }
+  "chat.tools.autoApprove": true,
+"chat.agent.maxRequests": 100
+}

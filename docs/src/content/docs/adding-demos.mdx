@@ -1,0 +1,262 @@
+---
+title: Adding demos
+description: Add your demos to your demo time configuration.
+lastmod: 2025-07-23T10:38:33.877Z
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+
+import openImage from "../../assets/docs/open-first-demo.webp";
+import implementationImage from "../../assets/docs/first-demo-implementation.webp";
+import demoStepImage from "../../assets/docs/adding-demo-step.webp";
+
+In the [getting started](/getting-started/) guide, you learned how to initialize the extension with a sample demo. In this guide, you will learn how to add your demos to the demo time configuration.
+
+<Aside type="note" title="How demo steps work">
+  Each <b>demo</b> can contain multiple <b>steps</b>. When you trigger a demo, <b>all its steps will run automatically in sequence</b>—you do not need to trigger each step one by one. This is useful for automating multi-step tasks, such as:
+  <ul>
+    <li>Creating a new file, adding content, and highlighting code—all in a single demo.</li>
+    <li>Opening GitHub Copilot chat, sending a message, and pressing Enter, as one seamless flow.</li>
+  </ul>
+  Instead of creating separate demos for each action, group related steps together for a smoother, more automated presentation.
+</Aside>
+
+## Adding your first demo
+
+Now that you have initialized the extension, you can start adding your first demo steps.
+
+You can open the newly created `demo.json` file in the `.demo` folder manually, or you can click on the "eye" icon in the **Demo Time** view to open the demo steps editor.
+
+<Image class="mx-auto" src={openImage} alt="Open the first demo file" width="400" />
+
+<Aside type="tip">
+It is a good practice to split your demos into multiple files. This way, you can keep your demos organized and easier to maintain.
+</Aside>
+
+The default content of the `demo.json` file looks like this:
+
+<Tabs syncKey="demo-file-format">
+<TabItem label="JSON">
+
+```json
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Demo",
+  "description": "Demo description",
+  "version": 2,
+  "timer": 5, // Optional timer in minutes. You can also set it on global level with the `demoTime.timer` setting.
+  "demos": []
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+title: Demo
+description: Demo description
+version: 2
+timer: 5 # Optional timer in minutes. You can also set it on global level with
+demos: []
+```
+
+</TabItem>
+</Tabs>
+
+You can start adding your demos in the `demos` array. Each demo should have the following structure:
+
+<Tabs syncKey="demo-structure">
+<TabItem label="JSON">
+
+```json
+{
+  "title": "<title>",
+  "description": "<description>",
+  "steps": []
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+title: <title>
+description: <description>
+steps: []
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="note">
+A single demo can contain multiple steps, which will be executed one after another when you trigger the demo. This allows you to automate a sequence of actions as part of a single demo, making your presentations smoother and more efficient.
+</Aside>
+
+You can also add icons to the demo to make them more recognizable.
+
+<Tabs syncKey="demo-icons">
+<TabItem label="JSON">
+
+```json
+{
+  "title": "<title>",
+  "description": "<description>",
+  "version": 2,
+  "icons": {
+    "start": "<name of the icon (optional)>",
+    "end": "<name of the icon (optional)>"
+  },
+  "steps": []
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+title: <title>
+description: <description>
+version: 2
+icons:
+  start: <name of the icon (optional)>
+  end: <name of the icon (optional)>
+steps: []
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="note">
+Use the icon names you can find in the [icon listing](https://code.visualstudio.com/api/references/icons-in-labels#icon-listing) from the Visual Studio Code documentation.
+</Aside>
+
+### Sample demo file configuration
+
+Here is an example of a demo where you create a file and open it:
+
+<Tabs syncKey="demo-example">
+<TabItem label="JSON">
+
+```json
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Demo",
+  "description": "Demo description",
+  "version": 2,
+  "demos": [
+    {
+      "title": "Create and open sample.json",
+      "description": "Create a sample.json file with some content.",
+      "icons": {
+        "start": "file-code",
+        "end": "pass-filled"
+      },
+      "steps": [
+        {
+          "action": "create",
+          "path": "sample.json",
+          "content": "{\n  \"firstName\": \"Elio\",\n  \"lastName\": \"Struyf\"\n}"
+        },
+        {
+          "action": "open",
+          "path": "sample.json"
+        }
+      ]
+    }
+  ]
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+title: Demo
+description: Demo description
+version: 2
+demos:
+  - title: Create and open sample.json
+    description: Create a sample.json file with some content.
+    icons:
+      start: file-code
+      end: pass-filled
+    steps:
+      - action: create
+        path: sample.json
+        content: "{\n  \"firstName\": \"Elio\",\n  \"lastName\": \"Struyf\"\n}"
+      - action: open
+        path: sample.json
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="note">
+Notice the `steps` array in the demo. Each step will be executed in sequence when you trigger the demo. In this example, when the `Create and open sample.json` demo is triggered, it creates a `sample.json` file with the specified content and then opens it in the editor all in one go.
+</Aside>
+
+## Adding demo steps
+
+When you have a file open in the editor, you can add a demo step to your demo file by using the command **Demo Time: Add demo step**.
+
+For example, if you want to highlight a piece of code, you can select the code and do the following:
+
+1. Open the command palette by pressing <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> or <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>.
+2. Search for the **Demo Time: Add demo step** command.
+3. Click on the `highlight` action in the command palette.
+  <Image class="mx-auto" src={demoStepImage} alt="Add a demo step from the &quot;Demo Time: Add demo step&quot; command" />
+4. Select the demo file in which you want to add the step (only if you have multiple demo files).
+5. Select if you want to add it to an existing demo or create a new one.
+
+## Executing the demo
+
+Each demo you add will be available in the **Demo Time** view. You can execute each step by clicking on the demo title or starting the presentation mode.
+
+<Image class="mx-auto" src={implementationImage} alt="First demo implementation" width="400" />
+
+## Adding notes to your demos
+
+You are also able to add notes to your demos. These notes can be used to provide additional information for yourself or others who will be executing the demo.
+
+The notes should be created as a markdown file in the `.demo` folder. Here is an example of how you can add notes to your demo:
+
+<Tabs syncKey="demo-notes">
+<TabItem label="JSON">
+
+```json
+{
+  "title": "<title>",
+  "description": "<description>",
+  "version": 2,
+  "steps": [...],
+  "notes": {
+    "path": "<relative path to the file>",
+    "showOnTrigger": "<show notes on trigger (optional) - default is false>"
+  }
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+title: <title>
+description: <description>
+version: 2
+steps: [...]
+notes:
+  path: <relative path to the notes file>
+  showOnTrigger: <show notes on trigger (optional) - default is false>
+```
+
+</TabItem>
+</Tabs>
+
+## Implementing other demos and steps
+
+You can add more demos and steps to the `demos` array. In the [actions section](/actions/) of the documenation, you can find all the available actions you can use to create your demos.
+
+<Aside type="note">
+If you want to split your demos in multiple sections, you can do this by creating multiple demo files in the `.demo` folder. The extension will automatically recognize them and display them in the **Demo Time** view.
+</Aside>

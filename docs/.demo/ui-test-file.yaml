@@ -1,0 +1,81 @@
+title: ui-test-file
+description: |-
+  This is
+  a description
+  with linebreaks
+version: 2
+timer: 30
+demos:
+  - id: demo-md3edcww-87fg
+    title: Demo 1
+    steps:
+      - action: setTheme
+        theme: Demo Time Light
+      - action: waitForTimeout
+        timeout: 2000
+      - action: setTheme
+        theme: Red
+      - action: waitForTimeout
+        timeout: 2000
+      - action: setTheme
+        theme: Shades of Purple (Super Dark)
+      - action: waitForTimeout
+        timeout: 2000
+      - action: setTheme
+        theme: Demo Time Dark
+    disabled: true
+    icons:
+      start: account
+      end: account
+  - id: demo-mdsiag0k-6i7p
+    title: Demo 3
+    steps:
+      - action: save
+        path: .demo/26.positioning.yaml
+      - action: save
+        disabled: true
+        path: .demo/26.positioning.yaml
+      - action: save
+      - action: save
+        disabled: false
+        path: .demo/26.positioning.yaml
+    disabled: true
+  - id: demo-md3eq630-1ub4
+    title: Demo 2
+    steps:
+      - action: copyToClipboard
+        content: This is the value to copy
+    icons:
+      start: alert
+      end: ''
+  - id: demo-mdsla1sh-m0cl12
+    title: Demo 4
+    steps:
+      - action: openSlide
+        path: .demo/slides/end-slides.md
+  - id: demo-mdsla1sh-m0cl
+    title: Demo 5
+    steps:
+      - action: close
+        disabled: true
+      - action: runDemoById
+        id: demo-mdsla1sh-m0cl12
+  - id: demo-me8pnoi1-wc3b
+    title: GitHub Copilot
+    steps:
+      - action: openCopilotChat
+    icons:
+      start: bell
+      end: stop
+    description: In this demo I'm going to show how to open it...
+  - id: demo-me8pwyrp-zel2
+    title: GitHub Copilot (Copy)
+    steps:
+      - action: agentCopilotChat
+      - action: typeText
+        content: Can you write me a TypeScript application that open a document
+      - action: pressEnter
+    icons:
+      start: bell
+      end: stop
+    description: In this demo I'm going to show how to open it...

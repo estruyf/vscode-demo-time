@@ -1,0 +1,106 @@
+---
+title: Unnamed theme
+description: Overview of the Unnamed theme in Demo Time.
+lastmod: 2025-07-04T15:10:34.634Z
+---
+
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+
+import defaultunnamedImg from "../../../../assets/docs/slide-themes/unnamed/default.webp";
+import introunnamedImg from "../../../../assets/docs/slide-themes/unnamed/intro.webp";
+import sectionunnamedImg from "../../../../assets/docs/slide-themes/unnamed/section.webp";
+import quoteunnamedImg from "../../../../assets/docs/slide-themes/unnamed/quote.webp";
+import imageunnamedImg from "../../../../assets/docs/slide-themes/unnamed/image.webp";
+import imageLeftunnamedImg from "../../../../assets/docs/slide-themes/unnamed/image-left.webp";
+import imageRightunnamedImg from "../../../../assets/docs/slide-themes/unnamed/image-right.webp";
+import twoColumnsunnamedImg from "../../../../assets/docs/slide-themes/unnamed/two-columns.webp";
+
+The unnamed theme is based on [The Unnamed - VS Code](https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-unnamed-theme) theme.
+
+<div class="relative !mt-0">
+  <div class="images w-full relative">
+    <div class="slideshow">
+      <Image class="h-full" src={defaultunnamedImg} alt="Default" />
+      <Image class="h-full" src={introunnamedImg} alt="Intro" />
+      <Image class="h-full" src={sectionunnamedImg} alt="Section" />
+      <Image class="h-full" src={quoteunnamedImg} alt="Quote" />
+      <Image class="h-full" src={imageunnamedImg} alt="Image" />
+      <Image class="h-full" src={imageLeftunnamedImg} alt="Image Left" />
+      <Image class="h-full" src={imageRightunnamedImg} alt="Image Right" />
+      <Image class="h-full" src={twoColumnsunnamedImg} alt="Two Columns" />
+    </div>
+  </div>
+</div>
+
+## Name
+
+```md
+---
+theme: unnamed
+---
+
+# Slide title
+```
+
+## CSS
+
+Here you can check the CSS of the [unnamed theme](https://github.com/estruyf/vscode-demo-time/blob/dev/src/preview/themes/unnamed.css).
+
+### CSS variables
+
+```css
+--demotime-color: var(--vscode-editor-foreground);
+--demotime-background: var(--vscode-panel-background);
+
+--demotime-font-size: var(--vscode-editor-font-size, 1.1em);
+
+--demotime-heading-color: var(--vscode-activityBarBadge-foreground);
+--demotime-heading-background: var(--vscode-activityBarBadge-background);
+--demotime-header-shadow: 0 0 8px 2px var(--vscode-widget-shadow);
+
+--demotime-link-color: var(--vscode-textLink-foreground);
+--demotime-link-active-color: var(--vscode-textLink-activeForeground);
+
+--demotime-code-background: var(--vscode-editor-background);
+--demotime-code-border: var(--vscode-panel-border);
+
+--demotime-quote-border: var(--vscode-textBlockQuote-border);
+--demotime-quote-background: var(--vscode-textBlockQuote-background);
+
+/* Slide layouts */
+--demotime-default-background: var(--demotime-background);
+--demotime-default-color: var(--demotime-color);
+--demotime-default-heading-color: var(--demotime-heading-color);
+--demotime-default-heading-background: var(--demotime-heading-background);
+
+--demotime-intro-background: var(--demotime-background);
+--demotime-intro-color: var(--demotime-color);
+--demotime-intro-heading-color: var(--demotime-heading-color);
+--demotime-intro-heading-background: var(--demotime-heading-background);
+
+--demotime-quote-background: var(--demotime-background);
+--demotime-quote-color: var(--demotime-color);
+--demotime-quote-heading-color: var(--demotime-heading-color);
+--demotime-quote-heading-background: var(--demotime-heading-background);
+
+--demotime-section-background: var(--demotime-background);
+--demotime-section-color: var(--demotime-color);
+--demotime-section-heading-color: var(--demotime-heading-color);
+--demotime-section-heading-background: var(--demotime-heading-background);
+
+--demotime-image-left-background: var(--demotime-background);
+--demotime-image-left-color: var(--demotime-color);
+--demotime-image-left-heading-color: var(--demotime-heading-color);
+--demotime-image-left-heading-background: var(--demotime-heading-background);
+
+--demotime-image-right-background: var(--demotime-background);
+--demotime-image-right-color: var(--demotime-color);
+--demotime-image-right-heading-color: var(--demotime-heading-color);
+--demotime-image-right-heading-background: var(--demotime-heading-background);
+
+--demotime-two-columns-background: var(--demotime-background);
+--demotime-two-columns-color: var(--demotime-color);
+--demotime-two-columns-heading-color: var(--demotime-heading-color);
+--demotime-two-columns-heading-background: var(--demotime-heading-background);
+```

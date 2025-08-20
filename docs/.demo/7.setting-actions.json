@@ -1,0 +1,62 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Setting actions",
+  "description": "",
+  "demos": [
+    {
+      "title": "Set setting",
+      "description": "",
+      "steps": [
+        {
+          "action": "setSetting",
+          "setting": {
+            "key": "editor.fontSize",
+            "value": 18
+          }
+        }
+      ]
+    },
+    {
+      "title": "Set setting (unset)",
+      "description": "",
+      "steps": [
+        {
+          "action": "setSetting",
+          "setting": {
+            "key": "editor.fontSize",
+            "value": null
+          }
+        }
+      ]
+    },
+    {
+      "title": "Set theme (light)",
+      "description": "",
+      "steps": [
+        {
+          "action": "setTheme",
+          "theme": "Default Light Modern"
+        }
+      ]
+    },
+    {
+      "title": "Set theme (dark)",
+      "description": "",
+      "steps": [
+        {
+          "action": "setTheme",
+          "theme": "Default Dark Modern"
+        }
+      ]
+    },
+    {
+      "title": "Unset theme",
+      "description": "",
+      "steps": [
+        {
+          "action": "unsetTheme"
+        }
+      ]
+    }
+  ]
+}

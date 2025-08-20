@@ -1,0 +1,41 @@
+---
+title: Commands
+description: Overview of all the Demo Time commands available in the editor.
+tableOfContents: false
+lastmod: 2025-07-29T08:24:03.002Z
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Here is a list of all the commands available in Demo Time.
+
+| Command | Description |
+| --- | --- |
+| `Demo Time: Open Demo Time documentation` | Open the documentation website. |
+| `Demo Time: Create a new demo file` | Create a new demo file. |
+| `Demo Time: Start` | Starts the demo or runs the next demo step. |
+| `Demo Time: Previous` | Go back to the previous demo step (only in presentation mode and when the `demoTime.previousEnabled` setting is enabled). |
+| `Demo Time: Add demo step` | Add the current selection as a demo step to the demo file. |
+| `Demo Time: Reset` | Reset all the demos. |
+| `Demo Time: Start countdown` | Start the countdown clock (you need to define the time in the `demoTime.timer` setting). |
+| `Demo Time: Reset countdown` | Reset the countdown clock. |
+| `Demo Time: Toggle presentation mode` | Toggle the presentation mode. In this mode you'll be able to use your clicker or arrow keys for the `Demo Time: Start` and `Demo Time: Previous` commands. |
+| `Demo Time: Show presenter view` | Open the presenter view which you can detach and move to another screen while presenting. |
+| `Demo Time: Add new action to demo step` | Add a new demo step. You can only trigger this command when you have a demo JSON file opened. |
+| `Demo Time: Toggle highlight` | Toggle the highlight on and off when the current demo included a highlight action. |
+| `Demo Time: Create a slide` | Create a new slide. Used for the [slides functionality](/slides/). |
+| `Demo Time: Create a snapshot` | Create a snapshot from the current file. Used for the [Patch actions](/actions/patch/). |
+| `Demo Time: Create a patch` | Create a patch from the current file. Used for the [Patch actions](/actions/patch/). |
+| `Demo Time: Toggle highlight of current line or selection` | Toggle the highlight of the current line or selection. |
+| `Demo Time: Toggle presentation view (hides status bar, tabs, and activity bar)` | Toggles the presentation view which hides status bar, tabs, and activity bar. |
+| `Demo Time: Open slide preview` | When you are on a slide source file, you can run this command to open the preview of the slide. |
+| `Demo Time: Export slides to PDF` | Export all your slides to a PDF file which you can share with your audience. |
+| `Demo Time: Import PowerPoint Images as Slides` | Import images from a PowerPoint presentation as slides. More information on [PowerPoint import](/slides/powerpoint-import/). |
+| `Demo Time: Hacker Typer next chunk` | Insert the next chunk of text in hacker-typer mode. This is used when you have the `demoTime.insertTypingMode` set to `hacker-typer` or when set on the text `insert`, `replace`, or `applyPatch` actions. |
+
+<Aside>
+The `Demo Time: Start` and `Demo Time: Previous` commands have a keybinding assigned to them.
+
+You can override these keybindings in your Visual Studio Code settings.
+</Aside>
+
