@@ -4,8 +4,8 @@ interface Props {
   label?: string;
 }
 
-const { filePath, label = "Open samples on GitHub" } = Astro.props;
-const baseUrl = "https://github.com/estruyf/demo-time-docs/blob/main/";
+const { filePath, label = 'Open samples on GitHub' } = Astro.props;
+const baseUrl = 'https://github.com/estruyf/vscode-demo-time/blob/main/docs/';
 const fullUrl = `${baseUrl}${filePath}`;
 ---
 

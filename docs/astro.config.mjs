@@ -1,9 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
-
 import tailwind from '@astrojs/tailwind';
-
 import react from '@astrojs/react';
 
 // https://astro.build/config
@@ -33,7 +31,7 @@ export default defineConfig({
       ],
       lastUpdated: true,
       editLink: {
-        baseUrl: 'https://github.com/estruyf/demo-time-docs/edit/main/',
+        baseUrl: 'https://github.com/estruyf/vscode-demo-time/edit/main/docs/',
       },
       head: [
         {
