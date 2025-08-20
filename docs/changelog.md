@@ -1,3 +1,25 @@
+## [1.8.0] - 2025-08-02
+
+- [#199](https://github.com/estruyf/vscode-demo-time/issues/199): Improve loading the slides when
+  switching between demo and slides
+- [#204](https://github.com/estruyf/vscode-demo-time/issues/204): Added the `openTerminal` action to
+  open a the terminal
+- [#205](https://github.com/estruyf/vscode-demo-time/issues/205): Added the `hacker-typer` typing mode to the `insert`, `replace`, and `patch` actions
+- [#207](https://github.com/estruyf/vscode-demo-time/issues/207): Made the `message` property
+  optional for the GitHub Copilot chat actions
+- [#208](https://github.com/estruyf/vscode-demo-time/issues/208): The JSON schema has been
+  refactored to have intellisense per action on which properties are required and optional
+- [#209](https://github.com/estruyf/vscode-demo-time/issues/209): The `path` property is not
+  required anymore for the `unselect` action
+- [#211](https://github.com/estruyf/vscode-demo-time/issues/211): Make the description property
+  optional on the demo root
+- [#212](https://github.com/estruyf/vscode-demo-time/issues/212): Fix encoding issue with ampersands
+  in the `dt-list` component
+- [#217](https://github.com/estruyf/vscode-demo-time/issues/217): Fix highlighting whole line when line number and 
+  character positioning is used
+- [#218](https://github.com/estruyf/vscode-demo-time/issues/218): Added a new `/api/demos` endpoint to 
+  retrieve the list of demos in the workspace
+
 ## [1.7.1] - 2025-07-10
 
 - [#202](https://github.com/estruyf/vscode-demo-time/issues/202): Fix an issue with the demo parsing

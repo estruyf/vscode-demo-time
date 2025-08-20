@@ -13,6 +13,7 @@ export default defineConfig({
       logo: {
         src: '/src/assets/demotime-bg.svg',
       },
+      disable404Route: true,
       title: 'Demo Time',
       social: {
         // github: 'https://github.com/estruyf/vscode-demo-time',

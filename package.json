@@ -31,7 +31,8 @@
     "markdown slides"
   ],
   "scripts": {
-    "docs:serve": "nx dev demo-time-docs"
+    "docs:dev": "nx dev demo-time-docs",
+    "docs:build": "nx build demo-time-docs"
   },
   "homepage": "https://demotime.show/",
   "directories": {

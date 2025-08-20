@@ -67,6 +67,7 @@
 ## Releases
 
 - [v1.7.0 | Demo Time](https://demotime.show/releases/1.7.0/): Release notes for version 1.7.0 of the Demo Time extension, including new features, improvements, and bug fixes.
+- [v1.8.0 | Demo Time](https://demotime.show/releases/1.8.0/): Release notes for version 1.8.0 of the Demo Time extension, including new features, improvements, and bug fixes.
 
 ## Slides
 
