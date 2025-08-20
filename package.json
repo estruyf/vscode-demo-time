@@ -40,7 +40,10 @@
   },
   "author": "Elio Struyf <elio@struyfconsulting.be> (https://www.eliostruyf.com)",
   "license": "MIT",
-  "nx": {},
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "devDependencies": {
     "@actions/core": "^1.11.1",
     "@nx/eslint": "^21.2.3",
@@ -52,7 +55,7 @@
     "@typescript-eslint/parser": "^8.40.0",
     "eslint": "^9.33.0",
     "jest": "^29.7.0",
-    "nx": "21.2.3",
+    "nx": "21.4.0",
     "webpack-cli": "^5.1.4"
   }
 }

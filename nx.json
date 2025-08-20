@@ -1,6 +1,5 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "targetDefaults": {},
   "nxCloudId": "68753044874bdb115b711fe8",
   "includedScripts": [],
   "namedInputs": {
