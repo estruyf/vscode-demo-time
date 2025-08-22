@@ -1,3 +1,5 @@
+@import 'tailwindcss';
+
 /* Minimal Theme */
 .slide.minimal {
   --demotime-color: var(--vscode-editor-foreground);

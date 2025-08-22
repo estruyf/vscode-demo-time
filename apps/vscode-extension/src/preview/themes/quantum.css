@@ -1,3 +1,5 @@
+@import 'tailwindcss';
+
 /* Quantum Theme for Demo Time
  * A modern, tech-focused theme with gradient accents
  */
@@ -32,7 +34,11 @@
   --demotime-intro-background: linear-gradient(135deg, #1a1b26 0%, #24283b 100%);
   --demotime-intro-color: var(--demotime-color);
   --demotime-intro-heading-color: transparent;
-  --demotime-intro-heading-background: linear-gradient(to right, var(--demotime-primary), var(--demotime-accent));
+  --demotime-intro-heading-background: linear-gradient(
+    to right,
+    var(--demotime-primary),
+    var(--demotime-accent)
+  );
 
   /* Quote layout */
   --demotime-quote-background: linear-gradient(135deg, #2b2d3e 0%, #1a1b26 100%);
@@ -44,7 +50,11 @@
   --demotime-section-background: linear-gradient(135deg, #24283b 0%, #1a1b26 100%);
   --demotime-section-color: var(--demotime-color);
   --demotime-section-heading-color: transparent;
-  --demotime-section-heading-background: linear-gradient(to right, var(--demotime-secondary), var(--demotime-primary));
+  --demotime-section-heading-background: linear-gradient(
+    to right,
+    var(--demotime-secondary),
+    var(--demotime-primary)
+  );
 
   /* Image layouts */
   --demotime-image-heading-background: rgba(0, 0, 0, 0.8);
@@ -150,7 +160,7 @@
     @apply list-none;
 
     li::before {
-      content: "•";
+      content: '•';
       color: var(--demotime-accent);
       font-weight: bold;
       display: inline-block;
@@ -246,13 +256,13 @@
 
       &::before,
       &::after {
-        content: "“ ";
+        content: '“ ';
         font-size: 1.5em;
         opacity: 0.5;
       }
 
       &::after {
-        content: " ”";
+        content: ' ”';
       }
     }
 
@@ -281,7 +291,7 @@
       position: relative;
 
       &::after {
-        content: "";
+        content: '';
         position: absolute;
         bottom: -0.5rem;
         left: 25%;
@@ -362,7 +372,7 @@
       position: relative;
 
       &::after {
-        content: "";
+        content: '';
         position: absolute;
         top: 2rem;
         bottom: 2rem;

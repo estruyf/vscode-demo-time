@@ -1,6 +1,4 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import 'tailwindcss';
 
 .notes-container {
   @apply p-4 bg-[var(--vscode-sideBar-background)];

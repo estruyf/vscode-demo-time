@@ -27,7 +27,7 @@ jobs:
         run: node .github/scripts/verify-actions.mjs
 
       - name: Publish
-        run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }}
+        run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }} --no-dependencies
 
       - name: Publish to open-vsx.org
-        run: npx ovsx publish -p ${{ secrets.OPEN_VSX_PAT }}
+        run: npx ovsx publish -p ${{ secrets.OPEN_VSX_PAT }} --no-dependencies

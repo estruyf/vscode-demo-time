@@ -1,19 +1,19 @@
+@import 'tailwindcss';
+
 /* 
   Monomi Theme - Based on: https://github.com/estruyf/slidev-theme-the-unnamed
 */
 .slide.monomi {
   --demotime-color: var(--vscode-editor-foreground);
   --demotime-background: var(--vscode-editor-background);
-  
+
   --demotime-heading-color: var(--vscode-editor-background);
   --demotime-heading-background: var(--vscode-editor-foreground);
   --demotime-heading-font-weight: 900;
 
   --demotime-font-size: var(--vscode-editor-font-size, 1.1em);
 
-  --demotime-bordered: 0
-
-  --demotime-link-color: var(--vscode-textLink-foreground);
+  --demotime-bordered: 0 --demotime-link-color: var(--vscode-textLink-foreground);
   --demotime-link-active-color: var(--vscode-textLink-activeForeground);
 
   --demotime-code-background: var(--vscode-editor-background);
@@ -207,13 +207,10 @@
         @apply p-8 w-full h-auto text-center;
         background: var(--demotime-section-heading-background);
         color: var(--demotime-section-heading-color);
-    
-        border-bottom: calc(2 * var(--demotime-bordered)) solid
-          var(--demotime-background);
-        border-top: calc(2 * var(--demotime-bordered)) solid
-          var(--demotime-background);
-        outline: var(--demotime-bordered) solid
-          var(--demotime-section-heading-background);
+
+        border-bottom: calc(2 * var(--demotime-bordered)) solid var(--demotime-background);
+        border-top: calc(2 * var(--demotime-bordered)) solid var(--demotime-background);
+        outline: var(--demotime-bordered) solid var(--demotime-section-heading-background);
       }
     }
 

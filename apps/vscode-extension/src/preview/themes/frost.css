@@ -1,3 +1,5 @@
+@import 'tailwindcss';
+
 /* Frost Theme for Demo Time
  * A clean, minimal theme with soft blues and elegant typography
  */
@@ -154,7 +156,7 @@
     list-style: none;
 
     li::before {
-      content: "•";
+      content: '•';
       color: var(--demotime-secondary);
       font-weight: bold;
       display: inline-block;
@@ -246,7 +248,7 @@
       position: relative;
 
       &::after {
-        content: "";
+        content: '';
         position: absolute;
         bottom: -0.3em;
         left: 50%;
@@ -284,7 +286,7 @@
       position: relative;
 
       &::before {
-        content: "“";
+        content: '“';
         position: absolute;
         top: -0.2em;
         left: -0.5em;
@@ -294,7 +296,7 @@
       }
 
       &::after {
-        content: "”";
+        content: '”';
         position: absolute;
         bottom: -0.5em;
         right: -0.5em;
@@ -328,7 +330,7 @@
       position: relative;
 
       &::after {
-        content: "";
+        content: '';
         position: absolute;
         bottom: -0.3em;
         left: 50%;

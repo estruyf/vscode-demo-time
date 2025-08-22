@@ -1,5 +1,3 @@
-# Change Log
-
 ## [1.9.0] - 2025-08-xx
 
 - [#219](https://github.com/estruyf/vscode-demo-time/issues/219): Added a GUI for editing your demo
@@ -7,7 +5,8 @@
 - [#220](https://github.com/estruyf/vscode-demo-time/issues/220): Allow to set a title for the
   `waitForInput` action
 - [#221](https://github.com/estruyf/vscode-demo-time/issues/221): Added support for the
-  `autoAdvanceAfter` property in the slide front matter to automatically advance to the next
+  `autoAdvanceAfter` property in the slide front matter to automatically advance to the next slide
+  or demo
 - [#222](https://github.com/estruyf/vscode-demo-time/issues/222): Added the ability to disable a
   demo or step
 - [#225](https://github.com/estruyf/vscode-demo-time/issues/225): Added a GUI for editing all the
@@ -696,3 +695,4 @@
 ## [0.0.1] - 2023-12-08
 
 - Initial release
+

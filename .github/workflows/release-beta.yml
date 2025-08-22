@@ -51,17 +51,17 @@ jobs:
 
       - name: Publish
         if: contains(github.event.head_commit.message, '#release') && github.ref != 'refs/heads/alpha'
-        run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }} --baseImagesUrl https://raw.githubusercontent.com/estruyf/vscode-demo-time/dev --pre-release
+        run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }} --baseImagesUrl https://raw.githubusercontent.com/estruyf/vscode-demo-time/dev --pre-release --no-dependencies
         working-directory: ${{ env.VSCODE_EXT_PATH }}
 
       - name: Publish to open-vsx.org
         if: contains(github.event.head_commit.message, '#release') && github.ref != 'refs/heads/alpha'
-        run: npx ovsx publish -p ${{ secrets.OPEN_VSX_PAT }}
+        run: npx ovsx publish -p ${{ secrets.OPEN_VSX_PAT }} --no-dependencies
         working-directory: ${{ env.VSCODE_EXT_PATH }}
 
       - name: Package VSIX (alpha branch)
         if: github.ref == 'refs/heads/alpha'
-        run: npx @vscode/vsce package
+        run: npx @vscode/vsce package --no-dependencies
         working-directory: ${{ env.VSCODE_EXT_PATH }}
 
       - name: Upload VSIX artifact (alpha branch)

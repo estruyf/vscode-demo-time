@@ -1,15 +1,20 @@
-import { commands, FileType, ProgressLocation, Uri, window, workspace } from "vscode";
-import { Action, DemoFile, Subscription } from "../models";
-import { Extension } from "./Extension";
-import { COMMAND, General } from "../constants";
-import { Notifications } from "./Notifications";
-import { createImageSlide, parseWinPath } from "../utils";
+import { commands, FileType, ProgressLocation, Uri, window, workspace } from 'vscode';
+import { Action, DemoFile, Subscription } from '../models';
+import { Extension } from './Extension';
+import { COMMAND, General } from '../constants';
+import { Notifications } from './Notifications';
+import { createImageSlide, parseWinPath } from '../utils';
 
 export class ImportService {
   public static register() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
 
-    subscriptions.push(commands.registerCommand(COMMAND.importPowerPointImages, ImportService.importPowerPointImages));
+    subscriptions.push(
+      commands.registerCommand(
+        COMMAND.importPowerPointImages,
+        ImportService.importPowerPointImages,
+      ),
+    );
   }
 
   private static async importPowerPointImages() {
@@ -17,18 +22,18 @@ export class ImportService {
     const selectedFolder = await window.showOpenDialog({
       canSelectFolders: true,
       canSelectMany: false,
-      openLabel: "Select folder with PowerPoint exported slide images",
+      openLabel: 'Select folder with PowerPoint exported slide images',
     });
 
     if (!selectedFolder || selectedFolder.length === 0) {
-      Notifications.error("No folder selected.");
+      Notifications.error('No folder selected.');
       return;
     }
 
     await window.withProgress(
       {
         location: ProgressLocation.Notification,
-        title: "Importing images...",
+        title: 'Importing images...',
         cancellable: false,
       },
       async (_) => {
@@ -36,56 +41,59 @@ export class ImportService {
         const wsFolder = Extension.getInstance().workspaceFolder;
 
         if (!wsFolder) {
-          window.showErrorMessage("No workspace folder found.");
+          window.showErrorMessage('No workspace folder found.');
           return;
         }
 
         const files = await workspace.fs.readDirectory(folderUri);
         const imageFiles = files.filter(
-          ([name, type]) => type === FileType.File && /\.(jpg|jpeg|png|gif)$/i.test(name)
+          ([name, type]) => type === FileType.File && /\.(jpg|jpeg|png|gif)$/i.test(name),
         );
         if (imageFiles.length === 0) {
-          Notifications.error("No image files found in the selected folder.");
+          Notifications.error('No image files found in the selected folder.');
           return;
         }
 
         const createNewDemoFile = await window.showInformationMessage(
-          "Do you want to add the slides in a new demo file?",
-          { modal: true, detail: "This will create a new demo file with the slides." },
-          "Yes"
+          'Do you want to add the slides in a new demo file?',
+          { modal: true, detail: 'This will create a new demo file with the slides.' },
+          'Yes',
         );
 
-        let imageUris = imageFiles.map(([name]) => folderUri.with({ path: `${folderUri.path}/${name}` }));
+        let imageUris = imageFiles.map(([name]) =>
+          folderUri.with({ path: `${folderUri.path}/${name}` }),
+        );
         imageUris = imageUris.sort((a, b) => {
-          const nameA = a.path.split("/").pop() || "";
-          const nameB = b.path.split("/").pop() || "";
-          return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "base" });
+          const nameA = a.path.split('/').pop() || '';
+          const nameB = b.path.split('/').pop() || '';
+          return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: 'base' });
         });
 
         const slideFolder = Uri.joinPath(wsFolder.uri, General.demoFolder, General.slidesFolder);
-        const slideFolderName = parseWinPath(folderUri.path).split("/").pop() || "";
+        const slideFolderName = parseWinPath(folderUri.path).split('/').pop() || '';
         const newSlideFolder = Uri.joinPath(slideFolder, slideFolderName);
 
         try {
           await workspace.fs.createDirectory(newSlideFolder);
         } catch (error) {
-          Notifications.error("Failed to create slide folder.");
+          Notifications.error('Failed to create slide folder.');
           return;
         }
 
         let demo: DemoFile | undefined;
-        if (createNewDemoFile === "Yes") {
+        if (createNewDemoFile === 'Yes') {
           demo = {
+            $schema: 'https://demotime.show/demo-time.schema.json',
             title: slideFolderName,
-            description: "Imported from PowerPoint",
+            description: 'Imported from PowerPoint',
             demos: [],
           };
         }
 
         for (const [_, imageUri] of imageUris.entries()) {
-          const imageName = imageUri.path.split("/").pop() || "";
-          const imageNameWithoutExtension = imageName.split(".").slice(0, -1).join(".");
-          const newImageUri = Uri.joinPath(newSlideFolder, "images", imageName);
+          const imageName = imageUri.path.split('/').pop() || '';
+          const imageNameWithoutExtension = imageName.split('.').slice(0, -1).join('.');
+          const newImageUri = Uri.joinPath(newSlideFolder, 'images', imageName);
 
           try {
             await workspace.fs.copy(imageUri, newImageUri, {
@@ -102,10 +110,10 @@ export class ImportService {
             if (slidePath && demo && demo.demos) {
               demo.demos.push({
                 title: imageNameWithoutExtension,
-                description: "",
+                description: '',
                 icons: {
-                  start: "vm",
-                  end: "pass-filled",
+                  start: 'vm',
+                  end: 'pass-filled',
                 },
                 steps: [{ action: Action.OpenSlide, path: slidePath }],
               });
@@ -117,18 +125,25 @@ export class ImportService {
         }
 
         if (demo) {
-          const demoFileUri = Uri.joinPath(wsFolder.uri, General.demoFolder, `${slideFolderName}.json`);
+          const demoFileUri = Uri.joinPath(
+            wsFolder.uri,
+            General.demoFolder,
+            `${slideFolderName}.json`,
+          );
           try {
-            await workspace.fs.writeFile(demoFileUri, new TextEncoder().encode(JSON.stringify(demo, null, 2)));
+            await workspace.fs.writeFile(
+              demoFileUri,
+              new TextEncoder().encode(JSON.stringify(demo, null, 2)),
+            );
             await window.showTextDocument(demoFileUri, { preview: false });
           } catch (error) {
-            Notifications.error("Failed to create demo file.");
+            Notifications.error('Failed to create demo file.');
             return;
           }
         }
 
-        Notifications.info("Slides created successfully!");
-      }
+        Notifications.info('Slides created successfully!');
+      },
     );
   }
 }

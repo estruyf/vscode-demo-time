@@ -1,6 +1,4 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import 'tailwindcss';
 
 :root {
   --demotime-transition-duration: 0.5s;
@@ -219,16 +217,16 @@ table td {
 }
 
 @keyframes laserPulse {
-  0% { 
-    opacity: 1; 
-    transform: translate(-50%, -50%) scale(1); 
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
   }
-  50% { 
-    opacity: 0.7; 
-    transform: translate(-50%, -50%) scale(1.1); 
+  50% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(1.1);
   }
-  100% { 
-    opacity: 1; 
-    transform: translate(-50%, -50%) scale(1); 
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
   }
 }
