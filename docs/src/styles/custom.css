@@ -14,7 +14,7 @@
 }
 
 /* Light mode colors. */
-:root[data-theme="light"] {
+:root[data-theme='light'] {
   --sl-color-accent-low: #e1d6b9;
   --sl-color-accent: #624d00;
   --sl-color-accent-high: #3f3000;
@@ -30,11 +30,11 @@
 }
 
 body {
-  font-family: "Mona Sans", serif;
+  font-family: 'Mona Sans', serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  font-variation-settings: "wdth" 100;
+  font-variation-settings: 'wdth' 100;
 }
 
 h1,
@@ -44,17 +44,17 @@ h4,
 h5,
 h6,
 .site-title {
-  font-family: "Hubot Sans", serif;
+  font-family: 'Hubot Sans', serif;
   font-optical-sizing: auto;
   font-weight: 600;
-  font-variation-settings: "wdth" 100;
+  font-variation-settings: 'wdth' 100;
 }
 
 .site-title {
-  font-family: "Hubot Sans", serif;
+  font-family: 'Hubot Sans', serif;
   font-optical-sizing: auto;
   font-weight: 600;
-  font-variation-settings: "wdth" 100;
+  font-variation-settings: 'wdth' 100;
   font-style: italic;
   text-transform: uppercase;
 }
@@ -66,6 +66,12 @@ h1 {
 
 .site-title {
   color: var(--sl-color-white);
+}
+
+.hero {
+  img {
+    @apply h-[150px] w-full md:h-[350px];
+  }
 }
 
 .social-icons {

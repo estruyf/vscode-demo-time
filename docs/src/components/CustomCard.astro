@@ -6,7 +6,7 @@ interface Props {
 const { title } = Astro.props;
 ---
 
-<article class="card sl-flex">
+<article class="card sl-flex rounded-xl">
   <p class="title sl-flex">
     <span class="icon">{(<slot name="icon" />)}</span>
     <span set:html={title} />
@@ -56,10 +56,6 @@ const { title } = Astro.props;
   }
   .card .body {
     margin: 0;
-    font-size: clamp(
-      var(--sl-text-sm),
-      calc(0.5rem + 1vw),
-      var(--sl-text-body)
-    );
+    font-size: clamp(var(--sl-text-sm), calc(0.5rem + 1vw), var(--sl-text-body));
   }
 </style>

@@ -1,0 +1,149 @@
+---
+import { Image } from 'astro:assets';
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import { toCodes } from 'astro:i18n';
+
+const response = await fetch(
+  'https://marketplace.visualstudio.com/_apis/public/gallery/publishers/eliostruyf/extensions/vscode-demo-time/reviews?count=4&filterOptions=3',
+);
+const data = await response.json();
+const reviews = data.reviews.filter(
+  (r: { userId: string }) => r.userId !== '911b69c7-f386-63b2-aa0a-8583da5ee40b',
+);
+---
+
+<section>
+  <h2>Real developers, real results</h2>
+  <p class="mb-8 text-lg opacity-90">
+    See how Demo Time is transforming presentations at conferences, workshops, and training sessions
+    worldwide.
+  </p>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 space-y-0">
+    <!-- Quote Cards -->
+    {
+      reviews.map((review: any) => (
+        <div class="social-proof-card flex flex-col justify-between h-full">
+          <blockquote class="mb-4">"{review.text}"</blockquote>
+          <div class="flex items-center gap-3 mt-auto">
+            <img
+              src={`https://marketplace.visualstudio.com/avatar?userid=${review.userId}`}
+              alt={review.userDisplayName}
+              class="rounded-full border-2 border-[var(--sl-color-gray-5)]"
+              style="height: 40px; width: 40px;"
+            />
+            <p class="font-semibold text-white !m-0">{review.userDisplayName}</p>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+
+  <!-- Stats Section -->
+  <div class="stats-grid grid grid-cols-2 md:grid-cols-4 gap-6 mb-12 space-y-0">
+    <div class="stat-card">
+      <div class="stat-number">12k+</div>
+      <div class="stat-label">Downloads</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">130+</div>
+      <div class="stat-label">GitHub Stars</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">50+</div>
+      <div class="stat-label">Conference Talks</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">5★</div>
+      <div class="stat-label">VS Code Rating</div>
+    </div>
+  </div>
+
+  <!-- Featured In -->
+  <div class="featured-section">
+    <h3 class="text-center mb-6 text-xl font-semibold">Featured in presentations at</h3>
+    <div class="flex flex-wrap justify-center items-center gap-8 opacity-70 space-y-0">
+      <div class="featured-item">
+        <span class="text-lg font-semibold">Microsoft Ignite</span>
+      </div>
+      <div class="featured-item">
+        <span class="text-lg font-semibold">OpenAI DevDay</span>
+      </div>
+      <div class="featured-item">
+        <span class="text-lg font-semibold">CloudBrew</span>
+      </div>
+      <div class="featured-item">
+        <span class="text-lg font-semibold">Wasm IO</span>
+      </div>
+      <div class="featured-item">
+        <span class="text-lg font-semibold">ESPC</span>
+      </div>
+      <div class="featured-item">
+        <span class="text-lg font-semibold">React Summit</span>
+      </div>
+      <div class="featured-item">
+        <span class="text-lg font-semibold">and many more...</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-8 text-center"></div>
+  <p>
+    Have a story to share? <a
+      href="https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-demo-time&ssr=false#review-details"
+      class="underline"
+      target="_blank"
+      rel="noopener">Add your review on the Visual Studio Code Marketplace</a
+    > and help inspire fellow presenters!
+  </p>
+</section>
+
+<style>
+  .social-proof-card {
+    background: var(--sl-color-gray-6);
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .social-proof-card blockquote {
+    font-style: italic;
+    color: var(--sl-color-gray-2);
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .stat-card {
+    text-align: center;
+    background: var(--sl-color-gray-6);
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 8px;
+    padding: 1.5rem 1rem;
+  }
+
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--sl-color-accent-high);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    color: var(--sl-color-gray-3);
+    font-weight: 500;
+  }
+
+  .featured-section {
+    padding: 2rem 1rem;
+    background: var(--sl-color-gray-6);
+    border-radius: 12px;
+    border: 1px solid var(--sl-color-gray-5);
+  }
+
+  .featured-item {
+    color: var(--sl-color-gray-2);
+  }
+</style>
