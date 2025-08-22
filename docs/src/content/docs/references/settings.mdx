@@ -1,11 +1,22 @@
 ---
 title: Settings
 description: Customize the settings of Demo Time to fit your needs.
-lastmod: 2025-07-29T07:46:39.865Z
+lastmod: 2025-08-22T10:03:29.355Z
 tableOfContents: false
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+
+import settingsGuiImg from "../../../assets/docs/settings-view.webp";
+
+By using the `Demo Time: Settings` command, you can quickly access and modify the settings of the Demo Time extension.
+
+<Image class="mx-auto" src={settingsGuiImg} alt="Settings GUI" />
+
+When you use the Demo Time Settings GUI, they will automatically be configured and stored in the `.vscode/settings.json` file of your workspace.
+
+## Overview
 
 Here is a list of all the settings available in Demo Time.
 
@@ -31,6 +42,7 @@ Here is a list of all the settings available in Demo Time.
 | `demoTime.defaultFileType` | The default file type for new demo files. Options: `json` (default), `yaml`. | `json` |
 | `demoTime.slideHeaderTemplate` | The template for the slide header. |  |
 | `demoTime.slideFooterTemplate` | The template for the slide footer. |  |
+| `demoTime.openInConfigEditor` | Open the demo file in the config editor GUI. | `true` |
 
 <Aside>
 The `demoTime.previousEnabled` is by default disabled to avoid conflicts when the previous action inserted content into a file.

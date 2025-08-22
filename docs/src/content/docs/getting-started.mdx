@@ -1,7 +1,7 @@
 ---
 title: Getting started
 description: Get started with Demo Time
-lastmod: 2025-07-23T10:26:20.272Z
+lastmod: 2025-08-22T07:51:32.455Z
 ---
 
 import {
@@ -13,8 +13,6 @@ import {
 import { Image } from "astro:assets";
 
 import initializeImage from "../../assets/docs/initialize.webp";
-
-> **Note**: Demo Time works not only in Visual Studio Code, but also in any code editor built on top of Visual Studio Code (such as Cursor, Windsurf, GitHub Codespaces, and other VS Code derivatives).
 
 To get started with Demo Time, you need to install the extension in Visual Studio Code. You can find the extension in the [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-demo-time).
 
@@ -35,6 +33,10 @@ Watch the video to learn more about why Demo Time was created and how it can hel
 <iframe width="720" class="!h-[400px]" src="https://www.youtube.com/embed/0YlUdvnHd9s?si=IBr8hO5agsVKfRgn" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 </Aside>
 
+<Aside type="tip">
+Demo Time works not only in Visual Studio Code, but also in any code editor built on top of Visual Studio Code (such as Cursor, Windsurf, GitHub Codespaces, and other VS Code derivatives).
+</Aside>
+
 ## Initialize the extension
 
 Once you have installed the extension, it is time to initialize it in your project where you want to use it. You can do this by opening the explorer panel in Visual Studio Code. There should be a **Demo Time** view available in which you find the **Initialize** button.
@@ -50,11 +52,13 @@ Once you clicked on the **Initialize** button, the extension will create a `.dem
 
 <Aside type="tip">
   You can change the `demo.json` filename to any other name you prefer. The
-  extension will still recognize it. You can also create multiple files if you
+  extension will still recognize it. 
+  
+  You can also create multiple files if you
   want to split your demos.
 </Aside>
 
-## Typical flow of a Demo Time session
+### Typical flow of a Demo Time session
 
 1. Script your demo steps (in one or more demo files)
 2. Mix code walkthroughs with slides — all in VS Code (if you want or use PowerPoint, Keynote, etc. for your slides)

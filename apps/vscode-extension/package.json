@@ -356,7 +356,7 @@
       },
       {
         "command": "demo-time.stepMoveUp",
-        "title": "Move down",
+        "title": "Move up",
         "icon": "$(arrow-up)"
       },
       {
