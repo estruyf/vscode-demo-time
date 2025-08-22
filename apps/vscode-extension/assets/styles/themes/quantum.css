@@ -1,3 +1,23 @@
+@custom-variant dark (&:is(.vscode-dark *));
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
 /* Quantum Theme for Demo Time
  * A modern, tech-focused theme with gradient accents
  */
@@ -132,10 +152,10 @@
   }
 
   a {
-    @apply text-[var(--demotime-link-color)] underline transition-colors duration-200;
+    @apply text-(--demotime-link-color) underline transition-colors duration-200;
 
     &:hover {
-      @apply text-[var(--demotime-link-active-color)];
+      @apply text-(--demotime-link-active-color);
     }
   }
 
@@ -181,7 +201,7 @@
   }
 
   blockquote {
-    @apply border-l-4 p-4 my-4 border-[var(--demotime-blockquote-border)] bg-[var(--demotime-blockquote-background)] rounded-r-md;
+    @apply border-l-4 p-4 my-4 border-(--demotime-blockquote-border) bg-(--demotime-blockquote-background) rounded-r-md;
 
     p {
       @apply italic;
@@ -189,7 +209,7 @@
   }
 
   code {
-    @apply px-1.5 py-0.5 rounded;
+    @apply px-1.5 py-0.5 rounded-sm;
     color: var(--demotime-accent);
   }
 

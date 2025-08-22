@@ -65,7 +65,9 @@ export class PdfExportService {
         },
         async (progress) => {
           const { chromium } = await PdfExportService.getPlaywright();
-          const browser = await chromium.launch();
+          const browser = await chromium.launch({
+            args: ['--allow-file-access-from-files', '--enable-local-file-accesses'],
+          });
           const context = await browser.newContext();
           const page = await context.newPage();
 
@@ -295,33 +297,56 @@ export class PdfExportService {
     );
     const css = await PdfExportService.insertCssVariables(exportStyles);
 
-    const defaultTheme = await readFile(
+    let defaultTheme = await readFile(
       Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'default.css'),
     );
 
-    const minimalTheme = await readFile(
+    let minimalTheme = await readFile(
       Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'minimal.css'),
     );
 
-    const monomiTheme = await readFile(
+    let monomiTheme = await readFile(
       Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'monomi.css'),
     );
 
-    const unnamedTheme = await readFile(
+    let unnamedTheme = await readFile(
       Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'unnamed.css'),
     );
 
-    const quantumTheme = await readFile(
+    let quantumTheme = await readFile(
       Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'quantum.css'),
     );
 
-    const frostTheme = await readFile(
+    let frostTheme = await readFile(
       Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'frost.css'),
     );
 
-    const webcomponents = await readFile(
-      Uri.joinPath(Uri.parse(extensionPath), 'out', 'webcomponents', 'index.mjs'),
-    );
+    // let webcomponents = await readFile(
+    //   Uri.joinPath(Uri.parse(extensionPath), 'out', 'webcomponents', 'index.mjs'),
+    // );
+
+    // let webcomponents = readFileSync(
+    //   join(extensionPath, 'out', 'webcomponents', 'index.mjs'),
+    //   'utf-8',
+    // );
+    // webcomponents = webcomponents.replace(/\n/g, '\\n');
+
+    const webcomponentsUrl = Uri.joinPath(
+      Uri.parse(extensionPath),
+      'out',
+      'webcomponents',
+      'index.mjs',
+    ).toString();
+
+    const removeCustomVariant = (css: string) =>
+      css.replace(/@custom-variant dark\s*\(&:is\(\.vscode-dark \*\)\);?/g, '');
+
+    defaultTheme = removeCustomVariant(defaultTheme);
+    minimalTheme = removeCustomVariant(minimalTheme);
+    monomiTheme = removeCustomVariant(monomiTheme);
+    unnamedTheme = removeCustomVariant(unnamedTheme);
+    quantumTheme = removeCustomVariant(quantumTheme);
+    frostTheme = removeCustomVariant(frostTheme);
 
     const customComponents = [];
     const customComponentsUrls = [];
@@ -378,7 +403,7 @@ export class PdfExportService {
     mermaid.initialize({ startOnLoad: true, theme: "${isDark ? 'dark' : 'default'}" });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <script type="module">${webcomponents}</script>
+  <script src="${webcomponentsUrl}" type="module"></script>
 
   ${customComponentsUrls.map((url) => `<script type="module" src="${url}"></script>`).join('\n')}
   ${customComponents.map((component) => `<script type="module">${component}</script>`).join('\n')}

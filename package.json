@@ -32,7 +32,8 @@
   ],
   "scripts": {
     "docs:dev": "nx dev demo-time-docs",
-    "docs:build": "nx build demo-time-docs"
+    "docs:build": "nx build demo-time-docs",
+    "vscode:open": "code ./apps/vscode-extension"
   },
   "homepage": "https://demotime.show/",
   "directories": {

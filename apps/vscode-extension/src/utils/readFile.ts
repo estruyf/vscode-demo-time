@@ -5,5 +5,5 @@ export const readFile = async (filePath: Uri) => {
   const parsedPath = parseWinPath(filePath.fsPath);
   filePath = Uri.file(parsedPath);
   const text = await workspace.fs.readFile(filePath);
-  return new TextDecoder().decode(text);
+  return new TextDecoder('utf-8').decode(text);
 };
