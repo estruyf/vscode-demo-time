@@ -90,9 +90,7 @@ export class DemoApi {
     const extensionPath = ext.extensionPath;
 
     try {
-      let apiHtml = await readFile(
-        Uri.joinPath(Uri.parse(extensionPath), 'assets', 'api', 'index.html'),
-      );
+      let apiHtml = await readFile(Uri.joinPath(ext.extensionUri, 'assets', 'api', 'index.html'));
       apiHtml = apiHtml.replace(
         /{{API_URL}}/g,
         `http://localhost:${ext.getSetting<number>(Config.api.port)}`,
@@ -143,13 +141,13 @@ export class DemoApi {
    * @returns A promise that resolves when the command execution is complete.
    */
   private static async runById(req: Request, res: Response) {
-    let id = undefined;
+    let id: string | undefined = undefined;
     const show = DemoApi.toFront(req);
 
     if (req.method === 'POST') {
-      id = req.body.id;
+      id = typeof req.body?.id === 'string' ? req.body.id : undefined;
     } else if (req.method === 'GET') {
-      id = req.query.id;
+      id = typeof req.query.id === 'string' ? req.query.id : undefined;
     } else {
       res.status(405).send('Method not allowed');
       return;
@@ -182,6 +180,7 @@ export class DemoApi {
     } else if (req.method === 'GET') {
       return req.query.bringToFront ? req.query.bringToFront === 'true' : false;
     }
+    return false;
   }
 
   private static async stop() {

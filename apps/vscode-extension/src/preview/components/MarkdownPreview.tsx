@@ -14,6 +14,7 @@ import { SlideParser } from '../../services/SlideParser';
 import { useMousePosition } from '../hooks/useMousePosition';
 import { convertTemplateToHtml } from '../../utils/convertTemplateToHtml';
 import { LaserPointer } from './LaserPointer';
+import DOMPurify from 'dompurify';
 
 export interface IMarkdownPreviewProps {
   fileUri: string;
@@ -224,13 +225,15 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     setTransition(crntSlide?.frontmatter.transition || undefined);
 
     if (crntSlide && crntSlide.frontmatter.header) {
-      setHeader(convertTemplateToHtml(crntSlide.frontmatter.header, crntSlide.frontmatter, webviewUrl));
+      const html = convertTemplateToHtml(crntSlide.frontmatter.header, crntSlide.frontmatter, webviewUrl);
+      setHeader(DOMPurify.sanitize(html, { USE_PROFILES: { html: true } }));
     } else {
       fetchHeader();
     }
 
     if (crntSlide && crntSlide.frontmatter.footer) {
-      setFooter(convertTemplateToHtml(crntSlide.frontmatter.footer, crntSlide.frontmatter, webviewUrl));
+      const html = convertTemplateToHtml(crntSlide.frontmatter.footer, crntSlide.frontmatter, webviewUrl);
+      setFooter(DOMPurify.sanitize(html, { USE_PROFILES: { html: true } }));
     } else {
       fetchFooter();
     }

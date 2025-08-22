@@ -830,6 +830,7 @@ export class DemoRunner {
 
     if (step.action === Action.Save) {
       await saveFiles();
+      return;
     }
 
     if (step.action === Action.Close) {

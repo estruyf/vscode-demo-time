@@ -2,9 +2,11 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import Fuse from 'fuse.js';
+import { fileURLToPath } from 'url';  
 
 // Directory containing markdown files
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const docsDir = path.join(__dirname, '../../..', 'docs', 'src', 'content', 'docs');
 
 // Read all markdown files
@@ -35,13 +37,13 @@ const data = files.map(filename => {
     title: frontmatter.title || filename,
     description: frontmatter.description || '',
     content,
-    slug: filename.replace(/\.mdx$/, ''),
+    slug: filename.replace(/\.(md|mdx)$/, ''),
   };
 });
 
 // Configure Fuse.js options
 const options = {
-  keys: ['title', 'content', 'description'],
+  keys: ['title', 'content', 'description', 'slug'],
   useExtendedSearch: true,
   ignoreLocation: true,
   threshold: 0.3,
@@ -58,7 +60,7 @@ if (!fs.existsSync(outputDir)) {
 }
 
 // Write the index and original data for searching
-fs.writeFileSync(path.join(outputDir, 'index.json'), JSON.stringify(index));
+fs.writeFileSync(path.join(outputDir, 'index.json'), index.toJSON(), "utf-8");
 fs.writeFileSync(path.join(outputDir, 'data.json'), JSON.stringify(data));
 
 console.log('Search index built and saved to searchindex folder.');

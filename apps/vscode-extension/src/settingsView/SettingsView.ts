@@ -70,11 +70,11 @@ export class SettingsView {
     }
 
     if (command === WebViewMessages.toVscode.settingsView.getSettings) {
-      SettingsView.getAllSettings(command, requestId);
+      await SettingsView.getAllSettings(command, requestId);
     } else if (command === WebViewMessages.toVscode.settingsView.saveSettings) {
-      SettingsView.saveSettings(command, requestId, payload);
+      await SettingsView.saveSettings(command, requestId, payload);
     } else if (command === WebViewMessages.toVscode.configEditor.filePicker) {
-      SettingsView.selectFile(command, requestId, payload);
+      await SettingsView.selectFile(command, requestId, payload);
     }
   }
 

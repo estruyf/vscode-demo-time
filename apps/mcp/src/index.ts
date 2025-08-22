@@ -1,56 +1,58 @@
 #!/usr/bin/env node
 
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-import { z } from "zod";
-import Fuse, { FuseResult } from "fuse.js";
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { z } from 'zod';
+import Fuse, { FuseResult } from 'fuse.js';
 
 // Get the directory name of the current module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Load the search index and data for fuse.js
-const searchIndexDir = path.join(__dirname, "..", "searchindex");
-const indexJsonPath = path.join(searchIndexDir, "index.json");
-const dataJsonPath = path.join(searchIndexDir, "data.json");
+const searchIndexDir = path.join(__dirname, '..', 'searchindex');
+const indexJsonPath = path.join(searchIndexDir, 'index.json');
+const dataJsonPath = path.join(searchIndexDir, 'data.json');
 
 if (!fs.existsSync(indexJsonPath) || !fs.existsSync(dataJsonPath)) {
-  throw new Error("Search index or data file not found.");
+  throw new Error('Search index or data file not found.');
 }
 
-const indexJson = JSON.parse(fs.readFileSync(indexJsonPath, "utf8"));
+const indexJson = JSON.parse(fs.readFileSync(indexJsonPath, 'utf8'));
 const data: Array<{
   id: string;
+  slug: string;
   title: string;
+  description?: string;
   content: string;
   tags?: string[];
-}> = JSON.parse(fs.readFileSync(dataJsonPath, "utf8"));
+}> = JSON.parse(fs.readFileSync(dataJsonPath, 'utf8'));
 
 // Recreate the Fuse index from the serialized index
 const fuseIndex = Fuse.parseIndex(indexJson);
 const fuse = new Fuse(
   data,
   {
-    keys: ["title", "content", "description", "slug"],
+    keys: ['title', 'content', 'description'],
     useExtendedSearch: true,
     ignoreLocation: true,
     threshold: 0.3,
     fieldNormWeight: 2,
   },
-  fuseIndex
+  fuseIndex,
 );
 
 // Create an MCP server
 // Read version from package.json
-const packageJsonPath = path.join(__dirname, "..", "package.json");
-const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
-const version = packageJson.version || "0.1.0";
+const packageJsonPath = path.join(__dirname, '..', 'package.json');
+const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+const version = packageJson.version || '0.1.0';
 
 const server = new McpServer({
-  name: "Demo Time",
+  name: 'Demo Time',
   version,
 });
 
@@ -61,9 +63,7 @@ const server = new McpServer({
  */
 function squashSearchResults(searchResults: Array<FuseResult<any>>): string {
   // Sort results by score (lowest score = best match)
-  const sortedResults = [...searchResults].sort(
-    (a, b) => (a.score ?? 0) - (b.score ?? 0)
-  );
+  const sortedResults = [...searchResults].sort((a, b) => (a.score ?? 0) - (b.score ?? 0));
 
   // Create a map to track unique documents by ID
   const uniqueDocsMap = new Map<string, { title: string; content: string }>();
@@ -75,6 +75,11 @@ function squashSearchResults(searchResults: Array<FuseResult<any>>): string {
         title: doc.title,
         content: doc.content,
       });
+    } else if (!uniqueDocsMap.has(doc.slug)) {
+      uniqueDocsMap.set(doc.slug, {
+        title: doc.title,
+        content: doc.content,
+      });
     }
   });
 
@@ -82,7 +87,7 @@ function squashSearchResults(searchResults: Array<FuseResult<any>>): string {
   const uniqueDocs = Array.from(uniqueDocsMap.values());
 
   // Build markdown string
-  let markdownResults = "";
+  let markdownResults = '';
   uniqueDocs.forEach((doc) => {
     markdownResults += `# ${doc.title}\n\n${doc.content}\n\n---\n\n`;
   });
@@ -91,8 +96,8 @@ function squashSearchResults(searchResults: Array<FuseResult<any>>): string {
 }
 
 server.tool(
-  "search",
-  "Search in Demo Time documentation using keywords",
+  'search',
+  'Search in Demo Time documentation using keywords',
   { query: z.string().min(1) },
   async ({ query }) => {
     const rawResults = fuse.search(`"${query}"`, { limit: 10 });
@@ -100,12 +105,12 @@ server.tool(
     return {
       content: [
         {
-          type: "text",
+          type: 'text',
           text: markdownResults,
         },
       ],
     };
-  }
+  },
 );
 
 // Start receiving messages on stdin and sending messages on stdout

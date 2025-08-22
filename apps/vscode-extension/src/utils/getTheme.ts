@@ -71,7 +71,9 @@ export const getTheme = async (themeName?: string) => {
   }
 
   if (theme.include) {
-    const includePath = Uri.joinPath(themePath, '..', theme.include);
+    // Resolve include relative to the theme file directory
+    const themeDir = themePath.with({ path: themePath.path.replace(/[^/]+$/, '') });
+    const includePath = Uri.joinPath(themeDir, theme.include);
     const includeContents = await readFile(includePath);
     return { ...theme, ...JSON.parse(includeContents) };
   }

@@ -1,3 +1,4 @@
+import { parseWinPath } from './../utils/parseWinPath';
 import { Uri, window, workspace } from 'vscode';
 import { Extension } from './Extension';
 import { DemoFiles, DemoFile, DemoFileType } from '../models';
@@ -281,7 +282,14 @@ export class DemoFileProvider {
       return;
     }
 
-    const file = Uri.file(filePath);
+    let file: Uri;
+    const workspacePath = parseWinPath(workspaceFolder.uri.fsPath);
+    if (!parseWinPath(filePath).startsWith(workspacePath)) {
+      file = Uri.joinPath(workspaceFolder.uri, filePath);
+    } else {
+      file = Uri.file(filePath);
+    }
+
     await writeFile(file, content, shouldWait);
   }
 }

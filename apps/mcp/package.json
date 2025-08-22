@@ -22,11 +22,18 @@
     "model-context-protocol",
     "ai-assistant"
   ],
+  "files": [
+    "dist",
+    "searchindex",
+    "LICENSE",
+    "README.md"
+  ],
   "author": "Elio Struyf <elio@struyfconsulting.be>",
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.11.5",
-    "fuse.js": "^7.1.0"
+    "fuse.js": "^7.1.0",
+    "zod": "^4.0.17"
   },
   "devDependencies": {
     "@types/node": "^22.15.21",

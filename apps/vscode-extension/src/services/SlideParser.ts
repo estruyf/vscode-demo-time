@@ -180,11 +180,12 @@ export class SlideParser {
   public groupSlidesByProperty(slides: Slide[], property: string): Record<string, Slide[]> {
     return slides.reduce(
       (groups, slide) => {
-        const propertyValue = slide.frontmatter[property] || SlideLayout.Default;
-        if (!groups[propertyValue]) {
-          groups[propertyValue] = [];
+        const propertyValue = slide.frontmatter[property] ?? SlideLayout.Default;
+        const key = String(propertyValue);
+        if (!groups[key]) {
+          groups[key] = [];
         }
-        groups[propertyValue].push(slide);
+        groups[key].push(slide);
         return groups;
       },
       {} as Record<string, Slide[]>,

@@ -14,7 +14,7 @@ export interface DemoFiles {
 }
 
 export interface DemoFile {
-  $schema?: string;
+  $schema: 'https://demotime.show/demo-time.schema.json';
   title: string;
   description?: string;
   version?: Version;

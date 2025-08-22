@@ -79,14 +79,14 @@ export class DemoPanel {
       const crntDemo = DemoRunner.currentDemo;
       const demoSteps = demos.demos.map((demo, idx, allDemos) => {
         let hasExecuted = false;
-        if (executingDemoFile.filePath === path) {
+        if (executingDemoFile?.filePath === path) {
           hasExecuted = !!executingDemoFile.demo.find((d) =>
             d.id ? d.id === demo.id : d.idx === idx,
           );
         }
 
         let isActive = false;
-        if (crntDemo && executingDemoFile.filePath === path) {
+        if (crntDemo && executingDemoFile?.filePath === path) {
           isActive =
             typeof crntDemo.id !== 'undefined'
               ? crntDemo.id === demo.id

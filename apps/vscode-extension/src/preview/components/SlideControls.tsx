@@ -68,7 +68,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
     } else if (previousEnabled) {
       messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.previous);
     }
-  }, [slides, currentSlide, updateSlideIdx]);
+  }, [slides, currentSlide, updateSlideIdx, previousEnabled]);
 
   const next = React.useCallback(() => {
     if (slides === 1) {
@@ -155,7 +155,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
         style={{ boxShadow: '0 0 8px 0 var(--vscode-widget-shadow)' }}
       >
         <div className='flex items-center'>
-          <SlideControl title="Toggle presentation mode" className={`${isPresentationMode ? `bg-[var(--vscode-statusBarItem-errorBackground)] hover:-[var(--vscode-statusBarItem-errorHoverBackground)]` : ''}`} icon={<ProjectorIcon className={`w-4 h-4 inline-flex justify-center items-center ${isPresentationMode ? `text-[var(--vscode-statusBarItem-errorForeground)] hover:text-[var(--vscode-statusBarItem-errorHoverForeground)]` : `text-[var(--vscode-editorWidget-foreground)]`}`} />} action={togglePresentationMode} />
+          <SlideControl title="Toggle presentation mode" className={`${isPresentationMode ? `bg-[var(--vscode-statusBarItem-errorBackground)] hover:bg-[var(--vscode-statusBarItem-errorHoverBackground)]` : ''}`} icon={<ProjectorIcon className={`w-4 h-4 inline-flex justify-center items-center ${isPresentationMode ? `text-[var(--vscode-statusBarItem-errorForeground)] hover:text-[var(--vscode-statusBarItem-errorHoverForeground)]` : `text-[var(--vscode-editorWidget-foreground)]`}`} />} action={togglePresentationMode} />
           <SlideControl title="Toggle fullscreen" iconName="screen-full" action={toggleFullscreen} />
           <SlideControl title="Toggle presentation view" icon={<WhiteboardIcon className="w-4 h-4 text-[var(--vscode-editorWidget-foreground)] inline-flex justify-center items-center" />} action={togglePresentationView} />
           <SlideControl title="Close sidebar" icon={(

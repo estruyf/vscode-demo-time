@@ -663,7 +663,7 @@
         },
         {
           "command": "demo-time.toggleSelectionHighlight",
-          "when": "activeEditor == 'workbench.editors.files.textFileEditor' && config.demoTime.hideEditorActions === false",
+          "when": "activeEditor == 'workbench.editors.files.textFileEditor' && config.demoTime.hideEditorActions == false",
           "group": "navigation@1"
         },
         {
@@ -673,7 +673,7 @@
         },
         {
           "command": "demo-time.addToStep",
-          "when": "activeEditor == 'workbench.editors.files.textFileEditor' && !(resourceDirname =~ /\\.demo$/) && config.demoTime.hideEditorActions === false",
+          "when": "activeEditor == 'workbench.editors.files.textFileEditor' && !(resourceDirname =~ /\\.demo$/) && config.demoTime.hideEditorActions == false",
           "group": "navigation@1"
         }
       ]
@@ -812,6 +812,7 @@
     "@estruyf/vscode": "^1.1.0",
     "@types/cors": "^2.8.17",
     "@types/diff": "^7.0.1",
+    "@types/dompurify": "^3.0.5",
     "@types/jest": "^29.5.11",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "18.x",
@@ -825,6 +826,7 @@
     "cors": "^2.8.5",
     "css-loader": "^7.1.2",
     "diff": "^7.0.0",
+    "dompurify": "^3.2.6",
     "eslint": "^8.52.0",
     "express": "^4.21.2",
     "glob": "^10.3.10",

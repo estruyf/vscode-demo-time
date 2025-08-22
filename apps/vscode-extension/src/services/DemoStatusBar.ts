@@ -19,6 +19,7 @@ export class DemoStatusBar {
   private static countdownPaused: boolean = false;
   private static pausedTimeRemaining: number | undefined;
   private static nextDemo: Demo | undefined;
+  private static clockTimer: ReturnType<typeof setTimeout> | undefined;
 
   public static register() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
@@ -99,70 +100,86 @@ export class DemoStatusBar {
     const demoFiles = await DemoFileProvider.getFiles();
     const executingFile = await DemoRunner.getExecutedDemoFile();
 
-    if (demoFiles && executingFile.filePath) {
-      let executingDemos = demoFiles[executingFile.filePath].demos;
-      const lastDemo = executingFile.demo[executingFile.demo.length - 1];
-
-      let crntDemoIdx = executingDemos.findIndex((d, idx) =>
-        d.id ? d.id === lastDemo.id : idx === lastDemo.idx,
-      );
-
-      // Show the notes action
-      const crntDemo = executingDemos[crntDemoIdx];
-
-      if (crntDemo.notes && crntDemo.notes.path) {
-        DemoStatusBar.statusBarNotes.show();
-      } else {
-        DemoStatusBar.statusBarNotes.hide();
-      }
-
-      // Check if exists and is the last demo
-      if (crntDemoIdx !== -1 && crntDemoIdx === executingDemos.length - 1) {
-        // Check if there is a next demo file
-        const nextFile = await getNextDemoFile(executingFile);
-        if (!nextFile) {
-          DemoStatusBar.statusBarItem.hide();
-          DemoStatusBar.nextDemo = undefined;
-          PresenterView.postMessage(
-            WebViewMessages.toWebview.updateNextDemo,
-            DemoStatusBar.nextDemo,
-          );
-          return;
-        }
-
-        // Reset the current demo index + set the next demos
-        crntDemoIdx = -1;
-        executingDemos = nextFile.demo.demos;
-      }
-
-      // Get the next enabled demo (skip disabled ones)
-      let nextDemo: Demo | undefined = undefined;
-      for (let i = crntDemoIdx + 1; i < executingDemos.length; i++) {
-        if (!executingDemos[i].disabled) {
-          nextDemo = executingDemos[i];
-          break;
-        }
-      }
-
-      if (nextDemo) {
-        DemoStatusBar.createStatusBarItems();
-
-        Logger.info(`Next demo: ${nextDemo.title}`);
-        DemoStatusBar.nextDemo = nextDemo;
-        DemoStatusBar.statusBarItem.text = `$(dt-logo) ${nextDemo.title}`;
-        DemoStatusBar.statusBarItem.tooltip =
-          nextDemo.description || `Next demo: ${nextDemo.title}`;
-        DemoStatusBar.statusBarItem.show();
-      } else {
-        Logger.info('No next demo found');
-        DemoStatusBar.nextDemo = undefined;
-        DemoStatusBar.statusBarItem.hide();
-      }
-    } else {
+    if (!demoFiles || !executingFile?.filePath) {
       Logger.info('No next demo file path found');
       DemoStatusBar.nextDemo = undefined;
-      DemoStatusBar.statusBarItem.hide();
+      DemoStatusBar.statusBarItem?.hide();
+      DemoStatusBar.statusBarNotes?.hide();
+      PresenterView.postMessage(WebViewMessages.toWebview.updateNextDemo, DemoStatusBar.nextDemo);
+      return;
+    }
+
+    const fileEntry = demoFiles[executingFile.filePath];
+    if (!fileEntry) {
+      Logger.info('Executing file not found in loaded demo files');
+      DemoStatusBar.nextDemo = undefined;
+      DemoStatusBar.statusBarItem?.hide();
+      DemoStatusBar.statusBarNotes?.hide();
+      PresenterView.postMessage(WebViewMessages.toWebview.updateNextDemo, DemoStatusBar.nextDemo);
+      return;
+    }
+
+    let executingDemos = fileEntry.demos ?? [];
+    const lastDemo = executingFile.demo[executingFile.demo.length - 1];
+    if (!lastDemo) {
+      Logger.info('No current demo step found');
+      DemoStatusBar.nextDemo = undefined;
+      DemoStatusBar.statusBarItem?.hide();
+      DemoStatusBar.statusBarNotes?.hide();
+      PresenterView.postMessage(WebViewMessages.toWebview.updateNextDemo, DemoStatusBar.nextDemo);
+      return;
+    }
+
+    let crntDemoIdx = executingDemos.findIndex((d, idx) =>
+      d.id ? d.id === lastDemo.id : idx === lastDemo.idx,
+    );
+
+    // Show the notes action
+    const crntDemo = executingDemos[crntDemoIdx];
+
+    if (crntDemo.notes && crntDemo.notes.path) {
+      DemoStatusBar.statusBarNotes.show();
+    } else {
       DemoStatusBar.statusBarNotes.hide();
+    }
+
+    // Check if exists and is the last demo
+    if (crntDemoIdx !== -1 && crntDemoIdx === executingDemos.length - 1) {
+      // Check if there is a next demo file
+      const nextFile = await getNextDemoFile(executingFile);
+      if (!nextFile) {
+        DemoStatusBar.statusBarItem.hide();
+        DemoStatusBar.nextDemo = undefined;
+        PresenterView.postMessage(WebViewMessages.toWebview.updateNextDemo, DemoStatusBar.nextDemo);
+        return;
+      }
+
+      // Reset the current demo index + set the next demos
+      crntDemoIdx = -1;
+      executingDemos = nextFile.demo.demos;
+    }
+
+    // Get the next enabled demo (skip disabled ones)
+    let nextDemo: Demo | undefined = undefined;
+    for (let i = crntDemoIdx + 1; i < executingDemos.length; i++) {
+      if (!executingDemos[i].disabled) {
+        nextDemo = executingDemos[i];
+        break;
+      }
+    }
+
+    if (nextDemo) {
+      DemoStatusBar.createStatusBarItems();
+
+      Logger.info(`Next demo: ${nextDemo.title}`);
+      DemoStatusBar.nextDemo = nextDemo;
+      DemoStatusBar.statusBarItem.text = `$(dt-logo) ${nextDemo.title}`;
+      DemoStatusBar.statusBarItem.tooltip = nextDemo.description || `Next demo: ${nextDemo.title}`;
+      DemoStatusBar.statusBarItem.show();
+    } else {
+      Logger.info('No next demo found');
+      DemoStatusBar.nextDemo = undefined;
+      DemoStatusBar.statusBarItem.hide();
     }
 
     PresenterView.postMessage(WebViewMessages.toWebview.updateNextDemo, DemoStatusBar.nextDemo);
@@ -310,7 +327,10 @@ export class DemoStatusBar {
     }
     DemoStatusBar.statusBarClock.show();
 
-    setTimeout(() => {
+    if (DemoStatusBar.clockTimer) {
+      clearTimeout(DemoStatusBar.clockTimer);
+    }
+    DemoStatusBar.clockTimer = setTimeout(() => {
       DemoStatusBar.startClock();
     }, 1000);
   }
@@ -340,6 +360,8 @@ export class DemoStatusBar {
       } else {
         DemoStatusBar.statusBarClock.command = COMMAND.startCountdown;
       }
+    } else {
+      DemoStatusBar.statusBarClock.command = undefined;
     }
   }
 
@@ -348,7 +370,7 @@ export class DemoStatusBar {
   }
 
   private static getClockText(clock: string): string {
-    const showClock = Extension.getInstance().getSetting<number>(Config.clock.show);
+    const showClock = Extension.getInstance().getSetting<boolean>(Config.clock.show);
     return showClock ? `$(dt-clock) ${clock}` : '';
   }
 

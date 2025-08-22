@@ -3,6 +3,7 @@ import {
   ExtensionContext,
   ExtensionMode,
   SecretStorage,
+  Uri,
   workspace,
 } from 'vscode';
 import { Config } from '../constants';
@@ -17,7 +18,12 @@ export class Extension {
    * @param ctx
    */
   public static getInstance(ctx?: ExtensionContext): Extension {
-    if (!Extension.instance && ctx) {
+    if (!Extension.instance) {
+      if (!ctx) {
+        throw new Error(
+          `${Config.title}: Extension not initialized. Call getInstance(ctx) from your activate() first.`,
+        );
+      }
       Extension.instance = new Extension(ctx);
     }
 
@@ -82,6 +88,13 @@ export class Extension {
    */
   public get extensionPath(): string {
     return this.ctx.extensionPath;
+  }
+
+  /**
+   * Get the extension's URI
+   */
+  public get extensionUri(): Uri {
+    return this.ctx.extensionUri;
   }
 
   /**

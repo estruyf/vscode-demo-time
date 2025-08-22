@@ -2,7 +2,7 @@
   <img alt="Demo Time" src="./assets/logo/demotime.png">
 </h1>
 
-<h2 align="center">Demo Time empowers you to script flawless coding demonstrations and present slides seamlessly within Visual Studio Code. Eliminate typos and missteps, ensuring engaging and stress-free presentations..</h2>
+<h2 align="center">Demo Time empowers you to script flawless coding demonstrations and present slides seamlessly within Visual Studio Code. Eliminate typos and missteps, ensuring engaging and stress-free presentations.</h2>
 
 <p align="center">
   <a href="https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-demo-time" title="Check it out on the Visual Studio Marketplace">

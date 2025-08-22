@@ -27,9 +27,7 @@ export class Preview {
   }
 
   public static setCurrentSlideIndex(index: number): void {
-    if (index >= 0) {
-      Preview.currentSlideIndex = index;
-    }
+    Preview.currentSlideIndex = Math.max(index, -1);
   }
 
   public static register() {
