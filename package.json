@@ -45,11 +45,6 @@
   },
   "author": "Elio Struyf <elio@struyfconsulting.be> (https://www.eliostruyf.com)",
   "license": "MIT",
-  "workspaces": [
-    "packages/*",
-    "apps/*",
-    "docs"
-  ],
   "devDependencies": {
     "@actions/core": "^1.11.1",
     "@nx/js": "^21.4.0",

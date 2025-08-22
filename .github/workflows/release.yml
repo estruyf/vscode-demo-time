@@ -5,10 +5,17 @@ on:
       - published
   workflow_dispatch:
 
+env:
+  VSCODE_EXT_PATH: apps/vscode-extension
+
 jobs:
   build:
     name: 'Build and release'
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ${{ env.VSCODE_EXT_PATH }}
 
     steps:
       - uses: actions/checkout@v4
