@@ -1,13 +1,13 @@
 ---
 const response = await fetch(
-  "https://marketplace.visualstudio.com/_apis/public/gallery/publishers/eliostruyf/extensions/vscode-demo-time/reviews?count=6&filterOptions=3"
+  'https://marketplace.visualstudio.com/_apis/public/gallery/publishers/eliostruyf/extensions/vscode-demo-time/reviews?count=6&filterOptions=3',
 );
 const data = await response.json();
 const reviews = data.reviews;
 ---
 
 <section class="testimonial-wrapper">
-  <h2 class="mb-8">Testimonials</h2>
+  <h2 class="mb-8">What people are saying</h2>
 
   <ul class="list-none p-0 grid grid-cols-1 md:grid-cols-2 gap-6">
     {

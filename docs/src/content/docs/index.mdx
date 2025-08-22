@@ -6,7 +6,7 @@ head:
 description: Deliver flawless coding demos with this VS Code extension—no live coding errors, just professional presentations every time.
 template: splash
 hero:
-  title: "Present like a pro: code, demo, and slides — all in your editor."
+  title: "The only presentation tool designed for live coding."
   tagline: Transform your coding presentations with seamless demo automation and slide integration—all without leaving your editor. Execute flawless demonstrations step-by-step, advance through slides effortlessly, and keep your audience captivated while eliminating the stress of live coding mishaps. Works in VS Code, Cursor, or any other VS Code-based editor.
   image:
     alt: Demo Time
@@ -24,6 +24,7 @@ lastmod: 2025-07-09T08:12:03.006Z
 
 import { Image } from 'astro:assets';
 import { Card, CardGrid } from '@astrojs/starlight/components';
+import Events from '../../components/Events.astro';
 import Reviewers from '../../components/Reviewers.astro';
 import CustomCard from '../../components/CustomCard.astro';
 import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
@@ -92,6 +93,8 @@ import Features from '../../components/Features.astro';
 	</section>
 
 	<Benefits />
+
+	{/* <Events /> */}
 
 	<Reviewers />
 
