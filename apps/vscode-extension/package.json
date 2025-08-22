@@ -783,7 +783,7 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "npm run clean && node ./scripts/update-changelog.cjs && npm run compile",
+    "vscode:prepublish": "npm run clean && node ./scripts/copy-changelog.cjs && npm run compile",
     "compile": "npm-run-all --parallel compile:*",
     "compile:ext": "tsup --minify",
     "compile:wc": "tsup --minify --config tsup.wc.config.ts",
