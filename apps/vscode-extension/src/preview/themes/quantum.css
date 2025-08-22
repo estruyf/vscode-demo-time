@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@config "../../../tailwind.config.js";
 
 /* Quantum Theme for Demo Time
  * A modern, tech-focused theme with gradient accents

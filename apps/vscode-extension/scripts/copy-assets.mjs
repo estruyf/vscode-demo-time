@@ -17,6 +17,12 @@ async function copyFiles(src, dest) {
       if (stat.isFile()) {
         await fs.copyFile(srcFile, destFile);
         console.log(`Copied: ${srcFile} -> ${destFile}`);
+
+        const content = await fs.readFile(destFile, 'utf8');
+        const cleaned = content
+          .replace(/^@import\s+'tailwindcss';\s*\n?/m, '')
+          .replace(/^@config\s+"..\/..\/..\/tailwind\.config\.js";\s*\n?/m, '');
+        await fs.writeFile(destFile, cleaned, 'utf8');
       }
     }
   } catch (error) {

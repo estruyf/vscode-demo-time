@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@config "../../tailwind.config.js";
 
 :root {
   --demotime-transition-duration: 0.5s;

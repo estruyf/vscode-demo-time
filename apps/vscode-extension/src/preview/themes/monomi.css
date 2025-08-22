@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@config "../../../tailwind.config.js";
 
 /* 
   Monomi Theme - Based on: https://github.com/estruyf/slidev-theme-the-unnamed
