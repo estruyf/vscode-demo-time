@@ -21,7 +21,7 @@ jobs:
           node-version: 20
 
       - name: Install the dependencies
-        run: npm ci
+        run: npm i
 
       - name: Verify actions
         run: node .github/scripts/verify-actions.mjs
