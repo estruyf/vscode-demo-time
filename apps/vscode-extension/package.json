@@ -854,7 +854,7 @@
     "rimraf": "^6.0.1",
     "style-loader": "^4.0.0",
     "tailwind": "^4.0.0",
-    "tailwindcss": "^3.4.16",
+    "tailwindcss": "^4.1.12",
     "ts-jest": "^29.1.1",
     "ts-loader": "^9.5.1",
     "tsup": "^8.5.0",

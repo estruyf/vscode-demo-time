@@ -28,7 +28,7 @@ export const Notes: React.FunctionComponent<INotesProps> = ({
   }, [content]);
 
   return (
-    <div className="rounded-[2px] border border-[var(--vscode-panel-border)] shadow-sm flex flex-col">
+    <div className="rounded-[2px] border border-(--vscode-panel-border) shadow-xs flex flex-col">
       <div className='flex justify-between items-center'>
         <DemoHeader title={`Presenter notes`} />
 

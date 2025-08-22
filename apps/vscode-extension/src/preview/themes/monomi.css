@@ -1,5 +1,24 @@
 @import 'tailwindcss';
-@config "../../../tailwind.config.js";
+
+@custom-variant dark (&:is(.vscode-dark *));
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
 
 /* 
   Monomi Theme - Based on: https://github.com/estruyf/slidev-theme-the-unnamed
@@ -103,10 +122,10 @@
   }
 
   a {
-    @apply text-[var(--demotime-link-foreground)] underline;
+    @apply text-(--demotime-link-foreground) underline;
 
     &:hover {
-      @apply text-[var(--demotime-link-activeForeground)];
+      @apply text-(--demotime-link-activeForeground);
     }
   }
 
@@ -136,7 +155,7 @@
   }
 
   blockquote {
-    @apply border-l-4 p-2 border-[var(--demotime-blockquote-border)] bg-[var(--demotime-blockquote-background)];
+    @apply border-l-4 p-2 border-(--demotime-blockquote-border) bg-(--demotime-blockquote-background);
   }
 
   .default {

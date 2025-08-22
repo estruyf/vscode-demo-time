@@ -1,5 +1,24 @@
 @import 'tailwindcss';
-@config "../../tailwind.config.js";
+
+@custom-variant dark (&:is(.vscode-dark *));
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
 
 :root {
   --demotime-transition-duration: 0.5s;
@@ -59,11 +78,11 @@ table td {
 }
 
 .slide__header {
-  @apply absolute top-0 left-0 w-full h-[2rem] text-[0.75rem] px-8 flex items-center justify-center opacity-75 text-[var(--vscode-editor-foreground)];
+  @apply absolute top-0 left-0 w-full h-8 text-[0.75rem] px-8 flex items-center justify-center opacity-75 text-(--vscode-editor-foreground);
 }
 
 .slide__footer {
-  @apply absolute bottom-0 left-0 w-full h-[2rem] text-[0.75rem] px-8 flex items-center justify-between opacity-75 text-[var(--vscode-editor-foreground)];
+  @apply absolute bottom-0 left-0 w-full h-8 text-[0.75rem] px-8 flex items-center justify-between opacity-75 text-(--vscode-editor-foreground);
 }
 
 .slide__content {

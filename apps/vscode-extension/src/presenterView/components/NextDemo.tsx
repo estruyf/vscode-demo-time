@@ -54,7 +54,7 @@ export const NextDemo: React.FunctionComponent<INextDemoProps> = ({
       appearance={secondary ? "secondary" : "primary"}>
       <span className={titleClass}>{nextDemo?.title || "Start"}</span>
 
-      <Icon name="arrow-right" className={`!text-inherit ${iconClass}`} />
+      <Icon name="arrow-right" className={`text-inherit! ${iconClass}`} />
     </Button>
   );
 };

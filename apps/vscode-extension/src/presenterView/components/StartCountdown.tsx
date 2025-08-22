@@ -25,7 +25,7 @@ export const StartCountdown: React.FunctionComponent<IStartCountdownProps> = ({
       appearance={`secondary`}
       onClick={stopCountdown}
       title={title}
-      className='!bg-transparent hover:!bg-[var(--vscode-button-secondaryHoverBackground)]'>
+      className='bg-transparent! hover:bg-(--vscode-button-secondaryHoverBackground)!'>
       {
         isStarted ? (
           <TimerOffIcon className="w-4 h-4" />

@@ -56,12 +56,12 @@ export const Countdown: React.FunctionComponent<ICountdownProps> = ({
   }
 
   return (
-    <div className="rounded-[2px] border border-[var(--vscode-panel-border)] shadow-sm">
+    <div className="rounded-[2px] border border-(--vscode-panel-border) shadow-xs">
       <div className="flex flex-col space-y-1.5 p-4">
         <h3 className="text-xl font-semibold leading-none tracking-tight">Countdown</h3>
       </div>
       <div className="p-4 pt-0">
-        <p className={`text-2xl font-bold ${isNegative ? 'text-[var(--vscode-notificationsErrorIcon-foreground)]' : ''}`}>
+        <p className={`text-2xl font-bold ${isNegative ? 'text-(--vscode-notificationsErrorIcon-foreground)' : ''}`}>
           {countdown ?? (time ? `${time} min` : '0s')}
         </p>
       </div>

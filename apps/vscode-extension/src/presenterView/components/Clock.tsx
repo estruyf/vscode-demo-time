@@ -32,7 +32,7 @@ export const Clock: React.FunctionComponent<IClockProps> = (props: React.PropsWi
   }
 
   return (
-    <div className="rounded-[2px] border border-[var(--vscode-panel-border)] shadow-sm">
+    <div className="rounded-[2px] border border-(--vscode-panel-border) shadow-xs">
       <div className="flex flex-col space-y-1.5 p-4">
         <h3 className="text-xl font-semibold leading-none tracking-tight">Current Time</h3>
       </div>

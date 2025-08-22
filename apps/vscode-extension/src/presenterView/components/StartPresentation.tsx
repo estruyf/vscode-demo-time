@@ -47,10 +47,10 @@ export const StartPresentation: React.FunctionComponent<IStartPresentationProps>
         appearance={`secondary`}
         onClick={startPresentationMode}
         title={title}
-        className='!bg-transparent hover:!bg-[var(--vscode-button-secondaryHoverBackground)]'>
+        className='bg-transparent! hover:bg-(--vscode-button-secondaryHoverBackground)!'>
         {
           isStarted ? (
-            <Icon name='debug-stop' className="w-4 h-4 !text-[var(--vscode-button-secondaryForeground)] hover:!text-[var(--vscode-button-secondaryHoverForeground)]" />
+            <Icon name='debug-stop' className="w-4 h-4 text-(--vscode-button-secondaryForeground)! hover:text-(--vscode-button-secondaryHoverForeground)!" />
           ) : (
             <ProjectorIcon className="w-4 h-4" />
           )

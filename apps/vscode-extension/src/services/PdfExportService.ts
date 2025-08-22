@@ -77,12 +77,15 @@ export class PdfExportService {
           }
 
           // Sort the demo files by their paths
-          demoFiles = sortFiles(demoFiles).reduce((sortedFiles, key) => {
-            if (demoFiles) {
-              sortedFiles[key] = demoFiles[key];
-            }
-            return sortedFiles;
-          }, {} as typeof demoFiles);
+          demoFiles = sortFiles(demoFiles).reduce(
+            (sortedFiles, key) => {
+              if (demoFiles) {
+                sortedFiles[key] = demoFiles[key];
+              }
+              return sortedFiles;
+            },
+            {} as typeof demoFiles,
+          );
 
           // Get all slide actions
           const slideActions: Step[] = [];
@@ -374,7 +377,7 @@ export class PdfExportService {
 
     mermaid.initialize({ startOnLoad: true, theme: "${isDark ? 'dark' : 'default'}" });
   </script>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script type="module">${webcomponents}</script>
 
   ${customComponentsUrls.map((url) => `<script type="module" src="${url}"></script>`).join('\n')}
@@ -586,10 +589,13 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
     }
 
     // Get the color variables from the theme
-    const colors = Object.entries(theme.colors).reduce((acc, [key, value]) => {
-      acc[key] = value as string;
-      return acc;
-    }, {} as Record<string, string>);
+    const colors = Object.entries(theme.colors).reduce(
+      (acc, [key, value]) => {
+        acc[key] = value as string;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
 
     // Get the font size and family from the editor settings
     // --vscode-editor-font-size

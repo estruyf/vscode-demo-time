@@ -58,7 +58,7 @@ export const App: React.FunctionComponent<IAppProps> = (props: React.PropsWithCh
 
   return (
     <div className='min-h-screen'>
-      <section className='bg-[var(--vscode-editor-background)] mb-4 flex items-center justify-between sticky top-0 w-full border-b border-[var(--vscode-panel-border)]'>
+      <section className='bg-(--vscode-editor-background) mb-4 flex items-center justify-between sticky top-0 w-full border-b border-(--vscode-panel-border)'>
         <div className='flex gap-2 items-center py-2'>
           <StartPresentation />
 
@@ -69,7 +69,7 @@ export const App: React.FunctionComponent<IAppProps> = (props: React.PropsWithCh
           }
 
           <NextDemo
-            className='!bg-transparent hover:!bg-[var(--vscode-button-secondaryHoverBackground)]'
+            className='bg-transparent! hover:bg-(--vscode-button-secondaryHoverBackground)!'
             titleClass='sr-only'
             secondary />
         </div>

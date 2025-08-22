@@ -16,8 +16,8 @@ export const ResetAction: React.FunctionComponent<IResetActionProps> = (props: R
         appearance={`secondary`}
         onClick={reset}
         title={`Reset the presentation`}
-        className='!bg-transparent hover:!bg-[var(--vscode-button-secondaryHoverBackground)]'>
-        <Icon name='refresh' className="w-4 h-4 !text-[var(--vscode-button-secondaryForeground)] hover:!text-[var(--vscode-button-secondaryHoverForeground)]" />
+        className='bg-transparent! hover:bg-(--vscode-button-secondaryHoverBackground)!'>
+        <Icon name='refresh' className="w-4 h-4 text-(--vscode-button-secondaryForeground)! hover:text-(--vscode-button-secondaryHoverForeground)!" />
         
         <span className='sr-only'>Reset the presentation</span>
       </Button>
