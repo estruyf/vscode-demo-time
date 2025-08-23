@@ -18,6 +18,11 @@
   ::file-selector-button {
     border-color: var(--color-gray-200, currentcolor);
   }
+
+  button,
+  [role='button'] {
+    cursor: pointer;
+  }
 }
 
 .notes-container {
