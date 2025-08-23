@@ -68,9 +68,7 @@ export const useDemoConfig = (initialConfig?: DemoConfig) => {
     if (isCurrentlyDirty !== isDirty) {
       setIsDirty(isCurrentlyDirty);
       // Send dirty state to VS Code
-      messageHandler.send(WebViewMessages.toVscode.configEditor.updateConfig, {
-        dirty: isCurrentlyDirty,
-      });
+      messageHandler.send(WebViewMessages.toVscode.configEditor.updateConfig, config);
     }
   }, [config, initialConfigSnapshot, isDirty]);
 

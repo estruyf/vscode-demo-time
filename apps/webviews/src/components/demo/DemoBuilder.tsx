@@ -39,6 +39,8 @@ export const DemoBuilder: React.FC<{ initialConfig: DemoConfig }> = ({ initialCo
     validation
   } = useDemoConfig(initialConfig);
 
+  console.log(`current config: ${JSON.stringify(config, null, 2)}`);
+
   const {
     handleSave,
   } = useFileOperations();
@@ -54,7 +56,7 @@ export const DemoBuilder: React.FC<{ initialConfig: DemoConfig }> = ({ initialCo
     config,
     onSave: handleSave,
     interval: 20000, // 20 seconds
-    enabled: true
+    enabled: false
   });
 
   const handlePlayDemo = (demoIndex: number) => {
