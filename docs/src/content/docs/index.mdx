@@ -2,54 +2,58 @@
 title: Demo Time
 head:
   - tag: title
-    content: Demo Time - Live demos & slides in VS Code
-description: Deliver flawless coding demos with this VS Code extension—no live coding errors, just professional presentations every time.
+    content: Demo Time - Never stress about live coding again
+description: The only presentation tool designed for flawless live coding. Script your demos to perfection—no typos, no missteps, just professional presentations every time.
 template: splash
 hero:
-  title: "The only presentation tool designed for live coding."
-  tagline: Transform your coding presentations with seamless demo automation and slide integration—all without leaving your editor. Execute flawless demonstrations step-by-step, advance through slides effortlessly, and keep your audience captivated while eliminating the stress of live coding mishaps. Works in VS Code, Cursor, or any other VS Code-based editor.
+  title: Never stress about live coding again
+  tagline: The only presentation tool designed for flawless live coding demos. Script your coding presentations to perfection—no typos, no missteps, just professional results every time. Execute demonstrations step-by-step, advance through slides effortlessly, and focus on your audience instead of worrying about errors. Works in VS Code, Cursor, or any other VS Code-based editor.
   image:
     alt: Demo Time
     file: ../../assets/demotime-bg.svg
   actions:
-    - text: Get started
+    - text: Start your first stress-free demo
       link: getting-started/
       icon: right-arrow
-    - text: Get the extension
+    - text: Install the VS Code extension now
       link: https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-demo-time
       icon: external
       variant: secondary
-lastmod: 2025-07-09T08:12:03.006Z
+lastmod: 2025-08-22T18:09:18.747Z
 ---
 
 import { Image } from 'astro:assets';
 import { Card, CardGrid } from '@astrojs/starlight/components';
-import Events from '../../components/Events.astro';
-import Reviewers from '../../components/Reviewers.astro';
 import CustomCard from '../../components/CustomCard.astro';
 import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
 import Benefits from '../../components/Benefits.astro';
 import Cta from '../../components/Cta.astro';
 import Preview from '../../components/Preview.astro';
 import Features from '../../components/Features.astro';
+import SocialProof from '../../components/SocialProof.astro';
+import LiveCodingComparison from '../../components/LiveCodingComparison.astro';
 
 <div class="space-y-24">
 	<Preview />
 
+	<LiveCodingComparison />
+
 	<Features />
 
+	<SocialProof />
+
 	<section>
-		<h2>Check out the overview video</h2>
+		<h2>See Demo Time in action</h2>
 
 		<YouTubeEmbed videoId="uMAIQTV41yQ" title="Demo Time Extension Overview" />
 	</section>
 
 	<section>
-		<h2>Build with the best live coding tips in mind</h2>
+		<h2>Built with the best live coding practices in mind</h2>
 
 		<CardGrid>
-			<CustomCard title="Easily follow your script" icon="rocket">
-				No more written notes/scripts needed. Simply trigger the next demo step and maintain perfect flow throughout your presentation.
+			<CustomCard title="Script every step in advance" icon="rocket">
+				Know exactly what happens and when. No more forgetting commands or fumbling under pressure—just smooth, predictable demos every time.
 
 				<svg xmlns="http://www.w3.org/2000/svg" slot="icon" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -60,19 +64,19 @@ import Features from '../../components/Features.astro';
 				</svg>
 			</CustomCard>
 
-			<CustomCard title="Focus on your audience" icon="rocket">
-				Focus entirely on your audience. With automated steps, you'll never lose their attention by opening the wrong files, or making mistakes.
+			<CustomCard title="Zero context switching" icon="rocket">
+				No more jumping between PowerPoint, terminal, and editor. Everything—slides, code, and terminal—lives in your editor where you're most comfortable.
 
 				<svg xmlns="http://www.w3.org/2000/svg" slot="icon" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-					<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-					<circle cx="9" cy="7" r="4"/>
-					<path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-					<path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+					<rect width="7" height="7" x="3" y="3" rx="1"/>
+					<rect width="7" height="7" x="14" y="3" rx="1"/>
+					<rect width="7" height="7" x="14" y="14" rx="1"/>
+					<rect width="7" height="7" x="3" y="14" rx="1"/>
 				</svg>
 			</CustomCard>
 
-			<CustomCard title="Smart highlights" icon="rocket">
-				Simply specify which lines to highlight, and Demo Time handles the rest. Keep your audience focused on the relevant code.
+			<CustomCard title="Precision highlighting" icon="rocket">
+				Draw attention to exactly the code that matters. Specify which lines to highlight and Demo Time handles the rest—your audience stays focused.
 
 				<svg xmlns="http://www.w3.org/2000/svg" slot="icon" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<path d="m8 3 4 9 4-9"/>
@@ -82,8 +86,8 @@ import Features from '../../components/Features.astro';
 				</svg>
 			</CustomCard>
 
-			<CustomCard title="Easier dry-runs" icon="rocket">
-				Create a starting branch, test your demo steps, and ensure everything works perfectly. No more juggling snippets or notes.
+			<CustomCard title="Demo like a pro" icon="rocket">
+				Test your demo steps in advance and ensure everything works perfectly. No more juggling snippets, notes, or worrying about what could go wrong.
 
 				<svg xmlns="http://www.w3.org/2000/svg" slot="icon" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<path d="M20 6 9 17l-5-5"/>
@@ -93,10 +97,6 @@ import Features from '../../components/Features.astro';
 	</section>
 
 	<Benefits />
-
-	{/* <Events /> */}
-
-	<Reviewers />
 
 	<Cta />
 </div>

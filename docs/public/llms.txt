@@ -6,6 +6,7 @@
 
 - [Supported actions | Demo Time](https://demotime.show/actions/): List of all supported actions in Demo Time
 - [GitHub Copilot actions | Demo Time](https://demotime.show/actions/copilot/): Actions for integrating GitHub Copilot in Demo Time
+- [Demo Time actions | Demo Time](https://demotime.show/actions/demotime/): Actions for controlling the Demo Time extension
 - [External application actions | Demo Time](https://demotime.show/actions/external/): Perform actions that interact with external applications from your demos.
 - [File actions | Demo Time](https://demotime.show/actions/file/): File actions are used to open, create, or preview files in the editor.
 - [Interaction actions | Demo Time](https://demotime.show/actions/interactions/): Perform interaction actions in your demos like copying to clipboard, pasting content, typing text, and pressing keys.
@@ -33,7 +34,7 @@
 ## Examples
 
 - [Projects | Demo Time](https://demotime.show/examples/): Examples of projects that you can use to learn and understand how to use the extension.
-- [Showcases | Demo Time](https://demotime.show/examples/showcases/): Showcases of where Demo Time is used.
+- [Showcases | Demo Time](https://demotime.show/examples/showcases/): Real-world usage of Demo Time at conferences, workshops, and presentations worldwide.
 
 ## Features
 

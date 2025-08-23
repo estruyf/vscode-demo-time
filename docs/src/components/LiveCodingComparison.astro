@@ -1,0 +1,256 @@
+---
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import Check from './Check.astro';
+import XMark from './XMark.astro';
+---
+
+<section>
+  <div class="comparison-container">
+    <div class="comparison-header">
+      <h2>Demo Time vs. Traditional Presentation Tools</h2>
+      <p>
+        While other tools focus on slides and design, Demo Time is the only presentation tool
+        specifically designed for live coding.
+      </p>
+    </div>
+
+    <div class="comparison-grid space-y-0">
+      <div class="comparison-column demo-time">
+        <div class="column-header">
+          <h3>Demo Time</h3>
+          <span class="tag live-coding">Built for Live Coding</span>
+        </div>
+        <ul class="feature-list">
+          <li class="feature-item flex text-center">
+            <span class="text-green-400"><Check /></span>
+            <span>Script every coding step in advance</span>
+          </li>
+          <li class="feature-item flex text-center">
+            <span class="text-green-400"><Check /></span>
+            <span>Seamless editor integration</span>
+          </li>
+          <li class="feature-item flex text-center">
+            <span class="text-green-400"><Check /></span>
+            <span>Typo-proof live demos</span>
+          </li>
+          <li class="feature-item flex text-center">
+            <span class="text-green-400"><Check /></span>
+            <span>Terminal automation</span>
+          </li>
+          <li class="feature-item flex text-center">
+            <span class="text-green-400"><Check /></span>
+            <span>Code highlighting & navigation</span>
+          </li>
+          <li class="feature-item flex text-center">
+            <span class="text-green-400"><Check /></span>
+            <span>Slides + code in one place</span>
+          </li>
+          <li class="feature-item flex text-center">
+            <span class="text-green-400"><Check /></span>
+            <span>GitHub Copilot integration</span>
+          </li>
+          <li class="feature-item flex text-center">
+            <span class="text-green-400"><Check /></span>
+            <span>Works in VS Code, Cursor, Windsurf</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="comparison-column traditional">
+        <div class="column-header">
+          <h3>Traditional Tools</h3>
+          <span class="tag traditional-tag">PowerPoint, Keynote, etc.</span>
+        </div>
+        <ul class="feature-list">
+          <li class="feature-item flex text-center">
+            <span class="text-red-400"><XMark /></span>
+            <span>No live coding automation</span>
+          </li>
+          <li class="feature-item flex text-center">
+            <span class="text-red-400"><XMark /></span>
+            <span>Context switching required</span>
+          </li>
+          <li class="feature-item flex text-center">
+            <span class="text-red-400"><XMark /></span>
+            <span>Error-prone manual typing</span>
+          </li>
+          <li class="feature-item flex text-center">
+            <span class="text-red-400"><XMark /></span>
+            <span>Separate terminal windows</span>
+          </li>
+          <li class="feature-item flex text-center">
+            <span class="text-red-400"><XMark /></span>
+            <span>No code-specific features</span>
+          </li>
+          <li class="feature-item">
+            <span class="text-green-400"><Check /></span>
+            <span>Static slides only</span>
+          </li>
+          <li class="feature-item flex text-center">
+            <span class="text-red-400"><XMark /></span>
+            <span>No dev tool integration</span>
+          </li>
+          <li class="feature-item flex text-center">
+            <span class="text-red-400"><XMark /></span>
+            <span>Limited to specific platforms</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="comparison-footer">
+      <div class="highlight-box">
+        <h4>The bottom line</h4>
+        <p>
+          <strong>Demo Time is the only tool that understands live coding presentations.</strong>
+          While traditional tools treat code as static content, Demo Time treats it as the dynamic, interactive
+          experience it should be.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .comparison-container {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .comparison-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .comparison-header h2 {
+    margin-bottom: 1rem;
+  }
+
+  .comparison-header p {
+    font-size: 1.125rem;
+    color: var(--sl-color-gray-2);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  @media (min-width: 768px) {
+    .comparison-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .comparison-column {
+    background: var(--sl-color-gray-6);
+    border-radius: 16px;
+    padding: 2rem;
+    border: 2px solid var(--sl-color-gray-5);
+  }
+
+  .comparison-column.demo-time {
+    border-color: var(--sl-color-accent);
+    background: linear-gradient(135deg, var(--sl-color-gray-6) 0%, rgba(255, 212, 59, 0.05) 100%);
+  }
+
+  .column-header {
+    margin-bottom: 2rem;
+  }
+
+  .column-header h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+
+  .live-coding {
+    background: var(--sl-color-accent-high);
+    color: #000;
+  }
+
+  .traditional-tag {
+    background: var(--sl-color-gray-5);
+    color: var(--sl-color-gray-2);
+  }
+
+  .feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+  }
+
+  .feature-item:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .feature-item.unavailable {
+    opacity: 0.6;
+  }
+
+  .text-green-400,
+  .x-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+  }
+
+  .feature-item span:last-child {
+    color: var(--sl-color-gray-2);
+    line-height: 1.4;
+  }
+
+  .comparison-footer {
+    text-align: center;
+  }
+
+  .highlight-box {
+    background: linear-gradient(
+      135deg,
+      var(--sl-color-accent-low) 0%,
+      rgba(255, 212, 59, 0.1) 100%
+    );
+    border: 2px solid var(--sl-color-accent);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .highlight-box h4 {
+    margin: 0 0 1rem 0;
+    color: var(--sl-color-accent-high);
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  .highlight-box p {
+    margin: 0;
+    color: var(--sl-color-white);
+    line-height: 1.6;
+  }
+</style>
