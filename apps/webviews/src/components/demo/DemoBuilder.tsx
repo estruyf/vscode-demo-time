@@ -10,7 +10,7 @@ import { AppHeader, MainContent, Sidebar } from '../layout';
 import { ActionControls, FileControls } from '../file';
 import { ValidationSummary } from './ValidationSummary';
 import { DemoEditor, DemoSection, MainConfigForm } from '.';
-import Settings from '../webviews/Settings';
+import SettingsView from '../webviews/SettingsView';
 import { WebViewMessages } from '@demotime/common';
 
 export const DemoBuilder: React.FC<{ initialConfig: DemoConfig }> = ({ initialConfig }) => {
@@ -286,7 +286,7 @@ export const DemoBuilder: React.FC<{ initialConfig: DemoConfig }> = ({ initialCo
 
   // If we're on the settings page, render the settings component
   if (isSettingsPage) {
-    return <Settings />;
+    return <SettingsView />;
   }
 
   return (

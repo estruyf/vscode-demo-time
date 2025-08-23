@@ -1,12 +1,9 @@
-import * as React from 'react';
 import { COMMAND } from '@demotime/common';
 import { messageHandler } from '@estruyf/vscode/dist/client/webview';
 import { Button, Icon } from 'vscrui';
 import { WebViewMessages } from '@demotime/common';
 
-export interface IResetActionProps { }
-
-export const ResetAction: React.FunctionComponent<IResetActionProps> = (props: React.PropsWithChildren<IResetActionProps>) => {
+export const ResetAction = () => {
   const reset = () => {
     messageHandler.send(WebViewMessages.toVscode.runCommand, { command: COMMAND.reset });
   };

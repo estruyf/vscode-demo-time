@@ -3,19 +3,17 @@ import * as React from 'react';
 import { WebViewMessages } from '@demotime/common';
 import { EventData } from '@estruyf/vscode';
 
-export interface IClockProps { }
-
-export const Clock: React.FunctionComponent<IClockProps> = (props: React.PropsWithChildren<IClockProps>) => {
+export const Clock = () => {
   const [clock, setClock] = React.useState("");
 
-  const messageListener = (message: MessageEvent<EventData<any>>) => {
+  const messageListener = (message: MessageEvent<EventData<unknown>>) => {
     const { command, payload } = message.data;
     if (!command) {
       return;
     }
 
     if (command === WebViewMessages.toWebview.updateClock) {
-      setClock(payload);
+      setClock(payload as string);
     }
   };
 

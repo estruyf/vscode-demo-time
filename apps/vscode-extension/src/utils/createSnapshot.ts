@@ -1,7 +1,7 @@
 import { Uri, window } from 'vscode';
 import { General } from '../constants';
 import { fileExists } from './fileExists';
-import { Action, Step } from '../models';
+import { Action, Step } from '@demotime/common';
 import { Extension, Notifications } from '../services';
 import { addStepsToDemo, chooseDemoFile, getFileName, writeFile } from '.';
 import { Config } from '@demotime/common';

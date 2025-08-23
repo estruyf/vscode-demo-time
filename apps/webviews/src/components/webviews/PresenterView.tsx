@@ -1,32 +1,24 @@
 import * as React from 'react';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
-import { Clock } from './Clock';
-import { Countdown } from './Countdown';
-import { Demos } from './Demos';
-import { NextDemo } from './NextDemo';
-import { StartCountdown } from './StartCountdown';
 import { EventData } from '@estruyf/vscode';
-import { StartPresentation } from './StartPresentation';
-import { ResetAction } from './ResetAction';
 import { Config, WebViewMessages } from "@demotime/common";
+import '../../styles/presenter.css';
+import { Clock, Countdown, Demos, NextDemo, ResetAction, StartCountdown, StartPresentation } from '../presenter';
 
-
-export interface IAppProps { }
-
-export const App: React.FunctionComponent<IAppProps> = (props: React.PropsWithChildren<IAppProps>) => {
+const PresenterView = () => {
   const [isReady, setIsReady] = React.useState(false);
   const [showClock, setShowClock] = React.useState(false);
   const [countdown, setCountdown] = React.useState<number | undefined>(undefined);
   const [countdownStarted, setCountdownStarted] = React.useState<Date | undefined>(undefined);
 
-  const messageListener = (message: MessageEvent<EventData<any>>) => {
+  const messageListener = (message: MessageEvent<EventData<unknown>>) => {
     const { command, payload } = message.data;
     if (!command) {
       return;
     }
 
     if (command === WebViewMessages.toWebview.updateCountdownStarted) {
-      setCountdownStarted(payload);
+      setCountdownStarted(payload as Date);
     }
   };
 
@@ -103,3 +95,5 @@ export const App: React.FunctionComponent<IAppProps> = (props: React.PropsWithCh
     </div>
   );
 };
+
+export default PresenterView;

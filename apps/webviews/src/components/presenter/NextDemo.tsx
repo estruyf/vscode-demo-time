@@ -1,8 +1,7 @@
 import { EventData } from '@estruyf/vscode';
 import * as React from 'react';
-import { COMMAND } from '@demotime/common';
+import { COMMAND, Demo } from '@demotime/common';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
-import { Demo } from '../../models';
 import { Button, Icon } from 'vscrui';
 import { WebViewMessages } from '@demotime/common';
 
@@ -21,14 +20,14 @@ export const NextDemo: React.FunctionComponent<INextDemoProps> = ({
 }: React.PropsWithChildren<INextDemoProps>) => {
   const [nextDemo, setNextDemo] = React.useState<Demo | undefined>(undefined);
 
-  const messageListener = (message: MessageEvent<EventData<any>>) => {
+  const messageListener = (message: MessageEvent<EventData<unknown>>) => {
     const { command, payload } = message.data;
     if (!command) {
       return;
     }
 
     if (command === WebViewMessages.toWebview.updateNextDemo) {
-      setNextDemo(payload);
+      setNextDemo(payload as Demo);
     }
   };
 

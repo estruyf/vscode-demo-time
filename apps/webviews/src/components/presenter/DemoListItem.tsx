@@ -1,5 +1,5 @@
+import { Demo } from '@demotime/common';
 import * as React from 'react';
-import { Demo } from '../../models';
 import { Icon } from 'vscrui';
 
 export interface DemoListItemProps {

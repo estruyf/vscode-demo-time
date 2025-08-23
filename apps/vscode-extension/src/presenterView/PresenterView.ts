@@ -176,44 +176,105 @@ export class PresenterView {
     } as MessageHandlerData<any>);
   }
 
-  private static async getWebviewContent(webview: Webview) {
-    const jsFile = 'main.bundle.js';
-    const localServerUrl = 'http://localhost:9000';
+  // private static async getWebviewContent(webview: Webview) {
+  //   const jsFile = 'main.bundle.js';
+  //   const localServerUrl = 'http://localhost:9000';
 
-    let scriptUrl = [];
+  //   let scriptUrl = [];
 
-    const extension = Extension.getInstance();
-    if (extension.isProductionMode) {
-      // Get the manifest file from the dist folder
-      const extPath = Uri.file(extension.extensionPath);
-      const manifestPath = Uri.joinPath(extPath, 'out', 'presenter', 'manifest.json');
-      const manifest = await readFile(manifestPath);
-      const manifestJson = JSON.parse(manifest);
+  //   const extension = Extension.getInstance();
+  //   if (extension.isProductionMode) {
+  //     // Get the manifest file from the dist folder
+  //     const extPath = Uri.file(extension.extensionPath);
+  //     const manifestPath = Uri.joinPath(extPath, 'out', 'presenter', 'manifest.json');
+  //     const manifest = await readFile(manifestPath);
+  //     const manifestJson = JSON.parse(manifest);
 
-      for (const [key, value] of Object.entries<string>(manifestJson)) {
-        if (key.endsWith('.js')) {
-          scriptUrl.push(
-            webview.asWebviewUri(Uri.joinPath(extPath, 'out', 'presenter', value)).toString(),
-          );
-        }
-      }
-    } else {
-      scriptUrl.push(`${localServerUrl}/${jsFile}`);
+  //     for (const [key, value] of Object.entries<string>(manifestJson)) {
+  //       if (key.endsWith('.js')) {
+  //         scriptUrl.push(
+  //           webview.asWebviewUri(Uri.joinPath(extPath, 'out', 'presenter', value)).toString(),
+  //         );
+  //       }
+  //     }
+  //   } else {
+  //     scriptUrl.push(`${localServerUrl}/${jsFile}`);
+  //   }
+
+  //   return `<!DOCTYPE html>
+  //   <html lang="en">
+  //   <head>
+  //     <meta charset="UTF-8">
+  //     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  //   </head>
+  //   <body>
+  //     <div id="root"></div>
+
+  //     ${scriptUrl.map((url) => `<script src="${url}"></script>`).join('\n')}
+
+  //     <img style="display:none" src="https://api.visitorbadge.io/api/combined?path=https:%2f%2fgithub.com%2festruyf%2fvscode-demo-time&labelColor=%23202736&countColor=%23FFD23F&slug=presenter-view" alt="Presenter view usage" />
+  //   </body>
+  //   </html>`;
+  // }
+
+  private static async getWebviewContent() {
+    const extensions = Extension.getInstance();
+    if (!extensions.isProductionMode) {
+      return `
+        <!doctype html>
+        <html lang="en">
+          <head>
+            <script type="module">
+              import RefreshRuntime from "http://localhost:5173/@react-refresh"
+              RefreshRuntime.injectIntoGlobalHook(window)
+              window.$RefreshReg$ = () => {}
+              window.$RefreshSig$ = () => (type) => type
+              window.__vite_plugin_react_preamble_installed__ = true
+            </script>
+
+            <script type="module" src="http://localhost:5173/@vite/client"></script>
+
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Demo Time Config Editor</title>
+          </head>
+          <body>
+            <div id="root" data-view-type="presenter"></div>
+            <script type="module" src="http://localhost:5173/src/main.tsx"></script>
+          </body>
+        </html>`;
     }
 
-    return `<!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-      <div id="root"></div>
-  
-      ${scriptUrl.map((url) => `<script src="${url}"></script>`).join('\n')}
+    const URL = `https://config-beta.demotime.show`;
+    try {
+      const response = await fetch(URL, {
+        headers: {
+          'Content-Type': 'text/html',
+        },
+        cache: 'no-cache',
+      });
 
-      <img style="display:none" src="https://api.visitorbadge.io/api/combined?path=https:%2f%2fgithub.com%2festruyf%2fvscode-demo-time&labelColor=%23202736&countColor=%23FFD23F&slug=presenter-view" alt="Presenter view usage" />
-    </body>
-    </html>`;
+      if (!response.ok) {
+        console.error(
+          `Failed to fetch settings webview: HTTP ${response.status} ${response.statusText}`,
+        );
+        return `<html><body><h2>Unable to load settings view (HTTP ${response.status}). Please check your network connection or try again later.</h2></body></html>`;
+      }
+
+      const html = await response.text();
+      // Patch relative asset URLs to absolute URLs using the base URL
+      const baseUrl = URL.replace(/\/$/, '');
+      const patchedHtml = html
+        .replace(/(src|href)=["'](\/assets\/[^"']+)["']/g, (match, attr, path) => {
+          return `${attr}="${baseUrl}${path}"`;
+        })
+        .replace(/href=["']\/vite\.svg["']/g, `href="${baseUrl}/vite.svg"`)
+        .replace(`id="root"`, `id="root" data-view-type="presenters"`);
+
+      return patchedHtml.toString();
+    } catch (error) {
+      console.error('Error fetching settings webview:', error);
+      return `<html><body><h2>Unable to load settings view. Please check your network connection or try again later.</h2></body></html>`;
+    }
   }
 }

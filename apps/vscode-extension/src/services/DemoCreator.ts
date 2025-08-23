@@ -8,7 +8,7 @@ import {
   workspace,
 } from 'vscode';
 import { ContextKeys } from '../constants';
-import { Action, Demo, DemoFile, DemoFileType, Icons, Step, Subscription } from '../models';
+import { DemoFileType, Subscription } from '../models';
 import { Extension } from './Extension';
 import { DemoFileProvider } from './DemoFileProvider';
 import { DemoPanel } from '../panels/DemoPanel';
@@ -28,7 +28,7 @@ import {
   upperCaseFirstLetter,
 } from '../utils';
 import { Notifications } from './Notifications';
-import { COMMAND, Config } from '@demotime/common';
+import { COMMAND, Config, Action, Demo, DemoFile, Icons, Step } from '@demotime/common';
 import { ConfigEditorProvider } from '../providers/ConfigEditorProvider';
 
 export class DemoCreator {

@@ -3,7 +3,7 @@ import { Extension, Notifications } from '../services';
 import { General } from '../constants';
 import { addStepsToDemo, chooseDemoFile, fileExists, getFileName, readFile, writeFile } from '.';
 import { createPatch as createFilePatch } from 'diff';
-import { Action, Step } from '../models';
+import { Action, Step } from '@demotime/common';
 import { Config } from '@demotime/common';
 
 export const createPatch = async () => {

@@ -7,7 +7,7 @@ import {
   Uri,
   window,
 } from 'vscode';
-import { Action, Step, Subscription } from '../models';
+import { Subscription } from '../models';
 import { Extension } from './Extension';
 import { General } from '../constants';
 import {
@@ -23,7 +23,15 @@ import {
 import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
 import { DemoFileProvider } from './DemoFileProvider';
 import { Preview } from '../preview/Preview';
-import { COMMAND, Config, SlideLayout, SlideTheme, SlideTransition } from '@demotime/common';
+import {
+  COMMAND,
+  Config,
+  SlideLayout,
+  SlideTheme,
+  SlideTransition,
+  Action,
+  Step,
+} from '@demotime/common';
 
 export class Slides {
   private static frontmatterRegex = /^---(?:[^\r\n]*\r?\n)+?---/;

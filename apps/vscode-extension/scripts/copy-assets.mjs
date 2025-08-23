@@ -1,8 +1,13 @@
 import { promises as fs } from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-const sourceDir = path.join('src', 'preview', 'themes');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const sourceDir = path.join(__dirname, '../../webviews/src/themes');
 const destinationDir = path.join('assets', 'styles', 'themes');
+console.log(`Copying files from ${sourceDir} to ${destinationDir}`);
 
 async function copyFiles(src, dest) {
   try {

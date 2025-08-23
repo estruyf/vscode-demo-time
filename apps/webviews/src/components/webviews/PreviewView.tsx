@@ -14,11 +14,7 @@ import '../../themes/frost.css';
 import '../../webcomponents';
 import { useWebviewSettings } from '../../providers';
 
-export interface IPreviewProps {
-}
-
-const Preview: React.FunctionComponent<IPreviewProps> = ({
-}: React.PropsWithChildren<IPreviewProps>) => {
+const PreviewView = () => {
   const { webviewUrl } = useWebviewSettings();
   const [customTheme, setCustomTheme] = React.useState<string | undefined>(undefined);
   const [fileUri, setFileUri] = React.useState<string | undefined>(undefined);
@@ -118,4 +114,4 @@ const Preview: React.FunctionComponent<IPreviewProps> = ({
   );
 };
 
-export default Preview;
+export default PreviewView;

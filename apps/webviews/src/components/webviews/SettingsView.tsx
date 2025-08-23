@@ -14,8 +14,9 @@ import TemplatesSettings from "../settings/TemplatesSettings"
 import { IDemoTimeSettings } from "../../types/IDemoTimeSettings"
 import { AppHeader } from "../layout/AppHeader";
 import { WebViewMessages } from "@demotime/common";
+import '../../styles/config.css';
 
-const Settings = () => {
+const SettingsView = () => {
   const [settings, setSettings] = useState<IDemoTimeSettings | undefined>(undefined);
   const [originalSettings, setOriginalSettings] = useState<IDemoTimeSettings | undefined>(undefined);
   const [saveStatus, setSaveStatus] = useState<{ type: "blank" | "dirty" | "success" | "error", text: string }>({ type: "blank", text: "" });
@@ -186,4 +187,4 @@ const Settings = () => {
   )
 }
 
-export default Settings;
+export default SettingsView;

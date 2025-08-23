@@ -5,8 +5,9 @@ import { DemoConfig } from '../../types/demo';
 import { EventData } from '@estruyf/vscode/dist/models';
 import { DemoBuilder } from '../demo/DemoBuilder';
 import { WebViewMessages } from '@demotime/common';
+import '../../styles/config.css';
 
-const ConfigEditor = () => {
+const ConfigEditorView = () => {
   const [config, setConfig] = React.useState<DemoConfig | undefined>(undefined);
 
   React.useEffect(() => {
@@ -42,4 +43,4 @@ const ConfigEditor = () => {
   return <DemoBuilder initialConfig={config} />;
 }
 
-export default ConfigEditor;
+export default ConfigEditorView;

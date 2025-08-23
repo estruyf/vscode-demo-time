@@ -1,5 +1,5 @@
+import { Action } from '@demotime/common';
 import { QuickPickItem } from 'vscode';
-import { Action } from '../models';
 
 export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   const action = selectedAction.label;

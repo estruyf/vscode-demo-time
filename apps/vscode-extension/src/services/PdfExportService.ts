@@ -1,7 +1,7 @@
 import rehypePrettyCode from 'rehype-pretty-code';
 import { resolve } from 'mlly';
 import { Notifications } from './Notifications';
-import { Action, Step, Subscription } from '../models';
+import { Subscription } from '../models';
 import { Extension } from './Extension';
 import { DemoFileProvider, Logger } from '.';
 import { getTheme, readFile, sortFiles, writeFile } from '../utils';
@@ -19,12 +19,14 @@ import { Page } from 'playwright-chromium';
 import { General } from '../constants';
 import { renderToString } from 'react-dom/server';
 import {
+  Action,
   COMMAND,
   Config,
   convertTemplateToHtml,
   SlideLayout,
   SlideParser,
   SlideTheme,
+  Step,
   transformMarkdown,
   twoColumnFormatting,
 } from '@demotime/common';

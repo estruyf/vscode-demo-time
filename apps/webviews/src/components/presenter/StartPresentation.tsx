@@ -6,19 +6,17 @@ import { EventData } from '@estruyf/vscode';
 import { ProjectorIcon } from '../icons/ProjectorIcon';
 import { WebViewMessages } from '@demotime/common';
 
-export interface IStartPresentationProps { }
-
-export const StartPresentation: React.FunctionComponent<IStartPresentationProps> = (props: React.PropsWithChildren<IStartPresentationProps>) => {
+export const StartPresentation = () => {
   const [isStarted, setIsStarted] = React.useState<boolean | undefined>(undefined);
 
-  const messageListener = (message: MessageEvent<EventData<any>>) => {
+  const messageListener = (message: MessageEvent<EventData<unknown>>) => {
     const { command, payload } = message.data;
     if (!command) {
       return;
     }
 
     if (command === WebViewMessages.toWebview.updatePresentationStarted) {
-      setIsStarted(payload);
+      setIsStarted(payload as boolean);
     }
   };
 

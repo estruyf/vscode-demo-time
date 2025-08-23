@@ -15,18 +15,18 @@ export const Countdown: React.FunctionComponent<ICountdownProps> = ({
   const [countdown, setCountdown] = React.useState("");
   const [isPaused, setIsPaused] = React.useState<boolean | undefined>(undefined);
 
-  const messageListener = (message: MessageEvent<EventData<any>>) => {
+  const messageListener = (message: MessageEvent<EventData<unknown>>) => {
     const { command, payload } = message.data;
     if (!command) {
       return;
     }
 
     if (command === WebViewMessages.toWebview.updateCountdown) {
-      setCountdown(payload);
+      setCountdown(payload as string);
     } else if (command === WebViewMessages.toWebview.resetCountdown) {
       setCountdown("");
     } else if (command === WebViewMessages.toWebview.updateCountdownStatus) {
-      setIsPaused(payload);
+      setIsPaused(payload as boolean | undefined);
     }
   };
 

@@ -2,14 +2,15 @@ import { lazy, StrictMode, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Loader } from "vscrui";
 import './vscode.ts';
-import './index.css';
+import './styles/main.css';
 import 'vscrui/dist/codicon.css';
 import { WebviewSettingsProvider } from './providers';
 
 const WEBVIEW_MAP: Record<string, React.LazyExoticComponent<React.FC<{}>>> = {
-  'settings': lazy(() => import('./components/webviews/Settings')),
-  'config-editor': lazy(() => import('./components/webviews/ConfigEditor')),
-  'preview': lazy(() => import('./components/webviews/Preview'))
+  'settings': lazy(() => import('./components/webviews/SettingsView')),
+  'config-editor': lazy(() => import('./components/webviews/ConfigEditorView')),
+  'preview': lazy(() => import('./components/webviews/PreviewView')),
+  'presenter': lazy(() => import('./components/webviews/PresenterView')),
 };
 
 const root = document.getElementById('root');

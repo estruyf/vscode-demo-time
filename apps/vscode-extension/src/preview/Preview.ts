@@ -377,7 +377,7 @@ export class Preview {
           return `${attr}="${baseUrl}${path}"`;
         })
         .replace(/href=["']\/vite\.svg["']/g, `href="${baseUrl}/vite.svg"`)
-        .replace(`id="root"`, `id="root" data-view-type="settings"`);
+        .replace(`id="root"`, `id="root" data-view-type="preview"`);
 
       return patchedHtml.toString();
     } catch (error) {

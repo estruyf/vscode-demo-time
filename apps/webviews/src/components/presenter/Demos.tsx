@@ -1,16 +1,13 @@
 import * as React from 'react';
-import { Demo, DemoFileCache, DemoFiles } from '../../models';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
-import { COMMAND } from '@demotime/common';
+import { COMMAND, Demo, DemoFileCache, DemoFiles } from '@demotime/common';
 import { EventData } from '@estruyf/vscode';
 import { DemoHeader } from './DemoHeader';
 import DemoListItem from './DemoListItem';
 import { Notes } from './Notes';
 import { WebViewMessages } from '@demotime/common';
 
-export interface IDemosProps { }
-
-export const Demos: React.FunctionComponent<IDemosProps> = ({ }: React.PropsWithChildren<IDemosProps>) => {
+export const Demos = () => {
   const [demoFiles, setDemoFiles] = React.useState<DemoFiles | null>(null);
   const [runningDemos, setRunningDemos] = React.useState<DemoFileCache | null>(null);
   const [notes, setNotes] = React.useState<string | undefined>(undefined);
@@ -31,14 +28,14 @@ export const Demos: React.FunctionComponent<IDemosProps> = ({ }: React.PropsWith
     }
   }, [setNotes]);
 
-  const messageListener = (message: MessageEvent<EventData<any>>) => {
+  const messageListener = (message: MessageEvent<EventData<unknown>>) => {
     const { command, payload } = message.data;
     if (!command) {
       return;
     }
 
     if (command === WebViewMessages.toWebview.updateRunningDemos) {
-      setRunningDemos(payload);
+      setRunningDemos(payload as DemoFileCache);
     } else if (command === WebViewMessages.toWebview.resetNotes) {
       setNotes(undefined);
     }

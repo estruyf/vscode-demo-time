@@ -1,16 +1,6 @@
 import { PresenterView } from '../presenterView/PresenterView';
 import { ContextKeys, StateKeys } from '../constants';
-import {
-  Action,
-  Demo,
-  DemoFileCache,
-  DemoFile,
-  IImagePreview,
-  ISlidePreview,
-  Step,
-  Subscription,
-  Version,
-} from '../models';
+import { Subscription } from '../models';
 import {
   Position,
   Range,
@@ -63,7 +53,19 @@ import {
 } from './';
 import { Preview } from '../preview/Preview';
 import { parse as jsonParse } from 'jsonc-parser';
-import { COMMAND, WebViewMessages, Config } from '@demotime/common';
+import {
+  COMMAND,
+  WebViewMessages,
+  Config,
+  Action,
+  Demo,
+  DemoFileCache,
+  DemoFile,
+  IImagePreview,
+  ISlidePreview,
+  Step,
+  Version,
+} from '@demotime/common';
 
 const DEFAULT_START_VALUE = {
   filePath: '',

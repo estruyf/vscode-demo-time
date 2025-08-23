@@ -1,13 +1,4 @@
-import { Action, Version } from '.';
-
-/**
- * Types for different insertion modes
- */
-export type InsertTypingMode =
-  | 'instant'
-  | 'line-by-line'
-  | 'character-by-character'
-  | 'hacker-typer';
+import { Action, InsertTypingMode, Version } from '.';
 
 export interface DemoFiles {
   [filePath: string]: DemoFile;
