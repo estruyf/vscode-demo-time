@@ -1,18 +1,10 @@
-import { SlideTheme } from '../constants/SlideTheme';
 import rehypePrettyCode from 'rehype-pretty-code';
 import { resolve } from 'mlly';
 import { Notifications } from './Notifications';
 import { Action, Step, Subscription } from '../models';
 import { Extension } from './Extension';
 import { DemoFileProvider, Logger } from '.';
-import {
-  convertTemplateToHtml,
-  getTheme,
-  readFile,
-  sortFiles,
-  transformMarkdown,
-  writeFile,
-} from '../utils';
+import { getTheme, readFile, sortFiles, writeFile } from '../utils';
 import {
   commands,
   Uri,
@@ -24,10 +16,18 @@ import {
   ColorThemeKind,
 } from 'vscode';
 import { Page } from 'playwright-chromium';
-import { COMMAND, Config, General, SlideLayout } from '../constants';
-import { twoColumnFormatting } from '../preview/utils';
+import { General } from '../constants';
 import { renderToString } from 'react-dom/server';
-import { SlideParser } from './SlideParser';
+import {
+  COMMAND,
+  Config,
+  convertTemplateToHtml,
+  SlideLayout,
+  SlideParser,
+  SlideTheme,
+  transformMarkdown,
+  twoColumnFormatting,
+} from '@demotime/common';
 
 export class PdfExportService {
   private static workspaceFolder: WorkspaceFolder | undefined;

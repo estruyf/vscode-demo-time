@@ -2,12 +2,13 @@ import { parseWinPath } from './../utils/parseWinPath';
 import { Uri, window, workspace } from 'vscode';
 import { Extension } from './Extension';
 import { DemoFiles, DemoFile, DemoFileType } from '../models';
-import { Config, General } from '../constants';
+import { General } from '../constants';
 import { parse as jsonParse } from 'jsonc-parser';
 import { load as yamlLoad, dump as yamlDump } from 'js-yaml';
 import { createDemoFile, readFile, sanitizeFileName, sortFiles, writeFile } from '../utils';
 import { Preview } from '../preview/Preview';
 import { Logger } from './Logger';
+import { Config } from '@demotime/common';
 
 export class DemoFileProvider {
   public static register() {

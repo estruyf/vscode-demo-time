@@ -1,6 +1,6 @@
 import { Uri, Webview, WebviewPanel, window, ViewColumn, commands } from 'vscode';
 import { Extension } from '../services/Extension';
-import { COMMAND, Config, ContextKeys } from '../constants';
+import { ContextKeys } from '../constants';
 import { MessageHandlerData } from '@estruyf/vscode';
 import {
   getAbsolutePath,
@@ -11,7 +11,7 @@ import {
   togglePresentationView,
 } from '../utils';
 import { DemoRunner } from '../services';
-import { WebViewMessages } from '@demotime/common';
+import { COMMAND, WebViewMessages, Config } from '@demotime/common';
 
 export class Preview {
   private static webview: WebviewPanel | null = null;
@@ -146,7 +146,7 @@ export class Preview {
       light: Uri.joinPath(Uri.file(extensionUri), 'assets', 'logo', 'demotime-bg.svg'),
     };
 
-    Preview.webview.webview.html = await Preview.getWebviewContent(Preview.webview.webview);
+    Preview.webview.webview.html = await Preview.getWebviewContent();
 
     Preview.webview.onDidDispose(async () => {
       Preview.isDisposed = true;
@@ -247,81 +247,142 @@ export class Preview {
     } as MessageHandlerData<any>);
   }
 
-  private static async getWebviewContent(webview: Webview) {
-    const jsFile = 'main.bundle.js';
-    const localServerUrl = 'http://localhost:9001';
+  // private static async getWebviewContent(webview: Webview) {
+  //   const jsFile = 'main.bundle.js';
+  //   const localServerUrl = 'http://localhost:9001';
 
-    let scriptUrl = [];
-    let moduleUrl = [];
-    let styleUrl = [];
+  //   let scriptUrl = [];
+  //   let moduleUrl = [];
+  //   let styleUrl = [];
 
-    const extension = Extension.getInstance();
-    const extPath = Uri.file(extension.extensionPath);
+  //   const extension = Extension.getInstance();
+  //   const extPath = Uri.file(extension.extensionPath);
 
-    if (extension.isProductionMode) {
-      // Get the manifest file from the dist folder
-      const manifestPath = Uri.joinPath(extPath, 'out', 'preview', 'manifest.json');
-      const manifest = await readFile(manifestPath);
-      const manifestJson = JSON.parse(manifest);
+  //   if (extension.isProductionMode) {
+  //     // Get the manifest file from the dist folder
+  //     const manifestPath = Uri.joinPath(extPath, 'out', 'preview', 'manifest.json');
+  //     const manifest = await readFile(manifestPath);
+  //     const manifestJson = JSON.parse(manifest);
 
-      for (const [key, value] of Object.entries<string>(manifestJson)) {
-        if (key.endsWith('.js')) {
-          scriptUrl.push(
-            webview.asWebviewUri(Uri.joinPath(extPath, 'out', 'preview', value)).toString(),
-          );
-        }
-      }
-    } else {
-      scriptUrl.push(`${localServerUrl}/${jsFile}`);
+  //     for (const [key, value] of Object.entries<string>(manifestJson)) {
+  //       if (key.endsWith('.js')) {
+  //         scriptUrl.push(
+  //           webview.asWebviewUri(Uri.joinPath(extPath, 'out', 'preview', value)).toString(),
+  //         );
+  //       }
+  //     }
+  //   } else {
+  //     scriptUrl.push(`${localServerUrl}/${jsFile}`);
+  //   }
+
+  //   scriptUrl.push(
+  //     webview.asWebviewUri(Uri.joinPath(extPath, 'assets', 'slides', 'tailwind.js')).toString(),
+  //   );
+  //   const workspaceFolder = extension.workspaceFolder;
+
+  //   const webComponents = extension.getSetting<string[]>(Config.webcomponents.scripts);
+  //   if (webComponents) {
+  //     for (const webComponent of webComponents) {
+  //       if (webComponent.startsWith('http')) {
+  //         moduleUrl.push(webComponent);
+  //       } else if (workspaceFolder) {
+  //         moduleUrl.push(
+  //           webview.asWebviewUri(Uri.joinPath(workspaceFolder.uri, webComponent)).toString(),
+  //         );
+  //       }
+  //     }
+  //   }
+
+  //   const customTheme = extension.getSetting<string>(Config.slides.customTheme);
+  //   if (customTheme) {
+  //     if (customTheme.startsWith('http')) {
+  //       styleUrl.push(customTheme);
+  //     } else if (workspaceFolder) {
+  //       styleUrl.push(
+  //         webview.asWebviewUri(Uri.joinPath(workspaceFolder.uri, customTheme)).toString(),
+  //       );
+  //     }
+  //   }
+
+  //   const webviewUrl = getWebviewUrl(webview, '');
+
+  //   return `<!DOCTYPE html>
+  //   <html lang="en">
+  //   <head>
+  //     <meta charset="UTF-8">
+  //     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  //   </head>
+  //   <body>
+  //     <div id="root" data-webview-url="${webviewUrl}"></div>
+
+  //     ${scriptUrl.map((url) => `<script src="${url}"></script>`).join('\n')}
+  //     ${moduleUrl.map((url) => `<script src="${url}" type="module"></script>`).join('\n')}
+
+  //     ${styleUrl.map((url) => `<link rel="stylesheet" href="${url}">`).join('\n')}
+
+  //     <img style="display:none" src="https://api.visitorbadge.io/api/combined?path=https:%2f%2fgithub.com%2festruyf%2fvscode-demo-time&labelColor=%23202736&countColor=%23FFD23F&slug=preview" alt="Preview usage" />
+  //   </body>
+  //   </html>`;
+  // }
+
+  private static async getWebviewContent() {
+    const extensions = Extension.getInstance();
+    if (!extensions.isProductionMode) {
+      return `
+        <!doctype html>
+        <html lang="en">
+          <head>
+            <script type="module">
+              import RefreshRuntime from "http://localhost:5173/@react-refresh"
+              RefreshRuntime.injectIntoGlobalHook(window)
+              window.$RefreshReg$ = () => {}
+              window.$RefreshSig$ = () => (type) => type
+              window.__vite_plugin_react_preamble_installed__ = true
+            </script>
+
+            <script type="module" src="http://localhost:5173/@vite/client"></script>
+
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Demo Time Config Editor</title>
+          </head>
+          <body>
+            <div id="root" data-view-type="preview"></div>
+            <script type="module" src="http://localhost:5173/src/main.tsx"></script>
+          </body>
+        </html>`;
     }
 
-    scriptUrl.push(
-      webview.asWebviewUri(Uri.joinPath(extPath, 'assets', 'slides', 'tailwind.js')).toString(),
-    );
-    const workspaceFolder = extension.workspaceFolder;
+    const URL = `https://config-beta.demotime.show`;
+    try {
+      const response = await fetch(URL, {
+        headers: {
+          'Content-Type': 'text/html',
+        },
+        cache: 'no-cache',
+      });
 
-    const webComponents = extension.getSetting<string[]>(Config.webcomponents.scripts);
-    if (webComponents) {
-      for (const webComponent of webComponents) {
-        if (webComponent.startsWith('http')) {
-          moduleUrl.push(webComponent);
-        } else if (workspaceFolder) {
-          moduleUrl.push(
-            webview.asWebviewUri(Uri.joinPath(workspaceFolder.uri, webComponent)).toString(),
-          );
-        }
-      }
-    }
-
-    const customTheme = extension.getSetting<string>(Config.slides.customTheme);
-    if (customTheme) {
-      if (customTheme.startsWith('http')) {
-        styleUrl.push(customTheme);
-      } else if (workspaceFolder) {
-        styleUrl.push(
-          webview.asWebviewUri(Uri.joinPath(workspaceFolder.uri, customTheme)).toString(),
+      if (!response.ok) {
+        console.error(
+          `Failed to fetch settings webview: HTTP ${response.status} ${response.statusText}`,
         );
+        return `<html><body><h2>Unable to load settings view (HTTP ${response.status}). Please check your network connection or try again later.</h2></body></html>`;
       }
+
+      const html = await response.text();
+      // Patch relative asset URLs to absolute URLs using the base URL
+      const baseUrl = URL.replace(/\/$/, '');
+      const patchedHtml = html
+        .replace(/(src|href)=["'](\/assets\/[^"']+)["']/g, (match, attr, path) => {
+          return `${attr}="${baseUrl}${path}"`;
+        })
+        .replace(/href=["']\/vite\.svg["']/g, `href="${baseUrl}/vite.svg"`)
+        .replace(`id="root"`, `id="root" data-view-type="settings"`);
+
+      return patchedHtml.toString();
+    } catch (error) {
+      console.error('Error fetching settings webview:', error);
+      return `<html><body><h2>Unable to load settings view. Please check your network connection or try again later.</h2></body></html>`;
     }
-
-    const webviewUrl = getWebviewUrl(webview, '');
-
-    return `<!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-      <div id="root" data-webview-url="${webviewUrl}"></div>
-  
-      ${scriptUrl.map((url) => `<script src="${url}"></script>`).join('\n')}
-      ${moduleUrl.map((url) => `<script src="${url}" type="module"></script>`).join('\n')}
-
-      ${styleUrl.map((url) => `<link rel="stylesheet" href="${url}">`).join('\n')}
-
-      <img style="display:none" src="https://api.visitorbadge.io/api/combined?path=https:%2f%2fgithub.com%2festruyf%2fvscode-demo-time&labelColor=%23202736&countColor=%23FFD23F&slug=preview" alt="Preview usage" />
-    </body>
-    </html>`;
   }
 }

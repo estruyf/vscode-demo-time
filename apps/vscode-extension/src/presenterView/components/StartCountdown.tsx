@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { COMMAND } from '../../constants';
+import { COMMAND } from '@demotime/common';
 import { messageHandler } from '@estruyf/vscode/dist/client/webview';
 import { Button } from 'vscrui';
 import { TimerOffIcon } from '../icons/TimerOffIcon';

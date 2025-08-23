@@ -1,9 +1,8 @@
 import { commands, window, WebviewPanel, ViewColumn, Uri } from 'vscode';
 import { Subscription } from '../models';
 import { Extension } from '../services';
-import { COMMAND, Config } from '../constants';
 import { openFilePicker, sleep } from '../utils';
-import { WebViewMessages } from '@demotime/common';
+import { COMMAND, WebViewMessages, Config } from '@demotime/common';
 
 export class SettingsView {
   private static webview: WebviewPanel | null = null;
@@ -186,7 +185,6 @@ export class SettingsView {
             <script type="module" src="http://localhost:5173/@vite/client"></script>
 
             <meta charset="UTF-8" />
-            <link rel="icon" type="image/svg+xml" href="/vite.svg" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <title>Demo Time Config Editor</title>
           </head>

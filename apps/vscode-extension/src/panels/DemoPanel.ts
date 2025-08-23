@@ -4,7 +4,7 @@ import { DemoFileProvider } from '../services/DemoFileProvider';
 import { Action, DemoFileCache, DemoFiles, DemoFile, Subscription } from '../models';
 import { ActionTreeItem, ActionTreeviewProvider } from '../providers/ActionTreeviewProvider';
 import { DemoRunner } from '../services/DemoRunner';
-import { COMMAND } from '../constants';
+import { COMMAND } from '@demotime/common';
 import { parseWinPath, setContext, sortFiles } from '../utils';
 import { DemoStatusBar } from '../services/DemoStatusBar';
 import { Extension } from '../services/Extension';

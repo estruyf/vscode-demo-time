@@ -32,8 +32,12 @@
     "markdown slides"
   ],
   "scripts": {
-    "docs:dev": "nx dev demo-time-docs",
-    "docs:build": "nx build demo-time-docs",
+    "docs:dev": "npx nx dev demo-time-docs",
+    "docs:build": "npx nx build demo-time-docs",
+    "common:build": "npx nx build common",
+    "common:watch": "npx nx run common:watch",
+    "webviews:build": "npx nx build webviews",
+    "webviews:watch": "npx nx run webviews:dev",
     "vscode:open": "code ./apps/vscode-extension"
   },
   "homepage": "https://demotime.show/",

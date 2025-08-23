@@ -7,7 +7,7 @@ import {
   window,
   workspace,
 } from 'vscode';
-import { COMMAND, Config, ContextKeys } from '../constants';
+import { ContextKeys } from '../constants';
 import { Action, Demo, DemoFile, DemoFileType, Icons, Step, Subscription } from '../models';
 import { Extension } from './Extension';
 import { DemoFileProvider } from './DemoFileProvider';
@@ -28,7 +28,7 @@ import {
   upperCaseFirstLetter,
 } from '../utils';
 import { Notifications } from './Notifications';
-import { parse as jsonParse } from 'jsonc-parser';
+import { COMMAND, Config } from '@demotime/common';
 import { ConfigEditorProvider } from '../providers/ConfigEditorProvider';
 
 export class DemoCreator {

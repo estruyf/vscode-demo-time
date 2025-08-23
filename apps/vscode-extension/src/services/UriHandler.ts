@@ -1,6 +1,6 @@
-import { commands, Uri, window } from "vscode";
-import { COMMAND } from "../constants";
-import { Notifications } from "./Notifications";
+import { commands, Uri, window } from 'vscode';
+import { COMMAND } from '@demotime/common';
+import { Notifications } from './Notifications';
 
 export class UriHandler {
   /**
@@ -10,21 +10,21 @@ export class UriHandler {
     window.registerUriHandler({
       handleUri(uri: Uri) {
         const queryParams = new URLSearchParams(uri.query);
-        if (!queryParams.has("command")) {
+        if (!queryParams.has('command')) {
           return;
         }
 
-        let command = queryParams.get("command");
+        let command = queryParams.get('command');
         if (!command) {
           return;
         }
 
         command = command.toLowerCase();
 
-        if (command === "next") {
+        if (command === 'next') {
           commands.executeCommand(COMMAND.start);
-        } else if (command === "runbyid") {
-          const id = queryParams.get("id");
+        } else if (command === 'runbyid') {
+          const id = queryParams.get('id');
           if (!id) {
             return;
           }

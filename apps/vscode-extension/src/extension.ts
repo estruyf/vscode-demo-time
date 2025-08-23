@@ -20,9 +20,9 @@ import {
 import { DemoPanel } from './panels/DemoPanel';
 import { Preview } from './preview/Preview';
 import { PresenterView } from './presenterView/PresenterView';
-import { Config } from './constants';
 import { ConfigEditorProvider } from './providers/ConfigEditorProvider';
 import { SettingsView } from './settingsView/SettingsView';
+import { Config } from '@demotime/common';
 
 export async function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);

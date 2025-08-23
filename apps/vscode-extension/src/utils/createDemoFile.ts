@@ -1,10 +1,11 @@
 import { Uri, window } from 'vscode';
-import { Config, General, Templates } from '../constants';
+import { General, Templates } from '../constants';
 import { DemoFileProvider, Extension, TemplateCreator } from '../services';
 import { DemoFileType } from '../models';
 import { sanitizeFileName } from './sanitizeFileName';
 import { fileExists } from './fileExists';
 import { ConfigEditorProvider } from '../providers/ConfigEditorProvider';
+import { Config } from '@demotime/common';
 
 export const createDemoFile = async () => {
   const wsFolder = Extension.getInstance().workspaceFolder;

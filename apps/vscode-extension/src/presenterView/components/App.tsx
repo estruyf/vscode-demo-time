@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
-import { Config } from '../../constants';
 import { Clock } from './Clock';
 import { Countdown } from './Countdown';
 import { Demos } from './Demos';
@@ -9,7 +8,7 @@ import { StartCountdown } from './StartCountdown';
 import { EventData } from '@estruyf/vscode';
 import { StartPresentation } from './StartPresentation';
 import { ResetAction } from './ResetAction';
-import { WebViewMessages } from "@demotime/common";
+import { Config, WebViewMessages } from "@demotime/common";
 
 
 export interface IAppProps { }

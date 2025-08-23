@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Demo, DemoFileCache, DemoFiles } from '../../models';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
-import { COMMAND } from '../../constants';
+import { COMMAND } from '@demotime/common';
 import { EventData } from '@estruyf/vscode';
 import { DemoHeader } from './DemoHeader';
 import DemoListItem from './DemoListItem';

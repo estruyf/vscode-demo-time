@@ -1,6 +1,6 @@
 import { EventData } from '@estruyf/vscode';
 import * as React from 'react';
-import { COMMAND } from '../../constants';
+import { COMMAND } from '@demotime/common';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import { Demo } from '../../models';
 import { Button, Icon } from 'vscrui';

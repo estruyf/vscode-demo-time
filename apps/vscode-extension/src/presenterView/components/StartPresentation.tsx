@@ -1,7 +1,7 @@
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import * as React from 'react';
 import { Button, Icon } from 'vscrui';
-import { COMMAND } from '../../constants';
+import { COMMAND } from '@demotime/common';
 import { EventData } from '@estruyf/vscode';
 import { ProjectorIcon } from '../icons/ProjectorIcon';
 import { WebViewMessages } from '@demotime/common';
