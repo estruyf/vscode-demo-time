@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
-import { Config, WebViewMessages } from '../../constants';
+import { Config } from '../../constants';
 import { Clock } from './Clock';
 import { Countdown } from './Countdown';
 import { Demos } from './Demos';
@@ -9,6 +9,9 @@ import { StartCountdown } from './StartCountdown';
 import { EventData } from '@estruyf/vscode';
 import { StartPresentation } from './StartPresentation';
 import { ResetAction } from './ResetAction';
+import { WebViewMessages } from "@demotime/common";
+
+
 export interface IAppProps { }
 
 export const App: React.FunctionComponent<IAppProps> = (props: React.PropsWithChildren<IAppProps>) => {

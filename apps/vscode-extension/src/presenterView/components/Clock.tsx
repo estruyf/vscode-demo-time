@@ -1,6 +1,6 @@
 import { Messenger } from '@estruyf/vscode/dist/client/webview';
 import * as React from 'react';
-import { WebViewMessages } from '../../constants';
+import { WebViewMessages } from '@demotime/common';
 import { EventData } from '@estruyf/vscode';
 
 export interface IClockProps { }

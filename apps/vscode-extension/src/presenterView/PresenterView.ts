@@ -1,13 +1,14 @@
 import { commands, Uri, Webview, WebviewPanel, window, ViewColumn } from 'vscode';
 import { Subscription } from '../models';
 import { Extension } from '../services/Extension';
-import { COMMAND, Config, EXTENSION_NAME, General, WebViewMessages } from '../constants';
+import { COMMAND, Config, EXTENSION_NAME, General } from '../constants';
 import { MessageHandlerData } from '@estruyf/vscode';
 import { DemoFileProvider } from '../services/DemoFileProvider';
 import { DemoRunner } from '../services/DemoRunner';
 import { DemoStatusBar } from '../services/DemoStatusBar';
 import { NotesService } from '../services/NotesService';
 import { openFile, readFile } from '../utils';
+import { WebViewMessages } from '@demotime/common';
 
 export class PresenterView {
   private static webview: WebviewPanel | null = null;

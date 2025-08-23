@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Messenger } from '@estruyf/vscode/dist/client';
 import { EventData } from '@estruyf/vscode';
-import { WebViewMessages } from '../../constants';
+import { WebViewMessages } from '@demotime/common';
 
 export const useFileContents = () => {
   const [content, setContent] = useState<string | undefined>(undefined);

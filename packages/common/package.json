@@ -1,11 +1,15 @@
 {
   "name": "@demotime/common",
   "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {},
+  "main": "./out/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "description": "",
-  "devDependencies": {}
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
 }

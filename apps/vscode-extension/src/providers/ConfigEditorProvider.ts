@@ -13,7 +13,7 @@ import {
 } from 'vscode';
 import { Subscription } from '../models';
 import { DemoFileProvider, DemoRunner, Extension, Logger, Notifications } from '../services';
-import { COMMAND, Config, General, WebViewMessages } from '../constants';
+import { COMMAND, Config, General } from '../constants';
 import {
   checkSnippetArgs,
   getDemoApiData,
@@ -25,6 +25,7 @@ import {
 } from '../utils';
 import { ActionTreeItem } from './ActionTreeviewProvider';
 import { SettingsView } from '../settingsView/SettingsView';
+import { WebViewMessages } from '@demotime/common';
 
 export class ConfigEditorProvider implements CustomTextEditorProvider {
   private static readonly viewType = 'demoTime.configEditor';

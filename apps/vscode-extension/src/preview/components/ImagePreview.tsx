@@ -1,6 +1,6 @@
 import { messageHandler } from '@estruyf/vscode/dist/client/webview';
 import * as React from 'react';
-import { WebViewMessages } from '../../constants';
+import { WebViewMessages } from '@demotime/common';
 
 export interface IImagePreviewProps {
   fileUri: string;

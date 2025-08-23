@@ -1,6 +1,6 @@
 import { messageHandler } from '@estruyf/vscode/dist/client/webview';
 import { useState, useEffect } from 'react';
-import { WebViewMessages } from '../../constants';
+import { WebViewMessages } from '@demotime/common';
 import { usePrevious } from './usePrevious';
 
 export default function useTheme() {

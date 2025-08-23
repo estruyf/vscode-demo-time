@@ -1,6 +1,6 @@
 import { Uri, Webview, WebviewPanel, window, ViewColumn, commands } from 'vscode';
 import { Extension } from '../services/Extension';
-import { COMMAND, Config, ContextKeys, WebViewMessages } from '../constants';
+import { COMMAND, Config, ContextKeys } from '../constants';
 import { MessageHandlerData } from '@estruyf/vscode';
 import {
   getAbsolutePath,
@@ -11,6 +11,7 @@ import {
   togglePresentationView,
 } from '../utils';
 import { DemoRunner } from '../services';
+import { WebViewMessages } from '@demotime/common';
 
 export class Preview {
   private static webview: WebviewPanel | null = null;

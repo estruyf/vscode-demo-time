@@ -1,15 +1,16 @@
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import * as React from 'react';
 import { Button, Icon } from 'vscrui';
-import { COMMAND, WebViewMessages } from '../../constants';
+import { COMMAND } from '../../constants';
 import { EventData } from '@estruyf/vscode';
 import { ProjectorIcon } from '../icons/ProjectorIcon';
+import { WebViewMessages } from '@demotime/common';
 
-export interface IStartPresentationProps {}
+export interface IStartPresentationProps { }
 
 export const StartPresentation: React.FunctionComponent<IStartPresentationProps> = (props: React.PropsWithChildren<IStartPresentationProps>) => {
   const [isStarted, setIsStarted] = React.useState<boolean | undefined>(undefined);
-  
+
   const messageListener = (message: MessageEvent<EventData<any>>) => {
     const { command, payload } = message.data;
     if (!command) {
@@ -35,7 +36,7 @@ export const StartPresentation: React.FunctionComponent<IStartPresentationProps>
     messageHandler.request<boolean | undefined>(WebViewMessages.toVscode.getPresentationStarted).then((started: boolean | undefined) => {
       setIsStarted(started);
     });
-    
+
     return () => {
       Messenger.unlisten(messageListener);
     };
@@ -55,7 +56,7 @@ export const StartPresentation: React.FunctionComponent<IStartPresentationProps>
             <ProjectorIcon className="w-4 h-4" />
           )
         }
-        
+
         <span className='sr-only'>{title}</span>
       </Button>
     </div>

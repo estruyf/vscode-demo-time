@@ -1,8 +1,9 @@
 import { commands, window, WebviewPanel, ViewColumn, Uri } from 'vscode';
 import { Subscription } from '../models';
 import { Extension } from '../services';
-import { COMMAND, Config, WebViewMessages } from '../constants';
+import { COMMAND, Config } from '../constants';
 import { openFilePicker, sleep } from '../utils';
+import { WebViewMessages } from '@demotime/common';
 
 export class SettingsView {
   private static webview: WebviewPanel | null = null;

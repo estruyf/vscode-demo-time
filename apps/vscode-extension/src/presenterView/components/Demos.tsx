@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { Demo, DemoFileCache, DemoFiles } from '../../models';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
-import { COMMAND, WebViewMessages } from '../../constants';
+import { COMMAND } from '../../constants';
 import { EventData } from '@estruyf/vscode';
 import { DemoHeader } from './DemoHeader';
 import DemoListItem from './DemoListItem';
 import { Notes } from './Notes';
+import { WebViewMessages } from '@demotime/common';
 
 export interface IDemosProps { }
 

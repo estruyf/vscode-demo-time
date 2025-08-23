@@ -1,8 +1,9 @@
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import * as React from 'react';
-import { COMMAND, WebViewMessages } from '../../constants';
+import { COMMAND } from '../../constants';
 import { EventData } from '@estruyf/vscode';
 import { Button } from 'vscrui';
+import { WebViewMessages } from '@demotime/common';
 
 export interface ICountdownProps {
   time: number | undefined;

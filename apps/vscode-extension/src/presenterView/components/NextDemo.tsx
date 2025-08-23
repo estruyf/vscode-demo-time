@@ -1,9 +1,10 @@
 import { EventData } from '@estruyf/vscode';
 import * as React from 'react';
-import { COMMAND, WebViewMessages } from '../../constants';
+import { COMMAND } from '../../constants';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import { Demo } from '../../models';
 import { Button, Icon } from 'vscrui';
+import { WebViewMessages } from '@demotime/common';
 
 export interface INextDemoProps {
   className?: string;
@@ -32,7 +33,7 @@ export const NextDemo: React.FunctionComponent<INextDemoProps> = ({
   };
 
   const runNextDemo = () => {
-    messageHandler.send(WebViewMessages.toVscode.runCommand, { command: COMMAND.start});
+    messageHandler.send(WebViewMessages.toVscode.runCommand, { command: COMMAND.start });
   };
 
   React.useEffect(() => {
@@ -41,16 +42,16 @@ export const NextDemo: React.FunctionComponent<INextDemoProps> = ({
     messageHandler.request<Demo | undefined>(WebViewMessages.toVscode.getNextDemo).then((demo) => {
       setNextDemo(demo);
     });
-    
+
     return () => {
       Messenger.unlisten(messageListener);
     };
   }, []);
 
   return (
-    <Button 
+    <Button
       className={className || ""}
-      onClick={runNextDemo} 
+      onClick={runNextDemo}
       appearance={secondary ? "secondary" : "primary"}>
       <span className={titleClass}>{nextDemo?.title || "Start"}</span>
 

@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
-import { Config, SlideLayout, SlideTheme, SlideTransition, WebViewMessages } from '../../constants';
+import { Config, SlideLayout, SlideTheme, SlideTransition } from '../../constants';
 import { Markdown } from './Markdown';
 import { EventData } from '@estruyf/vscode';
 import { useScale } from '../hooks/useScale';
 import { useFileContents } from '../hooks/useFileContents';
 import useCursor from '../hooks/useCursor';
 import { SlideControls } from './SlideControls';
-// Removed WebViewMessages import as setInitialSlide is no longer used here directly for listener
 import useTheme from '../hooks/useTheme';
 import { Slide } from '../../models';
 import { SlideParser } from '../../services/SlideParser';
@@ -15,6 +14,7 @@ import { useMousePosition } from '../hooks/useMousePosition';
 import { convertTemplateToHtml } from '../../utils/convertTemplateToHtml';
 import { LaserPointer } from './LaserPointer';
 import DOMPurify from 'dompurify';
+import { WebViewMessages } from '@demotime/common';
 
 export interface IMarkdownPreviewProps {
   fileUri: string;

@@ -1,6 +1,7 @@
 {
   "name": "demo-time",
   "version": "1.0.0",
+  "private": true,
   "description": "Demo Time - The extension to present and perform live coding demos with confidence.",
   "keywords": [
     "demo",
@@ -45,6 +46,11 @@
   },
   "author": "Elio Struyf <elio@struyfconsulting.be> (https://www.eliostruyf.com)",
   "license": "MIT",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "docs"
+  ],
   "devDependencies": {
     "@actions/core": "^1.11.1",
     "@nx/js": "^21.4.0",

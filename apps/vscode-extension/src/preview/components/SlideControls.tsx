@@ -1,12 +1,13 @@
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import * as React from 'react';
-import { COMMAND, WebViewMessages } from '../../constants';
+import { COMMAND } from '../../constants';
 import { SlideControl } from './SlideControl';
 import { WhiteboardIcon } from './WhiteboardIcon';
 import { Icon } from 'vscrui';
 import { ProjectorIcon } from './ProjectorIcon';
 import { EventData } from '@estruyf/vscode';
 import { SlideMetadata } from '../../models';
+import { WebViewMessages } from '@demotime/common';
 
 export interface ISlideControlsProps {
   show: boolean;

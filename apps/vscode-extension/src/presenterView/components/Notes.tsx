@@ -3,7 +3,7 @@ import { useRemark } from '../../preview/hooks/useRemark';
 import { DemoHeader } from './DemoHeader';
 import { Button, Icon } from 'vscrui';
 import { messageHandler } from '@estruyf/vscode/dist/client/webview';
-import { WebViewMessages } from '../../constants';
+import { WebViewMessages } from '@demotime/common';
 
 export interface INotesProps {
   content?: string;

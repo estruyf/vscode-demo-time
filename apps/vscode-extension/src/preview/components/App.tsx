@@ -1,9 +1,10 @@
 import { EventData } from '@estruyf/vscode';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import * as React from 'react';
-import { COMMAND, WebViewMessages } from '../../constants';
+import { COMMAND } from '../../constants';
 import { MarkdownPreview } from './MarkdownPreview';
 import { ImagePreview } from './ImagePreview';
+import { WebViewMessages } from '@demotime/common';
 
 export interface IAppProps {
   webviewUrl: string | null;

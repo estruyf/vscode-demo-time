@@ -1,5 +1,6 @@
 import { PresenterView } from '../presenterView/PresenterView';
-import { COMMAND, Config, ContextKeys, StateKeys, WebViewMessages } from '../constants';
+import { COMMAND, Config, ContextKeys, StateKeys } from '../constants';
+import { WebViewMessages } from '@demotime/common';
 import {
   Action,
   Demo,
