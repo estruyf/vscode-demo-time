@@ -784,8 +784,12 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run clean && npm run compile",
-    "compile": "tsup --minify",
-    "dev": "tsup --watch --sourcemap",
+    "compile": "npm-run-all --parallel compile:*",
+    "compile:ext": "tsup --minify",
+    "compile:wc": "tsup --minify --config tsup.wc.config.ts",
+    "dev": "npm-run-all --parallel watch:*",
+    "watch:ext": "tsup --watch --sourcemap",
+    "watch:wc": "tsup --watch --sourcemap --config tsup.wc.config.ts ",
     "lint": "eslint src --ext ts",
     "test": "jest --coverage",
     "clean": "rimraf out coverage"
@@ -819,6 +823,7 @@
     "jsonc-parser": "^3.3.1",
     "mermaid": "^11.6.0",
     "mlly": "^1.7.4",
+    "npm-run-all": "^4.1.5",
     "playwright-chromium": "^1.51.1",
     "prettier": "^3.6.2",
     "rehype-pretty-code": "^0.14.0",

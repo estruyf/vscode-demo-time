@@ -323,16 +323,6 @@ export class PdfExportService {
       Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'frost.css'),
     );
 
-    // let webcomponents = await readFile(
-    //   Uri.joinPath(Uri.parse(extensionPath), 'out', 'webcomponents', 'index.mjs'),
-    // );
-
-    // let webcomponents = readFileSync(
-    //   join(extensionPath, 'out', 'webcomponents', 'index.mjs'),
-    //   'utf-8',
-    // );
-    // webcomponents = webcomponents.replace(/\n/g, '\\n');
-
     const webcomponentsUrl = Uri.joinPath(
       Uri.parse(extensionPath),
       'out',
