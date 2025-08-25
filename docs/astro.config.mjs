@@ -191,14 +191,8 @@ export default defineConfig({
             { label: 'Snippets', slug: 'snippets' },
           ],
         },
-        {
-          label: 'Examples',
-          collapsed: true,
-          items: [
-            { label: 'Projects', slug: 'examples' },
-            { label: 'Showcases', slug: 'examples/showcases' },
-          ],
-        },
+        { label: 'Projects', slug: 'examples' },
+        { label: 'Showcases', slug: 'showcases' },
         {
           label: 'Community Articles',
           link: 'articles'

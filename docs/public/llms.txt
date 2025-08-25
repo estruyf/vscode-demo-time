@@ -34,7 +34,7 @@
 ## Examples
 
 - [Projects | Demo Time](https://demotime.show/examples/): Examples of projects that you can use to learn and understand how to use the extension.
-- [Showcases | Demo Time](https://demotime.show/examples/showcases/): Real-world usage of Demo Time at conferences, workshops, and presentations worldwide.
+- [Showcases | Demo Time](https://demotime.show/showcases/): Real-world usage of Demo Time at conferences, workshops, and presentations worldwide.
 
 ## Features
 

@@ -1,6 +1,6 @@
 # Change Log
 
-## [1.9.0] - 2025-08-xx
+## [1.9.0] - 2025-08-25
 
 - [#219](https://github.com/estruyf/vscode-demo-time/issues/219): Added a GUI for editing your demo
   files
