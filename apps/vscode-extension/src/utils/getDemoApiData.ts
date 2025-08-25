@@ -13,9 +13,14 @@ function mapDemos(demos: any[]): { id: string; title: string }[] {
 }
 
 /**
- * Retrieves formatted demo data including demo files, next demo, and current demo file.
+ * Retrieve structured demo metadata for the extension UI.
  *
- * @returns An object containing demoFiles, nextDemo, and currentDemoFile, or null if no demos found.
+ * Returns either null (when no demo files are available) or an object containing:
+ * - `demoFiles`: an array of { filePath: string; demos: { id: string; title: string }[] } for all discovered demo files.
+ * - `nextDemo` (optional): the next demo to run as { id: string; title: string } when available.
+ * - `currentDemoFile` (optional): the currently executing demo file as { filePath: string; demo: { id: string; title: string }[] } when available.
+ *
+ * @returns Formatted demo data or `null` if no demo files were found.
  */
 export async function getDemoApiData() {
   const demoFiles = await DemoFileProvider.getFiles();

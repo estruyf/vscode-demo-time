@@ -24,6 +24,14 @@ import { Config } from './constants';
 import { ConfigEditorProvider } from './providers/ConfigEditorProvider';
 import { SettingsView } from './settingsView/SettingsView';
 
+/**
+ * Activates the extension: initializes core singleton state, clears runtime variables, and registers all extension features and commands.
+ *
+ * This function is called by VS Code when the extension is activated. It obtains the Extension singleton, resets in-memory variable state, and registers UI panels, command handlers, providers, services, and URI/terminal integrations required for the extension to operate. After registration completes, it logs that the extension is active.
+ *
+ * @param context - The VS Code extension context supplied on activation.
+ * @returns A promise that resolves once activation and all registrations have completed.
+ */
 export async function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);
 
