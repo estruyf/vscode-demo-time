@@ -794,6 +794,11 @@
     "test": "jest --coverage",
     "clean": "rimraf out coverage"
   },
+  "nx": {
+    "implicitDependencies": [
+      "webviews"
+    ]
+  },
   "peerDependencies": {
     "playwright-chromium": "^1.51.1"
   },
