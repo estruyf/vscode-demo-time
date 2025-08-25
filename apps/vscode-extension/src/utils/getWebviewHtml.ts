@@ -9,6 +9,8 @@ export const getWebviewHtml = async (type: WebviewType, webview: Webview) => {
   Logger.info(`Loading webview HTML for type: ${type}`);
 
   const extension = Extension.getInstance();
+  const webviewWsUrl = getWebviewWorkspaceUrl(webview, '');
+  const webviewExtUrl = getWebviewExtensionUrl(webview);
 
   if (extension.isProductionMode) {
     const extensionUri = extension.extensionUri;
@@ -35,9 +37,6 @@ export const getWebviewHtml = async (type: WebviewType, webview: Webview) => {
         return;
       }
     }
-
-    const webviewWsUrl = getWebviewWorkspaceUrl(webview, '');
-    const webviewExtUrl = getWebviewExtensionUrl(webview);
 
     try {
       if (!webviewHtml) {
@@ -84,7 +83,7 @@ export const getWebviewHtml = async (type: WebviewType, webview: Webview) => {
             <title>Demo Time Config Editor</title>
           </head>
           <body>
-            <div id="root" data-view-type="${type}"></div>
+            <div id="root" data-view-type="${type}" data-webview-url="${webviewWsUrl}" data-extension-url="${webviewExtUrl}"></div>
             <script type="module" src="http://localhost:5173/src/main.tsx"></script>
           </body>
         </html>`;
