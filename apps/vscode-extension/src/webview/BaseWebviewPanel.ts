@@ -60,7 +60,7 @@ export class BaseWebview {
       light: Uri.joinPath(Uri.file(extensionUri), 'assets', 'logo', 'demotime-bg.svg'),
     };
 
-    this.webview.webview.html = await getWebviewHtml(this.id);
+    this.webview.webview.html = (await getWebviewHtml(this.id, this.webview.webview)) || '';
 
     this.webview.onDidDispose(this.onDispose);
 

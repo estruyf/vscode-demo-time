@@ -36,7 +36,7 @@
     "docs:build": "npx nx build demo-time-docs",
     "common:build": "npx nx build common",
     "common:watch": "npx nx run common:watch",
-    "webviews:build": "npx nx build webviews",
+    "webviews:build": "npx nx build webviews && node ./scripts/copy-webviews.js",
     "webviews:watch": "npx nx run webviews:dev",
     "vscode:open": "code ./apps/vscode-extension"
   },

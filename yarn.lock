@@ -1579,7 +1579,7 @@
     "@eslint/core" "^0.15.2"
     levn "^0.4.1"
 
-"@estruyf/vscode@^1.1.0":
+"@estruyf/vscode@1.2.0", "@estruyf/vscode@^1.1.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@estruyf/vscode/-/vscode-1.2.0.tgz#13d043113e9899f91b7d744604c803eea414711f"
   integrity sha512-ZOTB1Yt44BdNIG0gsGd+cI0Cj8mef+i0ULeYMqt/lY8idSI48ZTc2F8CUyLhfVw9kgI2i37jOqTlvBo4+St50w==

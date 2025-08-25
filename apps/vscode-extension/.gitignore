@@ -5,6 +5,7 @@ node_modules
 *.vsix
 .DS_STORE
 coverage
+webviews
 
 .nx/cache
 .nx/workspace-data

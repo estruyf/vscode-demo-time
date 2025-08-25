@@ -4,7 +4,7 @@ import { ContextKeys } from '../constants';
 import {
   getAbsolutePath,
   getTheme,
-  getWebviewUrl,
+  getWebviewWorkspaceUrl,
   readFile,
   setContext,
   togglePresentationView,
@@ -76,11 +76,11 @@ export class Preview extends BaseWebview {
     if (Preview.isOpen) {
       // Use the fileUri argument for triggerUpdate, as it's the most current.
       if (Preview.webview?.webview && fileUri) {
-        const fileWebviewPath = getWebviewUrl(Preview.webview?.webview, fileUri);
+        const fileWebviewPath = getWebviewWorkspaceUrl(Preview.webview?.webview, fileUri);
         Preview.triggerUpdate(fileWebviewPath);
 
         if (css) {
-          const cssWebviewPath = getWebviewUrl(Preview.webview?.webview, css);
+          const cssWebviewPath = getWebviewWorkspaceUrl(Preview.webview?.webview, css);
           Preview.postMessage(WebViewMessages.toWebview.updateStyles, cssWebviewPath);
         } else {
           Preview.postMessage(WebViewMessages.toWebview.updateStyles, undefined);
@@ -91,7 +91,7 @@ export class Preview extends BaseWebview {
       // After creating, if fileUri is available, trigger update
       if (fileUri && Preview.webview?.webview) {
         // Use fileUri from argument
-        const fileWebviewPath = getWebviewUrl(Preview.webview.webview, fileUri);
+        const fileWebviewPath = getWebviewWorkspaceUrl(Preview.webview.webview, fileUri);
         Preview.triggerUpdate(fileWebviewPath); // Convert string to Uri
       }
     }
@@ -134,14 +134,14 @@ export class Preview extends BaseWebview {
       const setting = Extension.getInstance().getSetting(payload);
       Preview.postRequestMessage(command, requestId, setting);
     } else if (command === WebViewMessages.toVscode.getFileUri && requestId) {
-      const fileWebviewPath = getWebviewUrl(Preview.webview?.webview, Preview.crntFile);
+      const fileWebviewPath = getWebviewWorkspaceUrl(Preview.webview?.webview, Preview.crntFile);
       Preview.postRequestMessage(WebViewMessages.toVscode.getFileUri, requestId, fileWebviewPath);
     } else if (command === WebViewMessages.toVscode.parseFileUri && requestId && payload) {
-      const fileWebviewPath = getWebviewUrl(Preview.webview?.webview, payload);
+      const fileWebviewPath = getWebviewWorkspaceUrl(Preview.webview?.webview, payload);
       Preview.postRequestMessage(WebViewMessages.toVscode.getFileUri, requestId, fileWebviewPath);
     } else if (command === WebViewMessages.toVscode.getStyles && requestId) {
       const cssWebviewPath = Preview.crntCss
-        ? getWebviewUrl(Preview.webview?.webview, Preview.crntCss)
+        ? getWebviewWorkspaceUrl(Preview.webview?.webview, Preview.crntCss)
         : undefined;
       Preview.postRequestMessage(WebViewMessages.toVscode.getStyles, requestId, cssWebviewPath);
     } else if (command === WebViewMessages.toVscode.getTheme && requestId) {

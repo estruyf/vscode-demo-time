@@ -85,8 +85,8 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       enableScripts: true,
     };
 
-    const html = await getWebviewHtml('config-editor');
-    webviewPanel.webview.html = html;
+    const html = await getWebviewHtml('config-editor', webviewPanel.webview);
+    webviewPanel.webview.html = html || '';
 
     ConfigEditorProvider.fileViews.set(document.uri.toString(), webviewPanel);
 
