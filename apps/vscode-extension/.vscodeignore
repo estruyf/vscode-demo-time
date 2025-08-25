@@ -1,0 +1,34 @@
+# Folders
+.demo
+.github
+.vscode
+.vscode-test/**
+coverage
+docs
+packages
+scripts
+snippets
+src
+tests
+examples
+.nx
+
+# Files
+**/.eslintrc.json
+.gitignore
+.prettierrc.json
+.yarnrc
+jest.config.js
+postcss.config.js
+preview.config.js
+tailwind.config.js
+**/tsconfig.json
+**/tsup.config.ts
+**/tsup.wc.config.ts
+webview.config.js
+**/*.ts
+nx.json
+
+# Assets
+assets/logo.ai
+assets/demotime.gif

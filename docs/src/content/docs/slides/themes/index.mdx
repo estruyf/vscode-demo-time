@@ -1,0 +1,249 @@
+---
+title: Slide themes
+description: Learn about the different slide themes available in Demo Time
+lastmod: 2025-07-04T18:00:50.393Z
+---
+
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+
+import defaultImg from "../../../../assets/docs/slide-themes/default/default.webp";
+import introImg from "../../../../assets/docs/slide-themes/default/intro.webp";
+import sectionImg from "../../../../assets/docs/slide-themes/default/section.webp";
+import quoteImg from "../../../../assets/docs/slide-themes/default/quote.webp";
+import imageImg from "../../../../assets/docs/slide-themes/default/image.webp";
+import imageLeftImg from "../../../../assets/docs/slide-themes/default/image-left.webp";
+import imageRightImg from "../../../../assets/docs/slide-themes/default/image-right.webp";
+import twoColumnsImg from "../../../../assets/docs/slide-themes/default/two-columns.webp";
+
+import defaultMinimalImg from "../../../../assets/docs/slide-themes/minimal/default.webp";
+import introMinimalImg from "../../../../assets/docs/slide-themes/minimal/intro.webp";
+import sectionMinimalImg from "../../../../assets/docs/slide-themes/minimal/section.webp";
+import quoteMinimalImg from "../../../../assets/docs/slide-themes/minimal/quote.webp";
+import imageMinimalImg from "../../../../assets/docs/slide-themes/minimal/image.webp";
+import imageLeftMinimalImg from "../../../../assets/docs/slide-themes/minimal/image-left.webp";
+import imageRightMinimalImg from "../../../../assets/docs/slide-themes/minimal/image-right.webp";
+import twoColumnsMinimalImg from "../../../../assets/docs/slide-themes/minimal/two-columns.webp";
+
+import defaultmonomiImg from "../../../../assets/docs/slide-themes/monomi/default.webp";
+import intromonomiImg from "../../../../assets/docs/slide-themes/monomi/intro.webp";
+import sectionmonomiImg from "../../../../assets/docs/slide-themes/monomi/section.webp";
+import quotemonomiImg from "../../../../assets/docs/slide-themes/monomi/quote.webp";
+import imagemonomiImg from "../../../../assets/docs/slide-themes/monomi/image.webp";
+import imageLeftmonomiImg from "../../../../assets/docs/slide-themes/monomi/image-left.webp";
+import imageRightmonomiImg from "../../../../assets/docs/slide-themes/monomi/image-right.webp";
+import twoColumnsmonomiImg from "../../../../assets/docs/slide-themes/monomi/two-columns.webp";
+
+import defaultunnamedImg from "../../../../assets/docs/slide-themes/unnamed/default.webp";
+import introunnamedImg from "../../../../assets/docs/slide-themes/unnamed/intro.webp";
+import sectionunnamedImg from "../../../../assets/docs/slide-themes/unnamed/section.webp";
+import quoteunnamedImg from "../../../../assets/docs/slide-themes/unnamed/quote.webp";
+import imageunnamedImg from "../../../../assets/docs/slide-themes/unnamed/image.webp";
+import imageLeftunnamedImg from "../../../../assets/docs/slide-themes/unnamed/image-left.webp";
+import imageRightunnamedImg from "../../../../assets/docs/slide-themes/unnamed/image-right.webp";
+import twoColumnsunnamedImg from "../../../../assets/docs/slide-themes/unnamed/two-columns.webp";
+
+import defaultquantumImg from "../../../../assets/docs/slide-themes/quantum/default.webp";
+import introquantumImg from "../../../../assets/docs/slide-themes/quantum/intro.webp";
+import sectionquantumImg from "../../../../assets/docs/slide-themes/quantum/section.webp";
+import quotequantumImg from "../../../../assets/docs/slide-themes/quantum/quote.webp";
+import imagequantumImg from "../../../../assets/docs/slide-themes/quantum/image.webp";
+import imageLeftquantumImg from "../../../../assets/docs/slide-themes/quantum/image-left.webp";
+import imageRightquantumImg from "../../../../assets/docs/slide-themes/quantum/image-right.webp";
+import twoColumnsquantumImg from "../../../../assets/docs/slide-themes/quantum/two-columns.webp";
+
+import defaultfrostImg from "../../../../assets/docs/slide-themes/frost/default.webp";
+import introfrostImg from "../../../../assets/docs/slide-themes/frost/intro.webp";
+import sectionfrostImg from "../../../../assets/docs/slide-themes/frost/section.webp";
+import quotefrostImg from "../../../../assets/docs/slide-themes/frost/quote.webp";
+import imagefrostImg from "../../../../assets/docs/slide-themes/frost/image.webp";
+import imageLeftfrostImg from "../../../../assets/docs/slide-themes/frost/image-left.webp";
+import imageRightfrostImg from "../../../../assets/docs/slide-themes/frost/image-right.webp";
+import twoColumnsfrostImg from "../../../../assets/docs/slide-themes/unnamed/two-columns.webp";
+
+Personalization matters! Demo Time allows you to customize the look and feel of your slides by selecting a built-in theme or creating your own.
+
+Similar like defining the `layout` in the front matter of a slide, you can also define a `theme` to apply a specific theme to a slide. If you don't specify a theme, the `default` theme will be used.
+
+```md
+---
+theme: default
+---
+
+# Welcome to Demo Time!
+```
+
+You can also use a custom theme by providing a CSS file in the slide action configuration:
+
+<Tabs syncKey="open-slide">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "openSlide",
+  "path": "<relative path to the file>",
+  "theme": "<relative path to the CSS file>"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: openSlide
+path: <relative path to the file>
+theme: <relative path to the CSS file>
+}
+```
+
+</TabItem>
+</Tabs>
+
+## Built-in themes
+
+- `default`
+- `minimal`
+- `monomi`
+- `unnamed`
+- `quantum`
+- `frost`
+
+### Theme overview
+
+<div class="grid grid-cols-2 gap-x-4 gap-y-8 mb-8">
+  <div class="relative">
+    <div class="images w-full relative">
+      <div class="slideshow">
+        <Image class="h-full" src={defaultImg} alt="Default" />
+        <Image class="h-full" src={introImg} alt="Intro" />
+        <Image class="h-full" src={sectionImg} alt="Section" />
+        <Image class="h-full" src={quoteImg} alt="Quote" />
+        <Image class="h-full" src={imageImg} alt="Image" />
+        <Image class="h-full" src={imageLeftImg} alt="Image Left" />
+        <Image class="h-full" src={imageRightImg} alt="Image Right" />
+        <Image class="h-full" src={twoColumnsImg} alt="Two Columns" />
+      </div>
+    </div>
+    
+    <p class="text-base font-bold mb-0">Default</p>
+    <p class="text-sm !mt-1">Theme name: <code>default</code></p>
+    <p class="text-sm !mt-1">The default theme is a clean and simple theme that can be used for most slides.</p>
+    <p class="text-sm !mt-1">
+      <a href="default/" title='View more'>View more</a>
+    </p>
+  </div>
+
+  <div class="relative !mt-0">
+    <div class="images w-full relative">
+      <div class="slideshow">
+        <Image class="h-full" src={defaultMinimalImg} alt="Default" />
+        <Image class="h-full" src={introMinimalImg} alt="Intro" />
+        <Image class="h-full" src={sectionMinimalImg} alt="Section" />
+        <Image class="h-full" src={quoteMinimalImg} alt="Quote" />
+        <Image class="h-full" src={imageMinimalImg} alt="Image" />
+        <Image class="h-full" src={imageLeftMinimalImg} alt="Image Left" />
+        <Image class="h-full" src={imageRightMinimalImg} alt="Image Right" />
+        <Image class="h-full" src={twoColumnsMinimalImg} alt="Two Columns" />
+      </div>
+    </div>
+    
+    <p class="text-base font-bold mb-0">Minimal</p>
+    <p class="text-sm !mt-1">Theme name: <code>minimal</code></p>
+    <p class="text-sm !mt-1">The minimal theme is a simple theme with a background on the slide title.</p>
+    <p class="text-sm !mt-1">
+      <a href="minimal/" title='View more'>View more</a>
+    </p>
+  </div>
+
+  <div class="relative !mt-0">
+    <div class="images w-full relative">
+      <div class="slideshow">
+        <Image class="h-full" src={defaultmonomiImg} alt="Default" />
+        <Image class="h-full" src={intromonomiImg} alt="Intro" />
+        <Image class="h-full" src={sectionmonomiImg} alt="Section" />
+        <Image class="h-full" src={quotemonomiImg} alt="Quote" />
+        <Image class="h-full" src={imagemonomiImg} alt="Image" />
+        <Image class="h-full" src={imageLeftmonomiImg} alt="Image Left" />
+        <Image class="h-full" src={imageRightmonomiImg} alt="Image Right" />
+        <Image class="h-full" src={twoColumnsmonomiImg} alt="Two Columns" />
+      </div>
+    </div>
+    
+    <p class="text-base font-bold mb-0">Monomi</p>
+    <p class="text-sm !mt-1">Theme name: <code>monomi</code></p>
+    <p class="text-sm !mt-1">A <b>mono</b>chrome-<b>mi</b>nimalist theme</p>
+    <p class="text-sm !mt-1">
+      <a href="monomi/" title='View more'>View more</a>
+    </p>
+  </div>
+
+  <div class="relative !mt-0">
+    <div class="images w-full relative">
+      <div class="slideshow">
+        <Image class="h-full" src={defaultunnamedImg} alt="Default" />
+        <Image class="h-full" src={introunnamedImg} alt="Intro" />
+        <Image class="h-full" src={sectionunnamedImg} alt="Section" />
+        <Image class="h-full" src={quoteunnamedImg} alt="Quote" />
+        <Image class="h-full" src={imageunnamedImg} alt="Image" />
+        <Image class="h-full" src={imageLeftunnamedImg} alt="Image Left" />
+        <Image class="h-full" src={imageRightunnamedImg} alt="Image Right" />
+        <Image class="h-full" src={twoColumnsunnamedImg} alt="Two Columns" />
+      </div>
+    </div>
+    
+    <p class="text-base font-bold mb-0">Unnamed</p>
+    <p class="text-sm !mt-1">Theme name: <code>unnamed</code></p>
+    <p class="text-sm !mt-1">The unnamed theme is based on the <a href="https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-unnamed-theme" title="The Unnamed - VS Code theme">VS Code theme</a></p>
+    <p class="text-sm !mt-1">
+      <a href="unnamed/" title='View more'>View more</a>
+    </p>
+  </div>
+
+  <div class="relative !mt-0">
+    <div class="images w-full relative">
+      <div class="slideshow">
+        <Image class="h-full" src={defaultquantumImg} alt="Default" />
+        <Image class="h-full" src={introquantumImg} alt="Intro" />
+        <Image class="h-full" src={sectionquantumImg} alt="Section" />
+        <Image class="h-full" src={quotequantumImg} alt="Quote" />
+        <Image class="h-full" src={imagequantumImg} alt="Image" />
+        <Image class="h-full" src={imageLeftquantumImg} alt="Image Left" />
+        <Image class="h-full" src={imageRightquantumImg} alt="Image Right" />
+        <Image class="h-full" src={twoColumnsquantumImg} alt="Two Columns" />
+      </div>
+    </div>
+    
+    <p class="text-base font-bold mb-0">Quantum</p>
+    <p class="text-sm !mt-1">Theme name: <code>quantum</code></p>
+    <p class="text-sm !mt-1">A dark mode theme with vibrant gradient accents</p>
+    <p class="text-sm !mt-1">
+      <a href="quantum/" title='View more'>View more</a>
+    </p>
+  </div>
+
+  <div class="relative !mt-0">
+    <div class="images w-full relative">
+      <div class="slideshow">
+        <Image class="h-full" src={defaultfrostImg} alt="Default" />
+        <Image class="h-full" src={introfrostImg} alt="Intro" />
+        <Image class="h-full" src={sectionfrostImg} alt="Section" />
+        <Image class="h-full" src={quotefrostImg} alt="Quote" />
+        <Image class="h-full" src={imagefrostImg} alt="Image" />
+        <Image class="h-full" src={imageLeftfrostImg} alt="Image Left" />
+        <Image class="h-full" src={imageRightfrostImg} alt="Image Right" />
+        <Image class="h-full" src={twoColumnsfrostImg} alt="Two Columns" />
+      </div>
+    </div>
+    
+    <p class="text-base font-bold mb-0">Frost</p>
+    <p class="text-sm !mt-1">Theme name: <code>frost</code></p>
+    <p class="text-sm !mt-1">Light mode design with a clean, airy feel</p>
+    <p class="text-sm !mt-1">
+      <a href="frost/" title='View more'>View more</a>
+    </p>
+  </div>
+</div>
+
+<Aside type="tip">
+If you want to create your own theme, you can start from one of the built-in themes and customize the CSS to match your style. You can find more information on how to create a custom theme in the [custom theming section](/slides/themes/custom/).
+</Aside>

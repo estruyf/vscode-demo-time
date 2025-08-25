@@ -1,0 +1,78 @@
+---
+title: Start Presenting with Demo Time
+description: Learn how to use Demo Time to present your demos like a pro.
+lastmod: 2025-07-23T09:15:10.517Z
+---
+
+import { Image } from 'astro:assets';
+import { Code, Aside } from '@astrojs/starlight/components';
+
+import presentationModeImage from "../../assets/docs/presentation-mode.webp";
+import presentationModeOnImg from "../../assets/docs/presentation-mode-on.webp";
+import resetPresentationProgressImg from "../../assets/docs/reset-presentation.webp";
+
+Once you have created your slides/demos, you can start presenting them using Demo Time. Demo Time provides a **presentation mode** which allows you to use a keyboard shortcut or a presenter/clicker to navigate through your demos without having to click through each step manually.
+
+<Aside type="note">
+The **presentation mode** works with both slides and code demos, allowing you to seamlessly switch between the two during your presentation.
+</Aside>
+
+## Start presenting
+
+Once you have created your demos, you will see them in the Demo Time panel view. You can run them by clicking on each demo manually. However, to present them more effectively, you can use the **presentation mode**. In this mode, you can navigate through your demos using a keyboard shortcut or a presenter/clicker.
+
+To enter presentation mode, click the "projector" icon in the Demo Time panel view or use the `Demo Time: Start Presentation Mode` command from the command palette.
+
+<Image class="mx-auto" src={presentationModeImage} alt="Enter presentation mode" width="400" />
+
+<Aside type="note">
+When you enter presentation mode and have multiple demo files available, you can choose which demo to start your presentation with.
+</Aside>
+
+Once you are in presentation mode, you will see a record icon in the status bar indicating that you are in presentation mode.
+
+
+<Image class="mx-auto" src={presentationModeOnImg} alt="Demo Time running in presentation mode" />
+
+You can now use your right arrow key `→` or right presenter/clicker button to navigate through the steps of your demos.
+
+<Aside type="tip">
+If you want, you can override the default keybindings for the presenter/clicker buttons by updating the `demoTime.start` and `demo-time.previous` commands in the keybindings settings (use the `Preferences: Open Keyboard Shortcuts` command). 
+
+More information about it can be found in the [control the next demo shortcut](/tips/control-next-demo) section.
+</Aside>
+
+## Stop presenting
+
+If you want to stop presenting, you can click on the `record` icon in the status bar, or use the `Demo Time: Toggle presentation mode` command from the command palette. This will stop the presentation mode and return you to the normal Demo Time view.
+
+Both of these actions will keep the current demo progress and allow you to continue from where you left off when you start the presentation mode again. 
+
+## Reset the demo progress
+
+In case you want to start from the beginning, you can use the **reset** action from the Demo Time panel view or use the `Demo Time: Reset` command from the command palette. This will reset the demo progress and allow you to start from the beginning.
+
+<Image class="mx-auto" src={resetPresentationProgressImg} alt="Reset the presentation progress" width="500" />
+
+## Enable "Go Back" Navigation
+
+If you would like to enable the ability to go back to the previous step, you can enable this by updating the `demoTime.previousEnabled` setting to `true`.
+
+```json title=".vscode/settings.json"
+{
+    "demoTime.previousEnabled": true
+}
+```
+
+When you enabled this setting, you can use your left arrow key or left presenter/clicker button to navigate back to the previous step.
+
+<Aside type="caution">
+The ability to go back is disabled by default because some demos may involve changes to content in previous steps. Re-running these steps could cause conflicts or errors.
+</Aside>
+
+## Tips for presenting
+
+- **Test with timing**: Practice your script while talking through each step
+- **Use `presentation mode`**: Avoid clicking through steps mid-talk
+- **Keep the demo focused**: Add extra info in notes, not in live code
+- **Backup plan**: Keep your demos self-contained so you can restart easily for when you would add manual changes

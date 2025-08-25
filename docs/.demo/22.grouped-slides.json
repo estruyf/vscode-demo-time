@@ -1,0 +1,35 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Grouped slides",
+  "description": "",
+  "demos": [
+    {
+      "title": "Grouped slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/grouped-slide.md"
+        }
+      ],
+      "icons": {
+        "start": "vm",
+        "end": "pass-filled"
+      }
+    },
+    {
+      "title": "Grouped slide 2",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/grouped-slide-2.md"
+        }
+      ],
+      "icons": {
+        "start": "vm",
+        "end": "pass-filled"
+      }
+    }
+  ]
+}

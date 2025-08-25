@@ -1,0 +1,74 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.vscode-dark *));
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+
+  button,
+  [role='button'] {
+    cursor: pointer;
+  }
+}
+
+.notes-container {
+  @apply p-4 bg-(--vscode-sideBar-background);
+
+  h1 {
+    @apply text-2xl font-bold mb-4;
+  }
+
+  h2 {
+    @apply text-xl font-semibold mb-2;
+  }
+
+  h3 {
+    @apply text-lg font-semibold mb-2;
+  }
+
+  h4 {
+    @apply text-base font-semibold mb-2;
+  }
+
+  h5 {
+    @apply text-sm font-semibold mb-2;
+  }
+
+  h6 {
+    @apply text-xs font-semibold mb-2;
+  }
+
+  p {
+    @apply mb-4;
+  }
+
+  ul {
+    @apply list-disc pl-5 mb-4;
+  }
+
+  ol {
+    @apply list-decimal pl-5 mb-4;
+  }
+
+  li {
+    @apply mb-2;
+  }
+
+  hr {
+    @apply border-t border-(--vscode-panel-border) my-4;
+  }
+}

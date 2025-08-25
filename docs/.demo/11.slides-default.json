@@ -1,0 +1,88 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Slides - Default theme",
+  "description": "",
+  "demos": [
+    {
+      "id": "default-slide",
+      "title": "Default slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/default/default-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Intro slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/default/intro.md"
+        }
+      ]
+    },
+    {
+      "title": "Quote slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/default/quote-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Section slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/default/section-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Image slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/default/image-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Image left slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/default/image-left-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Image right slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/default/image-right-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Two Column Slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/default/two-column-slide.md"
+        }
+      ]
+    }
+  ]
+}

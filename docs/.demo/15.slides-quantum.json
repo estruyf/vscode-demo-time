@@ -1,0 +1,87 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Slides - Quantum theme",
+  "description": "",
+  "demos": [
+    {
+      "title": "Default slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/quantum/default-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Intro slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/quantum/intro.md"
+        }
+      ]
+    },
+    {
+      "title": "Quote slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/quantum/quote-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Section slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/quantum/section-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Image slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/quantum/image-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Image left slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/quantum/image-left-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Image right slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/quantum/image-right-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Two Column Slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/quantum/two-column-slide.md"
+        }
+      ]
+    }
+  ]
+}

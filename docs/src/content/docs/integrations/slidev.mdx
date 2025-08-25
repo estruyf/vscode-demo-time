@@ -1,0 +1,94 @@
+---
+title: Slidev
+description: Learn more about how to integrate Slidev with Demo Time
+lastmod: 2025-07-04T15:10:34.622Z
+---
+
+import { Image } from 'astro:assets';
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+
+import apiPortImg from "../../../assets/docs/api-port.webp";
+import slidevDemoTimeImg from "../../../assets/docs/slidev-demotime.webp";
+import demoIdImg from "../../../assets/docs/slidev-demotime-id.webp";
+
+[Slidev](https://sli.dev) is a presentation tool with which you write your slides in markdown and render these in a website.
+
+<Aside type="note">
+  Slidev aims to provide flexibility and interactivity for **developers** to make their presentations much more interesting, expressive, and attractive by using technologies they are familiar with. Slidev is also open source with a strong community.
+</Aside>
+
+It is a perfect companion for Demo Time when you want to present your slides, and trigger your demos from the slides.
+
+In this guide, you will learn how to integrate Slidev with Demo Time.
+
+## Prerequisites
+
+Before you start integrating Slidev with Demo Time, make sure you have the following:
+
+- A [Slidev](https://sli.dev) presentation
+- A Demo Time extension installed in Visual Studio code
+
+## Enable the Demo Time API
+
+First, you need to enable the Demo Time API in your project. To do this, you need to add the configuration to your `.vscode/settings.json` file.
+
+<Code code={`{
+    "demoTime.api.enabled": true
+}`} 
+  lang="json" 
+  title={`.vscode/settings.json`} />
+
+<Aside type="tip">
+  With the `demoTime.api.port` setting you can specify the port on which the API will run. By default, it is set to `3710`.
+</Aside>
+
+Once enabled, it shows the API and its port number in the status bar of Visual Studio Code.
+
+<Image class="mx-auto" src={apiPortImg} alt="API enabled with port 3710" width="400" />
+
+## Install the Demo Time Slidev Addon
+
+To integrate Slidev with Demo Time, you need to install the Demo Time Slidev Addon.
+
+To install the Demo Time Slidev Addon, run the following command:
+
+<Code code={`npm install slidev-addon-demotime`} lang="bash" />
+
+In your `slides.md` file from Slidev, add the `slidev-addon-demotime` addon to the front matter section to import the Demo Time Slidev Addon:
+
+<Code code={`---
+addons:
+    - slidev-addon-demotime
+---`} lang="markdown"  title={`slides.md`} />
+
+## Usage
+
+After you have installed the Demo Time Slidev Addon, you can use the following syntax in your Slidev slides to trigger a demo:
+
+<Code code={`---
+clicks: 1
+---
+
+# Slide with a demo trigger
+
+This slide triggers \`demo1\` after **1** click.
+
+<demotime click="1" id="demo1" />`} lang="markdown"  title={`slides.md`} />
+
+On a slide where you use the `demotime` component, you will see the Demo Time logo.
+
+<Image class="mx-auto" src={slidevDemoTimeImg} alt="A Slidev slide with the Demo Time trigger" width="600" />
+
+When you hover over the `demotime` component, you will see the ID to trigger. When you click on it, it triggers the demo manually.
+
+<Image class="mx-auto" src={demoIdImg} alt="ID to execute" width="400" />
+
+### Component attributes
+
+The `demotime` component has the following attributes:
+
+- `click`: The number of clicks to trigger the demo.
+- `id`: The demo ID to trigger.
+- `port`: The port where the Demo Time server is running. Default is `3710`.
+- `host`: The host where the Demo Time server is running. Default is `http://localhost`.
+- `image`: The image to show in the slide. Default is the Demo Time logo.

@@ -32,7 +32,7 @@
   - Unit tests use Jest (`npm test`).
   - For extension/VS Code API tests, use `@vscode/test-cli` and Mocha (see README for details).
 - **PowerPoint Integration:**
-  - Supported via dedicated add-in (see docs and `packages/powerpoint-addin/`).
+  - Supported via dedicated add-in (see docs and `apps/powerpoint-addin/`).
 
 ## Developer Workflows
 

@@ -1,12 +1,29 @@
 # Change Log
 
+## [1.9.0] - 2025-08-25
+
+- [#219](https://github.com/estruyf/vscode-demo-time/issues/219): Added a GUI for editing your demo
+  files
+- [#220](https://github.com/estruyf/vscode-demo-time/issues/220): Allow to set a title for the
+  `waitForInput` action
+- [#221](https://github.com/estruyf/vscode-demo-time/issues/221): Added support for the
+  `autoAdvanceAfter` property in the slide front matter to automatically advance to the next slide
+  or demo
+- [#222](https://github.com/estruyf/vscode-demo-time/issues/222): Added the ability to disable a
+  demo or step
+- [#225](https://github.com/estruyf/vscode-demo-time/issues/225): Added a GUI for editing all the
+  settings from Demo Time
+- [#226](https://github.com/estruyf/vscode-demo-time/issues/226): New Demo Time action `runDemoById`
+  to allow to trigger a demo from another demo
+
 ## [1.8.0] - 2025-08-02
 
 - [#199](https://github.com/estruyf/vscode-demo-time/issues/199): Improve loading the slides when
   switching between demo and slides
 - [#204](https://github.com/estruyf/vscode-demo-time/issues/204): Added the `openTerminal` action to
   open a the terminal
-- [#205](https://github.com/estruyf/vscode-demo-time/issues/205): Added the `hacker-typer` typing mode to the `insert`, `replace`, and `patch` actions
+- [#205](https://github.com/estruyf/vscode-demo-time/issues/205): Added the `hacker-typer` typing
+  mode to the `insert`, `replace`, and `patch` actions
 - [#207](https://github.com/estruyf/vscode-demo-time/issues/207): Made the `message` property
   optional for the GitHub Copilot chat actions
 - [#208](https://github.com/estruyf/vscode-demo-time/issues/208): The JSON schema has been
@@ -17,10 +34,10 @@
   optional on the demo root
 - [#212](https://github.com/estruyf/vscode-demo-time/issues/212): Fix encoding issue with ampersands
   in the `dt-list` component
-- [#217](https://github.com/estruyf/vscode-demo-time/issues/217): Fix highlighting whole line when line number and 
-  character positioning is used
-- [#218](https://github.com/estruyf/vscode-demo-time/issues/218): Added a new `/api/demos` endpoint to 
-  retrieve the list of demos in the workspace
+- [#217](https://github.com/estruyf/vscode-demo-time/issues/217): Fix highlighting whole line when
+  line number and character positioning is used
+- [#218](https://github.com/estruyf/vscode-demo-time/issues/218): Added a new `/api/demos` endpoint
+  to retrieve the list of demos in the workspace
 
 ## [1.7.1] - 2025-07-10
 

@@ -1,0 +1,254 @@
+---
+title: File actions
+description: File actions are used to open, create, or preview files in the editor.
+lastmod: 2025-07-04T14:53:50.780Z
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import GitHubFileOpener from '../../../components/GitHubFileOpener.astro';
+
+File actions are used to open, create, or preview files in the editor.
+
+<Aside type="note" title='Samples'>
+  You can find file actions samples on GitHub: 
+  <GitHubFileOpener filePath=".demo/1.file-actions.json" />
+</Aside>
+
+## Open file
+
+To open a file in the editor, use the `open` action. The `open` action takes a file `path` as an argument.
+
+<Tabs syncKey="file-open-action">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "open",
+  "path": "<relative path to the file>"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: open
+path: <relative path to the file>
+```
+
+</TabItem>
+</Tabs>
+
+## Create file
+
+To create a new file in the editor, use the `create` action. The `create` action takes a file `path` as an argument and optionally a `content` or `contentPath` argument.
+
+<Tabs syncKey="file-create-action">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "create",
+  "path": "<relative path to the file>",
+  "content": "<content of the file> (optional)",
+  "contentPath": "<relative path to the file (optional)"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: create
+path: <relative path to the file>
+content: <content of the file> # optional
+contentPath: <relative path to the file> # optional
+```
+
+</TabItem>
+</Tabs>
+
+The `content` argument is used to define th content of the file. It is best used when it is a single line of text.
+
+When you want to create a file with a large content, you can use the `contentPath` argument. The `contentPath` argument is used to define the path to the file in the `.demo` folder. The content of the file will be read from the file in the `.demo` folder and used as the content of the file to be created.
+
+## Save current file
+
+To save the current file in the editor, use the `save` action.
+
+<Tabs syncKey="file-save-action">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "save"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: save
+```
+
+</TabItem>
+</Tabs>
+
+## Rename file
+
+To rename a file in the editor, use the `rename` action. The `rename` action takes a file `path` and a `dest` argument.
+
+<Tabs syncKey="file-rename-action">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "rename",
+  "path": "<relative path to the file>",
+  "dest": "<new name/path of the file>",
+  "overwrite": "<true/false> (optional - default is false)"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: rename
+path: <relative path to the file>
+dest: <new name/path of the file>
+overwrite: <true/false> # optional, default is false
+```
+
+</TabItem>
+</Tabs>
+
+## Move file
+
+To move a file in the editor, use the `move` action. The `move` action takes a file `path` and a `dest` argument.
+
+<Tabs syncKey="file-move-action">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "move",
+  "path": "<relative path to the file>",
+  "dest": "<new name/path of the file>",
+  "overwrite": "<true/false> (optional - default is false)"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: move
+path: <relative path to the file>
+dest: <new name/path of the file>
+overwrite: <true/false> # optional, default is false
+```
+
+</TabItem>
+</Tabs>
+
+## Copy file
+
+To copy a file in the editor, use the `copy` action. The `copy` action takes a file `path` and a `dest` argument.
+
+<Tabs syncKey="file-copy-action">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "copy",
+  "path": "<relative path to the file>",
+  "dest": "<new name/path of the file>",
+  "overwrite": "<true/false> (optional - default is false)"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: copy
+path: <relative path to the file>
+dest: <new name/path of the file>
+overwrite: <true/false> # optional, default is false
+```
+
+</TabItem>
+</Tabs>
+
+## Delete file
+
+To delete a file in the editor, use the `deleteFile` action. The `deleteFile` action takes a file `path` as an argument.
+
+<Tabs syncKey="file-delete-action">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "deleteFile",
+  "path": "<relative path to the file>"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: deleteFile
+path: <relative path to the file>
+```
+
+</TabItem>
+</Tabs>
+
+## Close file
+
+To close a the currently opened file in the editor, use the `close` action.
+
+<Tabs syncKey="file-close-action">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "close"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: close
+```
+
+</TabItem>
+</Tabs>
+
+## Close all files
+
+To close all opened files in the editor, use the `closeAll` action.
+
+<Tabs syncKey="file-closeall-action">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "closeAll"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: closeAll
+```
+
+</TabItem>
+</Tabs>

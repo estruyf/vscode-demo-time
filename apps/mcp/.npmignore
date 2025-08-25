@@ -1,0 +1,14 @@
+# Node modules
+node_modules/
+
+# Build output
+src/
+
+# Misc
+.DS_Store
+.env
+.vscode/
+scripts/
+
+# Package lock files
+package-lock.json

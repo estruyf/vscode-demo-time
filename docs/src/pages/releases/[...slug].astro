@@ -1,0 +1,227 @@
+---
+import { getCollection } from "astro:content";
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+
+export async function getStaticPaths() {
+  const releases = await getCollection("releases");
+  return releases.map((release) => ({
+    params: { slug: release.data.slug },
+    props: { release },
+  }));
+}
+
+const { release } = Astro.props;
+---
+
+<StarlightPage
+  frontmatter={{
+    title: release.data.title,
+    description: release.data.description,
+    tableOfContents: true,
+  }}
+>
+  <div class="release-page">
+    <div class="release-meta">
+      <div class="release-version">
+        <span class="version-label">Version</span>
+        <span class="version-number">{release.data.version}</span>
+      </div>
+      <div class="release-date">
+        <span class="date-label">Released</span>
+        <span class="date-value">
+          {new Date(release.data.date).toISOString().slice(0, 10)}
+        </span>
+      </div>
+    </div>
+
+    <div class="release-content">
+      <Fragment set:html={release.rendered?.html} />
+    </div>
+
+    {
+      (release.data.features ||
+        release.data.improvements ||
+        release.data.fixes) && (
+        <div class="release-summary">
+          <h2>Release Summary</h2>
+
+          {release.data.features && (
+            <div class="summary-section">
+              <h3>🎉 New Features</h3>
+              <ul>
+                {release.data.features.map((feature: string) => (
+                  <li>{feature}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {release.data.improvements && (
+            <div class="summary-section">
+              <h3>🚀 Improvements</h3>
+              <ul>
+                {release.data.improvements.map((improvement: string) => (
+                  <li>{improvement}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {release.data.fixes && (
+            <div class="summary-section">
+              <h3>🐛 Bug Fixes</h3>
+              <ul>
+                {release.data.fixes.map((fix: string) => (
+                  <li>{fix}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    <div class="release-navigation">
+      <a href="/releases/" class="back-link"> ← Back to all releases </a>
+    </div>
+  </div>
+</StarlightPage>
+
+<style>
+  .release-page {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .release-meta {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: var(--sl-color-gray-6);
+    border-radius: 12px;
+    border: 1px solid var(--sl-color-gray-5);
+  }
+
+  .release-version,
+  .release-date {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: flex-start;
+    margin-top: 0 !important;
+  }
+
+  .version-label,
+  .date-label {
+    font-size: 0.875rem;
+    color: var(--sl-color-gray-3);
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .version-number {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--sl-color-text-accent);
+    font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo,
+      Consolas, "DejaVu Sans Mono", monospace;
+  }
+
+  .date-value {
+    font-size: 1.25rem;
+    color: var(--sl-color-white);
+    font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo,
+      Consolas, "DejaVu Sans Mono", monospace;
+  }
+
+  .release-content {
+    margin-bottom: 3rem;
+  }
+
+  .release-summary {
+    background: var(--sl-color-gray-6);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--sl-color-gray-5);
+  }
+
+  .release-summary h2 {
+    color: var(--sl-color-white);
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+  }
+
+  .summary-section {
+    margin-bottom: 2rem;
+  }
+
+  .summary-section:last-child {
+    margin-bottom: 0;
+  }
+
+  .summary-section h3 {
+    color: var(--sl-color-accent);
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+  }
+
+  .summary-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .summary-section li {
+    padding: 0.5rem 0;
+    color: var(--sl-color-gray-2);
+    border-bottom: 1px solid var(--sl-color-gray-5);
+    position: relative;
+    padding-left: 1.5rem;
+  }
+
+  .summary-section li:last-child {
+    border-bottom: none;
+  }
+
+  .summary-section li::before {
+    content: "•";
+    color: var(--sl-color-accent);
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+  }
+
+  .release-navigation {
+    padding-top: 2rem;
+    border-top: 1px solid var(--sl-color-gray-5);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--sl-color-accent);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .back-link:hover {
+    color: var(--sl-color-accent-high);
+    transform: translateX(-4px);
+  }
+
+  @media (max-width: 768px) {
+    .release-meta {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .release-summary {
+      padding: 1.5rem;
+    }
+  }
+</style>

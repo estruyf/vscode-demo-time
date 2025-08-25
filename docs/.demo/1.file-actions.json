@@ -1,0 +1,158 @@
+{
+  "title": "File Actions",
+  "description": "Here are the actions you can perform on files.",
+  "version": 2,
+  "timer": 30,
+  "demos": [
+    {
+      "title": "Open file",
+      "description": "",
+      "steps": [
+        {
+          "action": "open",
+          "path": "src/content/docs/actions/file.mdx"
+        }
+      ]
+    },
+    {
+      "title": "Create file (with content)",
+      "description": "",
+      "steps": [
+        {
+          "action": "create",
+          "path": "temp/new-file.txt",
+          "content": "Hello, world!"
+        },
+        {
+          "action": "open",
+          "path": "temp/new-file.txt"
+        }
+      ]
+    },
+    {
+      "title": "Create file (with contentPath)",
+      "description": "",
+      "steps": [
+        {
+          "action": "create",
+          "path": "temp/file-action.md",
+          "contentPath": "content/file-action.md"
+        },
+        {
+          "action": "open",
+          "path": "temp/file-action.md"
+        }
+      ]
+    },
+    {
+      "title": "Save current file",
+      "description": "",
+      "steps": [
+        {
+          "action": "save"
+        }
+      ]
+    },
+    {
+      "title": "Rename file",
+      "description": "",
+      "steps": [
+        {
+          "action": "create",
+          "path": "temp/file-action.md",
+          "contentPath": "content/file-action.md"
+        },
+        {
+          "action": "rename",
+          "path": "temp/file-action.md",
+          "dest": "temp/file-action-update.md",
+          "overwrite": true
+        },
+        {
+          "action": "open",
+          "path": "temp/file-action-update.md"
+        }
+      ]
+    },
+    {
+      "title": "Move file",
+      "description": "",
+      "steps": [
+        {
+          "action": "create",
+          "path": "temp/file-action.md",
+          "contentPath": "content/file-action.md"
+        },
+        {
+          "action": "move",
+          "path": "temp/file-action.md",
+          "dest": "temp/file-action-update.md",
+          "overwrite": true
+        },
+        {
+          "action": "open",
+          "path": "temp/file-action-update.md"
+        }
+      ]
+    },
+    {
+      "title": "Copy file",
+      "description": "",
+      "steps": [
+        {
+          "action": "create",
+          "path": "temp/file-action.md",
+          "contentPath": "content/file-action.md"
+        },
+        {
+          "action": "copy",
+          "path": "temp/file-action.md",
+          "dest": "temp/file-action-copy.md",
+          "overwrite": true
+        },
+        {
+          "action": "open",
+          "path": "temp/file-action-copy.md"
+        }
+      ]
+    },
+    {
+      "title": "Delete file",
+      "description": "",
+      "steps": [
+        {
+          "action": "create",
+          "path": "temp/file-action.md",
+          "contentPath": "content/file-action.md"
+        },
+        {
+          "action": "deleteFile",
+          "path": "temp/file-action.md"
+        },
+        {
+          "action": "open",
+          "path": "temp/file-action.md"
+        }
+      ]
+    },
+    {
+      "title": "Close file",
+      "description": "",
+      "steps": [
+        {
+          "action": "close"
+        }
+      ]
+    },
+    {
+      "title": "Close all files",
+      "description": "",
+      "steps": [
+        {
+          "action": "closeAll"
+        }
+      ]
+    }
+  ],
+  "$schema": "https://beta.demotime.show/demo-time.schema.json"
+}

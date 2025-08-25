@@ -1,0 +1,103 @@
+---
+title: API
+description: Demo Time provides an API to control the extension programmatically.
+lastmod: 2025-08-02T15:56:10.675Z
+tableOfContents: false
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+import apiPortImg from "../../../assets/docs/api-port.webp";
+
+The extension provides an API which you can use to control the extension. 
+
+You can enable the API by setting the `demoTime.api.enabled` setting to `true`. 
+
+Once the API is enabled, it will run on the port defined in the `demoTime.api.port` setting.
+
+API URL: `http://localhost:3710/api/next`
+
+Once enabled, it shows the API and its port number in the status bar of Visual Studio Code.
+
+<Image class="mx-auto" src={apiPortImg} alt="API enabled with port 3710" width="400" />
+
+<Aside type="tip">
+  When enabled, you can click on the status bar API or open the site in your browser to see the API documentation. Example: `http://localhost:3710`
+</Aside>
+
+## API endpoints
+
+### `/api/next`
+
+This endpoint will execute the next step in the demo.
+
+- Method: `GET`
+- Query parameters:
+  - `bringToFront`: Bring the Visual Studio Code window to the front. Default is `false`.
+
+<Aside type="caution">
+  To make use of the `bringToFront` parameter, you need to make sure the `code` command is available in your system's PATH. If you have not yet installed the `code` command, you can do so by executing the `Shell Command: Install 'code' command in PATH` command from the command palette in Visual Studio Code.
+</Aside>
+
+### `/api/runById`
+
+This endpoint will execute a specific step by its ID in your demo.
+
+You can call this endpoint via a `GET` or `POST` request.
+
+#### GET request
+
+- Method: `GET`
+- Query parameters:
+  - `id`: The ID of the step you want to
+  - `bringToFront`: Bring the Visual Studio Code window to the front. Default is `false`.
+
+#### POST request
+
+- Method: `POST`
+- Body:
+
+  ```json title="API Body"
+  {
+    "id": "<step id>",
+    "bringToFront": "<bring the Visual Studio Code window to the front (optional) - default is false>"
+  }
+  ```
+
+- Headers:
+  - `Content-Type: application/json`
+
+### `/api/demos`
+
+Returns all demo files, the next demo, and the currently executing demo file.
+
+- Method: `GET`
+
+#### Response
+
+```json title="Demos API Response"
+{
+  "demoFiles": [
+    {
+      "filePath": "/absolute/path/to/demo.json",
+      "demos": [
+        { "id": "demo1", "title": "Demo 1" },
+        { "id": "demo2", "title": "Demo 2" }
+      ]
+    }
+  ],
+  "nextDemo": { "id": "demo2", "title": "Demo 2" },
+  "currentDemoFile": {
+    "filePath": "/absolute/path/to/demo.json",
+    "demo": [
+      { "id": "demo1", "title": "Demo 1" }
+    ]
+  }
+}
+```
+
+#### Description
+
+- `demoFiles`: Array of demo files, each with its file path and contained demos (id and title).
+- `nextDemo`: The next demo to be executed (id and title), if available.
+- `currentDemoFile`: The currently executing demo file, with its file path and demos.

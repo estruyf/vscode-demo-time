@@ -1,0 +1,40 @@
+---
+title: Slide transitions
+description: Learn about the different slide transitions available in Demo Time
+lastmod: 2025-07-04T15:10:34.623Z
+---
+
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Transitions add a dynamic touch to your slides. You can specify the transition effect for your slides using the `transition` property. Demo Time supports various transitions, including:
+
+- `fadeIn`
+- `slideRight`
+- `slideLeft`
+- `slideUp`
+- `slideDown`
+- `zoomIn`
+- `zoomOut`
+- `rotateIn`
+- `rotateOut`
+
+<Aside type="tip">
+You can change the transition effect duration by setting the `--demotime-transition-duration` CSS variable in your custom CSS file.
+</Aside>
+
+## Example
+
+```md
+---
+transition: fadeIn
+---
+
+# Welcome to Demo Time!
+```
+
+This will apply a fade-in transition to the slide when it is displayed.
+
+<video controls>
+  <source src="/videos/slide-transitions.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>

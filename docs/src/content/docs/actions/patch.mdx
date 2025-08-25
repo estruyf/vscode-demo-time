@@ -1,0 +1,81 @@
+---
+title: Patch actions
+description: File patch actions can be used to insert code based on a snapshot of the file and a patch file.
+lastmod: 2025-07-29T08:44:13.907Z
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import GitHubFileOpener from '../../../components/GitHubFileOpener.astro';
+
+Similar to the [Text actions](/actions/text/), the patch actions can be used to update the contents of a file, but you do not need to specify the position of the text to insert. Instead, you need to create a snapshot of the file and a patch file. 
+
+A patch works like a git's diff functionality, but instead of requiring a git branch, the base file is stored as a snapshot in the `.demo/snapshots` folder, and the patch file is stored in the `.demo/patches` folder.
+
+<video controls>
+  <source src="/videos/file-patching.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+
+<Aside type="note" title='Samples'>
+  You can find patch actions samples on GitHub: 
+  <GitHubFileOpener filePath=".demo/2.patch-actions.json" />
+</Aside>
+
+## Prerequisites of using patch actions
+
+To get started, you first create a snapshot of the file you want to use in your demo. This snapshot will be the starting point for the patches you'll create.
+
+Follow these steps:
+
+1. Create a new snapshow by executing the `Demo Time: Create a snapshot` command from the command palette.
+2. Follow the prompts to give your snapshot a name, and if you want to add it to a new/existing demo.
+
+  <Aside>
+  If you choose to add it as a new demo. In you demo file, there should be a demo with the `create` and `open` actions.
+  </Aside>
+   
+3. Once the snapshot is created, apply your changes to the source file.
+4. Once the changes are made, execute the `Demo Time: Create a patch` command from the command palette.
+5. Follow the prompts to give your patch a name, and if you want to add it to a new/existing demo.
+
+  <Aside>
+  If you choose to add it as a new demo. In you demo file, there should be a demo with the `applyPatch` and `open` actions.
+  </Aside>
+
+## Apply changes
+
+To apply the changes, you can use the `applyPatch` action. This action takes the `path`, `contentPath`, and `patch` properties as input.
+
+<Tabs syncKey="patch-action">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "applyPatch",
+  "path": "<relative path to the file>", // This will be the source file to update
+  "contentPath": "<relative path to the snapshot file>",
+  "patch": "<relative path to the patch file>",
+  "insertTypingMode": "<typing mode: 'instant', 'line-by-line', 'character-by-character', or 'hacker-typer'> (optional, default is 'instant')",
+  "insertTypingSpeed": "<delay in milliseconds (optional)>"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: applyPatch
+path: <relative path to the file> # This will be the source file to update
+contentPath: <relative path to the snapshot file>
+patch: <relative path to the patch file>
+insertTypingMode: <typing mode: 'instant', 'line-by-line', 'character-by-character', or 'hacker-typer'> # optional, default is 'instant'
+insertTypingSpeed: <delay in milliseconds> # optional
+```
+
+</TabItem>
+</Tabs>
+
+<Aside>
+For more information about the typing modes, see the [typing modes](/actions/text#typing-modes) section.
+</Aside>
+

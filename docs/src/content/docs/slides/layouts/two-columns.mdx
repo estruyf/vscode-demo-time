@@ -1,0 +1,33 @@
+---
+title: Two Columns Slide Layout
+description: Learn about the two-columns slide layout in Demo Time
+lastmod: 2025-07-04T15:10:34.640Z
+---
+
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+import twoColumnsImg from "../../../../assets/docs/slide-layouts/two-columns.webp";
+
+The `two-columns` layout is used to display content in two columns. It provides two equal-sized content areas. Use the `::right::` separator to split the content into two columns.
+
+```md
+---
+layout: two-columns
+---
+
+<!-- Content on the left -->
+
+# Left
+
+This shows on the left.
+
+::right::
+
+<!-- Content on the right -->
+
+# Right
+
+This shows on the right.
+```
+
+<Image class="mx-auto" src={twoColumnsImg} alt="Two columns" />

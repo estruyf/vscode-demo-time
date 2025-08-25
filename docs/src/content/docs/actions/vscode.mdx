@@ -1,0 +1,202 @@
+---
+title: Visual Studio Code actions
+description: Perform Visual Studio Code actions in your demos like executing commands or showing an information message.
+lastmod: 2025-07-04T17:51:35.344Z
+---
+
+import { Image } from 'astro:assets';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+import GitHubFileOpener from '../../../components/GitHubFileOpener.astro';
+import gearImage from "../../../assets/docs/gear-icon-on-command.webp";
+import copyImage from "../../../assets/docs/copy-command-id.webp";
+
+Visual Studio Code actions are used to perform actions related to Visual Studio Code in the editor. You can use these actions to execute commands, show information messages, and more.
+
+<Aside type="note" title='Samples'>
+  You can find VSCode actions samples on GitHub: 
+  <GitHubFileOpener filePath=".demo/6.vscode-actions.json" />
+</Aside>
+
+## Execute a Visual Studio Code command
+
+Execute a Visual Studio Code command using the `executeVSCodeCommand` action.
+
+<Tabs syncKey="vscode-execute-command">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "executeVSCodeCommand",
+  "command": "<command to execute>",
+  "args": "<arguments to pass to the command (optional)>",
+  "path": "<relative path to the file (optional, when defined, the args property is ignored.)>"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: executeVSCodeCommand
+command: <command to execute>
+args: <arguments to pass to the command> # optional
+path: <relative path to the file> # optional, when defined, the args property is ignored.
+```
+
+</TabItem>
+</Tabs>
+
+### How to find the command to execute
+
+You can find the command to execute by opening the command palette in Visual Studio Code (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> or <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>) and typing the command you want to execute. The command palette will show you the available commands that match your search query.
+
+<Image class="mx-auto" src={gearImage} alt="Gear icon on the command in the command palette" />
+
+Next to the command, you can see the "gear" icon. When you click on this icon, you get redirected to the keyboard shortcuts page where you can right-click on the command and select "Copy Command ID" to copy the command ID.
+
+<Image class="mx-auto" src={copyImage} alt="Copy the command ID" />
+
+## Show an information message
+
+Show an information message in Visual Studio Code using the `showInfoMessage` action.
+
+<Tabs syncKey="vscode-show-info-message">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "showInfoMessage",
+  "message": "<message>"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: showInfoMessage
+message: <message>
+```
+
+</TabItem>
+</Tabs>
+
+## Set state
+
+The `setState` action allows you to set a key/value pair in the extension state which can be accessed by other actions. You can use the state value in your demo steps by using the following `{STATE_<key>}` syntax.
+
+<Tabs syncKey="vscode-set-state">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "setState",
+  "state": {
+    "key": "<key>",
+    "value": "<value>"
+  }
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: setState
+state:
+  key: <key>
+  value: <value>
+```
+
+</TabItem>
+</Tabs>
+
+### Store the clipboard content in the extension state
+
+For example, you could use this action in combination with the `{DT_CLIPBOARD}` variable to store the clipboard content in the extension state and then use it in another action.
+
+<Aside type="danger" title="Important">
+The variables extension state gets reset when the extension starts up, or when you reset all the demos.
+</Aside>
+
+<Tabs syncKey="vscode-set-state-clipboard">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "setState",
+  "state": {
+    "key": "resourceID",
+    "value": "{DT_CLIPBOARD}"
+  }
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: setState
+state:
+  key: resourceID
+  value: "{DT_CLIPBOARD}"
+```
+
+</TabItem>
+</Tabs>
+
+To use the stored value in another action, you can reference it using the `{STATE_<key>}` syntax.
+
+<Tabs syncKey="vscode-create-with-state">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "create",
+  "path": "sample.json",
+  "content": "{\n  \"firstName\": \"{STATE_resourceID}\"\n}"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: create
+path: sample.json
+content: |
+  {
+    "firstName": "{STATE_resourceID}"
+  }
+```
+
+</TabItem>
+</Tabs>
+
+## Open a website
+
+Open a website in your browser or in the editor using the `openWebsite` action.
+
+<Tabs syncKey="vscode-open-website">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "openWebsite",
+  "url": "<URL>",
+  "openInVSCode": "<true/false>"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: openWebsite
+url: <URL>
+openInVSCode: <true/false>
+```
+
+</TabItem>
+</Tabs>

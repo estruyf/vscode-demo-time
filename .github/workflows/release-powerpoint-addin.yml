@@ -13,7 +13,7 @@ on:
 
 env:
   PROJECT: demotime-powerpoint
-  OUTPUT_DIR: packages/powerpoint-addin/dist
+  OUTPUT_DIR: apps/powerpoint-addin/dist
 
 jobs:
   release-powerpoint-addin:
@@ -24,7 +24,7 @@ jobs:
       deployments: write
     defaults:
       run:
-        working-directory: packages/powerpoint-addin
+        working-directory: apps/powerpoint-addin
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

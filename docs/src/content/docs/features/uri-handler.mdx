@@ -1,0 +1,61 @@
+---
+title: Trigger from a link
+description: Learn how to trigger a demo from a link.
+tableOfContents: false
+lastmod: 2025-07-04T14:53:50.809Z
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+You can trigger a demo from clicking on a link in your website, presentation, etc. To do this, you can make use of the Demo Time its URI handler feature. 
+
+## URI handler
+
+The URI handler is a feature that allows you to trigger a demo by clicking on a link. You can use the `vscode://` protocol to trigger a demo.
+
+To trigger a demo, you need to use the following URI:
+
+```plaintext
+vscode://eliostruyf.vscode-demo-time
+```
+
+You can make use of the following commands:
+
+- `next`: Go to the next step.
+- `runbyid`: Run a specific step by its ID.
+
+### next
+
+To start or trigger the next step, you can use the following URI:
+
+```plaintext
+vscode://eliostruyf.vscode-demo-time?command=next
+```
+
+Here is an example of how you can use this in a link:
+
+```html
+<a href="vscode://eliostruyf.vscode-demo-time?command=next">
+  Next
+</a>
+```
+
+### runbyid
+
+To run a specific step by its ID, you can use the following URI:
+
+```plaintext
+vscode://eliostruyf.vscode-demo-time?command=runbyid&id=<demo id>
+```
+
+<Aside>
+  The `id` parameter is the ID of the step you want to run. You can define this ID in your demo configuration.
+</Aside>
+
+Here is an example of how you can use this in a link:
+
+```html
+<a href="vscode://eliostruyf.vscode-demo-time?command=runbyid&id=demo1">
+  Run step 1
+</a>
+```

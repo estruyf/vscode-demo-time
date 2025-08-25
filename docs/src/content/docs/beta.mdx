@@ -1,0 +1,30 @@
+---
+title: Beta version
+description: How to use the beta version of Demo Time.
+lastmod: 2025-04-29T10:31:28.212Z
+---
+
+import { Image } from 'astro:assets';
+import { Code, Aside } from '@astrojs/starlight/components';
+
+import preReleaseImg from "../../assets/docs/pre-release-version.webp";
+
+Demo Time has a beta version or pre-release version available from the Visual Studio Code marketplace. This version is used to test new features and fixes before they are released in the stable version.
+
+## Version numbers
+
+The versioning strategy for the main and beta versions is as follows:
+
+- The main version will have version numbers like: `1.1.0`, `1.2.0`, etc.
+- The beta version will have version numbers like: `1.1.<build number>`, `1.2.<build number>`, etc.
+
+## How to install the beta version
+
+To install the beta version, you need to tell Visual Studio Code to install the pre-release version. You can do this as follows:
+
+- Open the extension panel in Visual Studio Code.
+- Search for "Demo Time" in the search bar.
+- Click on the extension in the list.
+- Click on the `Switch to Pre-Release Version` button in the extension details view.
+  <Image class="mx-auto" src={preReleaseImg} alt="Install pre-release version"  />
+- Once you clicked on the button the beta/pre-release version will be installed.

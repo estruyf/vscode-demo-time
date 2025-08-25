@@ -1,0 +1,11 @@
+[
+  {
+    "action": "create",
+    "path": "{MAIN_FILE}",
+    "content": "{MAIN_CONTENT}"
+  },
+  {
+    "action": "open",
+    "path": "{MAIN_FILE}"
+  }
+]

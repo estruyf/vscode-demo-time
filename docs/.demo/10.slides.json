@@ -1,0 +1,178 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Slides",
+  "description": "",
+  "demos": [
+    {
+      "title": "Open slide (custom theme)",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": ".demo/slides/custom/intro.md"
+        }
+      ]
+    },
+    {
+      "title": "Open slide (custom theme)",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": ".demo/slides/custom/benefits.md"
+        }
+      ]
+    },
+    {
+      "title": "Open slide (custom theme external)",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": ".demo/slides/custom/site.md"
+        }
+      ]
+    },
+    {
+      "title": "Custom layout",
+      "description": "",
+      "steps": [
+        {
+          "action": "setTheme",
+          "theme": "GitHub Light"
+        },
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/custom-layout.md"
+        }
+      ]
+    },
+    {
+      "title": "Custom layout",
+      "description": "",
+      "steps": [
+        {
+          "action": "setTheme",
+          "theme": "GitHub Dark"
+        },
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/custom-layout.md"
+        }
+      ]
+    },
+    {
+      "title": "Custom layout",
+      "description": "",
+      "steps": [
+        {
+          "action": "setTheme",
+          "theme": "The unnamed"
+        },
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/custom-layout.md"
+        }
+      ]
+    },
+    {
+      "title": "Custom layout",
+      "description": "",
+      "steps": [
+        {
+          "action": "setTheme",
+          "theme": "Shades of Purple"
+        },
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/custom-layout.md"
+        }
+      ]
+    },
+    {
+      "title": "Slide header and footer",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/slide-header-and-footer.md"
+        }
+      ],
+      "icons": {
+        "start": "vm",
+        "end": "pass-filled"
+      }
+    },
+    {
+      "title": "Slide header and footer (image)",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/slide-header-and-footer-image.md"
+        }
+      ],
+      "icons": {
+        "start": "vm",
+        "end": "pass-filled"
+      }
+    },
+    {
+      "title": "Slide header and footer (image right)",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/slide-header-and-footer-image-right.md"
+        }
+      ],
+      "icons": {
+        "start": "vm",
+        "end": "pass-filled"
+      }
+    },
+    {
+      "title": "Slide header and footer (image left)",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/slide-header-and-footer-image-left.md"
+        }
+      ],
+      "icons": {
+        "start": "vm",
+        "end": "pass-filled"
+      }
+    },
+    {
+      "title": "Next slide auto",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": ".demo/slides/auto-next-slide.md"
+        }
+      ],
+      "icons": {
+        "start": "vm",
+        "end": "pass-filled"
+      }
+    },
+    {
+      "title": "Next slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/next-slide.md"
+        }
+      ],
+      "icons": {
+        "start": "vm",
+        "end": "pass-filled"
+      },
+      "id": "demo-mdwz555l-cf6l"
+    }
+  ]
+}

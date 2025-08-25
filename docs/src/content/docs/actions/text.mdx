@@ -1,0 +1,519 @@
+---
+title: Text actions
+description: Text actions are used to insert, replace, highlight, delete or unselect text in the editor.
+lastmod: 2025-07-29T08:43:25.892Z
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+import GitHubFileOpener from '../../../components/GitHubFileOpener.astro';
+
+import hackerModeImg from "../../../assets/docs/hacker-typer-mode.webp";
+
+Text actions are used to insert, replace, highlight, delete or unselect text in the editor.
+
+Most of these actions make use of the `path` property to specify the location of the file.
+
+<Aside type="note" title='Samples'>
+  You can find text actions samples on GitHub: 
+  <GitHubFileOpener filePath=".demo/3.text-actions.json" />
+</Aside>
+
+## Highlight text
+
+Highlight text in the editor at a specific location.
+
+<Tabs syncKey="highlight-text">
+<TabItem label="JSON">
+
+```json
+// Via position
+{
+  "action": "highlight",
+  "path": "<relative path to the file>",
+  "position": "<position>",
+  "zoom": "<zoom level> (optional)"
+}
+
+// Via placeholders
+{
+  "action": "highlight",
+  "path": "<relative path to the file>",
+  "startPlaceholder": "<start placeholder>",
+  "endPlaceholder": "<end placeholder>",
+  "highlightWholeLine": "<highlight whole line (optional, default is true)>",
+  "zoom": "<zoom level> (optional)"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+# Via position
+action: highlight
+path: <relative path to the file>
+position: <position>
+zoom: <zoom level> # Optional
+
+# Via placeholders
+action: highlight
+path: <relative path to the file>
+startPlaceholder: <start placeholder>
+endPlaceholder: <end placeholder>
+highlightWholeLine: <highlight whole line (optional, default is true)>
+zoom: <zoom level> # Optional
+```
+
+</TabItem>
+</Tabs>
+
+<Aside>
+For more information about `positioning`, see the [positioning text/code](/actions/text#positioning-textcode) section.
+</Aside>
+
+<Aside>
+Check out the <a href="../../references/settings" title="settings">settings</a> section to customize the highlight colors.
+</Aside>
+
+<Aside type="caution" title="Important">
+When you use code area highlighting, which is when you use "line + character" position or setting `highlightWholeLine` property to `false` when using placeholder positioning, the highlighted code will not include a border.
+
+You can read more about it on the [highlighting](/tips/highlighting/) section.
+</Aside>
+
+## Position cursor
+
+Position your cursor in the editor at a specific location.
+
+<Tabs syncKey="position-cursor">
+<TabItem label="JSON">
+
+```json
+// Via position
+{
+  "action": "positionCursor",
+  "path": "<relative path to the file>",
+  "position": "<position>"
+}
+
+// Via start placeholder
+{
+  "action": "positionCursor",
+  "path": "<relative path to the file>",
+  "startPlaceholder": "<start placeholder>",
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+# Via position
+action: positionCursor
+path: <relative path to the file>
+position: <position>
+
+# Via start placeholder
+action: positionCursor
+path: <relative path to the file>
+startPlaceholder: <start placeholder>
+```
+
+</TabItem>
+</Tabs>
+
+<Aside>
+For more information about `positioning`, see the [positioning text/code](/actions/text#positioning-textcode) section.
+</Aside>
+
+## Insert text
+
+Insert text in the editor at a specific location.
+
+<Tabs syncKey="insert-text">
+<TabItem label="JSON">
+
+```json
+// Via position
+{
+  "action": "insert",
+  "path": "<relative path to the file>",
+  "position": "<position>",
+  "content": "<content of the file> (optional)",
+  "contentPath": "<relative path to the file (optional)>",
+  "insertTypingMode": "<typing mode: 'instant', 'line-by-line', 'character-by-character', 'hacker-typer'> (optional, default is 'instant')",
+  "insertTypingSpeed": "<delay in milliseconds to insert (optional)>"
+}
+
+// Via placeholders
+{
+  "action": "insert",
+  "path": "<relative path to the file>",
+  "startPlaceholder": "<start placeholder>",
+  "endPlaceholder": "<end placeholder>",
+  "content": "<content of the file> (optional)",
+  "contentPath": "<relative path to the file (optional)>",
+  "insertTypingMode": "<typing mode: 'instant', 'line-by-line', 'character-by-character', 'hacker-typer'> (optional, default is 'instant')",
+  "insertTypingSpeed": "<delay in milliseconds to insert (optional)>"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+# Via position
+action: insert
+path: <relative path to the file>
+position: <position>
+content: <content of the file> # optional
+contentPath: <relative path to the file> # optional
+insertTypingMode: <typing mode: 'instant', 'line-by-line', 'character-by-character' or 'hacker-typer'> # optional, default is 'instant'
+insertTypingSpeed: <delay in milliseconds to insert> # Optional
+
+# Via placeholders
+action: insert
+path: <relative path to the file>
+startPlaceholder: <start placeholder>
+endPlaceholder: <end placeholder>
+content: <content of the file> # optional
+contentPath: <relative path to the file> # optional
+insertTypingMode: <typing mode: 'instant', 'line-by-line', 'character-by-character' or 'hacker-typer'> # optional, default is 'instant'
+insertTypingSpeed: <delay in milliseconds to insert> # Optional
+``` 
+
+</TabItem>
+</Tabs>
+
+<Aside>
+For more information about `positioning`, see the [positioning text/code](/actions/text#positioning-textcode) section.
+
+For more information about the typing modes, see the [typing modes](/actions/text#typing-modes) section.
+</Aside>
+
+## Replace text
+
+Replace text in the editor at a specific location.
+
+<Tabs syncKey="replace-text">
+<TabItem label="JSON">
+
+```json
+// Via position
+{
+  "action": "replace",
+  "path": "<relative path to the file>",
+  "position": "<position>",
+  "content": "<content of the file> (optional)",
+  "contentPath": "<relative path to the file (optional)>",
+  "insertTypingMode": "<typing mode: 'instant', 'line-by-line', 'character-by-character' or 'hacker-typer'> (optional, default is 'instant')",
+  "insertTypingSpeed": "<delay in milliseconds to insert (optional)>"
+}
+
+// Via placeholders
+{
+  "action": "replace",
+  "path": "<relative path to the file>",
+  "startPlaceholder": "<start placeholder>",
+  "endPlaceholder": "<end placeholder>",
+  "content": "<content of the file> (optional)",
+  "contentPath": "<relative path to the file (optional)>",
+  "insertTypingMode": "<typing mode: 'instant', 'line-by-line', 'character-by-character' or 'hacker-typer'> (optional, default is 'instant')",
+  "insertTypingSpeed": "<delay in milliseconds to insert (optional)>"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+# Via position
+action: replace
+path: <relative path to the file>
+position: <position>
+content: <content of the file> # optional
+contentPath: <relative path to the file> # optional
+insertTypingMode: <typing mode: 'instant', 'line-by-line', 'character-by-character' or 'hacker-typer'> # optional, default is 'instant'
+insertTypingSpeed: <delay in milliseconds to insert> # Optional
+
+# Via placeholders
+action: replace
+path: <relative path to the file>
+startPlaceholder: <start placeholder>
+endPlaceholder: <end placeholder>
+content: <content of the file> # optional
+contentPath: <relative path to the file> # optional
+insertTypingMode: <typing mode: 'instant', 'line-by-line', 'character-by-character' or 'hacker-typer'> # optional, default is 'instant'
+insertTypingSpeed: <delay in milliseconds to insert> # Optional
+```
+
+</TabItem>
+</Tabs>
+
+<Aside>
+For more information about `positioning`, see the [positioning text/code](/actions/text#positioning-textcode) section.
+
+For more information about the typing modes, see the [typing modes](/actions/text#typing-modes) section.
+</Aside>
+
+## Write single line
+
+Write a single line of text in the editor at the current location or specific location.
+
+<Tabs syncKey="write-text">
+<TabItem label="JSON">
+
+```jsonc
+// Write to current active position
+{
+  "action": "write",
+  "content": "Hello World"
+}
+
+// Write to a specific position in a file
+// Via position
+{
+  "action": "write",
+  "content": "Hello World",
+  "path": "<relative path to the file>",
+  "position": "<position>"
+}
+
+// Via start placeholder
+{
+  "action": "write",
+  "content": "Hello World",
+  "path": "<relative path to the file>",
+  "startPlaceholder": "<start placeholder>",
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+# Write to current active position
+action: write
+content: "Hello World"
+
+# Write to a specific position in a file
+# Via position
+action: write
+content: "Hello World"
+path: <relative path to the file>
+position: <position>
+
+# Via start placeholder
+action: write
+content: "Hello World"
+path: <relative path to the file>
+startPlaceholder: <start placeholder>
+```
+
+</TabItem>
+</Tabs>
+
+<Aside>
+For more information about `positioning`, see the [positioning text/code](/actions/text#positioning-textcode) section.
+</Aside>
+
+## Format text
+
+Format the content of the active file.
+
+<Tabs syncKey="format-text">
+<TabItem label="JSON">
+
+
+```json
+{
+  "action": "format"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: format
+```
+
+</TabItem>
+</Tabs>
+
+## Unselect text
+
+Unselect or undo text highlighting in a specific file.
+
+<Tabs syncKey="unselect-text">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "unselect"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: unselect
+```
+
+</TabItem>
+</Tabs>
+
+## Delete text
+
+Delete text in the editor at a specific location.
+
+<Tabs syncKey="delete-text">
+<TabItem label="JSON">
+
+```json
+// Via position
+{
+  "action": "delete",
+  "path": "<relative path to the file>",
+  "position": "<position>"
+}
+
+// Via placeholders
+{
+  "action": "delete",
+  "path": "<relative path to the file>",
+  "startPlaceholder": "<start placeholder>",
+  "endPlaceholder": "<end placeholder>"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+# Via position
+action: delete
+path: <relative path to the file>
+position: <position>
+
+# Via placeholders
+action: delete
+path: <relative path to the file>
+startPlaceholder: <start placeholder>
+endPlaceholder: <end placeholder>
+``` 
+
+</TabItem>
+</Tabs>
+
+<Aside>
+For more information about `positioning`, see the [positioning text/code](/actions/text#positioning-textcode) section.
+</Aside>
+
+## Positioning text/code
+
+For the positioning of the text to insert, there are two options:
+
+- Use the `position` property to specify the location where the action should be performed. With this property, you can specify the line number, character position, or a range of lines and characters.
+- Use the `startPlaceholder` and `endPlaceholder` properties to specify the text to search for in the file to determine the location where the action should be performed.
+
+### Line position or range
+
+For the `position` property, you can use the following values:
+
+- `number`: The line number
+- `number:number`: The start and end line number
+- `number,number`: The start line and character
+- `number,number:number,number`: The start line and character and the end line and character
+- The `start` and `end` keywords can also be used instead of the line numbers
+  - `start` will be replaced by the first line number
+  - `end` will be replaced by the last line number
+
+Examples:
+
+<Tabs syncKey="text-position">
+<TabItem label="JSON">
+
+```jsonc
+"position": "10" // Line 10
+"position": "10:20" // Lines 10 to 20
+"position": "10,5" // Start line 10, character 5
+"position": "10,5:20,10" // Start line 10, character 5 to end line 20, character 10
+"position": "start" // First line
+"position": "end" // Last line
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+position: "10" # Line 10
+position: "10:20" # Lines 10 to 20
+position: "10,5" # Start line 10, character 5
+position: "10,5:20,10" # Start line 10, character 5
+position: start # First line
+position: end # Last line
+```
+
+</TabItem>
+</Tabs>
+
+### Placeholder position
+
+For the `startPlaceholder` and `endPlaceholder` properties, you specify the text to search for in the file.
+
+Examples:
+
+<Tabs syncKey="text-placeholder-position">
+<TabItem label="JSON">
+
+```jsonc
+"startPlaceholder": "// Start of demo1"
+"endPlaceholder": "// End of demo1"
+```
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+startPlaceholder: // Start of demo1
+endPlaceholder: // End of demo1
+```
+</TabItem>
+</Tabs>
+
+<Aside>
+The text will be replaced from the start of the `startPlaceholder` to the end of the `endPlaceholder`.
+</Aside>
+
+In the file, the placeholders should be defined like this:
+
+```javascript
+// Start of demo1
+const ext = 'Demo Time';
+// End of demo1
+```
+
+## Typing modes
+
+When inserting or replacing text, you can specify the typing mode with the `insertTypingMode` property or on global level with the `demoTime.insertTypingMode` setting. 
+
+The available options are:
+
+- `instant`: The text is inserted instantly.
+- `line-by-line`: The text is inserted line by line, with a delay between each line.
+- `character-by-character`: The text is inserted character by character, with a delay between each character.
+- `hacker-typer`: The text is inserted in a hacker-typer style, where you are in control over the character instertion by pressing the `down` key (default key binding which can be changed in the keybindings settings).
+
+### Hacker-typer mode
+
+When you use the `hacker-typer` mode, you can trigger the text insertion by pressing the `down` key on your keyboard. The text will be inserted in a hacker-typer style, where you are in control over the character insertion.
+
+The `demoTime.hackerTyperChunkSize` setting allows you to define how many characters are inserted per 'keystroke'. The default value is `3`, which means that three characters are inserted each time you press the `down` key.
+
+The `down` key is linked as a keybinding to the `Demo Time: Hacker Typer next chunk` (`demo-time.hackerTyperNextChunk`) command. You can change this keybinding in the keybindings settings.
+
+When you enter the `hacker-typer` mode, you will see a keyboard icon in the status bar indicating that you are in hacker-typer mode and it will be removed when you have entered all the text.
+
+<Image class="mx-auto" src={hackerModeImg} alt="Hacker-typer mode enabled" width="400" />

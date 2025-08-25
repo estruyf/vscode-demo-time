@@ -1,0 +1,125 @@
+title: Positioning
+version: 2
+description: Examples of insert and replace actions using all positioning notations.
+demos:
+  - title: Insert at line number
+    steps:
+      - action: create
+        path: sample.txt
+        content: |
+          Line 1\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6\nLine 7\nLine 8\nLine 9\nLine 10\nLine 11\nLine 12
+      - action: insert
+        path: sample.txt
+        position: "10"
+        content: "Inserted at line 10"
+  - title: Insert at the start
+    steps:
+      - action: create
+        path: sample.txt
+        content: |
+          Line 1\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6\nLine 7\nLine 8\nLine 9\nLine 10\nLine 11\nLine 12
+      - action: insert
+        path: sample.txt
+        position: "start"
+        content: "Inserted at the start"
+  - title: Insert at the end
+    steps:
+      - action: create
+        path: sample.txt
+        content: |
+          Line 1\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6\nLine 7\nLine 8\nLine 9\nLine 10\nLine 11\nLine 12
+      - action: insert
+        path: sample.txt
+        position: "end"
+        content: "Inserted at the end"
+  - title: Insert at line and character
+    steps:
+      - action: create
+        path: sample.txt
+        content: |
+          Line 1\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6\nLine 7\nLine 8\nLine 9\nLine 10\nLine 11\nLine 12
+      - action: insert
+        path: sample.txt
+        position: "5,6"
+        content: "Inserted at line 5, character 6"
+  - title: Insert via placeholders
+    steps:
+      - action: create
+        path: sample.txt
+        content: |
+          // Start Insert\nSome content here\n// End Insert
+      - action: insert
+        path: sample.txt
+        startPlaceholder: "// Start Insert"
+        content: Overwrite the start placeholder
+  - title: Replace at line number
+    steps:
+      - action: create
+        path: sample.txt
+        content: |
+          Line 1\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6\nLine 7\nLine 8\nLine 9\nLine 10\nLine 11\nLine 12
+      - action: replace
+        path: sample.txt
+        position: "10"
+        content: "Replaced at line 10"
+  - title: Replace in line range
+    steps:
+      - action: create
+        path: sample.txt
+        content: |
+          Line 1\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6\nLine 7\nLine 8\nLine 9\nLine 10\nLine 11\nLine 12
+      - action: replace
+        path: sample.txt
+        position: "10:12"
+        content: "Replaced from line 10 to 12"
+  - title: Replace at line and character
+    steps:
+      - action: create
+        path: sample.txt
+        content: |
+          Line 1\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6\nLine 7\nLine 8\nLine 9\nLine 10\nLine 11\nLine 12
+      - action: replace
+        path: sample.txt
+        position: "5,3"
+        content: "Replaced at line 5, character 3"
+  - title: Replace in line/character range
+    steps:
+      - action: create
+        path: sample.txt
+        content: |
+          Line 1\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6\nLine 7\nLine 8\nLine 9\nLine 10\nLine 11\nLine 12
+      - action: replace
+        path: sample.txt
+        position: "8,2:9,7"
+        content: "Replaced from line 8, char 2 to line 9, char 7"
+  - title: Replace at start
+    steps:
+      - action: create
+        path: sample.txt
+        content: |
+          Line 1\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6\nLine 7\nLine 8\nLine 9\nLine 10\nLine 11\nLine 12
+      - action: replace
+        path: sample.txt
+        position: start
+        content: "Replaced at start"
+  - title: Replace at end
+    steps:
+      - action: create
+        path: sample.txt
+        content: |
+          Line 1\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6\nLine 7\nLine 8\nLine 9\nLine 10\nLine 11\nLine 12
+      - action: replace
+        path: sample.txt
+        position: end
+        content: "Replaced at end"
+  - title: Replace via placeholders
+    steps:
+      - action: create
+        path: sample.txt
+        content: |
+          // Start Replace\nSome content here\n// End Replace
+      - action: replace
+        path: sample.txt
+        startPlaceholder: "// Start Replace"
+        endPlaceholder: "// End Replace"
+        content: "Replaced all content"

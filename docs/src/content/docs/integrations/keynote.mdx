@@ -1,0 +1,101 @@
+---
+title: Apple Keynote Integration
+description: Learn how to integrate and use Demo Time with Apple Keynote for seamless live demos in your presentations.
+lastmod: 2025-07-04T17:55:03.265Z
+---
+
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+
+While Apple Keynote doesn't support plugins or extensions like PowerPoint, you can still integrate Demo Time into your presentations by using clickable links that trigger your demos in Visual Studio Code.
+
+## How it works
+
+By adding a clickable shape or button to your Keynote slides, you can create a seamless transition from your presentation to your live demo in VS Code. When clicked, the link will automatically open Visual Studio Code and run the specified demo.
+
+## Setting up the integration
+
+### Step 1: Create a clickable element
+
+1. In your Keynote slide, add a shape, or any other element that you want to use as a trigger
+2. This could be a button, an icon, or even text like "Run Demo"
+3. Design it to fit your presentation style
+
+### Step 2: Add the Demo Time link
+
+1. Select the element you created
+2. Right-click and choose **Add Link** (or use the Inspector panel)
+3. In the link field, enter the following URI:
+   ```
+   vscode://eliostruyf.vscode-demo-time?command=runbyid&id=<demo id>
+   ```
+4. Replace `<demo id>` with the actual ID of your demo
+
+### Step 3: Find your demo ID
+
+To get the demo ID for your link:
+
+1. Open your demo file in VS Code
+2. Look for the `id` property in your demo configuration
+3. If you don't have an ID set, add one to your demo file:
+
+  <Tabs syncKey="demo-id">
+  <TabItem label="JSON">
+  
+  ```json
+  {
+    "id": "my-awesome-demo",
+    "title": "My Demo",
+    "steps": [
+      // your demo steps
+    ]
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="YAML">
+
+  ```yaml
+  id: my-awesome-demo
+  title: My Demo
+  steps:
+    # your demo steps
+  ```
+
+  </TabItem>
+  </Tabs>
+
+## Example
+
+Here's a complete example of how your link should look:
+
+```
+vscode://eliostruyf.vscode-demo-time?command=runbyid&id=react-component-demo
+```
+
+When you click the element during your presentation, it will:
+1. Switch to Visual Studio Code
+2. Automatically start the demo with ID `react-component-demo`
+3. Begin executing the first step of your demo
+
+## Going back to Keynote
+
+To return to Keynote after running your demo, you can use the `openKeynote` action in your demo script. This action will bring Keynote back to the foreground, allowing you to continue your presentation seamlessly.
+
+<Tabs syncKey="open-keynote">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "openKeynote"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: openKeynote
+```
+
+</TabItem>
+</Tabs>

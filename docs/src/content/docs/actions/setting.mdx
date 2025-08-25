@@ -1,0 +1,231 @@
+---
+title: Setting actions
+description: Perform setting actions in your demos like update settings, change themes, and more.
+lastmod: 2025-07-12T14:04:26.246Z
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import GitHubFileOpener from '../../../components/GitHubFileOpener.astro';
+
+Setting actions are used to perform actions related to settings in the editor. You can use these actions to update settings, change themes, and more.
+
+<Aside type="note" title='Samples'>
+  You can find setting actions samples on GitHub: 
+  <GitHubFileOpener filePath=".demo/7.setting-actions.json" />
+</Aside>
+
+## Update a setting
+
+Update a setting in Visual Studio Code using the `setSetting` action.
+
+<Tabs syncKey="update-setting">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "setSetting",
+  "setting": {
+    "key": "<setting key>",
+    "value": "<value>"
+  }
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: setSetting
+setting:
+  key: <setting key>
+  value: <value>
+```
+
+</TabItem>
+</Tabs>
+
+### Example of updating a setting
+
+Here is an example of how you can hide the activity and status bar in Visual Studio Code.
+
+<Tabs syncKey="update-setting-example">
+<TabItem label="JSON">
+
+```json
+[
+  {
+    "action": "setSetting",
+    "setting": {
+      "key": "workbench.statusBar.visible",
+      "value": false
+    }
+  },
+  {
+    "action": "setSetting",
+    "setting": {
+      "key": "workbench.activityBar.location",
+      "value": "hidden"
+    }
+  }
+]
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+- action: setSetting
+  setting:
+    key: workbench.statusBar.visible
+    value: false
+- action: setSetting
+  setting:
+    key: workbench.activityBar.location
+    value: hidden
+```
+
+</TabItem>
+</Tabs>
+
+To reset the settings, you can use the following steps:
+
+<Tabs syncKey="reset-setting-example">
+<TabItem label="JSON">
+
+```json
+[
+  {
+    "action": "setSetting",
+    "setting": {
+      "key": "workbench.statusBar.visible",
+      "value": null
+    }
+  },
+  {
+    "action": "setSetting",
+    "setting": {
+      "key": "workbench.activityBar.location",
+      "value": null
+    }
+  }
+]
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+- action: setSetting
+  setting:
+    key: workbench.statusBar.visible
+    value: null
+- action: setSetting
+  setting:
+    key: workbench.activityBar.location
+    value: null
+```
+
+</TabItem>
+</Tabs>
+
+## Set a theme
+
+Set a theme in Visual Studio Code using the `setTheme` action.
+
+<Tabs syncKey="set-theme-action">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "setTheme",
+  "theme": "<theme name>"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: setTheme
+theme: <theme name>
+```
+
+</TabItem>
+</Tabs>
+
+## Unset a theme
+
+Unset a theme in Visual Studio Code using the `unsetTheme` action.
+
+<Tabs syncKey="unset-theme-action">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "unsetTheme"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: unsetTheme
+```
+
+</TabItem>
+</Tabs>
+
+## Set the presentation view
+
+Set the presentation view in Visual Studio Code using the `setPresentationView` action. This action turns on settings to hide the status bar, tabs, and activity bar.
+
+<Tabs syncKey="set-presentation-view-action">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "setPresentationView"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: setPresentationView
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="tip">
+  You can use the `setPresentationView` action when you are starting a presentation to hide the UI elements. You can also trigger this from the slide controls.
+</Aside>
+
+## Unset the presentation view
+
+Unset the presentation view in Visual Studio Code using the `unsetPresentationView` action. This action turns off settings to show the status bar, tabs, and activity bar.
+
+<Tabs syncKey="unset-presentation-view-action">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "unsetPresentationView"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: unsetPresentationView
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="tip">
+  You can use the `unsetPresentationView` action in the demo right after a slide to make sure all UI elements are visible again. You can also trigger this from the slide controls.
+</Aside>

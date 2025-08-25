@@ -1,0 +1,60 @@
+---
+title: Demo Time for PowerPoint
+description: Learn how to integrate and use Demo Time with the PowerPoint Office Add-in for seamless live demos in your presentations.
+lastmod: 2025-07-04T17:56:24.330Z
+---
+
+import { Image } from 'astro:assets';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+import powerpoinAddinImg from "../../../assets/docs/powerpoint-addin.png";
+
+**Demo Time for PowerPoint** is an Office Add-in that allows you to seamlessly trigger live demos directly within your PowerPoint presentations. This integration is ideal for educators, trainers, and business professionals who want to showcase software, websites, or any live content without leaving their slides.
+
+With this add-in, you can:
+- Effortlessly switch between slides and live demos scripted by the Demo Time Visual Studio Code extension.
+- Keep your presentations dynamic and interactive.
+- Eliminate the hassle of switching between applications, reducing technical glitches.
+
+<Image class="mx-auto" src={powerpoinAddinImg} alt="PowerPoint Add-in" />
+
+## Features
+
+- Trigger live demos from within PowerPoint.
+- Integrate with Demo Time scripts for smooth, automated demo flows.
+- Maintain audience engagement by keeping everything inside your presentation.
+
+## Installation
+
+1. Open PowerPoint.
+2. Go to **Home** > **Add-ins**.
+3. Search for **Demo Time**.
+4. Click **Add** to install the add-in.
+
+Or, install directly from [Microsoft AppSource](https://appsource.microsoft.com/en-us/product/office/WA200008736?tab=Overview).
+
+## How to Use
+
+1. **Prepare Your Demo Script**  
+   - Prepare your demo(s) and give the ones you want to trigger from PowerPoint an `id` property.
+   - Enable the Demo Time API in your Visual Studio Code project by adding the following to your `.vscode/settings.json` file:
+
+      ```json title=".vscode/settings.json"
+      {
+         "demoTime.api.enabled": true
+      }
+      ```
+
+2. **Add the Add-in to Your Presentation**  
+   - Once installed, you can add the Demo Time add-in from the add-ins menu in PowerPoint.
+   - The initial view from the add-in will ask you for the `Demo Time - API URL` and `Demo ID`
+      - The `Demo Time - API URL` is the URL of the Demo Time API, which is by default `http://localhost:3710`.
+      - The `Demo ID` is the ID of the command you want to trigger from your script.
+      - Click on `save` to save the settings and the current slide ID. Important to note is that when you change the slide order, you will have to save the settings of the add-in again.
+      - You can test out the demo ID by clicking on the `test` button.
+
+3. **Trigger Live Demos**  
+   - Once you go to presentation mode in PowerPoint and you reach the slide with the Demo Time add-in, it will automatically trigger the demo associated with the command ID you set.
+
+4. **Go back to PowerPoint**  
+   - After the demo is finished, you can return to your PowerPoint presentation by using the `openPowerPoint` action from Demo Time. This action allows you to seamlessly switch back to your slides without any interruptions.

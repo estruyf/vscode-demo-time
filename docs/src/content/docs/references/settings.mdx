@@ -1,0 +1,103 @@
+---
+title: Settings
+description: Customize the settings of Demo Time to fit your needs.
+lastmod: 2025-08-22T10:03:29.355Z
+tableOfContents: false
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+
+import settingsGuiImg from "../../../assets/docs/settings-view.webp";
+
+By using the `Demo Time: Settings` command, you can quickly access and modify the settings of the Demo Time extension.
+
+<Image class="mx-auto" src={settingsGuiImg} alt="Settings GUI" />
+
+When you use the Demo Time Settings GUI, they will automatically be configured and stored in the `.vscode/settings.json` file of your workspace.
+
+## Overview
+
+Here is a list of all the settings available in Demo Time.
+
+| Setting | Description | Default |
+| --- | --- | --- |
+| `demoTime.previousEnabled` | Enable the previous command when in presentation mode. | `false` |
+| `demoTime.highlightBackground` | The background color of the highlighted code. | `var(--vscode-editor-selectionBackground)` |
+| `demoTime.highlightBorderColor` | The border color of the highlighted code. | `rgba(255,0,0,0.5)` |
+| `demoTime.highlightBlur` | Blur effect on the text which is not highlighted. | `0` |
+| `demoTime.highlightOpacity` | The opacity of the text which is not highlighted. Number between 0 and 1. | `0.5` |
+| `demoTime.highlightZoomEnabled` | Enable zooming when highlighting code. | `false` \| `number (zoom level)` |
+| `demoTime.nextActionBehaviour` | Defines how the next action/step behaves. <br /><br />**lastExecuted (default):** The "Next" action always advances from the furthest step you have executed, even if you go back and view previous steps. This is the current behavior.<br /><br />**currentPosition:** The "Next" action advances from your current position, regardless of how far you have previously gone. If you go back and then press "Next", it moves forward from where you are. | `lastExecuted` |
+| `demoTime.showClock` | Show a clock in the status bar. | `true` |
+| `demoTime.timer` | Count down timer for how long the session should last. If not set, it will not count down. The value is the number of minutes. | `null` |
+| `demoTime.insertTypingMode` | The typing mode for inserting text. Options are: `instant`, `line-by-line`, `character-by-character`, or `hacker-typer` | `instant` |
+| `demoTime.insertTypingSpeed` | The speed in milliseconds for inserting text. | `50` |
+| `demoTime.hackerTyperChunkSize` | Number of characters to insert per 'keystroke' in hacker-typer mode | `3` |
+| `demoTime.api.enabled` | Enable the API to control the extension. | `false` |
+| `demoTime.api.port` | The port on which the API should run. | `3710` |
+| `demoTime.hideEditorActions` | Hide the editor actions (add new demo and toggle highlight). | `false` |
+| `demoTime.customWebComponents` | Custom web components to be used in the slides. Provide the relative paths to the JS file(s). | `[]` |
+| `demoTime.customTheme` | Custom CSS file to be used in the slides. Provide the relative path to the CSS file. | `` |
+| `demoTime.defaultFileType` | The default file type for new demo files. Options: `json` (default), `yaml`. | `json` |
+| `demoTime.slideHeaderTemplate` | The template for the slide header. |  |
+| `demoTime.slideFooterTemplate` | The template for the slide footer. |  |
+| `demoTime.openInConfigEditor` | Open the demo file in the config editor GUI. | `true` |
+
+<Aside>
+The `demoTime.previousEnabled` is by default disabled to avoid conflicts when the previous action inserted content into a file.
+
+When you enable this setting, you can use the `Demo Time: Previous` command to go back to the previous step or use the left clicker button.
+</Aside>
+
+## Demo File Format Examples
+
+Demo Time supports both JSON and YAML formats for demo files. You can configure the default format with the `demoTime.defaultFileType` setting.
+
+<Tabs syncKey="demo-file-format">
+<TabItem label="JSON">
+
+```json
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "My Demo",
+  "description": "A sample demo",
+  "version": 2,
+  "demos": [
+    {
+      "title": "Step 1",
+      "steps": [
+        {
+          "action": "create",
+          "path": "test.txt",
+          "content": "Hello World"
+        }
+      ]
+    }
+  ]
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+title: My Demo
+description: A sample demo
+version: 2
+demos:
+  - title: Step 1
+    steps:
+      - action: create
+        path: test.txt
+        content: Hello World
+```
+
+</TabItem>
+</Tabs>
+
+<style>{`
+table th:nth-child(1) {
+  width: 40%;
+}
+`}</style>

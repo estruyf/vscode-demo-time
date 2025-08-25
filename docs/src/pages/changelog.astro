@@ -1,0 +1,18 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import { Content as ChangelogContent } from "../../changelog.md";
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "Changelog",
+    description: "All release notes and updates for the Demo Time extension.",
+    tableOfContents: false,
+  }}
+>
+  <div class="changelog-page">
+    <article class="changelog-content">
+      <ChangelogContent />
+    </article>
+  </div>
+</StarlightPage>

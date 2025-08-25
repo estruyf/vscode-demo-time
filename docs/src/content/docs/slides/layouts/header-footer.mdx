@@ -1,0 +1,79 @@
+---
+title: Header and Footer Support
+lastmod: 2025-07-04T15:10:34.636Z
+description: Learn how to add and customize headers and footers in your slides.
+---
+
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Demo Time supports adding headers and footers to your slides at both the **global** and **slide** level.
+
+Headers and footers make use of [Handlebars](https://handlebarsjs.com/) syntax, allowing you to use variables from the front matter of your slides. This means you can include dynamic content like slide titles, dates, and other metadata.
+
+You can define headers and footers in two ways:
+
+- **Global level:** Set the `demoTime.slideHeaderTemplate` and/or `demoTime.slideFooterTemplate` settings in your VS Code settings. This should point to HTML files that may contain Handlebars variables/syntax.
+- **Slide level:** Add a `header` and/or `footer` property to your slide's front matter. These can contain HTML and Handlebars variables.
+
+## Define on global level
+
+You can define a global header or footer for all slides by setting the `demoTime.slideHeaderTemplate` and/or `demoTime.slideFooterTemplate` settings in your VS Code settings. These should point to HTML files using Handlebars syntax. For example:
+
+```json title=".vscode/settings.json"
+{
+  // Use a relative path from your workspace root
+  // (e.g., "./.demo/templates/header.html" is relative to your project folder)
+  "demoTime.slideHeaderTemplate": "./.demo/templates/header.html",
+  "demoTime.slideFooterTemplate": "./.demo/templates/footer.html"
+}
+```
+
+Example `footer.html`:
+
+```html title="footer.html"
+<footer class="slide-footer">
+  <span>{{name}}</span> | <span>{{email}}</span> | <span>{{date}}</span>
+</footer>
+```
+
+All front matter properties are available as Handlebars variables in the template.
+
+```markdown title="Defining the front matter properties for your slide"
+---
+title: "My Slide Title"
+name: "Jane Doe"
+email: "jane@example.com"
+date: "2025-06-16"
+description: "A slide demonstrating header and footer variables."
+---
+```
+
+<Aside type="tip">
+You can control the styles of the header and footer using the `.slide__header` and `.slide__footer` classes in your slide's `<style>` block or in a global CSS file.
+</Aside>
+
+## Define on slide level
+
+You can also set the header and footer directly in the front matter of each slide. This allows for more granular control over individual slides or allows you to override the global settings for specific slides.
+
+```md title="Slide with header and footer"
+---
+name: "Demo Time"
+header: "<div style='display: flex;justify-content: flex-end;align-items:center;width: 100%;height: 100%;'><img src='public/favicon.svg' alt='Logo' width='25px' height='25px'></div>"
+footer: "<span>Created by {{name}}</span>"
+---
+```
+
+## Changing header and footer styles
+
+If you want to customize the styles of the header and footer, you can add a `<style>` block in your Markdown file or use a global CSS file by defining it in the `demoTime.customTheme` setting. For example:
+
+```md title="Custom styles for header and footer"
+<style>
+  .slide__header, .slide__footer {
+    background-color: rgba(0, 0, 0, 0.8);
+    opacity: 1;
+    color: white;
+  }
+</style>
+```

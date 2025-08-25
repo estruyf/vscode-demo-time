@@ -1,0 +1,109 @@
+---
+title: Preview actions
+description: Preview actions are used to preview files like Markdown and images in the editor.
+lastmod: 2025-07-04T15:07:02.842Z
+---
+
+import { Code, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+import GitHubFileOpener from '../../../components/GitHubFileOpener.astro';
+
+Preview actions are used to preview files like Markdown and images in the editor.
+
+<Aside type="note" title='Samples'>
+  You can find VSCode actions samples on GitHub: 
+  <GitHubFileOpener filePath=".demo/9.preview.json" />
+</Aside>
+
+## Show slides
+
+To show slides with Demo Time, you can make use of the `openSlide` action.
+
+<Tabs syncKey="preview-slides">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "openSlide",
+  "path": "<relative path to the file>"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: openSlide
+path: <relative path to the file>
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="tip">
+  You can use a custom theme for your slides by providing a relative path or URL to a CSS file to the `customTheme` property in the frontmatter section of your Markdown file.
+</Aside>
+
+Read more about it in the [slides](/slides/) section of the documentation.
+
+## Preview Markdown file
+
+To preview a markdown file in the editor, use the `markdownPreview` action. The `markdownPreview` action takes a file `path` as an argument.
+
+<Tabs syncKey="markdown-preview">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "markdownPreview",
+  "path": "<relative path to the file>"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: markdownPreview
+path: <relative path to the file>
+```
+
+</TabItem>
+</Tabs>
+
+## Preview image
+
+To preview an image in the editor, use the `imagePreview` action. The `imagePreview` action takes a file `path` as an argument.
+
+<Tabs syncKey="image-preview">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "imagePreview",
+  "path": "<relative path to the file>",
+  "theme": "<relative path to CSS file>"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: imagePreview
+path: <relative path to the file>
+theme: <relative path to CSS file>
+```
+
+</TabItem>
+</Tabs>
+
+### Custom theming
+
+Create a CSS file, and adapt the styling with the `.preview_view` class.
+
+```css title=".demo/themes/image.css"
+.preview_view {
+     background-color: #000;
+}
+```

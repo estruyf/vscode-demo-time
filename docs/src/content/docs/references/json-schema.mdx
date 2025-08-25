@@ -1,0 +1,46 @@
+---
+title: JSON schema
+description: JSON schema for the Demo Time configuration.
+lastmod: 2025-07-04T17:59:09.515Z
+tableOfContents: false
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+The JSON schema for the Demo Time configuration is used to validate the configuration file. This schema is used to ensure that the configuration file is correctly formatted and that all the required properties are present.
+
+Make sure to include the following JSON schema URL in your demo file: 
+
+`https://demotime.show/demo-time.schema.json`
+
+## Example
+
+<Tabs syncKey="demo-time-json-schema">
+<TabItem label="JSON">
+
+```json
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Demo",
+  "description": "Demo description",
+  "version": 2,
+  "demos": []
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+title: Demo
+description: Demo description
+version: 2
+demos: []
+```
+
+<Aside type="note" title='Note'>
+  For YAML files, the schema is applied automatically using the `yaml.schemas` setting provided by the extension. Make sure you have the `redhat.vscode-yaml` extension installed to enable this feature.
+</Aside>
+
+</TabItem>
+</Tabs>

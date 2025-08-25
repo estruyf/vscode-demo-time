@@ -1,0 +1,22 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Snippet actions",
+  "description": "",
+  "version": 2,
+  "demos": [
+    {
+      "title": "Using a snippet",
+      "description": "",
+      "steps": [
+        {
+          "action": "snippet",
+          "args": {
+            "MAIN_FILE": "temp/snippet.md",
+            "MAIN_CONTENT": "# Hello from Demo Time!"
+          },
+          "contentPath": ".demo/snippet/create-open.json"
+        }
+      ]
+    }
+  ]
+}

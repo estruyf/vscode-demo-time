@@ -1,0 +1,132 @@
+---
+title: Snippet actions
+description: Snippets can be used when you have steps that you want to reuse in multiple demos.
+lastmod: 2025-08-02T16:00:27.344Z
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import GitHubFileOpener from '../../../components/GitHubFileOpener.astro';
+
+Snippets can be used when you have steps that you want to reuse in multiple demos. You can define a snippet in the `.demo` folder and reference it in your demo files.
+
+<Aside type="note" title='Samples'>
+  You can find snippet actions samples on GitHub: 
+  <GitHubFileOpener filePath=".demo/8.snippet-actions.json" />
+</Aside>
+
+## Using a snippet
+
+Use the `snippet` action to reference a snippet in your demo.
+
+<Tabs syncKey="snippet-action">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "snippet",
+  "contentPath": "<relative path to the file>",
+  "args": {
+    // Define the argument name in the snippet file with curly braces {argument name}
+    "<argument name>": "<argument value>"
+  }
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: snippet
+contentPath: <relative path to the file>
+args:
+  # Define the argument name in the snippet file with curly braces {argument name}
+  <argument name>: <argument value>
+```
+
+</TabItem>
+</Tabs>
+
+Start by creating a snippet folder/file in the `.demo` folder. For example, you can create a `snippets` folder and a `insert_and_highlight.json` file.
+
+The contents of this file could look like this:
+
+<Tabs syncKey="snippet-file-example">
+<TabItem label="JSON">
+
+```json
+[
+  {
+    "action": "unselect"
+  },
+  {
+    "action": "insert",
+    "path": "{MAIN_FILE}",
+    "contentPath": "{CONTENT_PATH}",
+    "position": "{CONTENT_POSITION}"
+  },
+  {
+    "action": "highlight",
+    "path": "{MAIN_FILE}",
+    "position": "{HIGHLIGHT_POSITION}"
+  }
+]
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+- action: unselect
+- action: insert
+  path: "{MAIN_FILE}"
+  contentPath: "{CONTENT_PATH}"
+  position: "{CONTENT_POSITION}"
+- action: highlight
+  path: "{MAIN_FILE}"
+  # ...
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="tip">
+You can make use of variables/placeholders in the snippet file by using curly braces `{argument name}`. These variables are defined in the `args` property of the snippet action.
+</Aside>
+
+In your demo file, you can reference the snippet like this:
+
+<Tabs syncKey="snippet-action-example">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "snippet",
+  "contentPath": "./snippets/insert_and_highlight.json",
+  "args": {
+    "MAIN_FILE": "sample.json",
+    "CONTENT_PATH": "content.txt",
+    "CONTENT_POSITION": "3",
+    "HIGHLIGHT_POSITION": "4"
+  }
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: snippet
+contentPath: ./snippets/insert_and_highlight.json
+args:
+  MAIN_FILE: sample.json
+  CONTENT_PATH: content.txt
+  CONTENT_POSITION: "3"
+  HIGHLIGHT_POSITION: "4"
+```
+
+</TabItem>
+</Tabs>
+
+<Aside>
+You can find more snippet examples in the [snippets section](../../snippets) of the documentation.
+</Aside>

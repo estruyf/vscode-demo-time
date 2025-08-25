@@ -1,0 +1,870 @@
+{
+  "name": "vscode-demo-time",
+  "displayName": "Demo Time — Presentations & Demos in VS Code",
+  "description": "Script your coding demos and presentations to perfection and present slides — all within VS Code! No typos, no missteps—just flawless, stress-free presentations. Seamlessly execute each demo step and advance through slides like a pro, keeping your audience engaged without ever leaving your coding environment.",
+  "version": "1.9.0",
+  "publisher": "eliostruyf",
+  "keywords": [
+    "demo",
+    "presentation",
+    "slides",
+    "coding demo",
+    "workshop",
+    "training",
+    "automation",
+    "scripted demo",
+    "presenter",
+    "conference",
+    "tutorial",
+    "education",
+    "teaching",
+    "live coding",
+    "presentation mode",
+    "slides viewer",
+    "demo runner",
+    "step-by-step",
+    "highlighting",
+    "presenter view",
+    "timer",
+    "countdown",
+    "notes",
+    "pdf export",
+    "powerpoint",
+    "markdown slides"
+  ],
+  "galleryBanner": {
+    "color": "#0D1321",
+    "theme": "dark"
+  },
+  "icon": "assets/logo/demotime-128x128.png",
+  "badges": [
+    {
+      "description": "version",
+      "url": "https://img.shields.io/github/package-json/v/estruyf/vscode-demo-time?color=green&label=vscode-demo-time&style=flat-square",
+      "href": "https://github.com/estruyf/vscode-demo-time"
+    },
+    {
+      "description": "Buy me a coffee",
+      "url": "https://img.shields.io/badge/Buy%20me%20a%20coffee-€%203-blue?logo=buy-me-a-coffee&style=flat-square",
+      "href": "https://www.buymeacoffee.com/zMeFRy9"
+    },
+    {
+      "description": "sponsor",
+      "url": "https://img.shields.io/badge/Sponsor-Elio%20Struyf%20%E2%9D%A4-%23fe8e86?logo=GitHub&style=flat-square",
+      "href": "https://github.com/sponsors/estruyf"
+    }
+  ],
+  "homepage": "https://demotime.show/",
+  "sponsor": {
+    "url": "https://github.com/sponsors/estruyf"
+  },
+  "license": "MIT",
+  "author": "Elio Struyf <elio@struyfconsulting.be> (https://www.eliostruyf.com)",
+  "bugs": {
+    "url": "https://github.com/estruyf/vscode-demo-time/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/estruyf/vscode-demo-time"
+  },
+  "engines": {
+    "vscode": "^1.84.0"
+  },
+  "categories": [
+    "Education"
+  ],
+  "activationEvents": [
+    "workspaceContains:**/.demo/*"
+  ],
+  "main": "./out/extension/extension.js",
+  "contributes": {
+    "configurationDefaults": {
+      "files.associations": {
+        "**/.demo/*.json": "jsonc",
+        "**/.demo/*.yaml": "yaml",
+        "**/.demo/*.yml": "yaml"
+      },
+      "yaml.schemas": {
+        "https://demotime.show/demo-time.schema.json": ".demo/*"
+      },
+      "workbench.editorAssociations": {
+        "{git,gitlens}:/**/*.{yml,json,yaml}": "default"
+      }
+    },
+    "icons": {
+      "dt-projector": {
+        "description": "Demo Time - projector",
+        "default": {
+          "fontPath": "assets/demo-time-v1.woff",
+          "fontCharacter": "\\e900"
+        }
+      },
+      "dt-timer": {
+        "description": "Demo Time - timer",
+        "default": {
+          "fontPath": "assets/demo-time-v1.woff",
+          "fontCharacter": "\\e901"
+        }
+      },
+      "dt-timer-off": {
+        "description": "Demo Time - timer off",
+        "default": {
+          "fontPath": "assets/demo-time-v1.woff",
+          "fontCharacter": "\\e902"
+        }
+      },
+      "dt-clock": {
+        "description": "Demo Time - clock",
+        "default": {
+          "fontPath": "assets/demo-time-v1.woff",
+          "fontCharacter": "\\e903"
+        }
+      },
+      "dt-logo": {
+        "description": "Demo Time - logo",
+        "default": {
+          "fontPath": "assets/demo-time-logo-v3.woff",
+          "fontCharacter": "\\e801"
+        }
+      }
+    },
+    "configuration": {
+      "title": "Demo Time",
+      "properties": {
+        "demoTime.previousEnabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable the previous command when in presentation mode"
+        },
+        "demoTime.highlightBorderColor": {
+          "type": "string",
+          "default": "rgba(255,0,0,0.5)",
+          "description": "Color of the border when highlighting a step"
+        },
+        "demoTime.highlightBackground": {
+          "type": "string",
+          "default": "var(--vscode-editor-selectionBackground)",
+          "description": "Background color when highlighting code"
+        },
+        "demoTime.highlightBlur": {
+          "type": "number",
+          "default": 0,
+          "description": "Blur effect on the text which is not highlighted"
+        },
+        "demoTime.highlightOpacity": {
+          "type": "number",
+          "default": 1,
+          "description": "Opacity of the text which is not highlighted"
+        },
+        "demoTime.highlightZoomEnabled": {
+          "type": [
+            "boolean",
+            "number"
+          ],
+          "default": false,
+          "description": "Enable code zoom when highlighting code. When using a number, it will be the zoom level."
+        },
+        "demoTime.timer": {
+          "type": "number",
+          "default": null,
+          "description": "Count down timer for how long the session should last. If not set, it will not count down. The value is the number of minutes."
+        },
+        "demoTime.showClock": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show a clock in the status bar"
+        },
+        "demoTime.lineInsertionDelay": {
+          "type": "number",
+          "default": 0,
+          "description": "The delay between inserting lines of code (in milliseconds)",
+          "deprecationMessage": "This setting is deprecated. Use 'demoTime.insertTypingMode' and 'demoTime.insertTypingSpeed' instead."
+        },
+        "demoTime.insertTypingMode": {
+          "type": "string",
+          "enum": [
+            "instant",
+            "line-by-line",
+            "character-by-character",
+            "hacker-typer"
+          ],
+          "default": "instant",
+          "description": "Mode for inserting content: instant (all at once), line-by-line, character-by-character, or hacker-typer (chunks of content on each keystroke)"
+        },
+        "demoTime.insertTypingSpeed": {
+          "type": "number",
+          "default": 50,
+          "description": "Characters per second for character-by-character typing mode"
+        },
+        "demoTime.hackerTyperChunkSize": {
+          "type": "number",
+          "default": 3,
+          "description": "Number of characters to insert per 'keystroke' in hacker-typer mode"
+        },
+        "demoTime.api.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable the API for Demo Time. This allows you to control Demo Time from outside Visual Studio Code."
+        },
+        "demoTime.api.port": {
+          "type": "number",
+          "default": 3710,
+          "description": "Port number for the API"
+        },
+        "demoTime.hideEditorActions": {
+          "type": "boolean",
+          "default": false,
+          "description": "Hide the editor actions"
+        },
+        "demoTime.customWebComponents": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Provide paths to scripts for loading your custom web components. Each path should point to a JavaScript file."
+        },
+        "demoTime.customTheme": {
+          "type": "string",
+          "default": "",
+          "description": "Provide a path to a CSS file for loading your custom theme. The path should point to a CSS file."
+        },
+        "demoTime.nextActionBehaviour": {
+          "type": "string",
+          "enum": [
+            "lastExecuted",
+            "currentPosition"
+          ],
+          "default": "lastExecuted",
+          "description": "Define the behavior of the next action. Possible values are 'lastExecuted', or 'currentPosition'."
+        },
+        "demoTime.slideHeaderTemplate": {
+          "type": "string",
+          "default": "",
+          "description": "HTML template for slide headers. Supports Handlebars syntax with frontmatter variables. Example: '<header><h1>{{title}}</h1> <span>{{date}}</span></header>'"
+        },
+        "demoTime.slideFooterTemplate": {
+          "type": "string",
+          "default": "",
+          "description": "HTML template for slide footers. Supports Handlebars syntax with frontmatter variables. Example: '<footer><span>{{name}}</span> <span>{{date}}</span></footer>'"
+        },
+        "demoTime.defaultFileType": {
+          "type": "string",
+          "enum": [
+            "json",
+            "yaml"
+          ],
+          "default": "json",
+          "description": "Default file type for new demo files. Choose between JSON and YAML formats."
+        },
+        "demoTime.debug": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable debug mode for Demo Time."
+        },
+        "demoTime.openInConfigEditor": {
+          "type": "boolean",
+          "default": true,
+          "description": "Open the config file in the custom config editor."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "demo-time.docs",
+        "title": "Open Demo Time documentation",
+        "category": "Demo Time",
+        "icon": "$(dt-logo)"
+      },
+      {
+        "command": "demo-time.addStepToDemo",
+        "title": "Add new action to demo step",
+        "category": "Demo Time",
+        "icon": "$(add)"
+      },
+      {
+        "command": "demo-time.start",
+        "title": "Start",
+        "category": "Demo Time",
+        "icon": "$(play)"
+      },
+      {
+        "command": "demo-time.previous",
+        "title": "Previous",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.runStep",
+        "title": "Start a demo",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.runById",
+        "title": "Run by ID",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.addToStep",
+        "title": "Add demo step",
+        "category": "Demo Time",
+        "icon": "$(add)"
+      },
+      {
+        "command": "demo-time.initialize",
+        "title": "Initialize",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.openDemoFile",
+        "title": "Open demo file",
+        "category": "Demo Time",
+        "icon": "$(eye)"
+      },
+      {
+        "command": "demo-time.viewStep",
+        "title": "View demo step in editor",
+        "category": "Demo Time",
+        "icon": "$(eye)"
+      },
+      {
+        "command": "demo-time.viewNotes",
+        "title": "View demo notes",
+        "category": "Demo Time",
+        "icon": "$(book)"
+      },
+      {
+        "command": "demo-time.togglePresentationMode",
+        "title": "Toggle presentation mode",
+        "category": "Demo Time",
+        "icon": "$(dt-projector)"
+      },
+      {
+        "command": "demo-time.togglePresentationView",
+        "title": "Toggle presentation view (hides status bar, tabs, and activity bar)",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.closePresentationView",
+        "title": "Close presentation view",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.reset",
+        "title": "Reset",
+        "category": "Demo Time",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "demo-time.stepMoveUp",
+        "title": "Move up",
+        "icon": "$(arrow-up)"
+      },
+      {
+        "command": "demo-time.stepMoveDown",
+        "title": "Move down",
+        "icon": "$(arrow-down)"
+      },
+      {
+        "command": "demo-time.collapseAll",
+        "title": "Collapse all",
+        "icon": "$(collapse-all)"
+      },
+      {
+        "command": "demo-time.startCountdown",
+        "title": "Start countdown",
+        "category": "Demo Time",
+        "icon": "$(dt-timer)"
+      },
+      {
+        "command": "demo-time.resetCountdown",
+        "title": "Reset countdown",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.pauseCountdown",
+        "title": "Pause or resume countdown",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.showPresenterView",
+        "title": "Show presenter view",
+        "category": "Demo Time",
+        "icon": "$(vm)"
+      },
+      {
+        "command": "demo-time.toggleSelectionHighlight",
+        "title": "Toggle highlight of current line or selection",
+        "category": "Demo Time",
+        "icon": {
+          "light": "assets/icons/selection-highlight-light.svg",
+          "dark": "assets/icons/selection-highlight-dark.svg"
+        }
+      },
+      {
+        "command": "demo-time.toggleHighlight",
+        "title": "Toggle highlight",
+        "category": "Demo Time",
+        "icon": {
+          "light": "assets/icons/highlight-light.svg",
+          "dark": "assets/icons/highlight-dark.svg"
+        }
+      },
+      {
+        "command": "demo-time.createSnapshot",
+        "title": "Create a snapshot",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.createPatch",
+        "title": "Create patch for current file",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.createDemoFile",
+        "title": "Create a new demo file",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.createSlide",
+        "title": "Create a slide",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.viewSlide",
+        "title": "View slide",
+        "category": "Demo Time",
+        "icon": "$(preview)"
+      },
+      {
+        "command": "demo-time.openSlidePreview",
+        "title": "Open slide preview",
+        "category": "Demo Time",
+        "icon": "$(eye)"
+      },
+      {
+        "command": "demo-time.exportToPdf",
+        "title": "Export slides to PDF",
+        "category": "Demo Time",
+        "icon": "$(file-pdf)"
+      },
+      {
+        "command": "demo-time.importPowerPointImages",
+        "title": "Import PowerPoint Images as Slides",
+        "category": "Demo Time",
+        "icon": "$(file-media)"
+      },
+      {
+        "command": "demo-time.treeviewFind",
+        "title": "Find in Tree View",
+        "category": "Demo Time",
+        "icon": "$(search)"
+      },
+      {
+        "command": "demo-time.openConfigInTextEditor",
+        "title": "Open config in text editor",
+        "category": "Demo Time",
+        "icon": "$(file-code)"
+      },
+      {
+        "command": "demo-time.openConfigEditor",
+        "title": "Open config editor",
+        "category": "Demo Time",
+        "icon": "$(settings-gear)"
+      },
+      {
+        "command": "demo-time.hackerTyperNextChunk",
+        "title": "Hacker Typer next chunk",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.showSettings",
+        "title": "Settings",
+        "category": "Demo Time"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "demo-time.addStepToDemo",
+          "when": "((editorLangId == jsonc || editorLangId == json) || editorLangId == yaml) && resourceDirname =~ /\\.demo$/"
+        },
+        {
+          "command": "demo-time.previous",
+          "when": "demo-time.presentation && demo-time.previousEnabled"
+        },
+        {
+          "command": "demo-time.runById",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.runStep",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.initialize",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.openDemoFile",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.stepMoveUp",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.stepMoveDown",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.collapseAll",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.viewStep",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.viewNotes",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.viewSlide",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.openConfigInTextEditor",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.openConfigEditor",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.hackerTyperNextChunk",
+          "when": "demo-time.isHackerTyper == true"
+        },
+        {
+          "command": "demo-time.toggleHighlight",
+          "when": "demo-time.hasCodeHighlighting == true"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "demo-time.togglePresentationMode",
+          "when": "view == demo-time && !demo-time.presentation",
+          "group": "navigation@-1"
+        },
+        {
+          "command": "demo-time.startCountdown",
+          "when": "view == demo-time && !demo-time.countdown && demo-time.showTimer",
+          "group": "navigation@0"
+        },
+        {
+          "command": "demo-time.showPresenterView",
+          "when": "view == demo-time",
+          "group": "navigation@1"
+        },
+        {
+          "command": "demo-time.reset",
+          "when": "view == demo-time",
+          "group": "navigation@2"
+        },
+        {
+          "command": "demo-time.exportToPdf",
+          "when": "view == demo-time",
+          "group": "navigation@3"
+        },
+        {
+          "command": "demo-time.treeviewFind",
+          "when": "view == demo-time",
+          "group": "navigation@4"
+        },
+        {
+          "command": "demo-time.createDemoFile",
+          "when": "view == demo-time"
+        },
+        {
+          "command": "demo-time.docs",
+          "when": "view == demo-time"
+        },
+        {
+          "command": "demo-time.showSettings",
+          "when": "view == demo-time"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "demo-time.start",
+          "when": "view == demo-time && viewItem == demo-time.file",
+          "group": "inline@1"
+        },
+        {
+          "command": "demo-time.openDemoFile",
+          "when": "view == demo-time && viewItem == demo-time.file",
+          "group": "inline@2"
+        },
+        {
+          "command": "demo-time.stepMoveUp",
+          "when": "view == demo-time && (viewItem =~ /demo-time.step/ || viewItem =~ /demo-time.lastStep/)",
+          "group": "inline@1"
+        },
+        {
+          "command": "demo-time.stepMoveDown",
+          "when": "view == demo-time && (viewItem =~ /demo-time.step/ || viewItem =~ /demo-time.firstStep/)",
+          "group": "inline@2"
+        },
+        {
+          "command": "demo-time.viewStep",
+          "when": "view == demo-time && (viewItem =~ /demo-time.step/ || viewItem =~ /demo-time.firstStep/ || viewItem =~ /demo-time.lastStep/)",
+          "group": "inline@3"
+        },
+        {
+          "command": "demo-time.viewNotes",
+          "when": "view == demo-time && (viewItem =~ /demo-time.hasNotes/)",
+          "group": "inline@4"
+        },
+        {
+          "command": "demo-time.viewSlide",
+          "when": "view == demo-time && (viewItem =~ /demo-time.isSlide/)",
+          "group": "inline@4"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "demo-time.openConfigInTextEditor",
+          "when": "activeCustomEditorId == 'demoTime.configEditor'",
+          "group": "navigation@1"
+        },
+        {
+          "command": "demo-time.openConfigEditor",
+          "when": "((editorLangId == jsonc || editorLangId == json) || editorLangId == yaml) && resourceDirname =~ /\\.demo$/",
+          "group": "navigation@-1"
+        },
+        {
+          "command": "demo-time.addStepToDemo",
+          "when": "((editorLangId == jsonc || editorLangId == json) || editorLangId == yaml) && resourceDirname =~ /\\.demo$/",
+          "group": "navigation@-1"
+        },
+        {
+          "command": "demo-time.start",
+          "when": "((editorLangId == jsonc || editorLangId == json) || editorLangId == yaml) && resourceDirname =~ /\\.demo$/",
+          "group": "navigation@0"
+        },
+        {
+          "command": "demo-time.docs",
+          "when": "((editorLangId == jsonc || editorLangId == json) || editorLangId == yaml) && resourceDirname =~ /\\.demo$/",
+          "group": "navigation@1"
+        },
+        {
+          "command": "demo-time.openSlidePreview",
+          "when": "editorLangId == markdown && resourceDirname =~ /\\.demo/",
+          "group": "navigation@-1"
+        },
+        {
+          "command": "demo-time.toggleSelectionHighlight",
+          "when": "activeEditor == 'workbench.editors.files.textFileEditor' && config.demoTime.hideEditorActions == false",
+          "group": "navigation@1"
+        },
+        {
+          "command": "demo-time.toggleHighlight",
+          "when": "activeEditor == 'workbench.editors.files.textFileEditor' && demo-time.hasCodeHighlighting == true",
+          "group": "navigation@1"
+        },
+        {
+          "command": "demo-time.addToStep",
+          "when": "activeEditor == 'workbench.editors.files.textFileEditor' && !(resourceDirname =~ /\\.demo$/) && config.demoTime.hideEditorActions == false",
+          "group": "navigation@1"
+        }
+      ]
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "demo-time",
+          "name": "Demo Time",
+          "contextualTitle": "Demo Time",
+          "icon": "assets/logo/demotime.svg"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "demo-time.start",
+        "key": "right",
+        "when": "demo-time.presentation"
+      },
+      {
+        "command": "demo-time.previous",
+        "key": "left",
+        "when": "demo-time.presentation && demo-time.previousEnabled"
+      },
+      {
+        "command": "demo-time.previous",
+        "key": "left",
+        "when": "demo-time.presentation && demo-time.hasPreviousSlide == true"
+      },
+      {
+        "command": "demo-time.toggleSelectionHighlight",
+        "key": "alt+h"
+      },
+      {
+        "command": "workbench.action.webview.reloadWebviewAction",
+        "key": "ctrl+r",
+        "mac": "cmd+r",
+        "when": "activeWebviewPanelId == demoTime:preview"
+      },
+      {
+        "command": "demo-time.hackerTyperNextChunk",
+        "key": "down",
+        "when": "demo-time.isHackerTyper == true"
+      }
+    ],
+    "viewsWelcome": [
+      {
+        "view": "demo-time",
+        "contents": "Welcome to Demo Time! Start by creating a demo file in JSON or YAML format, or click the initialize button.\n\n[Initialize](command:demo-time.initialize)\n\n[Learn More](https://demotime.show)"
+      }
+    ],
+    "walkthroughs": [
+      {
+        "id": "demo-time.welcome",
+        "title": "Welcome to Demo Time",
+        "description": "Demo Time helps you create and present coding presentions, workshops, trainings, etc...",
+        "steps": [
+          {
+            "id": "frontmatter.welcome.init",
+            "title": "Get started",
+            "description": "Initial steps to get started.\n[Initialize](command:demo-time.initialize)",
+            "completionEvents": [
+              "onContext:demo-time.isInitialized"
+            ],
+            "media": {
+              "markdown": "walkthrough/init.md"
+            }
+          },
+          {
+            "id": "demo-time.welcome.createDemo",
+            "title": "Create a Demo File",
+            "description": "Use the [Demo Time: Create a new demo file](command:demo-time.createDemoFile) command to create a new demo file.",
+            "media": {
+              "markdown": "walkthrough/create-demo.md"
+            }
+          },
+          {
+            "id": "demo-time.documentation",
+            "title": "Explore Documentation",
+            "description": "Visit the [Demo Time Documentation](https://demotime.show) for more details.",
+            "media": {
+              "image": "assets/logo/demotime-bg.svg",
+              "altText": "Demo Time Logo"
+            }
+          }
+        ]
+      }
+    ],
+    "customEditors": [
+      {
+        "viewType": "demoTime.configEditor",
+        "displayName": "Demo Time Config Editor",
+        "selector": [
+          {
+            "filenamePattern": "**/.demo/*.json"
+          },
+          {
+            "filenamePattern": "**/.demo/*.yaml"
+          },
+          {
+            "filenamePattern": "**/.demo/*.yml"
+          }
+        ],
+        "priority": "default"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run clean && node ./scripts/copy-changelog.cjs && npm run compile",
+    "compile": "npm-run-all --parallel compile:*",
+    "compile:ext": "tsup --minify",
+    "compile:wc": "tsup --minify --config tsup.wc.config.ts",
+    "compile:wv": "webpack --mode production --config ./webview.config.js",
+    "compile:preview": "webpack --mode production --config ./preview.config.js",
+    "compile:copy": "node ./scripts/copy-assets.mjs",
+    "watch": "npm-run-all --parallel watch:*",
+    "watch:ext": "tsup --watch --sourcemap",
+    "watch:wc": "tsup --watch --sourcemap --config tsup.wc.config.ts ",
+    "watch:wv": "webpack serve --mode development --config ./webview.config.js",
+    "watch:preview": "webpack serve --mode development --config ./preview.config.js",
+    "lint": "eslint src --ext ts",
+    "test": "jest --coverage",
+    "clean": "rimraf out coverage"
+  },
+  "peerDependencies": {
+    "playwright-chromium": "^1.51.1"
+  },
+  "peerDependenciesMeta": {
+    "playwright-chromium": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@actions/core": "^1.11.1",
+    "@estruyf/vscode": "^1.1.0",
+    "@tailwindcss/postcss": "^4.1.12",
+    "@types/cors": "^2.8.17",
+    "@types/diff": "^7.0.1",
+    "@types/dompurify": "^3.0.5",
+    "@types/jest": "^29.5.11",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "18.x",
+    "@types/react": "^18.3.16",
+    "@types/react-dom": "^18.3.5",
+    "@types/vscode": "^1.84.0",
+    "@typescript-eslint/eslint-plugin": "^6.9.0",
+    "@typescript-eslint/parser": "^6.9.0",
+    "@vscode/test-electron": "^2.3.6",
+    "autoprefixer": "^10.4.20",
+    "cors": "^2.8.5",
+    "css-loader": "^7.1.2",
+    "diff": "^7.0.0",
+    "dompurify": "^3.2.6",
+    "eslint": "^8.52.0",
+    "express": "^4.21.2",
+    "glob": "^10.3.10",
+    "handlebars": "^4.7.8",
+    "jest": "^29.7.0",
+    "js-yaml": "^4.1.0",
+    "jsonc-parser": "^3.3.1",
+    "mermaid": "^11.6.0",
+    "mlly": "^1.7.4",
+    "npm-run-all": "^4.1.5",
+    "playwright-chromium": "^1.51.1",
+    "postcss": "^8.4.49",
+    "postcss-loader": "^8.1.1",
+    "prettier": "^3.6.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "rehype-pretty-code": "^0.14.0",
+    "rehype-raw": "^7.0.0",
+    "rehype-react": "^8.0.0",
+    "rehype-stringify": "^10.0.1",
+    "remark-frontmatter": "^5.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-rehype": "^11.1.1",
+    "rimraf": "^6.0.1",
+    "style-loader": "^4.0.0",
+    "tailwind": "^4.0.0",
+    "tailwindcss": "^4.1.12",
+    "ts-jest": "^29.1.1",
+    "ts-loader": "^9.5.1",
+    "tsup": "^8.5.0",
+    "typescript": "^5.2.2",
+    "uuid": "^11.1.0",
+    "vfile-matter": "^5.0.0",
+    "vscrui": "^0.2.0-beta.1229608",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.2.0",
+    "webpack-manifest-plugin": "^5.0.1"
+  }
+}

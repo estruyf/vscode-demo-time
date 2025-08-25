@@ -5,10 +5,17 @@ on:
       - published
   workflow_dispatch:
 
+env:
+  VSCODE_EXT_PATH: apps/vscode-extension
+
 jobs:
   build:
     name: 'Build and release'
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ${{ env.VSCODE_EXT_PATH }}
 
     steps:
       - uses: actions/checkout@v4
@@ -27,7 +34,7 @@ jobs:
         run: node .github/scripts/verify-actions.mjs
 
       - name: Publish
-        run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }}
+        run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }} --no-dependencies
 
       - name: Publish to open-vsx.org
-        run: npx ovsx publish -p ${{ secrets.OPEN_VSX_PAT }}
+        run: npx ovsx publish -p ${{ secrets.OPEN_VSX_PAT }} --no-dependencies

@@ -1,0 +1,52 @@
+---
+title: MCP server support
+description: Learn how to use the Model Context Protocol (MCP) server with Demo Time for AI assistants and automation.
+lastmod: 2025-07-04T15:10:34.645Z
+---
+
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Demo Time provides a Model Context Protocol (MCP) server via the [`@demotime/mcp`](https://www.npmjs.com/package/@demotime/mcp) package. This enables AI assistants and other MCP-compatible clients to search and interact with your Demo Time documentation and slides using natural language queries.
+
+## What is the Demo Time MCP server?
+
+The MCP server allows:
+- Searching through Demo Time documentation with natural language
+- Automating actions in Demo Time (e.g., opening files, running steps)
+- Integrating with AI assistants and tools that support MCP
+
+## How to set up the MCP server
+
+You can run the Demo Time MCP server using `npx`:
+
+```sh
+npx -y @demotime/mcp
+```
+
+Or, configure it in your MCP host (such as Visual Studio Code) as follows:
+
+1. Create or edit `.vscode/mcp.json` in your workspace:
+
+```json
+{
+  "servers": {
+    "Demo Time": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@demotime/mcp"]
+    }
+  }
+}
+```
+
+2. Reconnect the MCP server in your MCP-compatible tool (e.g., VS Code Copilot Chat).
+3. Once connected, you can ask GitHub Copilot or other AI assistants to search the Demo Time documentation for answers.
+
+## Resources
+
+- [Demo Time Documentation](https://demotime.show/)
+- [@demotime/mcp on npm](https://www.npmjs.com/package/@demotime/mcp)
+
+<Aside>
+For more information about MCP and supported features, see the [Model Context Protocol documentation](https://code.visualstudio.com/docs/copilot/chat/mcp-servers#_add-an-mcp-server).
+</Aside>

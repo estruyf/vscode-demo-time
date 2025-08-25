@@ -1,0 +1,346 @@
+---
+title: Terminal actions
+description: Perform terminal actions in your demos like running commands, clearing the terminal, and more.
+lastmod: 2025-08-02T16:01:30.079Z
+---
+
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+import GitHubFileOpener from '../../../components/GitHubFileOpener.astro';
+
+Terminal actions are used to perform actions related to the terminal in the editor. You can use these actions to run commands, clear the terminal, and more.
+
+<Aside type="note" title='Samples'>
+  You can find terminal actions samples on GitHub: 
+  <GitHubFileOpener filePath=".demo/5.terminal-actions.json" />
+</Aside>
+
+## Open the terminal
+
+Open the terminal in the editor. You can optionally specify a terminal ID to open a specific terminal.
+
+<Tabs syncKey="open-terminal">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "openTerminal",
+  "terminalId": "<terminal id (optional)>"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: openTerminal
+terminalId: <terminal id (optional)>
+```
+
+</TabItem>
+</Tabs>
+
+## Execute a terminal command
+
+Execute a terminal command in the terminal.
+
+<Tabs syncKey="execute-terminal-command">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "executeTerminalCommand",
+  "command": "<command to execute>",
+  "terminalId": "<terminal id (optional)>",
+  "autoExecute": "<true/false (optional - default is true)>",
+  "insertTypingMode": "<typing mode (optional - default is 'instant')>",
+  "insertTypingSpeed": "<speed in milliseconds (optional)>"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: executeTerminalCommand
+command: <command to execute>
+terminalId: <terminal id (optional)>
+autoExecute: <true/false (optional - default is true)>
+insertTypingMode: <typing mode (optional - default is 'instant')>
+insertTypingSpeed: <speed in milliseconds (optional)>
+```
+
+</TabItem>
+</Tabs>
+
+### Properties
+
+- **command**: The command to execute in the terminal
+- **terminalId**: Optional. Define a custom name for the terminal. Default is "DemoTime"
+- **autoExecute**: Optional. Whether to automatically execute the command after typing it. Default behavior varies
+- **insertTypingMode**: Optional. How the command should be typed. Options:
+  - `instant`: Types the command instantly
+  - `character-by-character`: Types each character individually
+- **insertTypingSpeed**: Optional. Speed in milliseconds between each typing unit.
+
+### Examples
+
+#### Basic terminal command
+
+<Tabs syncKey="execute-terminal-command-example">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "executeTerminalCommand",
+  "command": "echo 'Hello, world!'"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: executeTerminalCommand
+command: "echo 'Hello, world!'"
+```
+
+</TabItem>
+</Tabs>
+
+#### Manually execute command
+
+<Tabs syncKey="execute-terminal-command-manual">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "executeTerminalCommand",
+  "command": "echo 'Hello, world!'",
+  "autoExecute": false
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: executeTerminalCommand
+command: "echo 'Hello, world!'"
+autoExecute: false
+```
+
+</TabItem>
+</Tabs>
+
+#### Command with character-by-character typing
+
+<Tabs syncKey="execute-terminal-command-character-by-character">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "executeTerminalCommand",
+  "command": "echo 'Hello, world!'",
+  "insertTypingMode": "character-by-character",
+  "insertTypingSpeed": 50,
+  "insertTypingSpeed": 100
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: executeTerminalCommand
+command: "echo 'Hello, world!'"
+insertTypingMode: character-by-character
+insertTypingSpeed: 50
+```
+
+</TabItem>
+</Tabs>
+
+#### Command with custom terminal ID
+
+<Tabs syncKey="execute-terminal-command-custom-id">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "executeTerminalCommand",
+  "command": "echo 'Hello, world!'",
+  "terminalId": "demo-terminal"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: executeTerminalCommand
+command: "echo 'Hello, world!'"
+terminalId: demo-terminal
+```
+
+</TabItem>
+</Tabs>
+
+## Execute a script in the background
+
+Execute a script in the background of which you can use the output in the next steps.
+
+<Tabs syncKey="execute-script">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "executeScript",
+  "id": "<script id>",
+  "path": "<script to execute>",
+  "command": "node" // Can be powershell, bash, shell, python, etc.
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: executeScript
+id: <script id>
+path: <script to execute>
+command: node # Can be powershell, bash, shell, python, etc.
+```
+
+</TabItem>
+</Tabs>
+
+<Aside>
+If you want, you can use the output of the script in the next steps with `STATE_<script id>` syntax.
+
+Make sure you defined the `id` property and that your script only writes a single line of output.
+</Aside>
+
+### Example of using the output of a script
+
+<Tabs syncKey="execute-script-example">
+<TabItem label="JSON">
+
+```json title="demo.json"
+{
+    "title": "Script example",
+    "description": "",
+    "steps": [
+        {
+            "action": "executeScript",
+            "id": "firstName",
+            "path": "writeFirstName.mjs",
+            "command": "node"
+        },
+        {
+            "action": "create",
+            "path": "sample.json",
+            "content": "{\\n  \\"firstName\\": \\"{SCRIPT_firstName}\\"\\n}"
+        },
+        {
+            "action": "open",
+            "path": "sample.json"
+        }
+    ]
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml title="demo.yaml"
+title: Script example
+description: ""
+steps:
+  - action: executeScript
+    id: firstName
+    path: writeFirstName.mjs
+    command: node
+  - action: create
+    path: sample.json
+    content: "{\\n  \\"firstName\\": \\"{SCRIPT_firstName}\\"\\n}"
+  - action: open
+    path: sample.json
+```
+
+</TabItem>
+</Tabs>
+
+```js title="writeFirstName.mjs"
+console.log('Elio');
+```
+
+## Close a terminal
+
+Close the terminal. You can optionally specify a terminal ID to close a specific terminal.
+
+<Tabs syncKey="close-terminal">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "closeTerminal",
+  "terminalId": "<terminal id (optional)>"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: closeTerminal
+terminalId: <terminal id (optional)>
+```
+
+</TabItem>
+</Tabs>
+
+### Examples
+
+#### Close the default terminal
+
+<Tabs syncKey="close-terminal-default">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "closeTerminal"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: closeTerminal
+```
+
+</TabItem>
+</Tabs>
+
+#### Close a specific terminal by ID
+
+<Tabs syncKey="close-terminal-by-id">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "closeTerminal",
+  "terminalId": "demo-terminal"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: closeTerminal
+terminalId: demo-terminal
+```
+
+</TabItem>
+</Tabs>

@@ -1,0 +1,442 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Text actions",
+  "description": "",
+  "version": 2,
+  "demos": [
+    {
+      "title": "Highlight text (via placeholders)",
+      "description": "",
+      "steps": [
+        {
+          "action": "highlight",
+          "path": "src/content/docs/actions/text.mdx",
+          "startPlaceholder": "<Tabs syncKey=\"highlight-text\">",
+          "endPlaceholder": "</TabItem>"
+        }
+      ]
+    },
+    {
+      "title": "Highlight text (via position)",
+      "description": "",
+      "steps": [
+        {
+          "action": "highlight",
+          "path": "src/content/docs/actions/text.mdx",
+          "position": "64:66"
+        }
+      ]
+    },
+    {
+      "title": "Highlight text (via position with character)",
+      "description": "",
+      "steps": [
+        {
+          "action": "highlight",
+          "path": "src/content/docs/actions/text.mdx",
+          "position": "64,4:66"
+        }
+      ]
+    },
+    {
+      "title": "Highlight text (via position - first line)",
+      "description": "",
+      "steps": [
+        {
+          "action": "highlight",
+          "path": "src/content/docs/actions/text.mdx",
+          "position": "3",
+          "highlightWholeLine": true
+        }
+      ]
+    },
+    {
+      "title": "Highlight text (highlight settings)",
+      "description": "",
+      "steps": [
+        {
+          "action": "setSetting",
+          "setting": {
+            "key": "demoTime.highlightBorderColor",
+            "value": "#ffd43b"
+          }
+        },
+        {
+          "action": "setSetting",
+          "setting": {
+            "key": "demoTime.highlightBackground",
+            "value": "#ffd43b4d"
+          }
+        },
+        {
+          "action": "setSetting",
+          "setting": {
+            "key": "demoTime.highlightOpacity",
+            "value": 0.5
+          }
+        },
+        {
+          "action": "setSetting",
+          "setting": {
+            "key": "demoTime.highlightBlur",
+            "value": 2
+          }
+        },
+        {
+          "action": "highlight",
+          "path": "src/content/docs/actions/text.mdx",
+          "startPlaceholder": "## Highlight text",
+          "endPlaceholder": "specific location."
+        },
+        {
+          "action": "waitForTimeout",
+          "timeout": 2000
+        },
+        {
+          "action": "setSetting",
+          "setting": {
+            "key": "demoTime.highlightBorderColor",
+            "value": null
+          }
+        },
+        {
+          "action": "setSetting",
+          "setting": {
+            "key": "demoTime.highlightBackground",
+            "value": null
+          }
+        },
+        {
+          "action": "setSetting",
+          "setting": {
+            "key": "demoTime.highlightOpacity",
+            "value": null
+          }
+        },
+        {
+          "action": "setSetting",
+          "setting": {
+            "key": "demoTime.highlightBlur",
+            "value": null
+          }
+        }
+      ]
+    },
+    {
+      "title": "Highlight text (zoom)",
+      "description": "",
+      "steps": [
+        {
+          "action": "highlight",
+          "path": "src/content/docs/actions/text.mdx",
+          "startPlaceholder": "## Highlight text",
+          "endPlaceholder": "specific location.",
+          "zoom": 2
+        }
+      ]
+    },
+    {
+      "title": "Position cursor (via position)",
+      "description": "",
+      "steps": [
+        {
+          "action": "positionCursor",
+          "path": "src/content/docs/actions/text.mdx",
+          "position": "98,19"
+        }
+      ]
+    },
+    {
+      "title": "Position cursor (via startPlaceholder)",
+      "description": "",
+      "steps": [
+        {
+          "action": "positionCursor",
+          "path": "src/content/docs/actions/text.mdx",
+          "startPlaceholder": "## Position cursor"
+        }
+      ]
+    },
+    {
+      "title": "Insert text",
+      "description": "",
+      "steps": [
+        {
+          "action": "create",
+          "path": "temp/file-action.md",
+          "contentPath": ".demo/content/file-action.md"
+        },
+        {
+          "action": "open",
+          "path": "temp/file-action.md"
+        },
+        {
+          "action": "insert",
+          "path": "temp/file-action.md",
+          "position": "4",
+          "contentPath": ".demo/content/file-insert.md",
+          "insertTypingMode": "instant",
+          "insertTypingSpeed": 50
+        }
+      ]
+    },
+    {
+      "title": "Insert text (line-by-line)",
+      "description": "",
+      "steps": [
+        {
+          "action": "create",
+          "path": "temp/file-action.md",
+          "contentPath": ".demo/content/file-action.md"
+        },
+        {
+          "action": "open",
+          "path": "temp/file-action.md"
+        },
+        {
+          "action": "insert",
+          "path": "temp/file-action.md",
+          "position": "4",
+          "contentPath": ".demo/content/file-insert.md",
+          "insertTypingMode": "line-by-line",
+          "insertTypingSpeed": 50
+        }
+      ]
+    },
+    {
+      "title": "Insert text (character-by-character)",
+      "description": "",
+      "steps": [
+        {
+          "action": "create",
+          "path": "temp/file-action.md",
+          "contentPath": ".demo/content/file-action.md"
+        },
+        {
+          "action": "open",
+          "path": "temp/file-action.md"
+        },
+        {
+          "action": "insert",
+          "path": "temp/file-action.md",
+          "position": "4",
+          "contentPath": ".demo/content/file-insert.md",
+          "insertTypingMode": "character-by-character",
+          "insertTypingSpeed": 10
+        }
+      ]
+    },
+    {
+      "title": "Insert text (hacker-typer)",
+      "description": "",
+      "steps": [
+        {
+          "action": "create",
+          "path": "temp/file-action.md",
+          "contentPath": ".demo/content/file-action.md"
+        },
+        {
+          "action": "open",
+          "path": "temp/file-action.md"
+        },
+        {
+          "action": "showInfoMessage",
+          "message": "Hacker-typer mode is enabled."
+        },
+        {
+          "action": "insert",
+          "path": "temp/file-action.md",
+          "position": "4",
+          "contentPath": ".demo/content/file-insert.md",
+          "insertTypingMode": "hacker-typer",
+          "insertTypingSpeed": 10
+        },
+        {
+          "action": "showInfoMessage",
+          "message": "Hacker-typer mode is disabled."
+        }
+      ]
+    },
+    {
+      "title": "Replace text",
+      "description": "",
+      "steps": [
+        {
+          "action": "create",
+          "path": "temp/file-action.md",
+          "contentPath": ".demo/content/file-action.md"
+        },
+        {
+          "action": "open",
+          "path": "temp/file-action.md"
+        },
+        {
+          "action": "replace",
+          "path": "temp/file-action.md",
+          "position": "3:3",
+          "content": "THIS IS A DEMO",
+          "insertTypingMode": "instant",
+          "insertTypingSpeed": 10
+        }
+      ]
+    },
+    {
+      "title": "Replace text (line-by-line)",
+      "description": "",
+      "steps": [
+        {
+          "action": "create",
+          "path": "temp/file-action.md",
+          "contentPath": ".demo/content/file-action.md"
+        },
+        {
+          "action": "open",
+          "path": "temp/file-action.md"
+        },
+        {
+          "action": "replace",
+          "path": "temp/file-action.md",
+          "position": "3,4:3,6",
+          "content": "THIS IS A DEMO",
+          "insertTypingMode": "line-by-line",
+          "insertTypingSpeed": 10
+        }
+      ]
+    },
+    {
+      "title": "Replace text (character-by-character)",
+      "description": "",
+      "steps": [
+        {
+          "action": "create",
+          "path": "temp/file-action.md",
+          "contentPath": ".demo/content/file-action.md"
+        },
+        {
+          "action": "open",
+          "path": "temp/file-action.md"
+        },
+        {
+          "action": "replace",
+          "path": "temp/file-action.md",
+          "position": "3:3",
+          "content": "THIS IS A DEMO",
+          "insertTypingMode": "character-by-character",
+          "insertTypingSpeed": 10
+        }
+      ]
+    },
+    {
+      "title": "Replace text (hacker-typer)",
+      "description": "",
+      "steps": [
+        {
+          "action": "create",
+          "path": "temp/file-action.md",
+          "contentPath": ".demo/content/file-action.md"
+        },
+        {
+          "action": "open",
+          "path": "temp/file-action.md"
+        },
+        {
+          "action": "showInfoMessage",
+          "message": "Hacker-typer mode is enabled."
+        },
+        {
+          "action": "replace",
+          "path": "temp/file-action.md",
+          "position": "3:3",
+          "content": "THIS IS A DEMO",
+          "insertTypingMode": "hacker-typer",
+          "insertTypingSpeed": 10
+        },
+        {
+          "action": "showInfoMessage",
+          "message": "Hacker-typer mode is disabled."
+        }
+      ]
+    },
+    {
+      "title": "Write single line",
+      "description": "",
+      "steps": [
+        {
+          "action": "create",
+          "path": "temp/file-action.md",
+          "contentPath": ".demo/content/file-action.md"
+        },
+        {
+          "action": "open",
+          "path": "temp/file-action.md"
+        },
+        {
+          "action": "positionCursor",
+          "path": "temp/file-action.md",
+          "position": "4"
+        },
+        {
+          "action": "write",
+          "content": "Hello World!"
+        }
+      ]
+    },
+    {
+      "title": "Format text",
+      "description": "",
+      "steps": [
+        {
+          "action": "create",
+          "path": "temp/unformatted.json",
+          "contentPath": ".demo/content/unformatted.json"
+        },
+        {
+          "action": "open",
+          "path": "temp/unformatted.json"
+        },
+        {
+          "action": "format"
+        }
+      ]
+    },
+    {
+      "title": "Unselect text",
+      "description": "",
+      "steps": [
+        {
+          "action": "highlight",
+          "path": "src/content/docs/actions/text.mdx",
+          "startPlaceholder": "## Highlight text",
+          "endPlaceholder": "specific location."
+        },
+        {
+          "action": "waitForTimeout",
+          "timeout": 1000
+        },
+        {
+          "action": "unselect"
+        }
+      ]
+    },
+    {
+      "title": "Delete text",
+      "description": "",
+      "steps": [
+        {
+          "action": "create",
+          "path": "temp/file-action.md",
+          "contentPath": ".demo/content/file-action.md"
+        },
+        {
+          "action": "open",
+          "path": "temp/file-action.md"
+        },
+        {
+          "action": "delete",
+          "path": "temp/file-action.md",
+          "position": "3:3"
+        }
+      ]
+    }
+  ]
+}

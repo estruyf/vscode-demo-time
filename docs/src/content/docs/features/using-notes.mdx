@@ -1,0 +1,66 @@
+---
+title: Using notes
+description: Learn how to provide notes for your demos in Demo Time.
+lastmod: 2025-07-04T17:53:49.835Z
+---
+
+import { Image } from 'astro:assets';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import notesAction  from "../../../assets/docs/notes-action.webp";
+import notesImg from "../../../assets/docs/notes-presenter-view.webp";
+
+Notes can be added to your demos to provide additional information for yourself or others. If you are preparing a demo for a presentation, you can use these notes to provide additional context or reminders for each step. For you audience, these notes can provide additional information about the demo, such as the purpose of the demo, the expected outcome, or any additional information they should know. This can be helpful when sharing the demo with others who may not be familiar with the code or the context of the demo.
+
+To add notes to your demos, you can create a markdown file in the `.demo` folder. Once you have created the notes file, you can reference it in the demo JSON file using the `notes` property.
+
+Here is an example of how you can add notes to your demo:
+
+<Tabs syncKey="demo-notes">
+<TabItem label="JSON">
+
+```json
+{
+  "title": "<title>",
+  "description": "<description>",
+  "steps": [...],
+  "notes": {
+    "path": "<relative path to the file>",
+    "showOnTrigger": "<show notes on trigger (optional) - default is false>"
+  }
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+title: <title>
+description: <description>
+steps: [...]
+notes:
+  path: <relative path to the file>
+  showOnTrigger: <show notes on trigger (optional) - default is false>
+```
+
+</TabItem>
+</Tabs>
+
+## Viewing the notes
+
+To view the notes for a demo, you can hover over the demo title in the **Demo Time** view. If a demo contains notes, you should see the book icon appear next to the demo title. Clicking on the book icon will open the notes for the demo, allowing you to read the additional information provided.
+
+<Image class="mx-auto" src={notesAction} alt="Demo notes action" width="400" />
+
+Another way is to click on the **Notes** status bar action to open the notes for the current demo.
+
+## Automatically showing notes on trigger
+
+By default, the notes for a demo are hidden until you click on the book icon to view them. However, you can configure the demo to automatically show the notes when the demo is triggered. To do this, set the `showOnTrigger` property in the notes object to `true`.
+
+When the `showOnTrigger` property is set to `true`, the notes will automatically appear when the demo is triggered, providing additional context and information for the audience.
+
+## Notes on the presenter view
+
+If you are using the presenter view, the notes will automatically be shown. This allows you to see the notes while presenting without showing them to your audience.
+
+<Image class="mx-auto" src={notesImg} alt="Notes shown on the presenter view" />

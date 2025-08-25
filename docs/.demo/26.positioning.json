@@ -1,0 +1,19 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Positioning",
+  "description": "",
+  "version": 2,
+  "demos": [
+    {
+      "title": "Insert at line and character",
+      "steps": [
+        {
+          "action": "insert",
+          "path": "sample.txt",
+          "position": "5,3",
+          "content": "Inserted at line 5, character 3"
+        }
+      ]
+    }
+  ]
+}
