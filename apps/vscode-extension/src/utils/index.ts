@@ -32,6 +32,7 @@ export * from './getShellPath';
 export * from './getTheme';
 export * from './getUserInput';
 export * from './getVariables';
+export * from './getWebviewHtml';
 export * from './getWebviewUrl';
 export * from './insertVariables';
 export * from './isProjectInitialized';

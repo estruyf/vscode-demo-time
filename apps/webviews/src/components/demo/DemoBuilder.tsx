@@ -39,8 +39,6 @@ export const DemoBuilder: React.FC<{ initialConfig: DemoConfig }> = ({ initialCo
     validation
   } = useDemoConfig(initialConfig);
 
-  console.log(`current config: ${JSON.stringify(config, null, 2)}`);
-
   const {
     handleSave,
   } = useFileOperations();

@@ -30,15 +30,18 @@ export async function activate(context: vscode.ExtensionContext) {
   // Clearing the variable state when the extension starts
   clearVariablesState();
 
-  DecoratorService.register();
+  // Webviews
+  SettingsView.register();
+  PresenterView.register();
+  Preview.register();
 
+  // Services
+  DecoratorService.register();
   DemoPanel.register();
   DemoRunner.registerCommands();
   DemoCreator.registerCommands();
   DemoListeners.register();
   DemoStatusBar.register();
-  Preview.register();
-  PresenterView.register();
   DemoFileProvider.register();
   Slides.register();
   NotesService.registerCommands();
@@ -48,7 +51,6 @@ export async function activate(context: vscode.ExtensionContext) {
   PdfExportService.register();
   ImportService.register();
   ConfigEditorProvider.register();
-  SettingsView.register();
   TerminalService.register();
 
   console.log(`${Config.title} is active!`);
