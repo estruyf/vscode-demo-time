@@ -5,8 +5,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const sourceDir = path.join(__dirname, '../../webviews/src/themes');
-const destinationDir = path.join('assets', 'styles', 'themes');
+const sourceDir = path.resolve(__dirname, '../apps/webviews/src/themes');
+const destinationDir = path.resolve(__dirname, '../apps/vscode-extension/assets/styles/themes');
 console.log(`Copying files from ${sourceDir} to ${destinationDir}`);
 
 async function copyFiles(src, dest) {
