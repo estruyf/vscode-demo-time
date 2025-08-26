@@ -36,11 +36,10 @@
     "docs:build": "npx nx build demo-time-docs",
     "common:build": "npx nx build common",
     "common:dev": "npx nx run common:dev",
-    "webviews:build": "npx nx build webviews && node ./scripts/copy-webviews.js && node ./scripts/copy-assets.mjs",
+    "webviews:build": "npx nx build webviews",
     "webviews:dev": "npx nx run webviews:dev",
-    "vscode:dev": "nx run-many --target=dev --projects=vscode-demo-time,webviews,common --parallel",
-    "vscode:open": "code ./apps/vscode-extension",
-    "vscode:watch": "npx nx run vscode-demo-time:watch"
+    "vscode:dev": "npx nx run-many --target=dev --projects=vscode-demo-time,webviews,common --parallel",
+    "vscode:build": "npx nx build vscode-demo-time"
   },
   "homepage": "https://demotime.show/",
   "directories": {

@@ -783,10 +783,10 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "npm run clean && npm run compile",
-    "compile": "npm-run-all --parallel compile:*",
-    "compile:ext": "tsup --minify",
-    "compile:wc": "tsup --minify --config tsup.wc.config.ts",
+    "vscode:prepublish": "npm run clean && npm run build",
+    "build": "npm-run-all --parallel build:*",
+    "build:ext": "tsup --minify",
+    "build:wc": "tsup --minify --config tsup.wc.config.ts",
     "dev": "npm-run-all --parallel watch:*",
     "watch:ext": "tsup --watch --sourcemap",
     "watch:wc": "tsup --watch --sourcemap --config tsup.wc.config.ts ",
@@ -797,7 +797,20 @@
   "nx": {
     "implicitDependencies": [
       "webviews"
-    ]
+    ],
+    "targets": {
+      "copy-assets": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "node ./scripts/copy-webviews.js && node ./scripts/copy-assets.mjs"
+        }
+      },
+      "build": {
+        "dependsOn": [
+          "copy-assets"
+        ]
+      }
+    }
   },
   "peerDependencies": {
     "playwright-chromium": "^1.51.1"
