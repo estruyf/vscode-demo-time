@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FileText } from 'lucide-react';
+import { ChevronDown, ChevronUp, FileText } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client';
 import { EventData } from '@estruyf/vscode';
@@ -18,6 +18,7 @@ export const DemoBuilder: React.FC<{ initialConfig: DemoConfig }> = ({ initialCo
   const [selectedDemo, setSelectedDemo] = useState<number | null>(null);
   const [isTestingDemo, setIsTestingDemo] = useState<boolean>(false);
   const [showValidation, setShowValidation] = useState<boolean>(false);
+  const [collapsed, setCollapsed] = useState<boolean>(false);
 
   // Check if we're on the settings page
   const isSettingsPage = window.location.pathname === '/settings';
@@ -330,9 +331,23 @@ export const DemoBuilder: React.FC<{ initialConfig: DemoConfig }> = ({ initialCo
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <Sidebar>
-            <Card>
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">Demo File Settings</h2>
-              <MainConfigForm config={config} onChange={handleConfigChange} />
+            <Card className='space-y-6'>
+              <div className="flex items-center">
+                <button
+                  className="text-demo-time-gray-1 hover:text-demo-time-gray-2"
+                  aria-label={collapsed ? "Expand settings" : "Collapse settings"}
+                  onClick={() => setCollapsed((prev) => !prev)}
+                >
+                  <div className="flex items-center space-x-2">
+                    {collapsed ? <ChevronDown /> : <ChevronUp />}
+
+                    <h2 className="text-xl font-semibold text-gray-900">Demo File Settings</h2>
+                  </div>
+                </button>
+              </div>
+              {!collapsed && (
+                <MainConfigForm config={config} onChange={handleConfigChange} />
+              )}
             </Card>
 
             <DemoSection
