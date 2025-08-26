@@ -39,7 +39,7 @@ export default defineConfig({
           tag: 'meta',
           attrs: {
             property: 'og:image',
-            content: 'https://demotime.show/demo-time-og.png',
+            content: 'https://demotime.show/demo-time-og3.png',
           }
         },
         {
