@@ -26,14 +26,16 @@ const oneTimeSponsors = [
   },
 ];
 
+// Merge sponsors, exclude duplicates by 'login'
 let allSponsors = [...oneTimeSponsors, ...sponsors];
-allSponsors = Array.from(
-  new Map(
-    allSponsors
-      .sort((a, b) => (a.name || a.login).localeCompare(b.name || b.login))
-      .map((sponsor) => [sponsor.login, sponsor]),
-  ).values(),
-);
+const seenLogins = new Set();
+allSponsors = allSponsors
+  .sort((a, b) => (a.name || a.login).localeCompare(b.name || b.login))
+  .filter((sponsor) => {
+    if (seenLogins.has(sponsor.login)) return false;
+    seenLogins.add(sponsor.login);
+    return true;
+  });
 ---
 
 <div class="container px-4 mx-auto">
