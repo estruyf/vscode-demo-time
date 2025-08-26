@@ -1,5 +1,5 @@
 {
-  "name": "powerpoint-demo-time-addin",
+  "name": "@demotime/powerpoint-addin",
   "private": true,
   "version": "0.0.0",
   "type": "module",

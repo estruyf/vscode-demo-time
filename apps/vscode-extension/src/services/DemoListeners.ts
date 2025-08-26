@@ -1,10 +1,11 @@
-import { TextDocument, Uri, workspace } from "vscode";
-import { parseWinPath } from "../utils";
-import { DemoPanel } from "../panels/DemoPanel";
-import { Config, General } from "../constants";
-import { DecoratorService } from "./DecoratorService";
-import { DemoRunner } from "./DemoRunner";
-import { DemoStatusBar } from "./DemoStatusBar";
+import { TextDocument, Uri, workspace } from 'vscode';
+import { parseWinPath } from '../utils';
+import { DemoPanel } from '../panels/DemoPanel';
+import { General } from '../constants';
+import { DecoratorService } from './DecoratorService';
+import { DemoRunner } from './DemoRunner';
+import { DemoStatusBar } from './DemoStatusBar';
+import { Config } from '@demotime/common';
 
 export class DemoListeners {
   public static register() {

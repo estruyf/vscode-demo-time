@@ -1,4 +1,4 @@
-import { Config } from '../constants';
+import { Config } from '@demotime/common';
 import { window } from 'vscode';
 
 export const getUserInput = async (prompt: string, title?: string) => {

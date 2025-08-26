@@ -1,11 +1,14 @@
-import { parse as jsonParse } from "jsonc-parser";
-import { env, UIKind, Uri, workspace, WorkspaceFolder } from "vscode";
-import { Config, General, StateKeys } from "../constants";
-import { Extension } from "../services/Extension";
-import { Logger } from "../services/Logger";
-import { fileExists } from "./fileExists";
+import { parse as jsonParse } from 'jsonc-parser';
+import { env, UIKind, Uri, workspace, WorkspaceFolder } from 'vscode';
+import { General, StateKeys } from '../constants';
+import { Extension } from '../services/Extension';
+import { Logger } from '../services/Logger';
+import { fileExists } from './fileExists';
+import { Config } from '@demotime/common';
 
-export const getVariables = async (workspaceFolder: WorkspaceFolder): Promise<{ [key: string]: any } | undefined> => {
+export const getVariables = async (
+  workspaceFolder: WorkspaceFolder,
+): Promise<{ [key: string]: any } | undefined> => {
   try {
     const ext = Extension.getInstance();
 
@@ -17,8 +20,8 @@ export const getVariables = async (workspaceFolder: WorkspaceFolder): Promise<{ 
     const clipboard = await env.clipboard.readText();
     // Set the default variables
     const defaultVariables: { [key: string]: string } = {
-      DT_INPUT: "",
-      DT_CLIPBOARD: clipboard
+      DT_INPUT: '',
+      DT_CLIPBOARD: clipboard,
     };
 
     // Get the state variables

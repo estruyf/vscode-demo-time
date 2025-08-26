@@ -1,12 +1,13 @@
 import { commands, StatusBarAlignment, StatusBarItem, ThemeColor, Uri, window } from 'vscode';
 import { DemoRunner } from './DemoRunner';
 import { DemoFileProvider } from './DemoFileProvider';
-import { COMMAND, Config, ContextKeys, WebViewMessages } from '../constants';
+import { ContextKeys } from '../constants';
 import { Demo, Subscription } from '../models';
 import { Extension } from './Extension';
 import { getNextDemoFile, setContext } from '../utils';
 import { PresenterView } from '../presenterView/PresenterView';
 import { Logger } from './Logger';
+import { WebViewMessages, COMMAND, Config } from '@demotime/common';
 
 export class DemoStatusBar {
   private static statusPresenting: StatusBarItem;

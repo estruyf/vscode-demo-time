@@ -1,6 +1,7 @@
 {
   "name": "demo-time",
   "version": "1.0.0",
+  "private": true,
   "description": "Demo Time - The extension to present and perform live coding demos with confidence.",
   "keywords": [
     "demo",
@@ -31,9 +32,14 @@
     "markdown slides"
   ],
   "scripts": {
-    "docs:dev": "nx dev demo-time-docs",
-    "docs:build": "nx build demo-time-docs",
-    "vscode:open": "code ./apps/vscode-extension"
+    "docs:dev": "npx nx dev demo-time-docs",
+    "docs:build": "npx nx build demo-time-docs",
+    "common:build": "npx nx build common",
+    "common:dev": "npx nx run common:dev",
+    "webviews:build": "npx nx build webviews",
+    "webviews:dev": "npx nx run webviews:dev",
+    "vscode:dev": "npx nx run-many --target=dev --projects=vscode-demo-time,webviews,common --parallel",
+    "vscode:build": "npx nx build vscode-demo-time"
   },
   "homepage": "https://demotime.show/",
   "directories": {
@@ -45,6 +51,11 @@
   },
   "author": "Elio Struyf <elio@struyfconsulting.be> (https://www.eliostruyf.com)",
   "license": "MIT",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "docs"
+  ],
   "devDependencies": {
     "@actions/core": "^1.11.1",
     "@nx/js": "^21.4.0",
@@ -56,5 +67,6 @@
     "jest": "^29.7.0",
     "nx": "21.4.0",
     "webpack-cli": "^5.1.4"
-  }
+  },
+  "dependencies": {}
 }

@@ -1,6 +1,6 @@
-import { Extension } from "./Extension";
-import { commands, OutputChannel, window } from "vscode";
-import { COMMAND } from "../constants";
+import { Extension } from './Extension';
+import { commands, OutputChannel, window } from 'vscode';
+import { COMMAND } from '@demotime/common';
 
 export class Logger {
   private static instance: Logger;
@@ -21,7 +21,7 @@ export class Logger {
     return Logger.instance;
   }
 
-  public static info(message: string, type: "INFO" | "WARNING" | "ERROR" = "INFO"): void {
+  public static info(message: string, type: 'INFO' | 'WARNING' | 'ERROR' = 'INFO'): void {
     if (!Logger.channel) {
       Logger.getInstance();
     }
@@ -30,10 +30,10 @@ export class Logger {
   }
 
   public static warning(message: string): void {
-    Logger.info(message, "WARNING");
+    Logger.info(message, 'WARNING');
   }
 
   public static error(message: string): void {
-    Logger.info(message, "ERROR");
+    Logger.info(message, 'ERROR');
   }
 }

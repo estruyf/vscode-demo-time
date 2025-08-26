@@ -1,9 +1,10 @@
-import { FileType, Uri, window, workspace } from "vscode";
-import { Extension, Notifications } from "../services";
-import { Config, General } from "../constants";
-import { addStepsToDemo, chooseDemoFile, fileExists, getFileName, readFile, writeFile } from ".";
-import { createPatch as createFilePatch } from "diff";
-import { Action, Step } from "../models";
+import { FileType, Uri, window, workspace } from 'vscode';
+import { Extension, Notifications } from '../services';
+import { General } from '../constants';
+import { addStepsToDemo, chooseDemoFile, fileExists, getFileName, readFile, writeFile } from '.';
+import { createPatch as createFilePatch } from 'diff';
+import { Action, Step } from '@demotime/common';
+import { Config } from '@demotime/common';
 
 export const createPatch = async () => {
   const activeEditor = window.activeTextEditor;
@@ -18,8 +19,14 @@ export const createPatch = async () => {
   const text = activeEditor.document.getText();
 
   // Get all the snapshots
-  const snapshotFolderPath = Uri.joinPath(wsFolder?.uri, General.demoFolder, General.snapshotsFolder);
-  const files = await workspace.findFiles(`**/${General.demoFolder}/${General.snapshotsFolder}/**/*`);
+  const snapshotFolderPath = Uri.joinPath(
+    wsFolder?.uri,
+    General.demoFolder,
+    General.snapshotsFolder,
+  );
+  const files = await workspace.findFiles(
+    `**/${General.demoFolder}/${General.snapshotsFolder}/**/*`,
+  );
 
   // Check the type of the file
   const filesOnly = [];
@@ -31,10 +38,10 @@ export const createPatch = async () => {
   }
 
   // Ask the user to select a file
-  const options = filesOnly.map((file) => file.path.replace(snapshotFolderPath.path, ""));
+  const options = filesOnly.map((file) => file.path.replace(snapshotFolderPath.path, ''));
   const selectedFile = await window.showQuickPick(options, {
     title: Config.title,
-    placeHolder: "Select a file to compare with",
+    placeHolder: 'Select a file to compare with',
   });
 
   if (!selectedFile) {
@@ -44,7 +51,7 @@ export const createPatch = async () => {
   const selectedSnapshotPath = Uri.joinPath(snapshotFolderPath, selectedFile);
   const snapshot = await readFile(selectedSnapshotPath);
 
-  const relFilePath = activeEditor.document.uri.path.replace(wsFolder.uri.path, "");
+  const relFilePath = activeEditor.document.uri.path.replace(wsFolder.uri.path, '');
   const patch = createFilePatch(relFilePath, snapshot, text);
 
   const fileName = getFileName(activeEditor.document.uri);
@@ -53,18 +60,23 @@ export const createPatch = async () => {
   }
 
   // Remove the extension from the file name
-  const fileParts = fileName.split(".");
+  const fileParts = fileName.split('.');
   fileParts.pop();
-  let patchName: string | undefined = fileParts.join(".");
+  let patchName: string | undefined = fileParts.join('.');
 
   patchName = await window.showInputBox({
-    prompt: "Enter the name of the patch",
+    prompt: 'Enter the name of the patch',
     value: patchName,
     ignoreFocusOut: true,
     title: Config.title,
     validateInput: async (value) => {
       value = `${value}.patch`;
-      const newFilePath = Uri.joinPath(wsFolder.uri, General.demoFolder, General.patchesFolder, value);
+      const newFilePath = Uri.joinPath(
+        wsFolder.uri,
+        General.demoFolder,
+        General.patchesFolder,
+        value,
+      );
       if (await fileExists(newFilePath)) {
         return `Patch with name "${value}" already exists`;
       }
@@ -73,20 +85,25 @@ export const createPatch = async () => {
   });
 
   if (!patchName) {
-    Notifications.error("Snapshot name is required");
+    Notifications.error('Snapshot name is required');
     return;
   }
 
   patchName = `${patchName}.patch`;
-  const patchFilePath = Uri.joinPath(wsFolder.uri, General.demoFolder, General.patchesFolder, patchName);
+  const patchFilePath = Uri.joinPath(
+    wsFolder.uri,
+    General.demoFolder,
+    General.patchesFolder,
+    patchName,
+  );
   await writeFile(patchFilePath, patch);
   Notifications.info(`Patch ${patchName} created`);
 
   // Ask the user if they want to create a new demo starting from this file
   const createDemo = await window.showInformationMessage(
-    "Do you want to create a demo step with this patch?",
+    'Do you want to create a demo step with this patch?',
     { modal: true },
-    "Yes"
+    'Yes',
   );
 
   if (!createDemo) {
@@ -102,13 +119,13 @@ export const createPatch = async () => {
 
   const contentPath =
     version === 2
-      ? patchFilePath.path.replace(wsFolder.uri.path, "")
-      : patchFilePath.path.replace(Uri.joinPath(wsFolder.uri, General.demoFolder).path, "");
+      ? patchFilePath.path.replace(wsFolder.uri.path, '')
+      : patchFilePath.path.replace(Uri.joinPath(wsFolder.uri, General.demoFolder).path, '');
 
   const patchPath =
     version === 2
-      ? patchFilePath.path.replace(wsFolder.uri.path, "")
-      : patchFilePath.path.replace(Uri.joinPath(wsFolder.uri, General.demoFolder).path, "");
+      ? patchFilePath.path.replace(wsFolder.uri.path, '')
+      : patchFilePath.path.replace(Uri.joinPath(wsFolder.uri, General.demoFolder).path, '');
 
   const steps: Step[] = [
     {

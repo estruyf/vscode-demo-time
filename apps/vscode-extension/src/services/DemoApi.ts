@@ -1,12 +1,13 @@
 import { workspace, window, StatusBarAlignment, StatusBarItem, commands, Uri } from 'vscode';
 import { Extension } from './Extension';
-import { COMMAND, Config } from '../constants';
+import { Config } from '@demotime/common';
 import { Server } from 'http';
 import https from 'https';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { Logger } from './Logger';
 import { bringToFront, readFile, getDemoApiData } from '../utils';
+import { COMMAND } from '@demotime/common';
 
 export class DemoApi {
   private static statusBarItem: StatusBarItem;

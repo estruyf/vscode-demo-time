@@ -6,7 +6,7 @@ import {
   Uri,
   workspace,
 } from 'vscode';
-import { Config } from '../constants';
+import { Config } from '@demotime/common';
 
 export class Extension {
   private static instance: Extension;

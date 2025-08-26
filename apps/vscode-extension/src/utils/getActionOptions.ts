@@ -1,5 +1,5 @@
+import { Action } from '@demotime/common';
 import { QuickPickItem, QuickPickItemKind } from 'vscode';
-import { Action } from '../models';
 
 export const getActionOptions = (): QuickPickItem[] => {
   const actions: QuickPickItem[] = [];

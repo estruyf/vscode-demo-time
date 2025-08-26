@@ -1,18 +1,10 @@
-import { SlideTheme } from '../constants/SlideTheme';
 import rehypePrettyCode from 'rehype-pretty-code';
 import { resolve } from 'mlly';
 import { Notifications } from './Notifications';
-import { Action, Step, Subscription } from '../models';
+import { Subscription } from '../models';
 import { Extension } from './Extension';
 import { DemoFileProvider, Logger } from '.';
-import {
-  convertTemplateToHtml,
-  getTheme,
-  readFile,
-  sortFiles,
-  transformMarkdown,
-  writeFile,
-} from '../utils';
+import { getTheme, readFile, sortFiles, writeFile } from '../utils';
 import {
   commands,
   Uri,
@@ -24,10 +16,20 @@ import {
   ColorThemeKind,
 } from 'vscode';
 import { Page } from 'playwright-chromium';
-import { COMMAND, Config, General, SlideLayout } from '../constants';
-import { twoColumnFormatting } from '../preview/utils';
+import { General } from '../constants';
 import { renderToString } from 'react-dom/server';
-import { SlideParser } from './SlideParser';
+import {
+  Action,
+  COMMAND,
+  Config,
+  convertTemplateToHtml,
+  SlideLayout,
+  SlideParser,
+  SlideTheme,
+  Step,
+  transformMarkdown,
+  twoColumnFormatting,
+} from '@demotime/common';
 
 export class PdfExportService {
   private static workspaceFolder: WorkspaceFolder | undefined;
@@ -320,16 +322,6 @@ export class PdfExportService {
     let frostTheme = await readFile(
       Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'frost.css'),
     );
-
-    // let webcomponents = await readFile(
-    //   Uri.joinPath(Uri.parse(extensionPath), 'out', 'webcomponents', 'index.mjs'),
-    // );
-
-    // let webcomponents = readFileSync(
-    //   join(extensionPath, 'out', 'webcomponents', 'index.mjs'),
-    //   'utf-8',
-    // );
-    // webcomponents = webcomponents.replace(/\n/g, '\\n');
 
     const webcomponentsUrl = Uri.joinPath(
       Uri.parse(extensionPath),

@@ -1,9 +1,10 @@
-import { Uri, window } from "vscode";
-import { Config, General } from "../constants";
-import { fileExists } from "./fileExists";
-import { Action, Step } from "../models";
-import { Extension, Notifications } from "../services";
-import { addStepsToDemo, chooseDemoFile, getFileName, writeFile } from ".";
+import { Uri, window } from 'vscode';
+import { General } from '../constants';
+import { fileExists } from './fileExists';
+import { Action, Step } from '@demotime/common';
+import { Extension, Notifications } from '../services';
+import { addStepsToDemo, chooseDemoFile, getFileName, writeFile } from '.';
+import { Config } from '@demotime/common';
 
 export const createSnapshot = async () => {
   const activeEditor = window.activeTextEditor;
@@ -23,17 +24,22 @@ export const createSnapshot = async () => {
   }
 
   // Add .snapshot. to the name
-  const fileParts = fileName.split(".");
-  fileParts.splice(fileParts.length - 1, 0, "snapshot");
-  let newFileName: string | undefined = fileParts.join(".");
+  const fileParts = fileName.split('.');
+  fileParts.splice(fileParts.length - 1, 0, 'snapshot');
+  let newFileName: string | undefined = fileParts.join('.');
 
   newFileName = await window.showInputBox({
-    prompt: "Enter the name of the snapshot",
+    prompt: 'Enter the name of the snapshot',
     value: newFileName,
     ignoreFocusOut: true,
     title: Config.title,
     validateInput: async (value) => {
-      const newFilePath = Uri.joinPath(wsFolder.uri, General.demoFolder, General.snapshotsFolder, value);
+      const newFilePath = Uri.joinPath(
+        wsFolder.uri,
+        General.demoFolder,
+        General.snapshotsFolder,
+        value,
+      );
       if (await fileExists(newFilePath)) {
         return `Snapshot with name "${value}" already exists`;
       }
@@ -42,11 +48,16 @@ export const createSnapshot = async () => {
   });
 
   if (!newFileName) {
-    Notifications.error("Snapshot name is required");
+    Notifications.error('Snapshot name is required');
     return;
   }
 
-  const newFilePath = Uri.joinPath(wsFolder.uri, General.demoFolder, General.snapshotsFolder, newFileName);
+  const newFilePath = Uri.joinPath(
+    wsFolder.uri,
+    General.demoFolder,
+    General.snapshotsFolder,
+    newFileName,
+  );
   if (await fileExists(newFilePath)) {
     Notifications.error(`Snapshot ${newFileName} already exists`);
     return;
@@ -57,9 +68,9 @@ export const createSnapshot = async () => {
 
   // Ask the user if they want to create a new demo starting from this file
   const createDemo = await window.showInformationMessage(
-    "Do you want to create a demo starting from this file?",
+    'Do you want to create a demo starting from this file?',
     { modal: true },
-    "Yes"
+    'Yes',
   );
 
   if (!createDemo) {
@@ -75,10 +86,10 @@ export const createSnapshot = async () => {
 
   const contentPath =
     version === 2
-      ? newFilePath.path.replace(wsFolder.uri.path, "")
-      : newFilePath.path.replace(Uri.joinPath(wsFolder.uri, General.demoFolder).path, "");
+      ? newFilePath.path.replace(wsFolder.uri.path, '')
+      : newFilePath.path.replace(Uri.joinPath(wsFolder.uri, General.demoFolder).path, '');
 
-  const relFilePath = activeEditor.document.uri.path.replace(wsFolder.uri.path || "", "");
+  const relFilePath = activeEditor.document.uri.path.replace(wsFolder.uri.path || '', '');
   const steps: Step[] = [
     {
       action: Action.Create,

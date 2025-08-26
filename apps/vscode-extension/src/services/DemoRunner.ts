@@ -1,17 +1,6 @@
 import { PresenterView } from '../presenterView/PresenterView';
-import { COMMAND, Config, ContextKeys, StateKeys, WebViewMessages } from '../constants';
-import {
-  Action,
-  Demo,
-  DemoFileCache,
-  DemoFile,
-  IImagePreview,
-  ISlidePreview,
-  Step,
-  Subscription,
-  Version,
-} from '../models';
-import { Extension } from './Extension';
+import { ContextKeys, StateKeys } from '../constants';
+import { Subscription } from '../models';
 import {
   Position,
   Range,
@@ -24,7 +13,6 @@ import {
   window,
   workspace,
 } from 'vscode';
-import { DemoFileProvider } from './DemoFileProvider';
 import { DemoPanel } from '../panels/DemoPanel';
 import {
   getVariables,
@@ -46,21 +34,38 @@ import {
   saveFiles,
 } from '../utils';
 import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
-import { DecoratorService } from './DecoratorService';
-import { Notifications } from './Notifications';
-import { parse as jsonParse } from 'jsonc-parser';
-import { Logger } from './Logger';
-import { NotesService } from './NotesService';
-import { ScriptExecutor } from './ScriptExecutor';
-import { StateManager } from './StateManager';
+import {
+  DecoratorService,
+  Notifications,
+  Logger,
+  NotesService,
+  ScriptExecutor,
+  StateManager,
+  DemoStatusBar,
+  ExternalAppsService,
+  TerminalService,
+  ChatActionsService,
+  TextTypingService,
+  FileActionService,
+  InteractionService,
+  DemoFileProvider,
+  Extension,
+} from './';
 import { Preview } from '../preview/Preview';
-import { DemoStatusBar } from './DemoStatusBar';
-import { ExternalAppsService } from './ExternalAppsService';
-import { TerminalService } from './TerminalService';
-import { ChatActionsService } from './ChatActionsService';
-import { TextTypingService } from './TextTypingService';
-import { FileActionService } from './FileActionService';
-import { InteractionService } from './InteractionService';
+import { parse as jsonParse } from 'jsonc-parser';
+import {
+  COMMAND,
+  WebViewMessages,
+  Config,
+  Action,
+  Demo,
+  DemoFileCache,
+  DemoFile,
+  IImagePreview,
+  ISlidePreview,
+  Step,
+  Version,
+} from '@demotime/common';
 
 const DEFAULT_START_VALUE = {
   filePath: '',

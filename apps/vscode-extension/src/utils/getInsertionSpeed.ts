@@ -1,4 +1,4 @@
-import { Config } from '../constants';
+import { Config } from '@demotime/common';
 import { Extension } from '../services/Extension';
 
 const DEFAULT_INSERTION_DELAY = 25;

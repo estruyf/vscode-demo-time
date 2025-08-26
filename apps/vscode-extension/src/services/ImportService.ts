@@ -1,9 +1,10 @@
 import { commands, FileType, ProgressLocation, Uri, window, workspace } from 'vscode';
-import { Action, DemoFile, Subscription } from '../models';
+import { Subscription } from '../models';
 import { Extension } from './Extension';
-import { COMMAND, General } from '../constants';
+import { General } from '../constants';
 import { Notifications } from './Notifications';
 import { createImageSlide, parseWinPath } from '../utils';
+import { COMMAND, Action, DemoFile } from '@demotime/common';
 
 export class ImportService {
   public static register() {

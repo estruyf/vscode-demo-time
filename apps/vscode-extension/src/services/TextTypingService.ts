@@ -1,6 +1,6 @@
 import { diffChars, applyPatch } from 'diff';
 import { DemoStatusBar, Extension, Logger, Notifications } from '.';
-import { COMMAND, Config, ContextKeys } from '../constants';
+import { ContextKeys } from '../constants';
 import {
   CancellationToken,
   Position,
@@ -25,6 +25,7 @@ import {
   writeFile,
 } from '../utils';
 import { InsertTypingMode, Step, Subscription } from '../models';
+import { COMMAND, Config } from '@demotime/common';
 
 export class TextTypingService {
   private static crntHackerTyperSession:

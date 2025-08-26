@@ -13,18 +13,20 @@ import {
 } from 'vscode';
 import { Subscription } from '../models';
 import { DemoFileProvider, DemoRunner, Extension, Logger, Notifications } from '../services';
-import { COMMAND, Config, General, WebViewMessages } from '../constants';
+import { General } from '../constants';
 import {
   checkSnippetArgs,
   getDemoApiData,
   getRelPath,
   getThemes,
+  getWebviewHtml,
   openFile,
   openFilePicker,
   writeFile,
 } from '../utils';
 import { ActionTreeItem } from './ActionTreeviewProvider';
 import { SettingsView } from '../settingsView/SettingsView';
+import { COMMAND, Config, WebViewMessages } from '@demotime/common';
 
 export class ConfigEditorProvider implements CustomTextEditorProvider {
   private static readonly viewType = 'demoTime.configEditor';
@@ -83,8 +85,8 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       enableScripts: true,
     };
 
-    const html = await this.getHtmlForWebview();
-    webviewPanel.webview.html = html;
+    const html = await getWebviewHtml('config-editor', webviewPanel.webview);
+    webviewPanel.webview.html = html || '';
 
     ConfigEditorProvider.fileViews.set(document.uri.toString(), webviewPanel);
 
@@ -401,58 +403,6 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
         });
       }
     }
-  }
-
-  private async getHtmlForWebview(): Promise<string> {
-    const extensions = Extension.getInstance();
-    if (!extensions.isProductionMode) {
-      return `
-        <!doctype html>
-        <html lang="en">
-          <head>
-            <script type="module">
-              import RefreshRuntime from "http://localhost:5173/@react-refresh"
-              RefreshRuntime.injectIntoGlobalHook(window)
-              window.$RefreshReg$ = () => {}
-              window.$RefreshSig$ = () => (type) => type
-              window.__vite_plugin_react_preamble_installed__ = true
-            </script>
-
-            <script type="module" src="http://localhost:5173/@vite/client"></script>
-
-            <meta charset="UTF-8" />
-            <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <title>Demo Time Config Editor</title>
-          </head>
-          <body>
-            <div id="root"></div>
-            <script type="module" src="http://localhost:5173/src/main.tsx"></script>
-          </body>
-        </html>`;
-    }
-
-    const URL = `https://config-beta.demotime.show`;
-    const response = await fetch(URL, {
-      headers: {
-        'Content-Type': 'text/html',
-      },
-      cache: 'no-cache',
-    });
-    if (!response.ok) {
-      commands.executeCommand(COMMAND.openConfigInTextEditor);
-      throw new Error(`Failed to fetch HTML: ${response.statusText}`);
-    }
-    const html = await response.text();
-    // Patch relative asset URLs to absolute URLs using the base URL
-    const baseUrl = URL.replace(/\/$/, '');
-    const patchedHtml = html
-      .replace(/(src|href)=["'](\/assets\/[^"']+)["']/g, (match, attr, path) => {
-        return `${attr}="${baseUrl}${path}"`;
-      })
-      .replace(/href=["']\/vite\.svg["']/g, `href="${baseUrl}/vite.svg"`);
-
-    return patchedHtml.toString();
   }
 
   public static openInConfigEditor(uri?: Uri) {
