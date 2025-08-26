@@ -4,7 +4,7 @@ import * as core from '@actions/core';
 const getActionOptions = await readFile("./apps/vscode-extension/src/utils/getActionOptions.ts", "utf8");
 const getActionTemplate = await readFile("./apps/vscode-extension/src/utils/getActionTemplate.ts", "utf8");
 
-const actionsTxt = await readFile("./apps/vscode-extension/src/models/Action.ts", "utf8");
+const actionsTxt = await readFile("./packages/common/src/models/Action.ts", "utf8");
 
 const actionsData = actionsTxt.split("\n").slice(2);
 const actions = [];
