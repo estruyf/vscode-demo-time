@@ -783,7 +783,6 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "npm run clean && npm run build",
     "build": "npm-run-all --parallel build:*",
     "build:ext": "tsup --minify",
     "build:wc": "tsup --minify --config tsup.wc.config.ts",

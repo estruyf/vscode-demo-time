@@ -12,6 +12,7 @@ src
 tests
 examples
 .nx
+__mocks__
 
 # Files
 **/.eslintrc.json

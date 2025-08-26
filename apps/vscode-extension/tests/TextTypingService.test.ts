@@ -1,6 +1,6 @@
+import { InsertTypingMode } from '@demotime/common';
 import { Extension } from '../src/services/Extension';
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
-import { InsertTypingMode } from '../src/models';
 
 jest.mock(
   'vscode',
@@ -30,7 +30,7 @@ describe('Hacker-Typer Typing Mode', () => {
       const lineByLine: InsertTypingMode = 'line-by-line';
       const charByChar: InsertTypingMode = 'character-by-character';
       const hackerTyper: InsertTypingMode = 'hacker-typer';
-      
+
       expect(instant).toBe('instant');
       expect(lineByLine).toBe('line-by-line');
       expect(charByChar).toBe('character-by-character');
