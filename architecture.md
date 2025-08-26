@@ -35,7 +35,7 @@ presentations.
 ### 5. Webview Assets (`assets/`, `src/presenterView/`, `src/preview/`)
 
 - Custom React components, styles, and icons for webviews.
-- Webpack and tsup are used for bundling and optimizing assets.
+- Vite and tsup are used for bundling and optimizing assets.
 
 ### 6. Utilities (`src/utils/`)
 
@@ -64,7 +64,7 @@ presentations.
 
 ## Build & Tooling
 
-- **Webpack** and **tsup** are used for bundling extension and webview code.
+- **Vite** and **tsup** are used for bundling extension and webview code.
 - **ESLint** and **Prettier** enforce code quality and style.
 - **GitHub Actions** is used for CI (lint, test, build, release).
 

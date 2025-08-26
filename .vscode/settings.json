@@ -23,5 +23,6 @@
         "/packages/common/src/models",
         "/packages/common/src/constants",
         "/packages/common/src/services"
-    ]
+    ],
+    "nxConsole.generateAiAgentRules": true
 }
