@@ -153,4 +153,160 @@ export class Extension {
     const extConfig = workspace.getConfiguration(Config.root);
     await extConfig.update(key, value, target);
   }
+
+  /**
+   * Backs up VS Code workspace settings.
+   * @param sections - Optional array of section names to backup. If empty, common demo-related settings are backed up.
+   * @param target - Configuration target to backup from.
+   * @returns A promise that resolves when the backup is complete.
+   */
+  public async backupSettings(
+    sections: string[] = [], 
+    target: ConfigurationTarget = ConfigurationTarget.Workspace
+  ): Promise<void> {
+    try {
+      const backup: Record<string, Record<string, any>> = {};
+      
+      // Define common settings that are typically changed during demos
+      const commonDemoSettings = [
+        { section: 'workbench', keys: ['statusBar.visible', 'activityBar.location', 'colorTheme', 'sideBar.location'] },
+        { section: 'editor', keys: ['fontSize', 'fontFamily', 'tabSize', 'wordWrap', 'minimap.enabled'] },
+        { section: 'files', keys: ['autoSave', 'exclude'] },
+        { section: 'terminal', keys: ['integrated.fontSize', 'integrated.shell.windows'] },
+        { section: 'explorer', keys: ['openEditors.visible'] },
+        { section: Config.root, keys: [] } // Demo Time settings - will backup all
+      ];
+      
+      // Determine which sections to process
+      let sectionsToProcess = commonDemoSettings;
+      if (sections.length > 0) {
+        sectionsToProcess = sections.map(sectionName => ({ section: sectionName, keys: [] }));
+      }
+      
+      // Backup settings for each section
+      for (const { section, keys } of sectionsToProcess) {
+        const config = workspace.getConfiguration(section);
+        const sectionBackup: Record<string, any> = {};
+        
+        if (keys.length > 0) {
+          // Backup specific keys
+          for (const key of keys) {
+            const inspection = config.inspect(key);
+            if (inspection) {
+              let valueToStore: any = undefined;
+              
+              if (target === ConfigurationTarget.Workspace && inspection.workspaceValue !== undefined) {
+                valueToStore = inspection.workspaceValue;
+              } else if (target === ConfigurationTarget.Global && inspection.globalValue !== undefined) {
+                valueToStore = inspection.globalValue;
+              } else if (target === ConfigurationTarget.WorkspaceFolder && inspection.workspaceFolderValue !== undefined) {
+                valueToStore = inspection.workspaceFolderValue;
+              } else {
+                // Store the current effective value and its source
+                valueToStore = {
+                  value: config.get(key),
+                  source: 'effective'
+                };
+              }
+              
+              if (valueToStore !== undefined) {
+                sectionBackup[key] = valueToStore;
+              }
+            }
+          }
+        } else {
+          // For sections without specific keys (like demo time settings), try to backup common ones
+          const commonKeys = ['fontSize', 'fontFamily', 'visible', 'location', 'enabled', 'theme'];
+          for (const key of commonKeys) {
+            const inspection = config.inspect(key);
+            if (inspection) {
+              let valueToStore: any = undefined;
+              
+              if (target === ConfigurationTarget.Workspace && inspection.workspaceValue !== undefined) {
+                valueToStore = inspection.workspaceValue;
+              } else if (target === ConfigurationTarget.Global && inspection.globalValue !== undefined) {
+                valueToStore = inspection.globalValue;
+              }
+              
+              if (valueToStore !== undefined) {
+                sectionBackup[key] = valueToStore;
+              }
+            }
+          }
+        }
+        
+        if (Object.keys(sectionBackup).length > 0) {
+          backup[section] = sectionBackup;
+        }
+      }
+      
+      // Store backup in workspace state
+      const backupKey = `settingsBackup_${target}`;
+      await this.setState(backupKey, {
+        backup,
+        timestamp: new Date().toISOString(),
+        target,
+        originalSections: sections
+      });
+      
+    } catch (error) {
+      throw new Error(`Failed to backup settings: ${error}`);
+    }
+  }
+
+  /**
+   * Restores previously backed up VS Code settings.
+   * @param target - Configuration target that was used for backup.
+   * @returns A promise that resolves when the restore is complete.
+   */
+  public async restoreSettings(target: ConfigurationTarget = ConfigurationTarget.Workspace): Promise<void> {
+    try {
+      const backupKey = `settingsBackup_${target}`;
+      const backupData = this.getState<{
+        backup: Record<string, Record<string, any>>;
+        timestamp: string;
+        target: ConfigurationTarget;
+        originalSections: string[];
+      }>(backupKey);
+      
+      if (!backupData || !backupData.backup) {
+        throw new Error('No settings backup found. Please run backupSettings action first.');
+      }
+      
+      const { backup } = backupData;
+      
+      // Restore settings for each section
+      for (const [section, settings] of Object.entries(backup)) {
+        if (settings && typeof settings === 'object') {
+          const config = workspace.getConfiguration(section);
+          
+          for (const [key, value] of Object.entries(settings)) {
+            try {
+              // Handle both simple values and objects with source info
+              const valueToRestore = (value && typeof value === 'object' && value.source) ? value.value : value;
+              await config.update(key, valueToRestore, target);
+              // Small delay to ensure settings are applied properly
+              await new Promise(resolve => setTimeout(resolve, 50));
+            } catch (error) {
+              console.warn(`Failed to restore setting ${section}.${key}:`, error);
+              // Continue with other settings even if one fails
+            }
+          }
+        }
+      }
+      
+    } catch (error) {
+      throw new Error(`Failed to restore settings: ${error}`);
+    }
+  }
+
+  /**
+   * Clears the settings backup.
+   * @param target - Configuration target backup to clear.
+   * @returns A promise that resolves when the backup is cleared.
+   */
+  public async clearSettingsBackup(target: ConfigurationTarget = ConfigurationTarget.Workspace): Promise<void> {
+    const backupKey = `settingsBackup_${target}`;
+    await this.setState(backupKey, undefined);
+  }
 }

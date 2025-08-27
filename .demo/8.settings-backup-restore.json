@@ -1,0 +1,67 @@
+{
+  "$schema": "https://demotime.show/schemas/v2.schema.json",
+  "demos": [
+    {
+      "title": "Settings Backup and Restore Demo",
+      "description": "Demonstration of the new settings backup and restore functionality",
+      "steps": [
+        {
+          "action": "backupSettings",
+          "sections": []
+        },
+        {
+          "action": "setSetting",
+          "setting": {
+            "key": "workbench.statusBar.visible",
+            "value": false
+          }
+        },
+        {
+          "action": "setSetting",
+          "setting": {
+            "key": "workbench.activityBar.location",
+            "value": "hidden"
+          }
+        },
+        {
+          "action": "waitForTimeout",
+          "timeout": 2000
+        },
+        {
+          "action": "restoreSettings"
+        }
+      ]
+    },
+    {
+      "title": "Backup Specific Settings",
+      "description": "Backup only specific setting sections",
+      "steps": [
+        {
+          "action": "backupSettings",
+          "sections": ["workbench", "editor"]
+        },
+        {
+          "action": "setSetting",
+          "setting": {
+            "key": "workbench.colorTheme",
+            "value": "Default Dark+"
+          }
+        },
+        {
+          "action": "setSetting",
+          "setting": {
+            "key": "editor.fontSize",
+            "value": 16
+          }
+        },
+        {
+          "action": "waitForTimeout",
+          "timeout": 3000
+        },
+        {
+          "action": "restoreSettings"
+        }
+      ]
+    }
+  ]
+}

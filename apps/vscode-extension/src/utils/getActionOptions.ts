@@ -160,6 +160,16 @@ export const getActionOptions = (): QuickPickItem[] => {
   } as QuickPickItem);
 
   actions.push({
+    label: Action.BackupSettings,
+    description: 'Backup current settings',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.RestoreSettings,
+    description: 'Restore previously backed up settings',
+  } as QuickPickItem);
+
+  actions.push({
     label: Action.SetTheme,
     description: 'Set the theme',
   });

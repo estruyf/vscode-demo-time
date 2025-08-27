@@ -25,6 +25,8 @@ export enum Action {
   ApplyPatch = 'applyPatch',
   // Settings
   SetSetting = 'setSetting',
+  BackupSettings = 'backupSettings',
+  RestoreSettings = 'restoreSettings',
   SetTheme = 'setTheme',
   UnsetTheme = 'unsetTheme',
   SetPresentationView = 'setPresentationView',

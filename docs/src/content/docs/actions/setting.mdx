@@ -229,3 +229,157 @@ action: unsetPresentationView
 <Aside type="tip">
   You can use the `unsetPresentationView` action in the demo right after a slide to make sure all UI elements are visible again. You can also trigger this from the slide controls.
 </Aside>
+
+## Backup settings
+
+Backup VS Code settings before starting a demo session using the `backupSettings` action. This creates a snapshot of current settings that can be restored later.
+
+<Tabs syncKey="backup-settings-action">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "backupSettings",
+  "sections": []
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: backupSettings
+sections: []
+```
+
+</TabItem>
+</Tabs>
+
+### Parameters
+
+- `sections` (optional): Array of setting section names to backup. If empty or omitted, all common settings are backed up.
+
+### Example: Backup all settings
+
+<Tabs syncKey="backup-all-settings">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "backupSettings"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: backupSettings
+```
+
+</TabItem>
+</Tabs>
+
+### Example: Backup specific sections
+
+<Tabs syncKey="backup-specific-settings">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "backupSettings",
+  "sections": ["workbench", "editor", "files"]
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: backupSettings
+sections:
+  - workbench
+  - editor
+  - files
+```
+
+</TabItem>
+</Tabs>
+
+## Restore settings
+
+Restore previously backed up VS Code settings using the `restoreSettings` action. This restores settings to their state when the backup was created.
+
+<Tabs syncKey="restore-settings-action">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "restoreSettings"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: restoreSettings
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="note">
+  The `restoreSettings` action requires that `backupSettings` was called previously in the same session. If no backup exists, the action will fail with an error message.
+</Aside>
+
+### Example workflow
+
+Here's a complete example showing how to use the backup and restore actions:
+
+<Tabs syncKey="backup-restore-workflow">
+<TabItem label="JSON">
+
+```json
+[
+  {
+    "action": "backupSettings"
+  },
+  {
+    "action": "setSetting",
+    "setting": {
+      "key": "workbench.statusBar.visible",
+      "value": false
+    }
+  },
+  {
+    "action": "setSetting",
+    "setting": {
+      "key": "workbench.activityBar.location",
+      "value": "hidden"
+    }
+  },
+  {
+    "action": "restoreSettings"
+  }
+]
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+- action: backupSettings
+- action: setSetting
+  setting:
+    key: workbench.statusBar.visible
+    value: false
+- action: setSetting
+  setting:
+    key: workbench.activityBar.location
+    value: hidden
+- action: restoreSettings
+```
+
+</TabItem>
+</Tabs>

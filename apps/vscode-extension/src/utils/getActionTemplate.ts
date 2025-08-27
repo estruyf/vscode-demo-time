@@ -184,6 +184,19 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  if (action === Action.BackupSettings) {
+    return {
+      action: Action.BackupSettings,
+      sections: [], // Optional: specific sections to backup, empty array = all settings
+    };
+  }
+
+  if (action === Action.RestoreSettings) {
+    return {
+      action: Action.RestoreSettings,
+    };
+  }
+
   if (action === Action.SetTheme) {
     return {
       action: Action.SetTheme,

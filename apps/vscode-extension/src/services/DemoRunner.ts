@@ -707,6 +707,29 @@ export class DemoRunner {
       return;
     }
 
+    if (step.action === Action.BackupSettings) {
+      try {
+        const ext = Extension.getInstance();
+        const sections = step.sections || [];
+        await ext.backupSettings(sections);
+        Notifications.info('Settings backed up successfully');
+      } catch (error) {
+        Notifications.error(`Failed to backup settings: ${(error as Error).message}`);
+      }
+      return;
+    }
+
+    if (step.action === Action.RestoreSettings) {
+      try {
+        const ext = Extension.getInstance();
+        await ext.restoreSettings();
+        Notifications.info('Settings restored successfully');
+      } catch (error) {
+        Notifications.error(`Failed to restore settings: ${(error as Error).message}`);
+      }
+      return;
+    }
+
     if (step.action === Action.SetTheme) {
       if (!step.theme) {
         Notifications.error('No theme specified');
