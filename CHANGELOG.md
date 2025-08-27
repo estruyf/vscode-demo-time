@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.10.0] - 2025-09-xx
+
+- Project is moved to a new monorepo structure with Nx
+
 ## [1.9.0] - 2025-08-25
 
 - [#219](https://github.com/estruyf/vscode-demo-time/issues/219): Added a GUI for editing your demo
