@@ -2,7 +2,8 @@
 
 ## [1.10.0] - 2025-09-xx
 
-- Project is moved to a new monorepo structure with Nx
+- [#201](https://github.com/estruyf/vscode-demo-time/issues/201): Project is moved to a new monorepo
+  structure with Nx
 
 ## [1.9.0] - 2025-08-25
 
