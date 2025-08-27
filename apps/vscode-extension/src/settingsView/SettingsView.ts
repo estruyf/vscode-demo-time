@@ -22,6 +22,14 @@ export class SettingsView extends BaseWebview {
     }
   }
 
+  protected static onCreate() {
+    SettingsView.isDisposed = false;
+  }
+
+  protected static onDispose() {
+    SettingsView.isDisposed = true;
+  }
+
   protected static async messageListener(message: any) {
     const { command, requestId, payload } = message;
 
