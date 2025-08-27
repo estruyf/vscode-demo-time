@@ -31,7 +31,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const [header, setHeader] = React.useState<string | undefined>(undefined);
   const [footer, setFooter] = React.useState<string | undefined>(undefined);
   const [isZoomed, setIsZoomed] = React.useState(false);
-  const [zoomLevel, setZoomLevel] = React.useState(2.0); // 2x zoom by default
+  const [zoomLevel,] = React.useState(2.0); // 2x zoom by default
   const [panOffset, setPanOffset] = React.useState({ x: 0, y: 0 });
 
   const { content, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();

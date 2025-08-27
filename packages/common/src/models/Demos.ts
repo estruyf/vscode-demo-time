@@ -63,6 +63,7 @@ export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
   overwrite?: boolean;
   terminalId?: string;
   theme?: string;
+  slide?: number;
 }
 
 export interface ITerminal {

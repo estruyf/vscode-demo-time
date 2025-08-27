@@ -221,7 +221,12 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
     const isRequired = requiredFields.includes(field);
     const fieldErrors = stepValidation.errors.filter(error => error.field === field);
     const hasError = fieldErrors.length > 0;
-    const label = field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1');
+    let label = field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1');
+
+    if (label === "Slide") {
+      label = "Slide Number (1-based index)";
+    }
+
 
     switch (field) {
       case 'action':
@@ -325,6 +330,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       case 'timeout':
       case 'zoom':
       case 'insertTypingSpeed':
+      case 'slide':
         return (
           <div key={field}>
             <label className="block text-sm font-medium text-gray-700 mb-2">

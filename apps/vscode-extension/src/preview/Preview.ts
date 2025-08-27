@@ -65,7 +65,7 @@ export class Preview extends BaseWebview {
     return Preview.hasPreviousSlide;
   }
 
-  public static async show(fileUri: string, css?: string) {
+  public static async show(fileUri: string, css?: string, slide?: number) {
     if (Preview.crntFile !== fileUri) {
       Preview.currentSlideIndex = 0;
     }
@@ -77,7 +77,7 @@ export class Preview extends BaseWebview {
       // Use the fileUri argument for triggerUpdate, as it's the most current.
       if (Preview.webview?.webview && fileUri) {
         const fileWebviewPath = getWebviewWorkspaceUrl(Preview.webview?.webview, fileUri);
-        Preview.triggerUpdate(fileWebviewPath);
+        Preview.triggerUpdate(fileWebviewPath, slide);
 
         if (css) {
           const cssWebviewPath = getWebviewWorkspaceUrl(Preview.webview?.webview, css);
@@ -92,12 +92,12 @@ export class Preview extends BaseWebview {
       if (fileUri && Preview.webview?.webview) {
         // Use fileUri from argument
         const fileWebviewPath = getWebviewWorkspaceUrl(Preview.webview.webview, fileUri);
-        Preview.triggerUpdate(fileWebviewPath); // Convert string to Uri
+        Preview.triggerUpdate(fileWebviewPath, slide); // Convert string to Uri
       }
     }
   }
 
-  public static triggerUpdate(fileUri?: Uri | string, reset: boolean = false) {
+  public static triggerUpdate(fileUri?: Uri | string, slide?: number, reset: boolean = false) {
     if (!fileUri || !Preview.webview?.webview) {
       return;
     }
@@ -108,9 +108,11 @@ export class Preview extends BaseWebview {
 
     // Ensure fileUri is a Uri object
     if (Preview.isOpen && Preview.webview?.webview) {
+      slide = slide !== undefined && slide > 0 ? slide - 1 : slide;
+      const slideNr = slide !== undefined ? slide : reset ? 0 : Preview.currentSlideIndex;
       const payload = {
         fileUriString: fileUri,
-        slideIndex: reset ? 0 : Preview.currentSlideIndex,
+        slideIndex: slideNr,
       };
       Preview.postMessage(WebViewMessages.toWebview.triggerUpdate, payload);
     }

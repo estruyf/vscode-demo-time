@@ -159,6 +159,7 @@ export class SlideParser {
             'layout',
             'image',
             'autoAdvanceAfter',
+            'slide',
           ].includes(key) &&
           slide.frontmatter[key] === undefined
         ) {

@@ -894,7 +894,7 @@ export class DemoRunner {
     if (step.action === Action.OpenSlide) {
       const { path } = step as ISlidePreview;
       Preview.setCurrentSlideIndex(0); // Reset the slide index
-      Preview.show(path as string);
+      Preview.show(path as string, undefined, step.slide);
       return;
     }
 
