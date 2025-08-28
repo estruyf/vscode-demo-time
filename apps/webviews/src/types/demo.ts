@@ -103,7 +103,7 @@ export const CATEGORIZED_ACTIONS: {
   },
   {
     category: 'Time actions',
-    options: [Action.WaitForTimeout, Action.WaitForInput, Action.WaitForNext],
+    options: [Action.WaitForTimeout, Action.WaitForInput, Action.Pause],
   },
   {
     category: 'VS Code actions',

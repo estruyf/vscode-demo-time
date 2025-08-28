@@ -677,8 +677,8 @@ export class DemoRunner {
         return;
       }
       return;
-    } else if (step.action === Action.WaitForNext) {
-      await InputService.waitForNext();
+    } else if (step.action === Action.Pause) {
+      await InputService.pause();
     }
 
     // Open external applications

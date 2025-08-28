@@ -257,9 +257,9 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
-  if (action === Action.WaitForNext) {
+  if (action === Action.Pause) {
     return {
-      action: Action.WaitForNext,
+      action: Action.Pause,
     };
   }
 

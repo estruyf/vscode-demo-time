@@ -19,7 +19,7 @@ export class InputService {
   /**
    * Called by a demo action to pause execution until "Demo Time: Continue Demo" is called.
    */
-  public static async waitForNext(): Promise<void> {
+  public static async pause(): Promise<void> {
     await setContext(ContextKeys.isWaitingForNext, true);
     if (!InputService.waitingPromise) {
       InputService.waitingPromise = new Promise<void>((resolve) => {
@@ -35,7 +35,7 @@ export class InputService {
   }
 
   /**
-   * Called by a command to resume execution after waitForNext.
+   * Called by a command to resume execution after pause.
    */
   public static triggerNext() {
     if (InputService.resolveWaiting) {

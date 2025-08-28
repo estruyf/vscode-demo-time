@@ -32,7 +32,7 @@ export enum Action {
   // Timeout
   WaitForTimeout = 'waitForTimeout',
   WaitForInput = 'waitForInput',
-  WaitForNext = 'waitForNext',
+  Pause = 'pause',
   // VSCode
   ExecuteVSCodeCommand = 'executeVSCodeCommand',
   ShowInfoMessage = 'showInfoMessage',

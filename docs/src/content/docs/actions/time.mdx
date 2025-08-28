@@ -64,7 +64,7 @@ message: <input title (optional)>
 </TabItem>
 </Tabs>
 
-## Wait for manual trigger
+## Pause the demo
 
 Pause the demo until you manually trigger the next step (for example, via a command `Demo Time: Continue Demo` or button which is keybinded to the <kbd>next</kbd> button). This is useful for live presentations where you want to control the flow interactively.
 
@@ -73,7 +73,7 @@ Pause the demo until you manually trigger the next step (for example, via a comm
 
 ```json
 {
-  "action": "waitForNext"
+  "action": "pause"
 }
 ```
 
@@ -81,7 +81,7 @@ Pause the demo until you manually trigger the next step (for example, via a comm
 <TabItem label="YAML">
 
 ```yaml
-action: waitForNext
+action: pause
 ```
 
 </TabItem>

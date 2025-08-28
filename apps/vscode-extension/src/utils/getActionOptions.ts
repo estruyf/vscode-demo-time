@@ -228,8 +228,8 @@ export const getActionOptions = (): QuickPickItem[] => {
   } as QuickPickItem);
 
   actions.push({
-    label: Action.WaitForNext,
-    description: 'Wait until you trigger the next step',
+    label: Action.Pause,
+    description: 'Pause until you trigger the next step',
   } as QuickPickItem);
 
   /**
