@@ -12,7 +12,14 @@ import {
   Range,
 } from 'vscode';
 import { Subscription } from '../models';
-import { DemoFileProvider, DemoRunner, Extension, Logger, Notifications } from '../services';
+import {
+  DemoFileProvider,
+  DemoRunner,
+  EngageTimeService,
+  Extension,
+  Logger,
+  Notifications,
+} from '../services';
 import { General } from '../constants';
 import {
   checkSnippetArgs,
@@ -164,11 +171,32 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           await handleGetDemoIds(webviewPanel, command, requestId);
         } else if (command === WebViewMessages.toVscode.configEditor.createNotes) {
           await handleCreateNotes(webviewPanel, command, requestId, payload);
+        } else if (command === WebViewMessages.toVscode.configEditor.engageTime.getPolls) {
+          await getPolls(webviewPanel, command, requestId, payload);
         } else {
           console.warn(`Unknown message command: ${command}`);
         }
       },
     );
+
+    async function getPolls(
+      webviewPanel: WebviewPanel,
+      command: string,
+      requestId: string | undefined,
+      payload: { sessionId: string },
+    ) {
+      if (!requestId) {
+        return;
+      }
+
+      const { sessionId } = payload;
+      const polls = await EngageTimeService.getPolls(sessionId);
+      webviewPanel.webview.postMessage({
+        command,
+        requestId,
+        payload: polls,
+      });
+    }
 
     async function handleCreateNotes(
       webviewPanel: WebviewPanel,

@@ -145,4 +145,15 @@ export const CATEGORIZED_ACTIONS: {
     category: 'Run Demo actions',
     options: [Action.RunDemoById],
   },
+  {
+    category: 'Engage Time actions',
+    options: [
+      Action.ShowEngageTimePoll,
+      Action.ShowEngageTimeSession,
+      Action.StartEngageTimeSession,
+      Action.StartEngageTimePoll,
+      Action.CloseEngageTimeSession,
+      Action.CloseEngageTimePoll,
+    ],
+  },
 ];

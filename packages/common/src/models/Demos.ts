@@ -64,6 +64,10 @@ export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
   terminalId?: string;
   theme?: string;
   slide?: number;
+
+  // Engage Time
+  sessionId?: string;
+  pollId?: string;
 }
 
 export interface ITerminal {

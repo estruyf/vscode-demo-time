@@ -160,6 +160,15 @@ export const WebViewMessages = {
        * createConfigEditorNotes
        */
       createNotes: 'createConfigEditorNotes',
+      /**
+       * Engage Time
+       */
+      engageTime: {
+        /**
+         * Get polls
+         */
+        getPolls: 'getEngageTimePolls',
+      },
     },
     settingsView: {
       /**

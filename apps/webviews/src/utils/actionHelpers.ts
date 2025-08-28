@@ -55,6 +55,12 @@ export const getActionIcon = (action: Action): string => {
     [Action.RunDemoById]: 'play-circle',
     [Action.BackupSettings]: 'settings-gear',
     [Action.RestoreSettings]: 'settings-gear',
+    [Action.StartEngageTimeSession]: 'question',
+    [Action.StartEngageTimePoll]: 'question',
+    [Action.CloseEngageTimeSession]: 'question',
+    [Action.CloseEngageTimePoll]: 'question',
+    [Action.ShowEngageTimeSession]: 'question',
+    [Action.ShowEngageTimePoll]: 'question',
   };
   return iconMap[action] || 'circle';
 };
@@ -172,6 +178,12 @@ export const getRequiredFields = (action: Action): string[] => {
     [Action.RunDemoById]: ['id'],
     [Action.BackupSettings]: [],
     [Action.RestoreSettings]: [],
+    [Action.StartEngageTimeSession]: ['sessionId'],
+    [Action.StartEngageTimePoll]: ['sessionId', 'pollId'],
+    [Action.CloseEngageTimeSession]: ['sessionId'],
+    [Action.CloseEngageTimePoll]: ['sessionId', 'pollId'],
+    [Action.ShowEngageTimeSession]: ['sessionId'],
+    [Action.ShowEngageTimePoll]: ['sessionId', 'pollId'],
   };
   return requiredMap[action] || [];
 };
@@ -262,6 +274,12 @@ export const getFieldsForAction = (action: Action): string[] => {
     [Action.RunDemoById]: ['id'],
     [Action.BackupSettings]: [],
     [Action.RestoreSettings]: [],
+    [Action.StartEngageTimeSession]: ['sessionId'],
+    [Action.StartEngageTimePoll]: ['sessionId', 'pollId'],
+    [Action.CloseEngageTimeSession]: ['sessionId'],
+    [Action.CloseEngageTimePoll]: ['sessionId', 'pollId'],
+    [Action.ShowEngageTimeSession]: ['sessionId'],
+    [Action.ShowEngageTimePoll]: ['sessionId', 'pollId'],
   };
 
   return fieldMap[action] || [];

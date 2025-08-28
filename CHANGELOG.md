@@ -6,6 +6,8 @@
   structure with Nx
 - [#227](https://github.com/estruyf/vscode-demo-time/issues/227): Open a slide at a specific
   location
+- [#229](https://github.com/estruyf/vscode-demo-time/issues/229): Integration with
+  [Engage Time](https://engagetime.live)
 - [#234](https://github.com/estruyf/vscode-demo-time/issues/234): Fix for negative values in the
   insert typing speed and improved the labels
 - [#235](https://github.com/estruyf/vscode-demo-time/issues/235): Added the `pause` action to pause

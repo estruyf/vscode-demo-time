@@ -10,6 +10,7 @@ import { Switch } from '../ui/Switch';
 import { SnippetArguments } from './SnippetArguments';
 import { DemoIdPicker } from '../ui/DemoIdPicker';
 import { Action, Step, WebViewMessages } from '@demotime/common';
+import { PollIdPicker } from './PollIdPicker';
 
 interface StepEditorProps {
   step: Step;
@@ -246,6 +247,15 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
               onChange={(value) => handleChange('action', value as Action)}
               placeholder="Select action..."
             />
+            {
+              step.action && step.action.toLowerCase().includes('engagetime') && (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2">
+                  <p className="text-sm text-yellow-800">
+                    <strong>Note:</strong> Make sure you configure your Engage Time API key in the Demo Time settings. You can get it at <a href="https://engagetime.live" target="_blank" rel="noopener noreferrer" className="underline text-yellow-900">https://engagetime.live</a>
+                  </p>
+                </div>
+              )
+            }
           </div>
         );
 
@@ -264,6 +274,20 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
             {themeError && (
               <p className="text-sm text-red-600 mt-1">{themeError}</p>
             )}
+          </div>
+        );
+
+      case 'pollId':
+        return (
+          <div key={field}>
+            <PollIdPicker
+              label="Poll ID"
+              required={isRequired}
+              sessionId={step.sessionId || ''}
+              value={step.pollId || ''}
+              onChange={(value) => handleChange('pollId', value || undefined)}
+              error={fieldErrors.length > 0 ? fieldErrors[0].message : undefined}
+            />
           </div>
         );
 

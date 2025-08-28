@@ -2,6 +2,11 @@ export const Config = {
   title: 'Demo Time',
   root: 'demoTime',
   debug: 'debug',
+  secrets: {
+    engageTime: {
+      apiKey: 'engageTimeApiKey',
+    },
+  },
   presentationMode: {
     previousEnabled: 'previousEnabled',
   },

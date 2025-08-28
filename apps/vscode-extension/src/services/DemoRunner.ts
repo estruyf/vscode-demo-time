@@ -50,6 +50,7 @@ import {
   InteractionService,
   DemoFileProvider,
   Extension,
+  EngageTimeService,
 } from './';
 import { Preview } from '../preview/Preview';
 import { parse as jsonParse } from 'jsonc-parser';
@@ -894,6 +895,39 @@ export class DemoRunner {
     }
 
     /**
+     * Engage Time actions
+     */
+    if (step.action === Action.StartEngageTimeSession) {
+      await EngageTimeService.startSession(step.sessionId);
+      return;
+    }
+
+    if (step.action === Action.CloseEngageTimeSession) {
+      await EngageTimeService.stopSession(step.sessionId);
+      return;
+    }
+
+    if (step.action === Action.StartEngageTimePoll) {
+      await EngageTimeService.startPoll(step.pollId);
+      return;
+    }
+
+    if (step.action === Action.CloseEngageTimePoll) {
+      await EngageTimeService.stopPoll(step.pollId);
+      return;
+    }
+
+    if (step.action === Action.ShowEngageTimeSession) {
+      await EngageTimeService.showSession(step.sessionId);
+      return;
+    }
+
+    if (step.action === Action.ShowEngageTimePoll) {
+      await EngageTimeService.showPoll(step.pollId);
+      return;
+    }
+
+    /**
      * All the following actions require a file path.
      */
     if (!fileUri) {
@@ -1034,6 +1068,7 @@ export class DemoRunner {
 
     if (step.action === Action.Delete) {
       await TextTypingService.delete(editor, fileUri, crntRange, crntPosition);
+      return;
     }
   }
 

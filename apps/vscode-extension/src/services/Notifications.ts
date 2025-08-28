@@ -1,5 +1,5 @@
 import { window } from 'vscode';
-import { COMMAND } from '@demotime/common';
+import { COMMAND, Config } from '@demotime/common';
 import { Logger } from './Logger';
 import { Extension } from './Extension';
 
@@ -11,12 +11,9 @@ export class Notifications {
    * @returns
    */
   public static info(message: string, ...items: any): Thenable<string | undefined> {
-    Logger.info(`${Extension.getInstance().displayName}: ${message}`, 'INFO');
+    Logger.info(`${Config.title}: ${message}`, 'INFO');
 
-    return window.showInformationMessage(
-      `${Extension.getInstance().displayName}: ${message}`,
-      ...items,
-    );
+    return window.showInformationMessage(`${Config.title}: ${message}`, ...items);
   }
 
   /**
@@ -26,12 +23,9 @@ export class Notifications {
    * @returns
    */
   public static warning(message: string, ...items: any): Thenable<string | undefined> {
-    Logger.info(`${Extension.getInstance().displayName}: ${message}`, 'WARNING');
+    Logger.info(`${Config.title}: ${message}`, 'WARNING');
 
-    return window.showWarningMessage(
-      `${Extension.getInstance().displayName}: ${message}`,
-      ...items,
-    );
+    return window.showWarningMessage(`${Config.title}: ${message}`, ...items);
   }
 
   /**
@@ -41,9 +35,9 @@ export class Notifications {
    * @returns
    */
   public static error(message: string, ...items: any): Thenable<string | undefined> {
-    Logger.info(`${Extension.getInstance().displayName}: ${message}`, 'ERROR');
+    Logger.info(`${Config.title}: ${message}`, 'ERROR');
 
-    return window.showErrorMessage(`${Extension.getInstance().displayName}: ${message}`, ...items);
+    return window.showErrorMessage(`${Config.title}: ${message}`, ...items);
   }
 
   /**
@@ -53,10 +47,10 @@ export class Notifications {
    * @returns
    */
   public static errorWithOutput(message: string, ...items: any): Thenable<string | undefined> {
-    Logger.info(`${Extension.getInstance().displayName}: ${message}`, 'ERROR');
+    Logger.info(`${Config.title}: ${message}`, 'ERROR');
 
     return window.showErrorMessage(
-      `${Extension.getInstance().displayName}: ${message} [Show Output](command:${COMMAND.showOutputChannel})`,
+      `${Config.title}: ${message} [Show Output](command:${COMMAND.showOutputChannel})`,
       ...items,
     );
   }

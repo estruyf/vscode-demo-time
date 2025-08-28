@@ -1,6 +1,7 @@
 export * from './Action';
 export * from './DemoFileCache';
 export * from './Demos';
+export * from './EngageTimePoll';
 export * from './IDemoTimeSettings';
 export * from './InsertTypingMode';
 export * from './InternalSlide';
