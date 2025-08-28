@@ -408,5 +408,51 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  // Engage Time actions
+  if (action === Action.StartEngageTimeSession) {
+    return {
+      action: Action.StartEngageTimeSession,
+      sessionId: '',
+    };
+  }
+
+  if (action === Action.StartEngageTimePoll) {
+    return {
+      action: Action.StartEngageTimePoll,
+      sessionId: '',
+      pollId: '',
+    };
+  }
+
+  if (action === Action.CloseEngageTimeSession) {
+    return {
+      action: Action.CloseEngageTimeSession,
+      sessionId: '',
+    };
+  }
+
+  if (action === Action.CloseEngageTimePoll) {
+    return {
+      action: Action.CloseEngageTimePoll,
+      sessionId: '',
+      pollId: '',
+    };
+  }
+
+  if (action === Action.ShowEngageTimePoll) {
+    return {
+      action: Action.ShowEngageTimePoll,
+      sessionId: '',
+      pollId: '',
+    };
+  }
+
+  if (action === Action.ShowEngageTimeSession) {
+    return {
+      action: Action.ShowEngageTimeSession,
+      sessionId: '',
+    };
+  }
+
   return;
 };
