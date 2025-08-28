@@ -88,6 +88,8 @@
                     "unsetTheme",
                     "setPresentationView",
                     "unsetPresentationView",
+                    "backupSettings",
+                    "restoreSettings",
                     "waitForTimeout",
                     "waitForInput",
                     "pause",

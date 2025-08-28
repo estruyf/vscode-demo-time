@@ -29,6 +29,8 @@ export enum Action {
   UnsetTheme = 'unsetTheme',
   SetPresentationView = 'setPresentationView',
   UnsetPresentationView = 'unsetPresentationView',
+  BackupSettings = 'backupSettings',
+  RestoreSettings = 'restoreSettings',
   // Timeout
   WaitForTimeout = 'waitForTimeout',
   WaitForInput = 'waitForInput',

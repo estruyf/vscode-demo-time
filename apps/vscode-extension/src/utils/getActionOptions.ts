@@ -179,6 +179,16 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: 'Unset the presentation view',
   });
 
+  actions.push({
+    label: Action.BackupSettings,
+    description: 'Backup the current settings',
+  });
+
+  actions.push({
+    label: Action.RestoreSettings,
+    description: 'Restore the previous settings',
+  });
+
   /**
    * Terminal actions
    */

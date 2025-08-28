@@ -67,6 +67,8 @@ import {
   Version,
 } from '@demotime/common';
 import { InputService } from './InputService';
+import { backupVSCodeSettings } from '../utils/backupVSCodeSettings';
+import { restoreVSCodeSettings } from '../utils/restoreVSCodeSettings';
 
 const DEFAULT_START_VALUE = {
   filePath: '',
@@ -699,6 +701,16 @@ export class DemoRunner {
     }
 
     // Update settings
+    if (step.action === Action.BackupSettings) {
+      await backupVSCodeSettings();
+      return;
+    }
+
+    if (step.action === Action.RestoreSettings) {
+      await restoreVSCodeSettings();
+      return;
+    }
+
     if (step.action === Action.SetSetting) {
       if (!step.setting || !step.setting.key) {
         Notifications.error('No setting key or value specified');

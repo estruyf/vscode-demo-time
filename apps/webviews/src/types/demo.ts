@@ -90,6 +90,8 @@ export const CATEGORIZED_ACTIONS: {
       Action.SetPresentationView,
       Action.UnsetPresentationView,
       Action.SetState,
+      Action.BackupSettings,
+      Action.RestoreSettings,
     ],
   },
   {

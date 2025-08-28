@@ -53,6 +53,8 @@ export const getActionIcon = (action: Action): string => {
     [Action.TypeText]: 'type',
     [Action.PressEnter]: 'corner-down-left',
     [Action.RunDemoById]: 'play-circle',
+    [Action.BackupSettings]: 'settings-gear',
+    [Action.RestoreSettings]: 'settings-gear',
   };
   return iconMap[action] || 'circle';
 };
@@ -168,6 +170,8 @@ export const getRequiredFields = (action: Action): string[] => {
     [Action.TypeText]: ['content'],
     [Action.PressEnter]: [],
     [Action.RunDemoById]: ['id'],
+    [Action.BackupSettings]: [],
+    [Action.RestoreSettings]: [],
   };
   return requiredMap[action] || [];
 };
@@ -256,6 +260,8 @@ export const getFieldsForAction = (action: Action): string[] => {
     [Action.TypeText]: ['content', 'insertTypingSpeed'],
     [Action.PressEnter]: [],
     [Action.RunDemoById]: ['id'],
+    [Action.BackupSettings]: [],
+    [Action.RestoreSettings]: [],
   };
 
   return fieldMap[action] || [];

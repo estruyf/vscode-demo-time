@@ -209,6 +209,18 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  if (action === Action.BackupSettings) {
+    return {
+      action: Action.BackupSettings,
+    };
+  }
+
+  if (action === Action.RestoreSettings) {
+    return {
+      action: Action.RestoreSettings,
+    };
+  }
+
   /**
    * Terminal actions
    */
