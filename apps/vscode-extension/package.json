@@ -797,12 +797,6 @@
     ]
   },
   "scripts": {
-    "build": "npm-run-all --parallel build:*",
-    "build:ext": "tsup --minify",
-    "build:wc": "tsup --minify --config tsup.wc.config.ts",
-    "dev": "npm-run-all --parallel watch:*",
-    "watch:ext": "tsup --watch --sourcemap",
-    "watch:wc": "tsup --watch --sourcemap --config tsup.wc.config.ts ",
     "lint": "eslint src --ext ts",
     "test": "jest --coverage",
     "clean": "rimraf out coverage"
@@ -812,6 +806,31 @@
       "webviews"
     ],
     "targets": {
+      "build": {
+        "executor": "nx:run-commands",
+        "options": {
+          "commands": [
+            "tsup --minify",
+            "tsup --minify --config tsup.wc.config.ts"
+          ],
+          "parallel": true,
+          "cwd": "{projectRoot}"
+        },
+        "dependsOn": [
+          "copy-assets"
+        ]
+      },
+      "dev": {
+        "executor": "nx:run-commands",
+        "options": {
+          "commands": [
+            "tsup --watch --sourcemap",
+            "tsup --watch --sourcemap --config tsup.wc.config.ts"
+          ],
+          "parallel": true,
+          "cwd": "{projectRoot}"
+        }
+      },
       "copy-assets": {
         "executor": "nx:run-commands",
         "options": {
@@ -822,11 +841,6 @@
             "target": "build",
             "projects": "webviews"
           }
-        ]
-      },
-      "build": {
-        "dependsOn": [
-          "copy-assets"
         ]
       }
     }
@@ -847,6 +861,7 @@
     "@types/diff": "^7.0.1",
     "@types/jest": "^29.5.11",
     "@types/node": "18.x",
+    "@types/react-dom": "^19",
     "@types/vscode": "^1.84.0",
     "@typescript-eslint/eslint-plugin": "^6.9.0",
     "@typescript-eslint/parser": "^6.9.0",
@@ -860,13 +875,14 @@
     "jsonc-parser": "^3.3.1",
     "mermaid": "^11.6.0",
     "mlly": "^1.7.4",
-    "npm-run-all": "^4.1.5",
     "playwright-chromium": "^1.51.1",
     "prettier": "^3.6.2",
+    "react-dom": "^19.1.1",
     "rehype-pretty-code": "^0.14.0",
     "rimraf": "^6.0.1",
     "ts-jest": "^29.1.1",
     "tsup": "^8.5.0",
     "typescript": "^5.2.2"
-  }
+  },
+  "dependencies": {}
 }
