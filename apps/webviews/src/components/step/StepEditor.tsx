@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Step, CATEGORIZED_ACTIONS, THEMES, TYPING_MODES, TERMINAL_TYPING_MODES } from '../../types/demo';
+import { CATEGORIZED_ACTIONS, THEMES, TYPING_MODES, TERMINAL_TYPING_MODES } from '../../types/demo';
 import { getFieldsForAction, getRequiredFields } from '../../utils/actionHelpers';
 import { validateStep } from '../../utils/validation';
 import { SearchableDropdown } from '../ui/SearchableDropdown';
@@ -9,7 +9,7 @@ import { messageHandler } from '@estruyf/vscode/dist/client';
 import { Switch } from '../ui/Switch';
 import { SnippetArguments } from './SnippetArguments';
 import { DemoIdPicker } from '../ui/DemoIdPicker';
-import { Action, WebViewMessages } from '@demotime/common';
+import { Action, Step, WebViewMessages } from '@demotime/common';
 
 interface StepEditorProps {
   step: Step;
