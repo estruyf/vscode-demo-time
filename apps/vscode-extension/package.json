@@ -480,6 +480,11 @@
         "command": "demo-time.showSettings",
         "title": "Settings",
         "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.continueDemo",
+        "title": "Continue Demo",
+        "category": "Demo Time"
       }
     ],
     "menus": {
@@ -547,6 +552,10 @@
         {
           "command": "demo-time.toggleHighlight",
           "when": "demo-time.hasCodeHighlighting == true"
+        },
+        {
+          "command": "demo-time.continueDemo",
+          "when": "demo-time.isWaitingForNext == true"
         }
       ],
       "view/title": [
@@ -692,7 +701,12 @@
       {
         "command": "demo-time.start",
         "key": "right",
-        "when": "demo-time.presentation"
+        "when": "demo-time.presentation && demo-time.isWaitingForNext != true"
+      },
+      {
+        "command": "demo-time.continueDemo",
+        "key": "right",
+        "when": "demo-time.isWaitingForNext == true"
       },
       {
         "command": "demo-time.previous",

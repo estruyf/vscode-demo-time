@@ -14,6 +14,7 @@ export const COMMAND = {
   reset: `${EXTENSION_NAME}.reset`,
   toggleHighlight: `${EXTENSION_NAME}.toggleHighlight`,
   toggleSelectionHighlight: `${EXTENSION_NAME}.toggleSelectionHighlight`,
+  continueDemo: `${EXTENSION_NAME}.continueDemo`,
   // Creator
   initialize: `${EXTENSION_NAME}.initialize`,
   openDemoFile: `${EXTENSION_NAME}.openDemoFile`,

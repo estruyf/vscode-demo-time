@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Step, ActionType, CATEGORIZED_ACTIONS, THEMES, TYPING_MODES, TERMINAL_TYPING_MODES } from '../../types/demo';
+import { Step, CATEGORIZED_ACTIONS, THEMES, TYPING_MODES, TERMINAL_TYPING_MODES } from '../../types/demo';
 import { getFieldsForAction, getRequiredFields } from '../../utils/actionHelpers';
 import { validateStep } from '../../utils/validation';
 import { SearchableDropdown } from '../ui/SearchableDropdown';
@@ -9,7 +9,7 @@ import { messageHandler } from '@estruyf/vscode/dist/client';
 import { Switch } from '../ui/Switch';
 import { SnippetArguments } from './SnippetArguments';
 import { DemoIdPicker } from '../ui/DemoIdPicker';
-import { WebViewMessages } from '@demotime/common';
+import { Action, WebViewMessages } from '@demotime/common';
 
 interface StepEditorProps {
   step: Step;
@@ -238,7 +238,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
             <SearchableDropdown
               value={step.action}
               options={CATEGORIZED_ACTIONS}
-              onChange={(value) => handleChange('action', value as ActionType)}
+              onChange={(value) => handleChange('action', value as Action)}
               placeholder="Select action..."
             />
           </div>

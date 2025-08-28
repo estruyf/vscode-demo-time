@@ -2,7 +2,12 @@
 
 ## [1.10.0] - 2025-09-xx
 
-- Project is moved to a new monorepo structure with Nx
+- [#201](https://github.com/estruyf/vscode-demo-time/issues/201): Project is moved to a new monorepo
+  structure with Nx
+- [#227](https://github.com/estruyf/vscode-demo-time/issues/227): Open a slide at a specific
+  location
+- [#235](https://github.com/estruyf/vscode-demo-time/issues/235): Added the `waitForNext` action to
+  pause the demo and wait until the `Demo Time: Continue Demo` command is triggered
 
 ## [1.9.0] - 2025-08-25
 

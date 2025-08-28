@@ -90,6 +90,7 @@
                     "unsetPresentationView",
                     "waitForTimeout",
                     "waitForInput",
+                    "waitForNext",
                     "executeVSCodeCommand",
                     "showInfoMessage",
                     "setState",

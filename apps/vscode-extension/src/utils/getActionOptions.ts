@@ -227,6 +227,11 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: 'Wait for user input',
   } as QuickPickItem);
 
+  actions.push({
+    label: Action.WaitForNext,
+    description: 'Wait until you trigger the next step',
+  } as QuickPickItem);
+
   /**
    * VSCode actions
    */
@@ -280,12 +285,12 @@ export const getActionOptions = (): QuickPickItem[] => {
   } as QuickPickItem);
 
   actions.push({
-    label: Action.openPowerPoint,
+    label: Action.OpenPowerPoint,
     description: 'Open PowerPoint',
   } as QuickPickItem);
 
   actions.push({
-    label: Action.openKeynote,
+    label: Action.OpenKeynote,
     description: 'Open Keynote',
   } as QuickPickItem);
 
@@ -297,32 +302,32 @@ export const getActionOptions = (): QuickPickItem[] => {
   } as QuickPickItem);
 
   actions.push({
-    label: Action.openChat,
+    label: Action.OpenChat,
     description: 'Open the GitHub Copilot Chat',
   } as QuickPickItem);
 
   actions.push({
-    label: Action.newChat,
+    label: Action.NewChat,
     description: 'Start a new chat in GitHub Copilot',
   } as QuickPickItem);
 
   actions.push({
-    label: Action.askChat,
+    label: Action.AskChat,
     description: 'Ask a question in GitHub Copilot Chat',
   } as QuickPickItem);
 
   actions.push({
-    label: Action.editChat,
+    label: Action.EditChat,
     description: 'Start an edit chat in GitHub Copilot Chat',
   } as QuickPickItem);
 
   actions.push({
-    label: Action.agentChat,
+    label: Action.AgentChat,
     description: 'Start an agent chat in GitHub Copilot Chat',
   } as QuickPickItem);
 
   actions.push({
-    label: Action.closeChat,
+    label: Action.CloseChat,
     description: 'Close the GitHub Copilot Chat',
   } as QuickPickItem);
 

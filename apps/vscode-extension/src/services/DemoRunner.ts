@@ -66,6 +66,7 @@ import {
   Step,
   Version,
 } from '@demotime/common';
+import { InputService } from './InputService';
 
 const DEFAULT_START_VALUE = {
   filePath: '',
@@ -636,22 +637,22 @@ export class DemoRunner {
     }
 
     // GitHub Copilot actions
-    if (step.action === Action.openChat) {
+    if (step.action === Action.OpenChat) {
       await ChatActionsService.openChat();
       return;
-    } else if (step.action === Action.newChat) {
+    } else if (step.action === Action.NewChat) {
       await ChatActionsService.newChat();
       return;
-    } else if (step.action === Action.askChat) {
+    } else if (step.action === Action.AskChat) {
       await ChatActionsService.askChat(step);
       return;
-    } else if (step.action === Action.editChat) {
+    } else if (step.action === Action.EditChat) {
       await ChatActionsService.editChat(step);
       return;
-    } else if (step.action === Action.agentChat) {
+    } else if (step.action === Action.AgentChat) {
       await ChatActionsService.agentChat(step);
       return;
-    } else if (step.action === Action.closeChat) {
+    } else if (step.action === Action.CloseChat) {
       await ChatActionsService.closeChat();
       return;
     }
@@ -676,17 +677,19 @@ export class DemoRunner {
         return;
       }
       return;
+    } else if (step.action === Action.WaitForNext) {
+      await InputService.waitForNext();
     }
 
     // Open external applications
-    if (step.action === Action.openPowerPoint) {
+    if (step.action === Action.OpenPowerPoint) {
       try {
         await ExternalAppsService.openPowerPoint();
       } catch (error) {
         Notifications.error(`Failed to open PowerPoint: ${(error as Error).message}`);
       }
       return;
-    } else if (step.action === Action.openKeynote) {
+    } else if (step.action === Action.OpenKeynote) {
       try {
         await ExternalAppsService.openKeynote();
       } catch (error) {
