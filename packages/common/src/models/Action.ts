@@ -61,4 +61,11 @@ export enum Action {
   PressEnter = 'pressEnter',
   // Demo Time
   RunDemoById = 'runDemoById',
+  // Engage Time
+  StartEngageTimeSession = 'startEngageTimeSession',
+  StartEngageTimePoll = 'startEngageTimePoll',
+  CloseEngageTimeSession = 'closeEngageTimeSession',
+  CloseEngageTimePoll = 'closeEngageTimePoll',
+  ShowEngageTimeSession = 'showEngageTimeSession',
+  ShowEngageTimePoll = 'showEngageTimePoll',
 }

@@ -2,7 +2,7 @@ import { commands } from 'vscode';
 import { Subscription, WebviewType } from '../models';
 import { Extension } from '../services';
 import { openFilePicker, sleep } from '../utils';
-import { COMMAND, WebViewMessages, Config } from '@demotime/common';
+import { COMMAND, WebViewMessages, Config, IDemoTimeSettings } from '@demotime/common';
 import { BaseWebview } from '../webview/BaseWebviewPanel';
 
 export class SettingsView extends BaseWebview {
@@ -70,7 +70,11 @@ export class SettingsView extends BaseWebview {
       const settings = payload;
 
       for (const [key, value] of Object.entries(settings)) {
-        await ext.setSetting(key, value);
+        if (key === `engageTimeApiKey`) {
+          await ext.context.secrets.store(key, value);
+        } else {
+          await ext.setSetting(key, value);
+        }
         await sleep(100); // Adding a small delay to ensure settings are saved properly
       }
 
@@ -104,7 +108,8 @@ export class SettingsView extends BaseWebview {
       customWebComponents: ext.getSetting(Config.webcomponents.scripts),
       nextActionBehaviour: ext.getSetting(Config.demoRunner.nextActionBehaviour),
       openInConfigEditor: ext.getSetting(Config.configEditor.openInConfigEditor),
-    };
+      engageTimeApiKey: (await ext.context.secrets.get('engageTimeApiKey')) || '',
+    } as IDemoTimeSettings;
 
     SettingsView.postRequestMessage(command, requestId, settingsObject);
   }

@@ -11,12 +11,13 @@ export interface IDemoTimeSettings {
   insertTypingMode: string;
   insertTypingSpeed: number;
   hackerTyperChunkSize: number;
-  "api.enabled": boolean;
-  "api.port": number;
+  'api.enabled': boolean;
+  'api.port': number;
   customTheme: string;
   slideHeaderTemplate: string;
   slideFooterTemplate: string;
   customWebComponents: string[];
   nextActionBehaviour: string;
   openInConfigEditor: boolean;
+  engageTimeApiKey: string;
 }
