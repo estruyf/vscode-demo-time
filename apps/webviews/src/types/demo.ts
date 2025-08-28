@@ -1,3 +1,5 @@
+import { Action, InsertTypingMode } from '@demotime/common';
+
 export interface DemoConfig {
   title: string;
   description: string;
@@ -22,259 +24,125 @@ export interface Demo {
   };
 }
 
-export interface Step {
-  action: ActionType;
-  disabled?: boolean;
-  path?: string;
-  content?: string;
-  contentPath?: string;
-  patch?: string;
-  position?: string | number;
-  startPlaceholder?: string;
-  endPlaceholder?: string;
-  highlightWholeLine?: boolean;
-  timeout?: number;
-  command?: string;
-  message?: string;
-  dest?: string;
-  zoom?: number;
-  overwrite?: boolean;
-  terminalId?: string;
-  id?: string;
-  url?: string;
-  openInVSCode?: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  args?: any;
-  theme?: string;
-  setting?: {
-    key: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    value: any;
-  };
-  state?: {
-    key: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    value: any;
-  };
-  insertTypingSpeed?: number;
-  insertTypingMode?:
-    | "instant"
-    | "line-by-line"
-    | "character-by-character"
-    | "hacker-typer";
-  autoExecute?: boolean;
-}
-
-export type ActionType =
-  | "applyPatch"
-  | "create"
-  | "open"
-  | "rename"
-  | "deleteFile"
-  | "close"
-  | "closeAll"
-  | "copy"
-  | "move"
-  | "markdownPreview"
-  | "imagePreview"
-  | "openSlide"
-  | "insert"
-  | "highlight"
-  | "replace"
-  | "unselect"
-  | "delete"
-  | "positionCursor"
-  | "write"
-  | "save"
-  | "format"
-  | "setSetting"
-  | "setTheme"
-  | "unsetTheme"
-  | "setPresentationView"
-  | "unsetPresentationView"
-  | "waitForTimeout"
-  | "waitForInput"
-  | "executeVSCodeCommand"
-  | "showInfoMessage"
-  | "setState"
-  | "openWebsite"
-  | "openTerminal"
-  | "executeTerminalCommand"
-  | "executeScript"
-  | "closeTerminal"
-  | "snippet"
-  | "openPowerPoint"
-  | "openKeynote"
-  | "openCopilotChat"
-  | "newCopilotChat"
-  | "askCopilotChat"
-  | "editCopilotChat"
-  | "agentCopilotChat"
-  | "closeCopilotChat"
-  | "copyToClipboard"
-  | "pasteFromClipboard"
-  | "typeText"
-  | "pressEnter"
-  | "runDemoById";
-
 export const THEMES = [
-  "Default Dark Modern",
-  "Default Dark+",
-  "Default High Contrast Light",
-  "Default High Contrast",
-  "Default Light Modern",
-  "Default Light+",
+  'Default Dark Modern',
+  'Default Dark+',
+  'Default High Contrast Light',
+  'Default High Contrast',
+  'Default Light Modern',
+  'Default Light+',
 ];
 
-export const TYPING_MODES = [
-  "instant",
-  "line-by-line",
-  "character-by-character",
-  "hacker-typer",
+export const TYPING_MODES: InsertTypingMode[] = [
+  'instant',
+  'line-by-line',
+  'character-by-character',
+  'hacker-typer',
 ];
 
-export const TERMINAL_TYPING_MODES = ["instant", "character-by-character"];
-export const ACTIONS: ActionType[] = [
-  "applyPatch",
-  "create",
-  "open",
-  "rename",
-  "deleteFile",
-  "close",
-  "closeAll",
-  "copy",
-  "move",
-  "markdownPreview",
-  "imagePreview",
-  "openSlide",
-  "insert",
-  "highlight",
-  "replace",
-  "unselect",
-  "delete",
-  "positionCursor",
-  "write",
-  "save",
-  "format",
-  "setSetting",
-  "setTheme",
-  "unsetTheme",
-  "setPresentationView",
-  "unsetPresentationView",
-  "waitForTimeout",
-  "waitForInput",
-  "executeVSCodeCommand",
-  "showInfoMessage",
-  "setState",
-  "openWebsite",
-  "openTerminal",
-  "executeTerminalCommand",
-  "executeScript",
-  "closeTerminal",
-  "snippet",
-  "openPowerPoint",
-  "openKeynote",
-  "openCopilotChat",
-  "newCopilotChat",
-  "askCopilotChat",
-  "editCopilotChat",
-  "agentCopilotChat",
-  "closeCopilotChat",
-  "copyToClipboard",
-  "pasteFromClipboard",
-  "typeText",
-  "pressEnter",
-  "runDemoById",
-];
+export const TERMINAL_TYPING_MODES = ['instant', 'character-by-character'];
+export const ACTIONS = Object.values(Action);
 
 // Categorized actions for dropdown
-export const CATEGORIZED_ACTIONS = [
+export const CATEGORIZED_ACTIONS: {
+  category: string;
+  options: Action[];
+}[] = [
   {
-    category: "File actions",
+    category: 'File actions',
     options: [
-      "create",
-      "open",
-      "rename",
-      "deleteFile",
-      "close",
-      "closeAll",
-      "copy",
-      "move",
-      "save",
+      Action.Create,
+      Action.Open,
+      Action.Rename,
+      Action.DeleteFile,
+      Action.Close,
+      Action.CloseAll,
+      Action.Copy,
+      Action.Move,
+      Action.Save,
     ],
   },
   {
-    category: "Text actions",
-    options: ["insert", "replace", "delete", "write", "typeText", "format"],
-  },
-  {
-    category: "Preview actions",
-    options: ["markdownPreview", "imagePreview", "openSlide"],
-  },
-  {
-    category: "Patch actions",
-    options: ["applyPatch"],
-  },
-  {
-    category: "Setting actions",
+    category: 'Text actions',
     options: [
-      "setSetting",
-      "setTheme",
-      "unsetTheme",
-      "setPresentationView",
-      "unsetPresentationView",
-      "setState",
+      Action.Insert,
+      Action.Replace,
+      Action.Delete,
+      Action.Write,
+      Action.TypeText,
+      Action.Format,
     ],
   },
   {
-    category: "Terminal actions",
+    category: 'Preview actions',
+    options: [Action.MarkdownPreview, Action.ImagePreview, Action.OpenSlide],
+  },
+  {
+    category: 'Patch actions',
+    options: [Action.ApplyPatch],
+  },
+  {
+    category: 'Setting actions',
     options: [
-      "openTerminal",
-      "executeTerminalCommand",
-      "executeScript",
-      "closeTerminal",
+      Action.SetSetting,
+      Action.SetTheme,
+      Action.UnsetTheme,
+      Action.SetPresentationView,
+      Action.UnsetPresentationView,
+      Action.SetState,
+      Action.BackupSettings,
+      Action.RestoreSettings,
     ],
   },
   {
-    category: "Time actions",
-    options: ["waitForTimeout", "waitForInput"],
-  },
-  {
-    category: "VS Code actions",
-    options: ["executeVSCodeCommand", "showInfoMessage"],
-  },
-  {
-    category: "Snippet actions",
-    options: ["snippet"],
-  },
-  {
-    category: "External Apps actions",
-    options: ["openWebsite", "openPowerPoint", "openKeynote"],
-  },
-  {
-    category: "GitHub Copilot actions",
+    category: 'Terminal actions',
     options: [
-      "openCopilotChat",
-      "newCopilotChat",
-      "askCopilotChat",
-      "editCopilotChat",
-      "agentCopilotChat",
-      "closeCopilotChat",
+      Action.OpenTerminal,
+      Action.ExecuteTerminalCommand,
+      Action.ExecuteScript,
+      Action.CloseTerminal,
     ],
   },
   {
-    category: "Interaction actions",
+    category: 'Time actions',
+    options: [Action.WaitForTimeout, Action.WaitForInput, Action.Pause],
+  },
+  {
+    category: 'VS Code actions',
+    options: [Action.ExecuteVSCodeCommand, Action.ShowInfoMessage],
+  },
+  {
+    category: 'Snippet actions',
+    options: [Action.Snippet],
+  },
+  {
+    category: 'External Apps actions',
+    options: [Action.OpenWebsite, Action.OpenPowerPoint, Action.OpenKeynote],
+  },
+  {
+    category: 'GitHub Copilot actions',
     options: [
-      "highlight",
-      "unselect",
-      "positionCursor",
-      "copyToClipboard",
-      "pasteFromClipboard",
-      "pressEnter",
+      Action.OpenChat,
+      Action.NewChat,
+      Action.AskChat,
+      Action.EditChat,
+      Action.AgentChat,
+      Action.CloseChat,
     ],
   },
   {
-    category: "Run Demo actions",
-    options: ["runDemoById"],
+    category: 'Interaction actions',
+    options: [
+      Action.Highlight,
+      Action.Unselect,
+      Action.PositionCursor,
+      Action.CopyToClipboard,
+      Action.PasteFromClipboard,
+      Action.PressEnter,
+    ],
+  },
+  {
+    category: 'Run Demo actions',
+    options: [Action.RunDemoById],
   },
 ];

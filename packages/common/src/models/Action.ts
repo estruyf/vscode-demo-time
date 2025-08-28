@@ -29,9 +29,12 @@ export enum Action {
   UnsetTheme = 'unsetTheme',
   SetPresentationView = 'setPresentationView',
   UnsetPresentationView = 'unsetPresentationView',
+  BackupSettings = 'backupSettings',
+  RestoreSettings = 'restoreSettings',
   // Timeout
   WaitForTimeout = 'waitForTimeout',
   WaitForInput = 'waitForInput',
+  Pause = 'pause',
   // VSCode
   ExecuteVSCodeCommand = 'executeVSCodeCommand',
   ShowInfoMessage = 'showInfoMessage',
@@ -45,15 +48,15 @@ export enum Action {
   // Extensibility
   Snippet = 'snippet',
   // External applications
-  openPowerPoint = 'openPowerPoint',
-  openKeynote = 'openKeynote',
+  OpenPowerPoint = 'openPowerPoint',
+  OpenKeynote = 'openKeynote',
   // GitHub Copilot
-  openChat = 'openCopilotChat',
-  newChat = 'newCopilotChat',
-  askChat = 'askCopilotChat',
-  editChat = 'editCopilotChat',
-  agentChat = 'agentCopilotChat',
-  closeChat = 'closeCopilotChat',
+  OpenChat = 'openCopilotChat',
+  NewChat = 'newCopilotChat',
+  AskChat = 'askCopilotChat',
+  EditChat = 'editCopilotChat',
+  AgentChat = 'agentCopilotChat',
+  CloseChat = 'closeCopilotChat',
   // Interaction
   TypeText = 'typeText',
   CopyToClipboard = 'copyToClipboard',

@@ -9,7 +9,7 @@ coverage
 .nx/cache
 .nx/workspace-data
 
-
+.yarn
 
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md

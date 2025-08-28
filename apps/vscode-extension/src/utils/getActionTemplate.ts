@@ -209,6 +209,18 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  if (action === Action.BackupSettings) {
+    return {
+      action: Action.BackupSettings,
+    };
+  }
+
+  if (action === Action.RestoreSettings) {
+    return {
+      action: Action.RestoreSettings,
+    };
+  }
+
   /**
    * Terminal actions
    */
@@ -254,6 +266,12 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.WaitForInput) {
     return {
       action: Action.WaitForInput,
+    };
+  }
+
+  if (action === Action.Pause) {
+    return {
+      action: Action.Pause,
     };
   }
 
@@ -306,52 +324,52 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   /**
    * External applications
    */
-  if (action === Action.openPowerPoint) {
+  if (action === Action.OpenPowerPoint) {
     return {
-      action: Action.openPowerPoint,
+      action: Action.OpenPowerPoint,
     };
   }
 
-  if (action === Action.openKeynote) {
+  if (action === Action.OpenKeynote) {
     return {
-      action: Action.openKeynote,
+      action: Action.OpenKeynote,
     };
   }
 
   /**
    * GitHub Copilot actions
    */
-  if (action === Action.openChat) {
+  if (action === Action.OpenChat) {
     return {
-      action: Action.openChat,
+      action: Action.OpenChat,
     };
   }
-  if (action === Action.newChat) {
+  if (action === Action.NewChat) {
     return {
-      action: Action.newChat,
+      action: Action.NewChat,
     };
   }
-  if (action === Action.askChat) {
+  if (action === Action.AskChat) {
     return {
-      action: Action.askChat,
+      action: Action.AskChat,
       message: '',
     };
   }
-  if (action === Action.editChat) {
+  if (action === Action.EditChat) {
     return {
-      action: Action.editChat,
+      action: Action.EditChat,
       message: '',
     };
   }
-  if (action === Action.agentChat) {
+  if (action === Action.AgentChat) {
     return {
-      action: Action.agentChat,
+      action: Action.AgentChat,
       message: '',
     };
   }
-  if (action === Action.closeChat) {
+  if (action === Action.CloseChat) {
     return {
-      action: Action.closeChat,
+      action: Action.CloseChat,
     };
   }
 

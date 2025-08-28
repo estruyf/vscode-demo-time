@@ -16,13 +16,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Enable Corepack
+        run: corepack enable
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'yarn'
 
-      - name: Install the dependencies
-        run: yarn
+      - name: Install dependencies
+        run: yarn install --immutable
 
       - name: Verify actions
         run: node .github/scripts/verify-actions.mjs
@@ -31,16 +35,21 @@ jobs:
     name: 'Build and release'
     runs-on: ubuntu-latest
     needs: verify
+    if: contains(github.event.head_commit.message, '#release') || github.ref == 'refs/heads/alpha'
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Enable Corepack
+        run: corepack enable
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'yarn'
 
-      - name: Install the dependencies
-        run: yarn
+      - name: Install dependencies
+        run: yarn install --immutable
 
       - name: Build
         run: npm run vscode:build

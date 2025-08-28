@@ -23,6 +23,7 @@ import { PresenterView } from './presenterView/PresenterView';
 import { ConfigEditorProvider } from './providers/ConfigEditorProvider';
 import { SettingsView } from './settingsView/SettingsView';
 import { Config } from '@demotime/common';
+import { InputService } from './services/InputService';
 
 export async function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);
@@ -52,6 +53,7 @@ export async function activate(context: vscode.ExtensionContext) {
   ImportService.register();
   ConfigEditorProvider.register();
   TerminalService.register();
+  InputService.registerCommands();
 
   console.log(`${Config.title} is active!`);
 }

@@ -57,6 +57,29 @@
           "action": "unsetTheme"
         }
       ]
+    },
+    {
+      "title": "Backup Settings",
+      "steps": [
+        {
+          "action": "backupSettings"
+        },
+        {
+          "action": "setSetting",
+          "setting": {
+            "key": "editor.fontSize",
+            "value": 18
+          }
+        }
+      ]
+    },
+    {
+      "title": "Restore Settings",
+      "steps": [
+        {
+          "action": "restoreSettings"
+        }
+      ]
     }
   ]
 }
