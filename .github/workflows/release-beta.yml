@@ -21,8 +21,11 @@ jobs:
           node-version: 20
           cache: 'yarn'
 
-      - name: Install the dependencies
-        run: yarn
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
 
       - name: Verify actions
         run: node .github/scripts/verify-actions.mjs
@@ -39,8 +42,11 @@ jobs:
           node-version: 20
           cache: 'yarn'
 
-      - name: Install the dependencies
-        run: yarn
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
 
       - name: Build
         run: npm run vscode:build
