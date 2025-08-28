@@ -223,10 +223,15 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
     const hasError = fieldErrors.length > 0;
     let label = field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1');
 
-    if (label === "Slide") {
+    if (field === "slide") {
       label = "Slide Number (1-based index)";
+    } else if (field === 'timeout') {
+      label = "Timeout (ms)";
+    } else if (field === 'zoom') {
+      label = "Zoom Level (times to use VS Code zoom)";
+    } else if (field === 'insertTypingSpeed') {
+      label = "Insert Typing Speed (ms)";
     }
-
 
     switch (field) {
       case 'action':
@@ -343,6 +348,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
               className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${hasError ? 'border-red-300 bg-red-50' : 'border-gray-300'
                 }`}
               placeholder={`Enter ${label.toLowerCase()}`}
+              min={0}
             />
             {fieldErrors.map((error, index) => (
               <p key={index} className="text-sm text-red-600 mt-1">{error.message}</p>

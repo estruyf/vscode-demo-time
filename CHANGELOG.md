@@ -6,6 +6,8 @@
   structure with Nx
 - [#227](https://github.com/estruyf/vscode-demo-time/issues/227): Open a slide at a specific
   location
+- [#234](https://github.com/estruyf/vscode-demo-time/issues/234): Fix for negative values in the
+  insert typing speed and improved the labels
 - [#235](https://github.com/estruyf/vscode-demo-time/issues/235): Added the `waitForNext` action to
   pause the demo and wait until the `Demo Time: Continue Demo` command is triggered
 

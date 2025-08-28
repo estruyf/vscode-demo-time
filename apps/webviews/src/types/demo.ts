@@ -24,45 +24,6 @@ export interface Demo {
   };
 }
 
-export interface Step {
-  action: Action;
-  disabled?: boolean;
-  path?: string;
-  content?: string;
-  contentPath?: string;
-  patch?: string;
-  position?: string | number;
-  startPlaceholder?: string;
-  endPlaceholder?: string;
-  highlightWholeLine?: boolean;
-  timeout?: number;
-  command?: string;
-  message?: string;
-  dest?: string;
-  zoom?: number;
-  overwrite?: boolean;
-  terminalId?: string;
-  id?: string;
-  url?: string;
-  openInVSCode?: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  args?: any;
-  theme?: string;
-  setting?: {
-    key: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    value: any;
-  };
-  state?: {
-    key: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    value: any;
-  };
-  insertTypingSpeed?: number;
-  insertTypingMode?: InsertTypingMode;
-  autoExecute?: boolean;
-}
-
 export const THEMES = [
   'Default Dark Modern',
   'Default Dark+',
