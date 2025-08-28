@@ -24,8 +24,8 @@ import {
   sleep,
   writeFile,
 } from '../utils';
-import { InsertTypingMode, Step, Subscription } from '../models';
-import { COMMAND, Config } from '@demotime/common';
+import { Subscription } from '../models';
+import { COMMAND, Config, InsertTypingMode, Step } from '@demotime/common';
 
 export class TextTypingService {
   private static crntHackerTyperSession:
@@ -45,72 +45,10 @@ export class TextTypingService {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
 
     subscriptions.push(
-      commands.registerCommand(COMMAND.hackerTyperNextChunk, async () => {
-        const session = TextTypingService.crntHackerTyperSession;
-
-        if (
-          session === undefined ||
-          session.token?.isCancellationRequested ||
-          session.i >= session.content.length ||
-          session.done
-        ) {
-          if (session?.resolve) {
-            session.resolve();
-          }
-          if (session) {
-            session.done = true;
-          }
-          await setContext(ContextKeys.isHackerTyper, false);
-          TextTypingService.crntHackerTyperSession = undefined;
-          DemoStatusBar.toggleHackerMode(false);
-          return;
-        }
-
-        // Insert chunkSize characters at once
-        const chunkEnd = Math.min(session.i + session.chunkSize, session.content.length);
-        let chunk = '';
-        let nextPos = session.currentPos;
-
-        for (let idx = session.i; idx < chunkEnd; ) {
-          const { char, nextIndex } = TextTypingService.getNextChar(session.content, idx);
-          chunk += char;
-          idx = nextIndex;
-        }
-
-        const edit = new WorkspaceEdit();
-        edit.insert(session.editor.document.uri, session.currentPos, chunk);
-        await workspace.applyEdit(edit);
-
-        // Update position accounting for newlines in the chunk
-        for (let charIndex = 0; charIndex < chunk.length; ) {
-          if (chunk[charIndex] === '\r' && chunk[charIndex + 1] === '\n') {
-            nextPos = new Position(nextPos.line + 1, 0);
-            charIndex += 2;
-          } else if (chunk[charIndex] === '\n') {
-            nextPos = new Position(nextPos.line + 1, 0);
-            charIndex += 1;
-          } else {
-            nextPos = new Position(nextPos.line, nextPos.character + 1);
-            charIndex += 1;
-          }
-        }
-
-        session.editor.selection = new Selection(nextPos, nextPos);
-        session.currentPos = nextPos;
-        session.i = chunkEnd;
-
-        if (session.i >= session.content.length || session.token?.isCancellationRequested) {
-          if (session.resolve) {
-            session.resolve();
-          }
-          session.done = true;
-          await setContext(ContextKeys.isHackerTyper, false);
-          DemoStatusBar.toggleHackerMode(false);
-          TextTypingService.crntHackerTyperSession = undefined;
-        }
-      }),
+      commands.registerCommand(COMMAND.hackerTyperNextChunk, TextTypingService.hackerTyping),
     );
   }
+
   /**
    * Inserts content into a text editor at the specified position or range.
    * If a position is provided, the content is inserted at that position.
@@ -300,6 +238,71 @@ export class TextTypingService {
     }
 
     await saveFiles();
+  }
+
+  private static async hackerTyping() {
+    const session = TextTypingService.crntHackerTyperSession;
+
+    if (
+      session === undefined ||
+      session.token?.isCancellationRequested ||
+      session.i >= session.content.length ||
+      session.done
+    ) {
+      if (session?.resolve) {
+        session.resolve();
+      }
+      if (session) {
+        session.done = true;
+      }
+      await setContext(ContextKeys.isHackerTyper, false);
+      TextTypingService.crntHackerTyperSession = undefined;
+      DemoStatusBar.toggleHackerMode(false);
+      return;
+    }
+
+    // Insert chunkSize characters at once
+    const chunkEnd = Math.min(session.i + session.chunkSize, session.content.length);
+    let chunk = '';
+    let nextPos = session.currentPos;
+
+    for (let idx = session.i; idx < chunkEnd; ) {
+      const { char, nextIndex } = TextTypingService.getNextChar(session.content, idx);
+      chunk += char;
+      idx = nextIndex;
+    }
+
+    const edit = new WorkspaceEdit();
+    edit.insert(session.editor.document.uri, session.currentPos, chunk);
+    await workspace.applyEdit(edit);
+
+    // Update position accounting for newlines in the chunk
+    for (let charIndex = 0; charIndex < chunk.length; ) {
+      if (chunk[charIndex] === '\r' && chunk[charIndex + 1] === '\n') {
+        nextPos = new Position(nextPos.line + 1, 0);
+        charIndex += 2;
+      } else if (chunk[charIndex] === '\n') {
+        nextPos = new Position(nextPos.line + 1, 0);
+        charIndex += 1;
+      } else {
+        nextPos = new Position(nextPos.line, nextPos.character + 1);
+        charIndex += 1;
+      }
+    }
+
+    session.editor.selection = new Selection(nextPos, nextPos);
+    session.currentPos = nextPos;
+    session.i = chunkEnd;
+
+    if (session.i >= session.content.length || session.token?.isCancellationRequested) {
+      if (session.resolve) {
+        session.resolve();
+      }
+      session.done = true;
+      await setContext(ContextKeys.isHackerTyper, false);
+      DemoStatusBar.toggleHackerMode(false);
+      TextTypingService.crntHackerTyperSession = undefined;
+    }
   }
 
   private static async replaceWithRange(
