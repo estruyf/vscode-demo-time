@@ -813,7 +813,6 @@
             "tsup --minify",
             "tsup --minify --config tsup.wc.config.ts"
           ],
-          "parallel": true,
           "cwd": "{projectRoot}"
         },
         "dependsOn": [
@@ -827,7 +826,6 @@
             "tsup --watch --sourcemap",
             "tsup --watch --sourcemap --config tsup.wc.config.ts"
           ],
-          "parallel": true,
           "cwd": "{projectRoot}"
         }
       },
