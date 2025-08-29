@@ -28,13 +28,14 @@ export class Notifications {
         cancellable: false,
       },
       async (progress, token) => {
-        const steps = 20;
-        for (let i = 0; i <= steps; i++) {
-          progress.report({ increment: 100 / steps });
-          await new Promise((resolve) => setTimeout(resolve, durationMs / steps));
+        const totalSteps = 100;
+        const stepInterval = durationMs / totalSteps;
+        for (let step = 0; step < totalSteps; step++) {
           if (token.isCancellationRequested) {
             break;
           }
+          progress.report({ increment: 100 / totalSteps });
+          await new Promise((resolve) => setTimeout(resolve, stepInterval));
         }
       },
     );
