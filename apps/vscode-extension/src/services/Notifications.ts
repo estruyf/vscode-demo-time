@@ -1,7 +1,6 @@
-import { window } from 'vscode';
+import { ProgressLocation, window } from 'vscode';
 import { COMMAND, Config } from '@demotime/common';
 import { Logger } from './Logger';
-import { Extension } from './Extension';
 
 export class Notifications {
   /**
@@ -14,6 +13,31 @@ export class Notifications {
     Logger.info(`${Config.title}: ${message}`, 'INFO');
 
     return window.showInformationMessage(`${Config.title}: ${message}`, ...items);
+  }
+
+  /**
+   * Show an information notification with a progress bar
+   * @param message
+   * @param durationMs
+   */
+  public static infoWithProgress(message: string, durationMs = 3000): void {
+    void window.withProgress(
+      {
+        location: ProgressLocation.Notification,
+        title: `${Config.title}: ${message}`,
+        cancellable: false,
+      },
+      async (progress, token) => {
+        const steps = 20;
+        for (let i = 0; i <= steps; i++) {
+          progress.report({ increment: 100 / steps });
+          await new Promise((resolve) => setTimeout(resolve, durationMs / steps));
+          if (token.isCancellationRequested) {
+            break;
+          }
+        }
+      },
+    );
   }
 
   /**

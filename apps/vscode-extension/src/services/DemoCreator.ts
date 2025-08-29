@@ -96,7 +96,9 @@ export class DemoCreator {
     await addExtensionRecommendation();
 
     await setContext(ContextKeys.isInitialized, true);
-    Notifications.info(`${Config.title} is initialized, you can now start adding demo steps!`);
+    Notifications.infoWithProgress(
+      `${Config.title} is initialized, you can now start adding demo steps!`,
+    );
 
     DemoPanel.showWelcome(false);
     DemoPanel.init();

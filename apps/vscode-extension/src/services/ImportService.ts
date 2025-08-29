@@ -143,7 +143,7 @@ export class ImportService {
           }
         }
 
-        Notifications.info('Slides created successfully!');
+        Notifications.infoWithProgress('Slides created successfully!');
       },
     );
   }

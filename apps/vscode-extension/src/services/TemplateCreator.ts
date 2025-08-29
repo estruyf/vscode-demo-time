@@ -142,7 +142,7 @@ sayHello();`;
       await window.showTextDocument(demoFile);
     }
 
-    Notifications.info('Sample 1 created successfully');
+    Notifications.infoWithProgress('Sample 1 created successfully');
   }
 
   /**
@@ -282,6 +282,6 @@ export function multiply(x: number, y: number): number {
     if (demoFile) {
       await window.showTextDocument(demoFile);
     }
-    Notifications.info('Sample 2 created successfully');
+    Notifications.infoWithProgress('Sample 2 created successfully');
   }
 }

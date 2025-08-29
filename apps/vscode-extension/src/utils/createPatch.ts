@@ -97,7 +97,7 @@ export const createPatch = async () => {
     patchName,
   );
   await writeFile(patchFilePath, patch);
-  Notifications.info(`Patch ${patchName} created`);
+  Notifications.infoWithProgress(`Patch ${patchName} created`);
 
   // Ask the user if they want to create a new demo starting from this file
   const createDemo = await window.showInformationMessage(

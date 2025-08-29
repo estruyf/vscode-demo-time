@@ -392,7 +392,7 @@ export class DemoRunner {
         filePath,
       });
       if (!previousFile) {
-        Notifications.info('No previous demo steps found');
+        Notifications.infoWithProgress('No previous demo steps found');
         return;
       }
 

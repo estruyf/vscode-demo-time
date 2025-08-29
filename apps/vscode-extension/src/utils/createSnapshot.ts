@@ -64,7 +64,7 @@ export const createSnapshot = async () => {
   }
 
   await writeFile(newFilePath, text);
-  Notifications.info(`Snapshot ${newFileName} created`);
+  Notifications.infoWithProgress(`Snapshot ${newFileName} created`);
 
   // Ask the user if they want to create a new demo starting from this file
   const createDemo = await window.showInformationMessage(
