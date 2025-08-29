@@ -38,7 +38,7 @@ export const useRemark = ({
   matter: null | SlideMetadata,
 } => {
   const [reactContent, setReactContent] = useState<null | ReactElement>(null);
-  const [metadata, setMetadata] = useState<null | any>(null);
+  const [metadata, setMetadata] = useState<null | { [key: string]: string }>(null);
   const [textContent, setTextContent] = useState<string>('');
 
   /**

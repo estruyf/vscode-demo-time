@@ -18,6 +18,13 @@
       "options": {
         "targetName": "test"
       }
+    },
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      },
+      "exclude": ["docs/**", "examples/**"]
     }
   ]
 }

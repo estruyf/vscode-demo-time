@@ -797,7 +797,6 @@
     ]
   },
   "scripts": {
-    "lint": "eslint src --ext ts",
     "clean": "rimraf out coverage"
   },
   "nx": {
@@ -861,12 +860,9 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/vscode": "^1.84.0",
-    "@typescript-eslint/eslint-plugin": "^6.9.0",
-    "@typescript-eslint/parser": "^6.9.0",
     "@vscode/test-electron": "^2.3.6",
     "cors": "^2.8.5",
     "diff": "^7.0.0",
-    "eslint": "^8.52.0",
     "express": "^4.21.2",
     "glob": "^10.3.10",
     "jest": "^29.7.0",

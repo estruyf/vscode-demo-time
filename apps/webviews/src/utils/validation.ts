@@ -252,7 +252,9 @@ export const validateStep = (
 const isFieldValid = (step: Step, field: string): boolean => {
   const value = step[field as keyof Step];
 
-  if (value === undefined || value === null) return false;
+  if (value === undefined || value === null) {
+    return false;
+  }
 
   if (typeof value === 'string') {
     return value.trim().length > 0;
@@ -261,7 +263,7 @@ const isFieldValid = (step: Step, field: string): boolean => {
   if (typeof value === 'object') {
     // For setting and state objects
     if (field === 'setting') {
-      const setting = value as { key: string; value: any };
+      const setting = value as { key: string; value: string };
       return setting.key?.trim().length > 0 && setting.value !== undefined;
     }
     if (field === 'state') {
@@ -295,7 +297,9 @@ const getFieldLabel = (field: string): string => {
 };
 
 export const getValidationSummary = (result: ValidationResult): string => {
-  if (result.isValid) return 'All fields are valid';
+  if (result.isValid) {
+    return 'All fields are valid';
+  }
 
   const errorCount = result.errors.length;
   return `${errorCount} validation error${errorCount !== 1 ? 's' : ''} found`;

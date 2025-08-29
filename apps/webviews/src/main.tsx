@@ -6,7 +6,7 @@ import './styles/main.css';
 import 'vscrui/dist/codicon.css';
 import { WebviewSettingsProvider } from './providers';
 
-const WEBVIEW_MAP: Record<string, React.LazyExoticComponent<React.FC<{}>>> = {
+const WEBVIEW_MAP: Record<string, React.LazyExoticComponent<React.FC<object>>> = {
   'settings': lazy(() => import('./components/webviews/SettingsView')),
   'config-editor': lazy(() => import('./components/webviews/ConfigEditorView')),
   'preview': lazy(() => import('./components/webviews/PreviewView')),

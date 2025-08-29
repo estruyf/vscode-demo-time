@@ -55,7 +55,7 @@ jobs:
         run: npm run vscode:build
 
       - name: Linting
-        run: npx nx lint vscode-demo-time
+        run: npm run lint
 
       - name: Testing
         run: npm run test

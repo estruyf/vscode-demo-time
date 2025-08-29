@@ -110,7 +110,7 @@ class ListWebComponent extends HTMLElement {
     this.rootElm = createRoot(mountPoint);
     this.renderComponent();
 
-    const mutationObserver: MutationCallback = (mutationList: MutationRecord[], observer: MutationObserver) => {
+    const mutationObserver: MutationCallback = (mutationList: MutationRecord[]) => {
       for (const m of mutationList) {
         if (m.target === this) {
           this.renderComponent();

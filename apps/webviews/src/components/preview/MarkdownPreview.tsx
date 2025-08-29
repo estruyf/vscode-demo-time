@@ -21,6 +21,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
 }: React.PropsWithChildren<IMarkdownPreviewProps>) => {
   const [theme, setTheme] = React.useState<string | undefined>(undefined);
   const [layout, setLayout] = React.useState<string | undefined>(undefined);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [bgStyles, setBgStyles] = React.useState<any | null>(null);
   const [showControls, setShowControls] = React.useState(false);
   const [slides, setSlides] = React.useState<Slide[]>([]);
@@ -172,6 +173,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     });
   }, [isZoomed, zoomLevel, scale]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const slidesListener = React.useCallback((message: MessageEvent<EventData<any>>) => {
     const { command } = message.data;
     if (!command) {

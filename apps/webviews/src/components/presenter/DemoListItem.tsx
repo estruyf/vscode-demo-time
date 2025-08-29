@@ -23,12 +23,12 @@ const DemoListItem = React.forwardRef<HTMLLIElement, DemoListItemProps>(({
       >
         {demo.executed ? (
           <Icon
-            name={demo.icons?.end as any || 'pass-filled'}
+            name={demo.icons?.end as never || 'pass-filled'}
             className={demo.executed ? 'text-(--vscode-charts-green)!' : ''}
           />
         ) : (
           <Icon
-            name={demo.icons?.start as any || 'run'}
+            name={demo.icons?.start as never || 'run'}
             className={demo.executed ? 'text-(--vscode-charts-green)!' : ''}
           />
         )}

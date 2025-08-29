@@ -1,3 +1,5 @@
+import { IDemoTimeSettings, WebViewMessages } from '@demotime/common';
+
 // Default settings payload for mock response
 const defaultDemoTimeSettings: IDemoTimeSettings = {
   defaultFileType: 'yaml',
@@ -20,21 +22,20 @@ const defaultDemoTimeSettings: IDemoTimeSettings = {
   customWebComponents: [],
   nextActionBehaviour: 'lastExecuted',
   openInConfigEditor: false,
+  engageTimeApiKey: '',
 };
-import { WebViewMessages } from '@demotime/common';
 // In a real VS Code webview, `acquireVsCodeApi` is provided by VS Code.
 // In a standard browser environment, we need to provide a mock implementation
 // to avoid errors and allow the application to run.
 
-import { IDemoTimeSettings } from './types/IDemoTimeSettings';
-
 // This check ensures we only define the mock if the real API doesn't exist.
-if (typeof globalThis.acquireVsCodeApi === 'undefined') {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+if (typeof (globalThis as any).acquireVsCodeApi === 'undefined') {
   // We are defining a function on the global scope, so we need to use `any`.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (globalThis as any).acquireVsCodeApi = (() => {
     let acquired = false;
-    // biome-ignore lint/suspicious/noExplicitAny: We are mocking a generic state object.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let state: any = undefined;
 
     // This is the mock API object that will be returned.
@@ -44,7 +45,7 @@ if (typeof globalThis.acquireVsCodeApi === 'undefined') {
        * In a real VS Code environment, this would send a message to the extension host,
        * which would then post a message back.
        */
-      // biome-ignore lint/suspicious/noExplicitAny: We are mocking a generic message object.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       postMessage: (message: any) => {
         console.log('VSCode API postMessage (mocked):', message);
 
@@ -96,7 +97,7 @@ if (typeof globalThis.acquireVsCodeApi === 'undefined') {
        * Mocks the setState function to store state in a local variable.
        * In a real VS Code environment, this persists the webview's state.
        */
-      // biome-ignore lint/suspicious/noExplicitAny: We are mocking a generic state object.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setState: (newState: any) => {
         console.log('VSCode API setState (mocked):', newState);
         state = newState;
