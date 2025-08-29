@@ -247,6 +247,12 @@ export const WebViewMessages = {
      * nextSlide
      */
     nextSlide: 'nextSlide',
+    preview: {
+      /**
+       * updateNextStep
+       */
+      updateNextStep: 'updateNextStep',
+    },
     // Config editor
     configEditor: {
       /**

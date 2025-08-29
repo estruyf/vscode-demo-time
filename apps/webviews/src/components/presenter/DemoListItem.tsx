@@ -18,7 +18,7 @@ const DemoListItem = React.forwardRef<HTMLLIElement, DemoListItemProps>(({
   return (
     <li ref={ref} className={`flex items-center gap-2 ${isActive ? 'bg-(--vscode-list-activeSelectionBackground)' : ''}`}>
       <button
-        className="flex items-center p-1 space-x-2 hover:text-(--vscode-list-hoverForeground) hover:bg-(--vscode-list-hoverBackground) rounded-[2px]"
+        className="w-full flex items-center p-1 space-x-2 hover:text-(--vscode-list-hoverForeground) hover:bg-(--vscode-list-hoverBackground) rounded-[2px]"
         onClick={onRun}
       >
         {demo.executed ? (

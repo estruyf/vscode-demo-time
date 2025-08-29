@@ -11,7 +11,7 @@ export class BaseWebview {
   protected static webview: WebviewPanel | null = null;
   protected static isDisposed = true;
 
-  protected static get isOpen(): boolean {
+  public static get isOpen(): boolean {
     return !this.isDisposed;
   }
 
