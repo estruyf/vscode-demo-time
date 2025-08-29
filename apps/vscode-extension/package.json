@@ -798,7 +798,6 @@
   },
   "scripts": {
     "lint": "eslint src --ext ts",
-    "test": "jest --coverage",
     "clean": "rimraf out coverage"
   },
   "nx": {

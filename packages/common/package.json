@@ -4,8 +4,7 @@
   "main": "./out/index.js",
   "scripts": {
     "build": "tsc",
-    "dev": "tsc -w",
-    "test": "jest --coverage"
+    "dev": "tsc -w"
   },
   "keywords": [],
   "author": "",

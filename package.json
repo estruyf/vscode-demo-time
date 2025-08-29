@@ -39,7 +39,8 @@
     "webviews:build": "npx nx build webviews",
     "webviews:dev": "npx nx run webviews:dev",
     "vscode:dev": "npx nx run-many --target=dev --projects=vscode-demo-time,webviews,common --parallel",
-    "vscode:build": "npx nx build vscode-demo-time"
+    "vscode:build": "npx nx build vscode-demo-time",
+    "test": "npx nx run-many -t test"
   },
   "homepage": "https://demotime.show/",
   "directories": {
@@ -58,6 +59,7 @@
   ],
   "devDependencies": {
     "@actions/core": "^1.11.1",
+    "@nx/jest": "21.4.0",
     "@nx/js": "^21.4.0",
     "@nx/web": "21.2.3",
     "@nx/workspace": "^21.4.0",
