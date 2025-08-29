@@ -1,6 +1,5 @@
 import React from 'react';
 import { X } from 'lucide-react';
-import { Button } from './Button';
 
 interface ModalProps {
   isOpen: boolean;
@@ -19,7 +18,7 @@ export const Modal: React.FC<ModalProps> = ({
   actions,
   size = 'lg'
 }) => {
-  if (!isOpen) return null;
+  if (!isOpen) { return null; }
 
   const sizeClasses = {
     sm: 'max-w-md',
@@ -42,11 +41,11 @@ export const Modal: React.FC<ModalProps> = ({
             <X className="h-5 w-5 text-gray-500" />
           </button>
         </div>
-        
+
         <div className="flex-1 overflow-auto p-6">
           {children}
         </div>
-        
+
         {actions && (
           <div className="p-6 border-t bg-gray-50 flex justify-end space-x-3">
             {actions}

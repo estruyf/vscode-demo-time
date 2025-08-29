@@ -52,7 +52,7 @@ export const Mermaid: React.FC<MermaidProps> = ({ graphData, id, dark }) => {
       try {
         const rr = await mermaid.render(`${id}-svg`, graphData as string);
         setRenderResult(rr);
-      } catch (e: any) {
+      } catch (e) {
         console.log(`Error rendering mermaid diagram: ${(e as Error).message}`,);
       }
     })();

@@ -28,7 +28,7 @@ export const SlideControl: React.FunctionComponent<ISlideControlProps> = ({
       className={`p-2 inline-flex justify-center items-center rounded-sm disabled:opacity-50 disabled:cursor-not-allowed ${!isSlideControl ? ' opacity-70 hover:opacity-100' : ''} ${className ? className : "hover:bg-(--vscode-toolbar-hoverBackground)"}`}
     >
       <span className="sr-only">{title}</span>
-      {iconName && <Icon name={iconName as any} className="text-(--vscode-editorWidget-foreground)! inline-flex justify-center items-center" />}
+      {iconName && <Icon name={iconName as never} className="text-(--vscode-editorWidget-foreground)! inline-flex justify-center items-center" />}
       {icon}
     </button>
   );

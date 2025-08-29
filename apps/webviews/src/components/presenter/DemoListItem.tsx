@@ -18,17 +18,17 @@ const DemoListItem = React.forwardRef<HTMLLIElement, DemoListItemProps>(({
   return (
     <li ref={ref} className={`flex items-center gap-2 ${isActive ? 'bg-(--vscode-list-activeSelectionBackground)' : ''}`}>
       <button
-        className="flex items-center p-1 space-x-2 hover:text-(--vscode-list-hoverForeground) hover:bg-(--vscode-list-hoverBackground) rounded-[2px]"
+        className="w-full flex items-center p-1 space-x-2 hover:text-(--vscode-list-hoverForeground) hover:bg-(--vscode-list-hoverBackground) rounded-[2px]"
         onClick={onRun}
       >
         {demo.executed ? (
           <Icon
-            name={demo.icons?.end as any || 'pass-filled'}
+            name={demo.icons?.end as never || 'pass-filled'}
             className={demo.executed ? 'text-(--vscode-charts-green)!' : ''}
           />
         ) : (
           <Icon
-            name={demo.icons?.start as any || 'run'}
+            name={demo.icons?.start as never || 'run'}
             className={demo.executed ? 'text-(--vscode-charts-green)!' : ''}
           />
         )}

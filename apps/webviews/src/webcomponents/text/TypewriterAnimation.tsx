@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createRoot, Root } from 'react-dom/client';
-import { useState, useEffect, useRef, ReactNode } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 // Typewriter Animation
 export interface TypewriterProps {

@@ -13,7 +13,7 @@ export const useTheme = () => {
     return document.body.getAttribute("data-vscode-theme-name") || '';
   };
 
-  const mutationObserver = new MutationObserver((_, __) => {
+  const mutationObserver = new MutationObserver(() => {
     setTheme(getThemeName());
   });
 
@@ -21,7 +21,7 @@ export const useTheme = () => {
     const themeType = document.body.getAttribute(`data-vscode-theme-kind`);
     setIsDarkTheme(themeType?.includes('dark') || false);
 
-    messageHandler.request<any | null>(WebViewMessages.toVscode.getTheme, getThemeName()).then((theme) => {
+    messageHandler.request<unknown | null>(WebViewMessages.toVscode.getTheme, getThemeName()).then((theme) => {
       if (theme === null) {
         // Check if light or dark theme
         const themeType = document.body.getAttribute(`data-vscode-theme-kind`);
@@ -35,7 +35,7 @@ export const useTheme = () => {
           setVsCodeTheme("github-light-high-contrast");
         }
       } else {
-        setVsCodeTheme(theme);
+        setVsCodeTheme(theme as string);
       }
     });
   };

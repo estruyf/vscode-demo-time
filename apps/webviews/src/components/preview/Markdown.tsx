@@ -10,10 +10,10 @@ export interface IMarkdownProps {
   filePath?: string;
   content?: string;
   matter?: SlideMetadata;
-  vsCodeTheme: any;
+  vsCodeTheme: never;
   isDarkTheme: boolean;
   webviewUrl: string | null;
-  updateBgStyles: (styles: any) => void;
+  updateBgStyles: (styles: React.CSSProperties | undefined) => void;
 }
 
 export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
@@ -25,7 +25,6 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   webviewUrl,
   updateBgStyles
 }: React.PropsWithChildren<IMarkdownProps>) => {
-  const prevFilePath = usePrevious(filePath);
   const prevContent = usePrevious(content);
   const [isReady, setIsReady] = React.useState(false);
   const [customTheme, setCustomTheme] = React.useState<string | undefined>(undefined);
@@ -40,7 +39,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   } = useRemark({
     rehypeReactOptions: {
       components: {
-        img: ({ node, src, ...props }) => {
+        img: ({ src, ...props }) => {
           const fullSrc = transformImageUrl(webviewUrl || "", src);
           if (!fullSrc) {
             return null;

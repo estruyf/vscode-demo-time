@@ -85,7 +85,7 @@ abstract class BaseWebComponent extends HTMLElement {
     this.rootElm = createRoot(mountPoint);
     this.renderComponent(this.getAttribute('clicks'));
 
-    const mutationObserver: MutationCallback = (mutationList: MutationRecord[], observer: MutationObserver) => {
+    const mutationObserver: MutationCallback = (mutationList: MutationRecord[]) => {
       for (const m of mutationList) {
         if (m.target === this) {
           this.renderComponent(this.getAttribute('clicks'));

@@ -18,7 +18,8 @@ export const NextDemo: React.FunctionComponent<INextDemoProps> = ({
   iconClass,
   secondary
 }: React.PropsWithChildren<INextDemoProps>) => {
-  const [nextDemo, setNextDemo] = React.useState<Demo | undefined>(undefined);
+  const [nextDemo, setNextDemo] = React.useState<string | undefined>(undefined);
+  const [nextCommand, setNextCommand] = React.useState<string>(COMMAND.start);
 
   const messageListener = (message: MessageEvent<EventData<unknown>>) => {
     const { command, payload } = message.data;
@@ -27,19 +28,29 @@ export const NextDemo: React.FunctionComponent<INextDemoProps> = ({
     }
 
     if (command === WebViewMessages.toWebview.updateNextDemo) {
-      setNextDemo(payload as Demo);
+      setNextDemo((payload as Demo).title);
+      setNextCommand(COMMAND.start);
+    } else if (command === WebViewMessages.toWebview.preview.updateNextStep) {
+      const payloadObj = payload as { title: string; command: string };
+      if (!payloadObj.title || !payloadObj.command) {
+        return;
+      }
+
+      setNextDemo(payloadObj.title);
+      setNextCommand(payloadObj.command);
     }
   };
 
-  const runNextDemo = () => {
-    messageHandler.send(WebViewMessages.toVscode.runCommand, { command: COMMAND.start });
-  };
+  const runNextDemo = React.useCallback(() => {
+    messageHandler.send(WebViewMessages.toVscode.runCommand, { command: nextCommand });
+  }, [nextCommand]);
 
   React.useEffect(() => {
     Messenger.listen(messageListener);
 
     messageHandler.request<Demo | undefined>(WebViewMessages.toVscode.getNextDemo).then((demo) => {
-      setNextDemo(demo);
+      setNextDemo(demo?.title);
+      setNextCommand(COMMAND.start);
     });
 
     return () => {
@@ -52,7 +63,7 @@ export const NextDemo: React.FunctionComponent<INextDemoProps> = ({
       className={className || ""}
       onClick={runNextDemo}
       appearance={secondary ? "secondary" : "primary"}>
-      <span className={titleClass}>{nextDemo?.title || "Start"}</span>
+      <span className={titleClass}>{nextDemo || "Start"}</span>
 
       <Icon name="arrow-right" className={`text-inherit! ${iconClass}`} />
     </Button>

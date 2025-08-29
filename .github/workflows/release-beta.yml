@@ -55,10 +55,10 @@ jobs:
         run: npm run vscode:build
 
       - name: Linting
-        run: npx nx lint vscode-demo-time
+        run: npm run lint
 
       - name: Testing
-        run: npx nx run-many --target=test --projects=vscode-demo-time,common
+        run: npm run test
 
       - name: Prepare BETA
         if: github.ref != 'refs/heads/alpha'

@@ -2,12 +2,12 @@ import { commands, StatusBarAlignment, StatusBarItem, ThemeColor, Uri, window } 
 import { DemoRunner } from './DemoRunner';
 import { DemoFileProvider } from './DemoFileProvider';
 import { ContextKeys } from '../constants';
-import { Demo, Subscription } from '../models';
+import { Subscription } from '../models';
 import { Extension } from './Extension';
 import { getNextDemoFile, setContext } from '../utils';
 import { PresenterView } from '../presenterView/PresenterView';
 import { Logger } from './Logger';
-import { WebViewMessages, COMMAND, Config } from '@demotime/common';
+import { WebViewMessages, COMMAND, Config, Demo } from '@demotime/common';
 
 export class DemoStatusBar {
   private static statusPresenting: StatusBarItem;
@@ -89,6 +89,14 @@ export class DemoStatusBar {
       DemoStatusBar.statusBarPause.command = COMMAND.pauseCountdown;
       DemoStatusBar.statusBarPause.text = `$(debug-pause) Pause`;
       DemoStatusBar.statusBarPause.tooltip = 'Pause the countdown timer';
+    }
+  }
+
+  public static async updateNextDemoItem(title: string, command: string, show: boolean = true) {
+    DemoStatusBar.statusBarItem.text = `$(dt-logo) ${title}`;
+    DemoStatusBar.statusBarItem.command = command;
+    if (show) {
+      DemoStatusBar.statusBarItem.show();
     }
   }
 

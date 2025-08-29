@@ -24,6 +24,7 @@ export const useFileContents = () => {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const messageListener = (message: MessageEvent<EventData<any>>) => {
       const { command, payload } = message.data;
       if (!command) {

@@ -44,6 +44,8 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   const [isPresentationMode, setIsPresentationMode] = React.useState(false);
   const [showPosition, setShowPosition] = React.useState(false);
 
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const messageListener = (message: MessageEvent<EventData<any>>) => {
     const { command, payload } = message.data;
     if (!command) {

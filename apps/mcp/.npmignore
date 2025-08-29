@@ -9,6 +9,7 @@ src/
 .env
 .vscode/
 scripts/
+eslint.config.mjs
 
 # Package lock files
 package-lock.json
