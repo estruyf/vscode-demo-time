@@ -127,47 +127,77 @@ export const DemoListItem: React.FC<DemoListItemProps> = ({
           </div>
 
           <div className="flex items-center space-x-3 cursor-pointer flex-1 min-w-0" onClick={onSelect}>
-            <Play className={cn("h-5 w-5 shrink-0", demo.disabled ? 'text-gray-400' : 'text-blue-600')} />
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <div className="flex items-center">
-                <h4 className="font-medium text-gray-900 truncate">{demo.title}</h4>
+                <h4
+                  className="font-medium text-gray-900 cursor-pointer"
+                  title={demo.title}
+                  style={{
+                    overflow: 'hidden',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: 'vertical',
+                    lineHeight: '1.3em',
+                    maxHeight: '3.9em',
+                    wordBreak: 'break-word'
+                  }}
+                >
+                  {demo.title}
+                </h4>
                 {demo.disabled && (
                   <span className="ml-2 px-2 py-0.5 rounded-sm bg-gray-200 text-xs text-gray-600 font-semibold border border-gray-300">Disabled</span>
                 )}
               </div>
+
               {demo.description && (
-                <p className="text-sm text-gray-600 mt-1 truncate">{demo.description}</p>
+                <p
+                  className="text-sm text-gray-600 mt-1 cursor-pointer"
+                  title={demo.description}
+                  style={{
+                    overflow: 'hidden',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    lineHeight: '1.3em',
+                    maxHeight: '2.6em',
+                    wordBreak: 'break-word'
+                  }}
+                >
+                  {demo.description}
+                </p>
               )}
-              <p className="text-xs text-gray-500 mt-1">
-                {demo.steps.length} step{demo.steps.length !== 1 ? 's' : ''}
-              </p>
+
+              <div className="flex items-center justify-between mt-1">
+                <p className="text-xs text-gray-500 cursor-pointer">
+                  {demo.steps.length} step{demo.steps.length !== 1 ? 's' : ''}
+                </p>
+                <div className="flex items-center space-x-2 ml-4">
+                  <button
+                    onClick={handleDuplicateClick}
+                    className="p-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-sm transition-colors"
+                    title="Duplicate demo"
+                  >
+                    <Copy className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={handlePlayClick}
+                    className="p-1 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-sm transition-colors"
+                    title="Test demo"
+                    disabled={demo.disabled}
+                  >
+                    <Play className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={handleRemoveClick}
+                    className="p-1 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-sm transition-colors"
+                    title="Remove demo"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-
-        <div className="flex items-center space-x-2 ml-4">
-          <button
-            onClick={handleDuplicateClick}
-            className="p-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-sm transition-colors"
-            title="Duplicate demo"
-          >
-            <Copy className="h-4 w-4" />
-          </button>
-          <button
-            onClick={handlePlayClick}
-            className="p-1 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-sm transition-colors"
-            title="Test demo"
-            disabled={demo.disabled}
-          >
-            <Play className="h-4 w-4" />
-          </button>
-          <button
-            onClick={handleRemoveClick}
-            className="p-1 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-sm transition-colors"
-            title="Remove demo"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
         </div>
       </div>
     </div>

@@ -19,6 +19,7 @@ export const DemoBuilder: React.FC<{ initialConfig: DemoConfig }> = ({ initialCo
   const [isTestingDemo, setIsTestingDemo] = useState<boolean>(false);
   const [showValidation, setShowValidation] = useState<boolean>(false);
   const [collapsed, setCollapsed] = useState<boolean>(false);
+  const mainContentRef = React.useRef<HTMLDivElement>(null);
 
   // Check if we're on the settings page
   const isSettingsPage = window.location.pathname === '/settings';
@@ -223,6 +224,16 @@ export const DemoBuilder: React.FC<{ initialConfig: DemoConfig }> = ({ initialCo
     setSelectedDemo(demoIndex);
     setEditingStep(null);
     setIsTestingDemo(false);
+
+    // Scroll main content into view after demo selection
+    setTimeout(() => {
+      if (mainContentRef.current) {
+        mainContentRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }, 100);
   };
 
 
@@ -230,6 +241,16 @@ export const DemoBuilder: React.FC<{ initialConfig: DemoConfig }> = ({ initialCo
     setSelectedDemo(demoIndex);
     setEditingStep({ demoIndex, stepIndex });
     setIsTestingDemo(false);
+
+    // Scroll main content into view after navigation
+    setTimeout(() => {
+      if (mainContentRef.current) {
+        mainContentRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }, 100);
   };
 
   const handleDemoStepNavigation = (payload: { stepIndex?: number }) => {
@@ -330,7 +351,7 @@ export const DemoBuilder: React.FC<{ initialConfig: DemoConfig }> = ({ initialCo
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <Sidebar>
+          <Sidebar className="lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-205px)] lg:overflow-y-auto">
             <Card className='space-y-6'>
               <div className="flex items-center">
                 <button
@@ -366,7 +387,7 @@ export const DemoBuilder: React.FC<{ initialConfig: DemoConfig }> = ({ initialCo
             />
           </Sidebar>
 
-          <MainContent>
+          <MainContent ref={mainContentRef}>
             {selectedDemo !== null && (
               <>
                 <DemoEditor

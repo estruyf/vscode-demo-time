@@ -12,6 +12,8 @@
   insert typing speed and improved the labels
 - [#235](https://github.com/estruyf/vscode-demo-time/issues/235): Added the `pause` action to pause
   the demo and wait until the `Demo Time: Continue Demo` command is triggered
+- [#236](https://github.com/estruyf/vscode-demo-time/issues/236): Visual improvements for the Config
+  Editor
 
 ## [1.9.0] - 2025-08-25
 
