@@ -134,7 +134,7 @@ export class PdfExportService {
           });
 
           if (!pdfPath) {
-            Notifications.info('Export cancelled.');
+            Notifications.infoWithProgress('Export cancelled.');
             return;
           }
 
@@ -168,7 +168,7 @@ export class PdfExportService {
 
           // Open the generated PDF
           await env.openExternal(pdfPath);
-          Notifications.info('Slides exported to PDF successfully.');
+          Notifications.infoWithProgress('Slides exported to PDF successfully.');
         },
       );
     } catch (error) {

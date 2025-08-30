@@ -131,7 +131,7 @@ export class EngageTimeService {
         return;
       }
 
-      Notifications.info(
+      Notifications.infoWithProgress(
         `Engage Time session ${state === 'active' ? 'started' : 'stopped'} successfully.`,
       );
     } catch (error: any) {
@@ -178,7 +178,9 @@ export class EngageTimeService {
         return;
       }
 
-      Notifications.info(`Engage Time poll ${isActive ? 'started' : 'stopped'} successfully.`);
+      Notifications.infoWithProgress(
+        `Engage Time poll ${isActive ? 'started' : 'stopped'} successfully.`,
+      );
     } catch (error: any) {
       Notifications.error(
         `Error ${isActive ? 'starting' : 'stopping'} Engage Time poll: ${error.message}`,
