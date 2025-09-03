@@ -1,4 +1,4 @@
-import { Action, InsertTypingMode } from '@demotime/common';
+import { Action, Demo, InsertTypingMode } from '@demotime/common';
 
 export interface DemoConfig {
   title: string;
@@ -6,22 +6,6 @@ export interface DemoConfig {
   version: 1 | 2;
   timer?: number;
   demos: Demo[];
-}
-
-export interface Demo {
-  id?: string;
-  title: string;
-  description?: string;
-  icons?: {
-    start: string;
-    end: string;
-  };
-  steps: Step[];
-  disabled?: boolean;
-  notes?: {
-    path: string;
-    showOnTrigger?: boolean;
-  };
 }
 
 export const THEMES = [

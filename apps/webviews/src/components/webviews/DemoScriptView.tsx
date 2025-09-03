@@ -8,23 +8,26 @@ import { WebViewMessages } from '@demotime/common';
 import '../../styles/config.css';
 
 const DemoScriptView = () => {
-  const [config, setConfig] = useState<DemoConfig | undefined>(undefined);
+  const [demoConfigs, setDemoConfigs] = useState<DemoConfig[] | undefined>(undefined);
+  const [files, setFiles] = useState<string[] | undefined>(undefined);
 
   useEffect(() => {
-    messageHandler.request<DemoConfig>(WebViewMessages.toVscode.configEditor.getContents)
-      .then((response: DemoConfig) => {
-        setConfig(response);
+    messageHandler.request<{
+      demos: DemoConfig[],
+      fileNames: string[]
+    }>(WebViewMessages.toVscode.configEditor.getContents)
+      .then((response) => {
+        setDemoConfigs(response.demos);
+        setFiles(response.fileNames);
       })
       .catch((error: Error) => {
         console.error('Error loading demo config:', error.message);
-        setConfig(undefined);
+        setDemoConfigs(undefined);
+        setFiles(undefined);
       });
 
     function messageListener(message: MessageEvent<EventData<unknown>>) {
       const { command, payload } = message.data;
-      if (command === WebViewMessages.toWebview.configEditor.updateConfigContents) {
-        setConfig(payload as DemoConfig);
-      }
     }
 
     Messenger.listen(messageListener);
@@ -34,11 +37,22 @@ const DemoScriptView = () => {
     };
   }, []);
 
-  if (!config) {
+  if (!demoConfigs || !files) {
     return <Loader />;
   }
 
-  return <DemoScriptOverview config={config} />;
+  return (
+    <div>
+      {files.map((file, idx) => (
+        <details key={file} style={{ marginBottom: '1rem' }}>
+          <summary style={{ cursor: 'pointer', fontWeight: 'bold' }}>
+            {file}
+          </summary>
+          <DemoScriptOverview config={demoConfigs[idx]} />
+        </details>
+      ))}
+    </div>
+  );
 };
 
 export default DemoScriptView;

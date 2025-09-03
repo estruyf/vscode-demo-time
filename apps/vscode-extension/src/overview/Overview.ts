@@ -63,12 +63,14 @@ export class Overview extends BaseWebview {
       }
 
       const files = sortFiles(demoFiles);
-      const first = (demoFiles as any)[files[files.length - 2]];
 
       Overview.webview?.webview.postMessage({
         command: WebViewMessages.toVscode.configEditor.getContents,
         requestId: requestId,
-        payload: first,
+        payload: {
+          demos: files,
+          fileNames: sortFiles(demoFiles),
+        },
       });
     }
   }

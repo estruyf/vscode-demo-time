@@ -1,8 +1,8 @@
 import React from 'react';
 import { Play, Edit3, ChevronRight, ChevronDown } from 'lucide-react';
-import { Demo } from '../../types/demo';
 import { getActionIcon } from '../../utils/actionHelpers';
 import { cn } from '../../utils/cn';
+import { Demo } from '@demotime/common';
 
 interface DemoFlowNodeProps {
   demo: Demo;
