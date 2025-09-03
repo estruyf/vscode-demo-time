@@ -14,6 +14,8 @@
   the demo and wait until the `Demo Time: Continue Demo` command is triggered
 - [#236](https://github.com/estruyf/vscode-demo-time/issues/236): Visual improvements for the Config
   Editor
+- [#240](https://github.com/estruyf/vscode-demo-time/issues/240): Every GitHub Copilot chat action
+  now opens the chat view by default
 
 ## [1.9.0] - 2025-08-25
 

@@ -9,11 +9,13 @@ export class ChatActionsService {
 
   static async newChat() {
     // Open a new chat session using the correct command
+    await commands.executeCommand('workbench.action.chat.open');
     await commands.executeCommand('workbench.action.chat.newChat');
   }
 
   static async askChat(step: any) {
     // Open a new chat in ask mode with a prompt
+    await commands.executeCommand('workbench.action.chat.open');
     await commands.executeCommand('workbench.action.chat.newChat', {
       mode: 'ask',
       query: step.message || '',
@@ -22,6 +24,7 @@ export class ChatActionsService {
 
   static async editChat(step: any) {
     // Open a new chat in edit mode with a prompt
+    await commands.executeCommand('workbench.action.chat.open');
     await commands.executeCommand('workbench.action.chat.newChat', {
       mode: 'edit',
       query: step.message || '',
@@ -30,6 +33,7 @@ export class ChatActionsService {
 
   static async agentChat(step: any) {
     // Open a new chat in agent mode with a prompt
+    await commands.executeCommand('workbench.action.chat.open');
     await commands.executeCommand('workbench.action.chat.newChat', {
       mode: 'agent',
       query: step.message || '',
