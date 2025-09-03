@@ -11,6 +11,7 @@ const WEBVIEW_MAP: Record<string, React.LazyExoticComponent<React.FC<object>>> =
   'config-editor': lazy(() => import('./components/webviews/ConfigEditorView')),
   'preview': lazy(() => import('./components/webviews/PreviewView')),
   'presenter': lazy(() => import('./components/webviews/PresenterView')),
+  'overview': lazy(() => import('./components/webviews/DemoScriptView')),
 };
 
 const root = document.getElementById('root');

@@ -54,4 +54,6 @@ export const COMMAND = {
   hackerTyperNextChunk: `${EXTENSION_NAME}.hackerTyperNextChunk`,
   // Settings
   showSettings: `${EXTENSION_NAME}.showSettings`,
+  // Overview
+  showOverview: `${EXTENSION_NAME}.showOverview`,
 };

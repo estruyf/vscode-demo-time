@@ -482,6 +482,11 @@
         "category": "Demo Time"
       },
       {
+        "command": "demo-time.showOverview",
+        "title": "Overview",
+        "category": "Demo Time"
+      },
+      {
         "command": "demo-time.continueDemo",
         "title": "Continue Demo",
         "category": "Demo Time"

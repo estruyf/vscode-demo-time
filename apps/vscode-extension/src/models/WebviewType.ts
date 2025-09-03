@@ -1,1 +1,1 @@
-export type WebviewType = 'presenter' | 'preview' | 'settings' | 'config-editor';
+export type WebviewType = 'presenter' | 'preview' | 'settings' | 'config-editor' | 'overview';
