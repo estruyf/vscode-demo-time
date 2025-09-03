@@ -202,7 +202,7 @@ export const DemoScriptOverview: React.FC<DemoScriptOverviewProps> = ({ config }
             </div>
 
             {/* Summary Stats across all configs */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-12">
               <Card className="p-6 text-center">
                 <Clapperboard className="h-8 w-8 mx-auto mb-3 text-demo-time-accent" />
                 <div className="text-2xl font-bold text-demo-time-white">{(config.demos || []).length}</div>
@@ -213,12 +213,6 @@ export const DemoScriptOverview: React.FC<DemoScriptOverviewProps> = ({ config }
                 <Presentation className="h-8 w-8 mx-auto mb-3 text-demo-time-accent" />
                 <div className="text-2xl font-bold text-demo-time-white">{gridItems.filter(item => item.type === 'slide').length}</div>
                 <div className="text-sm text-demo-time-gray-4">Slide{gridItems.filter(item => item.type === 'slide').length !== 1 ? 's' : ''}</div>
-              </Card>
-
-              <Card className="p-6 text-center">
-                <Clock className="h-8 w-8 mx-auto mb-3 text-demo-time-accent" />
-                <div className="text-2xl font-bold text-demo-time-white">~{getEstimatedDuration()}min</div>
-                <div className="text-sm text-demo-time-gray-4">Estimated Duration</div>
               </Card>
             </div>
           </div>

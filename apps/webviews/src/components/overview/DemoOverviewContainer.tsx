@@ -47,11 +47,11 @@ export const DemoOverviewContainer: React.FC<DemoOverviewContainerProps> = ({
   // Calculate total stats across all demo files
   const getTotalStats = () => {
     const totalDemos = demoFiles.reduce((sum, file) => sum + (file.config.demos || []).length, 0);
-    const totalSteps = demoFiles.reduce((sum, file) => 
+    const totalSteps = demoFiles.reduce((sum, file) =>
       sum + (file.config.demos || []).reduce((demoSum, demo) => demoSum + demo.steps.length, 0), 0
     );
     const totalSlides = allGridItems.filter(item => item.type === 'slide').length;
-    
+
     // Rough estimate: 3 seconds per step
     const estimatedMinutes = Math.ceil((totalSteps * 3) / 60);
 
@@ -78,10 +78,10 @@ export const DemoOverviewContainer: React.FC<DemoOverviewContainerProps> = ({
 
         for (let demoIndex = 0; demoIndex < (config.demos || []).length; demoIndex++) {
           const demo = config.demos[demoIndex];
-          
+
           // Check if this demo contains slides (openSlide action)
           const openSlideStep = demo.steps.find(step => step.action === 'openSlide');
-          
+
           if (openSlideStep && openSlideStep.path) {
             try {
               // For now, we'll just add the demo itself since slide parsing would require VS Code API
@@ -157,7 +157,7 @@ export const DemoOverviewContainer: React.FC<DemoOverviewContainerProps> = ({
             <div>
               <h1 className="text-2xl font-bold text-demo-time-white">Demo Script Overview</h1>
               <p className="text-demo-time-gray-4 text-sm mt-1">
-                {stats.totalFiles} demo file{stats.totalFiles !== 1 ? 's' : ''} • 
+                {stats.totalFiles} demo file{stats.totalFiles !== 1 ? 's' : ''} •
                 {stats.totalItems} total items
               </p>
             </div>
@@ -165,8 +165,7 @@ export const DemoOverviewContainer: React.FC<DemoOverviewContainerProps> = ({
               <div className="text-sm text-demo-time-gray-4">
                 <span className="font-medium">{stats.totalDemos}</span> demos •
                 <span className="font-medium ml-1">{stats.totalSlides}</span> slides •
-                <span className="font-medium ml-1">{stats.totalSteps}</span> steps •
-                <span className="font-medium ml-1">~{stats.estimatedDuration}min</span>
+                <span className="font-medium ml-1">{stats.totalSteps}</span> steps
               </div>
               <div className="flex space-x-2">
                 <Button variant="secondary" onClick={expandAllSections} size="sm">
@@ -205,7 +204,7 @@ export const DemoOverviewContainer: React.FC<DemoOverviewContainerProps> = ({
             ))}
 
             {/* Summary Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-12">
               <Card className="p-6 text-center">
                 <FileText className="h-8 w-8 mx-auto mb-3 text-demo-time-accent" />
                 <div className="text-2xl font-bold text-demo-time-white">{stats.totalFiles}</div>
@@ -222,12 +221,6 @@ export const DemoOverviewContainer: React.FC<DemoOverviewContainerProps> = ({
                 <Presentation className="h-8 w-8 mx-auto mb-3 text-demo-time-accent" />
                 <div className="text-2xl font-bold text-demo-time-white">{stats.totalSlides}</div>
                 <div className="text-sm text-demo-time-gray-4">Slide{stats.totalSlides !== 1 ? 's' : ''}</div>
-              </Card>
-
-              <Card className="p-6 text-center">
-                <Clock className="h-8 w-8 mx-auto mb-3 text-demo-time-accent" />
-                <div className="text-2xl font-bold text-demo-time-white">~{stats.estimatedDuration}min</div>
-                <div className="text-sm text-demo-time-gray-4">Estimated Duration</div>
               </Card>
             </div>
           </div>

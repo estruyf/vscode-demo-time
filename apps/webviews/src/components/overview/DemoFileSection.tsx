@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronDown, ChevronRight, FileText, Play, Settings, BarChart3 } from 'lucide-react';
+import { ChevronDown, ChevronRight, FileText, Play, Settings, BarChart3, Clapperboard, Presentation, Clock } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { DemoFileGrid } from './DemoFileGrid';
@@ -32,12 +32,9 @@ export const DemoFileSection: React.FC<DemoFileSectionProps> = ({
 
   // Get range of global indices for this file
   const indices = allGridItems.map(item => item.globalIndex).sort((a, b) => a - b);
-  const indexRange = indices.length > 0 ? 
-    indices.length === 1 ? `#${indices[0]}` : `#${indices[0]}-${indices[indices.length - 1]}` : 
+  const indexRange = indices.length > 0 ?
+    indices.length === 1 ? `#${indices[0]}` : `#${indices[0]}-${indices[indices.length - 1]}` :
     'No items';
-
-  // Estimated duration for this file (3 seconds per step)
-  const estimatedMinutes = Math.ceil((stepCount * 3) / 60);
 
   const handleEditConfig = () => {
     // In a real implementation, you'd send a message to VS Code to open this file
@@ -54,7 +51,7 @@ export const DemoFileSection: React.FC<DemoFileSectionProps> = ({
   return (
     <Card className="overflow-hidden">
       {/* Section Header */}
-      <div className="p-6 border-b border-demo-time-gray-6">
+      <div className={`${isExpanded ? 'border-b border-demo-time-gray-6' : ''}`}>
         <div className="flex items-center justify-between">
           <button
             onClick={onToggle}
@@ -65,7 +62,7 @@ export const DemoFileSection: React.FC<DemoFileSectionProps> = ({
             ) : (
               <ChevronRight className="h-5 w-5 text-demo-time-gray-4 shrink-0" />
             )}
-            
+
             <div className="flex items-center space-x-3 min-w-0">
               <FileText className="h-6 w-6 text-demo-time-accent shrink-0" />
               <div className="min-w-0">
@@ -104,7 +101,7 @@ export const DemoFileSection: React.FC<DemoFileSectionProps> = ({
         </div>
 
         {/* File Stats */}
-        <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4">
           <div className="flex items-center space-x-2 text-sm">
             <Clapperboard className="h-4 w-4 text-demo-time-accent" />
             <span className="text-demo-time-gray-4">
@@ -123,13 +120,6 @@ export const DemoFileSection: React.FC<DemoFileSectionProps> = ({
             <BarChart3 className="h-4 w-4 text-demo-time-accent" />
             <span className="text-demo-time-gray-4">
               <span className="font-medium text-demo-time-white">{stepCount}</span> step{stepCount !== 1 ? 's' : ''}
-            </span>
-          </div>
-
-          <div className="flex items-center space-x-2 text-sm">
-            <Clock className="h-4 w-4 text-demo-time-accent" />
-            <span className="text-demo-time-gray-4">
-              <span className="font-medium text-demo-time-white">~{estimatedMinutes}min</span> estimated
             </span>
           </div>
         </div>

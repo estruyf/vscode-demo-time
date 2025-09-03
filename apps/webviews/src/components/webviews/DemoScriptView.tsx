@@ -15,15 +15,15 @@ const DemoScriptView = () => {
   // Transform the data into the format needed by DemoOverviewContainer
   const transformToDemoFileData = (configs: DemoConfig[], fileNames: string[]): DemoFileData[] => {
     let globalIndex = 1;
-    
+
     return fileNames.map((fileName, index) => {
       const config = configs[index];
       const startingIndex = globalIndex;
-      
+
       // Calculate how many items this file will contribute to increment globalIndex
       const demoCount = (config.demos || []).length;
       globalIndex += demoCount;
-      
+
       return {
         fileName: fileName.split('/').pop() || fileName, // Show just the filename, not full path
         filePath: fileName,
