@@ -8,9 +8,9 @@ import { WebviewHtml } from '../webview';
 export const getWebviewHtml = async (
   type: WebviewType,
   webview: Webview,
-  jsFiles: (Uri | string)[],
-  moduleFiles: (Uri | string)[],
-  cssFiles: (Uri | string)[],
+  jsFiles?: (Uri | string)[],
+  moduleFiles?: (Uri | string)[],
+  cssFiles?: (Uri | string)[],
 ) => {
   Logger.info(`Loading webview HTML for type: ${type}`);
 
@@ -18,17 +18,17 @@ export const getWebviewHtml = async (
   const webviewWsUrl = getWebviewWorkspaceUrl(webview, '');
   const webviewExtUrl = getWebviewExtensionUrl(webview);
 
-  const scriptUrls = jsFiles.map((file) =>
+  const scriptUrls = (jsFiles || []).map((file) =>
     typeof file === 'string' && file.startsWith(`http`)
       ? file
       : webview.asWebviewUri(file as Uri).toString(),
   );
-  const moduleUrls = moduleFiles.map((file) =>
+  const moduleUrls = (moduleFiles || []).map((file) =>
     typeof file === 'string' && file.startsWith(`http`)
       ? file
       : webview.asWebviewUri(file as Uri).toString(),
   );
-  const styleUrls = cssFiles.map((file) =>
+  const styleUrls = (cssFiles || []).map((file) =>
     typeof file === 'string' && file.startsWith(`http`)
       ? file
       : webview.asWebviewUri(file as Uri).toString(),
