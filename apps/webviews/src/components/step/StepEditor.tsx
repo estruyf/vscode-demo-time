@@ -381,7 +381,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
             </label>
             <input
               type="number"
-              value={step[field] || ''}
+              value={typeof step[field] !== 'undefined' ? step[field] : ''}
               onChange={(e) => handleChange(field, e.target.value ? parseInt(e.target.value) : undefined)}
               className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${hasError ? 'border-red-300 bg-red-50' : 'border-gray-300'
                 }`}

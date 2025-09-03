@@ -5,12 +5,41 @@ import { fileExists } from './fileExists';
 import { getWebviewExtensionUrl, getWebviewWorkspaceUrl, readFile } from '.';
 import { WebviewHtml } from '../webview';
 
-export const getWebviewHtml = async (type: WebviewType, webview: Webview) => {
+export const getWebviewHtml = async (
+  type: WebviewType,
+  webview: Webview,
+  jsFiles?: (Uri | string)[],
+  moduleFiles?: (Uri | string)[],
+  cssFiles?: (Uri | string)[],
+) => {
   Logger.info(`Loading webview HTML for type: ${type}`);
 
   const extension = Extension.getInstance();
   const webviewWsUrl = getWebviewWorkspaceUrl(webview, '');
   const webviewExtUrl = getWebviewExtensionUrl(webview);
+
+  const scriptUrls = (jsFiles || []).map((file) =>
+    typeof file === 'string' && file.startsWith(`http`)
+      ? file
+      : webview.asWebviewUri(file as Uri).toString(),
+  );
+  const moduleUrls = (moduleFiles || []).map((file) =>
+    typeof file === 'string' && file.startsWith(`http`)
+      ? file
+      : webview.asWebviewUri(file as Uri).toString(),
+  );
+  const styleUrls = (cssFiles || []).map((file) =>
+    typeof file === 'string' && file.startsWith(`http`)
+      ? file
+      : webview.asWebviewUri(file as Uri).toString(),
+  );
+
+  const htmlToInclude = [
+    ...styleUrls.map((href) => `<link rel="stylesheet" href="${href}" />`),
+    ...moduleUrls.map((src) => `<script type="module" src="${src}"></script>`),
+    ...scriptUrls.map((src) => `<script src="${src}"></script>`),
+    '</head>',
+  ].join('\n');
 
   if (extension.isProductionMode) {
     const extensionUri = extension.extensionUri;
@@ -56,6 +85,8 @@ export const getWebviewHtml = async (type: WebviewType, webview: Webview) => {
         `id="root" data-view-type="${type}" data-webview-url="${webviewWsUrl}" data-extension-url="${webviewExtUrl}"`,
       );
 
+      patchedHtml = patchedHtml.replace('</head>', htmlToInclude);
+
       return patchedHtml;
     } catch (error) {
       Notifications.error('Error loading webview HTML file.');
@@ -83,6 +114,8 @@ export const getWebviewHtml = async (type: WebviewType, webview: Webview) => {
           </head>
           <body>
             <div id="root" data-view-type="${type}" data-webview-url="${webviewWsUrl}" data-extension-url="${webviewExtUrl}"></div>
+
+            ${htmlToInclude}
             <script type="module" src="http://localhost:5173/src/main.tsx"></script>
           </body>
         </html>`;

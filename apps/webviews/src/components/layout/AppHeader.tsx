@@ -26,7 +26,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   autoSaveStatus,
 }) => {
   return (
-    <div className="bg-demo-time-black shadow-xs border-b border-demo-time-gray-6 sticky top-0 z-10">
+    <div className="bg-demo-time-black shadow-xs border-b border-demo-time-gray-6 sticky top-0 z-20">
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex flex-col space-y-3">
           {/* Title and Controls Row */}

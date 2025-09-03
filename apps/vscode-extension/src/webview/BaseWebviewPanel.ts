@@ -33,6 +33,18 @@ export class BaseWebview {
     this.isDisposed = true;
   }
 
+  protected static getJsFiles(): (Uri | string)[] {
+    return [];
+  }
+
+  protected static getModuleFiles(): (Uri | string)[] {
+    return [];
+  }
+
+  protected static getCssFiles(): (Uri | string)[] {
+    return [];
+  }
+
   protected static async create() {
     if (!this.id) {
       Notifications.error('Webview ID is not set. Cannot create webview panel.');
@@ -60,7 +72,12 @@ export class BaseWebview {
       light: Uri.joinPath(Uri.file(extensionUri), 'assets', 'logo', 'demotime-bg.svg'),
     };
 
-    this.webview.webview.html = (await getWebviewHtml(this.id, this.webview.webview)) || '';
+    const jsFiles = this.getJsFiles();
+    const moduleFiles = this.getModuleFiles();
+    const cssFiles = this.getCssFiles();
+
+    this.webview.webview.html =
+      (await getWebviewHtml(this.id, this.webview.webview, jsFiles, moduleFiles, cssFiles)) || '';
 
     this.webview.onDidDispose(this.onDispose);
 

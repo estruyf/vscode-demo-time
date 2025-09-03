@@ -194,4 +194,44 @@ export class Preview extends BaseWebview {
       Preview.reveal();
     }
   }
+
+  protected static getJsFiles(): (Uri | string)[] {
+    const extension = Extension.getInstance();
+    const extPath = Uri.file(extension.extensionPath);
+    return [Uri.joinPath(extPath, 'assets', 'slides', 'tailwind.js')];
+  }
+
+  protected static getModuleFiles(): (Uri | string)[] {
+    const extension = Extension.getInstance();
+    const workspaceFolder = extension.workspaceFolder;
+
+    let moduleUrl = [];
+    const webComponents = extension.getSetting<string[]>(Config.webcomponents.scripts);
+    if (webComponents) {
+      for (const webComponent of webComponents) {
+        if (webComponent.startsWith('http')) {
+          moduleUrl.push(webComponent);
+        } else if (workspaceFolder) {
+          moduleUrl.push(Uri.joinPath(workspaceFolder.uri, webComponent));
+        }
+      }
+    }
+    return moduleUrl;
+  }
+
+  protected static getCssFiles(): (Uri | string)[] {
+    const extension = Extension.getInstance();
+    const workspaceFolder = extension.workspaceFolder;
+
+    let styleUrl = [];
+    const customTheme = extension.getSetting<string>(Config.slides.customTheme);
+    if (customTheme) {
+      if (customTheme.startsWith('http')) {
+        styleUrl.push(customTheme);
+      } else if (workspaceFolder) {
+        styleUrl.push(Uri.joinPath(workspaceFolder.uri, customTheme));
+      }
+    }
+    return styleUrl;
+  }
 }

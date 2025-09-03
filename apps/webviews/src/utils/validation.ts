@@ -232,7 +232,7 @@ export const validateStep = (
       break;
 
     case Action.OpenSlide:
-      if (typeof step.slide !== 'number' || step.slide <= 0) {
+      if (typeof step.slide === 'number' && step.slide <= 0) {
         errors.push({
           field: 'slide',
           message: 'Slide must be a positive number',
