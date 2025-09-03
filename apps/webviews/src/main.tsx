@@ -23,8 +23,6 @@ const viewType = root.getAttribute('data-view-type') || 'config-editor';
 const webviewUrl = root.getAttribute('data-webview-url') || '';
 const WebviewComponent = WEBVIEW_MAP[viewType] || WEBVIEW_MAP['config-editor'];
 
-console.log(`Rendering view type: ${viewType} with URL: ${webviewUrl}`);
-
 createRoot(root).render(
   <StrictMode>
     <WebviewSettingsProvider webviewUrl={webviewUrl}>

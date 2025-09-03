@@ -70,6 +70,10 @@ export class Preview extends BaseWebview {
       Preview.currentSlideIndex = 0;
     }
 
+    if (slide) {
+      Preview.currentSlideIndex = slide;
+    }
+
     Preview.crntFile = fileUri ?? null;
     Preview.crntCss = css ?? null;
 
@@ -126,6 +130,8 @@ export class Preview extends BaseWebview {
   }
 
   protected static async messageListener(message: any) {
+    super.messageListener(message);
+
     const { command, requestId, payload } = message;
 
     if (!command || !Preview.webview?.webview) {
@@ -135,25 +141,28 @@ export class Preview extends BaseWebview {
     if (command === WebViewMessages.toVscode.getSetting && requestId) {
       const setting = Extension.getInstance().getSetting(payload);
       Preview.postRequestMessage(command, requestId, setting);
-    } else if (command === WebViewMessages.toVscode.getFileUri && requestId) {
+    } else if (command === WebViewMessages.toVscode.preview.getSlide && requestId) {
       const fileWebviewPath = getWebviewWorkspaceUrl(Preview.webview?.webview, Preview.crntFile);
-      Preview.postRequestMessage(WebViewMessages.toVscode.getFileUri, requestId, fileWebviewPath);
+      Preview.postRequestMessage(command, requestId, {
+        path: fileWebviewPath,
+        slideIndex: Preview.currentSlideIndex,
+      });
     } else if (command === WebViewMessages.toVscode.parseFileUri && requestId && payload) {
       const fileWebviewPath = getWebviewWorkspaceUrl(Preview.webview?.webview, payload);
-      Preview.postRequestMessage(WebViewMessages.toVscode.getFileUri, requestId, fileWebviewPath);
+      Preview.postRequestMessage(command, requestId, fileWebviewPath);
     } else if (command === WebViewMessages.toVscode.getStyles && requestId) {
       const cssWebviewPath = Preview.crntCss
         ? getWebviewWorkspaceUrl(Preview.webview?.webview, Preview.crntCss)
         : undefined;
-      Preview.postRequestMessage(WebViewMessages.toVscode.getStyles, requestId, cssWebviewPath);
+      Preview.postRequestMessage(command, requestId, cssWebviewPath);
     } else if (command === WebViewMessages.toVscode.getTheme && requestId) {
       try {
         const themeName = payload || '';
         const theme = await getTheme(themeName);
-        Preview.postRequestMessage(WebViewMessages.toVscode.getTheme, requestId, theme);
+        Preview.postRequestMessage(command, requestId, theme);
       } catch (e) {
         // This can happen in a Dev Container where the theme is not available
-        Preview.postRequestMessage(WebViewMessages.toVscode.getTheme, requestId, null);
+        Preview.postRequestMessage(command, requestId, null);
       }
     } else if (command === WebViewMessages.toVscode.updateTitle && payload) {
       Preview.webview.title = `${Config.title}: ${payload}`;
@@ -166,18 +175,9 @@ export class Preview extends BaseWebview {
         requestId,
         previousEnabled,
       );
-    } else if (command === WebViewMessages.toVscode.runCommand && payload) {
-      await commands.executeCommand(payload);
     } else if (command === WebViewMessages.toVscode.getPresentationStarted) {
       const isPresentationMode = DemoRunner.getIsPresentationMode();
       Preview.postRequestMessage(command, requestId, isPresentationMode);
-    } else if (command === WebViewMessages.toVscode.getFileContents && payload) {
-      try {
-        const fileContents = await readFile(getAbsolutePath(payload));
-        Preview.postRequestMessage(command, requestId, fileContents);
-      } catch (e) {
-        Preview.postRequestMessage(command, requestId, null);
-      }
     } else if (command === WebViewMessages.toVscode.setHasClickListener) {
       Preview.hasClickListener = payload.listening ?? false;
     } else if (command === WebViewMessages.toVscode.hasNextSlide) {

@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Clapperboard, Presentation, Clock } from 'lucide-react';
+import { FileText } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { DemoFileSection } from './DemoFileSection';
 import { DemoFileData, OverviewGridItem } from '../../types/demoOverview';
+import { messageHandler } from '@estruyf/vscode/dist/client';
+import { SlideParser, WebViewMessages } from '@demotime/common';
 
 interface DemoOverviewContainerProps {
   demoFiles: DemoFileData[];
-  onEditDemo: (fileName: string, demoIndex: number) => void;
-  onPlayDemo: (fileName: string, demo: any, demoIndex: number) => void;
 }
 
 export const DemoOverviewContainer: React.FC<DemoOverviewContainerProps> = ({
   demoFiles,
-  onEditDemo,
-  onPlayDemo,
 }) => {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   const [allGridItems, setAllGridItems] = useState<OverviewGridItem[]>([]);
@@ -81,21 +79,49 @@ export const DemoOverviewContainer: React.FC<DemoOverviewContainerProps> = ({
 
           // Check if this demo contains slides (openSlide action)
           const openSlideStep = demo.steps.find(step => step.action === 'openSlide');
-
           if (openSlideStep && openSlideStep.path) {
             try {
-              // For now, we'll just add the demo itself since slide parsing would require VS Code API
-              // In a real implementation, you'd use the messageHandler to get slide content
-              allItems.push({
-                type: 'demo',
-                globalIndex: globalIndex++,
-                fileIndex: fileItemIndex++,
-                fileName,
-                filePath,
-                demo,
-                demoIndex,
-              });
-            } catch (error) {
+              // Request file content from VS Code
+              const fileContent = await messageHandler.request<string>(
+                WebViewMessages.toVscode.getFileContents,
+                openSlideStep.path
+              );
+
+              if (fileContent) {
+                // Parse slides from markdown content
+                const parser = new SlideParser();
+                const slides = parser.parseSlides(fileContent);
+
+                // Add each slide as a grid item
+                slides.forEach((slide, slideIndex) => {
+                  allItems.push({
+                    type: 'slide',
+                    globalIndex: globalIndex++,
+                    fileIndex: fileItemIndex++,
+                    fileName,
+                    filePath,
+                    slide: {
+                      ...slide,
+                      filePath: openSlideStep.path!,
+                      demoTitle: demo.title,
+                      demoIndex
+                    },
+                    slideIndex
+                  });
+                });
+              } else {
+                // If file can't be read, add demo as fallback
+                allItems.push({
+                  type: 'demo',
+                  globalIndex: globalIndex++,
+                  fileIndex: fileItemIndex++,
+                  fileName,
+                  filePath,
+                  demo,
+                  demoIndex
+                });
+              }
+            } catch {
               // Fall back to demo display if slide parsing fails
               allItems.push({
                 type: 'demo',
@@ -128,10 +154,10 @@ export const DemoOverviewContainer: React.FC<DemoOverviewContainerProps> = ({
     generateGridItems();
   }, [demoFiles]);
 
-  // Initially expand first section if there are demo files
+
   useEffect(() => {
-    if (demoFiles.length > 0 && expandedSections.size === 0) {
-      setExpandedSections(new Set([demoFiles[0].fileName]));
+    if (demoFiles.length > 0) {
+      setExpandedSections(new Set(demoFiles.map(file => file.fileName)));
     }
   }, [demoFiles]);
 
@@ -155,15 +181,15 @@ export const DemoOverviewContainer: React.FC<DemoOverviewContainerProps> = ({
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-demo-time-white">Demo Script Overview</h1>
+              <h1 className="text-2xl font-bold text-demo-time-white">Overview</h1>
               <p className="text-demo-time-gray-4 text-sm mt-1">
-                {stats.totalFiles} demo file{stats.totalFiles !== 1 ? 's' : ''} •
-                {stats.totalItems} total items
+                <span>{stats.totalFiles} demo file{stats.totalFiles !== 1 ? 's' : ''} •</span>
+                <span className="ml-1">{stats.totalItems} total items</span>
               </p>
             </div>
             <div className="flex items-center space-x-3">
               <div className="text-sm text-demo-time-gray-4">
-                <span className="font-medium">{stats.totalDemos}</span> demos •
+                <span className="font-medium ml-1">{stats.totalDemos}</span> demos •
                 <span className="font-medium ml-1">{stats.totalSlides}</span> slides •
                 <span className="font-medium ml-1">{stats.totalSteps}</span> steps
               </div>
@@ -197,32 +223,9 @@ export const DemoOverviewContainer: React.FC<DemoOverviewContainerProps> = ({
                 fileData={fileData}
                 isExpanded={expandedSections.has(fileData.fileName)}
                 onToggle={() => toggleSection(fileData.fileName)}
-                onEditDemo={onEditDemo}
-                onPlayDemo={onPlayDemo}
                 allGridItems={allGridItems.filter(item => item.fileName === fileData.fileName)}
               />
             ))}
-
-            {/* Summary Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-12">
-              <Card className="p-6 text-center">
-                <FileText className="h-8 w-8 mx-auto mb-3 text-demo-time-accent" />
-                <div className="text-2xl font-bold text-demo-time-white">{stats.totalFiles}</div>
-                <div className="text-sm text-demo-time-gray-4">Demo File{stats.totalFiles !== 1 ? 's' : ''}</div>
-              </Card>
-
-              <Card className="p-6 text-center">
-                <Clapperboard className="h-8 w-8 mx-auto mb-3 text-demo-time-accent" />
-                <div className="text-2xl font-bold text-demo-time-white">{stats.totalDemos}</div>
-                <div className="text-sm text-demo-time-gray-4">Demo{stats.totalDemos !== 1 ? 's' : ''}</div>
-              </Card>
-
-              <Card className="p-6 text-center">
-                <Presentation className="h-8 w-8 mx-auto mb-3 text-demo-time-accent" />
-                <div className="text-2xl font-bold text-demo-time-white">{stats.totalSlides}</div>
-                <div className="text-sm text-demo-time-gray-4">Slide{stats.totalSlides !== 1 ? 's' : ''}</div>
-              </Card>
-            </div>
           </div>
         )}
       </div>

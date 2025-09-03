@@ -22,6 +22,5 @@ export const checkSnippetArgs = async (filePath: string): Promise<string[]> => {
   while ((match = regex.exec(content)) !== null) {
     names.add(match[1]);
   }
-  console.log(`Found placeholders: ${Array.from(names).join(', ')}`);
   return Array.from(names);
 };

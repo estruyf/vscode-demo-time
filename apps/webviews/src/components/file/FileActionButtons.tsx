@@ -1,14 +1,15 @@
 import React from 'react';
 import { Button } from '../ui/Button';
-import { Eye, Plus, Settings } from 'lucide-react';
+import { Eye, LayoutGrid, Plus, Settings } from 'lucide-react';
 
 interface FileActionButtonsProps {
   onSettingsClick: () => void;
+  onOverviewClick: () => void;
   onViewSource: () => void;
   onNewFile: () => void;
 }
 
-export const FileActionButtons: React.FC<FileActionButtonsProps> = ({ onSettingsClick, onViewSource, onNewFile }) => (
+export const FileActionButtons: React.FC<FileActionButtonsProps> = ({ onSettingsClick, onOverviewClick, onViewSource, onNewFile }) => (
   <div className="flex items-center space-x-2 sm:space-x-3 w-full sm:w-auto">
     <Button
       variant="secondary"
@@ -17,6 +18,15 @@ export const FileActionButtons: React.FC<FileActionButtonsProps> = ({ onSettings
       className="flex-1"
       size="sm"
       title='Open Demo Time Settings'
+    >
+    </Button>
+    <Button
+      variant="secondary"
+      onClick={onOverviewClick}
+      icon={LayoutGrid}
+      className="flex-1"
+      size="sm"
+      title='Open Demo Time Overview'
     >
     </Button>
     <Button

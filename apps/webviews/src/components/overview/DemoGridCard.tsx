@@ -1,43 +1,43 @@
-import { Clapperboard, Play, Settings } from "lucide-react";
+import { Clapperboard, PlayIcon, Settings } from "lucide-react";
 import { Card } from "../ui";
-import { Icon } from "vscrui";
-import { getActionIcon } from "../../utils";
 import { Demo } from "@demotime/common";
+import { useMemo, useState } from "react";
 
 interface DemoGridCardProps {
   demo: Demo;
   demoIndex: number;
   globalIndex: number;
-  isSelected: boolean;
   onClick: () => void;
   onEdit: () => void;
-  onPlay: () => void;
 }
 
 const DemoGridCard: React.FC<DemoGridCardProps> = ({
   demo,
   demoIndex: _demoIndex,
   globalIndex,
-  isSelected,
   onClick,
   onEdit,
-  onPlay
 }) => {
+  const [showAllSteps, setShowAllSteps] = useState(false);
   void _demoIndex;
 
+  const stepsToShow = useMemo(
+    () => (showAllSteps ? demo.steps : demo.steps.slice(0, 3)),
+    [showAllSteps, demo.steps]
+  );
+
   return (
-    <Card className={`h-full cursor-pointer transition-all duration-200 hover:shadow-lg border-l-4 border-l-yellow-500 ${isSelected ? 'ring-2 ring-blue-500' : ''
-      } ${demo.disabled ? 'opacity-60 grayscale' : ''}`}>
-      <div className="p-4 h-full flex flex-col" onClick={onClick}>
+    <Card className={`h-full cursor-pointer transition-all duration-200 hover:shadow-lg border-l-4 border-l-blue-500 ${demo.disabled ? 'opacity-60 grayscale' : ''}`} padding="sm">
+      <div className="h-full flex flex-col" onClick={onClick}>
         {/* Header with type indicator and number */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center space-x-2">
-            <div className="flex items-center justify-center w-7 h-7 bg-yellow-600 rounded-lg text-white font-bold text-sm">
+            <div className="flex items-center justify-center w-7 h-7 bg-blue-600 rounded-lg text-white font-bold text-sm">
               {globalIndex}
             </div>
             <div className="flex items-center space-x-1">
-              <Clapperboard className="h-4 w-4 text-yellow-600" />
-              <span className="text-xs font-semibold text-yellow-700 bg-yellow-100 px-2 py-0.5 rounded-full">
+              <Clapperboard className="h-4 w-4 text-blue-600" />
+              <span className="text-xs font-semibold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full">
                 DEMO
               </span>
             </div>
@@ -66,6 +66,29 @@ const DemoGridCard: React.FC<DemoGridCardProps> = ({
             </p>
           )}
 
+          {demo.steps.length > 0 && (
+            <div className="flex flex-wrap gap-1 mb-3">
+              {stepsToShow.map((step, idx) => (
+                <div
+                  key={idx}
+                  className="w-full flex items-center space-x-1 px-2 py-0.5 bg-demo-time-gray-6 text-demo-time-gray-3 rounded-full text-xs font-medium"
+                  title={step.action}
+                >
+                  <PlayIcon className="h-3 w-3" />
+                  <span>{step.action}</span>
+                </div>
+              ))}
+              {!showAllSteps && demo.steps.length > 3 && (
+                <button
+                  title={`Show ${demo.steps.length - 3} more steps`}
+                  className="px-2 py-0.5 bg-demo-time-gray-5 hover:bg-demo-time-gray-6 border border-demo-time-gray-4 text-demo-time-gray-2 rounded-full text-xs"
+                  onClick={() => setShowAllSteps(true)}>
+                  +{demo.steps.length - 3}
+                </button>
+              )}
+            </div>
+          )}
+
           <div className="flex-1 flex flex-col justify-end space-y-2">
             <div className="flex items-center justify-between text-xs text-demo-time-gray-4">
               <span>{demo.steps.length} step{demo.steps.length !== 1 ? 's' : ''}</span>
@@ -75,42 +98,6 @@ const DemoGridCard: React.FC<DemoGridCardProps> = ({
                 </span>
               )}
             </div>
-
-            {/* Action preview */}
-            {demo.steps.length > 0 && (
-              <div className="flex flex-wrap gap-1">
-                {demo.steps.slice(0, 3).map((step, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center space-x-1 px-2 py-0.5 bg-demo-time-gray-6 text-demo-time-gray-3 rounded-full text-xs font-medium"
-                    title={step.action}
-                  >
-                    <Icon name={getActionIcon(step.action) as never} className="h-3 w-3" />
-                    <span>{step.action}</span>
-                  </div>
-                ))}
-                {demo.steps.length > 3 && (
-                  <div className="px-2 py-0.5 bg-demo-time-gray-5 text-demo-time-gray-3 rounded-full text-xs">
-                    +{demo.steps.length - 3}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Actions at bottom */}
-          <div className="flex items-center justify-center mt-4">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onPlay();
-              }}
-              disabled={demo.disabled}
-              className="p-2 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              title="Run demo"
-            >
-              <Play className="h-4 w-4" />
-            </button>
           </div>
         </div>
       </div>

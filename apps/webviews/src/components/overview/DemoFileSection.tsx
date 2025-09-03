@@ -1,16 +1,16 @@
 import React from 'react';
-import { ChevronDown, ChevronRight, FileText, Play, Settings, BarChart3, Clapperboard, Presentation, Clock } from 'lucide-react';
+import { ChevronDown, ChevronRight, FileText, BarChart3, Clapperboard, Presentation } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { DemoFileGrid } from './DemoFileGrid';
 import { DemoFileData, OverviewGridItem } from '../../types/demoOverview';
+import { WebViewMessages } from '@demotime/common';
+import { messageHandler } from '@estruyf/vscode/dist/client';
 
 interface DemoFileSectionProps {
   fileData: DemoFileData;
   isExpanded: boolean;
   onToggle: () => void;
-  onEditDemo: (fileName: string, demoIndex: number) => void;
-  onPlayDemo: (fileName: string, demo: any, demoIndex: number) => void;
   allGridItems: OverviewGridItem[];
 }
 
@@ -18,11 +18,9 @@ export const DemoFileSection: React.FC<DemoFileSectionProps> = ({
   fileData,
   isExpanded,
   onToggle,
-  onEditDemo,
-  onPlayDemo,
   allGridItems,
 }) => {
-  const { fileName, config } = fileData;
+  const { fileName, filePath, config } = fileData;
 
   // Calculate stats for this file
   const demoCount = (config.demos || []).length;
@@ -36,22 +34,17 @@ export const DemoFileSection: React.FC<DemoFileSectionProps> = ({
     indices.length === 1 ? `#${indices[0]}` : `#${indices[0]}-${indices[indices.length - 1]}` :
     'No items';
 
-  const handleEditConfig = () => {
-    // In a real implementation, you'd send a message to VS Code to open this file
-    console.log('Edit config for:', fileName);
-  };
-
-  const handleRunFile = () => {
-    // Run the first demo in this file
-    if (config.demos && config.demos.length > 0) {
-      onPlayDemo(fileName, config.demos[0], 0);
-    }
-  };
+  const handleEditConfig = React.useMemo(
+    () => () => {
+      messageHandler.send(WebViewMessages.toVscode.overview.openConfig, filePath);
+    },
+    [filePath]
+  );
 
   return (
     <Card className="overflow-hidden">
       {/* Section Header */}
-      <div className={`${isExpanded ? 'border-b border-demo-time-gray-6' : ''}`}>
+      <div className={`${isExpanded ? 'border-b border-demo-time-gray-6 pb-6 mb-6' : ''}`}>
         <div className="flex items-center justify-between">
           <button
             onClick={onToggle}
@@ -88,16 +81,9 @@ export const DemoFileSection: React.FC<DemoFileSectionProps> = ({
             </div>
           </button>
 
-          <div className="flex items-center space-x-2 ml-4">
-            <Button variant="secondary" onClick={handleEditConfig} icon={Settings} size="sm">
-              Edit
-            </Button>
-            {demoCount > 0 && (
-              <Button variant="success" onClick={handleRunFile} icon={Play} size="sm">
-                Run
-              </Button>
-            )}
-          </div>
+          <Button variant="secondary" onClick={handleEditConfig} size="sm">
+            Open config
+          </Button>
         </div>
 
         {/* File Stats */}
@@ -133,12 +119,10 @@ export const DemoFileSection: React.FC<DemoFileSectionProps> = ({
 
       {/* Section Content */}
       {isExpanded && (
-        <div className="p-6">
+        <div className="">
           <DemoFileGrid
             fileData={fileData}
             gridItems={allGridItems}
-            onEditDemo={onEditDemo}
-            onPlayDemo={onPlayDemo}
           />
         </div>
       )}

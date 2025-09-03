@@ -9,15 +9,15 @@ import { WebViewMessages } from '@demotime/common';
 import '../../styles/config.css';
 
 const DemoScriptView = () => {
-  const [demoConfigs, setDemoConfigs] = useState<DemoConfig[] | undefined>(undefined);
+  const [demoConfigs, setDemoConfigs] = useState<{ [key: string]: DemoConfig } | undefined>(undefined);
   const [files, setFiles] = useState<string[] | undefined>(undefined);
 
   // Transform the data into the format needed by DemoOverviewContainer
-  const transformToDemoFileData = (configs: DemoConfig[], fileNames: string[]): DemoFileData[] => {
+  const transformToDemoFileData = (configs: { [key: string]: DemoConfig }, fileNames: string[]): DemoFileData[] => {
     let globalIndex = 1;
 
-    return fileNames.map((fileName, index) => {
-      const config = configs[index];
+    return fileNames.map((fileName) => {
+      const config = configs[fileName];
       const startingIndex = globalIndex;
 
       // Calculate how many items this file will contribute to increment globalIndex
@@ -33,29 +33,11 @@ const DemoScriptView = () => {
     });
   };
 
-  const handleEditDemo = (fileName: string, demoIndex: number) => {
-    // Send message to VS Code to open the config editor for this file and demo
-    console.log(`Edit demo ${demoIndex} in file ${fileName}`);
-    // In a real implementation:
-    // messageHandler.send(WebViewMessages.toVscode.configEditor.openStep, { 
-    //   fileName, 
-    //   stepIndex: demoIndex 
-    // });
-  };
-
-  const handlePlayDemo = (fileName: string, demo: any, demoIndex: number) => {
-    // Send message to VS Code to run this specific demo
-    console.log(`Play demo ${demoIndex} from file ${fileName}:`, demo);
-    messageHandler.send(WebViewMessages.toVscode.runCommand, {
-      command: 'demo-time.runDemo',
-      args: { fileName, demo, demoIndex }
-    });
-  };
   useEffect(() => {
     messageHandler.request<{
-      demos: DemoConfig[],
+      demos: { [key: string]: DemoConfig },
       fileNames: string[]
-    }>(WebViewMessages.toVscode.configEditor.getContents)
+    }>(WebViewMessages.toVscode.overview.getFiles)
       .then((response) => {
         setDemoConfigs(response.demos);
         setFiles(response.fileNames);
@@ -86,8 +68,6 @@ const DemoScriptView = () => {
   return (
     <DemoOverviewContainer
       demoFiles={demoFileData}
-      onEditDemo={handleEditDemo}
-      onPlayDemo={handlePlayDemo}
     />
   );
 };

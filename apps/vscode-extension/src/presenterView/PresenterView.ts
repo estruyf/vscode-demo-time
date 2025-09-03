@@ -46,10 +46,7 @@ export class PresenterView extends BaseWebview {
       return;
     }
 
-    if (command === WebViewMessages.toVscode.getSetting && requestId) {
-      const setting = Extension.getInstance().getSetting(payload);
-      PresenterView.postRequestMessage(command, requestId, setting);
-    } else if (command === WebViewMessages.toVscode.getTimer && requestId) {
+    if (command === WebViewMessages.toVscode.getTimer && requestId) {
       const timer = await DemoStatusBar.getTimer();
       PresenterView.postRequestMessage(command, requestId, timer);
     } else if (command === WebViewMessages.toVscode.getDemoFiles) {
@@ -63,21 +60,6 @@ export class PresenterView extends BaseWebview {
     } else if (command === WebViewMessages.toVscode.getNextDemo) {
       const nextDemo = DemoStatusBar.getNextDemo();
       PresenterView.postRequestMessage(command, requestId, nextDemo);
-    } else if (command === WebViewMessages.toVscode.runCommand && payload) {
-      const { command: cmd, args } = payload;
-      if (!cmd) {
-        return;
-      }
-
-      if ((cmd as string).startsWith(EXTENSION_NAME)) {
-        await commands.executeCommand(`workbench.action.focusActivityBar`);
-      }
-
-      if (args) {
-        commands.executeCommand(cmd, args);
-      } else {
-        commands.executeCommand(cmd);
-      }
     } else if (command === WebViewMessages.toVscode.getCountdownStarted) {
       const startTime = DemoStatusBar.getCountdownStarted();
       PresenterView.postRequestMessage(command, requestId, startTime);

@@ -78,6 +78,10 @@ export const DemoBuilder: React.FC<{ initialConfig: DemoConfig }> = ({ initialCo
     messageHandler.send(WebViewMessages.toVscode.configEditor.openSettings);
   };
 
+  const handleOverviewClick = () => {
+    messageHandler.send(WebViewMessages.toVscode.runCommand, { command: "demo-time.showOverview" });
+  };
+
   const handleManualSave = () => {
     performManualSave();
   };
@@ -273,7 +277,6 @@ export const DemoBuilder: React.FC<{ initialConfig: DemoConfig }> = ({ initialCo
     function messageListener(message: MessageEvent<EventData<unknown>>) {
       const { command, payload } = message.data;
       if (command === WebViewMessages.toWebview.configEditor.triggerSave) {
-        console.log("Triggering config editor save");
         performManualSave();
       } else if (command === WebViewMessages.toWebview.configEditor.openStep) {
         handleDemoStepNavigation(payload as { stepIndex?: number });
@@ -320,6 +323,7 @@ export const DemoBuilder: React.FC<{ initialConfig: DemoConfig }> = ({ initialCo
         fileControls={
           <FileControls
             onSettingsClick={handleSettingsClick}
+            onOverviewClick={handleOverviewClick}
             onNewFile={handleNewFileClick}
             onViewSource={handleViewSource}
           />

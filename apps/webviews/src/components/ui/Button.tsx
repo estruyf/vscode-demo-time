@@ -9,7 +9,7 @@ interface ButtonProps {
   icon?: LucideIcon;
   iconPosition?: 'left' | 'right';
   className?: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   onClick?: () => void;
   type?: 'button' | 'submit' | 'reset';
   title?: string;
@@ -58,7 +58,7 @@ export const Button: React.FC<ButtonProps> = ({
       {Icon && iconPosition === 'left' && (
         <Icon className={`h-4 w-4 ${children ? 'mr-2' : ''}`} />
       )}
-      {children}
+      {children || null}
       {Icon && iconPosition === 'right' && (
         <Icon className={`h-4 w-4 ${children ? 'ml-2' : ''}`} />
       )}
