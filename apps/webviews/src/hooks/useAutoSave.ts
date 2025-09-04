@@ -25,7 +25,7 @@ export const useAutoSave = ({
   const [isManuallySaving, setIsManuallySaving] = useState(false);
   const lastConfigRef = useRef<string>('');
   const autoSaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-+ const statusResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const statusResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const performAutoSave = useCallback(async () => {
     if (!enabled) {
