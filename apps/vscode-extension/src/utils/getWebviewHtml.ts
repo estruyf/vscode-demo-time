@@ -38,7 +38,7 @@ export const getWebviewHtml = async (
     ...styleUrls.map((href) => `<link rel="stylesheet" href="${href}" />`),
     ...moduleUrls.map((src) => `<script type="module" src="${src}"></script>`),
     ...scriptUrls.map((src) => `<script src="${src}"></script>`),
-    '</head>',
+    '</body>',
   ].join('\n');
 
   if (extension.isProductionMode) {
@@ -85,7 +85,7 @@ export const getWebviewHtml = async (
         `id="root" data-view-type="${type}" data-webview-url="${webviewWsUrl}" data-extension-url="${webviewExtUrl}"`,
       );
 
-      patchedHtml = patchedHtml.replace('</head>', htmlToInclude);
+      patchedHtml = patchedHtml.replace('</body>', htmlToInclude);
 
       return patchedHtml;
     } catch (error) {
@@ -115,8 +115,8 @@ export const getWebviewHtml = async (
           <body>
             <div id="root" data-view-type="${type}" data-webview-url="${webviewWsUrl}" data-extension-url="${webviewExtUrl}"></div>
 
-            ${htmlToInclude}
             <script type="module" src="http://localhost:5173/src/main.tsx"></script>
+            ${htmlToInclude}
           </body>
         </html>`;
   }
