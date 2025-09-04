@@ -70,7 +70,7 @@ export class Preview extends BaseWebview {
       Preview.currentSlideIndex = 0;
     }
 
-    if (slide) {
+    if (slide && typeof slide === 'number') {
       Preview.currentSlideIndex = slide;
     }
 
@@ -142,9 +142,13 @@ export class Preview extends BaseWebview {
       const setting = Extension.getInstance().getSetting(payload);
       Preview.postRequestMessage(command, requestId, setting);
     } else if (command === WebViewMessages.toVscode.preview.getSlide && requestId) {
-      const fileWebviewPath = getWebviewWorkspaceUrl(Preview.webview?.webview, Preview.crntFile);
+      const currentFile = Preview.crntFile;
+      const path =
+        currentFile && Preview.webview?.webview
+          ? getWebviewWorkspaceUrl(Preview.webview.webview, currentFile)
+          : null;
       Preview.postRequestMessage(command, requestId, {
-        path: fileWebviewPath,
+        path,
         slideIndex: Preview.currentSlideIndex,
       });
     } else if (command === WebViewMessages.toVscode.parseFileUri && requestId && payload) {

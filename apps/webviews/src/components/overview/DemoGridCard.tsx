@@ -1,4 +1,4 @@
-import { Clapperboard, PlayIcon, Settings } from "lucide-react";
+import { Clapperboard, Play, Settings } from "lucide-react";
 import { Card } from "../ui";
 import { Demo } from "@demotime/common";
 import { useMemo, useState } from "react";
@@ -28,7 +28,7 @@ const DemoGridCard: React.FC<DemoGridCardProps> = ({
 
   return (
     <Card className={`h-full cursor-pointer transition-all duration-200 hover:shadow-lg border-l-4 border-l-blue-500 ${demo.disabled ? 'opacity-60 grayscale' : ''}`} padding="sm">
-      <div className="h-full flex flex-col" onClick={onClick}>
+      <button className="h-full flex flex-col" onClick={onClick} aria-label={`Trigger ${demo.title}`} aria-disabled={demo.disabled}>
         {/* Header with type indicator and number */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center space-x-2">
@@ -74,7 +74,7 @@ const DemoGridCard: React.FC<DemoGridCardProps> = ({
                   className="w-full flex items-center space-x-1 px-2 py-0.5 bg-demo-time-gray-6 text-demo-time-gray-3 rounded-full text-xs font-medium"
                   title={step.action}
                 >
-                  <PlayIcon className="h-3 w-3" />
+                  <Play className="h-3 w-3" />
                   <span>{step.action}</span>
                 </div>
               ))}
@@ -100,7 +100,7 @@ const DemoGridCard: React.FC<DemoGridCardProps> = ({
             </div>
           </div>
         </div>
-      </div>
+      </button>
     </Card>
   );
 };

@@ -17,18 +17,24 @@ export const FileActionButtons: React.FC<FileActionButtonsProps> = ({ onSettings
       icon={Settings}
       className="flex-1"
       size="sm"
+      aria-label='Open Demo Time Settings'
       title='Open Demo Time Settings'
     >
     </Button>
-    <Button
-      variant="secondary"
-      onClick={onOverviewClick}
-      icon={LayoutGrid}
-      className="flex-1"
-      size="sm"
-      title='Open Demo Time Overview'
-    >
-    </Button>
+    {
+      onOverviewClick && (
+        <Button
+          variant="secondary"
+          onClick={onOverviewClick}
+          icon={LayoutGrid}
+          className="flex-1"
+          size="sm"
+          aria-label='Open Demo Time Overview'
+          title='Open Demo Time Overview'
+        >
+        </Button>
+      )
+    }
     <Button
       variant="secondary"
       onClick={onViewSource}

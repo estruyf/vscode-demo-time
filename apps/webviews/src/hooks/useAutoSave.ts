@@ -25,9 +25,12 @@ export const useAutoSave = ({
   const [isManuallySaving, setIsManuallySaving] = useState(false);
   const lastConfigRef = useRef<string>('');
   const autoSaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
++ const statusResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const performAutoSave = useCallback(async () => {
-    if (!enabled) return;
+    if (!enabled) {
+      return;
+    }
 
     const currentConfigString = JSON.stringify(config);
 
@@ -56,14 +59,20 @@ export const useAutoSave = ({
         onSaveSuccess?.();
 
         // Reset status to idle after 2 seconds
-        setTimeout(() => setAutoSaveStatus('idle'), 2000);
+        statusResetTimeoutRef.current = setTimeout(() => setAutoSaveStatus('idle'), 2000);
       } else {
         setAutoSaveStatus('error');
-        setTimeout(() => setAutoSaveStatus('idle'), 3000);
+        if (statusResetTimeoutRef.current) {
+          clearTimeout(statusResetTimeoutRef.current);
+        }
+        statusResetTimeoutRef.current = setTimeout(() => setAutoSaveStatus('idle'), 2000);
       }
     } catch {
       setAutoSaveStatus('error');
-      setTimeout(() => setAutoSaveStatus('idle'), 3000);
+      if (statusResetTimeoutRef.current) {
+        clearTimeout(statusResetTimeoutRef.current);
+      }
+      statusResetTimeoutRef.current = setTimeout(() => setAutoSaveStatus('idle'), 3000);
     } finally {
       setIsAutoSaving(false);
     }
@@ -123,6 +132,10 @@ export const useAutoSave = ({
     return () => {
       if (autoSaveTimeoutRef.current) {
         clearTimeout(autoSaveTimeoutRef.current);
+      }
+
+      if (statusResetTimeoutRef.current) {
+        clearTimeout(statusResetTimeoutRef.current);
       }
     };
   }, []);

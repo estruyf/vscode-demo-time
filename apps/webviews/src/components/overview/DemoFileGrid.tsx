@@ -27,22 +27,28 @@ export const DemoFileGrid: React.FC<DemoFileGridProps> = ({
 
   const handleItemClick = (item: OverviewGridItem, type: 'demo' | 'slide') => {
     if (type === 'slide') {
+      if (!item.slide) { return; }
       messageHandler.send(WebViewMessages.toVscode.overview.openSlide, {
-        filePath: item.slide!.filePath,
-        slideIndex: item.slide!.index
+        filePath: item.slide.filePath,
+        slideIndex: item.slide.index,
       });
-    } else {
-      messageHandler.request(WebViewMessages.toVscode.overview.runDemoSteps, {
-        steps: item.demo?.steps,
-      });
+      return;
     }
+
+    const steps = item.demo?.steps;
+    if (!steps || steps.length === 0) { return; }
+    void messageHandler
+      .request(WebViewMessages.toVscode.overview.runDemoSteps, { steps })
+      .catch(console.error);
   };
 
   const handleEditDemo = (demoIndex: number) => {
+    const originalLabel = config?.demos?.[demoIndex]?.title;
+    if (originalLabel === undefined) { return; }
     messageHandler.send(WebViewMessages.toVscode.overview.openConfigStep, {
       demoFilePath: filePath,
       stepIndex: demoIndex,
-      originalLabel: config.demos[demoIndex].title
+      originalLabel,
     });
   };
 
@@ -56,7 +62,7 @@ export const DemoFileGrid: React.FC<DemoFileGridProps> = ({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 auto-rows-fr">
-        {gridItems.sort((a, b) => a.globalIndex - b.globalIndex).map((item) => (
+        {[...gridItems].sort((a, b) => a.globalIndex - b.globalIndex).map((item) => (
           <div
             key={`${item.type}-${item.globalIndex}`}
             className={`h-full`}

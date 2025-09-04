@@ -24,17 +24,18 @@ const SlideGridCard: React.FC<SlideGridCardProps> = ({
   onEdit
 }) => {
   const slideTitle = React.useMemo(() => {
-    // Extract title from slide content (look for # heading)
-    const titleMatch = slide.content.match(/^#\s+(.+)$/m);
+    const content = typeof slide.content === 'string' ? slide.content : '';
+    // Extract first markdown heading (# .. ######)
+    const titleMatch = content.match(/^#{1,6}\s+(.+)$/m);
     let title = titleMatch ? titleMatch[1] : `Slide ${slideIndex + 1} (no title)`;
-    // Strip HTML tags if present
-    title = title.replace(/<[^>]+>/g, '');
+    // Strip HTML tags if present and trim
+    title = title.replace(/<[^>]+>/g, '').trim();
     return title;
   }, [slide.content, slideIndex]);
 
   return (
     <Card className={`h-full cursor-pointer transition-all duration-200 hover:shadow-lg border-l-4 border-l-yellow-500 ${demo?.disabled ? 'opacity-60 grayscale' : ''}`} padding="sm">
-      <div className="h-full flex flex-col" onClick={onClick}>
+      <button className="h-full flex flex-col" onClick={onClick} aria-label={`Trigger ${slideTitle}`} aria-disabled={demo?.disabled}>
         {/* Header with type indicator and number */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center space-x-2">
@@ -54,6 +55,7 @@ const SlideGridCard: React.FC<SlideGridCardProps> = ({
               onEdit();
             }}
             className="p-1 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+            aria-label={`Edit slide ${slideIndex + 1}`}
             title="Edit demo"
           >
             <Settings className="h-3 w-3" />
@@ -80,15 +82,15 @@ const SlideGridCard: React.FC<SlideGridCardProps> = ({
                   DISABLED
                 </span>
               )}
-              {slide.frontmatter.layout && (
+              {slide.frontmatter?.layout && (
                 <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded-full font-medium">
-                  {slide.frontmatter.layout}
+                  {slide.frontmatter?.layout}
                 </span>
               )}
             </div>
           </div>
         </div>
-      </div>
+      </button>
     </Card>
   );
 };

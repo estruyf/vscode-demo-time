@@ -79,9 +79,9 @@ export class BaseWebview {
     this.webview.webview.html =
       (await getWebviewHtml(this.id, this.webview.webview, jsFiles, moduleFiles, cssFiles)) || '';
 
-    this.webview.onDidDispose(this.onDispose);
+    this.webview.onDidDispose(this.onDispose, this);
 
-    this.webview.webview.onDidReceiveMessage(this.messageListener.bind(this));
+    this.webview.webview.onDidReceiveMessage(this.messageListener, this);
   }
 
   protected static async messageListener(message: MessageHandlerData<any>) {
@@ -90,9 +90,15 @@ export class BaseWebview {
     if (command === WebViewMessages.toVscode.getSetting && requestId) {
       const setting = Extension.getInstance().getSetting(payload);
       this.postRequestMessage(command, requestId, setting);
-    } else if (command === WebViewMessages.toVscode.getFileContents && payload && requestId) {
+    } else if (command === WebViewMessages.toVscode.getFileContents && requestId) {
+      if (typeof payload !== 'string') {
+        this.postRequestMessage(command, requestId, null);
+        return;
+      }
+
       try {
-        const fileContents = await readFile(getAbsolutePath(payload));
+        const abs = getAbsolutePath(payload);
+        const fileContents = await readFile(abs);
         this.postRequestMessage(command, requestId, fileContents);
       } catch (e) {
         this.postRequestMessage(command, requestId, null);
