@@ -1,10 +1,9 @@
-import { parse } from './../../../../node_modules/zod/src/v4/classic/parse';
 import { commands, Uri } from 'vscode';
 import { Subscription, WebviewType } from '../models';
-import { DemoCreator, DemoFileProvider, Extension } from '../services';
-import { COMMAND, WebViewMessages, Config } from '@demotime/common';
+import { DemoCreator, DemoFileProvider, DemoRunner, Extension } from '../services';
+import { COMMAND, WebViewMessages, Config, Step } from '@demotime/common';
 import { BaseWebview } from '../webview/BaseWebviewPanel';
-import { getAbsolutePath, getRelPath, parseWinPath, readFile, sortFiles } from '../utils';
+import { parseWinPath, sortFiles } from '../utils';
 import { Preview } from '../preview/Preview';
 
 export class Overview extends BaseWebview {
@@ -22,6 +21,10 @@ export class Overview extends BaseWebview {
     } else {
       Overview.create();
     }
+  }
+
+  public static update() {
+    this.postMessage(WebViewMessages.toWebview.overview.update);
   }
 
   protected static onCreate() {
@@ -48,6 +51,16 @@ export class Overview extends BaseWebview {
       handleOpenConfigStep(payload);
     } else if (command === WebViewMessages.toVscode.overview.openSlide) {
       handleOpenSlide(payload);
+    } else if (command === WebViewMessages.toVscode.overview.runDemoSteps) {
+      handleRunDemoSteps(payload);
+    }
+
+    async function handleRunDemoSteps(payload: { steps: Step[] }) {
+      if (!payload?.steps) {
+        return;
+      }
+
+      await DemoRunner.runSteps([...payload.steps], false);
     }
 
     async function handleGetFiles(requestId: string | undefined) {

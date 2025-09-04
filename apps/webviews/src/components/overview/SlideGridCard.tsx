@@ -1,4 +1,4 @@
-import { Slide } from "@demotime/common";
+import { Demo, Slide } from "@demotime/common";
 import { Card } from "../ui";
 import { Presentation, Settings } from "lucide-react";
 import React from "react";
@@ -6,15 +6,19 @@ import React from "react";
 // Slide Card Component for Grid
 interface SlideGridCardProps {
   slide: Slide & { filePath: string; demoTitle: string; demoIndex: number };
+  demo?: Demo;
   slideIndex: number;
+  totalSlides: number;
   globalIndex: number;
   onClick: () => void;
   onEdit: () => void;
 }
 
 const SlideGridCard: React.FC<SlideGridCardProps> = ({
+  demo,
   slide,
   slideIndex,
+  totalSlides,
   globalIndex,
   onClick,
   onEdit
@@ -29,7 +33,7 @@ const SlideGridCard: React.FC<SlideGridCardProps> = ({
   }, [slide.content, slideIndex]);
 
   return (
-    <Card className={`h-full cursor-pointer transition-all duration-200 hover:shadow-lg border-l-4 border-l-yellow-500`} padding="sm">
+    <Card className={`h-full cursor-pointer transition-all duration-200 hover:shadow-lg border-l-4 border-l-yellow-500 ${demo?.disabled ? 'opacity-60 grayscale' : ''}`} padding="sm">
       <div className="h-full flex flex-col" onClick={onClick}>
         {/* Header with type indicator and number */}
         <div className="flex items-center justify-between mb-3">
@@ -40,7 +44,7 @@ const SlideGridCard: React.FC<SlideGridCardProps> = ({
             <div className="flex items-center space-x-1">
               <Presentation className="h-4 w-4 text-yellow-600" />
               <span className="text-xs font-semibold text-yellow-700 bg-yellow-100 px-2 py-0.5 rounded-full">
-                SLIDE
+                SLIDE {totalSlides > 1 && ` GROUP`}
               </span>
             </div>
           </div>
@@ -70,7 +74,12 @@ const SlideGridCard: React.FC<SlideGridCardProps> = ({
 
           <div className="mt-auto flex flex-col space-y-2">
             <div className="flex items-center justify-between text-xs text-demo-time-gray-4">
-              <span>Slide {slideIndex + 1}</span>
+              <span>Slide {slideIndex + 1}/{totalSlides}</span>
+              {demo?.disabled && (
+                <span className="px-2 py-0.5 bg-gray-200 text-gray-600 rounded-full font-semibold">
+                  DISABLED
+                </span>
+              )}
               {slide.frontmatter.layout && (
                 <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded-full font-medium">
                   {slide.frontmatter.layout}

@@ -24,7 +24,9 @@ export const DemoTestView: React.FC<DemoTestViewProps> = ({
   const hasErrors = !validation.isValid;
 
   const simulateDemo = async () => {
-    if (hasErrors) return;
+    if (hasErrors) {
+      return;
+    }
 
     setIsRunning(true);
     setCurrentStep(0);

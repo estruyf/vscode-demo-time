@@ -1,3 +1,4 @@
+import { Demo, Slide } from '@demotime/common';
 import { DemoConfig } from './demo';
 
 export interface DemoFileData {
@@ -13,14 +14,15 @@ export interface OverviewGridItem {
   fileIndex: number; // Index within the file
   fileName: string;
   filePath: string;
-  demo?: any;
+  demo?: Demo;
   demoIndex?: number;
-  slide?: any;
+  slide?: Slide & { filePath: string; demoTitle: string; demoIndex: number };
   slideIndex?: number;
+  totalSlides?: number;
 }
 
 export interface DemoOverviewProps {
   demoFiles: DemoFileData[];
   onEditDemo: (fileName: string, demoIndex: number) => void;
-  onPlayDemo: (fileName: string, demo: any, demoIndex: number) => void;
+  onPlayDemo: (fileName: string, demo: Demo, demoIndex: number) => void;
 }

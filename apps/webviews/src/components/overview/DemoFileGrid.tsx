@@ -32,7 +32,9 @@ export const DemoFileGrid: React.FC<DemoFileGridProps> = ({
         slideIndex: item.slide!.index
       });
     } else {
-      // Do nothing
+      messageHandler.request(WebViewMessages.toVscode.overview.runDemoSteps, {
+        steps: item.demo?.steps,
+      });
     }
   };
 
@@ -70,7 +72,9 @@ export const DemoFileGrid: React.FC<DemoFileGridProps> = ({
             ) : item.slide ? (
               <SlideGridCard
                 slide={item.slide}
+                demo={item.demo}
                 slideIndex={item.slideIndex!}
+                totalSlides={item.totalSlides!}
                 globalIndex={item.globalIndex}
                 onClick={() => handleItemClick(item, 'slide')}
                 onEdit={() => handleEditDemo(item.slide!.demoIndex)}

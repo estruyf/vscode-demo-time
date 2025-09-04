@@ -33,7 +33,7 @@ const DemoScriptView = () => {
     });
   };
 
-  useEffect(() => {
+  const updateFileData = () => {
     messageHandler.request<{
       demos: { [key: string]: DemoConfig },
       fileNames: string[]
@@ -47,9 +47,17 @@ const DemoScriptView = () => {
         setDemoConfigs(undefined);
         setFiles(undefined);
       });
+  };
+
+  useEffect(() => {
+    updateFileData();
 
     function messageListener(message: MessageEvent<EventData<unknown>>) {
-      const { command, payload } = message.data;
+      const { command } = message.data;
+
+      if (command === WebViewMessages.toWebview.overview.update) {
+        updateFileData();
+      }
     }
 
     Messenger.listen(messageListener);

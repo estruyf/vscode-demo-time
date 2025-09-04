@@ -106,7 +106,9 @@ export const DemoOverviewContainer: React.FC<DemoOverviewContainerProps> = ({
                       demoTitle: demo.title,
                       demoIndex
                     },
-                    slideIndex
+                    demo,
+                    slideIndex,
+                    totalSlides: slides.length
                   });
                 });
               } else {

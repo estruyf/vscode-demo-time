@@ -37,6 +37,7 @@ export async function activate(context: vscode.ExtensionContext) {
   PresenterView.register();
   Preview.register();
   Overview.register();
+  ConfigEditorProvider.register();
 
   // Services
   DecoratorService.register();
@@ -53,7 +54,6 @@ export async function activate(context: vscode.ExtensionContext) {
   UriHandler.register();
   PdfExportService.register();
   ImportService.register();
-  ConfigEditorProvider.register();
   TerminalService.register();
   InputService.registerCommands();
 

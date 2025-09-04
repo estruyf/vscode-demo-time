@@ -188,6 +188,7 @@ export const WebViewMessages = {
       openConfig: 'openOverviewConfig',
       openConfigStep: 'openOverviewConfigStep',
       openSlide: 'openOverviewSlide',
+      runDemoSteps: 'runOverviewDemoSteps',
     },
   },
   toWebview: {
@@ -276,6 +277,9 @@ export const WebViewMessages = {
        * openConfigEditorStep
        */
       openStep: 'openConfigEditorStep',
+    },
+    overview: {
+      update: 'updateOverview',
     },
   },
 };
