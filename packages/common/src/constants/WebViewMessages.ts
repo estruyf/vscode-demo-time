@@ -106,6 +106,9 @@ export const WebViewMessages = {
      * slideReady
      */
     slideReady: 'slideReady',
+    preview: {
+      getSlide: 'getPreviewSlide',
+    },
     // Config editor
     configEditor: {
       /**
@@ -179,6 +182,13 @@ export const WebViewMessages = {
        * saveSettingsViewSettings
        */
       saveSettings: 'saveSettingsViewSettings',
+    },
+    overview: {
+      getFiles: 'getOverviewFiles',
+      openConfig: 'openOverviewConfig',
+      openConfigStep: 'openOverviewConfigStep',
+      openSlide: 'openOverviewSlide',
+      runDemoSteps: 'runOverviewDemoSteps',
     },
   },
   toWebview: {
@@ -267,6 +277,9 @@ export const WebViewMessages = {
        * openConfigEditorStep
        */
       openStep: 'openConfigEditorStep',
+    },
+    overview: {
+      update: 'updateOverview',
     },
   },
 };

@@ -1,8 +1,8 @@
 import { MessageHandlerData } from '@estruyf/vscode';
-import { Uri, ViewColumn, WebviewPanel, window } from 'vscode';
+import { commands, Uri, ViewColumn, WebviewPanel, window } from 'vscode';
 import { Extension, Notifications } from '../services';
-import { getWebviewHtml } from '../utils';
-import { Config } from '@demotime/common';
+import { getAbsolutePath, getWebviewHtml, readFile } from '../utils';
+import { Config, EXTENSION_NAME, WebViewMessages } from '@demotime/common';
 import { WebviewType } from '../models';
 
 export class BaseWebview {
@@ -79,12 +79,47 @@ export class BaseWebview {
     this.webview.webview.html =
       (await getWebviewHtml(this.id, this.webview.webview, jsFiles, moduleFiles, cssFiles)) || '';
 
-    this.webview.onDidDispose(this.onDispose);
+    this.webview.onDidDispose(this.onDispose, this);
 
-    this.webview.webview.onDidReceiveMessage(this.messageListener);
+    this.webview.webview.onDidReceiveMessage(this.messageListener, this);
   }
 
-  protected static async messageListener(_: MessageHandlerData<any>) {}
+  protected static async messageListener(message: MessageHandlerData<any>) {
+    const { command, requestId, payload } = message;
+
+    if (command === WebViewMessages.toVscode.getSetting && requestId) {
+      const setting = Extension.getInstance().getSetting(payload);
+      this.postRequestMessage(command, requestId, setting);
+    } else if (command === WebViewMessages.toVscode.getFileContents && requestId) {
+      if (typeof payload !== 'string') {
+        this.postRequestMessage(command, requestId, null);
+        return;
+      }
+
+      try {
+        const abs = getAbsolutePath(payload);
+        const fileContents = await readFile(abs);
+        this.postRequestMessage(command, requestId, fileContents);
+      } catch (e) {
+        this.postRequestMessage(command, requestId, null);
+      }
+    } else if (command === WebViewMessages.toVscode.runCommand && payload) {
+      const { command: cmd, args } = payload;
+      if (!cmd) {
+        return;
+      }
+
+      if ((cmd as string).startsWith(EXTENSION_NAME)) {
+        await commands.executeCommand(`workbench.action.focusActivityBar`);
+      }
+
+      if (args) {
+        commands.executeCommand(cmd, args);
+      } else {
+        commands.executeCommand(cmd);
+      }
+    }
+  }
 
   public static async postMessage(command: string, payload?: any) {
     if (this.isDisposed) {

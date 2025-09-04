@@ -40,6 +40,7 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
   private static readonly fileViews: Map<string, WebviewPanel> = new Map();
   private static pendingStepOpens: Map<string, ActionTreeItem> = new Map();
   private static isManualSave = false;
+  private static isDisposed = true;
 
   public static register() {
     const extensions = Extension.getInstance();
@@ -78,6 +79,8 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     webviewPanel: WebviewPanel,
     _token: CancellationToken,
   ): Promise<void> {
+    ConfigEditorProvider.isDisposed = false;
+
     const openInConfigEditor = Extension.getInstance().getSetting<boolean>(
       Config.configEditor.openInConfigEditor,
     );
@@ -134,6 +137,7 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     });
 
     webviewPanel.onDidDispose(() => {
+      ConfigEditorProvider.isDisposed = true;
       ConfigEditorProvider.fileViews.delete(document.uri.toString());
       ConfigEditorProvider.pendingStepOpens.delete(document.uri.toString());
       saveDocumentSubscription.dispose();
@@ -449,7 +453,7 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     }
 
     const panel = ConfigEditorProvider.fileViews.get(fileUri.toString());
-    if (panel?.active) {
+    if (!ConfigEditorProvider.isDisposed && panel) {
       panel.reveal();
       panel.webview.postMessage({
         command: WebViewMessages.toWebview.configEditor.openStep,

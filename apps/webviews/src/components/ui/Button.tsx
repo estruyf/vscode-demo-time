@@ -9,7 +9,7 @@ interface ButtonProps {
   icon?: LucideIcon;
   iconPosition?: 'left' | 'right';
   className?: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   onClick?: () => void;
   type?: 'button' | 'submit' | 'reset';
   title?: string;

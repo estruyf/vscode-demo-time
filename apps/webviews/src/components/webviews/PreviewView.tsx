@@ -49,7 +49,8 @@ const PreviewView = () => {
           setSlideIdx(-1);
           setTimeout(() => setSlideIdx(updatePayload.slideIndex), 0);
         } else {
-          setSlideIdx(updatePayload.slideIndex);
+          setSlideIdx(-1);
+          setTimeout(() => setSlideIdx(updatePayload.slideIndex), 0);
         }
         setFileUri(updatePayload.fileUriString);
       }
@@ -89,8 +90,12 @@ const PreviewView = () => {
     messageHandler.request<string>(WebViewMessages.toVscode.getStyles).then((styles) => {
       setCustomTheme(styles);
 
-      messageHandler.request<string>(WebViewMessages.toVscode.getFileUri).then((fileUri) => {
-        setFileUri(fileUri);
+      messageHandler.request<{
+        path: string,
+        slideIndex: number,
+      }>(WebViewMessages.toVscode.preview.getSlide).then((data) => {
+        setFileUri(data.path);
+        setSlideIdx(data.slideIndex);
       });
     });
 
@@ -100,7 +105,7 @@ const PreviewView = () => {
     };
   }, [messageListener]);
 
-  if (!fileUri) {
+  if (!fileUri || typeof slideIdx === 'undefined') {
     return null;
   }
 

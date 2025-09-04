@@ -11,6 +11,7 @@ const WEBVIEW_MAP: Record<string, React.LazyExoticComponent<React.FC<object>>> =
   'config-editor': lazy(() => import('./components/webviews/ConfigEditorView')),
   'preview': lazy(() => import('./components/webviews/PreviewView')),
   'presenter': lazy(() => import('./components/webviews/PresenterView')),
+  'overview': lazy(() => import('./components/webviews/DemoScriptView')),
 };
 
 const root = document.getElementById('root');
@@ -21,8 +22,6 @@ if (!root) {
 const viewType = root.getAttribute('data-view-type') || 'config-editor';
 const webviewUrl = root.getAttribute('data-webview-url') || '';
 const WebviewComponent = WEBVIEW_MAP[viewType] || WEBVIEW_MAP['config-editor'];
-
-console.log(`Rendering view type: ${viewType} with URL: ${webviewUrl}`);
 
 createRoot(root).render(
   <StrictMode>

@@ -24,6 +24,7 @@ import { ConfigEditorProvider } from './providers/ConfigEditorProvider';
 import { SettingsView } from './settingsView/SettingsView';
 import { Config } from '@demotime/common';
 import { InputService } from './services/InputService';
+import { Overview } from './overview/Overview';
 
 export async function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);
@@ -35,6 +36,8 @@ export async function activate(context: vscode.ExtensionContext) {
   SettingsView.register();
   PresenterView.register();
   Preview.register();
+  Overview.register();
+  ConfigEditorProvider.register();
 
   // Services
   DecoratorService.register();
@@ -51,7 +54,6 @@ export async function activate(context: vscode.ExtensionContext) {
   UriHandler.register();
   PdfExportService.register();
   ImportService.register();
-  ConfigEditorProvider.register();
   TerminalService.register();
   InputService.registerCommands();
 

@@ -6,6 +6,7 @@ import { DecoratorService } from './DecoratorService';
 import { DemoRunner } from './DemoRunner';
 import { DemoStatusBar } from './DemoStatusBar';
 import { Config } from '@demotime/common';
+import { Overview } from '../overview/Overview';
 
 export class DemoListeners {
   public static register() {
@@ -41,6 +42,7 @@ export class DemoListeners {
     const fileName = parseWinPath(document.fileName);
     if (fileName.includes(General.demoFolder)) {
       DemoPanel.update();
+      Overview.update();
     }
   }
 }

@@ -109,7 +109,7 @@ export class DemoCreator {
    * @param item The ActionTreeItem containing the demo file path.
    * @param isDemoStep A boolean indicating whether the item is a demo step and should be highlighted.
    */
-  private static async openDemoFile(item: ActionTreeItem, isDemoStep: boolean) {
+  public static async openDemoFile(item: ActionTreeItem, isDemoStep: boolean) {
     if (!item || !item.demoFilePath) {
       return;
     }

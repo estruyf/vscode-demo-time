@@ -6,6 +6,7 @@ import { FileActionButtons } from './FileActionButtons';
 
 interface FileControlsProps {
   onSettingsClick: () => void;
+  onOverviewClick: () => void;
   onNewFile: () => void;
   onViewSource: () => void;
 }
@@ -18,6 +19,7 @@ export const FileControls: React.FC<FileControlsProps> = ({
   // onFileSelect,
   // onFilenameChange,
   onSettingsClick,
+  onOverviewClick,
   onNewFile,
   onViewSource,
 }) => {
@@ -32,7 +34,7 @@ export const FileControls: React.FC<FileControlsProps> = ({
         onFilenameChange={onFilenameChange}
         fileType={fileType}
       /> */}
-      <FileActionButtons onSettingsClick={onSettingsClick} onViewSource={onViewSource} onNewFile={onNewFile} />
+      <FileActionButtons onSettingsClick={onSettingsClick} onOverviewClick={onOverviewClick} onViewSource={onViewSource} onNewFile={onNewFile} />
       {/* <FileImportButton onImport={onImport} /> */}
     </>
   );

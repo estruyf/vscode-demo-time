@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { DemoConfig } from "../types/demo";
-import { validateConfig } from "../utils/validation";
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { DemoConfig } from '../types/demo';
+import { validateConfig } from '../utils/validation';
 
 interface UseAutoSaveOptions {
   config: DemoConfig;
@@ -19,15 +19,18 @@ export const useAutoSave = ({
 }: UseAutoSaveOptions) => {
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastAutoSave, setLastAutoSave] = useState<Date | null>(null);
-  const [autoSaveStatus, setAutoSaveStatus] = useState<
-    "idle" | "saving" | "saved" | "error"
-  >("idle");
+  const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>(
+    'idle',
+  );
   const [isManuallySaving, setIsManuallySaving] = useState(false);
-  const lastConfigRef = useRef<string>("");
+  const lastConfigRef = useRef<string>('');
   const autoSaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
++ const statusResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const performAutoSave = useCallback(async () => {
-    if (!enabled) return;
+    if (!enabled) {
+      return;
+    }
 
     const currentConfigString = JSON.stringify(config);
 
@@ -39,32 +42,37 @@ export const useAutoSave = ({
     // Don't auto-save if there are validation errors
     const validation = validateConfig(config);
     if (!validation.isValid) {
-      setAutoSaveStatus("idle");
+      setAutoSaveStatus('idle');
       return;
     }
 
     setIsAutoSaving(true);
-    setAutoSaveStatus("saving");
+    setAutoSaveStatus('saving');
 
     try {
       const success = await onSave(config);
-      console.log("Auto-save result:", success);
       if (success) {
         lastConfigRef.current = currentConfigString;
         setLastAutoSave(new Date());
-        setAutoSaveStatus("saved");
+        setAutoSaveStatus('saved');
         // Call success callback to mark config as clean
         onSaveSuccess?.();
 
         // Reset status to idle after 2 seconds
-        setTimeout(() => setAutoSaveStatus("idle"), 2000);
+        statusResetTimeoutRef.current = setTimeout(() => setAutoSaveStatus('idle'), 2000);
       } else {
-        setAutoSaveStatus("error");
-        setTimeout(() => setAutoSaveStatus("idle"), 3000);
+        setAutoSaveStatus('error');
+        if (statusResetTimeoutRef.current) {
+          clearTimeout(statusResetTimeoutRef.current);
+        }
+        statusResetTimeoutRef.current = setTimeout(() => setAutoSaveStatus('idle'), 2000);
       }
     } catch {
-      setAutoSaveStatus("error");
-      setTimeout(() => setAutoSaveStatus("idle"), 3000);
+      setAutoSaveStatus('error');
+      if (statusResetTimeoutRef.current) {
+        clearTimeout(statusResetTimeoutRef.current);
+      }
+      statusResetTimeoutRef.current = setTimeout(() => setAutoSaveStatus('idle'), 3000);
     } finally {
       setIsAutoSaving(false);
     }
@@ -72,28 +80,27 @@ export const useAutoSave = ({
 
   const performManualSave = useCallback(async () => {
     setIsManuallySaving(true);
-    setAutoSaveStatus("saving");
+    setAutoSaveStatus('saving');
 
     try {
       const success = await onSave(config);
-      console.log("Manual save result:", success);
       if (success) {
         const currentConfigString = JSON.stringify(config);
         lastConfigRef.current = currentConfigString;
         setLastAutoSave(new Date());
-        setAutoSaveStatus("saved");
+        setAutoSaveStatus('saved');
         // Call success callback to mark config as clean
         onSaveSuccess?.();
 
         // Reset status to idle after 3 seconds for manual saves
-        setTimeout(() => setAutoSaveStatus("idle"), 3000);
+        setTimeout(() => setAutoSaveStatus('idle'), 3000);
       } else {
-        setAutoSaveStatus("error");
-        setTimeout(() => setAutoSaveStatus("idle"), 3000);
+        setAutoSaveStatus('error');
+        setTimeout(() => setAutoSaveStatus('idle'), 3000);
       }
     } catch {
-      setAutoSaveStatus("error");
-      setTimeout(() => setAutoSaveStatus("idle"), 3000);
+      setAutoSaveStatus('error');
+      setTimeout(() => setAutoSaveStatus('idle'), 3000);
     } finally {
       setIsManuallySaving(false);
     }
@@ -126,34 +133,36 @@ export const useAutoSave = ({
       if (autoSaveTimeoutRef.current) {
         clearTimeout(autoSaveTimeoutRef.current);
       }
+
+      if (statusResetTimeoutRef.current) {
+        clearTimeout(statusResetTimeoutRef.current);
+      }
     };
   }, []);
 
   const getAutoSaveStatusText = () => {
     switch (autoSaveStatus) {
-      case "saving":
-        return isManuallySaving ? "Saving..." : "Auto-saving...";
-      case "saved":
+      case 'saving':
+        return isManuallySaving ? 'Saving...' : 'Auto-saving...';
+      case 'saved':
         return `Saved at ${lastAutoSave?.toLocaleTimeString()}`;
-      case "error":
-        return isManuallySaving ? "Save failed" : "Auto-save failed";
+      case 'error':
+        return isManuallySaving ? 'Save failed' : 'Auto-save failed';
       default:
-        return lastAutoSave
-          ? `Last saved: ${lastAutoSave.toLocaleTimeString()}`
-          : "Ready to save";
+        return lastAutoSave ? `Last saved: ${lastAutoSave.toLocaleTimeString()}` : 'Ready to save';
     }
   };
 
   const getAutoSaveStatusColor = () => {
     switch (autoSaveStatus) {
-      case "saving":
-        return "text-blue-600";
-      case "saved":
-        return "text-green-600";
-      case "error":
-        return "text-red-600";
+      case 'saving':
+        return 'text-blue-600';
+      case 'saved':
+        return 'text-green-600';
+      case 'error':
+        return 'text-red-600';
       default:
-        return "text-gray-600";
+        return 'text-gray-600';
     }
   };
 
