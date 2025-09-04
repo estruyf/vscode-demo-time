@@ -117,10 +117,7 @@ export const createPatch = async () => {
 
   const version = demoFile.demo.version || 1;
 
-  const contentPath =
-    version === 2
-      ? patchFilePath.path.replace(wsFolder.uri.path, '')
-      : patchFilePath.path.replace(Uri.joinPath(wsFolder.uri, General.demoFolder).path, '');
+  const contentPath = selectedSnapshotPath.path.replace(wsFolder.uri.path, '');
 
   const patchPath =
     version === 2

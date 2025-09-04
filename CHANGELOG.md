@@ -16,6 +16,8 @@
   Editor
 - [#240](https://github.com/estruyf/vscode-demo-time/issues/240): Every GitHub Copilot chat action
   now opens the chat view by default
+- [#242](https://github.com/estruyf/vscode-demo-time/issues/242): Fix the content path in the
+  `Demo Time: Create patch for current file` command execution
 
 ## [1.9.0] - 2025-08-25
 
