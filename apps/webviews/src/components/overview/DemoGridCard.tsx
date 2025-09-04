@@ -56,12 +56,12 @@ const DemoGridCard: React.FC<DemoGridCardProps> = ({
 
         {/* Content - flex-grow to fill available space */}
         <div className="flex-1 flex flex-col">
-          <h3 className="font-semibold text-demo-time-white text-sm mb-2 line-clamp-2" title={demo.title}>
+          <h3 className="font-semibold text-demo-time-white text-sm mb-2 line-clamp-2 text-left" title={demo.title}>
             {demo.title}
           </h3>
 
           {demo.description && (
-            <p className="text-xs text-demo-time-gray-4 mb-3 line-clamp-2">
+            <p className="text-xs text-demo-time-gray-4 mb-3 line-clamp-2 text-left">
               {demo.description}
             </p>
           )}

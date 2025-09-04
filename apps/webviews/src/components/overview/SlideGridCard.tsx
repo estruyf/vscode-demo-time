@@ -70,7 +70,7 @@ const SlideGridCard: React.FC<SlideGridCardProps> = ({
             </span>
           </div>
 
-          <h3 className="font-semibold text-demo-time-white text-sm mb-2">
+          <h3 className="font-semibold text-demo-time-white text-sm mb-2 text-left">
             {slideTitle}
           </h3>
 

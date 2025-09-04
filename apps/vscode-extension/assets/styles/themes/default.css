@@ -6,7 +6,7 @@
   --demotime-background: var(--vscode-editor-background);
 
   --demotime-heading-color: var(--vscode-editor-foreground);
-  --demotime-heading-background: var(--vscode-editor-background);
+  --demotime-heading-background: transparent;
 
   --demotime-font-size: var(--vscode-editor-font-size, 1.1em);
 
