@@ -190,7 +190,7 @@ export const getRequiredFields = (action: Action): string[] => {
 
 export const getFieldsForAction = (action: Action): string[] => {
   const fieldMap: Record<Action, string[]> = {
-    [Action.ApplyPatch]: ['path', 'contentPath', 'patch'],
+    [Action.ApplyPatch]: ['path', 'contentPath', 'patch', 'insertTypingSpeed', 'insertTypingMode'],
     [Action.Create]: ['path', 'content', 'contentPath'],
     [Action.Open]: ['path'],
     [Action.Rename]: ['path', 'dest'],
