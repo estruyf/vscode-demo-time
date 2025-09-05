@@ -104,6 +104,11 @@ export class BaseWebview {
         this.postRequestMessage(command, requestId, null);
       }
     } else if (command === WebViewMessages.toVscode.runCommand && payload) {
+      if (typeof payload === 'string') {
+        await commands.executeCommand(payload);
+        return;
+      }
+
       const { command: cmd, args } = payload;
       if (!cmd) {
         return;
