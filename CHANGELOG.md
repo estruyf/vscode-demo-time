@@ -20,6 +20,7 @@
   now opens the chat view by default
 - [#242](https://github.com/estruyf/vscode-demo-time/issues/242): Fix the content path in the
   `Demo Time: Create patch for current file` command execution
+- [#245](https://github.com/estruyf/vscode-demo-time/issues/245): Fix right panel height
 
 ## [1.9.0] - 2025-08-25
 
