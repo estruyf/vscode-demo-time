@@ -78,7 +78,6 @@ export class Preview extends BaseWebview {
     Preview.crntCss = css ?? null;
 
     if (Preview.isOpen) {
-      Preview.reveal();
       // Use the fileUri argument for triggerUpdate, as it's the most current.
       if (Preview.webview?.webview && fileUri) {
         const fileWebviewPath = getWebviewWorkspaceUrl(Preview.webview?.webview, fileUri);
@@ -90,6 +89,8 @@ export class Preview extends BaseWebview {
         } else {
           Preview.postMessage(WebViewMessages.toWebview.updateStyles, undefined);
         }
+
+        Preview.reveal();
       }
     } else {
       await Preview.create();
