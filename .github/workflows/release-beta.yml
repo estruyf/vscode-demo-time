@@ -7,7 +7,6 @@ on:
   workflow_dispatch:
 
 env:
-  VSCODE_EXT_PATH: apps/vscode-extension
   MS_URL: 'https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-demo-time'
   VSX_URL: 'https://open-vsx.org/extension/eliostruyf/vscode-demo-time'
 
@@ -40,7 +39,7 @@ jobs:
       lint_command: npm run lint
       test_command: npm run test
       prepare_beta_command: ${{ github.ref != 'refs/heads/alpha' && format('node ./scripts/beta-release.mjs {0}', github.run_id) || '' }}
-      working_directory: ${{ env.VSCODE_EXT_PATH }}
+      working_directory: apps/vscode-extension
 
   release-ms:
     name: 'Release to VSCode Marketplace'
@@ -58,24 +57,24 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: vscode-extension-build
-          path: ${{ env.VSCODE_EXT_PATH }}
+          path: apps/vscode-extension
 
       - name: Publish
         if: contains(github.event.head_commit.message, '#release') && github.ref != 'refs/heads/alpha'
         run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }} --baseImagesUrl https://raw.githubusercontent.com/estruyf/vscode-demo-time/dev --pre-release --no-dependencies
-        working-directory: ${{ env.VSCODE_EXT_PATH }}
+        working-directory: apps/vscode-extension
 
       - name: Package VSIX (alpha branch)
         if: github.ref == 'refs/heads/alpha'
         run: npx @vscode/vsce package
-        working-directory: ${{ env.VSCODE_EXT_PATH }}
+        working-directory: apps/vscode-extension
 
       - name: Upload VSIX artifact (alpha branch)
         if: github.ref == 'refs/heads/alpha'
         uses: actions/upload-artifact@v4
         with:
           name: vscode-demo-time-alpha.vsix
-          path: '${{ env.VSCODE_EXT_PATH }}/*.vsix'
+          path: 'apps/vscode-extension/*.vsix'
 
   release-vsx:
     name: 'Release to Open VSX'
@@ -94,9 +93,9 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: vscode-extension-build
-          path: ${{ env.VSCODE_EXT_PATH }}
+          path: apps/vscode-extension
 
       - name: Publish to open-vsx.org
         if: contains(github.event.head_commit.message, '#release') && github.ref != 'refs/heads/alpha'
         run: npx ovsx publish -p ${{ secrets.OPEN_VSX_PAT }} --no-dependencies
-        working-directory: ${{ env.VSCODE_EXT_PATH }}
+        working-directory: apps/vscode-extension
