@@ -1,0 +1,57 @@
+name: Release Common
+
+on:
+  workflow_call:
+    inputs:
+      build_command:
+        required: true
+        type: string
+      lint_command:
+        required: true
+        type: string
+      test_command:
+        required: true
+        type: string
+      prepare_beta_command:
+        required: false
+        type: string
+      working_directory:
+        required: true
+        type: string
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build
+        run: ${{ inputs.build_command }}
+
+      - name: Linting
+        run: ${{ inputs.lint_command }}
+
+      - name: Testing
+        run: ${{ inputs.test_command }}
+
+      - name: Prepare BETA
+        if: ${{ inputs.prepare_beta_command != '' }}
+        run: ${{ inputs.prepare_beta_command }}
+        working-directory: ${{ inputs.working_directory }}
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: vscode-extension-build
+          path: ${{ inputs.working_directory }}

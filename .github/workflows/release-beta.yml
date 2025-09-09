@@ -33,10 +33,19 @@ jobs:
       - name: Verify actions
         run: node .github/scripts/verify-actions.mjs
 
+  build-and-test:
+    uses: ./.github/workflows/release-common.yml
+    with:
+      build_command: npm run vscode:build
+      lint_command: npm run lint
+      test_command: npm run test
+      prepare_beta_command: ${{ github.ref != 'refs/heads/alpha' && format('node ./scripts/beta-release.mjs {0}', github.run_id) || '' }}
+      working_directory: ${{ env.VSCODE_EXT_PATH }}
+
   release-ms:
     name: 'Release to VSCode Marketplace'
     runs-on: ubuntu-latest
-    needs: verify
+    needs: build-and-test
     if: contains(github.event.head_commit.message, '#release') || github.ref == 'refs/heads/alpha'
     environment:
       name: 'Microsoft Marketplace'
@@ -45,30 +54,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Enable Corepack
-        run: corepack enable
-
-      - uses: actions/setup-node@v4
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
         with:
-          node-version: 20
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
-      - name: Build
-        run: npm run vscode:build
-
-      - name: Linting
-        run: npm run lint
-
-      - name: Testing
-        run: npm run test
-
-      - name: Prepare BETA
-        if: github.ref != 'refs/heads/alpha'
-        run: node ./scripts/beta-release.mjs $GITHUB_RUN_ID
-        working-directory: ${{ env.VSCODE_EXT_PATH }}
+          name: vscode-extension-build
+          path: ${{ env.VSCODE_EXT_PATH }}
 
       - name: Publish
         if: contains(github.event.head_commit.message, '#release') && github.ref != 'refs/heads/alpha'
@@ -90,7 +80,7 @@ jobs:
   release-vsx:
     name: 'Release to Open VSX'
     runs-on: ubuntu-latest
-    needs: verify
+    needs: build-and-test
     if: contains(github.event.head_commit.message, '#release')
 
     environment:
@@ -100,30 +90,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Enable Corepack
-        run: corepack enable
-
-      - uses: actions/setup-node@v4
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
         with:
-          node-version: 20
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
-      - name: Build
-        run: npm run vscode:build
-
-      - name: Linting
-        run: npm run lint
-
-      - name: Testing
-        run: npm run test
-
-      - name: Prepare BETA
-        if: github.ref != 'refs/heads/alpha'
-        run: node ./scripts/beta-release.mjs $GITHUB_RUN_ID
-        working-directory: ${{ env.VSCODE_EXT_PATH }}
+          name: vscode-extension-build
+          path: ${{ env.VSCODE_EXT_PATH }}
 
       - name: Publish to open-vsx.org
         if: contains(github.event.head_commit.message, '#release') && github.ref != 'refs/heads/alpha'
