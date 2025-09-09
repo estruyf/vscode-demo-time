@@ -8,6 +8,8 @@ on:
 
 env:
   VSCODE_EXT_PATH: apps/vscode-extension
+  MS_URL: 'https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-demo-time'
+  VSX_URL: 'https://open-vsx.org/extension/eliostruyf/vscode-demo-time'
 
 jobs:
   verify:
@@ -31,11 +33,14 @@ jobs:
       - name: Verify actions
         run: node .github/scripts/verify-actions.mjs
 
-  build:
-    name: 'Build and release'
+  release-ms:
+    name: 'Release to VSCode Marketplace'
     runs-on: ubuntu-latest
     needs: verify
     if: contains(github.event.head_commit.message, '#release') || github.ref == 'refs/heads/alpha'
+    environment:
+      name: 'Microsoft Marketplace'
+      url: ${{ env.MS_URL }}
 
     steps:
       - uses: actions/checkout@v4
@@ -70,11 +75,6 @@ jobs:
         run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }} --baseImagesUrl https://raw.githubusercontent.com/estruyf/vscode-demo-time/dev --pre-release --no-dependencies
         working-directory: ${{ env.VSCODE_EXT_PATH }}
 
-      - name: Publish to open-vsx.org
-        if: contains(github.event.head_commit.message, '#release') && github.ref != 'refs/heads/alpha'
-        run: npx ovsx publish -p ${{ secrets.OPEN_VSX_PAT }} --no-dependencies
-        working-directory: ${{ env.VSCODE_EXT_PATH }}
-
       - name: Package VSIX (alpha branch)
         if: github.ref == 'refs/heads/alpha'
         run: npx @vscode/vsce package
@@ -86,3 +86,46 @@ jobs:
         with:
           name: vscode-demo-time-alpha.vsix
           path: '${{ env.VSCODE_EXT_PATH }}/*.vsix'
+
+  release-vsx:
+    name: 'Release to Open VSX'
+    runs-on: ubuntu-latest
+    needs: verify
+    if: contains(github.event.head_commit.message, '#release')
+
+    environment:
+      name: 'Open VSX'
+      url: ${{ env.VSX_URL }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build
+        run: npm run vscode:build
+
+      - name: Linting
+        run: npm run lint
+
+      - name: Testing
+        run: npm run test
+
+      - name: Prepare BETA
+        if: github.ref != 'refs/heads/alpha'
+        run: node ./scripts/beta-release.mjs $GITHUB_RUN_ID
+        working-directory: ${{ env.VSCODE_EXT_PATH }}
+
+      - name: Publish to open-vsx.org
+        if: contains(github.event.head_commit.message, '#release') && github.ref != 'refs/heads/alpha'
+        run: npx ovsx publish -p ${{ secrets.OPEN_VSX_PAT }} --no-dependencies
+        working-directory: ${{ env.VSCODE_EXT_PATH }}
