@@ -28,87 +28,307 @@ const oneTimeSponsors = [
 
 // Merge sponsors, exclude duplicates by a stable key: login -> url -> id
 let allSponsors = [...oneTimeSponsors, ...sponsors];
-// Deduplicate by a key that prefers `login`, then `url`, then `id` so we don't
-// accidentally drop sponsors that don't include a `login` field (e.g. Powerbouwer).
 const seenKeys = new Set();
 allSponsors = allSponsors
   .sort((a, b) => (a.name || a.login || '').localeCompare(b.name || b.login || ''))
   .filter((sponsor) => {
     const key = sponsor.login || sponsor.url || sponsor.id || sponsor.name;
-    if (!key) return false; // skip completely malformed entries
+    if (!key) return false;
     if (seenKeys.has(key)) return false;
     seenKeys.add(key);
     return true;
   });
 ---
 
-<div class="container px-4 mx-auto">
-  <div class="flex flex-col items-center gap-8 py-16 border-t border-[var(--sl-color-gray-6)]">
-    <div class="flex flex-col items-center max-w-2xl gap-4 text-center">
-      <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#FFD43B]/10">
-        <HeartIcon class="w-6 h-6 text-[#FFD43B]" />
+<section class="sponsors-section">
+  <div class="sponsors-container">
+    <!-- Header Section -->
+    <div class="sponsors-header">
+      <div class="heart-icon-wrapper">
+        <HeartIcon class="heart-icon" />
       </div>
-      <h2 class="text-2xl font-bold text-[var(--sl-color-white)]">Support Demo Time</h2>
-      <p class="text-[var(--sl-color-gray-2)]">
-        Love using Demo Time? Consider becoming a sponsor to help us continue building the best demo
-        experience for developers. Every contribution helps us add new features, fix bugs, and
-        improve the extension.
-      </p>
-      <p class="text-[var(--sl-color-gray-2)]">
-        Support the project and get featured! Become a sponsor, and we'll add your logo to our site
-        to showcase your support.
-      </p>
-      <div class="flex flex-wrap items-center justify-center gap-4 pt-2">
+      <h2 class="sponsors-title">Support Demo Time</h2>
+      <div class="sponsors-description">
+        <p>
+          Love using Demo Time? Consider becoming a sponsor to help us continue building the best
+          demo experience for developers.
+        </p>
+        <p>
+          Support the project and get featured! Become a sponsor, and we'll add your logo to our
+          site to showcase your support.
+        </p>
+      </div>
+      <div class="sponsor-button-wrapper">
         <SponsorButton />
       </div>
+    </div>
 
-      <div class="mt-8">
-        <h3 class="text-xl font-semibold text-[var(--sl-color-white)] mb-4">Premium Sponsors</h3>
-        <div class="flex flex-wrap justify-center gap-4">
-          <a
-            href={`https://www.coderabbit.ai/`}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="group flex flex-col items-center transition-transform hover:scale-105"
-            title={`AI Code Reviews by CodeRabbit`}
-          >
-            <img src="/sponsors/coderabbit-dark.svg" alt="AI Code Reviews by CodeRabbit" />
-          </a>
-        </div>
+    <!-- Premium Sponsors -->
+    <div class="sponsors-tier">
+      <h3 class="tier-title">Premium Sponsors</h3>
+      <div class="premium-sponsors-grid">
+        <a
+          href="https://www.coderabbit.ai/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="premium-sponsor-card"
+          title="AI Code Reviews by CodeRabbit"
+        >
+          <img
+            src="/sponsors/coderabbit-dark.svg"
+            alt="AI Code Reviews by CodeRabbit"
+            class="premium-sponsor-logo"
+          />
+        </a>
       </div>
+    </div>
 
-      {
-        sponsors.length > 0 && (
-          <div class="mt-8">
-            <h3 class="text-xl font-semibold text-[var(--sl-color-white)] mb-4">
-              Current Sponsors
-            </h3>
-            <div class="flex flex-wrap justify-center gap-4">
-              {allSponsors.map((sponsor) => (
-                <a
-                  href={sponsor.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="group flex flex-col items-center transition-transform hover:scale-105"
-                  title={`${sponsor.name} (${sponsor.login})`}
-                >
+    <!-- Current Sponsors -->
+    {
+      sponsors.length > 0 && (
+        <div class="sponsors-tier">
+          <h3 class="tier-title">Current Sponsors</h3>
+          <div class="sponsors-grid">
+            {allSponsors.map((sponsor) => (
+              <a
+                href={sponsor.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="sponsor-card"
+                title={`${sponsor.name} (${sponsor.login})`}
+              >
+                <div class="sponsor-avatar-wrapper">
                   <img
                     src={sponsor.avatarUrl}
                     alt={sponsor.name}
-                    class="w-16 h-16 rounded-full border-2 border-[#FFD43B]/50 group-hover:border-[#FFD43B]"
+                    class="sponsor-avatar"
                     width="64"
                     height="64"
                     loading="lazy"
                   />
-                  <span class="mt-2 text-xs text-[var(--sl-color-gray-3)] group-hover:text-[var(--sl-color-white)]">
-                    {sponsor.name || sponsor.login}
-                  </span>
-                </a>
-              ))}
-            </div>
+                </div>
+                <span class="sponsor-name">{sponsor.name || sponsor.login}</span>
+              </a>
+            ))}
           </div>
-        )
-      }
-    </div>
+        </div>
+      )
+    }
   </div>
-</div>
+</section>
+
+<style>
+  .sponsors-section {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.05) 100%);
+    border-top: 1px solid var(--sl-color-gray-6);
+    padding: 4rem 1rem;
+  }
+
+  .sponsors-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* Header Section */
+  .sponsors-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 4rem;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .heart-icon-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFD43B/20, #FFD43B/10);
+    border: 1px solid #FFD43B/30;
+    margin-bottom: 1.5rem;
+  }
+
+  .heart-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+    color: #ffd43b;
+  }
+
+  .sponsors-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--sl-color-white);
+    margin: 0 0 1.5rem 0;
+    letter-spacing: -0.02em;
+  }
+
+  .sponsors-description {
+    color: var(--sl-color-gray-2);
+    font-size: 1.125rem;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+  }
+
+  .sponsors-description p {
+    margin: 0 0 1rem 0;
+  }
+
+  .sponsors-description p:last-child {
+    margin-bottom: 0;
+  }
+
+  .sponsor-button-wrapper {
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Sponsor Tiers */
+  .sponsors-tier {
+    margin-bottom: 3rem;
+  }
+
+  .sponsors-tier:last-child {
+    margin-bottom: 0;
+  }
+
+  .tier-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--sl-color-white);
+    text-align: center;
+    margin: 0 0 2rem 0;
+    letter-spacing: -0.01em;
+  }
+
+  /* Premium Sponsors Grid */
+  .premium-sponsors-grid {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .premium-sponsor-card {
+    display: block;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .premium-sponsor-card:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 212, 59, 0.3);
+    box-shadow: 0 8px 32px rgba(255, 212, 59, 0.15);
+  }
+
+  .premium-sponsor-logo {
+    height: 3rem;
+    width: auto;
+    display: block;
+  }
+
+  /* Current Sponsors Grid */
+  .sponsors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1.5rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .sponsor-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px solid transparent;
+  }
+
+  .sponsor-card:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 212, 59, 0.2);
+  }
+
+  .sponsor-avatar-wrapper {
+    position: relative;
+    margin-bottom: 0.75rem;
+  }
+
+  .sponsor-avatar {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 212, 59, 0.3);
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .sponsor-card:hover .sponsor-avatar {
+    border-color: #ffd43b;
+    box-shadow: 0 4px 16px rgba(255, 212, 59, 0.25);
+  }
+
+  .sponsor-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--sl-color-gray-3);
+    text-align: center;
+    transition: color 0.3s ease;
+    line-height: 1.3;
+  }
+
+  .sponsor-card:hover .sponsor-name {
+    color: var(--sl-color-white);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .sponsors-section {
+      padding: 3rem 1rem;
+    }
+
+    .sponsors-header {
+      margin-bottom: 3rem;
+    }
+
+    .sponsors-title {
+      font-size: 2rem;
+    }
+
+    .sponsors-description {
+      font-size: 1rem;
+    }
+
+    .sponsors-grid {
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 1rem;
+    }
+
+    .premium-sponsors-grid {
+      gap: 1rem;
+    }
+
+    .premium-sponsor-card {
+      padding: 1.5rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .sponsors-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>
