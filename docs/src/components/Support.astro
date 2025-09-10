@@ -26,14 +26,18 @@ const oneTimeSponsors = [
   },
 ];
 
-// Merge sponsors, exclude duplicates by 'login'
+// Merge sponsors, exclude duplicates by a stable key: login -> url -> id
 let allSponsors = [...oneTimeSponsors, ...sponsors];
-const seenLogins = new Set();
+// Deduplicate by a key that prefers `login`, then `url`, then `id` so we don't
+// accidentally drop sponsors that don't include a `login` field (e.g. Powerbouwer).
+const seenKeys = new Set();
 allSponsors = allSponsors
-  .sort((a, b) => (a.name || a.login).localeCompare(b.name || b.login))
+  .sort((a, b) => (a.name || a.login || '').localeCompare(b.name || b.login || ''))
   .filter((sponsor) => {
-    if (seenLogins.has(sponsor.login)) return false;
-    seenLogins.add(sponsor.login);
+    const key = sponsor.login || sponsor.url || sponsor.id || sponsor.name;
+    if (!key) return false; // skip completely malformed entries
+    if (seenKeys.has(key)) return false;
+    seenKeys.add(key);
     return true;
   });
 ---
