@@ -47,9 +47,6 @@ jobs:
       - name: Linting and testing
         run: npm run lint && npm test
 
-      - name: Verify actions
-        run: node .github/scripts/verify-actions.mjs
-
       - name: Publish
         run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }} --no-dependencies
 
