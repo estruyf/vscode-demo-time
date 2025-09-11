@@ -48,7 +48,7 @@ export const PollIdPicker: React.FunctionComponent<IPollIdPickerProps> = ({
       </label>
       <ComboBox
         options={polls.map(poll => poll.title)}
-        value={selectedPoll}
+        value={value}
         onChange={selectedTitle => {
           const selectedPoll = polls.find(poll => poll.title === selectedTitle);
           if (selectedPoll) {
@@ -61,6 +61,11 @@ export const PollIdPicker: React.FunctionComponent<IPollIdPickerProps> = ({
         required={required}
         error={error}
       />
+      {
+        selectedPoll && (
+          <p className="mt-2 text-sm"><strong>Poll:</strong> {selectedPoll}</p>
+        )
+      }
     </>
   );
 };

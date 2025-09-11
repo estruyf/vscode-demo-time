@@ -1,10 +1,10 @@
 import React from 'react';
 import { messageHandler, Messenger } from "@estruyf/vscode/dist/client/index.js";
 import { Loader } from "vscrui";
-import { DemoConfig } from '../../types/demo';
 import { EventData } from '@estruyf/vscode/dist/models';
 import { DemoBuilder } from '../demo/DemoBuilder';
-import { WebViewMessages } from '@demotime/common';
+import { DemoConfigProvider } from '../../providers/DemoConfigProvider';
+import { DemoConfig, WebViewMessages } from '@demotime/common';
 import '../../styles/config.css';
 
 const ConfigEditorView = () => {
@@ -40,7 +40,11 @@ const ConfigEditorView = () => {
     return <Loader />;
   }
 
-  return <DemoBuilder initialConfig={config} />;
-}
+  return (
+    <DemoConfigProvider initialConfig={config}>
+      <DemoBuilder />
+    </DemoConfigProvider>
+  );
+};
 
 export default ConfigEditorView;

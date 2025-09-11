@@ -1,6 +1,7 @@
 export * from './useAutoSave';
 export * from './useCursor';
 export * from './useDemoConfig';
+export * from './useDemoConfigContext';
 export * from './useFileContents';
 export * from './useFileOperations';
 export * from './useMousePosition';

@@ -2,10 +2,9 @@ import { useEffect, useState } from 'react';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client';
 import { EventData } from '@estruyf/vscode';
 import { Loader } from 'vscrui';
-import { DemoConfig } from '../../types/demo';
 import { DemoOverviewContainer } from '../overview';
 import { DemoFileData } from '../../types/demoOverview';
-import { WebViewMessages } from '@demotime/common';
+import { DemoConfig, WebViewMessages } from '@demotime/common';
 import '../../styles/config.css';
 
 const DemoScriptView = () => {

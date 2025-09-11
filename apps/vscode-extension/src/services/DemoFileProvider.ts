@@ -8,7 +8,7 @@ import { load as yamlLoad, dump as yamlDump } from 'js-yaml';
 import { createDemoFile, readFile, sanitizeFileName, sortFiles, writeFile } from '../utils';
 import { Preview } from '../preview/Preview';
 import { Logger } from './Logger';
-import { Config, DemoFile, DemoFiles } from '@demotime/common';
+import { Config, DemoConfig, DemoConfig, DemoFiles } from '@demotime/common';
 
 export class DemoFileProvider {
   public static register() {
@@ -45,9 +45,9 @@ export class DemoFileProvider {
    * Parses the content of a demo file based on its extension
    * @param content The file content as string
    * @param filePath The file path to determine the format
-   * @returns The parsed content as DemoFile object
+   * @returns The parsed content as DemoConfig object
    */
-  public static parseFileContent(content: string, filePath: Uri): DemoFile | undefined {
+  public static parseFileContent(content: string, filePath: Uri): DemoConfig | undefined {
     const path = filePath.fsPath.toLowerCase();
 
     if (!content) {
@@ -56,7 +56,7 @@ export class DemoFileProvider {
 
     if (path.endsWith('.yaml') || path.endsWith('.yml')) {
       try {
-        const parsed = yamlLoad(content) as DemoFile;
+        const parsed = yamlLoad(content) as DemoConfig;
         return parsed;
       } catch (error) {
         console.error('Error parsing YAML demo file:', error);
@@ -74,8 +74,8 @@ export class DemoFileProvider {
    * @param title The demo title
    * @returns The formatted content string
    */
-  private static generateFileContent(title: string): DemoFile {
-    const demoContent: DemoFile = {
+  private static generateFileContent(title: string): DemoConfig {
+    const demoContent: DemoConfig = {
       $schema: 'https://demotime.show/demo-time.schema.json',
       title: title,
       description: '',
@@ -119,7 +119,7 @@ export class DemoFileProvider {
    * @param filePath - The path of the file to read.
    * @returns A Promise that resolves to the JSON object representing the file content, or undefined if the file is empty or not valid JSON.
    */
-  public static async getFile(filePath: Uri): Promise<DemoFile | undefined> {
+  public static async getFile(filePath: Uri): Promise<DemoConfig | undefined> {
     const content = await readFile(filePath);
     if (!content) {
       return;
@@ -169,7 +169,7 @@ export class DemoFileProvider {
    * Retrieves a demo file using a quick pick dialog.
    * @returns The selected demo file, or undefined if no file was selected.
    */
-  public static async demoQuickPick(): Promise<{ filePath: string; demo: DemoFile } | undefined> {
+  public static async demoQuickPick(): Promise<{ filePath: string; demo: DemoConfig } | undefined> {
     let demoFiles = await DemoFileProvider.getFiles();
     if (!demoFiles) {
       return;

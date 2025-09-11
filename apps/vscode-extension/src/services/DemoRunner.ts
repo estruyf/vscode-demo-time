@@ -61,7 +61,7 @@ import {
   Action,
   Demo,
   DemoFileCache,
-  DemoFile,
+  DemoConfig,
   IImagePreview,
   ISlidePreview,
   Step,
@@ -897,34 +897,38 @@ export class DemoRunner {
     /**
      * Engage Time actions
      */
-    if (step.action === Action.StartEngageTimeSession) {
-      await EngageTimeService.startSession(step.sessionId);
-      return;
-    }
+    if (step.action.includes('EngageTime')) {
+      const crntDemoConfig = await DemoRunner.getExecutedDemoFile();
+      const crntDemoFile = await DemoFileProvider.getFile(Uri.file(crntDemoConfig.filePath));
+      if (step.action === Action.StartEngageTimeSession) {
+        await EngageTimeService.startSession(crntDemoFile?.engageTime?.sessionId);
+        return;
+      }
 
-    if (step.action === Action.CloseEngageTimeSession) {
-      await EngageTimeService.stopSession(step.sessionId);
-      return;
-    }
+      if (step.action === Action.CloseEngageTimeSession) {
+        await EngageTimeService.stopSession(crntDemoFile?.engageTime?.sessionId);
+        return;
+      }
 
-    if (step.action === Action.StartEngageTimePoll) {
-      await EngageTimeService.startPoll(step.pollId);
-      return;
-    }
+      if (step.action === Action.StartEngageTimePoll) {
+        await EngageTimeService.startPoll(step.pollId);
+        return;
+      }
 
-    if (step.action === Action.CloseEngageTimePoll) {
-      await EngageTimeService.stopPoll(step.pollId);
-      return;
-    }
+      if (step.action === Action.CloseEngageTimePoll) {
+        await EngageTimeService.stopPoll(step.pollId);
+        return;
+      }
 
-    if (step.action === Action.ShowEngageTimeSession) {
-      await EngageTimeService.showSession(step.sessionId);
-      return;
-    }
+      if (step.action === Action.ShowEngageTimeSession) {
+        await EngageTimeService.showSession(crntDemoFile?.engageTime?.sessionId);
+        return;
+      }
 
-    if (step.action === Action.ShowEngageTimePoll) {
-      await EngageTimeService.showPoll(step.pollId);
-      return;
+      if (step.action === Action.ShowEngageTimePoll) {
+        await EngageTimeService.showPoll(step.pollId);
+        return;
+      }
     }
 
     /**
@@ -1201,7 +1205,7 @@ export class DemoRunner {
   ): Promise<
     | {
         filePath: string;
-        demo: DemoFile;
+        demo: DemoConfig;
       }
     | undefined
   > {

@@ -1,8 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
-import { DemoConfig, Demo, Step } from '../types/demo';
 import { validateConfig } from '../utils/validation';
 import { messageHandler } from '@estruyf/vscode/dist/client';
-import { WebViewMessages } from '@demotime/common';
+import { Action, Demo, DemoConfig, Step, WebViewMessages } from '@demotime/common';
 
 // Helper function to merge the initial config with default values.
 // This ensures that the config object always has the necessary properties.
@@ -17,12 +16,12 @@ const initializeConfig = (initialConfig?: DemoConfig): DemoConfig => {
         id: 'demo-sample-1',
         title: 'Getting Started',
         steps: [
-          { action: 'askCopilotChat' },
+          { action: Action.AskChat },
           {
-            action: 'typeText',
+            action: Action.TypeText,
             content: 'Hello, can you tell me more about Demo Time?',
           },
-          { action: 'pressEnter' },
+          { action: Action.PressEnter },
         ],
       },
     ],
@@ -132,7 +131,7 @@ export const useDemoConfig = (initialConfig?: DemoConfig) => {
   }, []);
 
   const handleAddStep = useCallback((demoIndex: number) => {
-    const newStep: Step = { action: 'create' };
+    const newStep: Step = { action: Action.Create };
     setConfig((prev) => ({
       ...prev,
       demos: prev.demos.map((demo, idx) =>
@@ -201,7 +200,9 @@ export const useDemoConfig = (initialConfig?: DemoConfig) => {
     setConfig((prev) => {
       const newDemos = [...prev.demos];
       const [draggedItem] = newDemos.splice(fromIndex, 1);
-      if (draggedItem === undefined) return prev;
+      if (draggedItem === undefined) {
+        return prev;
+      }
       newDemos.splice(toIndex, 0, draggedItem);
       return { ...prev, demos: newDemos };
     });

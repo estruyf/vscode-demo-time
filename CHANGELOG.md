@@ -20,6 +20,8 @@
   now opens the chat view by default
 - [#242](https://github.com/estruyf/vscode-demo-time/issues/242): Fix the content path in the
   `Demo Time: Create patch for current file` command execution
+- [#244](https://github.com/estruyf/vscode-demo-time/issues/244): Moved the Engage Time session ID
+  to the demo file level
 - [#245](https://github.com/estruyf/vscode-demo-time/issues/245): Fix right panel height
 - [#249](https://github.com/estruyf/vscode-demo-time/issues/249): Fix reveal of slides after
   navigating to another file

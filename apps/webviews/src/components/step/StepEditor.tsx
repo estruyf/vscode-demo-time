@@ -11,6 +11,7 @@ import { SnippetArguments } from './SnippetArguments';
 import { DemoIdPicker } from '../ui/DemoIdPicker';
 import { Action, Step, WebViewMessages } from '@demotime/common';
 import { PollIdPicker } from './PollIdPicker';
+import { useDemoConfigContext } from '../../hooks';
 
 interface StepEditorProps {
   step: Step;
@@ -21,6 +22,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
   const availableFields = getFieldsForAction(step?.action);
   const requiredFields = getRequiredFields(step?.action);
   const stepValidation = validateStep(step);
+  const { config } = useDemoConfigContext();
 
   // State for fetched themes
   const [fetchedThemes, setFetchedThemes] = useState<string[]>([]);
@@ -47,7 +49,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
   // Parse position into separate fields
   const parsePosition = (position?: string | number) => {
-    if (!position) return { startLine: '', startChar: '', endLine: '', endChar: '' };
+    if (!position) { return { startLine: '', startChar: '', endLine: '', endChar: '' }; }
 
     const pos = position.toString().trim();
 
@@ -104,7 +106,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
   // Combine position fields into position string
   const combinePosition = (startLine: string, startChar: string, endLine: string, endChar: string): string | undefined => {
-    if (!startLine.trim()) return undefined;
+    if (!startLine.trim()) { return undefined; }
 
     const start = startLine.trim();
     const startC = startChar.trim();
@@ -134,7 +136,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
   // Validate position ranges
   const validatePositionRange = (startLine: string, startChar: string, endLine: string, endChar: string): string | null => {
-    if (!startLine.trim()) return null;
+    if (!startLine.trim()) { return null; }
 
     const start = startLine.trim();
     const startC = startChar.trim();
@@ -142,13 +144,13 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
     const endC = endChar.trim();
 
     // Skip validation for special cases
-    if (start === 'start' || start === 'end') return null;
+    if (start === 'start' || start === 'end') { return null; }
 
     // Validate that all values are numbers when provided
-    if (!/^\d+$/.test(start)) return 'Start line must be a number';
-    if (startC && !/^\d+$/.test(startC)) return 'Start character must be a number';
-    if (end && !/^\d+$/.test(end)) return 'End line must be a number';
-    if (endC && !/^\d+$/.test(endC)) return 'End character must be a number';
+    if (!/^\d+$/.test(start)) { return 'Start line must be a number'; }
+    if (startC && !/^\d+$/.test(startC)) { return 'Start character must be a number'; }
+    if (end && !/^\d+$/.test(end)) { return 'End line must be a number'; }
+    if (endC && !/^\d+$/.test(endC)) { return 'End character must be a number'; }
 
     if (end) {
       const startLineNum = parseInt(start);
@@ -194,8 +196,8 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
     onChange(newStep);
   };
 
-  const handleSettingChange = (key: string, value: string) => {
-    handleChange('setting', { key, value });
+  const handleSettingChange = (key: string, value: string | number | boolean | object | null | undefined) => {
+    handleChange('setting', { key, value: value === undefined ? null : value });
   };
 
   const handleStateChange = (key: string, value: string) => {
@@ -249,25 +251,33 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
             />
             {
               step.action && step.action.toLowerCase().includes('engagetime') && (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2 space-y-1">
-                  <p className="text-sm text-yellow-800">
-                    <strong>Note:</strong> Make sure you configure your Engage Time API key in the Demo Time settings.
+                <>
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2 space-y-1">
+                    <p className="text-sm text-yellow-800">
+                      <strong>Note:</strong> Make sure to set the Engage Time Session ID in the demo configuration.
+                    </p>
                     <button
                       type="button"
-                      className="bg-transparent p-0 m-0 border-none underline decoration-dotted hover:decoration-solid text-blue-700 cursor-pointer"
+                      className="!text-sm bg-transparent p-0 m-0 border-none underline decoration-dotted hover:decoration-solid text-blue-700 cursor-pointer"
                       style={{ font: 'inherit' }}
                       onClick={(e) => {
                         e.preventDefault();
-                        messageHandler.send(WebViewMessages.toVscode.configEditor.openSettings);
+                        window.dispatchEvent(new CustomEvent('engagetime:open-config', {}));
                       }}
                     >
-                      Open Demo Time Settings
+                      Open Engage Time Config
                     </button>
-                  </p>
-                  <p className="text-sm text-yellow-800">
-                    You can get it at <a href="https://engagetime.live" target="_blank" rel="noopener noreferrer" className="underline! decoration-dotted! hover:decoration-solid! text-blue-700!">https://engagetime.live</a>.
-                  </p>
-                </div>
+                  </div>
+                  {
+                    config.engageTime?.sessionId ? null : (
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-2 space-y-1">
+                        <p className="text-sm text-red-700 mt-1">
+                          <strong>Error:</strong> No Engage Time Session ID is set in the demo configuration.
+                        </p>
+                      </div>
+                    )
+                  }
+                </>
               )
             }
           </div>
@@ -297,7 +307,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
             <PollIdPicker
               label="Poll ID"
               required={isRequired}
-              sessionId={step.sessionId || ''}
+              sessionId={config.engageTime?.sessionId || ''}
               value={step.pollId || ''}
               onChange={(value) => handleChange('pollId', value || undefined)}
               error={fieldErrors.length > 0 ? fieldErrors[0].message : undefined}
@@ -437,7 +447,13 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                 <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="setting-value">Value</label>
                 <textarea
                   id="setting-value"
-                  value={typeof step.setting?.value === 'object' && step.setting?.value !== null ? JSON.stringify(step.setting.value, null, 2) : step.setting?.value || ''}
+                  value={
+                    typeof step.setting?.value === 'object' && step.setting?.value !== null
+                      ? JSON.stringify(step.setting.value, null, 2)
+                      : typeof step.setting?.value === 'boolean'
+                        ? String(step.setting?.value)
+                        : step.setting?.value || ''
+                  }
                   onChange={e => {
                     try {
                       const parsed = JSON.parse(e.target.value);
@@ -750,7 +766,6 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
   };
 
   return (
-
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h4 className="text-lg font-semibold text-gray-900">Step Configuration</h4>

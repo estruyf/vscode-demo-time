@@ -1,22 +1,27 @@
 import { Action, InsertTypingMode, Version } from '.';
 
 export interface DemoFiles {
-  [filePath: string]: DemoFile;
+  [filePath: string]: DemoConfig;
 }
 
-export interface DemoFile {
-  $schema: 'https://demotime.show/demo-time.schema.json';
+export interface DemoConfig {
+  $schema?: 'https://demotime.show/demo-time.schema.json';
   title: string;
   description?: string;
   version?: Version;
   timer?: number;
+  engageTime?: EngageTimeConfig;
   demos: Demo[];
+}
+
+export interface EngageTimeConfig {
+  sessionId?: string;
 }
 
 export interface Demo {
   id?: string;
   title: string;
-  description: string;
+  description?: string;
   steps: Step[];
   icons?: Icons;
   notes?: Notes;

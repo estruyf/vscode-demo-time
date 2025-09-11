@@ -1,4 +1,4 @@
-import { Version } from "./Version";
+import { Version } from './Version';
 
 export interface DemoFileCache {
   filePath: string;

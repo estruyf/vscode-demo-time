@@ -1,7 +1,7 @@
 import React from 'react';
 import { AlertCircle, CheckCircle } from 'lucide-react';
-import { ValidationResult } from '../utils/validation';
-import { DemoConfig } from '../types/demo';
+import { DemoConfig } from '@demotime/common';
+import { ValidationResult } from '../../utils';
 
 interface ValidationSummaryProps {
   validationResult: ValidationResult;

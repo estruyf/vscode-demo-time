@@ -4,7 +4,7 @@ import { Extension } from './Extension';
 import { General } from '../constants';
 import { Notifications } from './Notifications';
 import { createImageSlide, parseWinPath } from '../utils';
-import { COMMAND, Action, DemoFile } from '@demotime/common';
+import { COMMAND, Action, DemoConfig } from '@demotime/common';
 
 export class ImportService {
   public static register() {
@@ -81,7 +81,7 @@ export class ImportService {
           return;
         }
 
-        let demo: DemoFile | undefined;
+        let demo: DemoConfig | undefined;
         if (createNewDemoFile === 'Yes') {
           demo = {
             $schema: 'https://demotime.show/demo-time.schema.json',

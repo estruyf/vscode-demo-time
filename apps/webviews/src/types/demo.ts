@@ -1,12 +1,4 @@
-import { Action, Demo, InsertTypingMode } from '@demotime/common';
-
-export interface DemoConfig {
-  title: string;
-  description: string;
-  version: 1 | 2;
-  timer?: number;
-  demos: Demo[];
-}
+import { Action, InsertTypingMode } from '@demotime/common';
 
 export const THEMES = [
   'Default Dark Modern',
@@ -98,6 +90,10 @@ export const CATEGORIZED_ACTIONS: {
   {
     category: 'Snippet actions',
     options: [Action.Snippet],
+  },
+  {
+    category: 'Patch actions',
+    options: [Action.ApplyPatch],
   },
   {
     category: 'External Apps actions',

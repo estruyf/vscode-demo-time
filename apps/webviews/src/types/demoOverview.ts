@@ -1,5 +1,4 @@
-import { Demo, Slide } from '@demotime/common';
-import { DemoConfig } from './demo';
+import { Demo, DemoConfig, Slide } from '@demotime/common';
 
 export interface DemoFileData {
   fileName: string;

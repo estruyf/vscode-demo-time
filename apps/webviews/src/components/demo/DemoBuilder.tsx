@@ -4,8 +4,7 @@ import { Card } from '../ui/Card';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client';
 import { EventData } from '@estruyf/vscode';
 import { StepList } from '../step/StepList';
-import { DemoConfig } from '../../types/demo';
-import { useAutoSave, useDemoConfig, useFileOperations } from '../../hooks';
+import { useAutoSave, useDemoConfigContext, useFileOperations } from '../../hooks';
 import { AppHeader, MainContent, Sidebar } from '../layout';
 import { ActionControls, FileControls } from '../file';
 import { ValidationSummary } from './ValidationSummary';
@@ -13,7 +12,7 @@ import { DemoEditor, DemoSection, MainConfigForm } from '.';
 import SettingsView from '../webviews/SettingsView';
 import { WebViewMessages } from '@demotime/common';
 
-export const DemoBuilder: React.FC<{ initialConfig: DemoConfig }> = ({ initialConfig }) => {
+export const DemoBuilder: React.FC = () => {
   const [editingStep, setEditingStep] = useState<{ demoIndex: number; stepIndex: number } | null>(null);
   const [selectedDemo, setSelectedDemo] = useState<number | null>(null);
   const [isTestingDemo, setIsTestingDemo] = useState<boolean>(false);
@@ -39,7 +38,7 @@ export const DemoBuilder: React.FC<{ initialConfig: DemoConfig }> = ({ initialCo
     handleReorderDemo,
     handleReorderStep,
     validation
-  } = useDemoConfig(initialConfig);
+  } = useDemoConfigContext();
 
   const {
     handleSave,
@@ -105,7 +104,7 @@ export const DemoBuilder: React.FC<{ initialConfig: DemoConfig }> = ({ initialCo
   };
 
   const handleRemoveStepWithState = (stepIndex: number) => {
-    if (selectedDemo === null) return;
+    if (selectedDemo === null) { return; }
 
     handleRemoveStep(selectedDemo, stepIndex);
 
@@ -122,7 +121,7 @@ export const DemoBuilder: React.FC<{ initialConfig: DemoConfig }> = ({ initialCo
   };
 
   const handleDuplicateStepWithState = (stepIndex: number) => {
-    if (selectedDemo === null) return;
+    if (selectedDemo === null) { return; }
 
     handleDuplicateStep(selectedDemo, stepIndex);
 
@@ -187,7 +186,7 @@ export const DemoBuilder: React.FC<{ initialConfig: DemoConfig }> = ({ initialCo
   };
 
   const handleReorderStepWithState = (fromIndex: number, toIndex: number) => {
-    if (selectedDemo === null) return;
+    if (selectedDemo === null) { return; }
 
     handleReorderStep(selectedDemo, fromIndex, toIndex);
 
@@ -212,7 +211,7 @@ export const DemoBuilder: React.FC<{ initialConfig: DemoConfig }> = ({ initialCo
   };
 
   const handleEditStep = (stepIndex: number | null) => {
-    if (selectedDemo === null) return;
+    if (selectedDemo === null) { return; }
 
     if (stepIndex === null) {
       setEditingStep(null);
@@ -271,7 +270,7 @@ export const DemoBuilder: React.FC<{ initialConfig: DemoConfig }> = ({ initialCo
     } else {
       console.warn("Received openConfigEditorStep without stepIndex or selectedDemo");
     }
-  }
+  };
 
   useEffect(() => {
     function messageListener(message: MessageEvent<EventData<unknown>>) {

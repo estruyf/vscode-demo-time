@@ -35,3 +35,5 @@ demos:
     steps:
       - action: closeEngageTimeSession
         sessionId: 4fn3gy
+engageTime:
+  sessionId: 4fn3gy

@@ -28,7 +28,7 @@ import {
   upperCaseFirstLetter,
 } from '../utils';
 import { Notifications } from './Notifications';
-import { COMMAND, Config, Action, Demo, DemoFile, Icons, Step } from '@demotime/common';
+import { COMMAND, Config, Action, Demo, DemoConfig, Icons, Step } from '@demotime/common';
 import { ConfigEditorProvider } from '../providers/ConfigEditorProvider';
 
 export class DemoCreator {
@@ -292,7 +292,7 @@ export class DemoCreator {
 
     const fileUri = editor.document.uri;
     const fileContents = editor.document.getText();
-    const demo = DemoFileProvider.parseFileContent(fileContents, fileUri) as DemoFile;
+    const demo = DemoFileProvider.parseFileContent(fileContents, fileUri) as DemoConfig;
 
     const actions = getActionOptions();
     const action = await window.showQuickPick(actions, {
@@ -335,12 +335,12 @@ export class DemoCreator {
    * @returns A promise that resolves to the updated list of demos or undefined if the operation was cancelled.
    */
   public static async askWhereToAddStep(
-    demo: DemoFile,
+    demo: DemoConfig,
     step: Step | Step[],
     stepTitle?: string,
     stepDescription?: string,
     stepIcons?: Icons,
-  ): Promise<DemoFile | undefined> {
+  ): Promise<DemoConfig | undefined> {
     let demoStep: string | undefined = 'New demo step';
 
     if (demo.demos.length > 0) {

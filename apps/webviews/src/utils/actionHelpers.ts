@@ -178,12 +178,12 @@ export const getRequiredFields = (action: Action): string[] => {
     [Action.RunDemoById]: ['id'],
     [Action.BackupSettings]: [],
     [Action.RestoreSettings]: [],
-    [Action.StartEngageTimeSession]: ['sessionId'],
-    [Action.StartEngageTimePoll]: ['sessionId', 'pollId'],
-    [Action.CloseEngageTimeSession]: ['sessionId'],
-    [Action.CloseEngageTimePoll]: ['sessionId', 'pollId'],
-    [Action.ShowEngageTimeSession]: ['sessionId'],
-    [Action.ShowEngageTimePoll]: ['sessionId', 'pollId'],
+    [Action.StartEngageTimeSession]: [],
+    [Action.StartEngageTimePoll]: ['pollId'],
+    [Action.CloseEngageTimeSession]: [],
+    [Action.CloseEngageTimePoll]: ['pollId'],
+    [Action.ShowEngageTimeSession]: [],
+    [Action.ShowEngageTimePoll]: ['pollId'],
   };
   return requiredMap[action] || [];
 };
@@ -274,12 +274,12 @@ export const getFieldsForAction = (action: Action): string[] => {
     [Action.RunDemoById]: ['id'],
     [Action.BackupSettings]: [],
     [Action.RestoreSettings]: [],
-    [Action.StartEngageTimeSession]: ['sessionId'],
-    [Action.StartEngageTimePoll]: ['sessionId', 'pollId'],
-    [Action.CloseEngageTimeSession]: ['sessionId'],
-    [Action.CloseEngageTimePoll]: ['sessionId', 'pollId'],
-    [Action.ShowEngageTimeSession]: ['sessionId'],
-    [Action.ShowEngageTimePoll]: ['sessionId', 'pollId'],
+    [Action.StartEngageTimeSession]: [],
+    [Action.StartEngageTimePoll]: ['pollId'],
+    [Action.CloseEngageTimeSession]: [],
+    [Action.CloseEngageTimePoll]: ['pollId'],
+    [Action.ShowEngageTimeSession]: [],
+    [Action.ShowEngageTimePoll]: ['pollId'],
   };
 
   return fieldMap[action] || [];

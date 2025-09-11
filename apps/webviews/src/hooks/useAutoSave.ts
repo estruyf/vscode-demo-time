@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { DemoConfig } from '../types/demo';
 import { validateConfig } from '../utils/validation';
+import { DemoConfig } from '@demotime/common';
 
 interface UseAutoSaveOptions {
   config: DemoConfig;
@@ -108,7 +108,9 @@ export const useAutoSave = ({
 
   // Debounced auto-save: only save after the user is idle for the interval
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) {
+      return;
+    }
 
     // Clear any existing timeout
     if (autoSaveTimeoutRef.current) {
