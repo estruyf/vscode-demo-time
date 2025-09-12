@@ -23,6 +23,8 @@
 - [#244](https://github.com/estruyf/vscode-demo-time/issues/244): Moved the Engage Time session ID
   to the demo file level
 - [#245](https://github.com/estruyf/vscode-demo-time/issues/245): Fix right panel height
+- [#246](https://github.com/estruyf/vscode-demo-time/issues/246): Added support for relative URLs to
+  images in CSS themes
 - [#249](https://github.com/estruyf/vscode-demo-time/issues/249): Fix reveal of slides after
   navigating to another file
 
