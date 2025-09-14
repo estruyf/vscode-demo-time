@@ -35,9 +35,22 @@ body {
 }
 
 code {
-  font-family: var(--vscode-editor-font-size, ui-sans-serif), ui-sans-serif, system-ui,
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
-    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  font-family:
+    var(--vscode-editor-font-size, ui-sans-serif),
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    'Noto Sans',
+    sans-serif,
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
+    'Noto Color Emoji';
 }
 
 blockquote {
@@ -88,6 +101,19 @@ pre code {
 .slide__image_left,
 .slide__image_right {
   @apply z-10;
+}
+
+/* Slide counter for exports */
+.slide-counter {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  z-index: 30;
+  background: rgba(255, 255, 255, 0.85);
+  color: inherit;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.9rem;
 }
 
 table {

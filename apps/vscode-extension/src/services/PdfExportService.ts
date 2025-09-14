@@ -421,6 +421,8 @@ export class PdfExportService {
       [SlideTheme.frost]: [],
     };
 
+    const totalSlides = allSlides.length;
+
     for (const slide of allSlides) {
       if (slide) {
         const css = await PdfExportService.getCustomTheme(slide.customTheme || '');
@@ -473,6 +475,7 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
         }
 
         ${slide.footer ? `<footer class="slide__footer">${slide.footer}</footer>` : ``}
+        <div class="slide-counter">${index + 1}/${totalSlides}</div>
       </div>
     </div>
   </div>

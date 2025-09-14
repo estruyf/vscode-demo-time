@@ -338,6 +338,11 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
               )
             }
 
+            {/* Slide counter */}
+            {slides.length > 0 && (
+              <div className="slide-counter absolute top-2 right-2 z-30 text-sm px-2 py-1 bg-(--vscode-editorWidget-background) text-(--vscode-editorWidget-foreground) opacity-90 rounded">{(crntSlide?.index ?? 0) + 1}/{slides.length}</div>
+            )}
+
             {/* Laser Pointer */}
             {mousePosition && laserPointerEnabled && (
               <LaserPointer

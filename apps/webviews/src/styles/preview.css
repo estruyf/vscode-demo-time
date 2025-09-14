@@ -79,6 +79,14 @@ table td {
   @apply z-10;
 }
 
+/* Slide counter (preview) */
+.slide-counter {
+  @apply absolute top-2 right-2 z-30 text-sm px-2 py-1 rounded;
+  background-color: var(--vscode-editorWidget-background);
+  color: var(--vscode-editorWidget-foreground);
+  opacity: 0.9;
+}
+
 /* Transitions */
 @keyframes fadeIn {
   from {
