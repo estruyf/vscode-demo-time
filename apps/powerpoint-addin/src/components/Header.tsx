@@ -6,7 +6,7 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  logoUrl = "https://raw.githubusercontent.com/estruyf/vscode-demo-time/main/assets/logo/demotime-square.png",
+  logoUrl = "https://raw.githubusercontent.com/estruyf/vscode-demo-time/main/apps/vscode-extension/assets/logo/demotime-square.png",
   title = "Demo Time Trigger"
 }) => {
   return (
