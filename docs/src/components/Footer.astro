@@ -1,13 +1,13 @@
 ---
-import type { Props } from "@astrojs/starlight/props";
+import type { Props } from '@astrojs/starlight/props';
 
-import EditLink from "virtual:starlight/components/EditLink";
-import LastUpdated from "virtual:starlight/components/LastUpdated";
-import Pagination from "virtual:starlight/components/Pagination";
-import SocialIcons from "virtual:starlight/components/SocialIcons";
-import config from "virtual:starlight/user-config";
-import { Icon } from "@astrojs/starlight/components";
-import Support from "./Support.astro";
+import EditLink from 'virtual:starlight/components/EditLink';
+import LastUpdated from 'virtual:starlight/components/LastUpdated';
+import Pagination from 'virtual:starlight/components/Pagination';
+import SocialIcons from 'virtual:starlight/components/SocialIcons';
+import config from 'virtual:starlight/user-config';
+import { Icon } from '@astrojs/starlight/components';
+import Support from './Support.astro';
 
 const currentUrl = Astro.request.url;
 const isProd = import.meta.env.PROD;
@@ -23,9 +23,7 @@ const isProd = import.meta.env.PROD;
 
   <Support />
 
-  <div
-    class="mx-auto gap-4 flex flex-col sm:flex-row justify-center items-center"
-  >
+  <div class="mx-auto gap-4 flex flex-col sm:flex-row justify-center items-center">
     <a
       class="inline-flex"
       href="https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-demo-time"
@@ -115,9 +113,7 @@ const isProd = import.meta.env.PROD;
         <span
           class="absolute inset-0 -z-10 scale-75 rounded-lg bg-[var(--sl-color-white)]/5 opacity-0 transition group-hover:scale-100 group-hover:opacity-100"
         ></span>
-        <span class="self-baseline text-[var(--sl-color-white)]"
-          >Elio Struyf</span
-        >
+        <span class="self-baseline text-[var(--sl-color-white)]">Elio Struyf</span>
       </a>
     </p>
   </div>
@@ -126,19 +122,30 @@ const isProd = import.meta.env.PROD;
     <a
       href="https://struyfconsulting.com"
       title="Hire Elio Struyf via Struyf Consulting"
+      class="group"
     >
       <img
         src="/struyf-consulting.svg"
         alt="Struyf Consulting Logo"
         height="25px"
+        class="transition duration-200 group-hover:opacity-80"
+        style="filter: invert(var(--sc-logo-invert, 0));"
       />
     </a>
+    <style>
+      :root {
+        --sc-logo-invert: 0;
+      }
+      html[data-theme='light'] {
+        --sc-logo-invert: 1;
+      }
+    </style>
   </div>
 
   {
     config.credits && (
       <a class="kudos sl-flex" href="https://starlight.astro.build">
-        <Icon name={"starlight"} /> {Astro.locals.t("builtWithStarlight.label")}
+        <Icon name={'starlight'} /> {Astro.locals.t('builtWithStarlight.label')}
       </a>
     )
   }
