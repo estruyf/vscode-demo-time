@@ -137,6 +137,7 @@ export const getWebviewHtml = async (
             <div id="root" data-view-type="${type}" data-webview-url="${webviewWsUrl}" data-extension-url="${webviewExtUrl}"></div>
 
             <script type="module" src="http://localhost:5173/src/main.tsx"></script>
+
             ${htmlToInclude}
           </body>
         </html>`;

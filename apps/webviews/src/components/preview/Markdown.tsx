@@ -69,7 +69,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
           let html = convertTemplateToHtml(templateHtml, {
             metadata,
             content: crntSlideContent,
-          });
+          }, webviewUrl);
 
           // Replace all the `<style>` tags with `<style type="text/tailwindcss">`
           html = html.replace(/<style>/g, '<style type="text/tailwindcss">');
@@ -83,7 +83,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     } else {
       setIsReady(true);
     }
-  }, [content, textContent]);
+  }, [content, textContent, webviewUrl]);
 
   const updateCustomThemePath = React.useCallback((customThemePath?: string) => {
     if (!customThemePath) {
