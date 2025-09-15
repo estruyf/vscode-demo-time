@@ -853,6 +853,46 @@ export class DemoRunner {
       return;
     }
 
+    if (step.action === Action.PressTab) {
+      await InteractionService.pressTab();
+      return;
+    }
+
+    if (step.action === Action.PressArrowLeft) {
+      await InteractionService.pressArrowLeft();
+      return;
+    }
+
+    if (step.action === Action.PressArrowRight) {
+      await InteractionService.pressArrowRight();
+      return;
+    }
+
+    if (step.action === Action.PressArrowUp) {
+      await InteractionService.pressArrowUp();
+      return;
+    }
+
+    if (step.action === Action.PressArrowDown) {
+      await InteractionService.pressArrowDown();
+      return;
+    }
+
+    if (step.action === Action.PressEscape) {
+      await InteractionService.pressEscape();
+      return;
+    }
+
+    if (step.action === Action.PressBackspace) {
+      await InteractionService.pressBackspace();
+      return;
+    }
+
+    if (step.action === Action.PressDelete) {
+      await InteractionService.pressDelete();
+      return;
+    }
+
     if (step.action === Action.CopyToClipboard) {
       await InteractionService.copyToClipboard({
         content: step.content,

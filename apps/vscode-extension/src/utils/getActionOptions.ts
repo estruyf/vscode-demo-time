@@ -353,6 +353,46 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: 'Press the Enter key',
   } as QuickPickItem);
 
+  actions.push({
+    label: Action.PressTab,
+    description: 'Press the Tab key',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.PressArrowLeft,
+    description: 'Press the Left Arrow key',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.PressArrowRight,
+    description: 'Press the Right Arrow key',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.PressArrowUp,
+    description: 'Press the Up Arrow key',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.PressArrowDown,
+    description: 'Press the Down Arrow key',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.PressEscape,
+    description: 'Press the Escape key',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.PressBackspace,
+    description: 'Press the Backspace key',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.PressDelete,
+    description: 'Press the Delete key',
+  } as QuickPickItem);
+
   // Demo Time actions
   actions.push({
     label: 'Demo Time',

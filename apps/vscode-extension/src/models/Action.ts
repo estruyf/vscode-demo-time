@@ -59,6 +59,14 @@ export enum Action {
   CopyToClipboard = 'copyToClipboard',
   PasteFromClipboard = 'pasteFromClipboard',
   PressEnter = 'pressEnter',
+  PressTab = 'pressTab',
+  PressArrowLeft = 'pressArrowLeft',
+  PressArrowRight = 'pressArrowRight',
+  PressArrowUp = 'pressArrowUp',
+  PressArrowDown = 'pressArrowDown',
+  PressEscape = 'pressEscape',
+  PressBackspace = 'pressBackspace',
+  PressDelete = 'pressDelete',
   // Demo Time
   RunDemoById = 'runDemoById',
 }
