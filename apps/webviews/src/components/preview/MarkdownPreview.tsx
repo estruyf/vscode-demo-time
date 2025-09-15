@@ -26,6 +26,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const [showControls, setShowControls] = React.useState(false);
   const [slides, setSlides] = React.useState<Slide[]>([]);
   const [crntSlide, setCrntSlide] = React.useState<Slide | null>(null);
+  const [globalTotalSlides, setGlobalTotalSlides] = React.useState<number | null>(null);
+  const [globalCurrentSlide, setGlobalCurrentSlide] = React.useState<number | null>(null);
   const [isMouseMoveEnabled, setIsMouseMoveEnabled] = React.useState(false);
   const [laserPointerEnabled, setLaserPointerEnabled] = React.useState(false);
   const [transition, setTransition] = React.useState<SlideTransition | undefined>(undefined);
@@ -43,6 +45,37 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const { scale } = useScale(ref, slideRef);
   const { mousePosition, handleMouseMove, handleMouseLeave } = useMousePosition(slideRef, scale, resetCursorTimeout);
 
+  const handleZoomedMouseMove = React.useCallback((event: React.MouseEvent) => {
+    if (!isZoomed || !ref.current) {
+      return;
+    }
+
+    const rect = ref.current.getBoundingClientRect();
+
+    // Calculate mouse position relative to viewport (0 to 1 range)
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    // Normalize to 0-1 range based on viewport dimensions
+    const normalizedX = Math.max(0, Math.min(1, mouseX / rect.width));
+    const normalizedY = Math.max(0, Math.min(1, mouseY / rect.height));
+
+    // Calculate pan limits to reach all edges of zoomed content, factoring in scale
+    // The visible area is 960x540, but the zoomed content is larger by zoomLevel * scale
+    const effectiveZoom = zoomLevel * scale;
+    const maxPanX = Math.max(0, ((960 * effectiveZoom) - rect.width) / 2);
+    const maxPanY = Math.max(0, ((540 * effectiveZoom) - rect.height) / 2);
+
+    // Clamp panOffset so the slide edges never go beyond the viewport
+    const panX = maxPanX * (1 - 2 * normalizedX);
+    const panY = maxPanY * (1 - 2 * normalizedY);
+
+    setPanOffset({
+      x: Math.max(-maxPanX, Math.min(maxPanX, panX)),
+      y: Math.max(-maxPanY, Math.min(maxPanY, panY))
+    });
+  }, [isZoomed, zoomLevel, scale]);
+
   const handlePreviewMouseMove = React.useCallback((ev: React.MouseEvent<HTMLDivElement>) => {
     setShowControls(true);
     resetCursorTimeout();
@@ -53,7 +86,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         handleMouseMove(ev);
       }
     }
-  }, [isMouseMoveEnabled, laserPointerEnabled, handleMouseMove, isZoomed, resetCursorTimeout]);
+  }, [isMouseMoveEnabled, laserPointerEnabled, handleMouseMove, isZoomed, resetCursorTimeout, handleZoomedMouseMove]);
 
   const hidePreviewControls = React.useCallback(() => {
     setShowControls(false);
@@ -85,6 +118,19 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         }
 
         if (template && crntSlide?.frontmatter) {
+          if (template.includes(`{{crntSlideIdx}}`)) {
+            const crntSlideIdx = await messageHandler.request<number>(WebViewMessages.toVscode.preview.getGlobalSlideIndex, {
+              filePath: crntFilePath,
+              localSlideIdx: crntSlide.index
+            });
+            crntSlide.frontmatter.crntSlideIdx = crntSlideIdx;
+          }
+
+          if (template.includes(`{{totalSlides}}`)) {
+            const totalSlides = await messageHandler.request<number>(WebViewMessages.toVscode.preview.getTotalSlides);
+            crntSlide.frontmatter.totalSlides = totalSlides;
+          }
+
           const processed = convertTemplateToHtml(template, crntSlide.frontmatter, webviewUrl);
           setter(processed);
         }
@@ -92,7 +138,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         setter(undefined);
       }
     },
-    [crntSlide, webviewUrl]
+    [crntFilePath, crntSlide?.frontmatter, crntSlide?.index, webviewUrl]
   );
 
   const fetchHeader = React.useCallback(() => {
@@ -142,37 +188,6 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     });
   }, []);
 
-  const handleZoomedMouseMove = React.useCallback((event: React.MouseEvent) => {
-    if (!isZoomed || !ref.current) {
-      return;
-    }
-
-    const rect = ref.current.getBoundingClientRect();
-
-    // Calculate mouse position relative to viewport (0 to 1 range)
-    const mouseX = event.clientX - rect.left;
-    const mouseY = event.clientY - rect.top;
-
-    // Normalize to 0-1 range based on viewport dimensions
-    const normalizedX = Math.max(0, Math.min(1, mouseX / rect.width));
-    const normalizedY = Math.max(0, Math.min(1, mouseY / rect.height));
-
-    // Calculate pan limits to reach all edges of zoomed content, factoring in scale
-    // The visible area is 960x540, but the zoomed content is larger by zoomLevel * scale
-    const effectiveZoom = zoomLevel * scale;
-    const maxPanX = Math.max(0, ((960 * effectiveZoom) - rect.width) / 2);
-    const maxPanY = Math.max(0, ((540 * effectiveZoom) - rect.height) / 2);
-
-    // Clamp panOffset so the slide edges never go beyond the viewport
-    const panX = maxPanX * (1 - 2 * normalizedX);
-    const panY = maxPanY * (1 - 2 * normalizedY);
-
-    setPanOffset({
-      x: Math.max(-maxPanX, Math.min(maxPanX, panX)),
-      y: Math.max(-maxPanY, Math.min(maxPanY, panY))
-    });
-  }, [isZoomed, zoomLevel, scale]);
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const slidesListener = React.useCallback((message: MessageEvent<EventData<any>>) => {
     const { command } = message.data;
@@ -187,7 +202,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       const previousSlide = crntSlide ? crntSlide.index - 1 : 0;
       updateSlideIdx(previousSlide);
     }
-  }, [crntSlide, slides.length, updateSlideIdx]);
+  }, [crntSlide, updateSlideIdx]);
 
   const getBgStyles = React.useCallback(() => {
     if (!layout || layout === SlideLayout.ImageLeft || layout === SlideLayout.ImageRight) {
@@ -231,7 +246,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     } else {
       fetchFooter();
     }
-  }, [crntSlide, webviewUrl]);
+  }, [crntSlide, webviewUrl, fetchHeader, fetchFooter]);
 
   React.useEffect(() => {
     Messenger.listen(slidesListener);
@@ -250,11 +265,11 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     return () => {
       Messenger.unlisten(slidesListener);
     };
-  }, [slides, crntSlide]); // Added slides to dependency array for null/empty check
+  }, [slides, crntSlide, slidesListener]);
 
   React.useEffect(() => {
     getFileContents(fileUri);
-  }, [fileUri]);
+  }, [fileUri, getFileContents]);
 
   // ESC key handler for zoom
   React.useEffect(() => {

@@ -59,6 +59,7 @@
 
   .slide__content__inner {
     @apply p-8 space-y-4;
+    box-sizing: border-box;
   }
 
   h1 {

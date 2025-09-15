@@ -16,6 +16,7 @@ import {
   fileExists,
   getRelPath,
   parseWinPath,
+  readFile,
   sanitizeFileName,
   upperCaseFirstLetter,
   writeFile,
@@ -31,6 +32,7 @@ import {
   SlideTransition,
   Action,
   Step,
+  SlideParser,
 } from '@demotime/common';
 
 export class Slides {
@@ -132,6 +134,95 @@ layout: ${layout.toLowerCase()}
       start: 'vm',
       end: 'pass-filled',
     });
+  }
+
+  public static async getTotalSlides(): Promise<number> {
+    // Get all demo files and count all slides
+    const demoFiles = await DemoFileProvider.getFiles();
+    let totalSlides = 0;
+    if (demoFiles) {
+      for (const demoFile of Object.values(demoFiles)) {
+        for (const demo of demoFile.demos) {
+          for (const step of demo.steps) {
+            if (step.action === 'openSlide' && step.path) {
+              try {
+                // Read file content
+                let fileUri;
+                const wsFolder = Extension.getInstance().workspaceFolder;
+                if (wsFolder) {
+                  fileUri = Uri.joinPath(wsFolder.uri, step.path);
+                } else {
+                  fileUri = Uri.file(step.path);
+                }
+                const fileContent = await readFile(fileUri);
+                if (fileContent) {
+                  // Parse slides from markdown content
+                  const parser = new SlideParser();
+                  const slides = parser.parseSlides(fileContent);
+                  totalSlides += slides.length;
+                }
+              } catch {
+                // If file can't be read, count as 1 slide fallback
+                totalSlides++;
+              }
+            }
+          }
+        }
+      }
+    }
+    return totalSlides;
+  }
+
+  /**
+   * Maps a file path and local slide index to the global slide index (1-based)
+   * @param filePath Relative file path to the slide markdown file
+   * @param localSlideIdx Local slide index (0-based)
+   * @returns Global slide index (1-based), or null if not found
+   */
+  public static async getGlobalSlideIndex(
+    filePath: string,
+    localSlideIdx: number,
+  ): Promise<number | null> {
+    filePath = parseWinPath(filePath);
+    const demoFiles = await DemoFileProvider.getFiles();
+    let globalIdx = 0;
+    if (demoFiles) {
+      for (const demoFile of Object.values(demoFiles)) {
+        for (const demo of demoFile.demos) {
+          for (const step of demo.steps) {
+            if (step.action === 'openSlide' && step.path) {
+              let fileUri;
+              const wsFolder = Extension.getInstance().workspaceFolder;
+              if (wsFolder) {
+                fileUri = Uri.joinPath(wsFolder.uri, step.path);
+              } else {
+                fileUri = Uri.file(step.path);
+              }
+              try {
+                const fileContent = await readFile(fileUri);
+                if (fileContent) {
+                  const parser = new SlideParser();
+                  const slides = parser.parseSlides(fileContent);
+                  for (let i = 0; i < slides.length; i++) {
+                    if (filePath.endsWith(parseWinPath(step.path)) && i === localSlideIdx) {
+                      return globalIdx + 1; // 1-based index
+                    }
+                    globalIdx++;
+                  }
+                }
+              } catch {
+                // Fallback: treat as one slide
+                if (step.path === filePath && localSlideIdx === 0) {
+                  return globalIdx + 1;
+                }
+                globalIdx++;
+              }
+            }
+          }
+        }
+      }
+    }
+    return null;
   }
 
   private static async viewSlide(item: ActionTreeItem) {

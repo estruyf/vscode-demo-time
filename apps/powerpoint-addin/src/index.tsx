@@ -20,4 +20,6 @@ if (container) {
   root.render(
     isRunById ? <RunByIdPage /> : <OfficeAppWrapper />
   );
+
+  window.Notification.tri
 }

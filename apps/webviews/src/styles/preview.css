@@ -71,6 +71,7 @@ table td {
   .slide__content__custom,
   .slide__content__inner {
     @apply relative h-full w-full z-20;
+    box-sizing: border-box;
   }
 }
 
