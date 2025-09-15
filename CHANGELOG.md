@@ -27,6 +27,8 @@
   images in CSS themes
 - [#249](https://github.com/estruyf/vscode-demo-time/issues/249): Fix reveal of slides after
   navigating to another file
+- [#255](https://github.com/estruyf/vscode-demo-time/issues/255): Optimize the normalized source
+  path handling in the custom template conversion
 
 ## [1.9.0] - 2025-08-25
 

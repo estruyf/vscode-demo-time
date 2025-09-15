@@ -14,7 +14,7 @@ export const convertTemplateToHtml = (template: string, data: any, webviewUrl?: 
       // Only prefix if not already prefixed and not an absolute URL
       if (!src.startsWith(webviewUrl) && !/^https?:\/\//.test(src)) {
         const normalizedUrl = webviewUrl.endsWith('/') ? webviewUrl : `${webviewUrl}/`;
-        const normalizedSrc = src.startsWith('/') ? src.substring(1) : src;
+        const normalizedSrc = src.replace(/^(\.\/|\/)/, '');
         return match.replace(src, `${normalizedUrl}${normalizedSrc}`);
       }
       return match;
