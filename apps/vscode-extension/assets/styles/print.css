@@ -87,33 +87,23 @@ pre code {
   .slide__content__custom,
   .slide__content__inner {
     @apply relative h-full w-full z-20;
+    box-sizing: border-box;
   }
 }
 
 .slide__header {
   @apply absolute top-0 left-0 w-full h-[2rem] text-[0.75rem] px-8 flex items-center justify-center opacity-75 z-20 text-[var(--vscode-editor-foreground)];
+  box-sizing: border-box;
 }
 
 .slide__footer {
   @apply absolute bottom-0 left-0 w-full h-[2rem] text-[0.75rem] px-8 flex items-center justify-between opacity-75 z-20 text-[var(--vscode-editor-foreground)];
+  box-sizing: border-box;
 }
 
 .slide__image_left,
 .slide__image_right {
   @apply z-10;
-}
-
-/* Slide counter for exports */
-.slide-counter {
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  z-index: 30;
-  background: rgba(255, 255, 255, 0.85);
-  color: inherit;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.9rem;
 }
 
 table {

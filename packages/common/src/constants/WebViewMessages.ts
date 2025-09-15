@@ -106,9 +106,6 @@ export const WebViewMessages = {
      * slideReady
      */
     slideReady: 'slideReady',
-    preview: {
-      getSlide: 'getPreviewSlide',
-    },
     // Config editor
     configEditor: {
       /**
@@ -172,6 +169,11 @@ export const WebViewMessages = {
          */
         getPolls: 'getEngageTimePolls',
       },
+    },
+    preview: {
+      getSlide: 'getPreviewSlide',
+      getTotalSlides: 'getPreviewTotalSlides',
+      getGlobalSlideIndex: 'getPreviewGlobalSlideIndex',
     },
     settingsView: {
       /**
