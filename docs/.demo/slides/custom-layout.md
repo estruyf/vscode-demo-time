@@ -14,22 +14,3 @@ social3: elio@struyfconsulting.be
 transition: slide-up
 ---
 
-<div class="recognitions">
-  <img src=".demo/assets/profile/github.svg" height="30px" />
-  <img src=".demo/assets/profile/mvp.svg" height="30px" />
-  <img src=".demo/assets/profile/gde.svg" height="30px" />
-</div>
-
-<style>
-  .recognitions {
-    display: flex;
-    gap: 1rem;
-    background: #F8F8F8;
-    padding: 0.5rem;
-    border-radius: 0;
-    position: absolute;
-    z-index: 999;
-    bottom: 0;
-    right: 0;
-  }
-</style>
