@@ -29,6 +29,8 @@
   navigating to another file
 - [#255](https://github.com/estruyf/vscode-demo-time/issues/255): Optimize the normalized source
   path handling in the custom template conversion
+- [#256](https://github.com/estruyf/vscode-demo-time/issues/256): Added `{{crntSlideIdx}}` and
+  `{{totalSlides}}` variables to the slide header and footer templates
 
 ## [1.9.0] - 2025-08-25
 
