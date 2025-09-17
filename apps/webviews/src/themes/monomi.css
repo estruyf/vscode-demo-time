@@ -64,8 +64,12 @@
   font-size: var(--demotime-font-size);
 
   .slide__content__inner {
-    @apply p-8 space-y-4;
+    @apply p-8;
     box-sizing: border-box;
+
+    > :not([hidden]) ~ :not([hidden]) {
+      margin-top: 1rem;
+    }
   }
 
   h1 {
