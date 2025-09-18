@@ -19,6 +19,17 @@ interface StepEditorProps {
 }
 
 export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
+  // Local state for id field (ExecuteScript only)
+  const [localId, setLocalId] = React.useState(step.id || '');
+  React.useEffect(() => {
+    setLocalId(step.id || '');
+  }, [step.id]);
+
+  const commitId = () => {
+    if (localId !== step.id) {
+      handleChange('id', localId || undefined);
+    }
+  };
   const availableFields = getFieldsForAction(step?.action);
   const requiredFields = getRequiredFields(step?.action);
   const stepValidation = validateStep(step);
@@ -234,6 +245,10 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       label = "Zoom Level (times to use VS Code zoom)";
     } else if (field === 'insertTypingSpeed') {
       label = "Insert Typing Speed (ms)";
+    } else if (step.action === Action.RunDemoById) {
+      label = "Demo ID";
+    } else if (step.action === Action.ExecuteScript) {
+      label = "Script ID";
     }
 
     switch (field) {
@@ -707,10 +722,32 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       }
 
       case 'id': {
+        if (step.action === Action.ExecuteScript) {
+          return (
+            <div key={field}>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {label} {isRequired && <span className="text-red-500">*</span>}
+              </label>
+              <input
+                type="text"
+                value={localId}
+                onChange={e => setLocalId(e.target.value)}
+                onBlur={commitId}
+                onKeyDown={e => { if (e.key === 'Enter') { commitId(); } }}
+                className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${hasError ? 'border-red-300 bg-red-50' : 'border-gray-300'}`}
+                placeholder={`Enter script ID`}
+              />
+              {fieldErrors.map((error, index) => (
+                <p key={index} className="text-sm text-red-600 mt-1">{error.message}</p>
+              ))}
+            </div>
+          );
+        }
+
         return (
           <div key={field}>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Demo ID {isRequired && <span className="text-red-500">*</span>}
+              {label} {isRequired && <span className="text-red-500">*</span>}
             </label>
             <DemoIdPicker
               value={step[field as keyof Step] || ''}
