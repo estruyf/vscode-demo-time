@@ -1,12 +1,13 @@
 import { commands, Uri } from 'vscode';
 import { Subscription, Demo } from '../models';
 import { Extension } from './Extension';
-import { COMMAND, General } from '../constants';
+import { General } from '../constants';
 import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
 import { Notifications } from './Notifications';
 import { fileExists } from '../utils';
 import { DemoFileProvider } from './DemoFileProvider';
 import { DemoRunner } from './DemoRunner';
+import { COMMAND } from '@demotime/common';
 
 export class NotesService {
   public static registerCommands() {

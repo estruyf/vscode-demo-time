@@ -2,9 +2,29 @@
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "nxCloudId": "68753044874bdb115b711fe8",
   "includedScripts": [],
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"],
+      "cache": true
+    }
+  },
   "namedInputs": {
     "sharedGlobals": ["{workspaceRoot}/.github/workflows/pr-checks.yml"],
     "default": ["sharedGlobals"]
   },
-  "plugins": []
+  "plugins": [
+    {
+      "plugin": "@nx/jest/plugin",
+      "options": {
+        "targetName": "test"
+      }
+    },
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      },
+      "exclude": ["docs/**", "examples/**"]
+    }
+  ]
 }

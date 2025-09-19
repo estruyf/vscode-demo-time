@@ -1,5 +1,37 @@
 # Change Log
 
+## [1.10.0] - 2025-09-xx
+
+- [#201](https://github.com/estruyf/vscode-demo-time/issues/201): Project is moved to a new monorepo
+  structure with Nx
+- [#227](https://github.com/estruyf/vscode-demo-time/issues/227): Open a slide at a specific
+  location
+- [#229](https://github.com/estruyf/vscode-demo-time/issues/229): Integration with
+  [Engage Time](https://engagetime.live)
+- [#234](https://github.com/estruyf/vscode-demo-time/issues/234): Fix for negative values in the
+  insert typing speed and improved the labels
+- [#235](https://github.com/estruyf/vscode-demo-time/issues/235): Added the `pause` action to pause
+  the demo and wait until the `Demo Time: Continue Demo` command is triggered
+- [#236](https://github.com/estruyf/vscode-demo-time/issues/236): Visual improvements for the Config
+  Editor
+- [#239](https://github.com/estruyf/vscode-demo-time/issues/239): New overview dashboard which can
+  be opened by using the `Demo Time: Overview` command
+- [#240](https://github.com/estruyf/vscode-demo-time/issues/240): Every GitHub Copilot chat action
+  now opens the chat view by default
+- [#242](https://github.com/estruyf/vscode-demo-time/issues/242): Fix the content path in the
+  `Demo Time: Create patch for current file` command execution
+- [#244](https://github.com/estruyf/vscode-demo-time/issues/244): Moved the Engage Time session ID
+  to the demo file level
+- [#245](https://github.com/estruyf/vscode-demo-time/issues/245): Fix right panel height
+- [#246](https://github.com/estruyf/vscode-demo-time/issues/246): Added support for relative URLs to
+  images in CSS themes
+- [#249](https://github.com/estruyf/vscode-demo-time/issues/249): Fix reveal of slides after
+  navigating to another file
+- [#255](https://github.com/estruyf/vscode-demo-time/issues/255): Optimize the normalized source
+  path handling in the custom template conversion
+- [#256](https://github.com/estruyf/vscode-demo-time/issues/256): Added `{{crntSlideIdx}}` and
+  `{{totalSlides}}` variables to the slide header and footer templates
+
 ## [1.9.0] - 2025-08-25
 
 - [#219](https://github.com/estruyf/vscode-demo-time/issues/219): Added a GUI for editing your demo

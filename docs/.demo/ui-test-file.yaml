@@ -49,10 +49,11 @@ demos:
       start: alert
       end: ''
   - id: demo-mdsla1sh-m0cl12
-    title: Demo 4
+    title: Start an Engage Time Session
     steps:
-      - action: openSlide
+      - action: startEngageTimeSession
         path: .demo/slides/end-slides.md
+        sessionId: 4fn3gy
   - id: demo-mdsla1sh-m0cl
     title: Demo 5
     steps:

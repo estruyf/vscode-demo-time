@@ -3,7 +3,8 @@ import { Extension, DemoFileProvider } from '.';
 import { writeFile } from '../utils';
 import { General, Templates } from '../constants';
 import { Notifications } from './Notifications';
-import { Action, DemoFileType } from '../models';
+import { Action } from '@demotime/common';
+import { DemoFileType } from '../models';
 import { DemoPanel } from '../panels/DemoPanel';
 
 export class TemplateCreator {
@@ -141,7 +142,7 @@ sayHello();`;
       await window.showTextDocument(demoFile);
     }
 
-    Notifications.info('Sample 1 created successfully');
+    Notifications.infoWithProgress('Sample 1 created successfully');
   }
 
   /**
@@ -281,6 +282,6 @@ export function multiply(x: number, y: number): number {
     if (demoFile) {
       await window.showTextDocument(demoFile);
     }
-    Notifications.info('Sample 2 created successfully');
+    Notifications.infoWithProgress('Sample 2 created successfully');
   }
 }

@@ -480,6 +480,16 @@
         "command": "demo-time.showSettings",
         "title": "Settings",
         "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.showOverview",
+        "title": "Overview",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.continueDemo",
+        "title": "Continue Demo",
+        "category": "Demo Time"
       }
     ],
     "menus": {
@@ -547,6 +557,10 @@
         {
           "command": "demo-time.toggleHighlight",
           "when": "demo-time.hasCodeHighlighting == true"
+        },
+        {
+          "command": "demo-time.continueDemo",
+          "when": "demo-time.isWaitingForNext == true"
         }
       ],
       "view/title": [
@@ -586,6 +600,10 @@
         },
         {
           "command": "demo-time.docs",
+          "when": "view == demo-time"
+        },
+        {
+          "command": "demo-time.showOverview",
           "when": "view == demo-time"
         },
         {
@@ -692,7 +710,12 @@
       {
         "command": "demo-time.start",
         "key": "right",
-        "when": "demo-time.presentation"
+        "when": "demo-time.presentation && demo-time.isWaitingForNext != true"
+      },
+      {
+        "command": "demo-time.continueDemo",
+        "key": "right",
+        "when": "demo-time.isWaitingForNext == true"
       },
       {
         "command": "demo-time.previous",
@@ -783,21 +806,49 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "npm run clean && node ./scripts/copy-changelog.cjs && npm run compile",
-    "compile": "npm-run-all --parallel compile:*",
-    "compile:ext": "tsup --minify",
-    "compile:wc": "tsup --minify --config tsup.wc.config.ts",
-    "compile:wv": "webpack --mode production --config ./webview.config.js",
-    "compile:preview": "webpack --mode production --config ./preview.config.js",
-    "compile:copy": "node ./scripts/copy-assets.mjs",
-    "watch": "npm-run-all --parallel watch:*",
-    "watch:ext": "tsup --watch --sourcemap",
-    "watch:wc": "tsup --watch --sourcemap --config tsup.wc.config.ts ",
-    "watch:wv": "webpack serve --mode development --config ./webview.config.js",
-    "watch:preview": "webpack serve --mode development --config ./preview.config.js",
-    "lint": "eslint src --ext ts",
-    "test": "jest --coverage",
     "clean": "rimraf out coverage"
+  },
+  "nx": {
+    "implicitDependencies": [
+      "webviews"
+    ],
+    "targets": {
+      "build": {
+        "executor": "nx:run-commands",
+        "options": {
+          "commands": [
+            "tsup --minify",
+            "tsup --minify --config tsup.wc.config.ts"
+          ],
+          "cwd": "{projectRoot}"
+        },
+        "dependsOn": [
+          "copy-assets"
+        ]
+      },
+      "dev": {
+        "executor": "nx:run-commands",
+        "options": {
+          "commands": [
+            "tsup --watch --sourcemap",
+            "tsup --watch --sourcemap --config tsup.wc.config.ts"
+          ],
+          "cwd": "{projectRoot}"
+        }
+      },
+      "copy-assets": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "node ./scripts/copy-webviews.js && node ./scripts/copy-assets.mjs"
+        },
+        "dependsOn": [
+          {
+            "target": "build",
+            "projects": "webviews"
+          }
+        ]
+      }
+    }
   },
   "peerDependencies": {
     "playwright-chromium": "^1.51.1"
@@ -809,62 +860,33 @@
   },
   "devDependencies": {
     "@actions/core": "^1.11.1",
-    "@estruyf/vscode": "^1.1.0",
-    "@tailwindcss/postcss": "^4.1.12",
+    "@demotime/common": "*",
+    "@estruyf/vscode": "1.2.0",
     "@types/cors": "^2.8.17",
     "@types/diff": "^7.0.1",
-    "@types/dompurify": "^3.0.5",
     "@types/jest": "^29.5.11",
-    "@types/js-yaml": "^4.0.9",
     "@types/node": "18.x",
-    "@types/react": "^18.3.16",
-    "@types/react-dom": "^18.3.5",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
     "@types/vscode": "^1.84.0",
-    "@typescript-eslint/eslint-plugin": "^6.9.0",
-    "@typescript-eslint/parser": "^6.9.0",
     "@vscode/test-electron": "^2.3.6",
-    "autoprefixer": "^10.4.20",
     "cors": "^2.8.5",
-    "css-loader": "^7.1.2",
     "diff": "^7.0.0",
-    "dompurify": "^3.2.6",
-    "eslint": "^8.52.0",
     "express": "^4.21.2",
     "glob": "^10.3.10",
-    "handlebars": "^4.7.8",
     "jest": "^29.7.0",
-    "js-yaml": "^4.1.0",
     "jsonc-parser": "^3.3.1",
     "mermaid": "^11.6.0",
     "mlly": "^1.7.4",
-    "npm-run-all": "^4.1.5",
     "playwright-chromium": "^1.51.1",
-    "postcss": "^8.4.49",
-    "postcss-loader": "^8.1.1",
     "prettier": "^3.6.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "rehype-pretty-code": "^0.14.0",
-    "rehype-raw": "^7.0.0",
-    "rehype-react": "^8.0.0",
-    "rehype-stringify": "^10.0.1",
-    "remark-frontmatter": "^5.0.0",
-    "remark-gfm": "^4.0.1",
-    "remark-rehype": "^11.1.1",
     "rimraf": "^6.0.1",
-    "style-loader": "^4.0.0",
-    "tailwind": "^4.0.0",
-    "tailwindcss": "^4.1.12",
+    "shiki": "^3.12.0",
     "ts-jest": "^29.1.1",
-    "ts-loader": "^9.5.1",
     "tsup": "^8.5.0",
-    "typescript": "^5.2.2",
-    "uuid": "^11.1.0",
-    "vfile-matter": "^5.0.0",
-    "vscrui": "^0.2.0-beta.1229608",
-    "webpack": "^5.97.1",
-    "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.2.0",
-    "webpack-manifest-plugin": "^5.0.1"
+    "typescript": "^5.2.2"
   }
 }

@@ -1,0 +1,91 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-blue-50: #f0f9ff;
+  --color-blue-100: #e0f2fe;
+  --color-blue-200: #bae6fd;
+  --color-blue-300: #7dd3fc;
+  --color-blue-400: #38bdf8;
+  --color-blue-500: #1282a2;
+  --color-blue-600: #1282a2;
+  --color-blue-700: #0c5f7a;
+  --color-blue-800: #0a4c62;
+  --color-blue-900: #0a3c4a;
+
+  --color-demo-time-accent-low: #e1d6b9;
+  --color-demo-time-accent: #624d00;
+  --color-demo-time-accent-high: #3f3000;
+  --color-demo-time-white: #15181f;
+  --color-demo-time-gray-1: #202736;
+  --color-demo-time-gray-2: #313848;
+  --color-demo-time-gray-3: #505869;
+  --color-demo-time-gray-4: #838c9e;
+  --color-demo-time-gray-5: #bdc2cc;
+  --color-demo-time-gray-6: #eaeef6;
+  --color-demo-time-gray-7: #f4f6fa;
+  --color-demo-time-black: #ffffff;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+
+  button,
+  [role='button'] {
+    cursor: pointer;
+  }
+
+  /* Special styling for scrollable areas */
+  .custom-scrollbar {
+    scrollbar-width: auto;
+    scrollbar-color: #64748b #e2e8f0;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 14px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #f8fafc;
+    border-radius: 8px;
+    margin: 8px 0;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    border-radius: 8px;
+    border: 2px solid #f8fafc;
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+    min-height: 50px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    border-color: #f1f5f9;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.5);
+  }
+
+  /* Ensure scroll containers handle rounded corners properly */
+  .lg\:overflow-y-auto {
+    scroll-padding: 1rem;
+  }
+}

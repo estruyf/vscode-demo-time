@@ -8,23 +8,21 @@ high-quality project.
 - Use meaningful variable and function names.
 - Keep functions small and focused.
 - Remove unused code and comments.
-- Follow the existing code style. Run `npm run lint` before submitting.
 - Use Prettier for formatting (see `.prettierrc.json`).
 
 ## Design Choices
 
-- Document significant architectural or design decisions in `docs/architecture.md`.
+- Document significant architectural or design decisions in `architecture.md`.
 - Discuss large changes in an issue before starting work.
 
 ## Static Analysis
 
-- All code must pass ESLint checks (`npm run lint`).
 - Use TypeScript for type safety.
 
 ## Requirements & Documentation
 
 - Reference related issues or requirements in your PR.
-- Update documentation (`README.md`, `docs/`, [demotime.show](https://demotime.show)) as needed.
+- Update documentation (`README.md`, `docs/`) as needed.
 
 ## Git Branching
 

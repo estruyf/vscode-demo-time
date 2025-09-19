@@ -7,7 +7,8 @@ on:
   workflow_dispatch:
 
 env:
-  VSCODE_EXT_PATH: apps/vscode-extension
+  MS_URL: 'https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-demo-time'
+  VSX_URL: 'https://open-vsx.org/extension/eliostruyf/vscode-demo-time'
 
 jobs:
   verify:
@@ -16,55 +17,86 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Enable Corepack
+        run: corepack enable
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'yarn'
 
-      - name: Install the dependencies
-        run: npm i
+      - name: Install dependencies
+        run: yarn install --immutable
 
       - name: Verify actions
         run: node .github/scripts/verify-actions.mjs
 
-  build:
-    name: 'Build and release'
-    runs-on: ubuntu-latest
+  build-and-test:
     needs: verify
+    uses: ./.github/workflows/release-common.yml
+    with:
+      build_command: npm run vscode:build
+      lint_command: npm run lint
+      test_command: npm run test
+      prepare_beta_command: ${{ github.ref != 'refs/heads/alpha' && format('node ./scripts/beta-release.mjs {0}', github.run_id) || '' }}
+      working_directory: apps/vscode-extension
 
-    defaults:
-      run:
-        working-directory: ${{ env.VSCODE_EXT_PATH }}
+  release-ms:
+    name: 'Release to VSCode Marketplace'
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: contains(github.event.head_commit.message, '#release') || github.ref == 'refs/heads/alpha'
+    environment:
+      name: 'Microsoft Marketplace'
+      url: ${{ env.MS_URL }}
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
         with:
-          node-version: 20
+          name: vscode-extension-build
+          path: apps/vscode-extension
 
-      - name: Install the dependencies
-        run: npm ci
-
-      - name: Linting and testing
-        run: npm run lint && npm test
-
-      - name: Prepare BETA
-        if: github.ref != 'refs/heads/alpha'
-        run: node ./scripts/beta-release.mjs $GITHUB_RUN_ID
       - name: Publish
         if: contains(github.event.head_commit.message, '#release') && github.ref != 'refs/heads/alpha'
-        run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }} --baseImagesUrl https://raw.githubusercontent.com/estruyf/vscode-demo-time/dev --pre-release
-
-      - name: Publish to open-vsx.org
-        if: contains(github.event.head_commit.message, '#release') && github.ref != 'refs/heads/alpha'
-        run: npx ovsx publish -p ${{ secrets.OPEN_VSX_PAT }}
+        run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }} --baseImagesUrl https://raw.githubusercontent.com/estruyf/vscode-demo-time/dev --pre-release --no-dependencies
+        working-directory: apps/vscode-extension
 
       - name: Package VSIX (alpha branch)
         if: github.ref == 'refs/heads/alpha'
         run: npx @vscode/vsce package
+        working-directory: apps/vscode-extension
 
       - name: Upload VSIX artifact (alpha branch)
         if: github.ref == 'refs/heads/alpha'
         uses: actions/upload-artifact@v4
         with:
           name: vscode-demo-time-alpha.vsix
-          path: '${{ env.VSCODE_EXT_PATH }}/*.vsix'
+          path: 'apps/vscode-extension/*.vsix'
+
+  release-vsx:
+    name: 'Release to Open VSX'
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: contains(github.event.head_commit.message, '#release')
+
+    environment:
+      name: 'Open VSX'
+      url: ${{ env.VSX_URL }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: vscode-extension-build
+          path: apps/vscode-extension
+
+      - name: Publish to open-vsx.org
+        if: contains(github.event.head_commit.message, '#release') && github.ref != 'refs/heads/alpha'
+        run: npx ovsx publish -p ${{ secrets.OPEN_VSX_PAT }} --no-dependencies
+        working-directory: apps/vscode-extension

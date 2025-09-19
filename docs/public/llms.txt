@@ -34,7 +34,6 @@
 ## Examples
 
 - [Projects | Demo Time](https://demotime.show/examples/): Examples of projects that you can use to learn and understand how to use the extension.
-- [Showcases | Demo Time](https://demotime.show/showcases/): Real-world usage of Demo Time at conferences, workshops, and presentations worldwide.
 
 ## Features
 
@@ -69,6 +68,11 @@
 
 - [v1.7.0 | Demo Time](https://demotime.show/releases/1.7.0/): Release notes for version 1.7.0 of the Demo Time extension, including new features, improvements, and bug fixes.
 - [v1.8.0 | Demo Time](https://demotime.show/releases/1.8.0/): Release notes for version 1.8.0 of the Demo Time extension, including new features, improvements, and bug fixes.
+- [v1.9.0 | Demo Time](https://demotime.show/releases/1.9.0/): 
+
+## Showcases
+
+- [Showcases | Demo Time](https://demotime.show/showcases/): Real-world usage of Demo Time at conferences, workshops, and presentations worldwide.
 
 ## Slides
 

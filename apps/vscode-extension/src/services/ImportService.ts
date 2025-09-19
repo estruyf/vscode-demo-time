@@ -1,9 +1,10 @@
 import { commands, FileType, ProgressLocation, Uri, window, workspace } from 'vscode';
-import { Action, DemoFile, Subscription } from '../models';
+import { Subscription } from '../models';
 import { Extension } from './Extension';
-import { COMMAND, General } from '../constants';
+import { General } from '../constants';
 import { Notifications } from './Notifications';
 import { createImageSlide, parseWinPath } from '../utils';
+import { COMMAND, Action, DemoConfig } from '@demotime/common';
 
 export class ImportService {
   public static register() {
@@ -80,7 +81,7 @@ export class ImportService {
           return;
         }
 
-        let demo: DemoFile | undefined;
+        let demo: DemoConfig | undefined;
         if (createNewDemoFile === 'Yes') {
           demo = {
             $schema: 'https://demotime.show/demo-time.schema.json',
@@ -142,7 +143,7 @@ export class ImportService {
           }
         }
 
-        Notifications.info('Slides created successfully!');
+        Notifications.infoWithProgress('Slides created successfully!');
       },
     );
   }

@@ -88,8 +88,11 @@
                     "unsetTheme",
                     "setPresentationView",
                     "unsetPresentationView",
+                    "backupSettings",
+                    "restoreSettings",
                     "waitForTimeout",
                     "waitForInput",
+                    "pause",
                     "executeVSCodeCommand",
                     "showInfoMessage",
                     "setState",
@@ -111,7 +114,13 @@
                     "pasteFromClipboard",
                     "typeText",
                     "pressEnter",
-                    "runDemoById"
+                    "runDemoById",
+                    "startEngageTimeSession",
+                    "startEngageTimePoll",
+                    "closeEngageTimeSession",
+                    "closeEngageTimePoll",
+                    "showEngageTimeSession",
+                    "showEngageTimePoll"
                   ]
                 },
                 "disabled": {
@@ -126,12 +135,7 @@
                   "if": {
                     "properties": {
                       "action": {
-                        "enum": [
-                          "open",
-                          "deleteFile",
-                          "markdownPreview",
-                          "openSlide"
-                        ]
+                        "enum": ["open", "deleteFile", "markdownPreview"]
                       }
                     }
                   },
@@ -140,6 +144,29 @@
                     "properties": {
                       "path": {
                         "$ref": "#/definitions/path"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "enum": ["openSlide"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["path"],
+                    "properties": {
+                      "path": {
+                        "$ref": "#/definitions/path"
+                      },
+                      "position": {
+                        "$ref": "#/definitions/position"
+                      },
+                      "slide": {
+                        "$ref": "#/definitions/slide"
                       }
                     }
                   }
@@ -165,10 +192,7 @@
                       },
                       {
                         "not": {
-                          "anyOf": [
-                            { "required": ["content"] },
-                            { "required": ["contentPath"] }
-                          ]
+                          "anyOf": [{ "required": ["content"] }, { "required": ["contentPath"] }]
                         }
                       }
                     ],
@@ -254,10 +278,7 @@
                   },
                   "then": {
                     "required": ["path"],
-                    "oneOf": [
-                      { "required": ["position"] },
-                      { "required": ["startPlaceholder"] }
-                    ],
+                    "oneOf": [{ "required": ["position"] }, { "required": ["startPlaceholder"] }],
                     "properties": {
                       "path": {
                         "$ref": "#/definitions/path"
@@ -281,10 +302,7 @@
                   },
                   "then": {
                     "required": ["path"],
-                    "oneOf": [
-                      { "required": ["content"] },
-                      { "required": ["contentPath"] }
-                    ],
+                    "oneOf": [{ "required": ["content"] }, { "required": ["contentPath"] }],
                     "anyOf": [
                       { "required": ["position"] },
                       { "required": ["startPlaceholder", "endPlaceholder"] }
@@ -658,11 +676,7 @@
                   "if": {
                     "properties": {
                       "action": {
-                        "enum": [
-                          "askCopilotChat",
-                          "editCopilotChat",
-                          "agentCopilotChat"
-                        ]
+                        "enum": ["askCopilotChat", "editCopilotChat", "agentCopilotChat"]
                       }
                     }
                   },
@@ -678,15 +692,53 @@
                   "if": {
                     "properties": {
                       "action": {
+                        "enum": [
+                          "startEngageTimeSession",
+                          "closeEngageTimeSession",
+                          "showEngageTimeSession"
+                        ]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["sessionId"],
+                    "properties": {
+                      "sessionId": {
+                        "$ref": "#/definitions/sessionId"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "enum": ["startEngageTimePoll", "closeEngageTimePoll", "showEngageTimePoll"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["sessionId", "pollId"],
+                    "properties": {
+                      "sessionId": {
+                        "$ref": "#/definitions/sessionId"
+                      },
+                      "pollId": {
+                        "$ref": "#/definitions/pollId"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
                         "const": "copyToClipboard"
                       }
                     }
                   },
                   "then": {
-                    "oneOf": [
-                      { "required": ["content"] },
-                      { "required": ["contentPath"] }
-                    ],
+                    "oneOf": [{ "required": ["content"] }, { "required": ["contentPath"] }],
                     "properties": {
                       "content": {
                         "$ref": "#/definitions/content"
@@ -800,12 +852,7 @@
     },
     "insertTypingMode": {
       "type": "string",
-      "enum": [
-        "instant",
-        "line-by-line",
-        "character-by-character",
-        "hacker-typer"
-      ],
+      "enum": ["instant", "line-by-line", "character-by-character", "hacker-typer"],
       "default": "instant",
       "title": "Typing mode defines how you enter the text. Default is 'instant'."
     },
@@ -909,6 +956,11 @@
       "type": "string",
       "title": "The URL to open"
     },
+    "slide": {
+      "type": "number",
+      "title": "Slide number to open (1-based index)",
+      "default": 1
+    },
     "vscodeCommand": {
       "type": "string",
       "title": "VS Code command ID to execute. Example: 'workbench.action.files.save', 'workbench.action.closeActiveEditor', etc."
@@ -937,6 +989,14 @@
       "type": "number",
       "title": "The zoom level for the editor when highlighting code",
       "default": 0
+    },
+    "sessionId": {
+      "type": "string",
+      "title": "The ID of the Engage Time session"
+    },
+    "pollId": {
+      "type": "string",
+      "title": "The ID of the Engage Time poll"
     }
   }
 }

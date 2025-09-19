@@ -7,8 +7,8 @@ import {
   window,
   workspace,
 } from 'vscode';
-import { COMMAND, Config, ContextKeys } from '../constants';
-import { Action, Demo, DemoFile, DemoFileType, Icons, Step, Subscription } from '../models';
+import { ContextKeys } from '../constants';
+import { DemoFileType, Subscription } from '../models';
 import { Extension } from './Extension';
 import { DemoFileProvider } from './DemoFileProvider';
 import { DemoPanel } from '../panels/DemoPanel';
@@ -28,7 +28,7 @@ import {
   upperCaseFirstLetter,
 } from '../utils';
 import { Notifications } from './Notifications';
-import { parse as jsonParse } from 'jsonc-parser';
+import { COMMAND, Config, Action, Demo, DemoConfig, Icons, Step } from '@demotime/common';
 import { ConfigEditorProvider } from '../providers/ConfigEditorProvider';
 
 export class DemoCreator {
@@ -96,7 +96,9 @@ export class DemoCreator {
     await addExtensionRecommendation();
 
     await setContext(ContextKeys.isInitialized, true);
-    Notifications.info(`${Config.title} is initialized, you can now start adding demo steps!`);
+    Notifications.infoWithProgress(
+      `${Config.title} is initialized, you can now start adding demo steps!`,
+    );
 
     DemoPanel.showWelcome(false);
     DemoPanel.init();
@@ -107,7 +109,7 @@ export class DemoCreator {
    * @param item The ActionTreeItem containing the demo file path.
    * @param isDemoStep A boolean indicating whether the item is a demo step and should be highlighted.
    */
-  private static async openDemoFile(item: ActionTreeItem, isDemoStep: boolean) {
+  public static async openDemoFile(item: ActionTreeItem, isDemoStep: boolean) {
     if (!item || !item.demoFilePath) {
       return;
     }
@@ -290,7 +292,7 @@ export class DemoCreator {
 
     const fileUri = editor.document.uri;
     const fileContents = editor.document.getText();
-    const demo = DemoFileProvider.parseFileContent(fileContents, fileUri) as DemoFile;
+    const demo = DemoFileProvider.parseFileContent(fileContents, fileUri) as DemoConfig;
 
     const actions = getActionOptions();
     const action = await window.showQuickPick(actions, {
@@ -333,12 +335,12 @@ export class DemoCreator {
    * @returns A promise that resolves to the updated list of demos or undefined if the operation was cancelled.
    */
   public static async askWhereToAddStep(
-    demo: DemoFile,
+    demo: DemoConfig,
     step: Step | Step[],
     stepTitle?: string,
     stepDescription?: string,
     stepIcons?: Icons,
-  ): Promise<DemoFile | undefined> {
+  ): Promise<DemoConfig | undefined> {
     let demoStep: string | undefined = 'New demo step';
 
     if (demo.demos.length > 0) {

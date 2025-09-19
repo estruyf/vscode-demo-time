@@ -17,5 +17,12 @@
     "demoTime.timer": 10,
     "exportall.config.relExclusion": [
         "/src/preview/webcomponents/BaseShapeComponent.ts"
-    ]
+    ],
+    "exportall.config.folderListener": [
+        "/packages/common/src/utils",
+        "/packages/common/src/models",
+        "/packages/common/src/constants",
+        "/packages/common/src/services"
+    ],
+    "nxConsole.generateAiAgentRules": true
 }

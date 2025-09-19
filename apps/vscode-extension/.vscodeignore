@@ -12,9 +12,10 @@ src
 tests
 examples
 .nx
+__mocks__
 
 # Files
-**/.eslintrc.json
+**/eslint.config.mjs
 .gitignore
 .prettierrc.json
 .yarnrc

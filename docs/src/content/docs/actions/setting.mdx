@@ -229,3 +229,49 @@ action: unsetPresentationView
 <Aside type="tip">
   You can use the `unsetPresentationView` action in the demo right after a slide to make sure all UI elements are visible again. You can also trigger this from the slide controls.
 </Aside>
+
+## Backup VS Code settings
+
+Back up your workspace settings using the `backupVSCodeSettings` action. This will create a backup of your `.vscode/settings.json` file as `.vscode/settings.backup.json`.
+
+<Tabs syncKey="backup-vscode-settings-action">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "backupVSCodeSettings"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: backupVSCodeSettings
+```
+
+</TabItem>
+</Tabs>
+
+## Restore VS Code settings
+
+Restore your workspace settings from a backup using the `restoreVSCodeSettings` action. This will overwrite your `.vscode/settings.json` file with the contents of `.vscode/settings.backup.json`.
+
+<Tabs syncKey="restore-vscode-settings-action">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "restoreVSCodeSettings"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: restoreVSCodeSettings
+```
+
+</TabItem>
+</Tabs>

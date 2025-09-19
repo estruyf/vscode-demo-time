@@ -1,17 +1,6 @@
 import { PresenterView } from '../presenterView/PresenterView';
-import { COMMAND, Config, ContextKeys, StateKeys, WebViewMessages } from '../constants';
-import {
-  Action,
-  Demo,
-  DemoFileCache,
-  DemoFile,
-  IImagePreview,
-  ISlidePreview,
-  Step,
-  Subscription,
-  Version,
-} from '../models';
-import { Extension } from './Extension';
+import { ContextKeys, StateKeys } from '../constants';
+import { Subscription } from '../models';
 import {
   Position,
   Range,
@@ -24,7 +13,6 @@ import {
   window,
   workspace,
 } from 'vscode';
-import { DemoFileProvider } from './DemoFileProvider';
 import { DemoPanel } from '../panels/DemoPanel';
 import {
   getVariables,
@@ -46,21 +34,42 @@ import {
   saveFiles,
 } from '../utils';
 import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
-import { DecoratorService } from './DecoratorService';
-import { Notifications } from './Notifications';
-import { parse as jsonParse } from 'jsonc-parser';
-import { Logger } from './Logger';
-import { NotesService } from './NotesService';
-import { ScriptExecutor } from './ScriptExecutor';
-import { StateManager } from './StateManager';
+import {
+  DecoratorService,
+  Notifications,
+  Logger,
+  NotesService,
+  ScriptExecutor,
+  StateManager,
+  DemoStatusBar,
+  ExternalAppsService,
+  TerminalService,
+  ChatActionsService,
+  TextTypingService,
+  FileActionService,
+  InteractionService,
+  DemoFileProvider,
+  Extension,
+  EngageTimeService,
+} from './';
 import { Preview } from '../preview/Preview';
-import { DemoStatusBar } from './DemoStatusBar';
-import { ExternalAppsService } from './ExternalAppsService';
-import { TerminalService } from './TerminalService';
-import { ChatActionsService } from './ChatActionsService';
-import { TextTypingService } from './TextTypingService';
-import { FileActionService } from './FileActionService';
-import { InteractionService } from './InteractionService';
+import { parse as jsonParse } from 'jsonc-parser';
+import {
+  COMMAND,
+  WebViewMessages,
+  Config,
+  Action,
+  Demo,
+  DemoFileCache,
+  DemoConfig,
+  IImagePreview,
+  ISlidePreview,
+  Step,
+  Version,
+} from '@demotime/common';
+import { InputService } from './InputService';
+import { backupVSCodeSettings } from '../utils/backupVSCodeSettings';
+import { restoreVSCodeSettings } from '../utils/restoreVSCodeSettings';
 
 const DEFAULT_START_VALUE = {
   filePath: '',
@@ -383,7 +392,7 @@ export class DemoRunner {
         filePath,
       });
       if (!previousFile) {
-        Notifications.info('No previous demo steps found');
+        Notifications.infoWithProgress('No previous demo steps found');
         return;
       }
 
@@ -631,22 +640,22 @@ export class DemoRunner {
     }
 
     // GitHub Copilot actions
-    if (step.action === Action.openChat) {
+    if (step.action === Action.OpenChat) {
       await ChatActionsService.openChat();
       return;
-    } else if (step.action === Action.newChat) {
+    } else if (step.action === Action.NewChat) {
       await ChatActionsService.newChat();
       return;
-    } else if (step.action === Action.askChat) {
+    } else if (step.action === Action.AskChat) {
       await ChatActionsService.askChat(step);
       return;
-    } else if (step.action === Action.editChat) {
+    } else if (step.action === Action.EditChat) {
       await ChatActionsService.editChat(step);
       return;
-    } else if (step.action === Action.agentChat) {
+    } else if (step.action === Action.AgentChat) {
       await ChatActionsService.agentChat(step);
       return;
-    } else if (step.action === Action.closeChat) {
+    } else if (step.action === Action.CloseChat) {
       await ChatActionsService.closeChat();
       return;
     }
@@ -671,17 +680,19 @@ export class DemoRunner {
         return;
       }
       return;
+    } else if (step.action === Action.Pause) {
+      await InputService.pause();
     }
 
     // Open external applications
-    if (step.action === Action.openPowerPoint) {
+    if (step.action === Action.OpenPowerPoint) {
       try {
         await ExternalAppsService.openPowerPoint();
       } catch (error) {
         Notifications.error(`Failed to open PowerPoint: ${(error as Error).message}`);
       }
       return;
-    } else if (step.action === Action.openKeynote) {
+    } else if (step.action === Action.OpenKeynote) {
       try {
         await ExternalAppsService.openKeynote();
       } catch (error) {
@@ -691,6 +702,16 @@ export class DemoRunner {
     }
 
     // Update settings
+    if (step.action === Action.BackupSettings) {
+      await backupVSCodeSettings();
+      return;
+    }
+
+    if (step.action === Action.RestoreSettings) {
+      await restoreVSCodeSettings();
+      return;
+    }
+
     if (step.action === Action.SetSetting) {
       if (!step.setting || !step.setting.key) {
         Notifications.error('No setting key or value specified');
@@ -914,6 +935,43 @@ export class DemoRunner {
     }
 
     /**
+     * Engage Time actions
+     */
+    if (step.action.includes('EngageTime')) {
+      const crntDemoConfig = await DemoRunner.getExecutedDemoFile();
+      const crntDemoFile = await DemoFileProvider.getFile(Uri.file(crntDemoConfig.filePath));
+      if (step.action === Action.StartEngageTimeSession) {
+        await EngageTimeService.startSession(crntDemoFile?.engageTime?.sessionId);
+        return;
+      }
+
+      if (step.action === Action.CloseEngageTimeSession) {
+        await EngageTimeService.stopSession(crntDemoFile?.engageTime?.sessionId);
+        return;
+      }
+
+      if (step.action === Action.StartEngageTimePoll) {
+        await EngageTimeService.startPoll(step.pollId);
+        return;
+      }
+
+      if (step.action === Action.CloseEngageTimePoll) {
+        await EngageTimeService.stopPoll(step.pollId);
+        return;
+      }
+
+      if (step.action === Action.ShowEngageTimeSession) {
+        await EngageTimeService.showSession(crntDemoFile?.engageTime?.sessionId);
+        return;
+      }
+
+      if (step.action === Action.ShowEngageTimePoll) {
+        await EngageTimeService.showPoll(step.pollId);
+        return;
+      }
+    }
+
+    /**
      * All the following actions require a file path.
      */
     if (!fileUri) {
@@ -929,7 +987,7 @@ export class DemoRunner {
     if (step.action === Action.OpenSlide) {
       const { path } = step as ISlidePreview;
       Preview.setCurrentSlideIndex(0); // Reset the slide index
-      Preview.show(path as string);
+      Preview.show(path as string, undefined, step.slide);
       return;
     }
 
@@ -1054,6 +1112,7 @@ export class DemoRunner {
 
     if (step.action === Action.Delete) {
       await TextTypingService.delete(editor, fileUri, crntRange, crntPosition);
+      return;
     }
   }
 
@@ -1186,7 +1245,7 @@ export class DemoRunner {
   ): Promise<
     | {
         filePath: string;
-        demo: DemoFile;
+        demo: DemoConfig;
       }
     | undefined
   > {

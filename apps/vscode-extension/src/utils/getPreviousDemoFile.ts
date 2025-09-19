@@ -1,5 +1,5 @@
+import { DemoConfig, DemoFiles } from '@demotime/common';
 import { sortFiles } from '.';
-import { DemoFiles, DemoFile } from '../models';
 import { DemoFileProvider } from '../services/DemoFileProvider';
 
 export const getPreviousDemoFile = async (demoFile?: {
@@ -7,7 +7,7 @@ export const getPreviousDemoFile = async (demoFile?: {
 }): Promise<
   | {
       filePath: string;
-      demo: DemoFile;
+      demo: DemoConfig;
     }
   | undefined
 > => {
