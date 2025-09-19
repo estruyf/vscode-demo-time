@@ -60,7 +60,7 @@ export const DemoSection: React.FC<DemoSectionProps> = ({
           </h2>
           <button
             onClick={() => setShowInfo(!showInfo)}
-            className="p-1 text-demo-time-gray-4 hover:text-demo-time-gray-3 hover:bg-demo-time-gray-6 rounded-sm transition-colors"
+            className="p-1 text-demo-time-gray-4 hover:text-demo-time-gray-3 hover:bg-demo-time-gray-6 rounded-xs transition-colors"
             title="About demos"
           >
             <Info className="h-4 w-4" />

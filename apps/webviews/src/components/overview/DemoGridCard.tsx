@@ -47,7 +47,7 @@ const DemoGridCard: React.FC<DemoGridCardProps> = ({
               e.stopPropagation();
               onEdit();
             }}
-            className="p-1 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+            className="p-1 text-blue-600 hover:bg-blue-50 rounded-sm transition-colors"
             title="Edit demo"
           >
             <Settings className="h-3 w-3" />

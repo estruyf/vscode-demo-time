@@ -363,7 +363,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                 type="checkbox"
                 checked={typeof step[field] === 'undefined' ? true : step[field]}
                 onChange={(e) => handleChange(field, e.target.checked)}
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="rounded-smborder-gray-300 text-blue-600 focus:ring-blue-500"
                 disabled={isFullRange}
               />
               <span className="text-sm font-medium text-gray-700">
@@ -386,7 +386,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                 type="checkbox"
                 checked={typeof step[field] === 'undefined' ? true : step[field]}
                 onChange={(e) => handleChange(field, e.target.checked)}
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="rounded-smborder-gray-300 text-blue-600 focus:ring-blue-500"
               />
               <span className="text-sm font-medium text-gray-700">
                 {label} {isRequired && <span className="text-red-500">*</span>}
@@ -659,11 +659,11 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                   <strong>Position Examples:</strong>
                 </p>
                 <div className="text-xs text-blue-700 space-y-1">
-                  <p><code className="bg-blue-50 px-1 rounded-sm">10</code> - Line 10 (Start Line only)</p>
-                  <p><code className="bg-blue-50 px-1 rounded-sm">10:20</code> - Lines 10 to 20 (Start + End Line)</p>
-                  <p><code className="bg-blue-50 px-1 rounded-sm">10,5</code> - Line 10, character 5 (Start Line + Character)</p>
-                  <p><code className="bg-blue-50 px-1 rounded-sm">10,5:20,10</code> - From line 10, char 5 to line 20, char 10 (All fields)</p>
-                  <p><code className="bg-blue-50 px-1 rounded-sm">start</code> or <code className="bg-blue-50 px-1 rounded-sm">end</code> - Special keywords (Start Line only)</p>
+                  <p><code className="bg-blue-50 px-1 rounded-xs">10</code> - Line 10 (Start Line only)</p>
+                  <p><code className="bg-blue-50 px-1 rounded-xs">10:20</code> - Lines 10 to 20 (Start + End Line)</p>
+                  <p><code className="bg-blue-50 px-1 rounded-xs">10,5</code> - Line 10, character 5 (Start Line + Character)</p>
+                  <p><code className="bg-blue-50 px-1 rounded-xs">10,5:20,10</code> - From line 10, char 5 to line 20, char 10 (All fields)</p>
+                  <p><code className="bg-blue-50 px-1 rounded-xs">start</code> or <code className="bg-blue-50 px-1 rounded-xs">end</code> - Special keywords (Start Line only)</p>
                 </div>
               </div>
             </div>
@@ -855,7 +855,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       {step.action === 'copyToClipboard' && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
           <p className="text-sm text-blue-800">
-            <strong>Note:</strong> This action requires either <code className="bg-white px-1 rounded-sm">content</code> OR <code className="bg-white px-1 rounded-sm">contentPath</code>.
+            <strong>Note:</strong> This action requires either <code className="bg-white px-1 rounded-xs">content</code> OR <code className="bg-white px-1 rounded-xs">contentPath</code>.
           </p>
         </div>
       )}

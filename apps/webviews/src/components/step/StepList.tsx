@@ -59,7 +59,7 @@ export const StepList: React.FC<StepListProps> = ({
           <h3 className="text-xl font-semibold text-gray-900">Steps</h3>
           <button
             onClick={() => setShowInfo(!showInfo)}
-            className="p-1 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-sm transition-colors"
+            className="p-1 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xs transition-colors"
             title="About steps"
           >
             <Info className="h-4 w-4" />

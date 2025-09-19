@@ -215,7 +215,7 @@ export const DemoTestView: React.FC<DemoTestViewProps> = ({
                       {step.action}
                     </span>
                     {isDisabled && (
-                      <span className="ml-2 px-2 py-0.5 rounded-sm bg-gray-200 text-xs text-gray-600 font-semibold border border-gray-300">Disabled</span>
+                      <span className="ml-2 px-2 py-0.5 rounded-xs bg-gray-200 text-xs text-gray-600 font-semibold border border-gray-300">Disabled</span>
                     )}
                   </div>
                   {step.path && (

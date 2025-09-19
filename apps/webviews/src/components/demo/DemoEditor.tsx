@@ -151,7 +151,7 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange }) => {
                     <Icon name={demo.icons.start as any} />
                     <button
                       type="button"
-                      className="absolute -top-2 -right-2 bg-white border border-gray-300 rounded-full p-0.5 text-xs text-gray-500 hover:text-red-600 hover:border-red-400 shadow-sm flex items-center justify-center"
+                      className="absolute -top-2 -right-2 bg-white border border-gray-300 rounded-full p-0.5 text-xs text-gray-500 hover:text-red-600 hover:border-red-400 shadow-xs flex items-center justify-center"
                       style={{ width: 20, height: 20 }}
                       title="Remove icon"
                       onClick={() => handleIconChange('start', '')}
@@ -181,7 +181,7 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange }) => {
                     <Icon name={demo.icons.end as any} />
                     <button
                       type="button"
-                      className="absolute -top-2 -right-2 bg-white border border-gray-300 rounded-full p-0.5 text-xs text-gray-500 hover:text-red-600 hover:border-red-400 shadow-sm flex items-center justify-center"
+                      className="absolute -top-2 -right-2 bg-white border border-gray-300 rounded-full p-0.5 text-xs text-gray-500 hover:text-red-600 hover:border-red-400 shadow-xs flex items-center justify-center"
                       style={{ width: 20, height: 20 }}
                       title="Remove icon"
                       onClick={() => handleIconChange('end', '')}

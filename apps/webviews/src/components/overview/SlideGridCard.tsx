@@ -54,7 +54,7 @@ const SlideGridCard: React.FC<SlideGridCardProps> = ({
               e.stopPropagation();
               onEdit();
             }}
-            className="p-1 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+            className="p-1 text-blue-600 hover:bg-blue-50 rounded-sm transition-colors"
             aria-label={`Edit slide ${slideIndex + 1}`}
             title="Edit demo"
           >

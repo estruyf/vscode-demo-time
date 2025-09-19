@@ -86,7 +86,7 @@ export const MainConfigForm: React.FC<MainConfigFormProps> = ({ config, onChange
               type="button"
               onClick={() => setEngageCollapsed(v => !v)}
               aria-expanded={!engageCollapsed}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-demo-time-black border border-demo-time-gray-6 rounded-md text-demo-time-gray-3 hover:text-demo-time-white hover:border-demo-time-gray-5 hover:bg-demo-time-gray-8 transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-demo-time-black border border-demo-time-gray-6 rounded-md text-demo-time-gray-3 hover:text-demo-time-white hover:border-demo-time-gray-5 hover:bg-demo-time-gray-8 transition-all duration-200 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent"
             >
               <span className="text-sm font-medium">{engageCollapsed ? 'Show' : 'Hide'}</span>
               <svg

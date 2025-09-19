@@ -145,7 +145,7 @@ export const DemoListItem: React.FC<DemoListItemProps> = ({
                   {demo.title}
                 </h4>
                 {demo.disabled && (
-                  <span className="ml-2 px-2 py-0.5 rounded-sm bg-gray-200 text-xs text-gray-600 font-semibold border border-gray-300">Disabled</span>
+                  <span className="ml-2 px-2 py-0.5 rounded-xs bg-gray-200 text-xs text-gray-600 font-semibold border border-gray-300">Disabled</span>
                 )}
               </div>
 
@@ -174,14 +174,14 @@ export const DemoListItem: React.FC<DemoListItemProps> = ({
                 <div className="flex items-center space-x-2 ml-4">
                   <button
                     onClick={handleDuplicateClick}
-                    className="p-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-sm transition-colors"
+                    className="p-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-xs transition-colors"
                     title="Duplicate demo"
                   >
                     <Copy className="h-4 w-4" />
                   </button>
                   <button
                     onClick={handlePlayClick}
-                    className="p-1 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-sm transition-colors"
+                    className="p-1 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-xs transition-colors"
                     title="Test demo"
                     disabled={demo.disabled}
                   >
@@ -189,7 +189,7 @@ export const DemoListItem: React.FC<DemoListItemProps> = ({
                   </button>
                   <button
                     onClick={handleRemoveClick}
-                    className="p-1 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-sm transition-colors"
+                    className="p-1 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xs transition-colors"
                     title="Remove demo"
                   >
                     <Trash2 className="h-4 w-4" />

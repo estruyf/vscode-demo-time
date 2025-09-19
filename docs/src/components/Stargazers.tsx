@@ -20,7 +20,7 @@ export default function Stargazers() {
     <div className={`stargazers group flex items-center`} style={{ height: "36px" }}>
       <a
         href={`https://github.com/estruyf/vscode-demo-time`}
-        className={`h-full flex items-center bg-[var(--sl-color-white)] text-[var(--sl-color-black)] p-2 text-xs font-bold group-hover:bg-whisper-700 rounded no-underline`}
+        className={`h-full flex items-center bg-[var(--sl-color-white)] text-[var(--sl-color-black)] p-2 text-xs font-bold group-hover:bg-whisper-700 rounded-sm no-underline`}
         title={`Give the project a star on GitHub`}>
         <GitHub className={`h-[20px] w-[20px] mr-1 !text-[var(--sl-color-black)]`} />
         <span>Star</span>
@@ -35,7 +35,7 @@ export default function Stargazers() {
 
             <a
               href={`https://github.com/estruyf/vscode-demo-time/stargazers`}
-              className={`h-full flex items-center bg-[var(--sl-color-white)] text-[var(--sl-color-black)] p-2 text-xs font-bold group-hover:bg-whisper-700 rounded no-underline`}
+              className={`h-full flex items-center bg-[var(--sl-color-white)] text-[var(--sl-color-black)] p-2 text-xs font-bold group-hover:bg-whisper-700 rounded-sm no-underline`}
               title={`Give the project a star on GitHub`}>
               {stars}
             </a>

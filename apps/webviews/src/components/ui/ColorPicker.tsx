@@ -87,7 +87,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ value, onChange, label
           type="color"
           value={hex}
           onChange={(e) => handleHexChange(e.target.value)}
-          className="w-12 h-10 rounded-sm border cursor-pointer"
+          className="w-12 h-10 rounded-xs border cursor-pointer"
           disabled={disabled || value.startsWith("var(")}
         />
       </div>

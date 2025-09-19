@@ -22,7 +22,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
         disabled={disabled}
-        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:cursor-not-allowed"
+        className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500 disabled:cursor-not-allowed"
       />
       <label className="text-sm font-medium text-gray-700">
         {label}

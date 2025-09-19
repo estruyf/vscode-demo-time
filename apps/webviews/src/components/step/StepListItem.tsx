@@ -174,7 +174,7 @@ export const StepListItem: React.FC<StepListItemProps> = ({
                 )}
               </span>
               {step.disabled && (
-                <span className="ml-2 px-2 py-0.5 rounded-sm bg-gray-200 text-xs text-gray-600 font-semibold border border-gray-300">Disabled</span>
+                <span className="ml-2 px-2 py-0.5 rounded-xs bg-gray-200 text-xs text-gray-600 font-semibold border border-gray-300">Disabled</span>
               )}
             </div>
             <ChevronRight className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${isEditing ? 'rotate-90' : ''} ml-2`} />
@@ -185,7 +185,7 @@ export const StepListItem: React.FC<StepListItemProps> = ({
           <button
             onClick={handleDuplicateClick}
             disabled={step.disabled}
-            className="p-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             title="Duplicate step"
           >
             <Copy className="h-4 w-4" />
@@ -193,14 +193,14 @@ export const StepListItem: React.FC<StepListItemProps> = ({
           <button
             onClick={handlePlayClick}
             disabled={step.disabled}
-            className="p-1 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             title="Test step"
           >
             <Play className="h-4 w-4" />
           </button>
           <button
             onClick={handleRemoveClick}
-            className="p-1 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             title="Remove step"
           >
             <Trash2 className="h-4 w-4" />

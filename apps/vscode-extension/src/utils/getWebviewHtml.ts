@@ -55,7 +55,6 @@ export const getWebviewHtml = async (
   const allStyles = await Promise.all(styles);
 
   const htmlToInclude = [
-    // ...styleUrls.map((href) => `<link rel="stylesheet" href="${href}" />`),
     ...allStyles.map((style) => `<style>${style}</style>`),
     ...moduleUrls.map((src) => `<script type="module" src="${src}"></script>`),
     ...scriptUrls.map((src) => `<script src="${src}"></script>`),

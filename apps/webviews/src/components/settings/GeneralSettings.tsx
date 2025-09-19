@@ -47,7 +47,7 @@ export default function GeneralSettings({ settings, updateSetting }: GeneralSett
               type={showApiKey ? 'text' : 'password'}
               value={settings.engageTimeApiKey || ''}
               onChange={e => updateSetting('engageTimeApiKey', e.target.value)}
-              className="w-full pr-10 px-3 py-2 border border-demo-time-gray-5 rounded-md bg-demo-time-black text-demo-time-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pr-10 px-3 py-2 border border-demo-time-gray-5 rounded-md bg-demo-time-black text-demo-time-white focus:outline-hidden focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your Engage Time API key"
               autoComplete="off"
             />
