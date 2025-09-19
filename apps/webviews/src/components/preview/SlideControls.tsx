@@ -153,19 +153,19 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
       style={style}
     >
       <div
-        className="bg-(--vscode-editorWidget-background) p-2 grid grid-cols-3 gap-4"
+        className="bg-[--vscode-editorWidget-background] p-2 grid grid-cols-3 gap-4"
         style={{ boxShadow: '0 0 8px 0 var(--vscode-widget-shadow)' }}
       >
         <div className='flex items-center'>
-          <SlideControl title="Toggle presentation mode" className={`${isPresentationMode ? `bg-(--vscode-statusBarItem-errorBackground) hover:bg-(--vscode-statusBarItem-errorHoverBackground)` : ''}`} icon={<ProjectorIcon className={`w-4 h-4 inline-flex justify-center items-center ${isPresentationMode ? `text-(--vscode-statusBarItem-errorForeground) hover:text-(--vscode-statusBarItem-errorHoverForeground)` : `text-(--vscode-editorWidget-foreground)`}`} />} action={togglePresentationMode} />
+          <SlideControl title="Toggle presentation mode" className={`${isPresentationMode ? `bg-[--vscode-statusBarItem-errorBackground] hover:bg-[--vscode-statusBarItem-errorHoverBackground]` : ''}`} icon={<ProjectorIcon className={`w-4 h-4 inline-flex justify-center items-center ${isPresentationMode ? `text-[--vscode-statusBarItem-errorForeground] hover:text-[--vscode-statusBarItem-errorHoverForeground]` : `text-[--vscode-editorWidget-foreground]`}`} />} action={togglePresentationMode} />
           <SlideControl title="Toggle fullscreen" iconName="screen-full" action={toggleFullscreen} />
-          <SlideControl title="Toggle presentation view" icon={<WhiteboardIcon className="w-4 h-4 text-(--vscode-editorWidget-foreground) inline-flex justify-center items-center" />} action={togglePresentationView} />
+          <SlideControl title="Toggle presentation view" icon={<WhiteboardIcon className="w-4 h-4 text-[--vscode-editorWidget-foreground] inline-flex justify-center items-center" />} action={togglePresentationView} />
           <SlideControl title="Close sidebar" icon={(
             <div className='relative inline-flex justify-center items-center'>
-              <div className='absolute -top-[2px] -right-[2px] w-2 h-2 bg-(--vscode-editorWidget-foreground) rounded-full inline-flex justify-center items-center'>
-                <Icon name='close' className='text-(--vscode-editorWidget-background)! block' style={{ fontSize: "8px" }} />
+              <div className='absolute -top-[2px] -right-[2px] w-2 h-2 bg-[--vscode-editorWidget-foreground] rounded-full inline-flex justify-center items-center'>
+                <Icon name='close' className='text-[--vscode-editorWidget-background]! block' style={{ fontSize: "8px" }} />
               </div>
-              <Icon name='layout-sidebar-left' className='text-(--vscode-editorWidget-foreground)! inline-flex justify-center items-center' />
+              <Icon name='layout-sidebar-left' className='text-[--vscode-editorWidget-foreground]! inline-flex justify-center items-center' />
             </div>
           )} action={closeSidebar} />
           <SlideControl title="Show demos" iconName='list-unordered' action={focusPanel} />
@@ -185,13 +185,13 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
         </div>
         <div className="flex items-center justify-end">
           {slides > 1 && (
-            <div className="slide-info text-sm px-2 py-1 text-(--vscode-editorWidget-foreground)">
+            <div className="slide-info text-sm px-2 py-1 text-[--vscode-editorWidget-foreground]">
               Slide {currentSlide + 1} of {slides}
             </div>
           )}
           <SlideControl
             title="Toggle laser pointer"
-            className={`hover:bg-(--vscode-toolbar-hoverBackground) ${laserPointerEnabled ? 'bg-(--vscode-statusBarItem-errorBackground)' : ''}`}
+            className={`hover:bg-[--vscode-toolbar-hoverBackground] ${laserPointerEnabled ? 'bg-[--vscode-statusBarItem-errorBackground]  ' : ''}`}
             iconName="record"
             action={() => {
               if (onLaserPointerToggle) {
@@ -201,7 +201,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
           />
           <SlideControl
             title={isZoomed ? "Exit zoom" : "Zoom in"}
-            className={`hover:bg-(--vscode-toolbar-hoverBackground) ${isZoomed ? 'bg-(--vscode-statusBarItem-errorBackground)' : ''}`}
+            className={`hover:bg-[--vscode-toolbar-hoverBackground] ${isZoomed ? 'bg-[--vscode-statusBarItem-errorBackground]' : ''}`}
             iconName={isZoomed ? "zoom-out" : "zoom-in"}
             action={() => {
               if (onZoomToggle) {
@@ -216,7 +216,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
                 {showPosition && children}
                 <SlideControl
                   title="Toggle mouse position"
-                  className='-rotate-90 hover:bg-(--vscode-toolbar-hoverBackground)'
+                  className='-rotate-90 hover:bg-[--vscode-toolbar-hoverBackground]'
                   iconName="symbol-ruler"
                   action={() => {
                     setShowPosition(prev => !prev);
