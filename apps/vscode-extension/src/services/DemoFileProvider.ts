@@ -8,7 +8,7 @@ import { load as yamlLoad, dump as yamlDump } from 'js-yaml';
 import { createDemoFile, readFile, sanitizeFileName, sortFiles, writeFile } from '../utils';
 import { Preview } from '../preview/Preview';
 import { Logger } from './Logger';
-import { Config, DemoConfig, DemoConfig, DemoFiles } from '@demotime/common';
+import { Config, DemoConfig, DemoFiles } from '@demotime/common';
 
 export class DemoFileProvider {
   public static register() {

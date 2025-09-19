@@ -379,7 +379,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         >
           {/* Mouse Position */}
           {mousePosition && showControls && cursorVisible && (
-            <div className="mouse-position text-sm px-2 py-1 text-[--vscode-editorWidget-foreground]">
+            <div className="mouse-position text-sm px-2 py-1 text-(--vscode-editorWidget-foreground)">
               X: {mousePosition.x}, Y: {mousePosition.y}
             </div>
           )}
