@@ -1,3 +1,6 @@
 dist
 node_modules
 searchindex
+
+.mcpregistry_github_token
+.mcpregistry_registry_token
