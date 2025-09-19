@@ -130,12 +130,21 @@ export class InteractionService {
    * @param linuxKey The key name for Linux xdotool (e.g., 'Return', 'Tab')
    * @returns A promise that resolves when the key press simulation is complete.
    */
-  private static async pressKey(windowsKey: string, macKeyCode: number, linuxKey: string): Promise<void> {
+  private static async pressKey(
+    windowsKey: string,
+    macKeyCode: number,
+    linuxKey: string,
+  ): Promise<void> {
     const osPlatform = platform();
     let command = '';
     if (osPlatform === 'darwin') {
       // macOS
-      command = `osascript -e 'tell application "System Events" to key code ${macKeyCode}'`;
+      if (macKeyCode === 48 || linuxKey === 'Tab') {
+        // Use keystroke for Tab key
+        command = `osascript -e 'tell application "System Events" to keystroke tab'`;
+      } else {
+        command = `osascript -e 'tell application "System Events" to key code ${macKeyCode}'`;
+      }
     } else if (osPlatform === 'win32') {
       // Windows - using PowerShell
       command = `powershell -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('{${windowsKey}}')"`;
