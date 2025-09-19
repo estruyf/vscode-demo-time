@@ -1,0 +1,22 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
+  "name": "io.github.estruyf/vscode-demo-time",
+  "description": "Enables AI assistants to interact with Demo Time and helps build presentations and demos.",
+  "status": "active",
+  "repository": {
+    "url": "https://github.com/estruyf/vscode-demo-time",
+    "source": "github"
+  },
+  "version": "0.0.54",
+  "packages": [
+    {
+      "registry_type": "npm",
+      "registry_base_url": "https://registry.npmjs.org",
+      "identifier": "@demotime/mcp",
+      "version": "0.0.54",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}
