@@ -31,8 +31,9 @@ jobs:
       - name: Update package version with build number as patch
         run: |
           BUILD_NUMBER=${{ github.run_number }}
+          PATCH_VERSION=$((39 + BUILD_NUMBER))
           CURRENT_VERSION=$(node -p "require('./package.json').version")
-          NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. -v b=$BUILD_NUMBER '{print $1"."$2"."b}')
+          NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. -v p=$PATCH_VERSION '{print $1"."$2"."p}')
           npm version $NEW_VERSION --no-git-tag-version --allow-same-version
 
       - name: Build package
