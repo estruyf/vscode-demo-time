@@ -11,6 +11,7 @@ env:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '#mcp')
     defaults:
       run:
         working-directory: ${{ env.MCP_PATH }}
@@ -26,13 +27,14 @@ jobs:
           registry-url: 'https://registry.npmjs.org/'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm i
 
       - name: Update package version with build number as patch
         run: |
           BUILD_NUMBER=${{ github.run_number }}
+          PATCH_VERSION=$((39 + BUILD_NUMBER))
           CURRENT_VERSION=$(node -p "require('./package.json').version")
-          NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. -v b=$BUILD_NUMBER '{print $1"."$2"."b}')
+          NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. -v p=$PATCH_VERSION '{print $1"."$2"."p}')
           npm version $NEW_VERSION --no-git-tag-version --allow-same-version
 
       - name: Build package

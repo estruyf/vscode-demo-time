@@ -60,7 +60,7 @@ if (!fs.existsSync(outputDir)) {
 }
 
 // Write the index and original data for searching
-fs.writeFileSync(path.join(outputDir, 'index.json'), index.toJSON(), "utf-8");
+fs.writeFileSync(path.join(outputDir, 'index.json'), JSON.stringify(index.toJSON()), "utf-8");
 fs.writeFileSync(path.join(outputDir, 'data.json'), JSON.stringify(data));
 
 console.log('Search index built and saved to searchindex folder.');

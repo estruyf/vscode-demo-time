@@ -45,7 +45,7 @@ allSponsors = allSponsors
     <!-- Header Section -->
     <div class="sponsors-header">
       <div class="heart-icon-wrapper">
-        <HeartIcon class="heart-icon" />
+        <HeartIcon class="heart-icon text-yellow-500 dark:text-yellow-400" />
       </div>
       <h2 class="sponsors-title">Support Demo Time</h2>
       <div class="sponsors-description">
@@ -74,11 +74,18 @@ allSponsors = allSponsors
           class="premium-sponsor-card"
           title="AI Code Reviews by CodeRabbit"
         >
-          <img
-            src="/sponsors/coderabbit-dark.png"
-            alt="AI Code Reviews by CodeRabbit"
-            class="premium-sponsor-logo"
-          />
+          <picture>
+            <img
+              src="/sponsors/coderabbit-light.png"
+              alt="AI Code Reviews by CodeRabbit"
+              class="premium-sponsor-logo block dark:hidden"
+            />
+            <img
+              src="/sponsors/coderabbit-dark.png"
+              alt="AI Code Reviews by CodeRabbit"
+              class="premium-sponsor-logo hidden dark:block"
+            />
+          </picture>
         </a>
       </div>
     </div>
@@ -119,8 +126,6 @@ allSponsors = allSponsors
 
 <style>
   .sponsors-section {
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.05) 100%);
-    border-top: 1px solid var(--sl-color-gray-6);
     padding: 4rem 1rem;
   }
 
@@ -154,9 +159,8 @@ allSponsors = allSponsors
   }
 
   .heart-icon {
-    width: 1.75rem;
-    height: 1.75rem;
-    color: #ffd43b;
+    width: 6rem;
+    height: 6rem;
   }
 
   .sponsors-title {
@@ -215,8 +219,9 @@ allSponsors = allSponsors
   .premium-sponsor-card {
     display: block;
     padding: 2rem;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    /* Use existing site color tokens instead of new variables */
+    background: var(--sl-color-gray-7);
+    border: 1px solid var(--sl-color-gray-5);
     border-radius: 1rem;
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
@@ -224,8 +229,8 @@ allSponsors = allSponsors
 
   .premium-sponsor-card:hover {
     transform: translateY(-4px);
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 212, 59, 0.3);
+    background: var(--sl-color-gray-6);
+    border-color: #ffd43b; /* keep gold accent */
     box-shadow: 0 8px 32px rgba(255, 212, 59, 0.15);
   }
 
@@ -252,14 +257,14 @@ allSponsors = allSponsors
     transition: all 0.3s ease;
     padding: 1rem;
     border-radius: 0.75rem;
-    background: rgba(255, 255, 255, 0.01);
+    background: var(--sl-color-gray-7);
     border: 1px solid transparent;
   }
 
   .sponsor-card:hover {
     transform: translateY(-2px);
-    background: rgba(255, 255, 255, 0.03);
-    border-color: rgba(255, 212, 59, 0.2);
+    background: var(--sl-color-gray-6);
+    border-color: var(--sl-color-gray-5);
   }
 
   .sponsor-avatar-wrapper {
@@ -271,9 +276,9 @@ allSponsors = allSponsors
     width: 4rem;
     height: 4rem;
     border-radius: 50%;
-    border: 2px solid rgba(255, 212, 59, 0.3);
+    border: 2px solid var(--sl-color-gray-5);
     transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.05);
+    background: #fff;
   }
 
   .sponsor-card:hover .sponsor-avatar {

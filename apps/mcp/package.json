@@ -4,6 +4,7 @@
   "description": "Model Context Protocol (MCP) server for Demo Time that enables AI assistants to interact with Demo Time.",
   "main": "dist/index.js",
   "type": "module",
+  "mcpName": "io.github.estruyf/vscode-demo-time",
   "bin": {
     "demotime-mcp": "dist/index.js"
   },

@@ -18,11 +18,14 @@ env:
 
 jobs:
   release-powerpoint-addin:
-    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '#powerpo')
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '#powerpoint')
     runs-on: ubuntu-latest
     permissions:
       contents: read
       deployments: write
+    defaults:
+      run:
+        working-directory: apps/powerpoint-addin
 
     steps:
       - name: Checkout repository
@@ -35,10 +38,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: yarn
 
       - name: Install dependencies
-        run: yarn install --immutable
+        run: npm i
 
       - name: Build PowerPoint Add-in
         run: npm run build
