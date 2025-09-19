@@ -400,6 +400,54 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  if (action === Action.PressTab) {
+    return {
+      action: Action.PressTab,
+    };
+  }
+
+  if (action === Action.PressArrowLeft) {
+    return {
+      action: Action.PressArrowLeft,
+    };
+  }
+
+  if (action === Action.PressArrowRight) {
+    return {
+      action: Action.PressArrowRight,
+    };
+  }
+
+  if (action === Action.PressArrowUp) {
+    return {
+      action: Action.PressArrowUp,
+    };
+  }
+
+  if (action === Action.PressArrowDown) {
+    return {
+      action: Action.PressArrowDown,
+    };
+  }
+
+  if (action === Action.PressEscape) {
+    return {
+      action: Action.PressEscape,
+    };
+  }
+
+  if (action === Action.PressBackspace) {
+    return {
+      action: Action.PressBackspace,
+    };
+  }
+
+  if (action === Action.PressDelete) {
+    return {
+      action: Action.PressDelete,
+    };
+  }
+
   // Demo Time actions
   if (action === Action.RunDemoById) {
     return {

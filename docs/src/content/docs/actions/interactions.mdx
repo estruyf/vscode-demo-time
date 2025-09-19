@@ -340,3 +340,192 @@ You can combine typing and pressing Enter to execute commands:
 </TabItem>
 </Tabs>
 
+## Press Tab
+
+Simulate pressing the Tab key using the `pressTab` action. This is useful for navigating between fields, indenting code, or moving focus.
+
+<Aside type="caution" title="macOS Security Requirement">
+  On macOS, you need to enable Security & Privacy accessibility settings for Visual Studio Code to allow it to perform key presses. The first time you use this action, you'll see a system message prompting you to grant these permissions. Go to System Preferences > Security & Privacy > Privacy > Accessibility and ensure Visual Studio Code is checked.
+</Aside>
+
+<Aside type="caution" title="Linux Requirement">
+  On Linux, you need to have <code>xdotool</code> installed to allow Visual Studio Code to perform key presses. Install it using your package manager (for example, <code>sudo apt install xdotool</code> on Ubuntu). Without <code>xdotool</code>, key press actions will not work.
+</Aside>
+
+<Tabs syncKey="press-tab-action">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "pressTab"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: pressTab
+```
+
+</TabItem>
+</Tabs>
+
+## Press Arrow Keys
+
+Navigate using arrow keys with the `pressArrowLeft`, `pressArrowRight`, `pressArrowUp`, and `pressArrowDown` actions. These are useful for cursor movement, menu navigation, or list selection.
+
+<Aside type="caution" title="macOS Security Requirement">
+  On macOS, you need to enable Security & Privacy accessibility settings for Visual Studio Code to allow it to perform key presses. The first time you use this action, you'll see a system message prompting you to grant these permissions. Go to System Preferences > Security & Privacy > Privacy > Accessibility and ensure Visual Studio Code is checked.
+</Aside>
+
+<Aside type="caution" title="Linux Requirement">
+  On Linux, you need to have <code>xdotool</code> installed to allow Visual Studio Code to perform key presses. Install it using your package manager (for example, <code>sudo apt install xdotool</code> on Ubuntu). Without <code>xdotool</code>, key press actions will not work.
+</Aside>
+
+<Tabs syncKey="press-arrow-actions">
+<TabItem label="JSON">
+
+```json
+[
+  {
+    "action": "pressArrowLeft"
+  },
+  {
+    "action": "pressArrowRight"
+  },
+  {
+    "action": "pressArrowUp"
+  },
+  {
+    "action": "pressArrowDown"
+  }
+]
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+- action: pressArrowLeft
+- action: pressArrowRight
+- action: pressArrowUp
+- action: pressArrowDown
+```
+
+</TabItem>
+</Tabs>
+
+### Example: Navigate through autocomplete suggestions
+
+You can use arrow keys to navigate through VS Code's autocomplete suggestions:
+
+<Tabs syncKey="navigate-autocomplete">
+<TabItem label="JSON">
+
+```json
+[
+  {
+    "action": "typeText",
+    "content": "console."
+  },
+  {
+    "action": "waitForTimeout",
+    "timeout": 500
+  },
+  {
+    "action": "pressArrowDown"
+  },
+  {
+    "action": "pressArrowDown"
+  },
+  {
+    "action": "pressEnter"
+  }
+]
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+- action: typeText
+  content: "console."
+- action: waitForTimeout
+  timeout: 500
+- action: pressArrowDown
+- action: pressArrowDown
+- action: pressEnter
+```
+
+</TabItem>
+</Tabs>
+
+## Press Escape
+
+Simulate pressing the Escape key using the `pressEscape` action. This is useful for closing dialogs, exiting modes, or canceling operations.
+
+<Aside type="caution" title="macOS Security Requirement">
+  On macOS, you need to enable Security & Privacy accessibility settings for Visual Studio Code to allow it to perform key presses. The first time you use this action, you'll see a system message prompting you to grant these permissions. Go to System Preferences > Security & Privacy > Privacy > Accessibility and ensure Visual Studio Code is checked.
+</Aside>
+
+<Aside type="caution" title="Linux Requirement">
+  On Linux, you need to have <code>xdotool</code> installed to allow Visual Studio Code to perform key presses. Install it using your package manager (for example, <code>sudo apt install xdotool</code> on Ubuntu). Without <code>xdotool</code>, key press actions will not work.
+</Aside>
+
+<Tabs syncKey="press-escape-action">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "pressEscape"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: pressEscape
+```
+
+</TabItem>
+</Tabs>
+
+## Press Backspace and Delete
+
+Use `pressBackspace` and `pressDelete` actions to remove characters. Backspace deletes the character before the cursor, while Delete removes the character after the cursor.
+
+<Aside type="caution" title="macOS Security Requirement">
+  On macOS, you need to enable Security & Privacy accessibility settings for Visual Studio Code to allow it to perform key presses. The first time you use this action, you'll see a system message prompting you to grant these permissions. Go to System Preferences > Security & Privacy > Privacy > Accessibility and ensure Visual Studio Code is checked.
+</Aside>
+
+<Aside type="caution" title="Linux Requirement">
+  On Linux, you need to have <code>xdotool</code> installed to allow Visual Studio Code to perform key presses. Install it using your package manager (for example, <code>sudo apt install xdotool</code> on Ubuntu). Without <code>xdotool</code>, key press actions will not work.
+</Aside>
+
+<Tabs syncKey="press-backspace-delete-actions">
+<TabItem label="JSON">
+
+```json
+[
+  {
+    "action": "pressBackspace"
+  },
+  {
+    "action": "pressDelete"
+  }
+]
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+- action: pressBackspace
+- action: pressDelete
+```
+
+</TabItem>
+</Tabs>
+

@@ -115,6 +115,55 @@
           "action": "pressEnter"
         }
       ]
+    },
+    {
+      "id": "demo-mfqlfswk-m7d9",
+      "title": "Trigger multiple keys",
+      "steps": [
+        {
+          "action": "executeVSCodeCommand",
+          "command": "workbench.extensions.action.focusExtensionsView"
+        },
+        {
+          "action": "waitForTimeout",
+          "timeout": 500
+        },
+        {
+          "action": "typeText",
+          "content": "Demo Time"
+        },
+        {
+          "action": "pressEnter"
+        },
+        {
+          "action": "waitForTimeout",
+          "timeout": 500
+        },
+        {
+          "action": "pressTab"
+        },
+        {
+          "action": "waitForTimeout",
+          "timeout": 500
+        },
+        {
+          "action": "pressTab"
+        },
+        {
+          "action": "waitForTimeout",
+          "timeout": 500
+        },
+        {
+          "action": "pressArrowDown"
+        },
+        {
+          "action": "waitForTimeout",
+          "timeout": 500
+        },
+        {
+          "action": "pressEnter"
+        }
+      ]
     }
   ]
 }

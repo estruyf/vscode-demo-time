@@ -1,0 +1,22 @@
+[
+  {
+    "action": "typeText", 
+    "content": "${content:Type some text}"
+  },
+  {
+    "action": "pressArrowLeft"
+  },
+  {
+    "action": "pressArrowLeft"
+  },
+  {
+    "action": "pressArrowLeft"
+  },
+  {
+    "action": "pressBackspace"
+  },
+  {
+    "action": "typeText",
+    "content": "${replacement:corrected}"
+  }
+]
