@@ -11,6 +11,7 @@ env:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '#mcp')
     defaults:
       run:
         working-directory: ${{ env.MCP_PATH }}

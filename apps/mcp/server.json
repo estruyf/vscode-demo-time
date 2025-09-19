@@ -7,13 +7,13 @@
     "url": "https://github.com/estruyf/vscode-demo-time",
     "source": "github"
   },
-  "version": "0.0.54",
+  "version": "0.0.55",
   "packages": [
     {
       "registry_type": "npm",
       "registry_base_url": "https://registry.npmjs.org",
       "identifier": "@demotime/mcp",
-      "version": "0.0.54",
+      "version": "0.0.55",
       "transport": {
         "type": "stdio"
       }
