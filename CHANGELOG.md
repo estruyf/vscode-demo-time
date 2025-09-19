@@ -27,6 +27,9 @@
   images in CSS themes
 - [#249](https://github.com/estruyf/vscode-demo-time/issues/249): Fix reveal of slides after
   navigating to another file
+- [#253](https://github.com/estruyf/vscode-demo-time/issues/253): Added support for other types of
+  keyboard keys: `tab`, `arrowLeft`, `arrowRight`, `arrowUp`, `arrowDown`, `escape`, `backspace`,
+  and `delete`
 - [#255](https://github.com/estruyf/vscode-demo-time/issues/255): Optimize the normalized source
   path handling in the custom template conversion
 - [#256](https://github.com/estruyf/vscode-demo-time/issues/256): Added `{{crntSlideIdx}}` and
