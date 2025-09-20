@@ -57,20 +57,20 @@ export const DemoFileSection: React.FC<DemoFileSectionProps> = ({
             )}
 
             <div className="flex items-center space-x-3 min-w-0">
-              <FileText className="h-6 w-6 text-demo-time-accent shrink-0" />
+              <FileText className="h-6 w-6 text-blue-600 dark:text-blue-400 shrink-0" />
               <div className="min-w-0">
-                <h3 className="text-lg font-semibold text-demo-time-white truncate">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
                   {fileName}
                 </h3>
                 {config.title && (
-                  <p className="text-sm text-demo-time-gray-4 truncate">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
                     {config.title}
                   </p>
                 )}
               </div>
             </div>
 
-            <div className="flex items-center space-x-4 text-sm text-demo-time-gray-4 shrink-0 ml-4">
+            <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400 shrink-0 ml-4">
               <span className="flex items-center space-x-1">
                 <span className="font-medium">{indexRange}</span>
               </span>
@@ -89,30 +89,30 @@ export const DemoFileSection: React.FC<DemoFileSectionProps> = ({
         {/* File Stats */}
         <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4">
           <div className="flex items-center space-x-2 text-sm">
-            <Clapperboard className="h-4 w-4 text-demo-time-accent" />
-            <span className="text-demo-time-gray-4">
-              <span className="font-medium text-demo-time-white">{demoCount}</span> demo{demoCount !== 1 ? 's' : ''}
+            <Clapperboard className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <span className="text-gray-600 dark:text-gray-400">
+              <span className="font-medium text-gray-900 dark:text-white">{demoCount}</span> demo{demoCount !== 1 ? 's' : ''}
             </span>
           </div>
 
           <div className="flex items-center space-x-2 text-sm">
-            <Presentation className="h-4 w-4 text-demo-time-accent" />
-            <span className="text-demo-time-gray-4">
-              <span className="font-medium text-demo-time-white">{slideCount}</span> slide{slideCount !== 1 ? 's' : ''}
+            <Presentation className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <span className="text-gray-600 dark:text-gray-400">
+              <span className="font-medium text-gray-900 dark:text-white">{slideCount}</span> slide{slideCount !== 1 ? 's' : ''}
             </span>
           </div>
 
           <div className="flex items-center space-x-2 text-sm">
-            <BarChart3 className="h-4 w-4 text-demo-time-accent" />
-            <span className="text-demo-time-gray-4">
-              <span className="font-medium text-demo-time-white">{stepCount}</span> step{stepCount !== 1 ? 's' : ''}
+            <BarChart3 className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <span className="text-gray-600 dark:text-gray-400">
+              <span className="font-medium text-gray-900 dark:text-white">{stepCount}</span> step{stepCount !== 1 ? 's' : ''}
             </span>
           </div>
         </div>
 
         {config.description && isExpanded && (
-          <div className="mt-4 p-3 bg-demo-time-gray-6 rounded-md">
-            <p className="text-sm text-demo-time-gray-2">{config.description}</p>
+          <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-700 rounded-md">
+            <p className="text-sm text-gray-700 dark:text-gray-300">{config.description}</p>
           </div>
         )}
       </div>

@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 
 @theme {
+  /* Light mode colors */
   --color-blue-50: #f0f9ff;
   --color-blue-100: #e0f2fe;
   --color-blue-200: #bae6fd;
@@ -12,18 +13,53 @@
   --color-blue-800: #0a4c62;
   --color-blue-900: #0a3c4a;
 
+  /* Light mode demo time colors */
   --color-demo-time-accent-low: #e1d6b9;
   --color-demo-time-accent: #624d00;
   --color-demo-time-accent-high: #3f3000;
-  --color-demo-time-white: #15181f;
-  --color-demo-time-gray-1: #202736;
-  --color-demo-time-gray-2: #313848;
-  --color-demo-time-gray-3: #505869;
-  --color-demo-time-gray-4: #838c9e;
-  --color-demo-time-gray-5: #bdc2cc;
-  --color-demo-time-gray-6: #eaeef6;
-  --color-demo-time-gray-7: #f4f6fa;
-  --color-demo-time-black: #ffffff;
+  --color-demo-time-white: #ffffff;
+  --color-demo-time-gray-1: #f8f9fa;
+  --color-demo-time-gray-2: #e9ecef;
+  --color-demo-time-gray-3: #dee2e6;
+  --color-demo-time-gray-4: #ced4da;
+  --color-demo-time-gray-5: #adb5bd;
+  --color-demo-time-gray-6: #6c757d;
+  --color-demo-time-gray-7: #495057;
+  --color-demo-time-black: #212529;
+}
+
+/* Dark mode overrides */
+@media (prefers-color-scheme: dark) {
+  @theme {
+    --color-demo-time-accent-low: #2d2416;
+    --color-demo-time-accent: #ffd43b;
+    --color-demo-time-accent-high: #ffe066;
+    --color-demo-time-white: #ffffff;
+    --color-demo-time-gray-1: #1e1e1e;
+    --color-demo-time-gray-2: #2d2d30;
+    --color-demo-time-gray-3: #3e3e42;
+    --color-demo-time-gray-4: #565656;
+    --color-demo-time-gray-5: #6e6e6e;
+    --color-demo-time-gray-6: #8e8e8e;
+    --color-demo-time-gray-7: #cccccc;
+    --color-demo-time-black: #0c0c0c;
+  }
+}
+
+/* VS Code dark theme override */
+.vscode-dark {
+  --color-demo-time-accent-low: #2d2416;
+  --color-demo-time-accent: #ffd43b;
+  --color-demo-time-accent-high: #ffe066;
+  --color-demo-time-white: #ffffff;
+  --color-demo-time-gray-1: #1e1e1e;
+  --color-demo-time-gray-2: #2d2d30;
+  --color-demo-time-gray-3: #3e3e42;
+  --color-demo-time-gray-4: #565656;
+  --color-demo-time-gray-5: #6e6e6e;
+  --color-demo-time-gray-6: #8e8e8e;
+  --color-demo-time-gray-7: #cccccc;
+  --color-demo-time-black: #0c0c0c;
 }
 
 /*

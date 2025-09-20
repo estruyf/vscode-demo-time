@@ -102,7 +102,7 @@ export const DemoIdPicker: React.FunctionComponent<IDemoIdPickerProps> = ({
 
   if (loading) {
     return (
-      <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500">
+      <div className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
         Loading demos...
       </div>
     );
@@ -110,7 +110,7 @@ export const DemoIdPicker: React.FunctionComponent<IDemoIdPickerProps> = ({
 
   if (error) {
     return (
-      <div className="w-full px-3 py-2 border border-red-300 rounded-md bg-red-50 text-red-600">
+      <div className="w-full px-3 py-2 border border-red-300 dark:border-red-400 rounded-md bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400">
         {error}
         <button
           onClick={getAllDemoData}
@@ -124,7 +124,7 @@ export const DemoIdPicker: React.FunctionComponent<IDemoIdPickerProps> = ({
 
   if (!demoData || dropdownOptions.length === 0) {
     return (
-      <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500">
+      <div className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
         No demos with IDs found
       </div>
     );
@@ -141,8 +141,8 @@ export const DemoIdPicker: React.FunctionComponent<IDemoIdPickerProps> = ({
         allowFreeform={true}
       />
       {selectedDemo && (
-        <div className="mt-2 px-3 py-2 bg-blue-50 border border-blue-200 rounded-md">
-          <div className="text-sm font-medium text-blue-800">
+        <div className="mt-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
+          <div className="text-sm font-medium text-blue-800 dark:text-blue-200">
             Selected demo: {selectedDemo.title}
           </div>
         </div>

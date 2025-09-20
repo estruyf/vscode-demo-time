@@ -32,11 +32,11 @@ export const Button: React.FC<ButtonProps> = ({
 
   const variantClasses = {
     primary: 'bg-demo-time-accent hover:bg-demo-time-accent-high text-demo-time-black focus:ring-demo-time-accent',
-    secondary: 'bg-demo-time-black border border-demo-time-gray-5 hover:bg-demo-time-gray-7 text-demo-time-gray-2 focus:ring-demo-time-accent',
+    secondary: 'bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 focus:ring-demo-time-accent dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-700 dark:text-gray-300',
     success: 'bg-[#ffd43b] hover:bg-[#e6c135] text-gray-900 focus:ring-[#ffd43b]',
     danger: 'bg-red-600 hover:bg-red-700 text-white focus:ring-red-500',
     warning: 'bg-yellow-600 hover:bg-yellow-700 text-white focus:ring-yellow-500',
-    dark: 'bg-demo-time-gray-1 hover:bg-demo-time-gray-2 text-demo-time-black focus:ring-demo-time-gray-3'
+    dark: 'bg-gray-800 hover:bg-gray-700 text-white focus:ring-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600'
   };
 
   const sizeClasses = {

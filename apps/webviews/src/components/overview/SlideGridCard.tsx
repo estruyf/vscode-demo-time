@@ -34,7 +34,7 @@ const SlideGridCard: React.FC<SlideGridCardProps> = ({
   }, [slide.content, slideIndex]);
 
   return (
-    <Card className={`h-full cursor-pointer transition-all duration-200 hover:shadow-lg border-l-4 border-l-yellow-500 ${demo?.disabled ? 'opacity-60 grayscale' : ''}`} padding="sm">
+    <Card className={`h-full cursor-pointer transition-all duration-200 hover:shadow-lg border-l-4 border-l-yellow-500 dark:hover:shadow-xl ${demo?.disabled ? 'opacity-60 grayscale' : ''}`} padding="sm">
       <button className="h-full flex flex-col" onClick={onClick} aria-label={`Trigger ${slideTitle}`} aria-disabled={demo?.disabled}>
         {/* Header with type indicator and number */}
         <div className="flex items-center justify-between mb-3">
@@ -65,17 +65,17 @@ const SlideGridCard: React.FC<SlideGridCardProps> = ({
         {/* Content - flex-grow to fill available space */}
         <div className="flex-1 flex flex-col">
           <div className="mb-2 flex justify-between items-center">
-            <span className="text-xs font-medium text-demo-time-gray-4 bg-demo-time-gray-6 px-2 py-0.5 rounded-full">
+            <span className="text-xs font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full">
               {slide.demoTitle}
             </span>
           </div>
 
-          <h3 className="font-semibold text-demo-time-white text-sm mb-2 text-left">
+          <h3 className="font-semibold text-gray-900 dark:text-white text-sm mb-2 text-left">
             {slideTitle}
           </h3>
 
           <div className="mt-auto flex flex-col space-y-2">
-            <div className="flex items-center justify-between text-xs text-demo-time-gray-4">
+            <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
               <span>Slide {slideIndex + 1}/{totalSlides}</span>
               {demo?.disabled && (
                 <span className="px-2 py-0.5 bg-gray-200 text-gray-600 rounded-full font-semibold">

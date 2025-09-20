@@ -12,8 +12,8 @@ export default function TemplatesSettings({ settings, updateSetting }: Templates
   return (
     <Card>
       <div className="p-6">
-        <h2 className="text-xl font-semibold text-demo-time-white mb-2">Slide Templates</h2>
-        <p className="text-demo-time-gray-4 mb-6">HTML templates for slide headers and footers (supports Handlebars syntax)</p>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Slide Templates</h2>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">HTML templates for slide headers and footers (supports Handlebars syntax)</p>
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="headerTemplate">Header Template</Label>
@@ -23,7 +23,7 @@ export default function TemplatesSettings({ settings, updateSetting }: Templates
               onChange={(value) => updateSetting("slideHeaderTemplate", value)}
               rows={3}
             />
-            <p className="text-sm text-demo-time-gray-4">HTML template for slide headers with Handlebars variables</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">HTML template for slide headers with Handlebars variables</p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="footerTemplate">Footer Template</Label>
@@ -33,7 +33,7 @@ export default function TemplatesSettings({ settings, updateSetting }: Templates
               onChange={(value) => updateSetting("slideFooterTemplate", value)}
               rows={3}
             />
-            <p className="text-sm text-demo-time-gray-4">HTML template for slide footers with Handlebars variables</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">HTML template for slide footers with Handlebars variables</p>
           </div>
         </div>
       </div>

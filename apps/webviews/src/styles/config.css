@@ -3,8 +3,19 @@
 html,
 body {
   padding: 0 !important;
+  margin: 0;
+  background: var(--vscode-editor-background, #ffffff);
+  color: var(--vscode-editor-foreground, #000000);
 }
 
 body {
-  @apply text-black text-base;
+  @apply text-base;
+  background: var(--vscode-editor-background, #ffffff);
+  color: var(--vscode-editor-foreground, #000000);
+}
+
+/* Dark mode specific overrides */
+.vscode-dark body {
+  background: var(--vscode-editor-background, #1e1e1e);
+  color: var(--vscode-editor-foreground, #d4d4d4);
 }

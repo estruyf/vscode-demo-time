@@ -106,7 +106,7 @@ export const DemoListItem: React.FC<DemoListItemProps> = ({
       onDrop={handleDrop}
       className={cn(
         `border rounded-lg transition-all duration-300 ease-in-out`,
-        isSelected ? 'border-blue-500 bg-blue-50 shadow-lg' : 'border-gray-200 bg-white hover:shadow-md',
+        isSelected ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-md dark:hover:shadow-xl',
         isBeingDragged ? 'opacity-40 border-dashed border-blue-600 scale-105' : 'scale-100',
         !isBeingDragged && dropPosition === 'top' && 'border-t-4 border-t-blue-500',
         !isBeingDragged && dropPosition === 'bottom' && 'border-b-4 border-b-blue-500',
@@ -119,7 +119,7 @@ export const DemoListItem: React.FC<DemoListItemProps> = ({
             draggable
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
-            className="cursor-move p-2 text-gray-400 hover:text-gray-700 -ml-2"
+            className="cursor-move p-2 text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 -ml-2"
             title="Drag to reorder"
             onClick={(e) => e.stopPropagation()}
           >
@@ -130,7 +130,7 @@ export const DemoListItem: React.FC<DemoListItemProps> = ({
             <div className="min-w-0 flex-1">
               <div className="flex items-center">
                 <h4
-                  className="font-medium text-gray-900 cursor-pointer"
+                  className="font-medium text-gray-900 dark:text-white cursor-pointer"
                   title={demo.title}
                   style={{
                     overflow: 'hidden',
@@ -151,7 +151,7 @@ export const DemoListItem: React.FC<DemoListItemProps> = ({
 
               {demo.description && (
                 <p
-                  className="text-sm text-gray-600 mt-1 cursor-pointer"
+                  className="text-sm text-gray-600 dark:text-gray-400 mt-1 cursor-pointer"
                   title={demo.description}
                   style={{
                     overflow: 'hidden',
@@ -168,7 +168,7 @@ export const DemoListItem: React.FC<DemoListItemProps> = ({
               )}
 
               <div className="flex items-center justify-between mt-1">
-                <p className="text-xs text-gray-500 cursor-pointer">
+                <p className="text-xs text-gray-500 dark:text-gray-400 cursor-pointer">
                   {demo.steps.length} step{demo.steps.length !== 1 ? 's' : ''}
                 </p>
                 <div className="flex items-center space-x-2 ml-4">

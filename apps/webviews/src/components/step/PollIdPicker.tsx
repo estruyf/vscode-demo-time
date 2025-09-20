@@ -63,7 +63,7 @@ export const PollIdPicker: React.FunctionComponent<IPollIdPickerProps> = ({
       />
       {
         selectedPoll && (
-          <p className="mt-2 text-sm"><strong>Poll:</strong> {selectedPoll}</p>
+          <p className="mt-2 text-sm text-gray-700 dark:text-gray-300"><strong>Poll:</strong> {selectedPoll}</p>
         )
       }
     </>

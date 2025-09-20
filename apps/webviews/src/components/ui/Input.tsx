@@ -25,8 +25,23 @@ export const Input: React.FC<InputProps> = ({
   disabled = false,
   ...rest
 }) => {
-  const inputClasses = `w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${error ? 'border-red-300 bg-red-50' : 'border-gray-300'
-    } ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''} ${className}`;
+  const inputClasses = `w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white text-gray-900 ${
+    error 
+      ? 'border-red-300 bg-red-50' 
+      : 'border-gray-300 hover:border-gray-400'
+  } ${
+    disabled 
+      ? 'bg-gray-100 cursor-not-allowed' 
+      : ''
+  } dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 dark:hover:border-gray-500 ${
+    error 
+      ? 'dark:border-red-400 dark:bg-red-900/20' 
+      : ''
+  } ${
+    disabled 
+      ? 'dark:bg-gray-700' 
+      : ''
+  } ${className}`;
 
   const inputStyles = type == 'color' ? {
     blockSize: "42px",
@@ -36,7 +51,7 @@ export const Input: React.FC<InputProps> = ({
   return (
     <div className='w-full'>
       {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           {label} {required && <span className="text-red-500">*</span>}
         </label>
       )}
@@ -53,7 +68,7 @@ export const Input: React.FC<InputProps> = ({
         />
       </div>
       {error && (
-        <p className="text-sm text-red-600 mt-1">{error}</p>
+        <p className="text-sm text-red-600 dark:text-red-400 mt-1">{error}</p>
       )}
     </div>
   );

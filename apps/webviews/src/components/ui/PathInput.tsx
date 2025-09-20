@@ -41,12 +41,12 @@ export const PathInput: React.FC<PathInputProps> = ({
   }, [value]);
 
   const inputClasses = `w-full px-3 py-2 pr-10 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${error ? 'border-red-300 bg-red-50' : 'border-gray-300'
-    } ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''} ${className}`;
+    } ${disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'} text-gray-900 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 ${error ? 'dark:border-red-400 dark:bg-red-900/20' : ''} ${disabled ? 'dark:bg-gray-700' : ''} ${className}`;
 
   return (
     <div className='w-full'>
       {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           {label} {required && <span className="text-red-500">*</span>}
         </label>
       )}
@@ -68,7 +68,7 @@ export const PathInput: React.FC<PathInputProps> = ({
             type="button"
             onClick={openFileExplorer}
             disabled={disabled}
-            className="absolute right-0 top-0 h-full px-3 flex items-center text-gray-500 hover:text-gray-700 disabled:cursor-not-allowed border-l border-gray-300"
+            className="absolute right-0 top-0 h-full px-3 flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 disabled:cursor-not-allowed border-l border-gray-300 dark:border-gray-600"
             title={`Browse for ${type}`}
           >
             {type === 'folder' ? (
@@ -85,7 +85,7 @@ export const PathInput: React.FC<PathInputProps> = ({
             type="button"
             onClick={openFileEditor}
             disabled={disabled || !value}
-            className={`h-full px-2 text-gray-500 hover:text-gray-700 disabled:cursor-not-allowed border rounded-md border-gray-300 ${disabled || !value ? 'opacity-50' : 'opacity-100'}`}
+            className={`h-full px-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 disabled:cursor-not-allowed border rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 ${disabled || !value ? 'opacity-50' : 'opacity-100'}`}
             style={{ zIndex: 2 }}
             title={`Show source file`}
           >
@@ -97,7 +97,7 @@ export const PathInput: React.FC<PathInputProps> = ({
 
 
       {error && (
-        <p className="text-sm text-red-600 mt-1">{error}</p>
+        <p className="text-sm text-red-600 dark:text-red-400 mt-1">{error}</p>
       )}
     </div>
   );

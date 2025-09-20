@@ -89,13 +89,13 @@ export const SelectTrigger: React.FC<SelectTriggerProps> = ({
       onClick={() => !disabled && setIsOpen(!isOpen)}
       disabled={disabled}
       className={`
-        w-full px-3 py-2 border border-demo-time-gray-5 rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-demo-time-black text-demo-time-white text-left flex items-center justify-between hover:border-demo-time-gray-4 transition-colors
+        w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-left flex items-center justify-between hover:border-gray-400 dark:hover:border-gray-500 transition-colors
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
         ${className}
       `}
     >
       {children}
-      <ChevronDown className={`h-4 w-4 text-demo-time-gray-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      <ChevronDown className={`h-4 w-4 text-gray-400 dark:text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
     </button>
   );
 };
@@ -111,7 +111,7 @@ export const SelectContent: React.FC<SelectContentProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="absolute z-50 w-full mt-1 bg-demo-time-black border border-demo-time-gray-5 rounded-md shadow-lg max-h-60 overflow-y-auto">
+    <div className="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-y-auto">
       {children}
     </div>
   );
@@ -133,7 +133,7 @@ export const SelectItem: React.FC<SelectItemProps> = ({
       onClick={() => onSelect(value)}
       className={`
         w-full px-3 py-2 text-left focus:outline-hidden transition-colors flex items-center justify-between
-        ${isSelected ? 'bg-demo-time-accent text-demo-time-black' : 'text-demo-time-white hover:bg-demo-time-gray-6'}
+        ${isSelected ? 'bg-demo-time-accent text-demo-time-black' : 'text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700'}
       `}
     >
       <span>{children}</span>
@@ -147,7 +147,7 @@ export const SelectValue: React.FC<SelectValueProps & { value?: string }> = ({
   value
 }) => {
   return (
-    <span className={value ? 'text-demo-time-white' : 'text-demo-time-gray-4'}>
+    <span className={value ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}>
       {value || placeholder}
     </span>
   );

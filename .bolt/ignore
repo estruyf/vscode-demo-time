@@ -1,7 +1,7 @@
 .demo/*
 .frontmatter/*
 .github/*
-apps/mcpv
+apps/mcp
 apps/powerpoint-addin/*
 apps/vscode-extension/*
 assets/*

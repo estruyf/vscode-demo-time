@@ -133,17 +133,17 @@ export const DemoTestView: React.FC<DemoTestViewProps> = ({
       </div>
 
       {/* Demo Info */}
-      <div className="bg-gray-50 rounded-lg p-4 mb-6">
-        <h3 className="font-medium text-gray-900 mb-2">{demo.title}</h3>
+      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-6">
+        <h3 className="font-medium text-gray-900 dark:text-white mb-2">{demo.title}</h3>
         {demo.description && (
-          <p className="text-sm text-gray-600 mb-3">{demo.description}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{demo.description}</p>
         )}
-        <div className="flex items-center space-x-4 text-sm">
-          <span className="text-gray-600">
+        <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
+          <span>
             <strong>{demo.steps.length}</strong> steps
           </span>
           {demo.id && (
-            <span className="text-gray-600">
+            <span>
               ID: <strong>{demo.id}</strong>
             </span>
           )}
@@ -152,14 +152,14 @@ export const DemoTestView: React.FC<DemoTestViewProps> = ({
 
       {/* Validation Status */}
       {hasErrors && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
           <div className="flex items-start space-x-2">
             <XCircle className="h-5 w-5 text-red-600 mt-0.5 shrink-0" />
             <div>
-              <h4 className="text-red-800 font-medium mb-2">Demo has validation errors</h4>
+              <h4 className="text-red-800 dark:text-red-200 font-medium mb-2">Demo has validation errors</h4>
               <div className="space-y-1">
                 {validation.errors.map((error, index) => (
-                  <div key={index} className="text-sm text-red-700">
+                  <div key={index} className="text-sm text-red-700 dark:text-red-300">
                     {error.stepIndex !== undefined && (
                       <span className="font-medium">Step {error.stepIndex + 1}: </span>
                     )}
@@ -167,7 +167,7 @@ export const DemoTestView: React.FC<DemoTestViewProps> = ({
                   </div>
                 ))}
               </div>
-              <p className="text-sm text-red-600 mt-2">
+              <p className="text-sm text-red-600 dark:text-red-400 mt-2">
                 Fix these errors before running the demo.
               </p>
             </div>
@@ -177,17 +177,17 @@ export const DemoTestView: React.FC<DemoTestViewProps> = ({
 
       {/* Success Status */}
       {!hasErrors && !isRunning && executedSteps.length === demo.steps.length && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+        <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-6">
           <div className="flex items-center space-x-2">
             <CheckCircle className="h-5 w-5 text-green-600" />
-            <span className="text-green-800 font-medium">Demo completed successfully!</span>
+            <span className="text-green-800 dark:text-green-200 font-medium">Demo completed successfully!</span>
           </div>
         </div>
       )}
 
       {/* Steps List */}
       <div>
-        <h4 className="font-medium text-gray-900 mb-4">Demo Steps</h4>
+        <h4 className="font-medium text-gray-900 dark:text-white mb-4">Demo Steps</h4>
         <div className="space-y-3">
           {demo.steps.map((step, index) => {
             const isDisabled = !!step.disabled;
@@ -199,19 +199,19 @@ export const DemoTestView: React.FC<DemoTestViewProps> = ({
               <div
                 key={index}
                 className={`flex items-center space-x-3 p-3 rounded-lg transition-colors
-                  ${status === 'running' ? 'bg-blue-50 border border-blue-200' :
-                    status === 'completed' ? 'bg-green-50 border border-green-200' :
-                      'bg-gray-50 border border-gray-200'}
+                  ${status === 'running' ? 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800' :
+                    status === 'completed' ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800' :
+                      'bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700'}
                   ${isDisabled ? 'opacity-60 grayscale' : ''}
                 `}
               >
                 <StepIcon className={`h-5 w-5 ${stepColor} shrink-0`} />
                 <div className="flex-1">
                   <div className="flex items-center space-x-2">
-                    <span className="text-sm font-medium text-gray-900">
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">
                       Step {index + 1}:
                     </span>
-                    <span className="text-sm font-medium text-gray-700">
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       {step.action}
                     </span>
                     {isDisabled && (
@@ -219,7 +219,7 @@ export const DemoTestView: React.FC<DemoTestViewProps> = ({
                     )}
                   </div>
                   {step.path && (
-                    <p className="text-xs text-gray-600 mt-1">{step.path}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{step.path}</p>
                   )}
                 </div>
                 {status === 'running' && (
@@ -235,12 +235,12 @@ export const DemoTestView: React.FC<DemoTestViewProps> = ({
 
       {/* Demo Info */}
       {!hasErrors && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6">
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mt-6">
           <div className="flex items-start space-x-2">
             <AlertTriangle className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
             <div>
-              <h4 className="text-blue-800 font-medium mb-1">Demo Simulation</h4>
-              <p className="text-sm text-blue-700">
+              <h4 className="text-blue-800 dark:text-blue-200 font-medium mb-1">Demo Simulation</h4>
+              <p className="text-sm text-blue-700 dark:text-blue-300">
                 This is a simulation that validates your demo configuration.
                 Each step will be checked and simulated to ensure it would work properly.
               </p>

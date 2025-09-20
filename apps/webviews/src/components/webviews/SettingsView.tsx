@@ -105,7 +105,7 @@ const SettingsView = () => {
       {saveLoading && (
         <Spinner />
       )}
-      <div className="min-h-screen bg-demo-time-gray-7">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <AppHeader
           title="Settings Editor"
           subtitle="Manage the Demo Time settings"

@@ -127,7 +127,7 @@ export const StepListItem: React.FC<StepListItemProps> = ({
       onDrop={handleDrop}
       className={cn(
         `relative border rounded-lg transition-all duration-300 ease-in-out`,
-        isEditing ? 'z-10 border-blue-500 bg-blue-50 shadow-lg' : 'z-0 border-gray-200 bg-white hover:shadow-md',
+       isEditing ? 'z-10 border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg' : 'z-0 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-md dark:hover:shadow-xl',
         resultBgColor,
         step.disabled ? 'opacity-50 grayscale' : '',
         isBeingDragged ? 'opacity-40 border-dashed border-blue-600 scale-105' : 'scale-100',
@@ -141,7 +141,7 @@ export const StepListItem: React.FC<StepListItemProps> = ({
             draggable
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
-            className="cursor-move p-2 text-gray-400 hover:text-gray-700 -ml-2"
+            className="cursor-move p-2 text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 -ml-2"
             title="Drag to reorder"
             onClick={(e) => e.stopPropagation()}
           >
@@ -161,23 +161,23 @@ export const StepListItem: React.FC<StepListItemProps> = ({
             }}
           >
             <div className="flex items-center space-x-3 min-w-0">
-              <span className="text-sm font-medium text-gray-600">
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
                 Step {stepIndex + 1}:
               </span>
-              <span className="text-sm font-medium text-gray-900 truncate">
+              <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                 {step.action}
                 {step.action === 'snippet' && (step.path || step.contentPath) && (
-                  <span className="ml-2 text-xs text-gray-500 font-normal">{step.path || step.contentPath}</span>
+                  <span className="ml-2 text-xs text-gray-500 dark:text-gray-400 font-normal">{step.path || step.contentPath}</span>
                 )}
                 {step.action === 'runDemoById' && (step.id) && (
-                  <span className="ml-2 text-xs text-gray-500 font-normal">{step.id}</span>
+                  <span className="ml-2 text-xs text-gray-500 dark:text-gray-400 font-normal">{step.id}</span>
                 )}
               </span>
               {step.disabled && (
                 <span className="ml-2 px-2 py-0.5 rounded-xs bg-gray-200 text-xs text-gray-600 font-semibold border border-gray-300">Disabled</span>
               )}
             </div>
-            <ChevronRight className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${isEditing ? 'rotate-90' : ''} ml-2`} />
+            <ChevronRight className={`h-4 w-4 text-gray-400 dark:text-gray-500 transition-transform duration-200 ${isEditing ? 'rotate-90' : ''} ml-2`} />
           </div>
         </div>
 
@@ -209,7 +209,7 @@ export const StepListItem: React.FC<StepListItemProps> = ({
       </div>
 
       {editor && (
-        <section className="border-t bg-white p-4 rounded-b-lg">
+        <section className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 rounded-b-lg">
           <div className="mt-2 mb-4">
             {editor}
           </div>
