@@ -341,7 +341,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
             <select
               value={step.insertTypingMode || 'instant'}
               onChange={(e) => handleChange('insertTypingMode', (e.target.value || undefined) as typeof step.insertTypingMode)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
+              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
                 }`}
             >
               {getTypingModeOptions().map(mode => (
@@ -410,7 +410,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
               type="number"
               value={typeof step[field] !== 'undefined' ? step[field] : ''}
               onChange={(e) => handleChange(field, e.target.value ? parseInt(e.target.value) : undefined)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
+              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
                 }`}
               placeholder={`Enter ${label.toLowerCase()}`}
               min={0}
@@ -432,7 +432,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
               value={step[field] || ''}
               onChange={(e) => handleChange(field, e.target.value || undefined)}
               rows={3}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
+              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
                 }`}
               placeholder={`Enter ${label.toLowerCase()}`}
             />
@@ -456,7 +456,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                   type="text"
                   value={step.setting?.key || ''}
                   onChange={(e) => handleSettingChange(e.target.value, step.setting?.value)}
-                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
+                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
                   placeholder="Setting key"
                 />
               </div>
@@ -481,7 +481,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                     }
                   }}
                   rows={5}
-                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
+                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
                   placeholder="Setting value (JSON or string)"
                 />
               </div>
@@ -507,7 +507,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                   type="text"
                   value={step.state?.key || ''}
                   onChange={(e) => handleStateChange(e.target.value, step.state?.value || '')}
-                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
+                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
                   placeholder="State key"
                 />
               </div>
@@ -518,7 +518,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                   type="text"
                   value={step.state?.value || ''}
                   onChange={(e) => handleStateChange(step.state?.key || '', e.target.value)}
-                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
+                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
                   placeholder="State value"
                 />
               </div>
@@ -550,7 +550,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                 }
               }}
               rows={3}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
+              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
                 }`}
               placeholder="Enter arguments (JSON or string)"
             />
@@ -584,7 +584,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
               type="text"
               value={step[field] || ''}
               onChange={(e) => handleChange(field, e.target.value || undefined)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
+              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
                 }`}
               placeholder={commandPlaceholder}
             />
@@ -613,7 +613,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                     type="text"
                     value={positionFields.startLine}
                     onChange={(e) => handlePositionChange('startLine', e.target.value)}
-                    className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${positionError ? 'border-red-300 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'}`}
+                    className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${positionError ? 'border-red-300 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'}`}
                     placeholder="10 or start"
                   />
                 </div>
@@ -624,7 +624,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                     type="text"
                     value={positionFields.startChar}
                     onChange={(e) => handlePositionChange('startChar', e.target.value)}
-                    className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${positionError ? 'border-red-300 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'}`}
+                    className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${positionError ? 'border-red-300 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'}`}
                     placeholder="5 (optional)"
                   />
                 </div>
@@ -635,7 +635,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                     type="text"
                     value={positionFields.endLine}
                     onChange={(e) => handlePositionChange('endLine', e.target.value)}
-                    className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${positionError ? 'border-red-300 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'}`}
+                    className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${positionError ? 'border-red-300 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'}`}
                     placeholder="20 (optional)"
                   />
                 </div>
@@ -646,7 +646,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                     type="text"
                     value={positionFields.endChar}
                     onChange={(e) => handlePositionChange('endChar', e.target.value)}
-                    className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${positionError ? 'border-red-300 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'}`}
+                    className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${positionError ? 'border-red-300 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'}`}
                     placeholder="10 (optional)"
                   />
                 </div>
@@ -693,7 +693,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                       type="text"
                       value={step.startPlaceholder || ''}
                       onChange={(e) => handleChange('startPlaceholder', e.target.value || undefined)}
-                      className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${startError ? 'border-red-300 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'}`}
+                      className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${startError ? 'border-red-300 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'}`}
                       placeholder="<!-- START -->"
                     />
                     {startError && (
@@ -707,7 +707,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                       type="text"
                       value={step.endPlaceholder || ''}
                       onChange={(e) => handleChange('endPlaceholder', e.target.value || undefined)}
-                      className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${endError ? 'border-red-300 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'}`}
+                      className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${endError ? 'border-red-300 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'}`}
                       placeholder="<!-- END -->"
                     />
                     {endError && (
@@ -736,7 +736,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                 onChange={e => setLocalId(e.target.value)}
                 onBlur={commitId}
                 onKeyDown={e => { if (e.key === 'Enter') { commitId(); } }}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
+                className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
                 placeholder={`Enter script ID`}
               />
               {fieldErrors.map((error, index) => (
@@ -792,7 +792,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
               type="text"
               value={step[field as keyof Step] || ''}
               onChange={(e) => handleChange(field as keyof Step, e.target.value || undefined)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
+              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
                 }`}
               placeholder={`Enter ${label.toLowerCase()}`}
             />
