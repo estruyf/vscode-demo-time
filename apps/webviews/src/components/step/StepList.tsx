@@ -56,7 +56,7 @@ export const StepList: React.FC<StepListProps> = ({
     <>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-2">
-          <h3 className="text-xl font-semibold text-gray-900">Steps</h3>
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Steps</h3>
           <button
             onClick={() => setShowInfo(!showInfo)}
             className="p-1 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xs transition-colors"
@@ -123,7 +123,7 @@ export const StepList: React.FC<StepListProps> = ({
         ))}
 
         {(demo?.steps || []).length === 0 && (
-          <div className="text-center py-12 text-gray-500 dark:text-gray-400 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800">
+          <div className="text-center py-12 text-gray-500 dark:text-gray-300 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800">
             <List className="h-12 w-12 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
             <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">No Steps Yet</h3>
             <p className="mt-1 text-sm">Click "Add Step" to start building your demo.</p>

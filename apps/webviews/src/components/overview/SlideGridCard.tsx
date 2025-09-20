@@ -65,7 +65,7 @@ const SlideGridCard: React.FC<SlideGridCardProps> = ({
         {/* Content - flex-grow to fill available space */}
         <div className="flex-1 flex flex-col">
           <div className="mb-2 flex justify-between items-center">
-            <span className="text-xs font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full">
+            <span className="text-xs font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full">
               {slide.demoTitle}
             </span>
           </div>
@@ -75,7 +75,7 @@ const SlideGridCard: React.FC<SlideGridCardProps> = ({
           </h3>
 
           <div className="mt-auto flex flex-col space-y-2">
-            <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
+            <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-300">
               <span>Slide {slideIndex + 1}/{totalSlides}</span>
               {demo?.disabled && (
                 <span className="px-2 py-0.5 bg-gray-200 text-gray-600 rounded-full font-semibold">

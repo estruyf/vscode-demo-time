@@ -102,7 +102,7 @@ export const DemoIdPicker: React.FunctionComponent<IDemoIdPickerProps> = ({
 
   if (loading) {
     return (
-      <div className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
+      <div className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-300">
         Loading demos...
       </div>
     );
@@ -124,7 +124,7 @@ export const DemoIdPicker: React.FunctionComponent<IDemoIdPickerProps> = ({
 
   if (!demoData || dropdownOptions.length === 0) {
     return (
-      <div className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
+      <div className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-300">
         No demos with IDs found
       </div>
     );

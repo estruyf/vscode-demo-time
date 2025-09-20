@@ -89,7 +89,7 @@ export const SelectTrigger: React.FC<SelectTriggerProps> = ({
       onClick={() => !disabled && setIsOpen(!isOpen)}
       disabled={disabled}
       className={`
-        w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-left flex items-center justify-between hover:border-gray-400 dark:hover:border-gray-500 transition-colors
+        w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-hidden  focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-left flex items-center justify-between hover:border-gray-400 dark:hover:border-gray-500 transition-colors
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
         ${className}
       `}
@@ -147,7 +147,7 @@ export const SelectValue: React.FC<SelectValueProps & { value?: string }> = ({
   value
 }) => {
   return (
-    <span className={value ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}>
+    <span className={value ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-300'}>
       {value || placeholder}
     </span>
   );

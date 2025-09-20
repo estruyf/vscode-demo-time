@@ -205,9 +205,9 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
       <button
         type="button"
         onClick={handleToggle}
-        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-left flex items-center justify-between hover:border-gray-400 dark:hover:border-gray-500 transition-colors"
+        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-left flex items-center justify-between hover:border-gray-400 dark:hover:border-gray-500 transition-colors"
       >
-        <span className={value ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}>
+        <span className={value ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-300'}>
           {value || placeholder}
         </span>
         <ChevronDown className={`h-4 w-4 text-gray-400 dark:text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
@@ -228,7 +228,7 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Search actions..."
-                className="w-full pl-9 pr-3 py-2 border border-gray-200 dark:border-gray-600 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                className="w-full pl-9 pr-3 py-2 border border-gray-200 dark:border-gray-600 rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               />
             </div>
           </div>
@@ -257,7 +257,7 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
                   );
                 }
                 return (
-                  <div className="px-3 py-2 text-gray-500 dark:text-gray-400 text-sm">
+                  <div className="px-3 py-2 text-gray-500 dark:text-gray-300 text-sm">
                     {noItemsText}
                   </div>
                 );
@@ -293,7 +293,7 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
                   {/* Render grouped options */}
                   {Object.entries(groups).map(([category, categoryOptions]) => (
                     <div key={category}>
-                      <div className="px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-gray-700 border-t border-gray-100 dark:border-gray-600">
+                      <div className="px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider bg-gray-50 dark:bg-gray-700 border-t border-gray-100 dark:border-gray-600">
                         {category}
                       </div>
                       {categoryOptions.map((option) => {

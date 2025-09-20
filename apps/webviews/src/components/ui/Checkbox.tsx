@@ -24,7 +24,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
         disabled={disabled}
         className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500 disabled:cursor-not-allowed"
       />
-      <label className="text-sm font-medium text-gray-700">
+      <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
         {label}
       </label>
     </div>

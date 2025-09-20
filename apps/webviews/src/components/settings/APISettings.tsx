@@ -2,7 +2,7 @@ import { Card } from "../ui/Card";
 import { Label } from "../ui/Label";
 import { Input } from "../ui/Input";
 import { Switch } from "../ui/Switch";
-import { IDemoTimeSettings } from "../../types/IDemoTimeSettings";
+import { IDemoTimeSettings } from "@demotime/common";
 
 interface APISettingsProps {
   settings: IDemoTimeSettings;
@@ -14,12 +14,12 @@ export default function APISettings({ settings, updateSetting }: APISettingsProp
     <Card>
       <div className="p-6">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">API Settings</h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">Configure external API access</p>
+        <p className="text-gray-600 dark:text-gray-300 mb-6">Configure external API access</p>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <Label>Enable API</Label>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Allow external control of Demo Time</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Allow external control of Demo Time</p>
             </div>
             <Switch
               checked={settings["api.enabled"]}
@@ -33,7 +33,7 @@ export default function APISettings({ settings, updateSetting }: APISettingsProp
               value={settings["api.port"].toString()}
               onChange={(value) => updateSetting("api.port", Number(value))}
             />
-            <p className="text-sm text-gray-600 dark:text-gray-400">Port number for the API server</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">Port number for the API server</p>
           </div>
         </div>
       </div>

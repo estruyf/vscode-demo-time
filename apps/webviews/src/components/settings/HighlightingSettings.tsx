@@ -14,7 +14,7 @@ export default function HighlightingSettings({ settings, updateSetting }: Highli
     <Card>
       <div className="p-6">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Highlighting Settings</h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">Configure code highlighting appearance</p>
+        <p className="text-gray-600 dark:text-gray-300 mb-6">Configure code highlighting appearance</p>
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
@@ -26,7 +26,7 @@ export default function HighlightingSettings({ settings, updateSetting }: Highli
                 placeholder="HEX, RGB/RGBA, or var(--vscode-...)"
                 disabled={settings.highlightBorderColor.startsWith("var(")}
               />
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 Color of the border when highlighting a step. Supports HEX (#ff0000 or #ff000080), RGB/RGBA
                 (rgb(255,0,0) or rgba(255,0,0,0.5)), or CSS variables (var(--vscode-...))
               </p>
@@ -40,7 +40,7 @@ export default function HighlightingSettings({ settings, updateSetting }: Highli
                 placeholder="HEX, RGB/RGBA, or var(--vscode-...)"
                 disabled={settings.highlightBackground.startsWith("var(")}
               />
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 Color of the border when highlighting a step. Supports HEX (#ff0000 or #ff000080), RGB/RGBA
                 (rgb(255,0,0) or rgba(255,0,0,0.5)), or CSS variables (var(--vscode-...))
               </p>
@@ -54,7 +54,7 @@ export default function HighlightingSettings({ settings, updateSetting }: Highli
                 value={settings.highlightBlur.toString()}
                 onChange={(value) => updateSetting("highlightBlur", Number(value))}
               />
-              <p className="text-sm text-gray-600 dark:text-gray-400">Blur effect on non-highlighted text</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Blur effect on non-highlighted text</p>
             </div>
 
             <div className="space-y-2">
@@ -67,7 +67,7 @@ export default function HighlightingSettings({ settings, updateSetting }: Highli
                 value={settings.highlightOpacity.toString()}
                 onChange={(value) => updateSetting("highlightOpacity", Math.max(0, Math.min(1, Number(value))))}
               />
-              <p className="text-sm text-gray-600 dark:text-gray-400">Opacity of non-highlighted text</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Opacity of non-highlighted text</p>
             </div>
           </div>
 
@@ -88,7 +88,7 @@ export default function HighlightingSettings({ settings, updateSetting }: Highli
                 updateSetting("highlightZoomEnabled", value === "" ? false : isNaN(num) ? false : num);
               }}
             />
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               Enable code zoom when highlighting. Use a number for zoom level, or leave empty to disable.
             </p>
           </div>

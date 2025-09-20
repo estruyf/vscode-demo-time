@@ -145,13 +145,13 @@ export const DemoListItem: React.FC<DemoListItemProps> = ({
                   {demo.title}
                 </h4>
                 {demo.disabled && (
-                  <span className="ml-2 px-2 py-0.5 rounded-xs bg-gray-200 text-xs text-gray-600 font-semibold border border-gray-300">Disabled</span>
+                  <span className="ml-2 px-2 py-0.5 rounded-xs bg-gray-200 text-xs text-gray-600 dark:text-gray-300 font-semibold border border-gray-300">Disabled</span>
                 )}
               </div>
 
               {demo.description && (
                 <p
-                  className="text-sm text-gray-600 dark:text-gray-400 mt-1 cursor-pointer"
+                  className="text-sm text-gray-600 dark:text-gray-300 mt-1 cursor-pointer"
                   title={demo.description}
                   style={{
                     overflow: 'hidden',
@@ -168,7 +168,7 @@ export const DemoListItem: React.FC<DemoListItemProps> = ({
               )}
 
               <div className="flex items-center justify-between mt-1">
-                <p className="text-xs text-gray-500 dark:text-gray-400 cursor-pointer">
+                <p className="text-xs text-gray-500 dark:text-gray-300 cursor-pointer">
                   {demo.steps.length} step{demo.steps.length !== 1 ? 's' : ''}
                 </p>
                 <div className="flex items-center space-x-2 ml-4">

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { validateConfig } from '../../utils/validation';
 import { messageHandler } from '@estruyf/vscode/dist/client/webview';
 import { DemoConfig, WebViewMessages } from '@demotime/common';
+import { Textarea } from '../ui';
 
 interface MainConfigFormProps {
   config: DemoConfig;
@@ -38,7 +39,7 @@ export const MainConfigForm: React.FC<MainConfigFormProps> = ({ config, onChange
           type="text"
           value={config.title}
           onChange={(e) => onChange({ title: e.target.value })}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${titleError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
+          className={`w-full px-3 py-2 border rounded-md focus:outline-hidden  focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${titleError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
             }`}
           placeholder="Enter demo title"
         />
@@ -51,11 +52,10 @@ export const MainConfigForm: React.FC<MainConfigFormProps> = ({ config, onChange
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Description
         </label>
-        <textarea
-          value={config.description}
-          onChange={(e) => onChange({ description: e.target.value })}
-          rows={3}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600`}
+        <Textarea
+          label="Description"
+          value={config.description || ""}
+          onChange={(value) => onChange({ description: value || undefined })}
           placeholder="Enter demo description"
         />
       </div>
@@ -68,25 +68,25 @@ export const MainConfigForm: React.FC<MainConfigFormProps> = ({ config, onChange
           type="number"
           value={config.timer || ''}
           onChange={(e) => onChange({ timer: e.target.value ? parseInt(e.target.value) : undefined })}
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-hidden  focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           placeholder="Enter timer in minutes"
           min="1"
         />
-        <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">Optional. Use this to show a timer during the presentation for this demo section.</p>
+        <p className="text-xs text-gray-600 dark:text-gray-300 mt-2">Optional. Use this to show a timer during the presentation for this demo section.</p>
       </div>
 
       <div>
         <div className="flex items-center justify-between">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Engage Time</label>
-            <p className="text-xs text-gray-600 dark:text-gray-400">Integrate Engage Time sessions for live interactions</p>
+            <p className="text-xs text-gray-600 dark:text-gray-300">Integrate Engage Time sessions for live interactions</p>
           </div>
           <div>
             <button
               type="button"
               onClick={() => setEngageCollapsed(v => !v)}
               aria-expanded={!engageCollapsed}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:border-gray-400 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:border-gray-400 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 ease-in-out focus:outline-hidden  focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent"
             >
               <span className="text-sm font-medium">{engageCollapsed ? 'Show' : 'Hide'}</span>
               <svg
@@ -114,7 +114,7 @@ export const MainConfigForm: React.FC<MainConfigFormProps> = ({ config, onChange
               ref={sessionIdInputRef}
               value={config.engageTime?.sessionId || ''}
               onChange={(e) => onChange({ engageTime: { sessionId: e.target.value } })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-hidden  focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               placeholder="Enter engage time session ID"
             />
 

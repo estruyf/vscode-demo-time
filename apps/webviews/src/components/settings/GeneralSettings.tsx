@@ -16,7 +16,7 @@ export default function GeneralSettings({ settings, updateSetting }: GeneralSett
     <Card>
       <div className="p-6">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">General</h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">Core configuration settings</p>
+        <p className="text-gray-600 dark:text-gray-300 mb-6">Core configuration settings</p>
 
         <div className="space-y-4">
           <div className="space-y-2">
@@ -33,7 +33,7 @@ export default function GeneralSettings({ settings, updateSetting }: GeneralSett
                 <SelectItem value="yaml">YAML</SelectItem>
               </SelectContent>
             </Select>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               Default format for new demo files - this is the most important setting
             </p>
           </div>
@@ -56,7 +56,7 @@ export default function GeneralSettings({ settings, updateSetting }: GeneralSett
               aria-pressed={showApiKey}
               onClick={() => setShowApiKey(v => !v)}
               onMouseDown={(e) => e.preventDefault()} // Prevent input blur on click
-              className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-8 h-8 rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+              className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-8 h-8 rounded-md text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-300"
               title={showApiKey ? 'Hide API key' : 'Show API key'}
             >
               {showApiKey ? (
@@ -67,7 +67,7 @@ export default function GeneralSettings({ settings, updateSetting }: GeneralSett
             </button>
           </div>
 
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-gray-600 dark:text-gray-300">
             Used for integrating with Engage Time services. Your API key is stored securely and never shared.
           </p>
           <p className="text-sm mt-2">

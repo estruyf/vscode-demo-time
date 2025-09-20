@@ -40,7 +40,7 @@ export default function UICustomizationSettings({ settings, updateSetting }: UIC
     <Card>
       <div className="p-6">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">UI & Customization</h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">Customize the interface and add custom components</p>
+        <p className="text-gray-600 dark:text-gray-300 mb-6">Customize the interface and add custom components</p>
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="customTheme">Custom Theme Path</Label>
@@ -51,7 +51,7 @@ export default function UICustomizationSettings({ settings, updateSetting }: UIC
               fileTypes={[".css"]}
               onChange={(value) => updateSetting("customTheme", value)}
             />
-            <p className="text-sm text-gray-600 dark:text-gray-400">Path to a CSS file for custom theming</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">Path to a CSS file for custom theming</p>
           </div>
 
           <div className="space-y-2">
@@ -83,7 +83,7 @@ export default function UICustomizationSettings({ settings, updateSetting }: UIC
                 </Button>
               </div>
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Paths to JavaScript files for custom web components</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">Paths to JavaScript files for custom web components</p>
           </div>
         </div>
       </div>

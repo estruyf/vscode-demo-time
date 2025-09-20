@@ -1,7 +1,7 @@
 import { commands } from 'vscode';
 import { Subscription, WebviewType } from '../models';
 import { EngageTimeService, Extension } from '../services';
-import { openFilePicker, sleep } from '../utils';
+import { openFile, openFilePicker, sleep } from '../utils';
 import { COMMAND, WebViewMessages, Config, IDemoTimeSettings } from '@demotime/common';
 import { BaseWebview } from '../webview/BaseWebviewPanel';
 
@@ -43,6 +43,8 @@ export class SettingsView extends BaseWebview {
       await SettingsView.saveSettings(command, requestId, payload);
     } else if (command === WebViewMessages.toVscode.configEditor.filePicker) {
       await SettingsView.selectFile(command, requestId, payload);
+    } else if (command === WebViewMessages.toVscode.openFile && payload) {
+      await openFile(payload);
     }
   }
 

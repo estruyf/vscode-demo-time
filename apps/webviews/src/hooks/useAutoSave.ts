@@ -164,7 +164,7 @@ export const useAutoSave = ({
       case 'error':
         return 'text-red-600';
       default:
-        return 'text-gray-600';
+        return 'text-gray-600 dark:text-gray-400';
     }
   };
 

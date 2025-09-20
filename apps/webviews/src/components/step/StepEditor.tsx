@@ -257,7 +257,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       case 'action':
         return (
           <div key={field}>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Action {isRequired && <span className="text-red-500">*</span>}
             </label>
             <SearchableDropdown
@@ -270,7 +270,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
               step.action && step.action.toLowerCase().includes('engagetime') && (
                 <>
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2 space-y-1">
-                    <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                    <p className="text-sm text-yellow-800 dark:text-yellow-900">
                       <strong>Note:</strong> Make sure to set the Engage Time Session ID in the demo configuration.
                     </p>
                     <button
@@ -288,7 +288,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                   {
                     config.engageTime?.sessionId ? null : (
                       <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-2 space-y-1">
-                        <p className="text-sm text-red-700 dark:text-red-300 mt-1">
+                        <p className="text-sm text-red-700 dark:text-red-800 mt-1">
                           <strong>Error:</strong> No Engage Time Session ID is set in the demo configuration.
                         </p>
                       </div>
@@ -335,7 +335,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       case 'insertTypingMode':
         return (
           <div key={field}>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Insert Typing Mode {isRequired && <span className="text-red-500">*</span>}
             </label>
             <select
@@ -360,15 +360,15 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
         const isFullRange = /^\d+,\d+:\d+,\d+$/.test(pos);
         return (
           <div key={field}>
-            <label className="flex items-center space-x-2">
+            <label className="h-full flex items-center space-x-2">
               <input
                 type="checkbox"
                 checked={typeof step[field] === 'undefined' ? true : step[field]}
                 onChange={(e) => handleChange(field, e.target.checked)}
-                className="rounded-smborder-gray-300 text-blue-600 focus:ring-blue-500"
+                className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500"
                 disabled={isFullRange}
               />
-              <span className="text-sm font-medium text-gray-700">
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
                 {label} {isRequired && <span className="text-red-500">*</span>}
                 {isFullRange && (
                   <span className="ml-2 text-xs text-gray-400">(Disabled for full range position)</span>
@@ -383,14 +383,14 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       case 'autoExecute':
         return (
           <div key={field}>
-            <label className="flex items-center space-x-2">
+            <label className="h-full flex items-center space-x-2">
               <input
                 type="checkbox"
                 checked={typeof step[field] === 'undefined' ? true : step[field]}
                 onChange={(e) => handleChange(field, e.target.checked)}
-                className="rounded-smborder-gray-300 text-blue-600 focus:ring-blue-500"
+                className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500"
               />
-              <span className="text-sm font-medium text-gray-700">
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
                 {label} {isRequired && <span className="text-red-500">*</span>}
               </span>
             </label>
@@ -403,7 +403,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       case 'slide':
         return (
           <div key={field}>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               {label} {isRequired && <span className="text-red-500">*</span>}
             </label>
             <input
@@ -425,7 +425,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       case 'message':
         return (
           <div key={field}>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               {label} {isRequired && <span className="text-red-500">*</span>}
             </label>
             <textarea
@@ -445,7 +445,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       case 'setting':
         return (
           <div key={field} className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Setting {isRequired && <span className="text-red-500">*</span>}
             </label>
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col gap-4">
@@ -496,7 +496,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       case 'state':
         return (
           <div key={field} className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               State {isRequired && <span className="text-red-500">*</span>}
             </label>
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col gap-4">
@@ -533,9 +533,9 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       case 'args':
         return (
           <div key={field}>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Arguments {isRequired && <span className="text-red-500">*</span>}
-              <span className="text-xs text-gray-500 block mt-1">
+              <span className="text-xs text-gray-600 dark:text-gray-400 block mt-1">
                 For VS Code commands: JSON object/array. For snippets: placeholder names
               </span>
             </label>
@@ -577,7 +577,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
         return (
           <div key={field}>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Command {isRequired && <span className="text-red-500">*</span>}
             </label>
             <input
@@ -601,7 +601,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
         return (
           <div key={field} className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Position {isRequired && <span className="text-red-500">*</span>}
             </label>
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col gap-4">
@@ -681,7 +681,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
           return (
             <div key="placeholders" className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Placeholders {(requiredFields.includes('startPlaceholder') || requiredFields.includes('endPlaceholder')) && <span className="text-red-500">*</span>}
               </label>
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col gap-4">
@@ -727,7 +727,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
         if (step.action === Action.ExecuteScript) {
           return (
             <div key={field}>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 {label} {isRequired && <span className="text-red-500">*</span>}
               </label>
               <input
@@ -748,7 +748,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
         return (
           <div key={field}>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               {label} {isRequired && <span className="text-red-500">*</span>}
             </label>
             <DemoIdPicker
@@ -785,7 +785,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
         return (
           <div key={field}>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               {label} {isRequired && <span className="text-red-500">*</span>}
             </label>
             <input
@@ -807,9 +807,9 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h4 className="text-lg font-semibold text-gray-900">Step Configuration</h4>
+        <h4 className="text-lg font-semibold text-gray-900 dark:text-white">Step Configuration</h4>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-700">{step.disabled ? 'Disabled' : 'Enabled'}</span>
+          <span className="text-sm text-gray-700 dark:text-gray-300">{step.disabled ? 'Disabled' : 'Enabled'}</span>
           <Switch
             checked={!step.disabled}
             onCheckedChange={(checked: boolean) => onChange({ ...step, disabled: !checked })}

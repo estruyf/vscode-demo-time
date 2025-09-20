@@ -13,27 +13,27 @@ export default function TemplatesSettings({ settings, updateSetting }: Templates
     <Card>
       <div className="p-6">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Slide Templates</h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">HTML templates for slide headers and footers (supports Handlebars syntax)</p>
+        <p className="text-gray-600 dark:text-gray-300 mb-6">HTML templates for slide headers and footers (supports Handlebars syntax)</p>
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="headerTemplate">Header Template</Label>
             <Textarea
-              placeholder="<header><h1>{{title}}</h1><span>{{date}}</span></header>"
+              placeholder="Relative path to header template."
               value={settings.slideHeaderTemplate}
               onChange={(value) => updateSetting("slideHeaderTemplate", value)}
               rows={3}
             />
-            <p className="text-sm text-gray-600 dark:text-gray-400">HTML template for slide headers with Handlebars variables</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">HTML template for slide headers with Handlebars variables</p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="footerTemplate">Footer Template</Label>
             <Textarea
-              placeholder="<footer><span>{{name}}</span><span>{{date}}</span></footer>"
+              placeholder="Relative path to footer template."
               value={settings.slideFooterTemplate}
               onChange={(value) => updateSetting("slideFooterTemplate", value)}
               rows={3}
             />
-            <p className="text-sm text-gray-600 dark:text-gray-400">HTML template for slide footers with Handlebars variables</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">HTML template for slide footers with Handlebars variables</p>
           </div>
         </div>
       </div>

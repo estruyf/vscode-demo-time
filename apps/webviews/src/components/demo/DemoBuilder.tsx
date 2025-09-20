@@ -358,14 +358,14 @@ export const DemoBuilder: React.FC = () => {
             <Card className='space-y-6'>
               <div className="flex items-center">
                 <button
-                  className="text-demo-time-gray-1 hover:text-demo-time-gray-2"
+                  className="text-demo-time-gray-1 hover:text-demo-time-gray-2 dark:text-white dark:hover:text-gray-300"
                   aria-label={collapsed ? "Expand settings" : "Collapse settings"}
                   onClick={() => setCollapsed((prev) => !prev)}
                 >
                   <div className="flex items-center space-x-2">
                     {collapsed ? <ChevronDown /> : <ChevronUp />}
 
-                    <h2 className="text-xl font-semibold text-gray-900">Demo File Settings</h2>
+                    <h2 className="text-xl font-semibold">Demo File Settings</h2>
                   </div>
                 </button>
               </div>
@@ -421,7 +421,7 @@ export const DemoBuilder: React.FC = () => {
               <Card className="p-12 text-center">
                 <FileText className="h-12 w-12 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No Demo Selected</h3>
-                <p className="text-gray-600 dark:text-gray-400">Select a demo from the left panel to view and edit its steps</p>
+                <p className="text-gray-600 dark:text-gray-300">Select a demo from the left panel to view and edit its steps</p>
               </Card>
             )}
           </MainContent>

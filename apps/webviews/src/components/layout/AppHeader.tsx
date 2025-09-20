@@ -36,7 +36,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                 {title}
               </h1>
               {subtitle && (
-                <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm">
+                <p className="text-gray-600 dark:text-gray-300 mt-1 text-sm">
                   {subtitle}
                 </p>
               )}
@@ -76,7 +76,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
             {/* Auto-save Status */}
             {autoSaveStatus && (
               <div className="flex items-center space-x-2">
-                <div className={`w-2 h-2 rounded-full ${autoSaveStatus.isActive ? 'bg-blue-500 animate-pulse' : 'bg-gray-400 dark:bg-gray-600'
+                <div className={`w-2 h-2 rounded-full ${autoSaveStatus.isActive ? 'bg-blue-500 animate-pulse' : 'bg-gray-400'
                   }`} />
                 <span className={`text-xs ${autoSaveStatus.color}`}>
                   {autoSaveStatus.text}

@@ -89,18 +89,18 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange }) => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <button
-            className="text-demo-time-gray-1 hover:text-demo-time-gray-2"
+            className="text-demo-time-gray-1 hover:text-demo-time-gray-2 dark:text-white dark:hover:text-gray-300"
             aria-label={collapsed ? "Expand settings" : "Collapse settings"}
             onClick={() => setCollapsed((prev) => !prev)}
           >
             <div className="flex items-center space-x-2">
               {collapsed ? <ChevronDown /> : <ChevronUp />}
 
-              <h2 className="text-xl font-semibold text-gray-900">Demo Information</h2>
+              <h2 className="text-xl font-semibold">Demo Information</h2>
             </div>
           </button>
           <div className="flex items-center">
-            <span className="text-sm text-gray-700 mr-2">{demo.disabled ? 'Disabled' : 'Enabled'}</span>
+            <span className="text-sm text-gray-700 dark:text-gray-400 mr-2">{demo.disabled ? 'Disabled' : 'Enabled'}</span>
             <Switch
               checked={!demo.disabled}
               onCheckedChange={(checked) => handleChange('disabled', !checked)}
@@ -127,7 +127,7 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange }) => {
                 placeholder="Enter demo ID (optional)"
                 error={getFieldError('id')}
               />
-              <p className="text-xs text-gray-500 mt-2">Optional. This ID can be used to trigger this demo from the API of URI handler.</p>
+              <p className="text-xs text-gray-500 dark:text-gray-300 mt-2">Optional. This ID can be used to trigger this demo from the API of URI handler.</p>
             </div>
 
             <div className="md:col-span-2">
@@ -141,7 +141,7 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Start Icon
               </label>
               <div className="flex items-center gap-2">
@@ -172,7 +172,7 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 End Icon
               </label>
               <div className="flex items-center gap-2">
@@ -204,7 +204,7 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange }) => {
 
             {/* Notes Section */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Notes File</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Notes File</label>
               <div className="flex items-center gap-2 mb-2">
                 <PathInput
                   label={undefined}
@@ -241,7 +241,7 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange }) => {
                       id="showOnTrigger"
                       className="mr-2"
                     />
-                    <label htmlFor="showOnTrigger" className="text-sm text-gray-700">
+                    <label htmlFor="showOnTrigger" className="text-sm text-gray-700 dark:text-gray-300">
                       Show notes file when demo is triggered
                     </label>
                   </div>

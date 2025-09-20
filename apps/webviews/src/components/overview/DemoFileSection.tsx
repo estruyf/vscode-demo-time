@@ -63,14 +63,14 @@ export const DemoFileSection: React.FC<DemoFileSectionProps> = ({
                   {fileName}
                 </h3>
                 {config.title && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 truncate">
                     {config.title}
                   </p>
                 )}
               </div>
             </div>
 
-            <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400 shrink-0 ml-4">
+            <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-300 shrink-0 ml-4">
               <span className="flex items-center space-x-1">
                 <span className="font-medium">{indexRange}</span>
               </span>
@@ -90,21 +90,21 @@ export const DemoFileSection: React.FC<DemoFileSectionProps> = ({
         <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4">
           <div className="flex items-center space-x-2 text-sm">
             <Clapperboard className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-            <span className="text-gray-600 dark:text-gray-400">
+            <span className="text-gray-600 dark:text-gray-300">
               <span className="font-medium text-gray-900 dark:text-white">{demoCount}</span> demo{demoCount !== 1 ? 's' : ''}
             </span>
           </div>
 
           <div className="flex items-center space-x-2 text-sm">
             <Presentation className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-            <span className="text-gray-600 dark:text-gray-400">
+            <span className="text-gray-600 dark:text-gray-300">
               <span className="font-medium text-gray-900 dark:text-white">{slideCount}</span> slide{slideCount !== 1 ? 's' : ''}
             </span>
           </div>
 
           <div className="flex items-center space-x-2 text-sm">
             <BarChart3 className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-            <span className="text-gray-600 dark:text-gray-400">
+            <span className="text-gray-600 dark:text-gray-300">
               <span className="font-medium text-gray-900 dark:text-white">{stepCount}</span> step{stepCount !== 1 ? 's' : ''}
             </span>
           </div>

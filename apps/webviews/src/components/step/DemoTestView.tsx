@@ -107,7 +107,7 @@ export const DemoTestView: React.FC<DemoTestViewProps> = ({
           >
             Back to Steps
           </Button>
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
             Testing: {demo.title}
           </h2>
         </div>
@@ -136,9 +136,9 @@ export const DemoTestView: React.FC<DemoTestViewProps> = ({
       <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-6">
         <h3 className="font-medium text-gray-900 dark:text-white mb-2">{demo.title}</h3>
         {demo.description && (
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{demo.description}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">{demo.description}</p>
         )}
-        <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
+        <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-300">
           <span>
             <strong>{demo.steps.length}</strong> steps
           </span>
@@ -215,11 +215,11 @@ export const DemoTestView: React.FC<DemoTestViewProps> = ({
                       {step.action}
                     </span>
                     {isDisabled && (
-                      <span className="ml-2 px-2 py-0.5 rounded-xs bg-gray-200 text-xs text-gray-600 font-semibold border border-gray-300">Disabled</span>
+                      <span className="ml-2 px-2 py-0.5 rounded-xs bg-gray-200 text-xs text-gray-600 dark:text-gray-300 font-semibold border border-gray-300">Disabled</span>
                     )}
                   </div>
                   {step.path && (
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{step.path}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">{step.path}</p>
                   )}
                 </div>
                 {status === 'running' && (

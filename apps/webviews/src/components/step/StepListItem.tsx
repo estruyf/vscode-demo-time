@@ -127,7 +127,7 @@ export const StepListItem: React.FC<StepListItemProps> = ({
       onDrop={handleDrop}
       className={cn(
         `relative border rounded-lg transition-all duration-300 ease-in-out`,
-       isEditing ? 'z-10 border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg' : 'z-0 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-md dark:hover:shadow-xl',
+        isEditing ? 'z-10 border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg' : 'z-0 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-md dark:hover:shadow-xl',
         resultBgColor,
         step.disabled ? 'opacity-50 grayscale' : '',
         isBeingDragged ? 'opacity-40 border-dashed border-blue-600 scale-105' : 'scale-100',
@@ -161,20 +161,20 @@ export const StepListItem: React.FC<StepListItemProps> = ({
             }}
           >
             <div className="flex items-center space-x-3 min-w-0">
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
                 Step {stepIndex + 1}:
               </span>
               <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                 {step.action}
                 {step.action === 'snippet' && (step.path || step.contentPath) && (
-                  <span className="ml-2 text-xs text-gray-500 dark:text-gray-400 font-normal">{step.path || step.contentPath}</span>
+                  <span className="ml-2 text-xs text-gray-500 dark:text-gray-300 font-normal">{step.path || step.contentPath}</span>
                 )}
                 {step.action === 'runDemoById' && (step.id) && (
-                  <span className="ml-2 text-xs text-gray-500 dark:text-gray-400 font-normal">{step.id}</span>
+                  <span className="ml-2 text-xs text-gray-500 dark:text-gray-300 font-normal">{step.id}</span>
                 )}
               </span>
               {step.disabled && (
-                <span className="ml-2 px-2 py-0.5 rounded-xs bg-gray-200 text-xs text-gray-600 font-semibold border border-gray-300">Disabled</span>
+                <span className="ml-2 px-2 py-0.5 rounded-xs bg-gray-200 text-xs text-gray-600 dark:text-gray-300 font-semibold border border-gray-300">Disabled</span>
               )}
             </div>
             <ChevronRight className={`h-4 w-4 text-gray-400 dark:text-gray-500 transition-transform duration-200 ${isEditing ? 'rotate-90' : ''} ml-2`} />

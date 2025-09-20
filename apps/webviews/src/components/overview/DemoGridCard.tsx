@@ -61,7 +61,7 @@ const DemoGridCard: React.FC<DemoGridCardProps> = ({
           </h3>
 
           {demo.description && (
-            <p className="text-xs text-gray-600 dark:text-gray-400 mb-3 line-clamp-2 text-left">
+            <p className="text-xs text-gray-600 dark:text-gray-300 mb-3 line-clamp-2 text-left">
               {demo.description}
             </p>
           )}
@@ -90,7 +90,7 @@ const DemoGridCard: React.FC<DemoGridCardProps> = ({
           )}
 
           <div className="flex-1 flex flex-col justify-end space-y-2">
-            <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
+            <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-300">
               <span>{demo.steps.length} step{demo.steps.length !== 1 ? 's' : ''}</span>
               {demo.disabled && (
                 <span className="px-2 py-0.5 bg-gray-200 text-gray-600 rounded-full font-semibold">
