@@ -341,7 +341,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
             <select
               value={step.insertTypingMode || 'instant'}
               onChange={(e) => handleChange('insertTypingMode', (e.target.value || undefined) as typeof step.insertTypingMode)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-demo-time-gray-2 text-gray-900 dark:text-demo-time-gray-3 ${hasError ? 'border-error-600 bg-error-50 dark:border-error-600 dark:bg-error-50' : 'border-gray-300 dark:border-demo-time-gray-5'
+              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
                 }`}
             >
               {getTypingModeOptions().map(mode => (
@@ -368,7 +368,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                 className="rounded-smborder-gray-300 text-blue-600 focus:ring-blue-500"
                 disabled={isFullRange}
               />
-              <span className="text-sm font-medium text-gray-700 dark:text-demo-time-gray-3">
+              <span className="text-sm font-medium text-gray-700">
                 {label} {isRequired && <span className="text-red-500">*</span>}
                 {isFullRange && (
                   <span className="ml-2 text-xs text-gray-400">(Disabled for full range position)</span>
@@ -390,7 +390,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                 onChange={(e) => handleChange(field, e.target.checked)}
                 className="rounded-smborder-gray-300 text-blue-600 focus:ring-blue-500"
               />
-              <span className="text-sm font-medium text-gray-700 dark:text-demo-time-gray-3">
+              <span className="text-sm font-medium text-gray-700">
                 {label} {isRequired && <span className="text-red-500">*</span>}
               </span>
             </label>
@@ -403,20 +403,20 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       case 'slide':
         return (
           <div key={field}>
-            <label className="block text-sm font-medium text-gray-700 dark:text-demo-time-gray-3 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               {label} {isRequired && <span className="text-red-500">*</span>}
             </label>
             <input
               type="number"
               value={typeof step[field] !== 'undefined' ? step[field] : ''}
               onChange={(e) => handleChange(field, e.target.value ? parseInt(e.target.value) : undefined)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-demo-time-gray-2 text-gray-900 dark:text-demo-time-gray-3 ${hasError ? 'border-error-600 bg-error-50 dark:border-error-600 dark:bg-error-50' : 'border-gray-300 dark:border-demo-time-gray-5'
+              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
                 }`}
               placeholder={`Enter ${label.toLowerCase()}`}
               min={0}
             />
             {fieldErrors.map((error, index) => (
-              <p key={index} className="text-sm text-error-600 dark:text-error-700 mt-1">{error.message}</p>
+              <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
             ))}
           </div>
         );
@@ -425,19 +425,19 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       case 'message':
         return (
           <div key={field}>
-            <label className="block text-sm font-medium text-gray-700 dark:text-demo-time-gray-3 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               {label} {isRequired && <span className="text-red-500">*</span>}
             </label>
             <textarea
               value={step[field] || ''}
               onChange={(e) => handleChange(field, e.target.value || undefined)}
               rows={3}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-demo-time-gray-2 text-gray-900 dark:text-demo-time-gray-3 ${hasError ? 'border-error-600 bg-error-50 dark:border-error-600 dark:bg-error-50' : 'border-gray-300 dark:border-demo-time-gray-5'
+              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
                 }`}
               placeholder={`Enter ${label.toLowerCase()}`}
             />
             {fieldErrors.map((error, index) => (
-              <p key={index} className="text-sm text-error-600 dark:text-error-700 mt-1">{error.message}</p>
+              <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
             ))}
           </div>
         );
@@ -445,23 +445,23 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       case 'setting':
         return (
           <div key={field} className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-demo-time-gray-3 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Setting {isRequired && <span className="text-red-500">*</span>}
             </label>
-            <div className="bg-gray-50 dark:bg-demo-time-gray-1 border border-gray-200 dark:border-demo-time-gray-5 rounded-lg p-4 flex flex-col gap-4">
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col gap-4">
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-gray-600 dark:text-demo-time-gray-5 mb-1" htmlFor="setting-key">Key</label>
+                <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="setting-key">Key</label>
                 <input
                   id="setting-key"
                   type="text"
                   value={step.setting?.key || ''}
                   onChange={(e) => handleSettingChange(e.target.value, step.setting?.value)}
-                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-demo-time-gray-2 text-gray-900 dark:text-demo-time-gray-3 ${hasError ? 'border-error-600 bg-error-50 dark:border-error-600 dark:bg-error-50' : 'border-gray-300 dark:border-demo-time-gray-5'}`}
+                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
                   placeholder="Setting key"
                 />
               </div>
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-gray-600 dark:text-demo-time-gray-5 mb-1" htmlFor="setting-value">Value</label>
+                <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="setting-value">Value</label>
                 <textarea
                   id="setting-value"
                   value={
@@ -481,13 +481,13 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                     }
                   }}
                   rows={5}
-                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-demo-time-gray-2 text-gray-900 dark:text-demo-time-gray-3 font-mono ${hasError ? 'border-error-600 bg-error-50 dark:border-error-600 dark:bg-error-50' : 'border-gray-300 dark:border-demo-time-gray-5'}`}
+                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
                   placeholder="Setting value (JSON or string)"
                 />
               </div>
 
               {fieldErrors.map((error, index) => (
-                <p key={index} className="text-sm text-error-600 dark:text-error-700 mt-1">{error.message}</p>
+                <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
               ))}
             </div>
           </div>
@@ -496,35 +496,35 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       case 'state':
         return (
           <div key={field} className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-demo-time-gray-3 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               State {isRequired && <span className="text-red-500">*</span>}
             </label>
-            <div className="bg-gray-50 dark:bg-demo-time-gray-1 border border-gray-200 dark:border-demo-time-gray-5 rounded-lg p-4 flex flex-col gap-4">
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col gap-4">
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-gray-600 dark:text-demo-time-gray-5 mb-1" htmlFor="state-key">Key</label>
+                <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="state-key">Key</label>
                 <input
                   id="state-key"
                   type="text"
                   value={step.state?.key || ''}
                   onChange={(e) => handleStateChange(e.target.value, step.state?.value || '')}
-                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-demo-time-gray-2 text-gray-900 dark:text-demo-time-gray-3 ${hasError ? 'border-error-600 bg-error-50 dark:border-error-600 dark:bg-error-50' : 'border-gray-300 dark:border-demo-time-gray-5'}`}
+                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
                   placeholder="State key"
                 />
               </div>
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-gray-600 dark:text-demo-time-gray-5 mb-1" htmlFor="state-value">Value</label>
+                <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="state-value">Value</label>
                 <input
                   id="state-value"
                   type="text"
                   value={step.state?.value || ''}
                   onChange={(e) => handleStateChange(step.state?.key || '', e.target.value)}
-                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-demo-time-gray-2 text-gray-900 dark:text-demo-time-gray-3 ${hasError ? 'border-error-600 bg-error-50 dark:border-error-600 dark:bg-error-50' : 'border-gray-300 dark:border-demo-time-gray-5'}`}
+                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
                   placeholder="State value"
                 />
               </div>
 
               {fieldErrors.map((error, index) => (
-                <p key={index} className="text-sm text-error-600 dark:text-error-700 mt-1">{error.message}</p>
+                <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
               ))}
             </div>
           </div>
@@ -533,9 +533,9 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       case 'args':
         return (
           <div key={field}>
-            <label className="block text-sm font-medium text-gray-700 dark:text-demo-time-gray-3 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Arguments {isRequired && <span className="text-red-500">*</span>}
-              <span className="text-xs text-gray-500 dark:text-demo-time-gray-5 block mt-1">
+              <span className="text-xs text-gray-500 block mt-1">
                 For VS Code commands: JSON object/array. For snippets: placeholder names
               </span>
             </label>
@@ -550,7 +550,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                 }
               }}
               rows={3}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-demo-time-gray-2 text-gray-900 dark:text-demo-time-gray-3 ${hasError ? 'border-error-600 bg-error-50 dark:border-error-600 dark:bg-error-50' : 'border-gray-300 dark:border-demo-time-gray-5'
+              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
                 }`}
               placeholder="Enter arguments (JSON or string)"
             />
@@ -560,7 +560,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
               )
             }
             {fieldErrors.map((error, index) => (
-              <p key={index} className="text-sm text-error-600 dark:text-error-700 mt-1">{error.message}</p>
+              <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
             ))}
           </div>
         );
@@ -577,19 +577,19 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
         return (
           <div key={field}>
-            <label className="block text-sm font-medium text-gray-700 dark:text-demo-time-gray-3 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Command {isRequired && <span className="text-red-500">*</span>}
             </label>
             <input
               type="text"
               value={step[field] || ''}
               onChange={(e) => handleChange(field, e.target.value || undefined)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-demo-time-gray-2 text-gray-900 dark:text-demo-time-gray-3 ${hasError ? 'border-error-600 bg-error-50 dark:border-error-600 dark:bg-error-50' : 'border-gray-300 dark:border-demo-time-gray-5'
+              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
                 }`}
               placeholder={commandPlaceholder}
             />
             {fieldErrors.map((error, index) => (
-              <p key={index} className="text-sm text-error-600 dark:text-error-700 mt-1">{error.message}</p>
+              <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
             ))}
           </div>
         );
@@ -601,71 +601,71 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
         return (
           <div key={field} className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-demo-time-gray-3 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Position {isRequired && <span className="text-red-500">*</span>}
             </label>
-            <div className="bg-gray-50 dark:bg-demo-time-gray-1 border border-gray-200 dark:border-demo-time-gray-5 rounded-lg p-4 flex flex-col gap-4">
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col gap-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-medium text-gray-600 dark:text-demo-time-gray-5 mb-1" htmlFor="position-start-line">Start Line</label>
+                  <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="position-start-line">Start Line</label>
                   <input
                     id="position-start-line"
                     type="text"
                     value={positionFields.startLine}
                     onChange={(e) => handlePositionChange('startLine', e.target.value)}
-                    className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-demo-time-gray-2 text-gray-900 dark:text-demo-time-gray-3 ${positionError ? 'border-error-600 dark:border-error-600' : 'border-gray-300 dark:border-demo-time-gray-5'}`}
+                    className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${positionError ? 'border-red-300 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'}`}
                     placeholder="10 or start"
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-medium text-gray-600 dark:text-demo-time-gray-5 mb-1" htmlFor="position-start-char">Start Character</label>
+                  <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="position-start-char">Start Character</label>
                   <input
                     id="position-start-char"
                     type="text"
                     value={positionFields.startChar}
                     onChange={(e) => handlePositionChange('startChar', e.target.value)}
-                    className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-demo-time-gray-2 text-gray-900 dark:text-demo-time-gray-3 ${positionError ? 'border-error-600 dark:border-error-600' : 'border-gray-300 dark:border-demo-time-gray-5'}`}
+                    className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${positionError ? 'border-red-300 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'}`}
                     placeholder="5 (optional)"
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-medium text-gray-600 dark:text-demo-time-gray-5 mb-1" htmlFor="position-end-line">End Line</label>
+                  <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="position-end-line">End Line</label>
                   <input
                     id="position-end-line"
                     type="text"
                     value={positionFields.endLine}
                     onChange={(e) => handlePositionChange('endLine', e.target.value)}
-                    className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-demo-time-gray-2 text-gray-900 dark:text-demo-time-gray-3 ${positionError ? 'border-error-600 dark:border-error-600' : 'border-gray-300 dark:border-demo-time-gray-5'}`}
+                    className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${positionError ? 'border-red-300 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'}`}
                     placeholder="20 (optional)"
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-medium text-gray-600 dark:text-demo-time-gray-5 mb-1" htmlFor="position-end-char">End Character</label>
+                  <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="position-end-char">End Character</label>
                   <input
                     id="position-end-char"
                     type="text"
                     value={positionFields.endChar}
                     onChange={(e) => handlePositionChange('endChar', e.target.value)}
-                    className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-demo-time-gray-2 text-gray-900 dark:text-demo-time-gray-3 ${positionError ? 'border-error-600 dark:border-error-600' : 'border-gray-300 dark:border-demo-time-gray-5'}`}
+                    className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${positionError ? 'border-red-300 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'}`}
                     placeholder="10 (optional)"
                   />
                 </div>
               </div>
 
               {positionError && (
-                <p className="text-sm text-error-600 dark:text-error-700">{positionError}</p>
+                <p className="text-sm text-red-600 dark:text-red-400">{positionError}</p>
               )}
 
-              <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 rounded-lg p-3">
-                <p className="text-sm text-blue-800 dark:text-blue-200 mb-2">
+              <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
+                <p className="text-sm text-blue-800 mb-2">
                   <strong>Position Examples:</strong>
                 </p>
-                <div className="text-xs text-blue-700 dark:text-blue-300 space-y-1">
-                  <p><code className="bg-blue-100 dark:bg-blue-900/50 px-1 rounded-xs">10</code> - Line 10 (Start Line only)</p>
-                  <p><code className="bg-blue-100 dark:bg-blue-900/50 px-1 rounded-xs">10:20</code> - Lines 10 to 20 (Start + End Line)</p>
-                  <p><code className="bg-blue-100 dark:bg-blue-900/50 px-1 rounded-xs">10,5</code> - Line 10, character 5 (Start Line + Character)</p>
-                  <p><code className="bg-blue-100 dark:bg-blue-900/50 px-1 rounded-xs">10,5:20,10</code> - From line 10, char 5 to line 20, char 10 (All fields)</p>
-                  <p><code className="bg-blue-100 dark:bg-blue-900/50 px-1 rounded-xs">start</code> or <code className="bg-blue-100 dark:bg-blue-900/50 px-1 rounded-xs">end</code> - Special keywords (Start Line only)</p>
+                <div className="text-xs text-blue-700 space-y-1">
+                  <p><code className="bg-blue-50 px-1 rounded-xs">10</code> - Line 10 (Start Line only)</p>
+                  <p><code className="bg-blue-50 px-1 rounded-xs">10:20</code> - Lines 10 to 20 (Start + End Line)</p>
+                  <p><code className="bg-blue-50 px-1 rounded-xs">10,5</code> - Line 10, character 5 (Start Line + Character)</p>
+                  <p><code className="bg-blue-50 px-1 rounded-xs">10,5:20,10</code> - From line 10, char 5 to line 20, char 10 (All fields)</p>
+                  <p><code className="bg-blue-50 px-1 rounded-xs">start</code> or <code className="bg-blue-50 px-1 rounded-xs">end</code> - Special keywords (Start Line only)</p>
                 </div>
               </div>
             </div>
@@ -681,37 +681,37 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
           return (
             <div key="placeholders" className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700 dark:text-demo-time-gray-3 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Placeholders {(requiredFields.includes('startPlaceholder') || requiredFields.includes('endPlaceholder')) && <span className="text-red-500">*</span>}
               </label>
-              <div className="bg-gray-50 dark:bg-demo-time-gray-1 border border-gray-200 dark:border-demo-time-gray-5 rounded-lg p-4 flex flex-col gap-4">
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col gap-4">
                 <div className="grid grid-cols-1 gap-4">
                   <div className="flex flex-col gap-1">
-                    <label className="text-xs font-medium text-gray-600 dark:text-demo-time-gray-5 mb-1" htmlFor="start-placeholder">Start Placeholder</label>
+                    <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="start-placeholder">Start Placeholder</label>
                     <input
                       id="start-placeholder"
                       type="text"
                       value={step.startPlaceholder || ''}
                       onChange={(e) => handleChange('startPlaceholder', e.target.value || undefined)}
-                      className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-demo-time-gray-2 text-gray-900 dark:text-demo-time-gray-3 ${startError ? 'border-error-600 dark:border-error-600' : 'border-gray-300 dark:border-demo-time-gray-5'}`}
+                      className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${startError ? 'border-red-300 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'}`}
                       placeholder="<!-- START -->"
                     />
                     {startError && (
-                      <p className="text-sm text-error-600 dark:text-error-700">{startError.message}</p>
+                      <p className="text-sm text-red-600 dark:text-red-400">{startError.message}</p>
                     )}
                   </div>
                   <div className="flex flex-col gap-1">
-                    <label className="text-xs font-medium text-gray-600 dark:text-demo-time-gray-5 mb-1" htmlFor="end-placeholder">End Placeholder</label>
+                    <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="end-placeholder">End Placeholder</label>
                     <input
                       id="end-placeholder"
                       type="text"
                       value={step.endPlaceholder || ''}
                       onChange={(e) => handleChange('endPlaceholder', e.target.value || undefined)}
-                      className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-demo-time-gray-2 text-gray-900 dark:text-demo-time-gray-3 ${endError ? 'border-error-600 dark:border-error-600' : 'border-gray-300 dark:border-demo-time-gray-5'}`}
+                      className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${endError ? 'border-red-300 dark:border-red-400' : 'border-gray-300 dark:border-gray-600'}`}
                       placeholder="<!-- END -->"
                     />
                     {endError && (
-                      <p className="text-sm text-error-600 dark:text-error-700">{endError.message}</p>
+                      <p className="text-sm text-red-600 dark:text-red-400">{endError.message}</p>
                     )}
                   </div>
                 </div>
@@ -748,7 +748,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
         return (
           <div key={field}>
-            <label className="block text-sm font-medium text-gray-700 dark:text-demo-time-gray-3 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               {label} {isRequired && <span className="text-red-500">*</span>}
             </label>
             <DemoIdPicker
@@ -757,7 +757,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
               placeholder="Select a demo..."
             />
             {fieldErrors.map((error, index) => (
-              <p key={index} className="text-sm text-error-600 dark:text-error-700 mt-1">{error.message}</p>
+              <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
             ))}
           </div>
         );
@@ -785,19 +785,19 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
         return (
           <div key={field}>
-            <label className="block text-sm font-medium text-gray-700 dark:text-demo-time-gray-3 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               {label} {isRequired && <span className="text-red-500">*</span>}
             </label>
             <input
               type="text"
               value={step[field as keyof Step] || ''}
               onChange={(e) => handleChange(field as keyof Step, e.target.value || undefined)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-demo-time-gray-2 text-gray-900 dark:text-demo-time-gray-3 ${hasError ? 'border-error-600 bg-error-50 dark:border-error-600 dark:bg-error-50' : 'border-gray-300 dark:border-demo-time-gray-5'
+              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
                 }`}
               placeholder={`Enter ${label.toLowerCase()}`}
             />
             {fieldErrors.map((error, index) => (
-              <p key={index} className="text-sm text-error-600 dark:text-error-700 mt-1">{error.message}</p>
+              <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
             ))}
           </div>
         );
@@ -831,33 +831,33 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
       {/* Show validation hints for complex actions */}
       {(step.action === 'insert' || step.action === 'replace') && (
-        <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
-          <p className="text-sm text-blue-800 dark:text-blue-200">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <p className="text-sm text-blue-800">
             <strong>Note:</strong> This action requires either content OR contentPath, and either position OR startPlaceholder.
           </p>
         </div>
       )}
 
       {step.action === 'create' && (
-        <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
-          <p className="text-sm text-blue-800 dark:text-blue-200">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <p className="text-sm text-blue-800">
             <strong>Note:</strong> This action requires a path. You can optionally provide either content OR contentPath (but not both), or leave both empty to create an empty file.
           </p>
         </div>
       )}
 
       {step.action === 'highlight' && (
-        <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
-          <p className="text-sm text-blue-800 dark:text-blue-200">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <p className="text-sm text-blue-800">
             <strong>Note:</strong> This action requires either position OR both startPlaceholder and endPlaceholder.
           </p>
         </div>
       )}
 
       {step.action === 'copyToClipboard' && (
-        <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
-          <p className="text-sm text-blue-800 dark:text-blue-200">
-            <strong>Note:</strong> This action requires either <code className="bg-white dark:bg-demo-time-gray-2 px-1 rounded-xs">content</code> OR <code className="bg-white dark:bg-demo-time-gray-2 px-1 rounded-xs">contentPath</code>.
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <p className="text-sm text-blue-800">
+            <strong>Note:</strong> This action requires either <code className="bg-white px-1 rounded-xs">content</code> OR <code className="bg-white px-1 rounded-xs">contentPath</code>.
           </p>
         </div>
       )}

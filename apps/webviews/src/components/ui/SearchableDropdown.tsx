@@ -205,22 +205,22 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
       <button
         type="button"
         onClick={handleToggle}
-        className="w-full px-3 py-2 border border-gray-300 dark:border-demo-time-gray-5 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-demo-time-gray-2 text-gray-900 dark:text-demo-time-gray-3 text-left flex items-center justify-between hover:border-gray-400 dark:hover:border-demo-time-gray-6 transition-colors"
+        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-left flex items-center justify-between hover:border-gray-400 dark:hover:border-gray-500 transition-colors"
       >
-        <span className={value ? 'text-gray-900 dark:text-demo-time-gray-3' : 'text-gray-500 dark:text-demo-time-gray-5'}>
+        <span className={value ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}>
           {value || placeholder}
         </span>
-        <ChevronDown className={`h-4 w-4 text-gray-400 dark:text-demo-time-gray-5 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`h-4 w-4 text-gray-400 dark:text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {/* Dropdown */}
       {isOpen && (
-        <div className={`absolute z-50 w-full bg-white dark:bg-demo-time-gray-2 border border-gray-300 dark:border-demo-time-gray-5 rounded-md shadow-lg ${dropdownPosition === 'above' ? 'bottom-full mb-1' : 'top-full mt-1'
+        <div className={`absolute z-50 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg ${dropdownPosition === 'above' ? 'bottom-full mb-1' : 'top-full mt-1'
           }`}>
           {/* Search Input */}
-          <div className="p-2 border-b border-gray-200 dark:border-demo-time-gray-5">
+          <div className="p-2 border-b border-gray-200 dark:border-gray-700">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-demo-time-gray-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
               <input
                 ref={inputRef}
                 type="text"
@@ -228,7 +228,7 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Search actions..."
-                className="w-full pl-9 pr-3 py-2 border border-gray-200 dark:border-demo-time-gray-5 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white dark:bg-demo-time-gray-1 text-gray-900 dark:text-demo-time-gray-3"
+                className="w-full pl-9 pr-3 py-2 border border-gray-200 dark:border-gray-600 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               />
             </div>
           </div>
@@ -293,7 +293,7 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
                   {/* Render grouped options */}
                   {Object.entries(groups).map(([category, categoryOptions]) => (
                     <div key={category}>
-                      <div className="px-3 py-2 text-xs font-semibold text-gray-500 dark:text-demo-time-gray-5 uppercase tracking-wider bg-gray-50 dark:bg-demo-time-gray-1 border-t border-gray-100 dark:border-demo-time-gray-5">
+                      <div className="px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-gray-700 border-t border-gray-100 dark:border-gray-600">
                         {category}
                       </div>
                       {categoryOptions.map((option) => {
@@ -306,10 +306,10 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
                             onClick={() => handleSelect(option.value)}
                             onMouseEnter={() => handleMouseEnter(option.value)}
                             className={`w-full px-3 py-2 text-left focus:outline-hidden transition-colors ${selectedIndex === currentIndex
-                              ? 'bg-blue-100 text-blue-900 dark:bg-blue-900/50 dark:text-blue-200'
+                              ? 'bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-100'
                               : value === option.value
-                                ? 'bg-blue-50 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-                                : 'text-gray-900 dark:text-demo-time-gray-3 hover:bg-gray-50 dark:hover:bg-demo-time-gray-1'
+                                ? 'bg-blue-50 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200'
+                                : 'text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700'
                               }`}
                           >
                             {option.value}

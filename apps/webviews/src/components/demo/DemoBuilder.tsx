@@ -312,7 +312,7 @@ export const DemoBuilder: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-demo-time-gray-1">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <AppHeader
         title="Config Editor"
         subtitle="Manage your demo configuration"
@@ -419,9 +419,9 @@ export const DemoBuilder: React.FC = () => {
 
             {selectedDemo === null && (
               <Card className="p-12 text-center">
-                <FileText className="h-12 w-12 mx-auto mb-4 text-gray-400 dark:text-demo-time-gray-5" />
-                <h3 className="text-lg font-medium text-gray-900 dark:text-demo-time-gray-7 mb-2">No Demo Selected</h3>
-                <p className="text-gray-600 dark:text-demo-time-gray-5">Select a demo from the left panel to view and edit its steps</p>
+                <FileText className="h-12 w-12 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No Demo Selected</h3>
+                <p className="text-gray-600 dark:text-gray-400">Select a demo from the left panel to view and edit its steps</p>
               </Card>
             )}
           </MainContent>
