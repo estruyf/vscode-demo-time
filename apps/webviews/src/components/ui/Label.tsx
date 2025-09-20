@@ -14,7 +14,7 @@ export const Label: React.FC<LabelProps> = ({
   return (
     <label
       htmlFor={htmlFor}
-      className={`block text-sm font-medium text-gray-700 dark:text-demo-time-gray-3 ${className}`}
+      className={`block text-sm font-medium text-gray-700 dark:text-gray-300 ${className}`}
     >
       {children}
     </label>

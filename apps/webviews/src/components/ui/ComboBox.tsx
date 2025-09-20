@@ -74,8 +74,8 @@ export const ComboBox: React.FC<ComboBoxProps> = ({
   };
 
   const inputClasses = `w-full px-3 py-2 pr-10 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-    error ? 'border-error-600 bg-error-50 dark:border-error-600 dark:bg-error-50' : 'border-gray-300 dark:border-demo-time-gray-5'
-  } ${disabled ? 'bg-gray-100 dark:bg-demo-time-gray-1 cursor-not-allowed' : 'bg-white dark:bg-demo-time-gray-2'} text-gray-900 dark:text-demo-time-gray-3 ${className}`;</parameter>
+    error ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
+  } ${disabled ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed' : 'bg-white dark:bg-gray-800'} text-gray-900 dark:text-gray-100 ${className}`;
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -109,13 +109,13 @@ export const ComboBox: React.FC<ComboBoxProps> = ({
       </div>
 
       {isOpen && filteredOptions.length > 0 && (
-        <div className="absolute z-10 w-full mt-1 bg-white dark:bg-demo-time-gray-2 border border-gray-300 dark:border-demo-time-gray-5 rounded-md shadow-lg max-h-60 overflow-y-auto">
+        <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-y-auto">
           {filteredOptions.map((option) => (
             <button
               key={option}
               type="button"
               onClick={() => handleOptionSelect(option)}
-              className="w-full px-3 py-2 text-left hover:bg-gray-50 dark:hover:bg-demo-time-gray-1 focus:outline-hidden focus:bg-gray-50 dark:focus:bg-demo-time-gray-1 flex items-center justify-between text-gray-900 dark:text-demo-time-gray-3"
+              className="w-full px-3 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-hidden focus:bg-gray-50 dark:focus:bg-gray-700 flex items-center justify-between text-gray-900 dark:text-gray-100"
             >
               <span>{option}</span>
               {value === option && <Check className="h-4 w-4 text-blue-600" />}

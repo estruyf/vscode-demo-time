@@ -209,7 +209,7 @@ export const StepListItem: React.FC<StepListItemProps> = ({
       </div>
 
       {editor && (
-        <section className="border-t border-gray-200 dark:border-demo-time-gray-5 bg-white dark:bg-demo-time-gray-2 p-4 rounded-b-lg">
+        <section className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 rounded-b-lg">
           <div className="mt-2 mb-4">
             {editor}
           </div>

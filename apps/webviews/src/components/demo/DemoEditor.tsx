@@ -127,7 +127,7 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange }) => {
                 placeholder="Enter demo ID (optional)"
                 error={getFieldError('id')}
               />
-              <p className="text-xs text-gray-500 dark:text-demo-time-gray-5 mt-2">Optional. This ID can be used to trigger this demo from the API of URI handler.</p>
+              <p className="text-xs text-gray-500 mt-2">Optional. This ID can be used to trigger this demo from the API of URI handler.</p>
             </div>
 
             <div className="md:col-span-2">
@@ -230,7 +230,7 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange }) => {
                   Create
                 </button>
               </div>
-                  <span className="text-sm text-gray-700 dark:text-demo-time-gray-3 mr-2">{demo.disabled ? 'Disabled' : 'Enabled'}</span>
+              {/* ShowOnTrigger Checkbox */}
               {
                 notesPath && (
                   <div className="mt-2 flex items-center">
@@ -241,7 +241,7 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange }) => {
                       id="showOnTrigger"
                       className="mr-2"
                     />
-                    <label htmlFor="showOnTrigger" className="text-sm text-gray-700 dark:text-demo-time-gray-3">
+                    <label htmlFor="showOnTrigger" className="text-sm text-gray-700">
                       Show notes file when demo is triggered
                     </label>
                   </div>

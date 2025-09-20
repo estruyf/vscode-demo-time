@@ -87,9 +87,9 @@ export const StepList: React.FC<StepListProps> = ({
       </div>
 
       {showInfo && (
-        <div className="mb-4 p-3 bg-success-50 dark:bg-success-50 border border-success-200 dark:border-success-600 rounded-md">
-          <p className="text-xs text-success-700 dark:text-success-200">
-            <span className="font-medium text-success-800 dark:text-success-300">About Steps:</span> A step defines an action that you want to perform for your demo. Each demo can have multiple steps.
+        <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md">
+          <p className="text-xs text-green-700 dark:text-green-300">
+            <span className="font-medium text-green-800 dark:text-green-200">About Steps:</span> A step defines an action that you want to perform for your demo. Each demo can have multiple steps.
             For example: opening GitHub Copilot chat, typing a message, and pressing enter.
           </p>
         </div>
@@ -123,9 +123,9 @@ export const StepList: React.FC<StepListProps> = ({
         ))}
 
         {(demo?.steps || []).length === 0 && (
-          <div className="text-center py-12 text-gray-500 dark:text-demo-time-gray-5 border-2 border-dashed border-gray-300 dark:border-demo-time-gray-5 rounded-lg bg-gray-50 dark:bg-demo-time-gray-2">
-            <List className="h-12 w-12 mx-auto mb-4 text-gray-400 dark:text-demo-time-gray-5" />
-            <h3 className="text-lg font-medium text-gray-800 dark:text-demo-time-gray-3">No Steps Yet</h3>
+          <div className="text-center py-12 text-gray-500 dark:text-gray-400 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <List className="h-12 w-12 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
+            <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">No Steps Yet</h3>
             <p className="mt-1 text-sm">Click "Add Step" to start building your demo.</p>
           </div>
         )}
