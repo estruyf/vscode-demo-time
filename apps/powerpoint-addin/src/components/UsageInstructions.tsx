@@ -19,7 +19,10 @@ export const UsageInstructions: React.FC = () => {
         </li>
       </ol>
 
-      <p>The add-in does not need to be visible on the slide to function; you can drag it outside the slide area.</p>
+      <div className="mt-4 p-2 border border-blue-400 bg-blue-100 text-blue-700 rounded">
+        <p className="font-bold">Tip:</p>
+        <p>The add-in does not need to be visible on the slide to function; you can drag it outside the slide area.</p>
+      </div>
 
       <div className="mt-4 p-2 border border-yellow-400 bg-yellow-100 text-yellow-700 rounded">
         <p className="font-bold">Important note:</p>
