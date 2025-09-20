@@ -6,7 +6,6 @@ import { DemoOverviewContainer } from '../overview';
 import { DemoFileData } from '../../types/demoOverview';
 import { DemoConfig, WebViewMessages } from '@demotime/common';
 import '../../styles/config.css';
-import { ThemeProvider } from '../../providers/ThemeProvider';
 
 const DemoScriptView = () => {
   const [demoConfigs, setDemoConfigs] = useState<{ [key: string]: DemoConfig } | undefined>(undefined);

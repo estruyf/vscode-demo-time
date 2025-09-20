@@ -11,9 +11,11 @@ import APISettings from "../settings/APISettings"
 import UICustomizationSettings from "../settings/UICustomizationSettings"
 import BehaviorSettings from "../settings/BehaviorSettings"
 import TemplatesSettings from "../settings/TemplatesSettings"
-import { WebViewMessages } from "@demotime/common";
+import { IDemoTimeSettings, WebViewMessages } from "@demotime/common";
 import '../../styles/config.css';
+import { AppHeader } from "../layout";
 
+const SettingsView = () => {
   const [settings, setSettings] = useState<IDemoTimeSettings | undefined>(undefined);
   const [originalSettings, setOriginalSettings] = useState<IDemoTimeSettings | undefined>(undefined);
   const [saveStatus, setSaveStatus] = useState<{ type: "blank" | "dirty" | "success" | "error", text: string }>({ type: "blank", text: "" });
@@ -67,7 +69,7 @@ import '../../styles/config.css';
   }
 
   const isDirty = useMemo(() => {
-    if (!settings || !originalSettings) return false;
+    if (!settings || !originalSettings) { return false; }
     for (const key in settings) {
       if (Object.prototype.hasOwnProperty.call(settings, key)) {
         // @ts-expect-error: Dynamic key access for settings diff
@@ -118,7 +120,7 @@ import '../../styles/config.css';
                     : saveStatus.type === "error"
                       ? "bg-red-500"
                       : saveStatus.type === "dirty"
-                        ? "bg-yellow-800 animate-pulse"
+                        ? "bg-yellow-800 dark:bg-yellow-300 animate-pulse"
                         : "bg-gray-400"
                     }`} />
                   <span className={`text-xs ${saveStatus.type === "success"
@@ -126,7 +128,7 @@ import '../../styles/config.css';
                     : saveStatus.type === "error"
                       ? "text-red-500"
                       : saveStatus.type === "dirty"
-                        ? "text-yellow-900"
+                        ? "text-yellow-900 dark:text-yellow-300"
                         : "text-gray-400"
                     }`}>
                     {saveStatus.text}

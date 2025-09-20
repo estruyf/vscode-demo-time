@@ -32,7 +32,7 @@ export const MainConfigForm: React.FC<MainConfigFormProps> = ({ config, onChange
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-demo-time-gray-3 mb-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Title <span className="text-red-500">*</span>
         </label>
         <input
@@ -49,9 +49,6 @@ export const MainConfigForm: React.FC<MainConfigFormProps> = ({ config, onChange
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Description
-        </label>
         <Textarea
           label="Description"
           value={config.description || ""}
@@ -72,7 +69,7 @@ export const MainConfigForm: React.FC<MainConfigFormProps> = ({ config, onChange
           placeholder="Enter timer in minutes"
           min="1"
         />
-        <p className="text-xs text-gray-600 dark:text-gray-300 mt-2">Optional. Use this to show a timer during the presentation for this demo section.</p>
+        <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">Optional. Use this to show a timer during the presentation for this demo section.</p>
       </div>
 
       <div>

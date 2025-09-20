@@ -1,7 +1,7 @@
 import { Card } from "../ui/Card";
 import { Label } from "../ui/Label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/EnhancedSelect";
-import { IDemoTimeSettings } from "../../types/IDemoTimeSettings";
+import { IDemoTimeSettings } from "@demotime/common";
 
 interface BehaviorSettingsProps {
   settings: IDemoTimeSettings;

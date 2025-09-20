@@ -1,6 +1,6 @@
 import React from 'react';
 import { ValidationResult } from '../../utils/validation';
-import { useTheme } from '../../providers/ThemeProvider';
+
 interface AppHeaderProps {
   title: string;
   subtitle?: string;

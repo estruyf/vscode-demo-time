@@ -3,9 +3,9 @@ import { Label } from "../ui/Label";
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
 import { Plus, Trash2 } from "lucide-react";
-import { IDemoTimeSettings } from "../../types/IDemoTimeSettings";
 import { PathInput } from "../ui/PathInput";
 import { useCallback, useState } from "react";
+import { IDemoTimeSettings } from "@demotime/common";
 
 interface UICustomizationSettingsProps {
   settings: IDemoTimeSettings;

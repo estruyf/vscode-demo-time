@@ -2,7 +2,7 @@ import { Card } from "../ui/Card";
 import { Label } from "../ui/Label";
 import { Input } from "../ui/Input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/EnhancedSelect";
-import { IDemoTimeSettings } from "../../types/IDemoTimeSettings";
+import { IDemoTimeSettings } from "@demotime/common";
 
 interface TypingAnimationSettingsProps {
   settings: IDemoTimeSettings;

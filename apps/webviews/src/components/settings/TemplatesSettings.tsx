@@ -1,7 +1,7 @@
+import { IDemoTimeSettings } from "@demotime/common";
 import { Card } from "../ui/Card";
 import { Label } from "../ui/Label";
 import { Textarea } from "../ui/Textarea";
-import { IDemoTimeSettings } from "../../types/IDemoTimeSettings";
 
 interface TemplatesSettingsProps {
   settings: IDemoTimeSettings;

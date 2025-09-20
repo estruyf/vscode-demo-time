@@ -2,7 +2,7 @@ import { Card } from "../ui/Card";
 import { Label } from "../ui/Label";
 import { Switch } from "../ui/Switch";
 import { Input } from "../ui/Input";
-import { IDemoTimeSettings } from "../../types/IDemoTimeSettings";
+import { IDemoTimeSettings } from "@demotime/common";
 
 interface PresentationControlsProps {
   settings: IDemoTimeSettings;
