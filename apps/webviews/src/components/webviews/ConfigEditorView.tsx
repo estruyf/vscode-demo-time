@@ -6,6 +6,7 @@ import { DemoBuilder } from '../demo/DemoBuilder';
 import { DemoConfigProvider } from '../../providers/DemoConfigProvider';
 import { DemoConfig, WebViewMessages } from '@demotime/common';
 import '../../styles/config.css';
+import { ThemeProvider } from '../../providers/ThemeProvider';
 
 const ConfigEditorView = () => {
   const [config, setConfig] = React.useState<DemoConfig | undefined>(undefined);
