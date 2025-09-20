@@ -44,7 +44,7 @@ export const DemoFileSection: React.FC<DemoFileSectionProps> = ({
   return (
     <Card className="overflow-hidden">
       {/* Section Header */}
-      <div className={`${isExpanded ? 'border-b border-demo-time-gray-6 pb-6 mb-6' : ''}`}>
+      <div className={`${isExpanded ? 'border-b border-demo-time-gray-3 pb-6 mb-6' : ''}`}>
         <div className="flex items-center justify-between">
           <button
             onClick={onToggle}

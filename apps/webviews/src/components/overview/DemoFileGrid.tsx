@@ -56,7 +56,7 @@ export const DemoFileGrid: React.FC<DemoFileGridProps> = ({
     <div className="space-y-4">
       {/* View Mode Toggle */}
       <div className="flex items-center justify-between">
-        <h4 className="text-lg font-semibold text-demo-time-white">
+        <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-300">
           Items ({gridItems.length})
         </h4>
       </div>

@@ -20,7 +20,7 @@ export const useThemeManager = (): UseThemeManagerReturn => {
   const getVSCodeTheme = useCallback((): ResolvedTheme => {
     const themeKind = document.body.getAttribute('data-vscode-theme-kind');
     const hasVSCodeDarkClass = document.body.classList.contains('vscode-dark');
-    
+
     if (hasVSCodeDarkClass || themeKind?.includes('dark')) {
       return 'dark';
     }
@@ -39,15 +39,16 @@ export const useThemeManager = (): UseThemeManagerReturn => {
   const applyTheme = useCallback((resolvedTheme: ResolvedTheme) => {
     const htmlElement = document.documentElement;
     const bodyElement = document.body;
-    
+
     // Remove existing theme classes
     htmlElement.classList.remove('light', 'dark');
     bodyElement.classList.remove('light', 'dark');
-    
+    bodyElement.classList.remove('vscode-light', 'vscode-dark', 'vscode-high-contrast');
+
     // Add new theme class
     htmlElement.classList.add(resolvedTheme);
     bodyElement.classList.add(resolvedTheme);
-    
+
     // Set data attribute for CSS selectors
     htmlElement.setAttribute('data-theme', resolvedTheme);
   }, []);

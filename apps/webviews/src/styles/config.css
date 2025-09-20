@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.vscode-dark, .vscode-dark *));
+
 html,
 body {
   padding: 0 !important;

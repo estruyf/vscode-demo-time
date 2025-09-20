@@ -1,7 +1,5 @@
 @import 'tailwindcss';
 
-@custom-variant dark (&:is(.vscode-dark *));
-
 /* 
   Monomi Theme - Based on: https://github.com/estruyf/slidev-theme-the-unnamed
 */

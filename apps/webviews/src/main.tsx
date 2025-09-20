@@ -26,13 +26,13 @@ const WebviewComponent = WEBVIEW_MAP[viewType] || WEBVIEW_MAP['config-editor'];
 
 createRoot(root).render(
   <StrictMode>
-    <ThemeProvider>
-      <WebviewSettingsProvider webviewUrl={webviewUrl}>
-        <Suspense fallback={<Loader />}>
-          <WebviewComponent />
-        </Suspense>
-      </WebviewSettingsProvider>
-    </ThemeProvider>
+    {/* <ThemeProvider> */}
+    <WebviewSettingsProvider webviewUrl={webviewUrl}>
+      <Suspense fallback={<Loader />}>
+        <WebviewComponent />
+      </Suspense>
+    </WebviewSettingsProvider>
+    {/* </ThemeProvider> */}
 
     <img style={{
       display: 'none'

@@ -1,7 +1,5 @@
 @import 'tailwindcss';
 
-@custom-variant dark (&:is(.vscode-dark *));
-
 /* Frost Theme for Demo Time
  * A clean, minimal theme with soft blues and elegant typography
  */

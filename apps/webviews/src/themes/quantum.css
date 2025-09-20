@@ -1,7 +1,5 @@
 @import 'tailwindcss';
 
-@custom-variant dark (&:is(.vscode-dark *));
-
 /* Quantum Theme for Demo Time
  * A modern, tech-focused theme with gradient accents
  */

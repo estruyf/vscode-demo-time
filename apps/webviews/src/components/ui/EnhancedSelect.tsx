@@ -133,7 +133,7 @@ export const SelectItem: React.FC<SelectItemProps> = ({
       onClick={() => onSelect(value)}
       className={`
         w-full px-3 py-2 text-left focus:outline-hidden transition-colors flex items-center justify-between
-        ${isSelected ? 'bg-demo-time-accent text-demo-time-black' : 'text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700'}
+        ${isSelected ? 'bg-demo-time-accent text-white dark:text-black' : 'text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700'}
       `}
     >
       <span>{children}</span>

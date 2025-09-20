@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.vscode-dark, .vscode-dark *));
+
 @theme {
   /* Light mode colors */
   --color-blue-50: #f0f9ff;
@@ -29,8 +31,8 @@
 }
 
 /* Dark mode overrides */
-@media (prefers-color-scheme: dark) {
-  @theme {
+@layer theme {
+  .vscode-dark {
     --color-demo-time-accent-low: #2d2416;
     --color-demo-time-accent: #ffd43b;
     --color-demo-time-accent-high: #ffe066;
@@ -46,35 +48,12 @@
   }
 }
 
-/* VS Code dark theme override */
-.vscode-dark {
-  --color-demo-time-accent-low: #2d2416;
-  --color-demo-time-accent: #ffd43b;
-  --color-demo-time-accent-high: #ffe066;
-  --color-demo-time-white: #ffffff;
-  --color-demo-time-gray-1: #1e1e1e;
-  --color-demo-time-gray-2: #2d2d30;
-  --color-demo-time-gray-3: #3e3e42;
-  --color-demo-time-gray-4: #565656;
-  --color-demo-time-gray-5: #6e6e6e;
-  --color-demo-time-gray-6: #8e8e8e;
-  --color-demo-time-gray-7: #cccccc;
-  --color-demo-time-black: #0c0c0c;
-}
-
 /* Theme transition for smooth switching */
 * {
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-}
-
-/* Ensure theme classes work correctly */
-.dark,
-.vscode-dark {
-  color-scheme: dark;
-}
-
-.light {
-  color-scheme: light;
+  transition:
+    background-color 0.2s ease-in-out,
+    color 0.2s ease-in-out,
+    border-color 0.2s ease-in-out;
 }
 
 /*

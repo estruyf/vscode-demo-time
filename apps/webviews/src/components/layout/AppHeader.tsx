@@ -1,5 +1,8 @@
 import React from 'react';
 import { ValidationResult } from '../../utils/validation';
+import { ThemeToggle } from '../ui/ThemeToggle';
+import { useTheme } from '../../providers/ThemeProvider';
+import { useThemeManager } from '../../hooks/useThemeManager';
 
 interface AppHeaderProps {
   title: string;
@@ -25,6 +28,9 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   actionControls,
   autoSaveStatus,
 }) => {
+  // const { theme } = useThemeManager();
+  // const { setTheme } = useTheme();
+
   return (
     <div className="bg-white dark:bg-gray-900 shadow-xs border-b border-gray-200 dark:border-gray-700 sticky top-0 z-20">
       <div className="max-w-7xl mx-auto px-6 py-4">
@@ -83,6 +89,11 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                 </span>
               </div>
             )}
+
+            {/* <ThemeToggle
+              currentTheme={theme}
+              onThemeChange={setTheme}
+            /> */}
           </div>
         </div>
       </div>

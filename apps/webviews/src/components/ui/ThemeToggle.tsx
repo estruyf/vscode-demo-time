@@ -20,11 +20,11 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
 
   const getButtonClasses = (theme: typeof currentTheme) => {
     const baseClasses = 'inline-flex items-center justify-center px-3 py-2 text-sm font-medium rounded-md transition-colors focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:ring-offset-2';
-    
+
     if (currentTheme === theme) {
       return `${baseClasses} bg-demo-time-accent text-demo-time-black shadow-sm`;
     }
-    
+
     return `${baseClasses} text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700`;
   };
 
