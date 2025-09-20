@@ -55,12 +55,12 @@ export const DemoSection: React.FC<DemoSectionProps> = ({
     <Card>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-3">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-demo-time-gray-7">
             Demos ({(demos || []).length})
           </h2>
           <button
             onClick={() => setShowInfo(!showInfo)}
-            className="p-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xs transition-colors"
+            className="p-1 text-gray-500 dark:text-demo-time-gray-5 hover:text-gray-700 dark:hover:text-demo-time-gray-3 hover:bg-gray-100 dark:hover:bg-demo-time-gray-1 rounded-xs transition-colors"
             title="About demos"
           >
             <Info className="h-4 w-4" />
@@ -79,9 +79,9 @@ export const DemoSection: React.FC<DemoSectionProps> = ({
       </div>
 
       {showInfo && (
-        <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
+        <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-md">
           <p className="text-xs text-blue-800 dark:text-blue-200">
-            <span className="font-medium text-blue-900 dark:text-blue-100">About Demos:</span> Each demo can consist of multiple steps that will be running in sequence right after each other.
+            <span className="font-medium text-blue-900 dark:text-blue-300">About Demos:</span> Each demo can consist of multiple steps that will be running in sequence right after each other.
             Create organized demonstrations by grouping related actions together.
           </p>
         </div>

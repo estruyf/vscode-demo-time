@@ -13,12 +13,12 @@ export const Card: React.FC<CardProps> = ({
   padding = 'md',
   variant = 'default'
 }) => {
-  const baseClasses = 'bg-white dark:bg-gray-800 rounded-lg';
+  const baseClasses = 'bg-white dark:bg-demo-time-gray-2 rounded-lg';</parameter>
   
   const variantClasses = {
-    default: 'border border-gray-200 dark:border-gray-700',
-    elevated: 'shadow-lg border border-gray-200 dark:border-gray-700',
-    outlined: 'border-2 border-gray-300 dark:border-gray-600'
+    default: 'border border-gray-200 dark:border-demo-time-gray-5',
+    elevated: 'shadow-lg border border-gray-200 dark:border-demo-time-gray-5',
+    outlined: 'border-2 border-gray-300 dark:border-demo-time-gray-5'
   };
   
   const paddingClasses = {

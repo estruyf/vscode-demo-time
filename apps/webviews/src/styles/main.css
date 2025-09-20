@@ -20,12 +20,26 @@
   --color-demo-time-white: #ffffff;
   --color-demo-time-gray-1: #f8f9fa;
   --color-demo-time-gray-2: #e9ecef;
-  --color-demo-time-gray-3: #dee2e6;
-  --color-demo-time-gray-4: #ced4da;
-  --color-demo-time-gray-5: #adb5bd;
-  --color-demo-time-gray-6: #6c757d;
-  --color-demo-time-gray-7: #495057;
+  --color-demo-time-gray-3: #343a40;
+  --color-demo-time-gray-4: #495057;
+  --color-demo-time-gray-5: #6c757d;
+  --color-demo-time-gray-6: #495057;
+  --color-demo-time-gray-7: #343a40;
   --color-demo-time-black: #212529;
+
+  /* Success/Error/Warning colors for light mode */
+  --color-success-50: #f0fdf4;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+  --color-success-700: #15803d;
+  --color-error-50: #fef2f2;
+  --color-error-500: #ef4444;
+  --color-error-600: #dc2626;
+  --color-error-700: #b91c1c;
+  --color-warning-50: #fffbeb;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
 }
 
 /* Dark mode overrides */
@@ -35,14 +49,28 @@
     --color-demo-time-accent: #ffd43b;
     --color-demo-time-accent-high: #ffe066;
     --color-demo-time-white: #ffffff;
-    --color-demo-time-gray-1: #1e1e1e;
-    --color-demo-time-gray-2: #2d2d30;
-    --color-demo-time-gray-3: #3e3e42;
-    --color-demo-time-gray-4: #565656;
-    --color-demo-time-gray-5: #6e6e6e;
-    --color-demo-time-gray-6: #8e8e8e;
-    --color-demo-time-gray-7: #cccccc;
+    --color-demo-time-gray-1: #1a1d23;
+    --color-demo-time-gray-2: #252a31;
+    --color-demo-time-gray-3: #e1e5e9;
+    --color-demo-time-gray-4: #c9d1d9;
+    --color-demo-time-gray-5: #8b949e;
+    --color-demo-time-gray-6: #c9d1d9;
+    --color-demo-time-gray-7: #f0f6fc;
     --color-demo-time-black: #0c0c0c;
+
+    /* Success/Error/Warning colors for dark mode */
+    --color-success-50: #0f1419;
+    --color-success-500: #238636;
+    --color-success-600: #2ea043;
+    --color-success-700: #56d364;
+    --color-error-50: #0f1419;
+    --color-error-500: #da3633;
+    --color-error-600: #f85149;
+    --color-error-700: #ff7b72;
+    --color-warning-50: #0f1419;
+    --color-warning-500: #d29922;
+    --color-warning-600: #e3b341;
+    --color-warning-700: #f2cc60;
   }
 }
 
@@ -52,14 +80,28 @@
   --color-demo-time-accent: #ffd43b;
   --color-demo-time-accent-high: #ffe066;
   --color-demo-time-white: #ffffff;
-  --color-demo-time-gray-1: #1e1e1e;
-  --color-demo-time-gray-2: #2d2d30;
-  --color-demo-time-gray-3: #3e3e42;
-  --color-demo-time-gray-4: #565656;
-  --color-demo-time-gray-5: #6e6e6e;
-  --color-demo-time-gray-6: #8e8e8e;
-  --color-demo-time-gray-7: #cccccc;
+  --color-demo-time-gray-1: #1a1d23;
+  --color-demo-time-gray-2: #252a31;
+  --color-demo-time-gray-3: #e1e5e9;
+  --color-demo-time-gray-4: #c9d1d9;
+  --color-demo-time-gray-5: #8b949e;
+  --color-demo-time-gray-6: #c9d1d9;
+  --color-demo-time-gray-7: #f0f6fc;
   --color-demo-time-black: #0c0c0c;
+
+  /* Success/Error/Warning colors for VS Code dark mode */
+  --color-success-50: #0f1419;
+  --color-success-500: #238636;
+  --color-success-600: #2ea043;
+  --color-success-700: #56d364;
+  --color-error-50: #0f1419;
+  --color-error-500: #da3633;
+  --color-error-600: #f85149;
+  --color-error-700: #ff7b72;
+  --color-warning-50: #0f1419;
+  --color-warning-500: #d29922;
+  --color-warning-600: #e3b341;
+  --color-warning-700: #f2cc60;
 }
 
 /*
