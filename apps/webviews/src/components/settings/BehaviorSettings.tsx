@@ -12,8 +12,8 @@ export default function BehaviorSettings({ settings, updateSetting }: BehaviorSe
   return (
     <Card>
       <div className="p-6">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Behavior Settings</h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">Configure demo behavior and file handling</p>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-demo-time-gray-7 mb-2">Behavior Settings</h2>
+        <p className="text-gray-600 dark:text-demo-time-gray-5 mb-6">Configure demo behavior and file handling</p>
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="nextAction">Next Action Behavior</Label>
@@ -29,7 +29,7 @@ export default function BehaviorSettings({ settings, updateSetting }: BehaviorSe
                 <SelectItem value="currentPosition">Current Position</SelectItem>
               </SelectContent>
             </Select>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Define the behavior of the next action</p>
+            <p className="text-sm text-gray-600 dark:text-demo-time-gray-5">Define the behavior of the next action</p>
           </div>
         </div>
       </div>

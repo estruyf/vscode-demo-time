@@ -31,12 +31,12 @@ export const Button: React.FC<ButtonProps> = ({
   const baseClasses = 'inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-hidden focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
 
   const variantClasses = {
-    primary: 'bg-demo-time-accent hover:bg-demo-time-accent-high text-demo-time-black focus:ring-demo-time-accent',
-    secondary: 'bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 focus:ring-demo-time-accent dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-700 dark:text-gray-300',
-    success: 'bg-[#ffd43b] hover:bg-[#e6c135] text-gray-900 focus:ring-[#ffd43b]',
-    danger: 'bg-red-600 hover:bg-red-700 text-white focus:ring-red-500',
-    warning: 'bg-yellow-600 hover:bg-yellow-700 text-white focus:ring-yellow-500',
-    dark: 'bg-gray-800 hover:bg-gray-700 text-white focus:ring-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600'
+    primary: 'bg-demo-time-accent hover:bg-demo-time-accent-high text-demo-time-black focus:ring-demo-time-accent focus:ring-offset-2',
+    secondary: 'bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 focus:ring-demo-time-accent focus:ring-offset-2 dark:bg-demo-time-gray-2 dark:border-demo-time-gray-5 dark:hover:bg-demo-time-gray-1 dark:text-demo-time-gray-3',
+    success: 'bg-success-600 hover:bg-success-700 text-white focus:ring-success-500 focus:ring-offset-2',
+    danger: 'bg-error-600 hover:bg-error-700 text-white focus:ring-error-500 focus:ring-offset-2',
+    warning: 'bg-warning-600 hover:bg-warning-700 text-white focus:ring-warning-500 focus:ring-offset-2',
+    dark: 'bg-gray-800 hover:bg-gray-700 text-white focus:ring-gray-600 focus:ring-offset-2 dark:bg-demo-time-gray-2 dark:hover:bg-demo-time-gray-1 dark:text-demo-time-gray-3'
   };
 
   const sizeClasses = {

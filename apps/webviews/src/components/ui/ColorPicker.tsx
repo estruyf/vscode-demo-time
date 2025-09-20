@@ -107,7 +107,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ value, onChange, label
             className="flex-1"
           />
           <span className="text-sm w-12">{opacity}</span>
-        </div>
+        <p className="text-sm text-error-600 dark:text-error-700 mt-1">{error}</p>
       )}
     </div>
   );

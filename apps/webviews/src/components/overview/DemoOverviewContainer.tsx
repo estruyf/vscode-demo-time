@@ -165,10 +165,10 @@ export const DemoOverviewContainer: React.FC<DemoOverviewContainerProps> = ({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-demo-time-gray-1 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading demo overview...</p>
+          <p className="text-gray-600 dark:text-demo-time-gray-5">Loading demo overview...</p>
         </div>
       </div>
     );
@@ -177,20 +177,20 @@ export const DemoOverviewContainer: React.FC<DemoOverviewContainerProps> = ({
   const stats = getTotalStats();
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-demo-time-gray-1">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-900 shadow-xs border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+      <div className="bg-white dark:bg-demo-time-gray-2 shadow-xs border-b border-gray-200 dark:border-demo-time-gray-5 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Overview</h1>
-              <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-demo-time-gray-7">Overview</h1>
+              <p className="text-gray-600 dark:text-demo-time-gray-5 text-sm mt-1">
                 <span>{stats.totalFiles} demo file{stats.totalFiles !== 1 ? 's' : ''} •</span>
                 <span className="ml-1">{stats.totalItems} total items</span>
               </p>
             </div>
             <div className="flex items-center space-x-3">
-              <div className="text-sm text-gray-600 dark:text-gray-400">
+              <div className="text-sm text-gray-600 dark:text-demo-time-gray-5">
                 <span className="font-medium ml-1">{stats.totalDemos}</span> demos •
                 <span className="font-medium ml-1">{stats.totalSlides}</span> slides •
                 <span className="font-medium ml-1">{stats.totalSteps}</span> steps
@@ -212,9 +212,9 @@ export const DemoOverviewContainer: React.FC<DemoOverviewContainerProps> = ({
       <div className="max-w-7xl mx-auto px-6 py-8">
         {demoFiles.length === 0 ? (
           <Card className="p-12 text-center">
-            <FileText className="h-12 w-12 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No Demo Files Found</h3>
-            <p className="text-gray-600 dark:text-gray-400">Create some demo files to see the script overview</p>
+            <FileText className="h-12 w-12 mx-auto mb-4 text-gray-400 dark:text-demo-time-gray-5" />
+            <h3 className="text-lg font-medium text-gray-900 dark:text-demo-time-gray-7 mb-2">No Demo Files Found</h3>
+            <p className="text-gray-600 dark:text-demo-time-gray-5">Create some demo files to see the script overview</p>
           </Card>
         ) : (
           <div className="space-y-6">
