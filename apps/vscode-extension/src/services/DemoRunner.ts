@@ -793,7 +793,8 @@ export class DemoRunner {
         return;
       }
 
-      if (step.openInVSCode) {
+      // By default open in the Simple Browser, unless specified otherwise
+      if (typeof step.openInVSCode === 'undefined' || step.openInVSCode) {
         await commands.executeCommand('simpleBrowser.show', Uri.parse(step.url));
       } else {
         await commands.executeCommand('vscode.open', Uri.parse(step.url));

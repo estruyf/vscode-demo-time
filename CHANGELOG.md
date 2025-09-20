@@ -37,6 +37,8 @@
 - [#261](https://github.com/estruyf/vscode-demo-time/issues/261): Added a message for the PowerPoint
   addin that it can be shown outside of the visible slide container
 - [#263](https://github.com/estruyf/vscode-demo-time/issues/263): Show icons in the icon picker
+- [#268](https://github.com/estruyf/vscode-demo-time/issues/268): Fix the `openInVSCode` property
+  which was not working as expected
 
 ## [1.9.0] - 2025-08-25
 

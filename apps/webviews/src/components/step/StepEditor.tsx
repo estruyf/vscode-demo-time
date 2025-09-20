@@ -249,6 +249,8 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       label = "Demo ID";
     } else if (step.action === Action.ExecuteScript) {
       label = "Script ID";
+    } else if (field === 'openInVSCode') {
+      label = 'Open in VS Code';
     }
 
     switch (field) {
