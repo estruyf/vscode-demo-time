@@ -5,6 +5,7 @@ import './vscode.ts';
 import './styles/main.css';
 import 'vscrui/dist/codicon.css';
 import { WebviewSettingsProvider } from './providers';
+import { ThemeProvider } from './providers/ThemeProvider';
 
 const WEBVIEW_MAP: Record<string, React.LazyExoticComponent<React.FC<object>>> = {
   'settings': lazy(() => import('./components/webviews/SettingsView')),
@@ -25,11 +26,13 @@ const WebviewComponent = WEBVIEW_MAP[viewType] || WEBVIEW_MAP['config-editor'];
 
 createRoot(root).render(
   <StrictMode>
-    <WebviewSettingsProvider webviewUrl={webviewUrl}>
-      <Suspense fallback={<Loader />}>
-        <WebviewComponent />
-      </Suspense>
-    </WebviewSettingsProvider>
+    <ThemeProvider>
+      <WebviewSettingsProvider webviewUrl={webviewUrl}>
+        <Suspense fallback={<Loader />}>
+          <WebviewComponent />
+        </Suspense>
+      </WebviewSettingsProvider>
+    </ThemeProvider>
 
     <img style={{
       display: 'none'

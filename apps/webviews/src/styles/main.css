@@ -62,6 +62,21 @@
   --color-demo-time-black: #0c0c0c;
 }
 
+/* Theme transition for smooth switching */
+* {
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+/* Ensure theme classes work correctly */
+.dark,
+.vscode-dark {
+  color-scheme: dark;
+}
+
+.light {
+  color-scheme: light;
+}
+
 /*
   The default border color has changed to `currentcolor` in Tailwind CSS v4,
   so we've added these compatibility styles to make sure everything still

@@ -5,7 +5,7 @@ import { Card } from '../ui/Card';
 import { DemoFileSection } from './DemoFileSection';
 import { DemoFileData, OverviewGridItem } from '../../types/demoOverview';
 import { messageHandler } from '@estruyf/vscode/dist/client';
-import { SlideParser, WebViewMessages } from '@demotime/common';
+import { useTheme } from '../../providers/ThemeProvider';
 
 interface DemoOverviewContainerProps {
   demoFiles: DemoFileData[];
