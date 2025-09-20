@@ -34,6 +34,9 @@
   path handling in the custom template conversion
 - [#256](https://github.com/estruyf/vscode-demo-time/issues/256): Added `{{crntSlideIdx}}` and
   `{{totalSlides}}` variables to the slide header and footer templates
+- [#261](https://github.com/estruyf/vscode-demo-time/issues/261): Added a message for the PowerPoint
+  addin that it can be shown outside of the visible slide container
+- [#263](https://github.com/estruyf/vscode-demo-time/issues/263): Show icons in the icon picker
 
 ## [1.9.0] - 2025-08-25
 

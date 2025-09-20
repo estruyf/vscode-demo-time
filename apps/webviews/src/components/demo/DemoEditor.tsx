@@ -166,6 +166,7 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange }) => {
                   options={VSCODE_ICONS}
                   placeholder="Select start icon"
                   className="grow"
+                  isIconPicker
                 />
               </div>
             </div>
@@ -196,6 +197,7 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange }) => {
                   options={VSCODE_ICONS}
                   placeholder="Select end icon"
                   className="grow"
+                  isIconPicker
                 />
               </div>
             </div>

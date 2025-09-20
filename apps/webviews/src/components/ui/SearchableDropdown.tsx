@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Search } from 'lucide-react';
+import { Icon } from 'vscrui';
 
 interface DropdownOption {
   value: string;
@@ -19,6 +20,7 @@ interface SearchableDropdownProps {
   noItemsText?: string;
   className?: string;
   allowFreeform?: boolean;
+  isIconPicker?: boolean;
 }
 
 export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
@@ -28,7 +30,8 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
   placeholder = "Select an option...",
   noItemsText = "No options available",
   className = "",
-  allowFreeform = false
+  allowFreeform = false,
+  isIconPicker = false
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -272,14 +275,17 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
                         type="button"
                         onClick={() => handleSelect(option.value)}
                         onMouseEnter={() => handleMouseEnter(option.value)}
-                        className={`w-full px-3 py-2 text-left focus:outline-hidden transition-colors ${selectedIndex === currentIndex
+                        className={`w-full px-3 py-2 text-left flex items-center justify-between focus:outline-hidden transition-colors ${selectedIndex === currentIndex
                           ? 'bg-blue-100 text-blue-900'
                           : value === option.value
                             ? 'bg-blue-50 text-blue-800'
                             : 'text-gray-900 hover:bg-gray-50'
                           }`}
                       >
-                        {option.value}
+                        <span className="truncate">{option.value}</span>
+                        {isIconPicker && (
+                          <Icon name={option.value as never} className="ml-2 shrink-0" />
+                        )}
                       </button>
                     );
                   })}
