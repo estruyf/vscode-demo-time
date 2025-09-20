@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 
-@custom-variant dark (&:where(.vscode-dark, .vscode-dark *));
+@custom-variant dark (&:where(.vscode-dark, .vscode-dark *, .vscode-high-contrast, .vscode-high-contrast *));
 
 @theme {
   /* Light mode colors */
@@ -32,7 +32,8 @@
 
 /* Dark mode overrides */
 @layer theme {
-  .vscode-dark {
+  .vscode-dark,
+  .vscode-high-contrast {
     --color-demo-time-accent-low: #2d2416;
     --color-demo-time-accent: #ffd43b;
     --color-demo-time-accent-high: #ffe066;
