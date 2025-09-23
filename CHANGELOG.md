@@ -39,6 +39,8 @@
 - [#261](https://github.com/estruyf/vscode-demo-time/issues/261): Added a message for the PowerPoint
   addin that it can be shown outside of the visible slide container
 - [#263](https://github.com/estruyf/vscode-demo-time/issues/263): Show icons in the icon picker
+- [#264](https://github.com/estruyf/vscode-demo-time/issues/264): New `focusTop` property for the
+  `openFile` action to control if the editor should focus on the top of the file or not
 - [#268](https://github.com/estruyf/vscode-demo-time/issues/268): Fix the `openInVSCode` property
   which was not working as expected
 
