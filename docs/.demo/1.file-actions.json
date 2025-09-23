@@ -10,7 +10,8 @@
       "steps": [
         {
           "action": "open",
-          "path": "src/content/docs/actions/file.mdx"
+          "path": "src/content/docs/actions/file.mdx",
+          "focusTop": true
         }
       ]
     },

@@ -208,7 +208,7 @@ export const getFieldsForAction = (action: Action): string[] => {
   const fieldMap: Record<Action, string[]> = {
     [Action.ApplyPatch]: ['path', 'contentPath', 'patch', 'insertTypingSpeed', 'insertTypingMode'],
     [Action.Create]: ['path', 'content', 'contentPath'],
-    [Action.Open]: ['path'],
+    [Action.Open]: ['path', 'focusTop'],
     [Action.Rename]: ['path', 'dest'],
     [Action.DeleteFile]: ['path'],
     [Action.Close]: [],

@@ -378,6 +378,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
           </div>
         );
       }
+      case 'focusTop':
       case 'overwrite':
       case 'openInVSCode':
       case 'autoExecute':

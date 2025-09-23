@@ -135,7 +135,7 @@
                   "if": {
                     "properties": {
                       "action": {
-                        "enum": ["open", "deleteFile", "markdownPreview"]
+                        "enum": ["deleteFile", "markdownPreview"]
                       }
                     }
                   },
@@ -144,6 +144,26 @@
                     "properties": {
                       "path": {
                         "$ref": "#/definitions/path"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "enum": ["open"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["path"],
+                    "properties": {
+                      "path": {
+                        "$ref": "#/definitions/path"
+                      },
+                      "focusTop": {
+                        "$ref": "#/definitions/focusTop"
                       }
                     }
                   }
@@ -885,6 +905,11 @@
     "path": {
       "type": "string",
       "title": "Path to file"
+    },
+    "focusTop": {
+      "type": "boolean",
+      "title": "Focus the editor on the top of the file",
+      "default": true
     },
     "position": {
       "type": ["string", "number"],

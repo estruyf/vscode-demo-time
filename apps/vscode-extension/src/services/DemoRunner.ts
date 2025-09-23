@@ -993,7 +993,7 @@ export class DemoRunner {
     }
 
     if (step.action === Action.Open) {
-      FileActionService.open(fileUri);
+      FileActionService.open(fileUri, typeof step.focusTop === 'undefined' || step.focusTop);
       return;
     }
 
