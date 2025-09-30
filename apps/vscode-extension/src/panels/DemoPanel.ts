@@ -163,6 +163,7 @@ export class DemoPanel {
           isActive,
           hasExecuted,
           disabled,
+          demo.id || undefined,
         );
       });
 
