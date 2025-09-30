@@ -23,29 +23,19 @@ export async function getDemoApiData() {
     return null;
   }
 
-  const demoFilesFormatted = Object.entries(demoFiles).map(([filePath, file]) => ({
-    filePath,
-    demos: mapDemos(file.demos),
-  }));
-
   const nextDemoFull = DemoStatusBar.getNextDemo();
   const nextDemo = nextDemoFull ? { title: nextDemoFull.title, id: nextDemoFull.id } : undefined;
+  const demos = DemoPanel.getDemos();
 
   const crntFile = DemoPanel.crntExecutingDemoFile;
-  let currentDemoFile = undefined;
-  if (crntFile?.filePath && Array.isArray(crntFile.demo)) {
-    currentDemoFile = {
-      filePath: crntFile.filePath,
-      demo: crntFile.demo.map(({ title, id }) => ({
-        title,
-        id,
-      })),
-    };
+  let currentDemoFile: string | undefined = undefined;
+  if (crntFile?.filePath) {
+    currentDemoFile = crntFile.filePath;
   }
 
   return {
-    demoFiles: demoFilesFormatted,
     nextDemo,
+    demos,
     currentDemoFile,
   };
 }

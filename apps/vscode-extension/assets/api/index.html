@@ -141,20 +141,56 @@
             </div>
             <div class="bg-slate-100 rounded-lg p-4 font-mono text-xs border border-slate-200 overflow-x-auto">
               <pre>{
-  "demoFiles": [{
-    "filePath": "/absolute/path/to/demo.json",
-    "demos": [
-      { "id": "demo1", "title": "Demo 1" },
-      { "id": "demo2", "title": "Demo 2" }
-    ]
+  "nextDemo": {
+    "title": "2. Wrong settings"
+  },
+  "demos": [{
+    "collapsibleState": 2,
+    "label": "Pitch",
+    "children": [
+      {
+        "collapsibleState": 0,
+        "label": "1. Demo Time",
+        "demoFilePath": "/Users/user/project/.demo/pitch.yaml",
+        "stepIndex": 0,
+        "originalLabel": "Demo Time",
+        "isActive": false,
+        "hasExecuted": true,
+        "disabled": false,
+        "tooltip": "1. Demo Time",
+        "contextValue": "demo-time.firstStep demo-time.isSlide"
+      },
+      {
+        "collapsibleState": 0,
+        "label": "2. Wrong settings",
+        "demoFilePath": "/Users/user/project/.demo/pitch.yaml",
+        "stepIndex": 1,
+        "originalLabel": "Wrong settings",
+        "isActive": false,
+        "hasExecuted": true,
+        "disabled": false,
+        "tooltip": "2. Wrong settings",
+        "contextValue": "demo-time.step"
+      },
+      {
+        "collapsibleState": 0,
+        "label": "3. Slides",
+        "demoFilePath": "/Users/user/project/.demo/pitch.yaml",
+        "stepIndex": 2,
+        "originalLabel": "Slides",
+        "isActive": false,
+        "hasExecuted": false,
+        "disabled": false,
+        "tooltip": "3. Slides",
+        "contextValue": "demo-time.step demo-time.isSlide"
+      }
+    ],
+    "demoFilePath": "/Users/user/project/.demo/pitch.yaml",
+    "description": " pitch.yaml",
+    "tooltip": "pitch.yaml",
+    "contextValue": "demo-time.file"
   }],
-  "nextDemo": { "id": "demo2", "title": "Demo 2" },
-  "currentDemoFile": {
-    "filePath": "/absolute/path/to/demo.json",
-    "demo": [
-      { "id": "demo1", "title": "Demo 1" }
-    ]
-  }
+  "currentDemoFile": "/Users/user/project/.demo/pitch.yaml"
 }</pre>
             </div>
           </div>
@@ -163,9 +199,10 @@
               <span class="text-sm font-medium text-slate-700">Description</span>
             </div>
             <ul class="list-disc ml-6 text-sm text-slate-700">
-              <li><code>demoFiles</code>: Array of demo files, each with its file path and contained demos (id and title).</li>
-              <li><code>nextDemo</code>: The next demo to be executed (id and title), if available.</li>
-              <li><code>currentDemoFile</code>: The currently executing demo file, with its file path and demos.</li>
+              <li><code>nextDemo</code>: The next demo to be executed (title only), if available.</li>
+              <li><code>demos</code>: Array of demo files with hierarchical structure. Each demo file contains children array with individual demo steps.</li>
+              <li><code>currentDemoFile</code>: String path to the currently executing demo file.</li>
+              <li><code>children</code>: Array of demo steps within each file, containing stepIndex, labels, execution status, and contextValue.</li>
             </ul>
           </div>
           
