@@ -48,6 +48,7 @@ export interface ApiData {
   nextDemo?: NextDemo;
   demos: DemoFile[];
   currentDemoFile?: string;
+  previousEnabled?: boolean;
 }
 
 export interface ConnectionStatus {

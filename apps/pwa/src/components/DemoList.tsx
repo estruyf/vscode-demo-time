@@ -60,7 +60,7 @@ export const DemoList: React.FC<DemoListProps> = ({ apiData, onRunById }) => {
     <div className="card flex flex-col h-full">
       <div className="mb-4 flex-shrink-0">
         <h2 className="text-xl font-bold text-white">
-          All Demos
+          All steps
         </h2>
       </div>
 

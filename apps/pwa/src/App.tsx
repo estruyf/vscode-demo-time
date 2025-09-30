@@ -3,6 +3,7 @@ import { Connection } from './components/Connection';
 import { DemoList } from './components/DemoList';
 import { InstallPrompt } from './components/InstallPrompt';
 import 'vscrui/dist/codicon.css';
+import { Icon } from 'vscrui';
 
 function App() {
   const {
@@ -12,6 +13,7 @@ function App() {
     connect,
     disconnect,
     triggerNext,
+    triggerPrevious,
     runById,
     refreshData,
   } = useApi();
@@ -70,7 +72,7 @@ function App() {
           </div>
 
           {apiData && (
-            <div className="container mx-auto px-4 max-w-4xl flex-1 overflow-hidden">
+            <div className="container mx-auto max-w-4xl flex-1 overflow-hidden">
               <DemoList
                 apiData={apiData}
                 onRunById={runById}
@@ -80,27 +82,54 @@ function App() {
 
           {apiData && (
             <div className="flex-shrink-0 bg-[#1a1f2e]/95 backdrop-blur-sm border-t border-gray-700/30 shadow-2xl">
-              <div className="container mx-auto px-4 py-3 max-w-4xl">
+              <div className="container mx-auto md:px-4 md:py-3 max-w-4xl">
                 {apiData.nextDemo && (
-                  <div className="bg-gray-800/40 rounded-lg px-3 py-2 mb-2">
+                  <div className="px-3 py-2 mb-2">
                     <p className="text-xs text-gray-500 mb-0.5">NEXT UP</p>
                     <p className="font-semibold text-white text-sm leading-tight">{apiData.nextDemo.title}</p>
                   </div>
                 )}
-                <button
-                  onClick={async () => {
-                    try {
-                      await triggerNext(true);
-                      setTimeout(() => refreshData(), 500);
-                    } catch (error) {
-                      console.error('Failed to trigger next demo:', error);
+                <div className="flex items-center justify-between md:gap-x-4">
+                  {
+                    apiData.previousEnabled && (
+                      <button
+                        onClick={async () => {
+                          try {
+                            await triggerPrevious(true);
+                            setTimeout(() => refreshData(), 500);
+                          } catch (error) {
+                            console.error('Failed to trigger previous demo:', error);
+                          }
+                        }}
+                        disabled={loading}
+                        className="btn-secondary border-0 text-base py-4 disabled:opacity-50 disabled:cursor-not-allowed rounded-none md:rounded-lg w-1/2"
+                      >
+                        <span className='inline-flex items-center'><Icon name="arrow-left" size={16} className='mr-2' /> Previous</span>
+                      </button>
+                    )
+                  }
+
+                  <button
+                    onClick={async () => {
+                      try {
+                        await triggerNext(true);
+                        setTimeout(() => refreshData(), 500);
+                      } catch (error) {
+                        console.error('Failed to trigger next demo:', error);
+                      }
+                    }}
+                    disabled={loading}
+                    className={`btn-primary text-base py-4 disabled:opacity-50 disabled:cursor-not-allowed rounded-none md:rounded-lg ${apiData.previousEnabled ? 'w-1/2' : 'w-full'}`}
+                  >
+                    {loading ? 'Starting...' : apiData.nextDemo ?
+                      (
+                        <span className='inline-flex items-center'>Next <Icon name="arrow-right" size={16} className='ml-2' /></span>
+                      ) : (
+                        <span className='inline-flex items-center'><Icon name="rocket" size={16} className='mr-2' /> Start</span>
+                      )
                     }
-                  }}
-                  disabled={loading}
-                  className="w-full btn-primary text-base py-4 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? 'Starting...' : apiData.nextDemo ? '▶ Next Demo' : '🚀 Start Demo'}
-                </button>
+                  </button>
+                </div>
               </div>
             </div>
           )}
