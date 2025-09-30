@@ -8,6 +8,7 @@ import cors from 'cors';
 import { Logger } from './Logger';
 import { bringToFront, readFile, getDemoApiData } from '../utils';
 import { COMMAND } from '@demotime/common';
+import { DemoRunner } from './DemoRunner';
 
 export class DemoApi {
   private static statusBarItem: StatusBarItem;
@@ -63,6 +64,7 @@ export class DemoApi {
     app.get('/', DemoApi.home);
     app.get('/api/demos', DemoApi.demos);
     app.get('/api/next', DemoApi.next);
+    app.get('/api/previous', DemoApi.previous);
     app.get('/api/runById', DemoApi.runById);
     app.post('/api/runById', DemoApi.runById);
 
@@ -132,6 +134,33 @@ export class DemoApi {
     }
 
     await commands.executeCommand(COMMAND.start);
+  }
+
+  /**
+   * Handles the request to trigger the previous demo.
+   *
+   * @param req - The request object.
+   * @param res - The response object.
+   *
+   * @returns A promise that resolves when the demo has been brought to the front and the previous
+   *          demo has been started.
+   */
+  private static async previous(req: Request, res: Response) {
+    const isAllowed = DemoRunner.allowPrevious();
+    if (!isAllowed) {
+      res.status(403).send('Previous demo is not allowed at this time');
+      return;
+    }
+
+    Logger.info('Received trigger for previous demo');
+    res.status(200).send('OK');
+
+    const show = DemoApi.toFront(req);
+    if (show) {
+      await bringToFront();
+    }
+
+    await commands.executeCommand(COMMAND.previous);
   }
 
   /**

@@ -43,6 +43,10 @@
   `openFile` action to control if the editor should focus on the top of the file or not
 - [#268](https://github.com/estruyf/vscode-demo-time/issues/268): Fix the `openInVSCode` property
   which was not working as expected
+- [#271](https://github.com/estruyf/vscode-demo-time/issues/271): Added the new `/api/previous`
+  endpoint to trigger the previous demo step
+- [#272](https://github.com/estruyf/vscode-demo-time/issues/272): Added the Demo Time Remote Control
+  PWA to control your presentation from another device
 
 ## [1.9.0] - 2025-08-25
 

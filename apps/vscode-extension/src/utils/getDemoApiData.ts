@@ -1,6 +1,7 @@
 import { DemoFileProvider } from '../services/DemoFileProvider';
 import { DemoStatusBar } from '../services/DemoStatusBar';
 import { DemoPanel } from '../panels/DemoPanel';
+import { DemoRunner } from '../services';
 
 /**
  * Maps an array of demo objects to an array of objects containing only the `id` and `title` properties.
@@ -26,6 +27,7 @@ export async function getDemoApiData() {
   const nextDemoFull = DemoStatusBar.getNextDemo();
   const nextDemo = nextDemoFull ? { title: nextDemoFull.title, id: nextDemoFull.id } : undefined;
   const demos = DemoPanel.getDemos();
+  const previousEnabled = DemoRunner.allowPrevious();
 
   const crntFile = DemoPanel.crntExecutingDemoFile;
   let currentDemoFile: string | undefined = undefined;
@@ -37,5 +39,6 @@ export async function getDemoApiData() {
     nextDemo,
     demos,
     currentDemoFile,
+    previousEnabled,
   };
 }
