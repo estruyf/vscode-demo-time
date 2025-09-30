@@ -40,6 +40,7 @@ export class PresenterView extends BaseWebview {
   }
 
   protected static async messageListener(message: any) {
+    super.messageListener(message);
     const { command, requestId, payload } = message;
 
     if (!command) {
