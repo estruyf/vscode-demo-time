@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #202736;
+  color: white;
+  min-height: 100vh;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-[#FFD23F] hover:bg-[#FFC61A] text-[#202736] font-bold py-4 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply bg-gray-700/50 hover:bg-gray-600/50 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 border border-gray-600/30;
+  }
+
+  .btn-danger {
+    @apply bg-red-600/80 hover:bg-red-700/80 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200;
+  }
+
+  .card {
+    @apply bg-gray-800/40 backdrop-blur-sm p-6;
+  }
+
+  .input-field {
+    @apply bg-gray-900/50 border border-gray-700/50 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFD23F]/50 focus:border-[#FFD23F]/50 backdrop-blur-sm transition-all duration-200;
+  }
+
+  .status-connected {
+    @apply bg-green-600/80 text-white px-3 py-1 rounded-full text-sm font-medium shadow-md;
+  }
+
+  .status-disconnected {
+    @apply bg-red-600/80 text-white px-3 py-1 rounded-full text-sm font-medium shadow-md;
+  }
+
+  .status-connecting {
+    @apply bg-[#FFD23F] text-[#202736] px-3 py-1 rounded-full text-sm font-bold shadow-md;
+  }
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-down {
+  animation: slide-down 0.3s ease-out;
+}
