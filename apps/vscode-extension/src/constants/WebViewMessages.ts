@@ -13,6 +13,10 @@ export const WebViewMessages = {
     getNotes: 'getNotes',
     // Presenter view
     getTimer: 'getTimer',
+    // New notes messages
+    getCurrentStepNotes: 'getCurrentStepNotes',
+    getStepNotes: 'getStepNotes',
+    getDemoNotes: 'getDemoNotes',
     // Preview
     getFileUri: 'getFileUri',
     parseFileUri: 'parseFileUri',
@@ -60,6 +64,13 @@ export const WebViewMessages = {
     resetCountdown: 'resetCountdown',
     updatePresentationStarted: 'updatePresentationStarted',
     resetNotes: 'resetNotes',
+    // New notes messages
+    updateCurrentStepNotes: 'updateCurrentStepNotes',
+    updateStepNotes: 'updateStepNotes',
+    updateDemoNotes: 'updateDemoNotes',
+    updateCurrentDemo: 'updateCurrentDemo',
+    updateCurrentStepIndex: 'updateCurrentStepIndex',
+    notesError: 'notesError',
     // Preview
     updateFileUri: 'updateFileUri',
     triggerUpdate: 'triggerUpdate',
