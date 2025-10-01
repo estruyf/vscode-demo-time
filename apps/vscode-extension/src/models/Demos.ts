@@ -1,13 +1,8 @@
-import { Action, Version } from '.';
-
-/**
- * Types for different insertion modes
- */
-export type InsertTypingMode =
-  | 'instant'
-  | 'line-by-line'
-  | 'character-by-character'
-  | 'hacker-typer';
+export interface Version {
+  major: number;
+  minor: number;
+  patch: number;
+}
 
 export interface DemoFiles {
   [filePath: string]: DemoFile;
@@ -42,63 +37,84 @@ export interface Icons {
   end: string;
 }
 
-export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
-  action: Action;
-  disabled?: boolean;
-
-  path?: string;
-  content?: string;
-  contentPath?: string;
-  patch?: string;
-
-  position?: string | number;
-  startPlaceholder?: string;
-  endPlaceholder?: string;
-
-  zoom?: number;
-  highlightWholeLine?: boolean;
-
+export interface Step {
   id?: string;
-  timeout?: number;
-  command?: string;
-  message?: string;
-  args?: any;
-  lineInsertionDelay?: number;
-  insertTypingMode?: InsertTypingMode;
-  insertTypingSpeed?: number;
-  setting?: Setting;
-  state?: State;
-  dest?: string;
-  overwrite?: boolean;
-  terminalId?: string;
-  theme?: string;
+  title?: string;
+  description?: string;
+  action: string;
+  notes?: string | StepNotes; // Added support for step-level notes
+  [key: string]: any;
 }
 
-export interface ITerminal {
-  autoExecute?: boolean;
+export interface StepNotes {
+  content?: string;
+  path?: string;
 }
 
-export interface IOpenWebsite {
-  action: Action;
-  url?: string;
-  openInVSCode?: boolean;
+export interface ActionTreeItem {
+  label: string;
+  description?: string;
+  contextValue?: string;
+  tooltip?: string;
+  command?: {
+    command: string;
+    title: string;
+    arguments?: any[];
+  };
+  iconPath?: {
+    light: string;
+    dark: string;
+  };
+  collapsibleState?: number;
+  children?: ActionTreeItem[];
+  resourceUri?: any;
+  demo?: Demo;
+  step?: Step;
+  idx?: number;
+  demoIdx?: number;
+  hasNotes?: boolean;
+}
+
+export interface ExecutingDemoFile {
+  filePath: string;
+  title: string;
+  demoFile: DemoFile;
+}
+
+export interface DemoFileCache {
+  filePath: string;
+  content: string;
+  lastModified: number;
+}
+
+export interface Subscription {
+  dispose(): any;
 }
 
 export interface ISlidePreview {
-  action: Action;
-  path?: string;
+  id: string;
+  slide: string;
+  notes?: string;
 }
 
-export interface IImagePreview extends ISlidePreview {
+export interface IImagePreview {
+  id: string;
+  image: string;
+  alt?: string;
+  notes?: string;
+}
+
+export interface Action {
+  action: string;
+  [key: string]: any;
+}
+
+export interface SlideMetadata {
+  title?: string;
   theme?: string;
-}
-
-export interface Setting {
-  key: string;
-  value: string | number | boolean | object | null;
-}
-
-export interface State {
-  key: string;
-  value: string;
+  layout?: string;
+  background?: string;
+  transition?: string;
+  notes?: string;
+  [key: string]: any;
 }
