@@ -57,8 +57,15 @@ export const NotesView: React.FunctionComponent<INotesViewProps> = ({
       setLoading(true);
       setError(null);
       
-      // Request notes for current step
-      messageHandler.send(WebViewMessages.toVscode.requestCurrentStepNotes, {});
+      // Request notes for current step using existing message structure
+      messageHandler.request(WebViewMessages.toVscode.getCurrentStepNotes, {}).then((response: any) => {
+        setNotes(response);
+        setLoading(false);
+        setError(null);
+      }).catch((err: any) => {
+        setError(err?.message || 'Failed to load notes');
+        setLoading(false);
+      });
     } else {
       setNotes(null);
       setLoading(false);
