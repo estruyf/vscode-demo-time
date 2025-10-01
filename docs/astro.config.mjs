@@ -146,6 +146,7 @@ export default defineConfig({
           label: 'Other features',
           collapsed: true,
           items: [
+            { label: 'Overview Dashboard', slug: 'features/overview-dashboard' },
             { label: 'Presenter view', slug: 'features/presenter-view' },
             { label: 'Using notes', slug: 'features/using-notes' },
             { label: 'URI handler', slug: 'features/uri-handler' },
