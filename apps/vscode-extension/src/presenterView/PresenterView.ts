@@ -154,16 +154,16 @@ export class PresenterView {
         PresenterView.postRequestMessage(command, requestId, undefined);
       } else if (command === WebViewMessages.toVscode.openFile && payload) {
         await openFile(payload);
-      } 
+      }
       // New notes-related message handlers
-      else if (command === WebViewMessages.toVscode.requestCurrentStepNotes) {
+      else if (command === WebViewMessages.toVscode.getCurrentStepNotes) {
         const currentNotes = await NotesService.getCurrentStepNotes();
         PresenterView.postRequestMessage(
           WebViewMessages.toWebview.updateCurrentStepNotes,
           requestId,
           currentNotes
         );
-      } else if (command === WebViewMessages.toVscode.requestStepNotes) {
+      } else if (command === WebViewMessages.toVscode.getStepNotes) {
         if (payload?.demo && typeof payload?.stepIndex === 'number') {
           const stepNotes = await NotesService.getStepNotes(payload.demo, payload.stepIndex);
           PresenterView.postRequestMessage(
@@ -172,22 +172,13 @@ export class PresenterView {
             { stepIndex: payload.stepIndex, notes: stepNotes }
           );
         }
-      } else if (command === WebViewMessages.toVscode.requestDemoNotes) {
+      } else if (command === WebViewMessages.toVscode.getDemoNotes) {
         if (payload?.demoId) {
           const demoNotes = await NotesService.getDemoNotes(payload.demoId);
           PresenterView.postRequestMessage(
             WebViewMessages.toWebview.updateDemoNotes,
             requestId,
             { demoId: payload.demoId, notes: demoNotes }
-          );
-        }
-      } else if (command === WebViewMessages.toVscode.requestNotesPreview) {
-        if (payload?.notes && typeof payload?.maxLines === 'number') {
-          const preview = NotesService.getNotesPreview(payload.notes, payload.maxLines);
-          PresenterView.postRequestMessage(
-            WebViewMessages.toWebview.updateNotesPreview,
-            requestId,
-            preview
           );
         }
       }
