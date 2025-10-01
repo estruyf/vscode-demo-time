@@ -1,17 +1,6 @@
 import { PresenterView } from '../presenterView/PresenterView';
-import { COMMAND, Config, ContextKeys, StateKeys, WebViewMessages } from '../constants';
-import {
-  Action,
-  Demo,
-  DemoFileCache,
-  DemoFile,
-  IImagePreview,
-  ISlidePreview,
-  Step,
-  Subscription,
-  Version,
-} from '../models';
-import { Extension } from './Extension';
+import { ContextKeys, StateKeys } from '../constants';
+import { Subscription } from '../models';
 import {
   Position,
   Range,
@@ -24,7 +13,6 @@ import {
   window,
   workspace,
 } from 'vscode';
-import { DemoFileProvider } from './DemoFileProvider';
 import { DemoPanel } from '../panels/DemoPanel';
 import {
   getVariables,
@@ -46,21 +34,42 @@ import {
   saveFiles,
 } from '../utils';
 import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
-import { DecoratorService } from './DecoratorService';
-import { Notifications } from './Notifications';
-import { parse as jsonParse } from 'jsonc-parser';
-import { Logger } from './Logger';
-import { NotesService } from './NotesService';
-import { ScriptExecutor } from './ScriptExecutor';
-import { StateManager } from './StateManager';
+import {
+  DecoratorService,
+  Notifications,
+  Logger,
+  NotesService,
+  ScriptExecutor,
+  StateManager,
+  DemoStatusBar,
+  ExternalAppsService,
+  TerminalService,
+  ChatActionsService,
+  TextTypingService,
+  FileActionService,
+  InteractionService,
+  DemoFileProvider,
+  Extension,
+  EngageTimeService,
+} from './';
 import { Preview } from '../preview/Preview';
-import { DemoStatusBar } from './DemoStatusBar';
-import { ExternalAppsService } from './ExternalAppsService';
-import { TerminalService } from './TerminalService';
-import { ChatActionsService } from './ChatActionsService';
-import { TextTypingService } from './TextTypingService';
-import { FileActionService } from './FileActionService';
-import { InteractionService } from './InteractionService';
+import { parse as jsonParse } from 'jsonc-parser';
+import {
+  COMMAND,
+  WebViewMessages,
+  Config,
+  Action,
+  Demo,
+  DemoFileCache,
+  DemoConfig,
+  IImagePreview,
+  ISlidePreview,
+  Step,
+  Version,
+} from '@demotime/common';
+import { InputService } from './InputService';
+import { backupVSCodeSettings } from '../utils/backupVSCodeSettings';
+import { restoreVSCodeSettings } from '../utils/restoreVSCodeSettings';
 
 const DEFAULT_START_VALUE = {
   filePath: '',
@@ -75,6 +84,7 @@ export class DemoRunner {
   private static crntZoom: number | undefined;
   private static crntHighlightWholeLine: boolean | undefined;
   public static currentDemo: Demo | undefined;
+  private static currentStepIdx: number = 0;
 
   /**
    * Registers the commands for the demo runner.
@@ -110,6 +120,38 @@ export class DemoRunner {
     });
 
     DemoRunner.allowPrevious();
+  }
+
+  /**
+   * Get the current demo being executed
+   * @returns Demo | undefined
+   */
+  public static getCurrentDemo(): Demo | undefined {
+    return DemoRunner.currentDemo;
+  }
+
+  /**
+   * Get the current step index
+   * @returns number
+   */
+  public static getCurrentStepIndex(): number {
+    return DemoRunner.currentStepIdx;
+  }
+
+  /**
+   * Update presenter view with current demo state
+   */
+  private static updatePresenterViewState(): void {
+    if (PresenterView.isOpen) {
+      PresenterView.postMessage(
+        WebViewMessages.toWebview.updateCurrentDemo,
+        DemoRunner.currentDemo
+      );
+      PresenterView.postMessage(
+        WebViewMessages.toWebview.updateCurrentStepIndex,
+        DemoRunner.currentStepIdx
+      );
+    }
   }
 
   /**
@@ -238,9 +280,13 @@ export class DemoRunner {
     PresenterView.postMessage(WebViewMessages.toWebview.updateRunningDemos, resetContent);
     PresenterView.postMessage(WebViewMessages.toWebview.resetNotes, undefined);
     DemoRunner.currentDemo = undefined;
+    DemoRunner.currentStepIdx = 0;
     DemoRunner.togglePresentationMode(false);
     DemoPanel.update();
     Preview.close();
+    
+    // Update presenter view state after reset
+    DemoRunner.updatePresenterViewState();
   }
 
   /**
@@ -249,7 +295,7 @@ export class DemoRunner {
    * @returns {Promise<void>} A promise that resolves when the demo runner has started.
    */
   private static async start(
-    item: ActionTreeItem | { demoFilePath: string; description: string },
+    item?: ActionTreeItem | { demoFilePath: string; description: string },
   ): Promise<void> {
     if (Preview.isListening()) {
       return;
@@ -335,8 +381,12 @@ export class DemoRunner {
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     DemoRunner.currentDemo = nextDemo;
+    DemoRunner.currentStepIdx = 0; // Reset step index for new demo
     await DemoRunner.runSteps(demoSteps);
     NotesService.showNotes(nextDemo);
+    
+    // Update presenter view state
+    DemoRunner.updatePresenterViewState();
   }
 
   /**
@@ -383,7 +433,7 @@ export class DemoRunner {
         filePath,
       });
       if (!previousFile) {
-        Notifications.info('No previous demo steps found');
+        Notifications.infoWithProgress('No previous demo steps found');
         return;
       }
 
@@ -403,8 +453,12 @@ export class DemoRunner {
 
       await DemoRunner.setExecutedDemoFile(executingFile);
       DemoRunner.currentDemo = lastDemo;
+      DemoRunner.currentStepIdx = lastDemo.steps ? lastDemo.steps.length - 1 : 0;
       await DemoRunner.runSteps(lastDemo.steps);
       NotesService.showNotes(lastDemo);
+      
+      // Update presenter view state
+      DemoRunner.updatePresenterViewState();
       return;
     }
 
@@ -425,8 +479,12 @@ export class DemoRunner {
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     DemoRunner.currentDemo = previousDemo;
+    DemoRunner.currentStepIdx = demoSteps.length - 1;
     await DemoRunner.runSteps(demoSteps);
     NotesService.showNotes(previousDemo);
+    
+    // Update presenter view state
+    DemoRunner.updatePresenterViewState();
   }
 
   /**
@@ -467,8 +525,12 @@ export class DemoRunner {
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     DemoRunner.currentDemo = demoToRun.demo;
+    DemoRunner.currentStepIdx = 0;
     await DemoRunner.runSteps(demoToRun.demo.steps);
     NotesService.showNotes(demoToRun.demo);
+    
+    // Update presenter view state
+    DemoRunner.updatePresenterViewState();
   }
 
   private static async runById(...args: string[]): Promise<void> {
@@ -538,15 +600,23 @@ export class DemoRunner {
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     DemoRunner.currentDemo = demoToRun;
+    DemoRunner.currentStepIdx = 0;
     await DemoRunner.runSteps(demoToRun.steps);
     NotesService.showNotes(demoToRun);
+    
+    // Update presenter view state
+    DemoRunner.updatePresenterViewState();
   }
 
   /**
    * Runs the given demo steps.
    * @param demoSteps An array of Step objects representing the steps to be executed.
    */
-  public static async runSteps(demoSteps: Step[], needsUpdate: boolean = true): Promise<void> {
+  public static async runSteps(
+    demoSteps: Step[],
+    needsUpdate: boolean = true,
+    crntFilePath: string | undefined = undefined,
+  ): Promise<void> {
     // Unselect the current selection
     DecoratorService.unselect();
 
@@ -596,8 +666,13 @@ export class DemoRunner {
     }
 
     // Loop over all the demo steps and execute them.
-    for (let step of stepsToExecute) {
-      await DemoRunner.runStep(step, variables, workspaceFolder);
+    for (let i = 0; i < stepsToExecute.length; i++) {
+      const step = stepsToExecute[i];
+      DemoRunner.currentStepIdx = i;
+      await DemoRunner.runStep(step, variables, workspaceFolder, crntFilePath);
+      
+      // Update presenter view with current step index
+      DemoRunner.updatePresenterViewState();
     }
 
     if (needsUpdate) {
@@ -609,6 +684,7 @@ export class DemoRunner {
     step: Step,
     variables: { [key: string]: any } | undefined,
     workspaceFolder: WorkspaceFolder,
+    crntFilePath: string | undefined,
   ): Promise<void> {
     if (!step.action) {
       return;
@@ -631,22 +707,22 @@ export class DemoRunner {
     }
 
     // GitHub Copilot actions
-    if (step.action === Action.openChat) {
+    if (step.action === Action.OpenChat) {
       await ChatActionsService.openChat();
       return;
-    } else if (step.action === Action.newChat) {
+    } else if (step.action === Action.NewChat) {
       await ChatActionsService.newChat();
       return;
-    } else if (step.action === Action.askChat) {
+    } else if (step.action === Action.AskChat) {
       await ChatActionsService.askChat(step);
       return;
-    } else if (step.action === Action.editChat) {
+    } else if (step.action === Action.EditChat) {
       await ChatActionsService.editChat(step);
       return;
-    } else if (step.action === Action.agentChat) {
+    } else if (step.action === Action.AgentChat) {
       await ChatActionsService.agentChat(step);
       return;
-    } else if (step.action === Action.closeChat) {
+    } else if (step.action === Action.CloseChat) {
       await ChatActionsService.closeChat();
       return;
     }
@@ -671,17 +747,19 @@ export class DemoRunner {
         return;
       }
       return;
+    } else if (step.action === Action.Pause) {
+      await InputService.pause();
     }
 
     // Open external applications
-    if (step.action === Action.openPowerPoint) {
+    if (step.action === Action.OpenPowerPoint) {
       try {
         await ExternalAppsService.openPowerPoint();
       } catch (error) {
         Notifications.error(`Failed to open PowerPoint: ${(error as Error).message}`);
       }
       return;
-    } else if (step.action === Action.openKeynote) {
+    } else if (step.action === Action.OpenKeynote) {
       try {
         await ExternalAppsService.openKeynote();
       } catch (error) {
@@ -691,6 +769,16 @@ export class DemoRunner {
     }
 
     // Update settings
+    if (step.action === Action.BackupSettings) {
+      await backupVSCodeSettings();
+      return;
+    }
+
+    if (step.action === Action.RestoreSettings) {
+      await restoreVSCodeSettings();
+      return;
+    }
+
     if (step.action === Action.SetSetting) {
       if (!step.setting || !step.setting.key) {
         Notifications.error('No setting key or value specified');
@@ -772,7 +860,8 @@ export class DemoRunner {
         return;
       }
 
-      if (step.openInVSCode) {
+      // By default open in the Simple Browser, unless specified otherwise
+      if (typeof step.openInVSCode === 'undefined' || step.openInVSCode) {
         await commands.executeCommand('simpleBrowser.show', Uri.parse(step.url));
       } else {
         await commands.executeCommand('vscode.open', Uri.parse(step.url));
@@ -853,6 +942,46 @@ export class DemoRunner {
       return;
     }
 
+    if (step.action === Action.PressTab) {
+      await InteractionService.pressTab();
+      return;
+    }
+
+    if (step.action === Action.PressArrowLeft) {
+      await InteractionService.pressArrowLeft();
+      return;
+    }
+
+    if (step.action === Action.PressArrowRight) {
+      await InteractionService.pressArrowRight();
+      return;
+    }
+
+    if (step.action === Action.PressArrowUp) {
+      await InteractionService.pressArrowUp();
+      return;
+    }
+
+    if (step.action === Action.PressArrowDown) {
+      await InteractionService.pressArrowDown();
+      return;
+    }
+
+    if (step.action === Action.PressEscape) {
+      await InteractionService.pressEscape();
+      return;
+    }
+
+    if (step.action === Action.PressBackspace) {
+      await InteractionService.pressBackspace();
+      return;
+    }
+
+    if (step.action === Action.PressDelete) {
+      await InteractionService.pressDelete();
+      return;
+    }
+
     if (step.action === Action.CopyToClipboard) {
       await InteractionService.copyToClipboard({
         content: step.content,
@@ -874,6 +1003,43 @@ export class DemoRunner {
     }
 
     /**
+     * EngageTime actions
+     */
+    if (step.action.includes('EngageTime')) {
+      const crntDemoConfig = crntFilePath || (await DemoRunner.getExecutedDemoFile()).filePath;
+      const crntDemoFile = await DemoFileProvider.getFile(Uri.file(crntDemoConfig));
+      if (step.action === Action.StartEngageTimeSession) {
+        await EngageTimeService.startSession(crntDemoFile?.engageTime?.sessionId);
+        return;
+      }
+
+      if (step.action === Action.CloseEngageTimeSession) {
+        await EngageTimeService.stopSession(crntDemoFile?.engageTime?.sessionId);
+        return;
+      }
+
+      if (step.action === Action.StartEngageTimePoll) {
+        await EngageTimeService.startPoll(step.pollId);
+        return;
+      }
+
+      if (step.action === Action.CloseEngageTimePoll) {
+        await EngageTimeService.stopPoll(step.pollId);
+        return;
+      }
+
+      if (step.action === Action.ShowEngageTimeSession) {
+        await EngageTimeService.showSession(crntDemoFile?.engageTime?.sessionId);
+        return;
+      }
+
+      if (step.action === Action.ShowEngageTimePoll) {
+        await EngageTimeService.showPoll(step.pollId);
+        return;
+      }
+    }
+
+    /**
      * All the following actions require a file path.
      */
     if (!fileUri) {
@@ -889,12 +1055,12 @@ export class DemoRunner {
     if (step.action === Action.OpenSlide) {
       const { path } = step as ISlidePreview;
       Preview.setCurrentSlideIndex(0); // Reset the slide index
-      Preview.show(path as string);
+      Preview.show(path as string, undefined, step.slide);
       return;
     }
 
     if (step.action === Action.Open) {
-      FileActionService.open(fileUri);
+      FileActionService.open(fileUri, typeof step.focusTop === 'undefined' || step.focusTop);
       return;
     }
 
@@ -1014,6 +1180,7 @@ export class DemoRunner {
 
     if (step.action === Action.Delete) {
       await TextTypingService.delete(editor, fileUri, crntRange, crntPosition);
+      return;
     }
   }
 
@@ -1146,7 +1313,7 @@ export class DemoRunner {
   ): Promise<
     | {
         filePath: string;
-        demo: DemoFile;
+        demo: DemoConfig;
       }
     | undefined
   > {
