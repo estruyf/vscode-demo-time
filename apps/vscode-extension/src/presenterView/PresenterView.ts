@@ -83,76 +83,123 @@ export class PresenterView {
       return;
     }
 
-    if (command === WebViewMessages.toVscode.getSetting && requestId) {
-      const setting = Extension.getInstance().getSetting(payload);
-      PresenterView.postRequestMessage(command, requestId, setting);
-    } else if (command === WebViewMessages.toVscode.getTimer && requestId) {
-      const timer = await DemoStatusBar.getTimer();
-      PresenterView.postRequestMessage(command, requestId, timer);
-    } else if (command === WebViewMessages.toVscode.getDemoFiles) {
-      const demoFiles = await DemoFileProvider.getFiles();
-      PresenterView.postRequestMessage(command, requestId, demoFiles);
-    } else if (command === WebViewMessages.toVscode.getRunningDemos) {
-      const executingFile = await DemoRunner.getExecutedDemoFile();
-      PresenterView.postRequestMessage(command, requestId, executingFile);
-    } else if (command === WebViewMessages.toVscode.getCurrentDemo) {
-      PresenterView.postRequestMessage(command, requestId, DemoRunner.currentDemo);
-    } else if (command === WebViewMessages.toVscode.getNextDemo) {
-      const nextDemo = DemoStatusBar.getNextDemo();
-      PresenterView.postRequestMessage(command, requestId, nextDemo);
-    } else if (command === WebViewMessages.toVscode.runCommand && payload) {
-      const { command: cmd, args } = payload;
-      if (!cmd) {
-        return;
-      }
-
-      if ((cmd as string).startsWith(EXTENSION_NAME)) {
-        await commands.executeCommand(`workbench.action.focusActivityBar`);
-      }
-
-      if (args) {
-        commands.executeCommand(cmd, args);
-      } else {
-        commands.executeCommand(cmd);
-      }
-    } else if (command === WebViewMessages.toVscode.getCountdownStarted) {
-      const startTime = DemoStatusBar.getCountdownStarted();
-      PresenterView.postRequestMessage(command, requestId, startTime);
-    } else if (command === WebViewMessages.toVscode.getPresentationStarted) {
-      const isPresentationMode = DemoRunner.getIsPresentationMode();
-      PresenterView.postRequestMessage(command, requestId, isPresentationMode);
-    } else if (command === WebViewMessages.toVscode.detach) {
-      const panel = PresenterView.webview;
-      if (panel?.viewColumn === ViewColumn.One && !PresenterView.isDetached) {
-        PresenterView.isDetached = true;
-        commands.executeCommand('workbench.action.moveEditorToNewWindow');
-      }
-    } else if (command === WebViewMessages.toVscode.openNotes && payload) {
-      await commands.executeCommand(`workbench.action.focusActivityBar`);
-
-      const { path } = payload;
-      if (path) {
-        NotesService.openNotes(path);
-      }
-    } else if (command === WebViewMessages.toVscode.getNotes && payload) {
-      const { path } = payload;
-      if (path) {
-        const workspaceFolder = Extension.getInstance().workspaceFolder;
-        const version = DemoRunner.getCurrentVersion();
-        const notesPath = workspaceFolder
-          ? version === 2
-            ? Uri.joinPath(workspaceFolder.uri, path)
-            : Uri.joinPath(workspaceFolder.uri, General.demoFolder, path)
-          : undefined;
-        if (notesPath) {
-          const notes = await readFile(notesPath);
-          PresenterView.postRequestMessage(command, requestId, notes);
+    try {
+      if (command === WebViewMessages.toVscode.getSetting && requestId) {
+        const setting = Extension.getInstance().getSetting(payload);
+        PresenterView.postRequestMessage(command, requestId, setting);
+      } else if (command === WebViewMessages.toVscode.getTimer && requestId) {
+        const timer = await DemoStatusBar.getTimer();
+        PresenterView.postRequestMessage(command, requestId, timer);
+      } else if (command === WebViewMessages.toVscode.getDemoFiles) {
+        const demoFiles = await DemoFileProvider.getFiles();
+        PresenterView.postRequestMessage(command, requestId, demoFiles);
+      } else if (command === WebViewMessages.toVscode.getRunningDemos) {
+        const executingFile = await DemoRunner.getExecutedDemoFile();
+        PresenterView.postRequestMessage(command, requestId, executingFile);
+      } else if (command === WebViewMessages.toVscode.getCurrentDemo) {
+        PresenterView.postRequestMessage(command, requestId, DemoRunner.currentDemo);
+      } else if (command === WebViewMessages.toVscode.getNextDemo) {
+        const nextDemo = DemoStatusBar.getNextDemo();
+        PresenterView.postRequestMessage(command, requestId, nextDemo);
+      } else if (command === WebViewMessages.toVscode.runCommand && payload) {
+        const { command: cmd, args } = payload;
+        if (!cmd) {
           return;
         }
+
+        if ((cmd as string).startsWith(EXTENSION_NAME)) {
+          await commands.executeCommand(`workbench.action.focusActivityBar`);
+        }
+
+        if (args) {
+          commands.executeCommand(cmd, args);
+        } else {
+          commands.executeCommand(cmd);
+        }
+      } else if (command === WebViewMessages.toVscode.getCountdownStarted) {
+        const startTime = DemoStatusBar.getCountdownStarted();
+        PresenterView.postRequestMessage(command, requestId, startTime);
+      } else if (command === WebViewMessages.toVscode.getPresentationStarted) {
+        const isPresentationMode = DemoRunner.getIsPresentationMode();
+        PresenterView.postRequestMessage(command, requestId, isPresentationMode);
+      } else if (command === WebViewMessages.toVscode.detach) {
+        const panel = PresenterView.webview;
+        if (panel?.viewColumn === ViewColumn.One && !PresenterView.isDetached) {
+          PresenterView.isDetached = true;
+          commands.executeCommand('workbench.action.moveEditorToNewWindow');
+        }
+      } else if (command === WebViewMessages.toVscode.openNotes && payload) {
+        await commands.executeCommand(`workbench.action.focusActivityBar`);
+
+        const { path } = payload;
+        if (path) {
+          NotesService.openNotes(path);
+        }
+      } else if (command === WebViewMessages.toVscode.getNotes && payload) {
+        const { path } = payload;
+        if (path) {
+          const workspaceFolder = Extension.getInstance().workspaceFolder;
+          const version = DemoRunner.getCurrentVersion();
+          const notesPath = workspaceFolder
+            ? version === 2
+              ? Uri.joinPath(workspaceFolder.uri, path)
+              : Uri.joinPath(workspaceFolder.uri, General.demoFolder, path)
+            : undefined;
+          if (notesPath) {
+            const notes = await readFile(notesPath);
+            PresenterView.postRequestMessage(command, requestId, notes);
+            return;
+          }
+        }
+        PresenterView.postRequestMessage(command, requestId, undefined);
+      } else if (command === WebViewMessages.toVscode.openFile && payload) {
+        await openFile(payload);
+      } 
+      // New notes-related message handlers
+      else if (command === WebViewMessages.toVscode.requestCurrentStepNotes) {
+        const currentNotes = await NotesService.getCurrentStepNotes();
+        PresenterView.postRequestMessage(
+          WebViewMessages.toWebview.updateCurrentStepNotes,
+          requestId,
+          currentNotes
+        );
+      } else if (command === WebViewMessages.toVscode.requestStepNotes) {
+        if (payload?.demo && typeof payload?.stepIndex === 'number') {
+          const stepNotes = await NotesService.getStepNotes(payload.demo, payload.stepIndex);
+          PresenterView.postRequestMessage(
+            WebViewMessages.toWebview.updateStepNotes,
+            requestId,
+            { stepIndex: payload.stepIndex, notes: stepNotes }
+          );
+        }
+      } else if (command === WebViewMessages.toVscode.requestDemoNotes) {
+        if (payload?.demoId) {
+          const demoNotes = await NotesService.getDemoNotes(payload.demoId);
+          PresenterView.postRequestMessage(
+            WebViewMessages.toWebview.updateDemoNotes,
+            requestId,
+            { demoId: payload.demoId, notes: demoNotes }
+          );
+        }
+      } else if (command === WebViewMessages.toVscode.requestNotesPreview) {
+        if (payload?.notes && typeof payload?.maxLines === 'number') {
+          const preview = NotesService.getNotesPreview(payload.notes, payload.maxLines);
+          PresenterView.postRequestMessage(
+            WebViewMessages.toWebview.updateNotesPreview,
+            requestId,
+            preview
+          );
+        }
       }
-      PresenterView.postRequestMessage(command, requestId, undefined);
-    } else if (command === WebViewMessages.toVscode.openFile && payload) {
-      await openFile(payload);
+    } catch (error) {
+      console.error('Error handling presenter view message:', error);
+      if (requestId) {
+        PresenterView.postRequestMessage(
+          WebViewMessages.toWebview.notesError,
+          requestId,
+          { error: error instanceof Error ? error.message : 'Unknown error' }
+        );
+      }
     }
   }
 
