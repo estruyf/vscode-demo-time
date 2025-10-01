@@ -1,7 +1,7 @@
 ---
 title: Preview actions
 description: Preview actions are used to preview files like Markdown and images in the editor.
-lastmod: 2025-07-04T15:07:02.842Z
+lastmod: 2025-10-01T12:26:30.393Z
 ---
 
 import { Code, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
@@ -26,7 +26,7 @@ To show slides with Demo Time, you can make use of the `openSlide` action.
 {
   "action": "openSlide",
   "path": "<relative path to the file>",
-  "slide": "<slide number>"
+  "slide": "<slide number (1-based) (optional)>"
 }
 ```
 
@@ -36,7 +36,7 @@ To show slides with Demo Time, you can make use of the `openSlide` action.
 ```yaml
 action: openSlide
 path: <relative path to the file>
-slide: <slide number>
+slide: <slide number (1-based) (optional)>
 ```
 
 </TabItem>
