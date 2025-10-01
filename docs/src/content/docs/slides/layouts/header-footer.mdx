@@ -1,6 +1,6 @@
 ---
 title: Header and Footer Support
-lastmod: 2025-07-04T15:10:34.636Z
+lastmod: 2025-10-01T11:30:21.355Z
 description: Learn how to add and customize headers and footers in your slides.
 ---
 
@@ -46,6 +46,24 @@ email: "jane@example.com"
 date: "2025-06-16"
 description: "A slide demonstrating header and footer variables."
 ---
+```
+
+### Slide number placeholders
+
+Demo Time provides two Handlebars placeholders you can use in header and footer templates to show the current slide number and the total number of slides in the grouped presentation:
+
+- `{{crntSlideIdx}}` — the current slide index (1-based) within the grouped slides.
+- `{{totalSlides}}` — the total number of slides in the current group.
+
+These placeholders work in both global templates (set via `demoTime.slideHeaderTemplate` / `demoTime.slideFooterTemplate`) and slide-level `header`/`footer` front matter. They reflect numbering after slides are grouped, so counts are across the entire group rather than just the current file.
+
+Example `footer.html` using the placeholders:
+
+```html title="footer.html"
+<footer class="slide-footer">
+  <span>Slide {{crntSlideIdx}} of {{totalSlides}}</span>
+  <span class="muted"> | {{date}}</span>
+</footer>
 ```
 
 <Aside type="tip">

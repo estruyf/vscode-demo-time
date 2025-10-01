@@ -39,6 +39,33 @@ path: <relative path to the file>
 </TabItem>
 </Tabs>
 
+### Optional: `focusTop`
+
+By default Demo Time will try to focus the top of the editor when opening a file. Use the optional boolean `focusTop` to explicitly control this behaviour. When set to `true` the editor will focus the top of the file; when set to `false` it will preserve the editor's default reveal behaviour.
+
+<Tabs syncKey="file-open-action-focusTop">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "open",
+  "path": "README.md",
+  "focusTop": true
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: open
+path: README.md
+focusTop: true
+```
+
+</TabItem>
+</Tabs>
+
 ## Create file
 
 To create a new file in the editor, use the `create` action. The `create` action takes a file `path` as an argument and optionally a `content` or `contentPath` argument.

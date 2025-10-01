@@ -1,0 +1,41 @@
+---
+title: Overview Dashboard
+description: Learn more about the overview dashboard in Demo Time.
+lastmod: 2025-10-01T12:15:20.212Z
+---
+
+import { Image } from 'astro:assets';
+import overviewImg from "../../../assets/docs/presentation-overview.webp";
+
+Demo Time includes an Overview dashboard that gives you a high-level view of your demos, slides, and presentation status. The Overview is useful for quickly navigating between demos, jumping to specific slides, and monitoring the current presentation when you're presenting or rehearsing.
+
+<Image class="mx-auto" src={overviewImg} alt="Overview dashboard" />
+
+## Opening the Overview
+
+Open the Overview with the command `Demo Time: Overview` from the Command Palette (Cmd/Ctrl+Shift+P). The dashboard opens in a new panel and shows all demos defined in your demo file along with their status and metadata.
+
+## What the Overview shows
+
+- Demo list: A table or grid of demos with title, description, and status (enabled/disabled).
+- Slide counts: The number of slides per demo and the total slides in the current group.
+- Current session: If a presentation is active, the overview highlights the currently playing demo and slide.
+- Quick actions: Start/stop a demo, jump to a specific slide, open demo settings, or run a demo by ID.
+
+## Actions and shortcuts
+
+From the Overview you can:
+
+- Start a demo or open the demo presenter view.
+- Run a demo step-by-step or jump directly to a slide.
+- Open the demo configuration editor for quick edits.
+
+These actions are exposed as toolbar buttons inside the dashboard and can also be triggered via the demo actions and automation steps described elsewhere in the docs.
+
+## When to use the Overview
+
+- Before a talk: verify demos, order, and slide counts.
+- During rehearsal: quickly jump between demos and slides to rehearse specific parts.
+- Live presenting: monitor the current demo and use quick actions to recover from mistakes or skip ahead.
+
+

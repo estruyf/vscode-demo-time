@@ -1,5 +1,53 @@
 # Change Log
 
+## [1.10.0] - 2025-10-01
+
+- [#201](https://github.com/estruyf/vscode-demo-time/issues/201): Project is moved to a new monorepo
+  structure with Nx
+- [#227](https://github.com/estruyf/vscode-demo-time/issues/227): Open a slide at a specific
+  location
+- [#229](https://github.com/estruyf/vscode-demo-time/issues/229): Integration with
+  [EngageTime](https://engagetime.live)
+- [#234](https://github.com/estruyf/vscode-demo-time/issues/234): Fix for negative values in the
+  insert typing speed and improved the labels
+- [#235](https://github.com/estruyf/vscode-demo-time/issues/235): Added the `pause` action to pause
+  the demo and wait until the `Demo Time: Continue Demo` command is triggered
+- [#236](https://github.com/estruyf/vscode-demo-time/issues/236): Visual improvements for the Config
+  Editor
+- [#239](https://github.com/estruyf/vscode-demo-time/issues/239): New overview dashboard which can
+  be opened by using the `Demo Time: Overview` command
+- [#240](https://github.com/estruyf/vscode-demo-time/issues/240): Every GitHub Copilot chat action
+  now opens the chat view by default
+- [#242](https://github.com/estruyf/vscode-demo-time/issues/242): Fix the content path in the
+  `Demo Time: Create patch for current file` command execution
+- [#244](https://github.com/estruyf/vscode-demo-time/issues/244): Moved the EngageTime session ID to
+  the demo file level
+- [#245](https://github.com/estruyf/vscode-demo-time/issues/245): Fix right panel height
+- [#246](https://github.com/estruyf/vscode-demo-time/issues/246): Added support for relative URLs to
+  images in CSS themes
+- [#249](https://github.com/estruyf/vscode-demo-time/issues/249): Fix reveal of slides after
+  navigating to another file
+- [#253](https://github.com/estruyf/vscode-demo-time/issues/253): Added support for other types of
+  keyboard keys: `tab`, `arrowLeft`, `arrowRight`, `arrowUp`, `arrowDown`, `escape`, `backspace`,
+  and `delete`
+- [#255](https://github.com/estruyf/vscode-demo-time/issues/255): Optimize the normalized source
+  path handling in the custom template conversion
+- [#256](https://github.com/estruyf/vscode-demo-time/issues/256): Added `{{crntSlideIdx}}` and
+  `{{totalSlides}}` variables to the slide header and footer templates
+- [#260](https://github.com/estruyf/vscode-demo-time/issues/260): Added dark mode support for the
+  config editor, settings editor, and overview dashboard
+- [#261](https://github.com/estruyf/vscode-demo-time/issues/261): Added a message for the PowerPoint
+  addin that it can be shown outside of the visible slide container
+- [#263](https://github.com/estruyf/vscode-demo-time/issues/263): Show icons in the icon picker
+- [#264](https://github.com/estruyf/vscode-demo-time/issues/264): New `focusTop` property for the
+  `openFile` action to control if the editor should focus on the top of the file or not
+- [#268](https://github.com/estruyf/vscode-demo-time/issues/268): Fix the `openInVSCode` property
+  which was not working as expected
+- [#271](https://github.com/estruyf/vscode-demo-time/issues/271): Added the new `/api/previous`
+  endpoint to trigger the previous demo step
+- [#272](https://github.com/estruyf/vscode-demo-time/issues/272): Added the Demo Time Remote Control
+  PWA to control your presentation from another device
+
 ## [1.9.0] - 2025-08-25
 
 - [#219](https://github.com/estruyf/vscode-demo-time/issues/219): Added a GUI for editing your demo

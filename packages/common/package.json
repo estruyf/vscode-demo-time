@@ -1,11 +1,36 @@
 {
   "name": "@demotime/common",
   "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {},
+  "main": "./out/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w"
+  },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "description": "",
-  "devDependencies": {}
+  "dependencies": {
+    "handlebars": "^4.7.8",
+    "js-yaml": "^4.1.0",
+    "mdast-util-to-hast": "^13.2.0",
+    "react": "^18.3.1",
+    "rehype-raw": "^7.0.0",
+    "rehype-react": "^8.0.0",
+    "remark-frontmatter": "^5.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.2",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.0.0",
+    "uuid": "^11.1.0",
+    "vfile-matter": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/react": "^18.3.5",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.9.2"
+  }
 }

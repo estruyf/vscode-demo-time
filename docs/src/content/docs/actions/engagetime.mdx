@@ -1,0 +1,216 @@
+---
+title: EngageTime actions
+description: Actions for controlling EngageTime sessions
+lastmod: 2025-10-01T12:13:45.817Z
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+
+import engageTimeSessionIdImg from "../../../assets/docs/engagetime-sessionid.webp";
+
+The EngageTime actions allow you to control the behavior of the EngageTime integration during your demos. You can use these actions to start/close an EngageTime session or poll for responses.
+
+## What is EngageTime?
+
+[EngageTime](https://engagetime.live) is a audience engagement service that lets presenters run live polls, Q&A, and sessions that attendees can join with a session code. Demo Time integrates with EngageTime so you can start or control sessions directly from your demo scripts.
+
+## Prerequisites
+
+To use the EngageTime actions, you need to have an EngageTime account and API key. 
+
+1. Go to [engagetime.live](https://engagetime.live) and sign up for an account if you don't have one.
+2. Obtain your API key from the [API Management](https://engagetime.live/speaker/api-keys) section in your account settings.
+3. Execute the `Demo Time: Settings` command in VS Code.
+4. Enter the API key in the `EngageTime API Key` field and save the settings.
+
+## Available actions
+
+The following EngageTime actions are available:
+
+- `startEngageTimeSession` — Start an EngageTime session.
+- `closeEngageTimeSession` — Close an active EngageTime session. 
+- `showEngageTimeSession` — Show the session link and QR.
+- `startEngageTimePoll` — Start a poll within an EngageTime session. Requires `pollId`.
+- `closeEngageTimePoll` — Close a running poll. Requires `pollId`.
+- `showEngageTimePoll` — Show poll results. Requires `pollId`.
+
+All these actions require you to define the `sessionId` of the EngageTime session you want to control. You define the `sessionId` at the root of your demo file:
+
+<Tabs>
+<TabItem label="Config Editor">
+
+You can set the `sessionId` in the demo configuration under the `Demo File Settings` section:
+
+<Image class="mx-auto" src={engageTimeSessionIdImg} alt="EngageTime Session ID configuration" width="400" />
+
+</TabItem>
+<TabItem label="Code Approach">
+
+You can set the `sessionId` at the root of your demo file:
+
+```yaml
+title: EngageTime
+description: Test out the EngageTime interaction
+version: 2
+engageTime:
+  sessionId: 4fn3gy
+demos:
+  - id: demo-mevoasl4-rp3l
+    title: Start a session
+    steps:
+      - action: startEngageTimeSession
+```
+
+</TabItem>
+</Tabs>
+
+## Start and control a session
+
+### Start an EngageTime session
+
+Start or open an EngageTime session using `startEngageTimeSession`.
+
+<Tabs syncKey="start-engagetime-session">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "startEngageTimeSession"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: startEngageTimeSession
+```
+
+</TabItem>
+</Tabs>
+
+### Show the session (link / QR)
+
+Use `showEngageTimeSession` to surface the session link or QR code in the presenter UI.
+
+<Tabs syncKey="show-engagetime-session">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "showEngageTimeSession"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: showEngageTimeSession
+```
+
+</TabItem>
+</Tabs>
+
+### Close a session
+
+Close an active session with `closeEngageTimeSession`.
+
+<Tabs syncKey="close-engagetime-session">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "closeEngageTimeSession"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: closeEngageTimeSession
+```
+
+</TabItem>
+</Tabs>
+
+## Poll actions
+
+The following actions control polls inside an EngageTime session. All poll actions require the `pollId`. When the session ID has been defined, the poll can be easily selected from the dropdown in the action UI. If you are using the code approach, you can retrieve it from the URL.
+
+### Start a poll
+
+Start a poll that has been configured in your EngageTime session using `startEngageTimePoll`.
+
+<Tabs syncKey="start-engagetime-poll">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "startEngageTimePoll",
+  "pollId": "poll-1"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: startEngageTimePoll
+pollId: poll-1
+```
+
+</TabItem>
+</Tabs>
+
+### Show poll results or UI
+
+Use `showEngageTimePoll` to display poll results in the presenter view.
+
+<Tabs syncKey="show-engagetime-poll">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "showEngageTimePoll",
+  "pollId": "poll-1"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: showEngageTimePoll
+pollId: poll-1
+```
+
+</TabItem>
+</Tabs>
+
+### Close a poll
+
+Close an active poll using `closeEngageTimePoll`.
+
+<Tabs syncKey="close-engagetime-poll">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "closeEngageTimePoll",
+  "pollId": "poll-1"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: closeEngageTimePoll
+pollId: poll-1
+```
+
+</TabItem>
+</Tabs>

@@ -1,34 +1,28 @@
-import { Uri, Webview, WebviewPanel, window, ViewColumn, commands } from 'vscode';
+import { Uri, window, commands } from 'vscode';
 import { Extension } from '../services/Extension';
-import { COMMAND, Config, ContextKeys, WebViewMessages } from '../constants';
-import { MessageHandlerData } from '@estruyf/vscode';
+import { ContextKeys } from '../constants';
 import {
   getAbsolutePath,
   getTheme,
-  getWebviewUrl,
+  getWebviewWorkspaceUrl,
   readFile,
   setContext,
   togglePresentationView,
 } from '../utils';
-import { DemoRunner } from '../services';
+import { DemoRunner, Slides } from '../services';
+import { COMMAND, WebViewMessages, Config } from '@demotime/common';
+import { BaseWebview } from '../webview/BaseWebviewPanel';
+import { WebviewType } from '../models';
 
-export class Preview {
-  private static webview: WebviewPanel | null = null;
-  private static isDisposed = true;
+export class Preview extends BaseWebview {
+  public static id: WebviewType = 'preview';
+
   private static hasClickListener = false;
   private static hasPreviousSlide = false;
   private static hasNextSlide = false;
   private static crntFile: string | null = null;
   private static crntCss: string | null = null;
   private static currentSlideIndex: number = 0;
-
-  public static getCurrentSlideIndex(): number {
-    return Preview.currentSlideIndex;
-  }
-
-  public static setCurrentSlideIndex(index: number): void {
-    Preview.currentSlideIndex = Math.max(index, -1);
-  }
 
   public static register() {
     const subscriptions = Extension.getInstance().subscriptions;
@@ -41,8 +35,12 @@ export class Preview {
     );
   }
 
-  public static get isOpen(): boolean {
-    return !Preview.isDisposed;
+  public static getCurrentSlideIndex(): number {
+    return Preview.currentSlideIndex;
+  }
+
+  public static setCurrentSlideIndex(index: number): void {
+    Preview.currentSlideIndex = Math.max(index, -1);
   }
 
   public static isListening(): boolean {
@@ -67,9 +65,13 @@ export class Preview {
     return Preview.hasPreviousSlide;
   }
 
-  public static async show(fileUri: string, css?: string) {
+  public static async show(fileUri: string, css?: string, slide?: number) {
     if (Preview.crntFile !== fileUri) {
       Preview.currentSlideIndex = 0;
+    }
+
+    if (slide && typeof slide === 'number') {
+      Preview.currentSlideIndex = slide;
     }
 
     Preview.crntFile = fileUri ?? null;
@@ -78,28 +80,30 @@ export class Preview {
     if (Preview.isOpen) {
       // Use the fileUri argument for triggerUpdate, as it's the most current.
       if (Preview.webview?.webview && fileUri) {
-        const fileWebviewPath = getWebviewUrl(Preview.webview?.webview, fileUri);
-        Preview.triggerUpdate(fileWebviewPath);
+        const fileWebviewPath = getWebviewWorkspaceUrl(Preview.webview?.webview, fileUri);
+        Preview.triggerUpdate(fileWebviewPath, slide);
 
         if (css) {
-          const cssWebviewPath = getWebviewUrl(Preview.webview?.webview, css);
+          const cssWebviewPath = getWebviewWorkspaceUrl(Preview.webview?.webview, css);
           Preview.postMessage(WebViewMessages.toWebview.updateStyles, cssWebviewPath);
         } else {
           Preview.postMessage(WebViewMessages.toWebview.updateStyles, undefined);
         }
+
+        Preview.reveal();
       }
     } else {
       await Preview.create();
       // After creating, if fileUri is available, trigger update
       if (fileUri && Preview.webview?.webview) {
         // Use fileUri from argument
-        const fileWebviewPath = getWebviewUrl(Preview.webview.webview, fileUri);
-        Preview.triggerUpdate(fileWebviewPath); // Convert string to Uri
+        const fileWebviewPath = getWebviewWorkspaceUrl(Preview.webview.webview, fileUri);
+        Preview.triggerUpdate(fileWebviewPath, slide); // Convert string to Uri
       }
     }
   }
 
-  public static triggerUpdate(fileUri?: Uri | string, reset: boolean = false) {
+  public static triggerUpdate(fileUri?: Uri | string, slide?: number, reset: boolean = false) {
     if (!fileUri || !Preview.webview?.webview) {
       return;
     }
@@ -110,54 +114,26 @@ export class Preview {
 
     // Ensure fileUri is a Uri object
     if (Preview.isOpen && Preview.webview?.webview) {
+      slide = slide !== undefined && slide > 0 ? slide - 1 : slide;
+      const slideNr = slide !== undefined ? slide : reset ? 0 : Preview.currentSlideIndex;
       const payload = {
         fileUriString: fileUri,
-        slideIndex: reset ? 0 : Preview.currentSlideIndex,
+        slideIndex: slideNr,
       };
       Preview.postMessage(WebViewMessages.toWebview.triggerUpdate, payload);
     }
   }
 
-  public static reveal() {
-    if (Preview.webview) {
-      Preview.webview.reveal();
-    }
+  protected static onDispose(): void {
+    Preview.isDisposed = true;
+    Preview.hasClickListener = false;
+    Preview.hasPreviousSlide = false;
+    Preview.hasNextSlide = false;
   }
 
-  public static close() {
-    Preview.webview?.dispose();
-  }
+  protected static async messageListener(message: any) {
+    super.messageListener(message);
 
-  public static async create() {
-    const extensionUri = Extension.getInstance().extensionPath;
-
-    // Create the preview webview
-    Preview.webview = window.createWebviewPanel('demoTime:preview', Config.title, ViewColumn.One, {
-      enableScripts: true,
-      retainContextWhenHidden: true,
-      enableCommandUris: true,
-    });
-
-    Preview.isDisposed = false;
-
-    Preview.webview.iconPath = {
-      dark: Uri.joinPath(Uri.file(extensionUri), 'assets', 'logo', 'demotime-bg.svg'),
-      light: Uri.joinPath(Uri.file(extensionUri), 'assets', 'logo', 'demotime-bg.svg'),
-    };
-
-    Preview.webview.webview.html = await Preview.getWebviewContent(Preview.webview.webview);
-
-    Preview.webview.onDidDispose(async () => {
-      Preview.isDisposed = true;
-      Preview.hasClickListener = false;
-      Preview.hasPreviousSlide = false;
-      Preview.hasNextSlide = false;
-    });
-
-    Preview.webview.webview.onDidReceiveMessage(Preview.messageListener);
-  }
-
-  private static async messageListener(message: any) {
     const { command, requestId, payload } = message;
 
     if (!command || !Preview.webview?.webview) {
@@ -167,25 +143,44 @@ export class Preview {
     if (command === WebViewMessages.toVscode.getSetting && requestId) {
       const setting = Extension.getInstance().getSetting(payload);
       Preview.postRequestMessage(command, requestId, setting);
-    } else if (command === WebViewMessages.toVscode.getFileUri && requestId) {
-      const fileWebviewPath = getWebviewUrl(Preview.webview?.webview, Preview.crntFile);
-      Preview.postRequestMessage(WebViewMessages.toVscode.getFileUri, requestId, fileWebviewPath);
+    } else if (command === WebViewMessages.toVscode.preview.getTotalSlides && requestId) {
+      const totalSlides = await Slides.getTotalSlides();
+      Preview.postRequestMessage(command, requestId, totalSlides);
+    } else if (
+      command === WebViewMessages.toVscode.preview.getGlobalSlideIndex &&
+      requestId &&
+      payload
+    ) {
+      // payload: { filePath, localSlideIdx }
+      const { filePath, localSlideIdx } = payload;
+      const globalIdx = await Slides.getGlobalSlideIndex(filePath, localSlideIdx);
+      Preview.postRequestMessage(command, requestId, globalIdx);
+    } else if (command === WebViewMessages.toVscode.preview.getSlide && requestId) {
+      const currentFile = Preview.crntFile;
+      const path =
+        currentFile && Preview.webview?.webview
+          ? getWebviewWorkspaceUrl(Preview.webview.webview, currentFile)
+          : null;
+      Preview.postRequestMessage(command, requestId, {
+        path,
+        slideIndex: Preview.currentSlideIndex,
+      });
     } else if (command === WebViewMessages.toVscode.parseFileUri && requestId && payload) {
-      const fileWebviewPath = getWebviewUrl(Preview.webview?.webview, payload);
-      Preview.postRequestMessage(WebViewMessages.toVscode.getFileUri, requestId, fileWebviewPath);
+      const fileWebviewPath = getWebviewWorkspaceUrl(Preview.webview?.webview, payload);
+      Preview.postRequestMessage(command, requestId, fileWebviewPath);
     } else if (command === WebViewMessages.toVscode.getStyles && requestId) {
       const cssWebviewPath = Preview.crntCss
-        ? getWebviewUrl(Preview.webview?.webview, Preview.crntCss)
+        ? getWebviewWorkspaceUrl(Preview.webview?.webview, Preview.crntCss)
         : undefined;
-      Preview.postRequestMessage(WebViewMessages.toVscode.getStyles, requestId, cssWebviewPath);
+      Preview.postRequestMessage(command, requestId, cssWebviewPath);
     } else if (command === WebViewMessages.toVscode.getTheme && requestId) {
       try {
         const themeName = payload || '';
         const theme = await getTheme(themeName);
-        Preview.postRequestMessage(WebViewMessages.toVscode.getTheme, requestId, theme);
+        Preview.postRequestMessage(command, requestId, theme);
       } catch (e) {
         // This can happen in a Dev Container where the theme is not available
-        Preview.postRequestMessage(WebViewMessages.toVscode.getTheme, requestId, null);
+        Preview.postRequestMessage(command, requestId, null);
       }
     } else if (command === WebViewMessages.toVscode.updateTitle && payload) {
       Preview.webview.title = `${Config.title}: ${payload}`;
@@ -198,18 +193,9 @@ export class Preview {
         requestId,
         previousEnabled,
       );
-    } else if (command === WebViewMessages.toVscode.runCommand && payload) {
-      await commands.executeCommand(payload);
     } else if (command === WebViewMessages.toVscode.getPresentationStarted) {
       const isPresentationMode = DemoRunner.getIsPresentationMode();
       Preview.postRequestMessage(command, requestId, isPresentationMode);
-    } else if (command === WebViewMessages.toVscode.getFileContents && payload) {
-      try {
-        const fileContents = await readFile(getAbsolutePath(payload));
-        Preview.postRequestMessage(command, requestId, fileContents);
-      } catch (e) {
-        Preview.postRequestMessage(command, requestId, null);
-      }
     } else if (command === WebViewMessages.toVscode.setHasClickListener) {
       Preview.hasClickListener = payload.listening ?? false;
     } else if (command === WebViewMessages.toVscode.hasNextSlide) {
@@ -227,100 +213,43 @@ export class Preview {
     }
   }
 
-  public static async postMessage(command: string, payload?: any) {
-    if (Preview.isDisposed) {
-      return;
-    }
-
-    Preview.webview?.webview.postMessage({
-      command,
-      payload,
-    } as MessageHandlerData<any>);
-  }
-
-  private static async postRequestMessage(command: string, requestId: string, payload: any) {
-    Preview.webview?.webview.postMessage({
-      command,
-      requestId,
-      payload,
-    } as MessageHandlerData<any>);
-  }
-
-  private static async getWebviewContent(webview: Webview) {
-    const jsFile = 'main.bundle.js';
-    const localServerUrl = 'http://localhost:9001';
-
-    let scriptUrl = [];
-    let moduleUrl = [];
-    let styleUrl = [];
-
+  protected static getJsFiles(): (Uri | string)[] {
     const extension = Extension.getInstance();
     const extPath = Uri.file(extension.extensionPath);
+    return [Uri.joinPath(extPath, 'assets', 'slides', 'tailwind.js')];
+  }
 
-    if (extension.isProductionMode) {
-      // Get the manifest file from the dist folder
-      const manifestPath = Uri.joinPath(extPath, 'out', 'preview', 'manifest.json');
-      const manifest = await readFile(manifestPath);
-      const manifestJson = JSON.parse(manifest);
-
-      for (const [key, value] of Object.entries<string>(manifestJson)) {
-        if (key.endsWith('.js')) {
-          scriptUrl.push(
-            webview.asWebviewUri(Uri.joinPath(extPath, 'out', 'preview', value)).toString(),
-          );
-        }
-      }
-    } else {
-      scriptUrl.push(`${localServerUrl}/${jsFile}`);
-    }
-
-    scriptUrl.push(
-      webview.asWebviewUri(Uri.joinPath(extPath, 'assets', 'slides', 'tailwind.js')).toString(),
-    );
+  protected static getModuleFiles(): (Uri | string)[] {
+    const extension = Extension.getInstance();
     const workspaceFolder = extension.workspaceFolder;
 
+    let moduleUrl = [];
     const webComponents = extension.getSetting<string[]>(Config.webcomponents.scripts);
     if (webComponents) {
       for (const webComponent of webComponents) {
         if (webComponent.startsWith('http')) {
           moduleUrl.push(webComponent);
         } else if (workspaceFolder) {
-          moduleUrl.push(
-            webview.asWebviewUri(Uri.joinPath(workspaceFolder.uri, webComponent)).toString(),
-          );
+          moduleUrl.push(Uri.joinPath(workspaceFolder.uri, webComponent));
         }
       }
     }
+    return moduleUrl;
+  }
 
+  protected static getCssFiles(): (Uri | string)[] {
+    const extension = Extension.getInstance();
+    const workspaceFolder = extension.workspaceFolder;
+
+    let styleUrl = [];
     const customTheme = extension.getSetting<string>(Config.slides.customTheme);
     if (customTheme) {
       if (customTheme.startsWith('http')) {
         styleUrl.push(customTheme);
       } else if (workspaceFolder) {
-        styleUrl.push(
-          webview.asWebviewUri(Uri.joinPath(workspaceFolder.uri, customTheme)).toString(),
-        );
+        styleUrl.push(Uri.joinPath(workspaceFolder.uri, customTheme));
       }
     }
-
-    const webviewUrl = getWebviewUrl(webview, '');
-
-    return `<!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-      <div id="root" data-webview-url="${webviewUrl}"></div>
-  
-      ${scriptUrl.map((url) => `<script src="${url}"></script>`).join('\n')}
-      ${moduleUrl.map((url) => `<script src="${url}" type="module"></script>`).join('\n')}
-
-      ${styleUrl.map((url) => `<link rel="stylesheet" href="${url}">`).join('\n')}
-
-      <img style="display:none" src="https://api.visitorbadge.io/api/combined?path=https:%2f%2fgithub.com%2festruyf%2fvscode-demo-time&labelColor=%23202736&countColor=%23FFD23F&slug=preview" alt="Preview usage" />
-    </body>
-    </html>`;
+    return styleUrl;
   }
 }

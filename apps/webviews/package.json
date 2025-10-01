@@ -1,0 +1,38 @@
+{
+  "name": "@demotime/webviews",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@demotime/common": "*",
+    "@estruyf/vscode": "^1.1.0",
+    "clsx": "^2.1.1",
+    "dompurify": "^3.2.6",
+    "lucide-react": "^0.344.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "rehype-pretty-code": "^0.14.1",
+    "tailwind-merge": "^3.3.1",
+    "vscrui": "^0.2.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.1",
+    "@tailwindcss/postcss": "^4.1.12",
+    "@tailwindcss/vite": "^4.1.13",
+    "@types/dompurify": "^3.2.0",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "eslint-plugin-react-hooks": "^5.1.0-rc.0",
+    "eslint-plugin-react-refresh": "^0.4.11",
+    "globals": "^15.9.0",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^5.5.3",
+    "vite": "^5.4.2"
+  }
+}

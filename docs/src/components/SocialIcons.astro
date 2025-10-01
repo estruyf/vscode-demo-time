@@ -1,18 +1,13 @@
 ---
-import type { Props } from "@astrojs/starlight/props";
-import Default from "@astrojs/starlight/components/SocialIcons.astro";
-import Stargazers from "./Stargazers.tsx";
-import { Icon } from "@astrojs/starlight/components";
+import type { Props } from '@astrojs/starlight/props';
+import Default from '@astrojs/starlight/components/SocialIcons.astro';
+import Stargazers from './Stargazers.tsx';
+import { Icon } from '@astrojs/starlight/components';
 ---
 
 <div class="flex items-center gap-4">
   <!-- Add custom social link with its SVG icon and a label. -->
-  <a
-    href="https://demotime.show/support/"
-    rel="me"
-    title="Support Demo Time"
-    class="sl-flex"
-  >
+  <a href="https://demotime.show/support/" rel="me" title="Support Demo Time" class="sl-flex">
     <span class="sr-only">Support Demo Time</span>
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -25,6 +20,33 @@ import { Icon } from "@astrojs/starlight/components";
         d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z"
       ></path>
     </svg>
+  </a>
+  <a
+    href="https://remote.demotime.show"
+    target="_blank"
+    rel="noopener noreferrer"
+    title="Remote Control for Demo Time"
+    class="sl-flex"
+  >
+    <span class="sr-only">Remote Control</span>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height="16"
+      width="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="lucide lucide-monitor-up-icon lucide-monitor-up"
+      ><path d="m9 10 3-3 3 3"></path><path d="M12 13V7"></path><rect
+        width="20"
+        height="14"
+        x="2"
+        y="3"
+        rx="2"></rect><path d="M12 17v4"></path><path d="M8 21h8"></path></svg
+    >
   </a>
 
   <!-- Render the default social links. -->

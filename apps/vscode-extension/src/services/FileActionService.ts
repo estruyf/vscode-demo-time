@@ -1,6 +1,6 @@
 import { commands, Uri, workspace, WorkspaceFolder } from 'vscode';
-import { Step } from '../models';
 import { Notifications } from './Notifications';
+import { Step } from '@demotime/common';
 
 export class FileActionService {
   /**
@@ -9,8 +9,11 @@ export class FileActionService {
    * @param fileUri - The URI of the file to open.
    * @returns A promise that resolves when the file has been opened.
    */
-  public static async open(fileUri: Uri): Promise<void> {
+  public static async open(fileUri: Uri, focusToTop: boolean = true): Promise<void> {
     await commands.executeCommand('vscode.open', fileUri);
+    if (focusToTop) {
+      await commands.executeCommand('revealLine', { lineNumber: 0, at: 'top' });
+    }
   }
 
   /**

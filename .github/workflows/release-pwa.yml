@@ -1,0 +1,61 @@
+name: Release PWA
+
+on:
+  workflow_dispatch:
+    inputs:
+      trigger:
+        description: "Manual trigger for PWA release"
+        required: false
+  push:
+    branches:
+      - main
+      - dev
+
+env:
+  PROJECT: demotime-pwa
+  OUTPUT_DIR: apps/pwa/dist
+  APP_PATH: apps/pwa
+
+jobs:
+  release-pwa:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '#pwa')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    defaults:
+      run:
+        working-directory: apps/pwa
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Build PWA
+        run: npm run build
+        working-directory: apps/pwa
+
+      - name: Upload PowerPoint Add-in artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: powerpoint-addin
+          path: ${{ env.OUTPUT_DIR }}
+
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_PUBLISH }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID_PUBLISH }}
+          command: pages deploy ${{ env.OUTPUT_DIR }} --project-name=${{ env.PROJECT }} --branch=main
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

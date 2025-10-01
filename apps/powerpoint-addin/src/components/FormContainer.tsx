@@ -220,7 +220,7 @@ export const FormContainer: React.FC = () => {
         <Button
           id="testBtn"
           onClick={handleRunCommand}
-          className="px-2 py-1 text-white rounded cursor-pointer bg-[#6290C8] border border-[#4A7FBF] hover:bg-[#6290C8]/90"
+          className="px-2 py-1 text-white rounded-sm cursor-pointer bg-[#6290C8] border border-[#4A7FBF] hover:bg-[#6290C8]/90"
         >
           Test
         </Button>
@@ -228,7 +228,7 @@ export const FormContainer: React.FC = () => {
         <Button
           id="saveBtn"
           onClick={handleSaveSettings}
-          className="px-2 py-1 text-black rounded cursor-pointer bg-accent-high border border-accent-high hover:bg-accent-high/90"
+          className="px-2 py-1 text-black rounded-sm cursor-pointer bg-accent-high border border-accent-high hover:bg-accent-high/90"
         >
           Save
         </Button>

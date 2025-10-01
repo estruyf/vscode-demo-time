@@ -141,20 +141,57 @@
             </div>
             <div class="bg-slate-100 rounded-lg p-4 font-mono text-xs border border-slate-200 overflow-x-auto">
               <pre>{
-  "demoFiles": [{
-    "filePath": "/absolute/path/to/demo.json",
-    "demos": [
-      { "id": "demo1", "title": "Demo 1" },
-      { "id": "demo2", "title": "Demo 2" }
-    ]
+  "previousEnabled": false,
+  "nextDemo": {
+    "title": "2. Wrong settings"
+  },
+  "demos": [{
+    "collapsibleState": 2,
+    "label": "Pitch",
+    "children": [
+      {
+        "collapsibleState": 0,
+        "label": "1. Demo Time",
+        "demoFilePath": "/Users/user/project/.demo/pitch.yaml",
+        "stepIndex": 0,
+        "originalLabel": "Demo Time",
+        "isActive": false,
+        "hasExecuted": true,
+        "disabled": false,
+        "tooltip": "1. Demo Time",
+        "contextValue": "demo-time.firstStep demo-time.isSlide"
+      },
+      {
+        "collapsibleState": 0,
+        "label": "2. Wrong settings",
+        "demoFilePath": "/Users/user/project/.demo/pitch.yaml",
+        "stepIndex": 1,
+        "originalLabel": "Wrong settings",
+        "isActive": false,
+        "hasExecuted": true,
+        "disabled": false,
+        "tooltip": "2. Wrong settings",
+        "contextValue": "demo-time.step"
+      },
+      {
+        "collapsibleState": 0,
+        "label": "3. Slides",
+        "demoFilePath": "/Users/user/project/.demo/pitch.yaml",
+        "stepIndex": 2,
+        "originalLabel": "Slides",
+        "isActive": false,
+        "hasExecuted": false,
+        "disabled": false,
+        "tooltip": "3. Slides",
+        "contextValue": "demo-time.step demo-time.isSlide"
+      }
+    ],
+    "demoFilePath": "/Users/user/project/.demo/pitch.yaml",
+    "description": " pitch.yaml",
+    "tooltip": "pitch.yaml",
+    "contextValue": "demo-time.file"
   }],
-  "nextDemo": { "id": "demo2", "title": "Demo 2" },
-  "currentDemoFile": {
-    "filePath": "/absolute/path/to/demo.json",
-    "demo": [
-      { "id": "demo1", "title": "Demo 1" }
-    ]
-  }
+  "currentDemoFile": "/Users/user/project/.demo/pitch.yaml"
 }</pre>
             </div>
           </div>
@@ -163,9 +200,10 @@
               <span class="text-sm font-medium text-slate-700">Description</span>
             </div>
             <ul class="list-disc ml-6 text-sm text-slate-700">
-              <li><code>demoFiles</code>: Array of demo files, each with its file path and contained demos (id and title).</li>
-              <li><code>nextDemo</code>: The next demo to be executed (id and title), if available.</li>
-              <li><code>currentDemoFile</code>: The currently executing demo file, with its file path and demos.</li>
+              <li><code>nextDemo</code>: The next demo to be executed (title only), if available.</li>
+              <li><code>demos</code>: Array of demo files with hierarchical structure. Each demo file contains children array with individual demo steps.</li>
+              <li><code>currentDemoFile</code>: String path to the currently executing demo file.</li>
+              <li><code>children</code>: Array of demo steps within each file, containing stepIndex, labels, execution status, and contextValue.</li>
             </ul>
           </div>
           
@@ -273,6 +311,97 @@
                 <div class="flex items-center justify-between">
                   <span class="text-green-400">{{API_URL}}/api/next?bringToFront=true</span>
                   <button onclick="copyToClipboard('/api/next?bringToFront=true', this)" class="flex items-center gap-1 px-2 py-1 text-xs bg-slate-700 hover:bg-slate-600 rounded-sm transition-colors text-slate-300">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                    </svg>
+                    Copy
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Previous Demo Endpoint -->
+      <div class="bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden">
+        <div class="p-6">
+          <div class="flex items-start justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                GET
+              </span>
+              <div>
+                <h3 class="text-xl font-semibold text-slate-900">Trigger Previous Demo (if enabled via the <code>demoTime.previousEnabled</code> setting)</h3>
+                <p class="text-slate-600 mt-1">Triggers the previous demo in the sequence</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Endpoint Path -->
+          <div class="mb-6">
+            <div class="flex items-center gap-2 mb-2">
+              <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+              </svg>
+              <span class="text-sm font-medium text-slate-700">Endpoint</span>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-4 font-mono text-sm border border-slate-200">
+              <div class="flex items-center justify-between">
+                <span class="text-slate-800">/api/previous</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Parameters -->
+          <div class="mb-6">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-sm font-medium text-slate-700">Parameters</span>
+            </div>
+            <div class="space-y-3">
+              <div class="flex items-start gap-4 p-3 bg-slate-50 rounded-lg">
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-2 mb-1">
+                    <code class="text-sm font-semibold text-slate-900">bringToFront</code>
+                    <span class="text-xs text-slate-500">boolean</span>
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-sm text-xs font-medium bg-slate-100 text-slate-600">
+                      optional
+                    </span>
+                  </div>
+                  <p class="text-sm text-slate-600 mb-1">Brings the application to the front</p>
+                  <div class="flex items-center gap-2 text-xs">
+                    <span class="text-slate-500">Example:</span>
+                    <code class="bg-white px-1.5 py-0.5 rounded-sm border text-slate-700">true</code>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Examples -->
+          <div>
+            <div class="flex items-center gap-2 mb-3">
+              <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+              </svg>
+              <span class="text-sm font-medium text-slate-700">Usage Examples</span>
+            </div>
+            <div class="space-y-2">
+              <div class="bg-slate-900 rounded-lg p-4 font-mono text-sm">
+                <div class="flex items-center justify-between">
+                  <span class="text-green-400">{{API_URL}}/api/previous</span>
+                  <button onclick="copyToClipboard('/api/previous', this)" class="flex items-center gap-1 px-2 py-1 text-xs bg-slate-700 hover:bg-slate-600 rounded-sm transition-colors text-slate-300">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                    </svg>
+                    Copy
+                  </button>
+                </div>
+              </div>
+              <div class="bg-slate-900 rounded-lg p-4 font-mono text-sm">
+                <div class="flex items-center justify-between">
+                  <span class="text-green-400">{{API_URL}}/api/previous?bringToFront=true</span>
+                  <button onclick="copyToClipboard('/api/previous?bringToFront=true', this)" class="flex items-center gap-1 px-2 py-1 text-xs bg-slate-700 hover:bg-slate-600 rounded-sm transition-colors text-slate-300">
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
                     </svg>

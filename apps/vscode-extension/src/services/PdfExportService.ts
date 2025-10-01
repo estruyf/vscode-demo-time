@@ -1,18 +1,10 @@
-import { SlideTheme } from '../constants/SlideTheme';
 import rehypePrettyCode from 'rehype-pretty-code';
 import { resolve } from 'mlly';
 import { Notifications } from './Notifications';
-import { Action, Step, Subscription } from '../models';
+import { Subscription } from '../models';
 import { Extension } from './Extension';
-import { DemoFileProvider, Logger } from '.';
-import {
-  convertTemplateToHtml,
-  getTheme,
-  readFile,
-  sortFiles,
-  transformMarkdown,
-  writeFile,
-} from '../utils';
+import { DemoFileProvider, Logger, Slides } from '.';
+import { getAbsolutePath, getTheme, readFile, sortFiles, writeFile } from '../utils';
 import {
   commands,
   Uri,
@@ -24,10 +16,20 @@ import {
   ColorThemeKind,
 } from 'vscode';
 import { Page } from 'playwright-chromium';
-import { COMMAND, Config, General, SlideLayout } from '../constants';
-import { twoColumnFormatting } from '../preview/utils';
+import { General } from '../constants';
 import { renderToString } from 'react-dom/server';
-import { SlideParser } from './SlideParser';
+import {
+  Action,
+  COMMAND,
+  Config,
+  convertTemplateToHtml,
+  SlideLayout,
+  SlideParser,
+  SlideTheme,
+  Step,
+  transformMarkdown,
+  twoColumnFormatting,
+} from '@demotime/common';
 
 export class PdfExportService {
   private static workspaceFolder: WorkspaceFolder | undefined;
@@ -132,7 +134,7 @@ export class PdfExportService {
           });
 
           if (!pdfPath) {
-            Notifications.info('Export cancelled.');
+            Notifications.infoWithProgress('Export cancelled.');
             return;
           }
 
@@ -166,7 +168,7 @@ export class PdfExportService {
 
           // Open the generated PDF
           await env.openExternal(pdfPath);
-          Notifications.info('Slides exported to PDF successfully.');
+          Notifications.infoWithProgress('Slides exported to PDF successfully.');
         },
       );
     } catch (error) {
@@ -222,6 +224,8 @@ export class PdfExportService {
 
     let idx = 0;
     const parser = new SlideParser();
+    const totalSlides = await Slides.getTotalSlides();
+
     for (const slide of slides) {
       try {
         const allSlides = parser.parseSlides(slide.content);
@@ -243,14 +247,38 @@ export class PdfExportService {
           const image = crntSlide.frontmatter.image || undefined;
           const customTheme = crntSlide.frontmatter.customTheme || undefined;
           const customLayout = crntSlide.frontmatter.customLayout || undefined;
-          let header = crntSlide.frontmatter.header || headerSetting || undefined;
-          let footer = crntSlide.frontmatter.footer || footerSetting || undefined;
+          let headerTemplate = crntSlide.frontmatter.header || undefined;
+          let footerTemplate = crntSlide.frontmatter.footer || undefined;
 
-          if (header) {
-            header = convertTemplateToHtml(header, crntSlide.frontmatter);
+          if (!headerTemplate && headerSetting) {
+            const abs = getAbsolutePath(headerSetting);
+            headerTemplate = await readFile(abs);
           }
-          if (footer) {
-            footer = convertTemplateToHtml(footer, crntSlide.frontmatter);
+
+          if (!footerTemplate && footerSetting) {
+            const abs = getAbsolutePath(footerSetting);
+            footerTemplate = await readFile(abs);
+          }
+
+          if (
+            headerTemplate?.includes(`{{crntSlideIdx}}`) ||
+            footerTemplate?.includes(`{{crntSlideIdx}}`)
+          ) {
+            crntSlide.frontmatter.crntSlideIdx = idx + 1;
+          }
+
+          if (
+            headerTemplate?.includes(`{{totalSlides}}`) ||
+            footerTemplate?.includes(`{{totalSlides}}`)
+          ) {
+            crntSlide.frontmatter.totalSlides = totalSlides;
+          }
+
+          if (headerTemplate) {
+            headerTemplate = convertTemplateToHtml(headerTemplate, crntSlide.frontmatter);
+          }
+          if (footerTemplate) {
+            footerTemplate = convertTemplateToHtml(footerTemplate, crntSlide.frontmatter);
           }
 
           let html = renderToString(reactContent);
@@ -278,8 +306,8 @@ export class PdfExportService {
             image,
             customTheme,
             customLayout,
-            header,
-            footer,
+            headerTemplate,
+            footerTemplate,
           });
 
           idx++;
@@ -320,16 +348,6 @@ export class PdfExportService {
     let frostTheme = await readFile(
       Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'frost.css'),
     );
-
-    // let webcomponents = await readFile(
-    //   Uri.joinPath(Uri.parse(extensionPath), 'out', 'webcomponents', 'index.mjs'),
-    // );
-
-    // let webcomponents = readFileSync(
-    //   join(extensionPath, 'out', 'webcomponents', 'index.mjs'),
-    //   'utf-8',
-    // );
-    // webcomponents = webcomponents.replace(/\n/g, '\\n');
 
     const webcomponentsUrl = Uri.joinPath(
       Uri.parse(extensionPath),
@@ -402,7 +420,9 @@ export class PdfExportService {
 
     mermaid.initialize({ startOnLoad: true, theme: "${isDark ? 'dark' : 'default'}" });
   </script>
+  
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
   <script src="${webcomponentsUrl}" type="module"></script>
 
   ${customComponentsUrls.map((url) => `<script type="module" src="${url}"></script>`).join('\n')}
@@ -460,7 +480,7 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
   <div class="slide ${slide.theme.toLowerCase()}" date-theme="${slide.theme.toLowerCase()}" data-layout="${slide.layout.toLowerCase()}" >
     <div class="slide__container">
       <div class="slide__layout ${slide.layout.toLowerCase()}" style="${slideBg}">
-        ${slide.header ? `<header class="slide__header">${slide.header}</header>` : ``}
+        ${slide.headerTemplate ? `<header class="slide__header">${slide.headerTemplate}</header>` : ``}
 
         ${
           slide.layout === SlideLayout.ImageLeft
@@ -480,7 +500,7 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
             : ``
         }
 
-        ${slide.footer ? `<footer class="slide__footer">${slide.footer}</footer>` : ``}
+        ${slide.footerTemplate ? `<footer class="slide__footer">${slide.footerTemplate}</footer>` : ``}
       </div>
     </div>
   </div>
@@ -629,7 +649,8 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
     const editorFontFamily = workspace.getConfiguration('editor').get('fontFamily') as string;
 
     // Add the colors to the top of the CSS
-    let updatedCss = ':root {\n';
+    let updatedCss = '@reference "tailwindcss";\n\n';
+    updatedCss += ':root {\n';
     updatedCss += `  --vscode-editor-font-size: ${editorFontSize}px;\n`;
     updatedCss += `  --vscode-editor-font-family: ${editorFontFamily};\n`;
     for (const [key, value] of Object.entries(colors)) {

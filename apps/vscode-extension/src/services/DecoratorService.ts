@@ -8,7 +8,7 @@ import {
   window,
 } from 'vscode';
 import { Extension } from './Extension';
-import { Config } from '../constants';
+import { Config } from '@demotime/common';
 
 export class DecoratorService {
   private static lineDecorator: TextEditorDecorationType;

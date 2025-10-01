@@ -1,5 +1,5 @@
+import { Action } from '@demotime/common';
 import { QuickPickItem, QuickPickItemKind } from 'vscode';
-import { Action } from '../models';
 
 export const getActionOptions = (): QuickPickItem[] => {
   const actions: QuickPickItem[] = [];
@@ -179,6 +179,16 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: 'Unset the presentation view',
   });
 
+  actions.push({
+    label: Action.BackupSettings,
+    description: 'Backup the current settings',
+  });
+
+  actions.push({
+    label: Action.RestoreSettings,
+    description: 'Restore the previous settings',
+  });
+
   /**
    * Terminal actions
    */
@@ -225,6 +235,11 @@ export const getActionOptions = (): QuickPickItem[] => {
   actions.push({
     label: Action.WaitForInput,
     description: 'Wait for user input',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.Pause,
+    description: 'Pause until you trigger the next step',
   } as QuickPickItem);
 
   /**
@@ -280,12 +295,12 @@ export const getActionOptions = (): QuickPickItem[] => {
   } as QuickPickItem);
 
   actions.push({
-    label: Action.openPowerPoint,
+    label: Action.OpenPowerPoint,
     description: 'Open PowerPoint',
   } as QuickPickItem);
 
   actions.push({
-    label: Action.openKeynote,
+    label: Action.OpenKeynote,
     description: 'Open Keynote',
   } as QuickPickItem);
 
@@ -297,32 +312,32 @@ export const getActionOptions = (): QuickPickItem[] => {
   } as QuickPickItem);
 
   actions.push({
-    label: Action.openChat,
+    label: Action.OpenChat,
     description: 'Open the GitHub Copilot Chat',
   } as QuickPickItem);
 
   actions.push({
-    label: Action.newChat,
+    label: Action.NewChat,
     description: 'Start a new chat in GitHub Copilot',
   } as QuickPickItem);
 
   actions.push({
-    label: Action.askChat,
+    label: Action.AskChat,
     description: 'Ask a question in GitHub Copilot Chat',
   } as QuickPickItem);
 
   actions.push({
-    label: Action.editChat,
+    label: Action.EditChat,
     description: 'Start an edit chat in GitHub Copilot Chat',
   } as QuickPickItem);
 
   actions.push({
-    label: Action.agentChat,
+    label: Action.AgentChat,
     description: 'Start an agent chat in GitHub Copilot Chat',
   } as QuickPickItem);
 
   actions.push({
-    label: Action.closeChat,
+    label: Action.CloseChat,
     description: 'Close the GitHub Copilot Chat',
   } as QuickPickItem);
 
@@ -353,6 +368,46 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: 'Press the Enter key',
   } as QuickPickItem);
 
+  actions.push({
+    label: Action.PressTab,
+    description: 'Press the Tab key',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.PressArrowLeft,
+    description: 'Press the Left Arrow key',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.PressArrowRight,
+    description: 'Press the Right Arrow key',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.PressArrowUp,
+    description: 'Press the Up Arrow key',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.PressArrowDown,
+    description: 'Press the Down Arrow key',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.PressEscape,
+    description: 'Press the Escape key',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.PressBackspace,
+    description: 'Press the Backspace key',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.PressDelete,
+    description: 'Press the Delete key',
+  } as QuickPickItem);
+
   // Demo Time actions
   actions.push({
     label: 'Demo Time',
@@ -363,6 +418,43 @@ export const getActionOptions = (): QuickPickItem[] => {
   actions.push({
     label: Action.RunDemoById,
     description: 'Run a demo by its ID',
+  } as QuickPickItem);
+
+  // EngageTime actions
+  actions.push({
+    label: 'EngageTime',
+    description: 'EngageTime actions',
+    kind: QuickPickItemKind.Separator,
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.StartEngageTimeSession,
+    description: 'Start an EngageTime session',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.StartEngageTimePoll,
+    description: 'Start an EngageTime poll',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.CloseEngageTimeSession,
+    description: 'Close the EngageTime session',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.CloseEngageTimePoll,
+    description: 'Close the EngageTime poll',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.ShowEngageTimeSession,
+    description: 'Show the EngageTime session',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.ShowEngageTimePoll,
+    description: 'Show the EngageTime poll',
   } as QuickPickItem);
 
   return actions;

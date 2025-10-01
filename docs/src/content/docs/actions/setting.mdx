@@ -1,7 +1,7 @@
 ---
 title: Setting actions
 description: Perform setting actions in your demos like update settings, change themes, and more.
-lastmod: 2025-07-12T14:04:26.246Z
+lastmod: 2025-10-01T12:19:52.891Z
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
@@ -228,4 +228,54 @@ action: unsetPresentationView
 
 <Aside type="tip">
   You can use the `unsetPresentationView` action in the demo right after a slide to make sure all UI elements are visible again. You can also trigger this from the slide controls.
+</Aside>
+
+## Backup workspace settings
+
+Back up your workspace settings using the `backupSettings` action. This copies your current `.vscode/settings.json` to `.vscode/settings.backup.json` (created if missing).
+
+<Tabs syncKey="backup-settings-action">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "backupSettings"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: backupSettings
+```
+
+</TabItem>
+</Tabs>
+
+## Restore workspace settings
+
+Restore your workspace settings from the backup using the `restoreSettings` action. This will overwrite `.vscode/settings.json` with the contents of `.vscode/settings.backup.json`. Use this when you want to revert changes made during a demo.
+
+<Tabs syncKey="restore-settings-action">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "restoreSettings"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: restoreSettings
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="tip">
+  The backup file is stored inside the workspace at <code>.vscode/settings.backup.json</code>. If you include backup/restore steps in automated demos, ensure the backup is created before making changes. Restoring will overwrite the current settings file—keep a copy if you need to preserve custom settings.
 </Aside>

@@ -91,6 +91,7 @@ export default defineConfig({
             { label: "GitHub Copilot actions", slug: 'actions/copilot' },
             { label: 'Interaction actions', slug: 'actions/interactions' },
             { label: 'Demo Time actions', slug: 'actions/demotime' },
+            { label: 'EngageTime actions', slug: 'actions/engagetime' },
           ],
         },
         {
@@ -145,6 +146,7 @@ export default defineConfig({
           label: 'Other features',
           collapsed: true,
           items: [
+            { label: 'Overview Dashboard', slug: 'features/overview-dashboard' },
             { label: 'Presenter view', slug: 'features/presenter-view' },
             { label: 'Using notes', slug: 'features/using-notes' },
             { label: 'URI handler', slug: 'features/uri-handler' },
@@ -191,6 +193,7 @@ export default defineConfig({
             { label: 'Snippets', slug: 'snippets' },
           ],
         },
+        { label: 'Remote Control', slug: 'remote-control' },
         { label: 'Projects', slug: 'examples' },
         { label: 'Showcases', slug: 'showcases' },
         {
@@ -217,4 +220,9 @@ export default defineConfig({
     }), 
     react()
   ],
+  vite: {
+		ssr: {
+			noExternal: ['zod'],
+		},
+	}
 });

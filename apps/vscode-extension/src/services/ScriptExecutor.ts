@@ -1,12 +1,13 @@
 import { ProgressLocation, Uri, window } from 'vscode';
-import { Action, CommandType, Step } from '../models';
+import { CommandType } from '../models';
 import { Notifications } from './Notifications';
-import { Config, StateKeys } from '../constants';
+import { StateKeys } from '../constants';
 import { evaluateCommand, fileExists, getPlatform } from '../utils';
 import { Extension } from './Extension';
 import { exec } from 'child_process';
 import { Logger } from './Logger';
 import { StateManager } from './StateManager';
+import { Config, Action, Step } from '@demotime/common';
 
 export class ScriptExecutor {
   public static async run(step: Step): Promise<void> {

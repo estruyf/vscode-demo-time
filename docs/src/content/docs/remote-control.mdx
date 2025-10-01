@@ -1,0 +1,55 @@
+---
+title: Remote Control
+description: Control your Demo Time presentations from any device using the Remote Control Progressive Web App (PWA).
+lastmod: 2025-10-01T11:19:29.177Z
+---
+
+import {
+  Card,
+  CardGrid,
+  LinkButton,
+  Aside,
+} from "@astrojs/starlight/components";
+import { Image } from "astro:assets";
+
+import remoteControlImg from "../../assets/docs/remote-control.webp";
+import remoteControlActionsImg from "../../assets/docs/remote-control-connected.webp";
+
+The Remote Control feature lets you drive your Demo Time presentations from another device (phone,
+tablet, second laptop). It connects over your local network or a reachable host where the Demo Time
+local API is running.
+
+Open the control at: [remote.demotime.show](https://remote.demotime.show)
+
+<Aside type="tip">
+  You can make use of `ngrok` or a reverse proxy to expose the API over the internet to make the Remote Control feature accessible from anywhere.
+</Aside>
+
+<Image class="mx-auto" src={remoteControlImg} alt="Remote Cotrol for Demo Time" width="400" />
+
+## Key Capabilities
+
+- PWA (installable on supported browsers)
+- Advance to next / previous step or slide
+- See all steps
+
+## Prerequisites
+
+1. Demo Time extension installed
+2. Local API enabled by using the `demoTime.api.enabled` setting and setting the value to `true`.
+3. (Optional) Set a fixed port: `demoTime.api.port` (default shown in settings UI)
+4. All devices are on the same network (or the host is publicly reachable)
+
+<Aside type="note">
+  More information about the API can be found in the [Demo Time - API](/references/api) section.
+</Aside>
+
+## Launching the Remote Control PWA
+
+1. Open the project and start your `ngrok` tunnel with `ngrok http 3710`.
+2. Open a browser on your secondary device and navigate to: [remote.demotime.show](https://remote.demotime.show).
+3. Install / add to home screen if your browser prompts (PWA capable - optional).
+4. Add the URL of the `ngrok` tunnel (or local IP with port if on the same network).
+5. Interact with the controls (Next / Previous / Start) as the presentation runs.
+
+<Image class="mx-auto" src={remoteControlActionsImg} alt="Remote Cotrol - Actions" width="400" />

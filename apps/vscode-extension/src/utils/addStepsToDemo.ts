@@ -1,4 +1,4 @@
-import { DemoFile, Icons, Step } from '../models';
+import { DemoConfig, Icons, Step } from '@demotime/common';
 import { DemoPanel } from '../panels/DemoPanel';
 import { DemoCreator, DemoFileProvider } from '../services';
 
@@ -6,7 +6,7 @@ export const addStepsToDemo = async (
   steps: Step | Step[],
   demoFile?: {
     filePath: string;
-    demo: DemoFile;
+    demo: DemoConfig;
   },
   title?: string,
   description?: string,

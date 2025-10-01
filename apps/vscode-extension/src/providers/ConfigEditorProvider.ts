@@ -12,25 +12,35 @@ import {
   Range,
 } from 'vscode';
 import { Subscription } from '../models';
-import { DemoFileProvider, DemoRunner, Extension, Logger, Notifications } from '../services';
-import { COMMAND, Config, General, WebViewMessages } from '../constants';
+import {
+  DemoFileProvider,
+  DemoRunner,
+  EngageTimeService,
+  Extension,
+  Logger,
+  Notifications,
+} from '../services';
+import { General } from '../constants';
 import {
   checkSnippetArgs,
   getDemoApiData,
   getRelPath,
   getThemes,
+  getWebviewHtml,
   openFile,
   openFilePicker,
   writeFile,
 } from '../utils';
 import { ActionTreeItem } from './ActionTreeviewProvider';
 import { SettingsView } from '../settingsView/SettingsView';
+import { COMMAND, Config, WebViewMessages } from '@demotime/common';
 
 export class ConfigEditorProvider implements CustomTextEditorProvider {
   private static readonly viewType = 'demoTime.configEditor';
   private static readonly fileViews: Map<string, WebviewPanel> = new Map();
   private static pendingStepOpens: Map<string, ActionTreeItem> = new Map();
   private static isManualSave = false;
+  private static isDisposed = true;
 
   public static register() {
     const extensions = Extension.getInstance();
@@ -69,6 +79,8 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     webviewPanel: WebviewPanel,
     _token: CancellationToken,
   ): Promise<void> {
+    ConfigEditorProvider.isDisposed = false;
+
     const openInConfigEditor = Extension.getInstance().getSetting<boolean>(
       Config.configEditor.openInConfigEditor,
     );
@@ -83,8 +95,8 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       enableScripts: true,
     };
 
-    const html = await this.getHtmlForWebview();
-    webviewPanel.webview.html = html;
+    const html = await getWebviewHtml('config-editor', webviewPanel.webview);
+    webviewPanel.webview.html = html || '';
 
     ConfigEditorProvider.fileViews.set(document.uri.toString(), webviewPanel);
 
@@ -125,6 +137,7 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     });
 
     webviewPanel.onDidDispose(() => {
+      ConfigEditorProvider.isDisposed = true;
       ConfigEditorProvider.fileViews.delete(document.uri.toString());
       ConfigEditorProvider.pendingStepOpens.delete(document.uri.toString());
       saveDocumentSubscription.dispose();
@@ -162,11 +175,32 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           await handleGetDemoIds(webviewPanel, command, requestId);
         } else if (command === WebViewMessages.toVscode.configEditor.createNotes) {
           await handleCreateNotes(webviewPanel, command, requestId, payload);
+        } else if (command === WebViewMessages.toVscode.configEditor.engageTime.getPolls) {
+          await getPolls(webviewPanel, command, requestId, payload);
         } else {
           console.warn(`Unknown message command: ${command}`);
         }
       },
     );
+
+    async function getPolls(
+      webviewPanel: WebviewPanel,
+      command: string,
+      requestId: string | undefined,
+      payload: { sessionId: string },
+    ) {
+      if (!requestId) {
+        return;
+      }
+
+      const { sessionId } = payload;
+      const polls = await EngageTimeService.getPolls(sessionId);
+      webviewPanel.webview.postMessage({
+        command,
+        requestId,
+        payload: polls,
+      });
+    }
 
     async function handleCreateNotes(
       webviewPanel: WebviewPanel,
@@ -252,7 +286,8 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       }
       try {
         Logger.info(`Running demo step from config editor: ${JSON.stringify(payload.step)}`);
-        await DemoRunner.runSteps([payload.step], false);
+        const crntFilePath = document.uri.fsPath;
+        await DemoRunner.runSteps([payload.step], false, crntFilePath);
         window.showInformationMessage('Demo step triggered from config editor.');
         // Optionally, send a response back to the webview
         webviewPanel.webview.postMessage({
@@ -403,58 +438,6 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     }
   }
 
-  private async getHtmlForWebview(): Promise<string> {
-    const extensions = Extension.getInstance();
-    if (!extensions.isProductionMode) {
-      return `
-        <!doctype html>
-        <html lang="en">
-          <head>
-            <script type="module">
-              import RefreshRuntime from "http://localhost:5173/@react-refresh"
-              RefreshRuntime.injectIntoGlobalHook(window)
-              window.$RefreshReg$ = () => {}
-              window.$RefreshSig$ = () => (type) => type
-              window.__vite_plugin_react_preamble_installed__ = true
-            </script>
-
-            <script type="module" src="http://localhost:5173/@vite/client"></script>
-
-            <meta charset="UTF-8" />
-            <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <title>Demo Time Config Editor</title>
-          </head>
-          <body>
-            <div id="root"></div>
-            <script type="module" src="http://localhost:5173/src/main.tsx"></script>
-          </body>
-        </html>`;
-    }
-
-    const URL = `https://config-beta.demotime.show`;
-    const response = await fetch(URL, {
-      headers: {
-        'Content-Type': 'text/html',
-      },
-      cache: 'no-cache',
-    });
-    if (!response.ok) {
-      commands.executeCommand(COMMAND.openConfigInTextEditor);
-      throw new Error(`Failed to fetch HTML: ${response.statusText}`);
-    }
-    const html = await response.text();
-    // Patch relative asset URLs to absolute URLs using the base URL
-    const baseUrl = URL.replace(/\/$/, '');
-    const patchedHtml = html
-      .replace(/(src|href)=["'](\/assets\/[^"']+)["']/g, (match, attr, path) => {
-        return `${attr}="${baseUrl}${path}"`;
-      })
-      .replace(/href=["']\/vite\.svg["']/g, `href="${baseUrl}/vite.svg"`);
-
-    return patchedHtml.toString();
-  }
-
   public static openInConfigEditor(uri?: Uri) {
     uri = uri || window.activeTextEditor?.document.uri;
     commands.executeCommand('vscode.openWith', uri, ConfigEditorProvider.viewType);
@@ -471,7 +454,7 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     }
 
     const panel = ConfigEditorProvider.fileViews.get(fileUri.toString());
-    if (panel?.active) {
+    if (!ConfigEditorProvider.isDisposed && panel) {
       panel.reveal();
       panel.webview.postMessage({
         command: WebViewMessages.toWebview.configEditor.openStep,

@@ -10,7 +10,7 @@ export const StatusMessage: React.FC<StatusMessageProps> = ({ text, type, visibl
   if (!visible) return null;
 
   return (
-    <section className={`mt-4 p-2 rounded ${type || ''} ${visible ? 'block' : 'hidden'}`}>
+    <section className={`mt-4 p-2 rounded-sm ${type || ''} ${visible ? 'block' : 'hidden'}`}>
       {text}
     </section>
   );

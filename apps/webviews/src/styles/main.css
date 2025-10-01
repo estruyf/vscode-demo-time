@@ -1,0 +1,122 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.vscode-dark, .vscode-dark *, .vscode-high-contrast, .vscode-high-contrast *));
+
+@theme {
+  /* Light mode colors */
+  --color-blue-50: #f0f9ff;
+  --color-blue-100: #e0f2fe;
+  --color-blue-200: #bae6fd;
+  --color-blue-300: #7dd3fc;
+  --color-blue-400: #38bdf8;
+  --color-blue-500: #1282a2;
+  --color-blue-600: #1282a2;
+  --color-blue-700: #0c5f7a;
+  --color-blue-800: #0a4c62;
+  --color-blue-900: #0a3c4a;
+
+  /* Light mode demo time colors */
+  --color-demo-time-accent-low: #e1d6b9;
+  --color-demo-time-accent: #624d00;
+  --color-demo-time-accent-high: #3f3000;
+  --color-demo-time-white: #ffffff;
+  --color-demo-time-gray-1: #f8f9fa;
+  --color-demo-time-gray-2: #e9ecef;
+  --color-demo-time-gray-3: #dee2e6;
+  --color-demo-time-gray-4: #ced4da;
+  --color-demo-time-gray-5: #adb5bd;
+  --color-demo-time-gray-6: #6c757d;
+  --color-demo-time-gray-7: #495057;
+  --color-demo-time-black: #212529;
+}
+
+/* Dark mode overrides */
+@layer theme {
+  .vscode-dark,
+  .vscode-high-contrast {
+    --color-demo-time-accent-low: #2d2416;
+    --color-demo-time-accent: #ffd43b;
+    --color-demo-time-accent-high: #ffe066;
+    --color-demo-time-white: #ffffff;
+    --color-demo-time-gray-1: #1e1e1e;
+    --color-demo-time-gray-2: #2d2d30;
+    --color-demo-time-gray-3: #3e3e42;
+    --color-demo-time-gray-4: #565656;
+    --color-demo-time-gray-5: #6e6e6e;
+    --color-demo-time-gray-6: #8e8e8e;
+    --color-demo-time-gray-7: #cccccc;
+    --color-demo-time-black: #0c0c0c;
+  }
+}
+
+/* Theme transition for smooth switching */
+* {
+  transition:
+    background-color 0.2s ease-in-out,
+    color 0.2s ease-in-out,
+    border-color 0.2s ease-in-out;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+
+  button,
+  [role='button'] {
+    cursor: pointer;
+  }
+
+  /* Special styling for scrollable areas */
+  .custom-scrollbar {
+    scrollbar-width: auto;
+    scrollbar-color: #64748b #e2e8f0;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 14px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #f8fafc;
+    border-radius: 8px;
+    margin: 8px 0;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    border-radius: 8px;
+    border: 2px solid #f8fafc;
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+    min-height: 50px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    border-color: #f1f5f9;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.5);
+  }
+
+  /* Ensure scroll containers handle rounded corners properly */
+  .lg\:overflow-y-auto {
+    scroll-padding: 1rem;
+  }
+}

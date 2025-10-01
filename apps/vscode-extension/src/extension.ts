@@ -20,9 +20,11 @@ import {
 import { DemoPanel } from './panels/DemoPanel';
 import { Preview } from './preview/Preview';
 import { PresenterView } from './presenterView/PresenterView';
-import { Config } from './constants';
 import { ConfigEditorProvider } from './providers/ConfigEditorProvider';
 import { SettingsView } from './settingsView/SettingsView';
+import { Config } from '@demotime/common';
+import { InputService } from './services/InputService';
+import { Overview } from './overview/Overview';
 
 export async function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);
@@ -30,15 +32,20 @@ export async function activate(context: vscode.ExtensionContext) {
   // Clearing the variable state when the extension starts
   clearVariablesState();
 
-  DecoratorService.register();
+  // Webviews
+  SettingsView.register();
+  PresenterView.register();
+  Preview.register();
+  Overview.register();
+  ConfigEditorProvider.register();
 
+  // Services
+  DecoratorService.register();
   DemoPanel.register();
   DemoRunner.registerCommands();
   DemoCreator.registerCommands();
   DemoListeners.register();
   DemoStatusBar.register();
-  Preview.register();
-  PresenterView.register();
   DemoFileProvider.register();
   Slides.register();
   NotesService.registerCommands();
@@ -47,9 +54,8 @@ export async function activate(context: vscode.ExtensionContext) {
   UriHandler.register();
   PdfExportService.register();
   ImportService.register();
-  ConfigEditorProvider.register();
-  SettingsView.register();
   TerminalService.register();
+  InputService.registerCommands();
 
   console.log(`${Config.title} is active!`);
 }

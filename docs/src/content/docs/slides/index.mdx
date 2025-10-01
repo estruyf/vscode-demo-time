@@ -1,7 +1,7 @@
 ---
 title: Present your slides
 description: From Markdown to slides - present your slides with Demo Time
-lastmod: 2025-08-20T15:59:24.602Z
+lastmod: 2025-10-01T12:22:17.993Z
 ---
 
 import { Code, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
@@ -136,12 +136,17 @@ Use the `openSlide` action to open a slide in the slide view.
 ```json
 {
   "action": "openSlide",
-  "path": "<relative path to the file>"
+  "path": "<relative path to the file>",
+  "slide": "<slide index you want to open (1-based) (optional)>"
 }
 ```
 
 </TabItem>
 <TabItem label="YAML">
+```yaml
+action: openSlide
+path: <relative path to the file>
+slide: <slide index you want to open (1-based) (optional)>
 
 ```yaml
 action: openSlide
