@@ -91,6 +91,7 @@ export default defineConfig({
             { label: "GitHub Copilot actions", slug: 'actions/copilot' },
             { label: 'Interaction actions', slug: 'actions/interactions' },
             { label: 'Demo Time actions', slug: 'actions/demotime' },
+            { label: 'EngageTime actions', slug: 'actions/engagetime' },
           ],
         },
         {
@@ -191,6 +192,7 @@ export default defineConfig({
             { label: 'Snippets', slug: 'snippets' },
           ],
         },
+        { label: 'Remote Control', slug: 'remote-control' },
         { label: 'Projects', slug: 'examples' },
         { label: 'Showcases', slug: 'showcases' },
         {
