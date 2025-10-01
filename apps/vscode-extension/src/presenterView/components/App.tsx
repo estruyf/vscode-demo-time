@@ -36,14 +36,21 @@ export const App: React.FunctionComponent<IAppProps> = (props: React.PropsWithCh
       case WebViewMessages.toWebview.updateClock:
         setCountdown(payload);
         break;
-      case WebViewMessages.toWebview.updateShowClock:
-        setShowClock(payload);
-        break;
       case WebViewMessages.toWebview.updateCurrentDemo:
         setCurrentDemo(payload);
         break;
       case WebViewMessages.toWebview.updateCurrentStepIndex:
         setCurrentStepIndex(payload);
+        break;
+      case WebViewMessages.toWebview.updateRunningDemos:
+        // Handle running demos update
+        if (payload?.demoFile?.demos) {
+          // Find current demo from the running demos
+          const currentRunningDemo = payload.demoFile.demos.find((demo: any) => demo.id === payload.currentDemoId);
+          if (currentRunningDemo) {
+            setCurrentDemo(currentRunningDemo);
+          }
+        }
         break;
     }
   }, []);
@@ -55,17 +62,28 @@ export const App: React.FunctionComponent<IAppProps> = (props: React.PropsWithCh
 
   React.useEffect(() => {
     const getData = async () => {
-      // Request initial data
-      messageHandler.send(WebViewMessages.toVscode.getPresentationStarted, {});
-      messageHandler.send(WebViewMessages.toVscode.getCountdownStarted, {});
-      messageHandler.send(WebViewMessages.toVscode.getCurrentDemo, {});
-      
-      // Get clock settings
-      const clockSetting = await messageHandler.request(WebViewMessages.toVscode.getSetting, 'demoTime.clock.show');
-      setShowClock(clockSetting);
-      
-      if (clockSetting) {
-        messageHandler.send(WebViewMessages.toVscode.getTimer, {});
+      try {
+        // Request initial data using existing message handlers
+        const [presentationStartedResult, countdownStartedResult, currentDemoResult] = await Promise.all([
+          messageHandler.request(WebViewMessages.toVscode.getPresentationStarted, {}),
+          messageHandler.request(WebViewMessages.toVscode.getCountdownStarted, {}),
+          messageHandler.request(WebViewMessages.toVscode.getCurrentDemo, {}),
+        ]);
+
+        setPresentationStarted(presentationStartedResult);
+        setCountdownStarted(countdownStartedResult);
+        setCurrentDemo(currentDemoResult);
+        
+        // Get clock settings
+        const clockSetting = await messageHandler.request(WebViewMessages.toVscode.getSetting, 'demoTime.clock.show');
+        setShowClock(clockSetting);
+        
+        if (clockSetting) {
+          const timer = await messageHandler.request(WebViewMessages.toVscode.getTimer, {});
+          setCountdown(timer);
+        }
+      } catch (error) {
+        console.error('Error fetching initial data:', error);
       }
     };
 
