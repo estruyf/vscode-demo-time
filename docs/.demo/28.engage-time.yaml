@@ -1,6 +1,8 @@
-title: Engage Time
-description: Test out the Engage Time interaction
+title: EngageTime
+description: Test out the EngageTime interaction
 version: 2
+engageTime:
+  sessionId: 4fn3gy
 demos:
   - id: demo-mevoasl4-rp3l
     title: Start a session
@@ -35,5 +37,3 @@ demos:
     steps:
       - action: closeEngageTimeSession
         sessionId: 4fn3gy
-engageTime:
-  sessionId: 4fn3gy

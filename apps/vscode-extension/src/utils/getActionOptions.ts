@@ -420,41 +420,41 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: 'Run a demo by its ID',
   } as QuickPickItem);
 
-  // Engage Time actions
+  // EngageTime actions
   actions.push({
-    label: 'Engage Time',
-    description: 'Engage Time actions',
+    label: 'EngageTime',
+    description: 'EngageTime actions',
     kind: QuickPickItemKind.Separator,
   } as QuickPickItem);
 
   actions.push({
     label: Action.StartEngageTimeSession,
-    description: 'Start an Engage Time session',
+    description: 'Start an EngageTime session',
   } as QuickPickItem);
 
   actions.push({
     label: Action.StartEngageTimePoll,
-    description: 'Start an Engage Time poll',
+    description: 'Start an EngageTime poll',
   } as QuickPickItem);
 
   actions.push({
     label: Action.CloseEngageTimeSession,
-    description: 'Close the Engage Time session',
+    description: 'Close the EngageTime session',
   } as QuickPickItem);
 
   actions.push({
     label: Action.CloseEngageTimePoll,
-    description: 'Close the Engage Time poll',
+    description: 'Close the EngageTime poll',
   } as QuickPickItem);
 
   actions.push({
     label: Action.ShowEngageTimeSession,
-    description: 'Show the Engage Time session',
+    description: 'Show the EngageTime session',
   } as QuickPickItem);
 
   actions.push({
     label: Action.ShowEngageTimePoll,
-    description: 'Show the Engage Time poll',
+    description: 'Show the EngageTime poll',
   } as QuickPickItem);
 
   return actions;

@@ -72,7 +72,7 @@ export enum Action {
   PressDelete = 'pressDelete',
   // Demo Time
   RunDemoById = 'runDemoById',
-  // Engage Time
+  // EngageTime
   StartEngageTimeSession = 'startEngageTimeSession',
   StartEngageTimePoll = 'startEngageTimePoll',
   CloseEngageTimeSession = 'closeEngageTimeSession',

@@ -35,6 +35,15 @@
           "description": {
             "type": "string"
           },
+          "engageTime": {
+            "type": "object",
+            "properties": {
+              "sessionId": {
+                "type": "string",
+                "description": "The ID of the EngageTime session."
+              }
+            }
+          },
           "disabled": {
             "type": "boolean",
             "default": false,
@@ -720,37 +729,13 @@
                   "if": {
                     "properties": {
                       "action": {
-                        "enum": [
-                          "startEngageTimeSession",
-                          "closeEngageTimeSession",
-                          "showEngageTimeSession"
-                        ]
-                      }
-                    }
-                  },
-                  "then": {
-                    "required": ["sessionId"],
-                    "properties": {
-                      "sessionId": {
-                        "$ref": "#/definitions/sessionId"
-                      }
-                    }
-                  }
-                },
-                {
-                  "if": {
-                    "properties": {
-                      "action": {
                         "enum": ["startEngageTimePoll", "closeEngageTimePoll", "showEngageTimePoll"]
                       }
                     }
                   },
                   "then": {
-                    "required": ["sessionId", "pollId"],
+                    "required": ["pollId"],
                     "properties": {
-                      "sessionId": {
-                        "$ref": "#/definitions/sessionId"
-                      },
                       "pollId": {
                         "$ref": "#/definitions/pollId"
                       }
@@ -1023,13 +1008,9 @@
       "title": "The zoom level for the editor when highlighting code",
       "default": 0
     },
-    "sessionId": {
-      "type": "string",
-      "title": "The ID of the Engage Time session"
-    },
     "pollId": {
       "type": "string",
-      "title": "The ID of the Engage Time poll"
+      "title": "The ID of the EngageTime poll"
     }
   }
 }

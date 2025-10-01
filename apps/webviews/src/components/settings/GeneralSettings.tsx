@@ -40,7 +40,7 @@ export default function GeneralSettings({ settings, updateSetting }: GeneralSett
         </div>
 
         <div className="space-y-2 mt-8">
-          <Label htmlFor="engageTimeApiKey">Engage Time API Key</Label>
+          <Label htmlFor="engageTimeApiKey">EngageTime API Key</Label>
           <div className="relative">
             <input
               id="engageTimeApiKey"
@@ -48,7 +48,7 @@ export default function GeneralSettings({ settings, updateSetting }: GeneralSett
               value={settings.engageTimeApiKey || ''}
               onChange={e => updateSetting('engageTimeApiKey', e.target.value)}
               className="w-full pr-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter your Engage Time API key"
+              placeholder="Enter your EngageTime API key"
               autoComplete="off"
             />
             <button
@@ -68,7 +68,7 @@ export default function GeneralSettings({ settings, updateSetting }: GeneralSett
           </div>
 
           <p className="text-sm text-gray-600 dark:text-gray-300">
-            Used for integrating with Engage Time services. Your API key is stored securely and never shared.
+            Used for integrating with EngageTime services. Your API key is stored securely and never shared.
           </p>
           <p className="text-sm mt-2">
             <a
@@ -77,7 +77,7 @@ export default function GeneralSettings({ settings, updateSetting }: GeneralSett
               rel="noopener noreferrer"
               className="underline text-blue-500 hover:text-blue-700"
             >
-              Manage your API key in Engage Time API Management
+              Manage your API key in EngageTime API Management
             </a>
           </p>
         </div>

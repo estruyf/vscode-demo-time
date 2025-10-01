@@ -21,7 +21,7 @@ export class EngageTimeService {
 
   public static async showSession(sessionId?: string): Promise<void> {
     if (!sessionId) {
-      Notifications.error(`Engage Time session ID is required to show a session.`);
+      Notifications.error(`EngageTime session ID is required to show a session.`);
       return;
     }
 
@@ -33,7 +33,7 @@ export class EngageTimeService {
 
   public static async showPoll(pollId?: string): Promise<void> {
     if (!pollId) {
-      Notifications.error(`Engage Time poll ID is required to show a poll.`);
+      Notifications.error(`EngageTime poll ID is required to show a poll.`);
       return;
     }
 
@@ -61,13 +61,13 @@ export class EngageTimeService {
 
   public static async getPolls(sessionId?: string): Promise<Poll[]> {
     if (!sessionId) {
-      Notifications.error(`Engage Time session ID is required to get polls.`);
+      Notifications.error(`EngageTime session ID is required to get polls.`);
       return [];
     }
 
     const apiKey = await EngageTimeService.getApiKey();
     if (!apiKey) {
-      Notifications.error(`Engage Time API key is required to get polls.`);
+      Notifications.error(`EngageTime API key is required to get polls.`);
       return [];
     }
 
@@ -82,14 +82,14 @@ export class EngageTimeService {
 
       if (!response.ok) {
         const errorText = await response.text();
-        Notifications.error(`Failed to get Engage Time polls: ${response.status} ${errorText}`);
+        Notifications.error(`Failed to get EngageTime polls: ${response.status} ${errorText}`);
         return [];
       }
 
       const data = await response.json();
       return data || [];
     } catch (error: any) {
-      Notifications.error(`Error getting Engage Time polls: ${error.message}`);
+      Notifications.error(`Error getting EngageTime polls: ${error.message}`);
       return [];
     }
   }
@@ -100,7 +100,7 @@ export class EngageTimeService {
   ): Promise<void> {
     if (!sessionId) {
       Notifications.error(
-        `Engage Time session ID is required to ${state === 'active' ? 'start' : 'stop'} a session.`,
+        `EngageTime session ID is required to ${state === 'active' ? 'start' : 'stop'} a session.`,
       );
       return;
     }
@@ -108,7 +108,7 @@ export class EngageTimeService {
     const apiKey = await EngageTimeService.getApiKey();
     if (!apiKey) {
       Notifications.error(
-        `Engage Time API key is required to ${state === 'active' ? 'start' : 'stop'} a session.`,
+        `EngageTime API key is required to ${state === 'active' ? 'start' : 'stop'} a session.`,
       );
       return;
     }
@@ -126,17 +126,17 @@ export class EngageTimeService {
       if (!response.ok) {
         const errorText = await response.text();
         Notifications.error(
-          `Failed to ${state === 'active' ? 'start' : 'stop'} Engage Time session: ${response.status} ${errorText}`,
+          `Failed to ${state === 'active' ? 'start' : 'stop'} EngageTime session: ${response.status} ${errorText}`,
         );
         return;
       }
 
       Notifications.infoWithProgress(
-        `Engage Time session ${state === 'active' ? 'started' : 'stopped'} successfully.`,
+        `EngageTime session ${state === 'active' ? 'started' : 'stopped'} successfully.`,
       );
     } catch (error: any) {
       Notifications.error(
-        `Error ${state === 'active' ? 'starting' : 'stopping'} Engage Time session: ${error.message}`,
+        `Error ${state === 'active' ? 'starting' : 'stopping'} EngageTime session: ${error.message}`,
       );
     }
   }
@@ -147,7 +147,7 @@ export class EngageTimeService {
   ): Promise<void> {
     if (!pollId) {
       Notifications.error(
-        `Engage Time poll ID is required to ${isActive ? 'start' : 'stop'} a poll.`,
+        `EngageTime poll ID is required to ${isActive ? 'start' : 'stop'} a poll.`,
       );
       return;
     }
@@ -155,7 +155,7 @@ export class EngageTimeService {
     const apiKey = await EngageTimeService.getApiKey();
     if (!apiKey) {
       Notifications.error(
-        `Engage Time API key is required to ${isActive ? 'start' : 'stop'} a poll.`,
+        `EngageTime API key is required to ${isActive ? 'start' : 'stop'} a poll.`,
       );
       return;
     }
@@ -173,17 +173,17 @@ export class EngageTimeService {
       if (!response.ok) {
         const errorText = await response.text();
         Notifications.error(
-          `Failed to ${isActive ? 'start' : 'stop'} Engage Time poll: ${response.status} ${errorText}`,
+          `Failed to ${isActive ? 'start' : 'stop'} EngageTime poll: ${response.status} ${errorText}`,
         );
         return;
       }
 
       Notifications.infoWithProgress(
-        `Engage Time poll ${isActive ? 'started' : 'stopped'} successfully.`,
+        `EngageTime poll ${isActive ? 'started' : 'stopped'} successfully.`,
       );
     } catch (error: any) {
       Notifications.error(
-        `Error ${isActive ? 'starting' : 'stopping'} Engage Time poll: ${error.message}`,
+        `Error ${isActive ? 'starting' : 'stopping'} EngageTime poll: ${error.message}`,
       );
     }
   }

@@ -271,7 +271,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                 <>
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2 space-y-1">
                     <p className="text-sm text-yellow-800 dark:text-yellow-900">
-                      <strong>Note:</strong> Make sure to set the Engage Time Session ID in the demo configuration.
+                      <strong>Note:</strong> Make sure to set the EngageTime Session ID in the demo configuration.
                     </p>
                     <button
                       type="button"
@@ -282,14 +282,14 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                         window.dispatchEvent(new CustomEvent('engagetime:open-config', {}));
                       }}
                     >
-                      Open Engage Time Config
+                      Open EngageTime Config
                     </button>
                   </div>
                   {
                     config.engageTime?.sessionId ? null : (
                       <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-2 space-y-1">
                         <p className="text-sm text-red-700 dark:text-red-800 mt-1">
-                          <strong>Error:</strong> No Engage Time Session ID is set in the demo configuration.
+                          <strong>Error:</strong> No EngageTime Session ID is set in the demo configuration.
                         </p>
                       </div>
                     )

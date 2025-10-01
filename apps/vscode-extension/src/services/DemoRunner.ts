@@ -555,7 +555,11 @@ export class DemoRunner {
    * Runs the given demo steps.
    * @param demoSteps An array of Step objects representing the steps to be executed.
    */
-  public static async runSteps(demoSteps: Step[], needsUpdate: boolean = true): Promise<void> {
+  public static async runSteps(
+    demoSteps: Step[],
+    needsUpdate: boolean = true,
+    crntFilePath: string | undefined = undefined,
+  ): Promise<void> {
     // Unselect the current selection
     DecoratorService.unselect();
 
@@ -606,7 +610,7 @@ export class DemoRunner {
 
     // Loop over all the demo steps and execute them.
     for (let step of stepsToExecute) {
-      await DemoRunner.runStep(step, variables, workspaceFolder);
+      await DemoRunner.runStep(step, variables, workspaceFolder, crntFilePath);
     }
 
     if (needsUpdate) {
@@ -618,6 +622,7 @@ export class DemoRunner {
     step: Step,
     variables: { [key: string]: any } | undefined,
     workspaceFolder: WorkspaceFolder,
+    crntFilePath: string | undefined,
   ): Promise<void> {
     if (!step.action) {
       return;
@@ -936,11 +941,11 @@ export class DemoRunner {
     }
 
     /**
-     * Engage Time actions
+     * EngageTime actions
      */
     if (step.action.includes('EngageTime')) {
-      const crntDemoConfig = await DemoRunner.getExecutedDemoFile();
-      const crntDemoFile = await DemoFileProvider.getFile(Uri.file(crntDemoConfig.filePath));
+      const crntDemoConfig = crntFilePath || (await DemoRunner.getExecutedDemoFile()).filePath;
+      const crntDemoFile = await DemoFileProvider.getFile(Uri.file(crntDemoConfig));
       if (step.action === Action.StartEngageTimeSession) {
         await EngageTimeService.startSession(crntDemoFile?.engageTime?.sessionId);
         return;

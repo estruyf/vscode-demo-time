@@ -63,7 +63,7 @@ export const StepListItem: React.FC<StepListItemProps> = ({
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    if (draggingIndex === null || draggingIndex === stepIndex) return;
+    if (draggingIndex === null || draggingIndex === stepIndex) { return };
 
     const rect = rootRef.current?.getBoundingClientRect();
     if (rect) {

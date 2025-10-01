@@ -89,7 +89,7 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange }) => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <button
-            className="text-demo-time-gray-1 hover:text-demo-time-gray-2 dark:text-white dark:hover:text-gray-300"
+            className="text-gray-900 hover:text-gray-800 dark:text-white dark:hover:text-gray-300"
             aria-label={collapsed ? "Expand settings" : "Collapse settings"}
             onClick={() => setCollapsed((prev) => !prev)}
           >

@@ -7,7 +7,7 @@
 - [#227](https://github.com/estruyf/vscode-demo-time/issues/227): Open a slide at a specific
   location
 - [#229](https://github.com/estruyf/vscode-demo-time/issues/229): Integration with
-  [Engage Time](https://engagetime.live)
+  [EngageTime](https://engagetime.live)
 - [#234](https://github.com/estruyf/vscode-demo-time/issues/234): Fix for negative values in the
   insert typing speed and improved the labels
 - [#235](https://github.com/estruyf/vscode-demo-time/issues/235): Added the `pause` action to pause
@@ -20,8 +20,8 @@
   now opens the chat view by default
 - [#242](https://github.com/estruyf/vscode-demo-time/issues/242): Fix the content path in the
   `Demo Time: Create patch for current file` command execution
-- [#244](https://github.com/estruyf/vscode-demo-time/issues/244): Moved the Engage Time session ID
-  to the demo file level
+- [#244](https://github.com/estruyf/vscode-demo-time/issues/244): Moved the EngageTime session ID to
+  the demo file level
 - [#245](https://github.com/estruyf/vscode-demo-time/issues/245): Fix right panel height
 - [#246](https://github.com/estruyf/vscode-demo-time/issues/246): Added support for relative URLs to
   images in CSS themes

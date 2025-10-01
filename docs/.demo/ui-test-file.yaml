@@ -49,7 +49,7 @@ demos:
       start: alert
       end: ''
   - id: demo-mdsla1sh-m0cl12
-    title: Start an Engage Time Session
+    title: Start an EngageTime Session
     steps:
       - action: startEngageTimeSession
         path: .demo/slides/end-slides.md

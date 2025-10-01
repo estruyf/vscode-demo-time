@@ -75,8 +75,8 @@ export const MainConfigForm: React.FC<MainConfigFormProps> = ({ config, onChange
       <div>
         <div className="flex items-center justify-between">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Engage Time</label>
-            <p className="text-xs text-gray-600 dark:text-gray-300">Integrate Engage Time sessions for live interactions</p>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">EngageTime</label>
+            <p className="text-xs text-gray-600 dark:text-gray-300">Integrate EngageTime sessions for live interactions</p>
           </div>
           <div>
             <button
@@ -112,12 +112,12 @@ export const MainConfigForm: React.FC<MainConfigFormProps> = ({ config, onChange
               value={config.engageTime?.sessionId || ''}
               onChange={(e) => onChange({ engageTime: { sessionId: e.target.value } })}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-hidden  focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-              placeholder="Enter engage time session ID"
+              placeholder="Enter EngageTime session ID"
             />
 
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2 space-y-1">
               <p className="text-sm text-yellow-800">
-                <strong>Note:</strong> Make sure you configure your Engage Time API key in the Demo Time settings.
+                <strong>Note:</strong> Make sure you configure your EngageTime API key in the Demo Time settings.
                 <button
                   type="button"
                   className="bg-transparent p-0 m-0 border-none underline decoration-dotted hover:decoration-solid text-blue-700 cursor-pointer"

@@ -286,7 +286,8 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       }
       try {
         Logger.info(`Running demo step from config editor: ${JSON.stringify(payload.step)}`);
-        await DemoRunner.runSteps([payload.step], false);
+        const crntFilePath = document.uri.fsPath;
+        await DemoRunner.runSteps([payload.step], false, crntFilePath);
         window.showInformationMessage('Demo step triggered from config editor.');
         // Optionally, send a response back to the webview
         webviewPanel.webview.postMessage({

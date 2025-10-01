@@ -161,7 +161,7 @@ export const WebViewMessages = {
        */
       createNotes: 'createConfigEditorNotes',
       /**
-       * Engage Time
+       * EngageTime
        */
       engageTime: {
         /**

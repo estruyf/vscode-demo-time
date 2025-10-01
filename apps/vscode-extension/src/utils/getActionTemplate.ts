@@ -456,7 +456,7 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
-  // Engage Time actions
+  // EngageTime actions
   if (action === Action.StartEngageTimeSession) {
     return {
       action: Action.StartEngageTimeSession,
