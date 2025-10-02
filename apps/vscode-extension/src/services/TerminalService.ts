@@ -1,8 +1,8 @@
 import { commands, Terminal, window, Disposable } from 'vscode';
 import { Notifications } from './Notifications';
-import { sleep } from '../utils';
+import { bringToFront, sleep } from '../utils';
 import { DemoRunner } from './DemoRunner';
-import { Step } from '../models';
+import { Step } from '@demotime/common';
 
 /**
  * Service to manage terminal operations for demo execution.
@@ -65,7 +65,6 @@ export class TerminalService {
       if (autoExecute) {
         terminal.sendText('', true);
       }
-      return;
     } else {
       terminal.sendText(command, autoExecute);
     }
@@ -151,6 +150,7 @@ export class TerminalService {
       await sleep(500);
       // Focus the terminal after sending the command
       await commands.executeCommand('workbench.action.focusStatusBar');
+      await commands.executeCommand('workbench.action.focusActiveEditorGroup');
     }
   }
 
