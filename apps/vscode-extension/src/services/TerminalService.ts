@@ -1,6 +1,6 @@
 import { commands, Terminal, window, Disposable } from 'vscode';
 import { Notifications } from './Notifications';
-import { bringToFront, sleep } from '../utils';
+import { sleep } from '../utils';
 import { DemoRunner } from './DemoRunner';
 import { Step } from '@demotime/common';
 
