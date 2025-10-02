@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.11.0] - 2025-xx-xx
+
+- [#274](https://github.com/estruyf/vscode-demo-time/issues/274): Added support for
+  `shellIntegration` by VS Code terminals
+
 ## [1.10.0] - 2025-10-01
 
 - [#201](https://github.com/estruyf/vscode-demo-time/issues/201): Project is moved to a new monorepo

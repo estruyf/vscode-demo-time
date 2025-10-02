@@ -5498,7 +5498,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/vscode@npm:^1.84.0":
+"@types/vscode@npm:^1.104.0":
   version: 1.104.0
   resolution: "@types/vscode@npm:1.104.0"
   checksum: 10c0/6d9dd470a8d430c65ce5069bc504b9b3f500fcfe13dc7e5df23994f70ea569707ea005936cf706d325b3abf28bfdc402eb8b8449c548b7428f1a6ebfe0d264b9
@@ -18184,7 +18184,7 @@ __metadata:
     "@types/node": "npm:18.x"
     "@types/react": "npm:^18.3.5"
     "@types/react-dom": "npm:^18.3.0"
-    "@types/vscode": "npm:^1.84.0"
+    "@types/vscode": "npm:^1.104.0"
     "@vscode/test-electron": "npm:^2.3.6"
     cors: "npm:^2.8.5"
     diff: "npm:^7.0.0"

@@ -68,7 +68,7 @@
     "url": "https://github.com/estruyf/vscode-demo-time"
   },
   "engines": {
-    "vscode": "^1.84.0"
+    "vscode": "^1.104.0"
   },
   "categories": [
     "Education"
@@ -868,7 +868,7 @@
     "@types/node": "18.x",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
-    "@types/vscode": "^1.84.0",
+    "@types/vscode": "^1.104.0",
     "@vscode/test-electron": "^2.3.6",
     "cors": "^2.8.5",
     "diff": "^7.0.0",
