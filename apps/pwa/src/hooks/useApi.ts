@@ -7,6 +7,7 @@ export const useApi = () => {
   });
   const [apiData, setApiData] = useState<ApiData | null>(null);
   const [loading, setLoading] = useState(false);
+  const [notes, setNotes] = useState<string | null>(null);
 
   const connect = useCallback(async (url: string) => {
     setLoading(true);
@@ -46,6 +47,7 @@ export const useApi = () => {
   const disconnect = useCallback(() => {
     setConnectionStatus({ connected: false });
     setApiData(null);
+    setNotes(null);
     localStorage.removeItem('demoTimeApiUrl');
   }, []);
 
@@ -59,6 +61,8 @@ export const useApi = () => {
       if (!response.ok) {
         throw new Error(`Failed to trigger next demo: ${response.statusText}`);
       }
+
+      refreshData(true);
     },
     [connectionStatus],
   );
@@ -75,6 +79,8 @@ export const useApi = () => {
       if (!response.ok) {
         throw new Error(`Failed to trigger previous demo: ${response.statusText}`);
       }
+
+      refreshData(true);
     },
     [connectionStatus],
   );
@@ -104,7 +110,9 @@ export const useApi = () => {
       }
 
       try {
-        if (!silent) setLoading(true);
+        if (!silent) {
+          setLoading(true);
+        }
         const response = await fetch(`${connectionStatus.url}/api/demos`);
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -120,11 +128,46 @@ export const useApi = () => {
         });
         setApiData(null);
       } finally {
-        if (!silent) setLoading(false);
+        if (!silent) {
+          setLoading(false);
+        }
       }
     },
     [connectionStatus],
   );
+
+  const fetchNotes = useCallback(
+    async (notesPath: string) => {
+      if (!connectionStatus.connected || !connectionStatus.url) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`${connectionStatus.url}/api/notes`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ path: notesPath }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch notes: ${response.statusText}`);
+        }
+
+        const notesData = await response.text();
+        setNotes(notesData);
+      } catch (error) {
+        console.error('Failed to fetch notes:', error);
+        setNotes(null);
+      }
+    },
+    [connectionStatus],
+  );
+
+  const clearNotes = useCallback(() => {
+    setNotes(null);
+  }, []);
 
   // Auto-connect on mount if URL is stored
   useEffect(() => {
@@ -136,7 +179,9 @@ export const useApi = () => {
 
   // Polling for updates when connected
   useEffect(() => {
-    if (!connectionStatus.connected) return;
+    if (!connectionStatus.connected) {
+      return;
+    }
 
     const interval = setInterval(() => {
       refreshData(true);
@@ -149,11 +194,14 @@ export const useApi = () => {
     connectionStatus,
     apiData,
     loading,
+    notes,
     connect,
     disconnect,
     triggerNext,
     triggerPrevious,
     runById,
     refreshData,
+    fetchNotes,
+    clearNotes,
   };
 };

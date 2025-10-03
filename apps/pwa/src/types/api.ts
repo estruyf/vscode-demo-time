@@ -9,6 +9,7 @@ export interface DemoStep {
   disabled: boolean;
   description: string;
   tooltip: string;
+  notes?: string;
   iconPath: {
     id: string;
     color: {

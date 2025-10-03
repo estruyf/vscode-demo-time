@@ -2,21 +2,50 @@ import { useApi } from './hooks/useApi';
 import { Connection } from './components/Connection';
 import { DemoList } from './components/DemoList';
 import { NextDemo } from './components/NextDemo';
+import { Notes } from './components/Notes';
 import { InstallPrompt } from './components/InstallPrompt';
 import 'vscrui/dist/codicon.css';
+import { Header } from './components/Header';
+import { useEffect } from 'react';
 
 function App() {
   const {
     connectionStatus,
     apiData,
     loading,
+    notes,
     connect,
     disconnect,
     triggerNext,
     triggerPrevious,
     runById,
     refreshData,
+    fetchNotes,
+    clearNotes,
   } = useApi();
+
+  // Detect mobile screen size
+  const isMobile = window.innerWidth < 768;
+
+  // Fetch notes when current demo step has notes and not on mobile
+  useEffect(() => {
+    if (apiData && !isMobile) {
+      // Find the current active step
+      const currentStep = apiData.demos
+        .flatMap(demo => demo.children)
+        .find(step => step.isActive);
+
+      if (currentStep?.notes) {
+        fetchNotes(currentStep.notes);
+      } else {
+        // Clear notes if no current step has notes
+        clearNotes();
+      }
+    } else if (isMobile) {
+      // Clear notes on mobile
+      clearNotes();
+    }
+  }, [apiData, isMobile, fetchNotes, clearNotes]);
 
   return (
     <div className="h-screen bg-[#202736] text-white flex flex-col overflow-hidden">
@@ -47,36 +76,21 @@ function App() {
         </div>
       ) : (
         <>
-          <div className="sticky top-0 z-10 bg-[#202736]/95 backdrop-blur-sm border-b border-gray-700/30 flex-shrink-0">
-            <div className="container mx-auto px-4 py-3 max-w-4xl">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <img src="/logo.svg" alt="Demo Time" className="w-10 h-10" />
-                  <div>
-                    <h1 className="text-lg font-bold text-white leading-tight">
-                      Demo Time
-                    </h1>
-                    <p className="text-xs text-gray-400 leading-tight">
-                      Remote
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={disconnect}
-                  className="text-xs px-3 py-1.5 rounded-lg bg-red-600/20 text-red-400 hover:bg-red-600/30 transition-colors"
-                >
-                  Disconnect
-                </button>
-              </div>
-            </div>
-          </div>
+          <Header />
 
           {apiData && (
-            <div className="container mx-auto max-w-4xl flex-1 overflow-hidden">
-              <DemoList
-                apiData={apiData}
-                onRunById={runById}
-              />
+            <div className="container mx-auto max-w-7xl flex-1 overflow-hidden">
+              <div className="flex h-full">
+                <div className={`${notes ? 'flex-1' : 'max-w-4xl mx-auto'} h-full`}>
+                  <DemoList
+                    apiData={apiData}
+                    onRunById={runById}
+                  />
+                </div>
+                {notes && (
+                  <Notes notes={notes} />
+                )}
+              </div>
             </div>
           )}
 
