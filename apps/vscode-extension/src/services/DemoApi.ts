@@ -9,7 +9,6 @@ import { Logger } from './Logger';
 import { bringToFront, readFile, getDemoApiData } from '../utils';
 import { COMMAND } from '@demotime/common';
 import { DemoRunner } from './DemoRunner';
-
 export class DemoApi {
   private static statusBarItem: StatusBarItem;
   private static server: Server;
@@ -67,6 +66,7 @@ export class DemoApi {
     app.get('/api/previous', DemoApi.previous);
     app.get('/api/runById', DemoApi.runById);
     app.post('/api/runById', DemoApi.runById);
+    app.post('/api/notes', DemoApi.notes);
 
     DemoApi.server = app.listen(port, () => {
       DemoApi.statusBarItem = window.createStatusBarItem('api', StatusBarAlignment.Left, 100005);
@@ -196,6 +196,35 @@ export class DemoApi {
     }
 
     await commands.executeCommand(COMMAND.runById, id);
+  }
+
+  /**
+   * API endpoint to get the notes for a specific path.
+   * @param req
+   * @param res
+   * @returns
+   */
+  private static async notes(req: Request, res: Response) {
+    if (req.method !== 'POST') {
+      res.status(405).send('Method not allowed');
+      return;
+    }
+
+    const path = typeof req.body?.path === 'string' ? req.body.path : undefined;
+    if (!path) {
+      res.status(400).send('Missing notes path');
+      return;
+    }
+
+    const workspaceFolder = Extension.getInstance().workspaceFolder;
+    const notesPath = workspaceFolder ? Uri.joinPath(workspaceFolder.uri, path) : undefined;
+    if (!notesPath) {
+      res.status(404).send('Notes not found');
+      return;
+    }
+
+    const notes = await readFile(notesPath);
+    res.status(200).send(notes);
   }
 
   /**
