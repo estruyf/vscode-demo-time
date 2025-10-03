@@ -107,6 +107,7 @@ export default defineConfig({
                 { label: 'Intro layout', slug: 'slides/layouts/intro' },
                 { label: 'Section layout', slug: 'slides/layouts/section' },
                 { label: 'Quote layout', slug: 'slides/layouts/quote' },
+                { label: 'Video layout', slug: 'slides/layouts/video' },
                 { label: 'Image layout', slug: 'slides/layouts/image' },
                 { label: 'Image left layout', slug: 'slides/layouts/image-left' },
                 { label: 'Image right layout', slug: 'slides/layouts/image-right' },
