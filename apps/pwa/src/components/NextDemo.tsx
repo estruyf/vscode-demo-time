@@ -1,142 +1,124 @@
 import React, { useState } from 'react';
 import { NextDemo as NextDemoType } from '../types/api';
+import { Icon } from 'vscrui';
 
 interface NextDemoProps {
   nextDemo?: NextDemoType;
+  previousEnabled?: boolean;
+  loading: boolean;
   onTriggerNext: (bringToFront?: boolean) => Promise<void>;
+  onTriggerPrevious: (bringToFront?: boolean) => Promise<void>;
   onRefresh: () => Promise<void>;
 }
 
 export const NextDemo: React.FC<NextDemoProps> = ({
   nextDemo,
+  previousEnabled,
+  loading,
   onTriggerNext,
+  onTriggerPrevious,
   onRefresh,
 }) => {
-  const [loading, setLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
-  const [bringToFront, setBringToFront] = useState(true);
+  const [bringToFront, setBringToFront] = useState(false);
 
   const handleTriggerNext = async () => {
     try {
-      setLoading(true);
       await onTriggerNext(bringToFront);
-      // Refresh data after triggering to get updated state
-      setTimeout(() => {
-        handleRefresh();
-      }, 500);
+      setTimeout(() => onRefresh(), 500);
     } catch (error) {
       console.error('Failed to trigger next demo:', error);
-      alert(`Failed to trigger next demo: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    } finally {
-      setLoading(false);
     }
   };
 
-  const handleRefresh = async () => {
+  const handleTriggerPrevious = async () => {
     try {
-      setRefreshing(true);
-      await onRefresh();
+      await onTriggerPrevious(bringToFront);
+      setTimeout(() => onRefresh(), 500);
     } catch (error) {
-      console.error('Failed to refresh:', error);
-    } finally {
-      setRefreshing(false);
+      console.error('Failed to trigger previous demo:', error);
     }
   };
 
   return (
-    <div className="card">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-          Next Demo
-        </h2>
-        <button
-          onClick={handleRefresh}
-          disabled={refreshing}
-          className="btn-secondary text-sm px-4 py-2 flex items-center gap-2"
-        >
-          {refreshing ? (
-            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-          ) : (
-            <span>🔄</span>
-          )}
-          Refresh
-        </button>
+    <div className="flex-shrink-0 bg-[#1a1f2e]/95 backdrop-blur-sm border-t border-gray-700/30 shadow-2xl">
+      <div className="container mx-auto md:px-4 md:py-3 max-w-4xl">
+        {nextDemo && (
+          <div className="px-3 py-2 mb-2 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-gray-500 mb-0.5">NEXT UP</p>
+              <p className="font-semibold text-white text-sm leading-tight">{nextDemo.title}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <label htmlFor="bringToFrontToggle" className="text-xs text-gray-400 whitespace-nowrap">
+                Bring to front
+              </label>
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  id="bringToFrontToggle"
+                  checked={bringToFront}
+                  onChange={(e) => setBringToFront(e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div
+                  className="w-9 h-5 bg-gray-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-yellow-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-yellow-500 cursor-pointer"
+                  onClick={() => setBringToFront(!bringToFront)}
+                ></div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {!nextDemo && (
+          <div className="px-3 py-2 mb-2 flex items-center justify-end">
+            <div className="flex items-center gap-2">
+              <label htmlFor="bringToFrontToggle" className="text-xs text-gray-400 whitespace-nowrap">
+                Bring to front
+              </label>
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  id="bringToFrontToggle"
+                  checked={bringToFront}
+                  onChange={(e) => setBringToFront(e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div
+                  className="w-9 h-5 bg-gray-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#FFD23F] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#FFD23F] cursor-pointer"
+                  onClick={() => setBringToFront(!bringToFront)}
+                ></div>
+              </div>
+            </div>
+          </div>
+        )}
+        <div className="flex items-center justify-between md:gap-x-4">
+          {
+            previousEnabled && (
+              <button
+                onClick={handleTriggerPrevious}
+                disabled={loading}
+                className="btn-secondary border-0 text-base py-4 disabled:opacity-50 disabled:cursor-not-allowed rounded-none md:rounded-lg w-1/2"
+              >
+                <span className='inline-flex items-center'><Icon name="arrow-left" size={16} className='mr-2' /> Previous</span>
+              </button>
+            )
+          }
+
+          <button
+            onClick={handleTriggerNext}
+            disabled={loading}
+            className={`btn-primary text-base py-4 disabled:opacity-50 disabled:cursor-not-allowed rounded-none md:rounded-lg ${previousEnabled ? 'w-1/2' : 'w-full'}`}
+          >
+            {loading ? 'Starting...' : nextDemo ?
+              (
+                <span className='inline-flex items-center'>Next <Icon name="arrow-right" size={16} className='ml-2' /></span>
+              ) : (
+                <span className='inline-flex items-center'><Icon name="rocket" size={16} className='mr-2' /> Start</span>
+              )
+            }
+          </button>
+        </div>
       </div>
-
-      {nextDemo ? (
-        <div className="space-y-4">
-          <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-500/30 rounded-lg p-4">
-            <h3 className="font-semibold text-white text-lg">{nextDemo.title}</h3>
-          </div>
-
-          <div className="flex items-center gap-3 text-sm">
-            <input
-              type="checkbox"
-              id="bringToFront"
-              checked={bringToFront}
-              onChange={(e) => setBringToFront(e.target.checked)}
-              className="rounded border-gray-600 bg-gray-700 text-blue-500 focus:ring-blue-500"
-            />
-            <label htmlFor="bringToFront" className="text-gray-300 font-medium">
-              Bring VS Code to front
-            </label>
-          </div>
-
-          <button
-            onClick={handleTriggerNext}
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
-          >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                Triggering...
-              </span>
-            ) : (
-              <span className="flex items-center justify-center gap-2">
-                ▶ Start Next Demo
-              </span>
-            )}
-          </button>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          <div className="bg-gradient-to-r from-gray-800 to-gray-700 border border-gray-600 rounded-lg p-4">
-            <h3 className="font-semibold text-gray-300 text-lg">Ready to Start</h3>
-            <p className="text-sm text-gray-400 mt-1">No next demo available - click below to begin</p>
-          </div>
-
-          <div className="flex items-center gap-3 text-sm">
-            <input
-              type="checkbox"
-              id="bringToFront"
-              checked={bringToFront}
-              onChange={(e) => setBringToFront(e.target.checked)}
-              className="rounded border-gray-600 bg-gray-700 text-blue-500 focus:ring-blue-500"
-            />
-            <label htmlFor="bringToFront" className="text-gray-300 font-medium">
-              Bring VS Code to front
-            </label>
-          </div>
-
-          <button
-            onClick={handleTriggerNext}
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
-          >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                Starting...
-              </span>
-            ) : (
-              <span className="flex items-center justify-center gap-2">
-                🚀 Start Demo
-              </span>
-            )}
-          </button>
-        </div>
-      )}
     </div>
   );
 };
