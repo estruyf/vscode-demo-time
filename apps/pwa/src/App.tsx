@@ -87,6 +87,15 @@ function App() {
                   <div className="px-3 py-2 mb-2">
                     <p className="text-xs text-gray-500 mb-0.5">NEXT UP</p>
                     <p className="font-semibold text-white text-sm leading-tight">{apiData.nextDemo.title}</p>
+                    {apiData.nextSlideScreenshot && (
+                      <div className="mt-3">
+                        <img
+                          src={apiData.nextSlideScreenshot}
+                          alt="Next slide preview"
+                          className="w-full max-w-sm rounded-lg border border-gray-600/50 shadow-lg"
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
                 <div className="flex items-center justify-between md:gap-x-4">

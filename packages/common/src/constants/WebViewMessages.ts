@@ -211,6 +211,10 @@ export const WebViewMessages = {
      */
     updateNextDemo: 'updateNextDemo',
     /**
+     * updateNextSlideScreenshot
+     */
+    updateNextSlideScreenshot: 'updateNextSlideScreenshot',
+    /**
      * updateCountdown
      */
     updateCountdown: 'updateCountdown',

@@ -8,6 +8,7 @@ import { getNextDemoFile, setContext } from '../utils';
 import { PresenterView } from '../presenterView/PresenterView';
 import { Logger } from './Logger';
 import { WebViewMessages, COMMAND, Config, Demo } from '@demotime/common';
+import { SlideScreenshotService } from './SlideScreenshotService';
 
 export class DemoStatusBar {
   private static statusPresenting: StatusBarItem;
@@ -114,6 +115,7 @@ export class DemoStatusBar {
       DemoStatusBar.nextDemo = undefined;
       DemoStatusBar.statusBarItem?.hide();
       DemoStatusBar.statusBarNotes?.hide();
+      SlideScreenshotService.clearCache();
       PresenterView.postMessage(WebViewMessages.toWebview.updateNextDemo, DemoStatusBar.nextDemo);
       return;
     }
@@ -124,6 +126,7 @@ export class DemoStatusBar {
       DemoStatusBar.nextDemo = undefined;
       DemoStatusBar.statusBarItem?.hide();
       DemoStatusBar.statusBarNotes?.hide();
+      SlideScreenshotService.clearCache();
       PresenterView.postMessage(WebViewMessages.toWebview.updateNextDemo, DemoStatusBar.nextDemo);
       return;
     }
@@ -135,6 +138,7 @@ export class DemoStatusBar {
       DemoStatusBar.nextDemo = undefined;
       DemoStatusBar.statusBarItem?.hide();
       DemoStatusBar.statusBarNotes?.hide();
+      SlideScreenshotService.clearCache();
       PresenterView.postMessage(WebViewMessages.toWebview.updateNextDemo, DemoStatusBar.nextDemo);
       return;
     }
@@ -159,6 +163,7 @@ export class DemoStatusBar {
       if (!nextFile) {
         DemoStatusBar.statusBarItem.hide();
         DemoStatusBar.nextDemo = undefined;
+        SlideScreenshotService.clearCache();
         PresenterView.postMessage(WebViewMessages.toWebview.updateNextDemo, DemoStatusBar.nextDemo);
         return;
       }
@@ -185,10 +190,21 @@ export class DemoStatusBar {
       DemoStatusBar.statusBarItem.text = `$(dt-logo) ${nextDemo.title}`;
       DemoStatusBar.statusBarItem.tooltip = nextDemo.description || `Next demo: ${nextDemo.title}`;
       DemoStatusBar.statusBarItem.show();
+
+      // Send screenshot to presenter view
+      SlideScreenshotService.getNextSlideScreenshot().then((screenshot) => {
+        if (screenshot) {
+          PresenterView.postMessage(WebViewMessages.toWebview.updateNextSlideScreenshot, screenshot);
+        }
+      }).catch((error) => {
+        Logger.error(`Failed to get screenshot for presenter view: ${error}`);
+      });
     } else {
       Logger.info('No next demo found');
       DemoStatusBar.nextDemo = undefined;
       DemoStatusBar.statusBarItem.hide();
+      SlideScreenshotService.clearCache();
+      PresenterView.postMessage(WebViewMessages.toWebview.updateNextSlideScreenshot, null);
     }
 
     PresenterView.postMessage(WebViewMessages.toWebview.updateNextDemo, DemoStatusBar.nextDemo);

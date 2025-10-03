@@ -9,6 +9,7 @@ import { Logger } from './Logger';
 import { bringToFront, readFile, getDemoApiData } from '../utils';
 import { COMMAND } from '@demotime/common';
 import { DemoRunner } from './DemoRunner';
+import { SlideScreenshotService } from './SlideScreenshotService';
 
 export class DemoApi {
   private static statusBarItem: StatusBarItem;
@@ -67,6 +68,7 @@ export class DemoApi {
     app.get('/api/previous', DemoApi.previous);
     app.get('/api/runById', DemoApi.runById);
     app.post('/api/runById', DemoApi.runById);
+    app.get('/api/next-slide-screenshot', DemoApi.nextSlideScreenshot);
 
     DemoApi.server = app.listen(port, () => {
       DemoApi.statusBarItem = window.createStatusBarItem('api', StatusBarAlignment.Left, 100005);
@@ -196,6 +198,31 @@ export class DemoApi {
     }
 
     await commands.executeCommand(COMMAND.runById, id);
+  }
+
+  /**
+   * Handles the request to get a screenshot of the next slide.
+   *
+   * @param req - The HTTP request object.
+   * @param res - The HTTP response object.
+   * @returns A promise that resolves when the screenshot has been generated and sent.
+   */
+  private static async nextSlideScreenshot(req: Request, res: Response) {
+    Logger.info('Received request for next slide screenshot');
+
+    try {
+      const screenshot = await SlideScreenshotService.getNextSlideScreenshot();
+
+      if (!screenshot) {
+        res.status(404).json({ error: 'No next slide available' });
+        return;
+      }
+
+      res.status(200).json({ screenshot });
+    } catch (error) {
+      Logger.error(`Failed to generate next slide screenshot - ${(error as Error).message}`);
+      res.status(500).json({ error: 'Failed to generate screenshot' });
+    }
   }
 
   /**

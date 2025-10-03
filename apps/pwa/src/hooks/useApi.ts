@@ -111,6 +111,23 @@ export const useApi = () => {
         }
 
         const data: ApiData = await response.json();
+
+        // Fetch next slide screenshot if available
+        if (data.nextDemo) {
+          try {
+            const screenshotResponse = await fetch(
+              `${connectionStatus.url}/api/next-slide-screenshot`,
+            );
+            if (screenshotResponse.ok) {
+              const screenshotData = await screenshotResponse.json();
+              data.nextSlideScreenshot = screenshotData.screenshot;
+            }
+          } catch (screenshotError) {
+            console.warn('Failed to fetch next slide screenshot:', screenshotError);
+            // Continue without screenshot - not a fatal error
+          }
+        }
+
         setApiData(data);
       } catch (error) {
         console.error('Failed to refresh data:', error);

@@ -10,6 +10,7 @@ const PresenterView = () => {
   const [showClock, setShowClock] = React.useState(false);
   const [countdown, setCountdown] = React.useState<number | undefined>(undefined);
   const [countdownStarted, setCountdownStarted] = React.useState<Date | undefined>(undefined);
+  const [nextSlideScreenshot, setNextSlideScreenshot] = React.useState<string | null>(null);
 
   const messageListener = (message: MessageEvent<EventData<unknown>>) => {
     const { command, payload } = message.data;
@@ -19,6 +20,8 @@ const PresenterView = () => {
 
     if (command === WebViewMessages.toWebview.updateCountdownStarted) {
       setCountdownStarted(payload as Date);
+    } else if (command === WebViewMessages.toWebview.updateNextSlideScreenshot) {
+      setNextSlideScreenshot(payload as string | null);
     }
   };
 
@@ -88,8 +91,22 @@ const PresenterView = () => {
           </div>
         )}
 
-        <div className={`flex justify-end`}>
-          <NextDemo iconClass='ml-1' />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            {nextSlideScreenshot && (
+              <div className="bg-(--vscode-editor-background) border border-(--vscode-panel-border) rounded p-4">
+                <h2 className="text-lg font-semibold mb-3">Next Slide Preview</h2>
+                <img
+                  src={nextSlideScreenshot}
+                  alt="Next slide preview"
+                  className="w-full rounded border border-(--vscode-panel-border)"
+                />
+              </div>
+            )}
+          </div>
+          <div className="flex items-end justify-end">
+            <NextDemo iconClass='ml-1' />
+          </div>
         </div>
       </div>
     </div>

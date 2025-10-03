@@ -18,6 +18,7 @@ export * from './NotesService';
 export * from './Notifications';
 export * from './PdfExportService';
 export * from './ScriptExecutor';
+export * from './SlideScreenshotService';
 export * from './Slides';
 export * from './StateManager';
 export * from './TemplateCreator';

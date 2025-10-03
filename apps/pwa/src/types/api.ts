@@ -46,6 +46,7 @@ export interface NextDemo {
 
 export interface ApiData {
   nextDemo?: NextDemo;
+  nextSlideScreenshot?: string;
   demos: DemoFile[];
   currentDemoFile?: string;
   previousEnabled?: boolean;
