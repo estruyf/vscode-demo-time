@@ -41,7 +41,7 @@ export const NextDemo: React.FC<NextDemoProps> = ({
 
   return (
     <div className="flex-shrink-0 bg-[#1a1f2e]/95 backdrop-blur-sm border-t border-gray-700/30 shadow-2xl">
-      <div className="container mx-auto md:px-4 md:py-3 max-w-7xl">
+      <div className="container mx-auto md:px-4 md:pt-3 max-w-7xl">
         {nextDemo && (
           <div className="px-3 py-2 mb-2 flex items-center justify-between">
             <div>
@@ -97,7 +97,7 @@ export const NextDemo: React.FC<NextDemoProps> = ({
               <button
                 onClick={handleTriggerPrevious}
                 disabled={loading}
-                className="btn-secondary border-0 text-base py-4 disabled:opacity-50 disabled:cursor-not-allowed rounded-none md:rounded-lg w-1/2"
+                className="btn-secondary border-0 text-base py-4 md:py-5 disabled:opacity-50 disabled:cursor-not-allowed rounded-none md:rounded-t-lg w-1/2"
               >
                 <span className='inline-flex items-center'><Icon name="arrow-left" size={16} className='mr-2' /> Previous</span>
               </button>
@@ -107,7 +107,7 @@ export const NextDemo: React.FC<NextDemoProps> = ({
           <button
             onClick={handleTriggerNext}
             disabled={loading}
-            className={`btn-primary text-base py-4 disabled:opacity-50 disabled:cursor-not-allowed rounded-none md:rounded-lg ${previousEnabled ? 'w-1/2' : 'w-full'}`}
+            className={`btn-primary text-base py-4 md:py-5 disabled:opacity-50 disabled:cursor-not-allowed rounded-none md:rounded-t-lg ${previousEnabled ? 'w-1/2' : 'w-full'}`}
           >
             {loading ? 'Starting...' : nextDemo ?
               (
