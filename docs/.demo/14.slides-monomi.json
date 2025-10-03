@@ -44,6 +44,16 @@
       ]
     },
     {
+      "title": "Video slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/monomi/video.md"
+        }
+      ]
+    },
+    {
       "title": "Image slide",
       "description": "",
       "steps": [

@@ -221,6 +221,38 @@
     }
   }
 
+  .video {
+    .slide__content__inner {
+      @apply flex flex-col items-center justify-center text-center;
+      background-color: transparent;
+    }
+
+    .slide__video {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+
+      video {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: cover;
+        filter: brightness(0.65);
+      }
+    }
+
+    h1 {
+      @apply p-1;
+    }
+  }
+
   .image-left {
     background: var(--demotime-image-left-background);
     color: var(--demotime-image-left-color);

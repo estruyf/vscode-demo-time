@@ -175,7 +175,9 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
         template ? (
           <div key={filePath} className={`slide__content__custom`} dangerouslySetInnerHTML={{ __html: template }} />
         ) : (
-          <div key={filePath} className={`slide__content__inner`}>{markdown}</div>
+          <div key={filePath} className={`slide__content__inner`}>
+            {markdown}
+          </div>
         )
       }
     </>

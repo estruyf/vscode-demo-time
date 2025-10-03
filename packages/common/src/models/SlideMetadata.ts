@@ -9,6 +9,8 @@ export interface SlideMetadata {
   header?: string;
   footer?: string;
   autoAdvanceAfter?: number;
+  image?: string;
+  video?: string;
 
   [key: string]: any;
 }

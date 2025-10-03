@@ -335,6 +335,47 @@
     }
   }
 
+  .video {
+    .slide__content__inner {
+      @apply flex flex-col items-center justify-center text-center;
+      background-color: transparent;
+    }
+
+    h1 {
+      @apply py-2 px-4 mb-6 inline-block;
+      background: var(--demotime-image-heading-background);
+      border-left: 3px solid var(--demotime-accent);
+      border-right: 3px solid var(--demotime-accent);
+      border-radius: 4px;
+    }
+
+    img {
+      @apply max-h-[70vh] w-auto object-contain rounded-md shadow-xl;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .slide__video {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+
+      video {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: cover;
+        filter: brightness(0.65);
+      }
+    }
+  }
+
   .image-left {
     background: var(--demotime-image-left-background);
     color: var(--demotime-image-left-color);

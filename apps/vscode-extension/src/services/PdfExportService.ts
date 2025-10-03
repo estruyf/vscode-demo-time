@@ -245,6 +245,7 @@ export class PdfExportService {
             ? crntSlide.frontmatter.customLayout
             : crntSlide.frontmatter.layout || SlideLayout.Default;
           const image = crntSlide.frontmatter.image || undefined;
+          const video = crntSlide.frontmatter.video || undefined;
           const customTheme = crntSlide.frontmatter.customTheme || undefined;
           const customLayout = crntSlide.frontmatter.customLayout || undefined;
           let headerTemplate = crntSlide.frontmatter.header || undefined;
@@ -304,6 +305,7 @@ export class PdfExportService {
             theme: slideTheme,
             layout,
             image,
+            video,
             customTheme,
             customLayout,
             headerTemplate,

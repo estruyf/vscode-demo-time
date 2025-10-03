@@ -373,6 +373,46 @@
     }
   }
 
+  .video {
+    height: 100%;
+
+    .slide__content__inner {
+      @apply flex flex-col items-center justify-center text-center;
+      background-color: transparent;
+    }
+
+    .slide__video {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+
+      video {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: cover;
+        filter: brightness(0.65);
+      }
+    }
+
+    h1 {
+      padding: 0.5rem 1rem;
+      margin-bottom: 1.5rem;
+      display: inline-block;
+      background-color: var(--demotime-image-heading-background);
+      border-bottom: 3px solid var(--demotime-secondary);
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+  }
+
   .image-left {
     background: var(--demotime-image-left-background);
     color: var(--demotime-image-left-color);
