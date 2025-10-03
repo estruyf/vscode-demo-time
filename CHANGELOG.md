@@ -4,6 +4,8 @@
 
 - [#269](https://github.com/estruyf/vscode-demo-time/issues/269): Added a new `video` slide layout
   to allow video as slide background
+- [#271](https://github.com/estruyf/vscode-demo-time/issues/271): Add new `previous` API endpoint
+  for PWA integration
 - [#273](https://github.com/estruyf/vscode-demo-time/issues/273): Added the new `notes` API endpoint
   to retrieve the notes of the current slide
 - [#274](https://github.com/estruyf/vscode-demo-time/issues/274): Added support for
