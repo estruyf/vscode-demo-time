@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { ApiData, DemoStep } from '../types/api';
-import { Icon } from 'vscrui';
+import { DemoStep as DemoStepComponent } from './DemoStep';
 
 interface DemoListProps {
   apiData: ApiData;
@@ -88,42 +88,16 @@ export const DemoList: React.FC<DemoListProps> = ({ apiData, onRunById }) => {
             const isActive = isCurrentStep(step);
 
             return (
-              <div
+              <DemoStepComponent
                 key={index}
-                ref={isNext ? nextItemRef : null}
-                className={`flex items-center gap-3 py-3 transition-all duration-200 hover:bg-gray-700/20 rounded-lg px-3 -mx-3 ${isActive ? 'bg-blue-500/20 border border-blue-500/30' : isNext ? 'bg-[#FFD23F]/10' : ''} ${step.id ? 'cursor-pointer' : ''}`}
-                onClick={step.id ? () => handleRunDemo(step.id as string) : undefined}
-              >
-                <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
-                  {isExecuted ? (
-                    <Icon name={step.iconPath.id as never} className="!text-[#4ade80]" size={18} />
-                  ) : isActive ? (
-                    <Icon name={step.iconPath.id as never} className="!text-blue-400" size={18} />
-                  ) : isNext ? (
-                    <Icon name={step.iconPath.id as never} className="!text-[#FFD23F]" size={18} />
-                  ) : (
-                    <Icon name={step.iconPath.id as never} className="!text-gray-500" size={18} />
-                  )}
-                </div>
-                <span
-                  className={`font-medium text-base ${isActive
-                    ? 'text-blue-300 font-semibold'
-                    : isNext
-                      ? 'text-white font-semibold'
-                      : isExecuted
-                        ? 'text-gray-400'
-                        : 'text-gray-200'
-                    }`}
-                >
-                  {step.originalLabel}
-                </span>
-
-                {
-                  step.id && (
-                    <Icon name={`play`} className={`${isActive ? 'text-blue-400' : isExecuted ? 'text-gray-400' : 'text-gray-200'} ml-auto`} size={16} />
-                  )
-                }
-              </div>
+                step={step}
+                index={index}
+                isNext={isNext}
+                isActive={isActive}
+                isExecuted={isExecuted}
+                nextItemRef={nextItemRef}
+                onRunDemo={handleRunDemo}
+              />
             );
           })}
         </div>
