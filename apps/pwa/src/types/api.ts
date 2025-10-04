@@ -50,10 +50,17 @@ export interface ApiData {
   demos: DemoFile[];
   currentDemoFile?: string;
   previousEnabled?: boolean;
+  clock?: Clock;
 }
 
 export interface ConnectionStatus {
   connected: boolean;
   url?: string;
   error?: string;
+}
+
+export interface Clock {
+  current: string;
+  countdown: string;
+  isPaused: boolean;
 }

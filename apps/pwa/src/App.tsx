@@ -108,14 +108,15 @@ function App() {
               loading={loading}
               onConnect={connect}
               onDisconnect={disconnect}
+              onCheckForUpdates={checkForUpdates}
             />
           </div>
         </div>
       ) : (
         <>
           <Header
-            onCheckForUpdates={checkForUpdates}
             onDisconnect={disconnect}
+            clock={apiData?.clock}
           />
 
           {apiData && (

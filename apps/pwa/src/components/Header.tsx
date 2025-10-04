@@ -1,14 +1,13 @@
 import * as React from 'react';
-import { useApi } from '../hooks/useApi';
+import { Clock } from './Clock';
+import { Clock as IClock } from '../types/api';
 
 export interface IHeaderProps {
-  onCheckForUpdates?: () => void;
+  clock?: IClock;
   onDisconnect?: () => void;
 }
 
-export const Header: React.FunctionComponent<IHeaderProps> = ({ onCheckForUpdates, onDisconnect }) => {
-  const { } = useApi();
-
+export const Header: React.FunctionComponent<IHeaderProps> = ({ clock, onDisconnect }) => {
   return (
     <div className="sticky top-0 z-10 bg-[#202736]/95 backdrop-blur-sm border-b border-gray-700/30 flex-shrink-0">
       <div className="container mx-auto px-4 py-3 max-w-7xl">
@@ -24,15 +23,12 @@ export const Header: React.FunctionComponent<IHeaderProps> = ({ onCheckForUpdate
               </p>
             </div>
           </div>
+
+          <div className='hidden md:block'>
+            <Clock clock={clock} />
+          </div>
+
           <div className="flex items-center gap-2">
-            {onCheckForUpdates && (
-              <button
-                onClick={onCheckForUpdates}
-                className="text-xs px-3 py-1.5 rounded-lg bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 transition-colors"
-              >
-                Check for Updates
-              </button>
-            )}
             <button
               onClick={onDisconnect}
               className="text-xs px-3 py-1.5 rounded-lg bg-red-600/20 text-red-400 hover:bg-red-600/30 transition-colors"

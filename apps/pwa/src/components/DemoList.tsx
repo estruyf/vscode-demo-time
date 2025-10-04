@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { ApiData, DemoStep } from '../types/api';
 import { DemoStep as DemoStepComponent } from './DemoStep';
+import { Clock } from './Clock';
 
 interface DemoListProps {
   apiData: ApiData;
@@ -56,10 +57,13 @@ export const DemoList: React.FC<DemoListProps> = ({ apiData, onRunById }) => {
 
   return (
     <div className="card flex flex-col h-full">
-      <div className="mb-4 flex-shrink-0">
+      <div className="mb-4 flex-shrink-0 flex items-center justify-between">
         <h2 className="text-xl font-bold text-white">
-          Demo Files
+          Steps
         </h2>
+        <div className='block md:hidden'>
+          <Clock clock={apiData?.clock} />
+        </div>
       </div>
 
       {apiData.demos.length === 0 ? (

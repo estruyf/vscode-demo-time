@@ -6,12 +6,14 @@ interface ConnectionProps {
   loading: boolean;
   onConnect: (url: string) => void;
   onDisconnect: () => void;
+  onCheckForUpdates: () => void;
 }
 
 export const Connection: React.FC<ConnectionProps> = ({
   connectionStatus,
   loading,
   onConnect,
+  onCheckForUpdates,
 }) => {
   const [url, setUrl] = useState('localhost:3710');
 
@@ -105,6 +107,17 @@ export const Connection: React.FC<ConnectionProps> = ({
             <span>Click <code>Connect to Demo Time</code></span>
           </li>
         </ol>
+      </div>
+
+      <div className="mt-4 text-sm">
+        {onCheckForUpdates && (
+          <button
+            onClick={onCheckForUpdates}
+            className="text-xs px-3 py-1.5 rounded-lg bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 transition-colors"
+          >
+            Check for Updates
+          </button>
+        )}
       </div>
     </div>
   );
