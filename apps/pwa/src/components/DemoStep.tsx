@@ -41,7 +41,7 @@ export const DemoStep: React.FC<DemoStepProps> = ({
     <div
       key={index}
       ref={isNext ? nextItemRef : null}
-      className={`flex flex-col transition-all duration-200 hover:bg-gray-700/20 rounded-lg px-3 py-3 -mx-3 ${isActive ? 'bg-blue-500/20 border border-blue-500/30' : isNext ? 'bg-[#FFD23F]/10' : ''} ${step.id ? 'cursor-pointer' : ''}`}
+      className={`flex flex-col transition-all duration-200 hover:bg-gray-700/20 rounded-lg px-3 py-3 ${isActive ? 'bg-blue-500/20 border border-blue-500/30' : isNext ? 'bg-[#FFD23F]/10' : ''} ${step.id ? 'cursor-pointer' : ''}`}
       onClick={step.id ? () => onRunDemo(step.id as string) : undefined}
     >
       <div className='flex items-center gap-3'>
