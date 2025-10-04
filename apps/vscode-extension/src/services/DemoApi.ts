@@ -9,6 +9,7 @@ import { Logger } from './Logger';
 import { bringToFront, readFile, getDemoApiData } from '../utils';
 import { COMMAND } from '@demotime/common';
 import { DemoRunner } from './DemoRunner';
+import { ScreenshotService } from './ScreenshotService';
 export class DemoApi {
   private static statusBarItem: StatusBarItem;
   private static server: Server;
@@ -67,6 +68,7 @@ export class DemoApi {
     app.get('/api/runById', DemoApi.runById);
     app.post('/api/runById', DemoApi.runById);
     app.post('/api/notes', DemoApi.notes);
+    app.get('/api/screenshot', DemoApi.screenshot);
 
     DemoApi.server = app.listen(port, () => {
       DemoApi.statusBarItem = window.createStatusBarItem('api', StatusBarAlignment.Left, 100005);
@@ -225,6 +227,16 @@ export class DemoApi {
 
     const notes = await readFile(notesPath);
     res.status(200).send(notes);
+  }
+
+  private static async screenshot(req: Request, res: Response) {
+    if (req.method !== 'GET') {
+      res.status(405).send('Method not allowed');
+      return;
+    }
+
+    const screenshot = await ScreenshotService.getNextSlideScreenshot();
+    res.status(200).send(screenshot);
   }
 
   /**
