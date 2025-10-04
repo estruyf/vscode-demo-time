@@ -32,7 +32,7 @@ code {
   }
 
   .card {
-    @apply bg-gray-800/40 backdrop-blur-sm p-6;
+    @apply bg-gray-800/40 p-6;
   }
 
   .input-field {

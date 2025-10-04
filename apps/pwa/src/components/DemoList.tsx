@@ -88,7 +88,7 @@ export const DemoList: React.FC<DemoListProps> = ({ apiData, onRunById }) => {
             return (
               <div key={demoIndex} className="space-y-2">
                 {/* Demo File Header */}
-                <div className={`sticky top-0 z-10 px-3 py-2 rounded-lg border backdrop-blur-sm ${isCurrentFile
+                <div className={`sticky top-0 z-10 px-3 py-2 rounded-lg border backdrop-blur ${isCurrentFile
                   ? 'bg-blue-500/20 border-blue-500/30 text-blue-300'
                   : isNextFile
                     ? 'bg-yellow-500/20 border-yellow-500/30 text-yellow-300'
