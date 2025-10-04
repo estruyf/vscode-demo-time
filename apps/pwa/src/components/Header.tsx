@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { useApi } from '../hooks/useApi';
 
-export interface IHeaderProps { }
+export interface IHeaderProps {
+  onCheckForUpdates?: () => void;
+  onDisconnect?: () => void;
+}
 
-export const Header: React.FunctionComponent<IHeaderProps> = () => {
-  const {
-    disconnect,
-  } = useApi();
+export const Header: React.FunctionComponent<IHeaderProps> = ({ onCheckForUpdates, onDisconnect }) => {
+  const { } = useApi();
 
   return (
     <div className="sticky top-0 z-10 bg-[#202736]/95 backdrop-blur-sm border-b border-gray-700/30 flex-shrink-0">
@@ -23,12 +24,22 @@ export const Header: React.FunctionComponent<IHeaderProps> = () => {
               </p>
             </div>
           </div>
-          <button
-            onClick={disconnect}
-            className="text-xs px-3 py-1.5 rounded-lg bg-red-600/20 text-red-400 hover:bg-red-600/30 transition-colors"
-          >
-            Disconnect
-          </button>
+          <div className="flex items-center gap-2">
+            {onCheckForUpdates && (
+              <button
+                onClick={onCheckForUpdates}
+                className="text-xs px-3 py-1.5 rounded-lg bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 transition-colors"
+              >
+                Check for Updates
+              </button>
+            )}
+            <button
+              onClick={onDisconnect}
+              className="text-xs px-3 py-1.5 rounded-lg bg-red-600/20 text-red-400 hover:bg-red-600/30 transition-colors"
+            >
+              Disconnect
+            </button>
+          </div>
         </div>
       </div>
     </div>

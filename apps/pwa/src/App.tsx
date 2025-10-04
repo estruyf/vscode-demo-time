@@ -27,6 +27,43 @@ function App() {
   // Detect mobile screen size
   const isMobile = window.innerWidth < 768;
 
+  // Check for PWA updates
+  const checkForUpdates = async () => {
+    if ('serviceWorker' in navigator) {
+      try {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        let updateFound = false;
+
+        for (const registration of registrations) {
+          // Force update check
+          await registration.update();
+
+          // Check if there's a waiting worker (new version available)
+          if (registration.waiting) {
+            updateFound = true;
+            // Notify user that update is available
+            if (confirm('A new version is available! Reload to update?')) {
+              // Tell the waiting worker to skip waiting and become active
+              registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+              // Reload the page
+              window.location.reload();
+            }
+            break;
+          }
+        }
+
+        if (!updateFound) {
+          alert('No updates available. You\'re running the latest version!');
+        }
+      } catch (error) {
+        console.error('Error checking for updates:', error);
+        alert('Error checking for updates. Please try again.');
+      }
+    } else {
+      alert('Service workers not supported in this browser.');
+    }
+  };
+
   // Fetch notes when current demo step has notes and not on mobile
   useEffect(() => {
     if (apiData && !isMobile) {
@@ -76,7 +113,10 @@ function App() {
         </div>
       ) : (
         <>
-          <Header />
+          <Header
+            onCheckForUpdates={checkForUpdates}
+            onDisconnect={disconnect}
+          />
 
           {apiData && (
             <div className="container mx-auto max-w-7xl flex-1 overflow-hidden">
