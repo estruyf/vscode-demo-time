@@ -35,10 +35,18 @@ export async function getDemoApiData() {
     currentDemoFile = crntFile.filePath;
   }
 
+  const clock = DemoStatusBar.getClock();
+  const countdown = DemoStatusBar.getCountdown();
+
   return {
     nextDemo,
     demos,
     currentDemoFile,
     previousEnabled,
+    clock: {
+      current: clock,
+      countdown: countdown,
+      isPaused: DemoStatusBar.getCountdownPaused(),
+    },
   };
 }
