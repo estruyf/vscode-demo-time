@@ -10,6 +10,8 @@
   to retrieve the notes of the current slide
 - [#274](https://github.com/estruyf/vscode-demo-time/issues/274): Added support for
   `shellIntegration` by VS Code terminals
+- [#282](https://github.com/estruyf/vscode-demo-time/issues/282): Updated the GitHub Copilot chat
+  actions to use the new commands
 
 ## [1.10.0] - 2025-10-01
 

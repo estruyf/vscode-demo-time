@@ -16,8 +16,7 @@ export class ChatActionsService {
   static async askChat(step: any) {
     // Open a new chat in ask mode with a prompt
     await commands.executeCommand('workbench.action.chat.open');
-    await commands.executeCommand('workbench.action.chat.newChat', {
-      mode: 'ask',
+    await commands.executeCommand('workbench.action.chat.openask', {
       query: step.message || '',
     });
   }
@@ -25,8 +24,7 @@ export class ChatActionsService {
   static async editChat(step: any) {
     // Open a new chat in edit mode with a prompt
     await commands.executeCommand('workbench.action.chat.open');
-    await commands.executeCommand('workbench.action.chat.newChat', {
-      mode: 'edit',
+    await commands.executeCommand('workbench.action.chat.openedit', {
       query: step.message || '',
     });
   }
@@ -34,8 +32,7 @@ export class ChatActionsService {
   static async agentChat(step: any) {
     // Open a new chat in agent mode with a prompt
     await commands.executeCommand('workbench.action.chat.open');
-    await commands.executeCommand('workbench.action.chat.newChat', {
-      mode: 'agent',
+    await commands.executeCommand('workbench.action.chat.openagent', {
       query: step.message || '',
     });
   }
