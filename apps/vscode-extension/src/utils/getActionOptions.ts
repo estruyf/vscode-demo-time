@@ -337,6 +337,11 @@ export const getActionOptions = (): QuickPickItem[] => {
   } as QuickPickItem);
 
   actions.push({
+    label: Action.CustomChat,
+    description: 'Start a custom chat in GitHub Copilot Chat',
+  } as QuickPickItem);
+
+  actions.push({
     label: Action.CloseChat,
     description: 'Close the GitHub Copilot Chat',
   } as QuickPickItem);

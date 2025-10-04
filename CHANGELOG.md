@@ -12,6 +12,8 @@
   `shellIntegration` by VS Code terminals
 - [#282](https://github.com/estruyf/vscode-demo-time/issues/282): Updated the GitHub Copilot chat
   actions to use the new commands
+- [#283](https://github.com/estruyf/vscode-demo-time/issues/283): Added a new `customCopilotChat`
+  action to allow users to start a chat in a specific mode
 
 ## [1.10.0] - 2025-10-01
 

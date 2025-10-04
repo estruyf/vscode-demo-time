@@ -71,6 +71,9 @@ export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
   slide?: number;
   focusTop?: boolean;
 
+  // Chats
+  mode?: string;
+
   // EngageTime
   sessionId?: string;
   pollId?: string;

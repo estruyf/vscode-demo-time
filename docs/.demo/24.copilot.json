@@ -49,6 +49,17 @@
       ]
     },
     {
+      "title": "Start a custom chat mode",
+      "steps": [
+        {
+          "action": "customCopilotChat",
+          "message": "Write a function that returns \"Hello from Demo Time\".",
+          "mode": "Beast Mode 3.1"
+        }
+      ],
+      "id": "demo-mgbxoh5y-zgmw"
+    },
+    {
       "title": "Chat via VS Code command",
       "steps": [
         {

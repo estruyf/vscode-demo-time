@@ -118,6 +118,7 @@
                     "askCopilotChat",
                     "editCopilotChat",
                     "agentCopilotChat",
+                    "customCopilotChat",
                     "closeCopilotChat",
                     "copyToClipboard",
                     "pasteFromClipboard",
@@ -729,6 +730,26 @@
                   "if": {
                     "properties": {
                       "action": {
+                        "enum": ["customCopilotChat"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["mode"],
+                    "properties": {
+                      "mode": {
+                        "$ref": "#/definitions/copilotMode"
+                      },
+                      "message": {
+                        "$ref": "#/definitions/copilotMessage"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
                         "enum": ["startEngageTimePoll", "closeEngageTimePoll", "showEngageTimePoll"]
                       }
                     }
@@ -845,6 +866,10 @@
     "copilotMessage": {
       "type": "string",
       "title": "The message for the GitHub Copilot interaction"
+    },
+    "copilotMode": {
+      "type": "string",
+      "title": "The mode for the GitHub Copilot interaction"
     },
     "cssTheme": {
       "type": "string",

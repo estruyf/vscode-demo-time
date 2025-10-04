@@ -158,6 +158,47 @@ message: "Write a function that returns 'Hello from Demo Time'."
 </TabItem>
 </Tabs>
 
+## Start a custom chat with Copilot
+
+To start a chat with a custom mode, use the `customCopilotChat` action.
+
+Define the `mode` property to specify the chat mode you want to use.
+
+The `message` property is optional.
+
+<Tabs syncKey="copilot-custom-chat">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "customCopilotChat",
+  "mode": "Beast Mode 3.1"
+}
+
+{
+  "action": "customCopilotChat",
+  "mode": "Beast Mode 3.1",
+  "message": "Write a function that returns 'Hello from Demo Time'."
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: customCopilotChat
+mode: "Beast Mode 3.1"
+```
+
+```yaml
+action: customCopilotChat
+mode: "Beast Mode 3.1"
+message: "Write a function that returns 'Hello from Demo Time'."
+```
+
+</TabItem>
+</Tabs>
+
 ## Close Copilot chat
 
 To close the Copilot chat panel, use the `closeCopilotChat` action.

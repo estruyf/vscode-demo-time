@@ -107,6 +107,7 @@ export const CATEGORIZED_ACTIONS: {
       Action.AskChat,
       Action.EditChat,
       Action.AgentChat,
+      Action.CustomChat,
       Action.CloseChat,
     ],
   },

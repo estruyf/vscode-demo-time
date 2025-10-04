@@ -660,6 +660,9 @@ export class DemoRunner {
     } else if (step.action === Action.AgentChat) {
       await ChatActionsService.agentChat(step);
       return;
+    } else if (step.action === Action.CustomChat) {
+      await ChatActionsService.customChat(step);
+      return;
     } else if (step.action === Action.CloseChat) {
       await ChatActionsService.closeChat();
       return;

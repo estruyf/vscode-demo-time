@@ -367,6 +367,13 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
       message: '',
     };
   }
+  if (action === Action.CustomChat) {
+    return {
+      action: Action.CustomChat,
+      mode: '',
+      message: '',
+    };
+  }
   if (action === Action.CloseChat) {
     return {
       action: Action.CloseChat,
