@@ -58,9 +58,9 @@ export const DemoList: React.FC<DemoListProps> = ({ apiData, onRunById }) => {
   return (
     <div className="card flex flex-col h-full">
       <div className="mb-4 flex-shrink-0 flex items-center justify-between">
-        <h2 className="text-xl font-bold text-white">
-          Steps
-        </h2>
+        <div className="p-4 border-b border-gray-700/30">
+          <h2 className="text-lg font-semibold text-white">Steps</h2>
+        </div>
         <div className='block md:hidden'>
           <Clock clock={apiData?.clock} />
         </div>

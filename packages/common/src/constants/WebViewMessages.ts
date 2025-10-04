@@ -106,6 +106,10 @@ export const WebViewMessages = {
      * slideReady
      */
     slideReady: 'slideReady',
+    /**
+     * nextSlideTitle
+     */
+    nextSlideTitle: 'nextSlideTitle',
     // Config editor
     configEditor: {
       /**

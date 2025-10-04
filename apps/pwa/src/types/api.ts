@@ -51,6 +51,7 @@ export interface ApiData {
   currentDemoFile?: string;
   previousEnabled?: boolean;
   clock?: Clock;
+  slides?: Slide;
 }
 
 export interface ConnectionStatus {
@@ -63,4 +64,10 @@ export interface Clock {
   current: string;
   countdown: string;
   isPaused: boolean;
+}
+
+export interface Slide {
+  nextTitle: string;
+  hasNext: boolean;
+  slideIdx: number;
 }

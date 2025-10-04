@@ -70,6 +70,7 @@ import {
 import { InputService } from './InputService';
 import { backupVSCodeSettings } from '../utils/backupVSCodeSettings';
 import { restoreVSCodeSettings } from '../utils/restoreVSCodeSettings';
+import { ScreenshotService } from './ScreenshotService';
 
 const DEFAULT_START_VALUE = {
   filePath: '',
@@ -250,6 +251,7 @@ export class DemoRunner {
     DemoRunner.togglePresentationMode(false);
     DemoPanel.update();
     Preview.close();
+    ScreenshotService.clearCache();
   }
 
   /**

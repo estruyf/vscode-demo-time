@@ -165,6 +165,25 @@ export const useApi = () => {
     [connectionStatus],
   );
 
+  const fetchScreenshot = useCallback(async () => {
+    if (!connectionStatus.connected || !connectionStatus.url) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`${connectionStatus.url}/api/screenshot`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch screenshot: ${response.statusText}`);
+      }
+
+      const base64Img = await response.text();
+      return base64Img;
+    } catch (error) {
+      console.error('Failed to fetch screenshot:', error);
+      return null;
+    }
+  }, [connectionStatus]);
+
   const clearNotes = useCallback(() => {
     setNotes(null);
   }, []);
@@ -203,5 +222,6 @@ export const useApi = () => {
     refreshData,
     fetchNotes,
     clearNotes,
+    fetchScreenshot,
   };
 };

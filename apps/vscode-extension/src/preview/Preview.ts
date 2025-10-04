@@ -5,7 +5,6 @@ import {
   getAbsolutePath,
   getTheme,
   getWebviewWorkspaceUrl,
-  readFile,
   setContext,
   togglePresentationView,
 } from '../utils';
@@ -20,6 +19,7 @@ export class Preview extends BaseWebview {
   private static hasClickListener = false;
   private static hasPreviousSlide = false;
   private static hasNextSlide = false;
+  private static nextSlideTitle: string | undefined = undefined;
   private static crntFile: string | null = null;
   private static crntCss: string | null = null;
   private static currentSlideIndex: number = 0;
@@ -37,6 +37,10 @@ export class Preview extends BaseWebview {
 
   public static getCurrentSlideIndex(): number {
     return Preview.currentSlideIndex;
+  }
+
+  public static getNextSlideTitle(): string | undefined {
+    return Preview.nextSlideTitle;
   }
 
   public static setCurrentSlideIndex(index: number): void {
@@ -203,6 +207,8 @@ export class Preview extends BaseWebview {
     } else if (command === WebViewMessages.toVscode.hasPreviousSlide) {
       Preview.hasPreviousSlide = payload;
       setContext(ContextKeys.hasPreviousSlide, payload);
+    } else if (command === WebViewMessages.toVscode.nextSlideTitle) {
+      Preview.nextSlideTitle = payload;
     } else if (command === WebViewMessages.toVscode.openFile && payload) {
       const fileUri = getAbsolutePath(payload);
       await window.showTextDocument(fileUri, { preview: false });

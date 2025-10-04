@@ -7,6 +7,7 @@ import { InstallPrompt } from './components/InstallPrompt';
 import 'vscrui/dist/codicon.css';
 import { Header } from './components/Header';
 import { useEffect } from 'react';
+import { Screenshot } from './components/Screenshot';
 
 function App() {
   const {
@@ -122,15 +123,24 @@ function App() {
           {apiData && (
             <div className="container mx-auto max-w-7xl flex-1 overflow-hidden">
               <div className="flex h-full">
-                <div className={`${notes ? 'flex-1' : 'max-w-4xl mx-auto'} h-full`}>
+                <div className={`max-w-4xl md:w-1/3 md:max-w-max h-full mx-auto md:mx-0`}>
                   <DemoList
                     apiData={apiData}
                     onRunById={runById}
                   />
                 </div>
-                {notes && (
-                  <Notes notes={notes} />
-                )}
+
+                {
+                  !isMobile && (
+                    <div className='w-2/3 flex flex-col'>
+                      <Screenshot {...apiData.slides} nextTitle={apiData?.slides?.nextTitle || apiData.nextDemo?.title || ''} />
+
+                      {notes && (
+                        <Notes notes={notes} />
+                      )}
+                    </div>
+                  )
+                }
               </div>
             </div>
           )}

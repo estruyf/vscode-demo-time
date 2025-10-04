@@ -23,7 +23,7 @@ export const InstallPrompt = () => {
 
       const dismissed = localStorage.getItem('pwa-install-dismissed');
       if (!dismissed) {
-        setTimeout(() => setShowPrompt(true), 3000);
+        setTimeout(() => setShowPrompt(true), 1000);
       }
     };
 

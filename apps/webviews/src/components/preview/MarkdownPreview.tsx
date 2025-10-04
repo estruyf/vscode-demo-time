@@ -7,6 +7,7 @@ import { LaserPointer } from './LaserPointer';
 import DOMPurify from 'dompurify';
 import { Config, convertTemplateToHtml, Slide, SlideLayout, SlideParser, SlideTheme, SlideTransition, WebViewMessages } from '@demotime/common';
 import { useFileContents, useCursor, useScale, useMousePosition, useTheme } from '../../hooks';
+import { extractFirstH1 } from '../../utils';
 
 export interface IMarkdownPreviewProps {
   fileUri: string;
@@ -166,6 +167,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const updateSlideIdx = React.useCallback((slideIdx: number) => {
     if (slideIdx < 0 || slideIdx >= slides.length) {
       messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
+      messageHandler.send(WebViewMessages.toVscode.nextSlideTitle, undefined);
       return;
     }
     // Reset zoom and pan when changing slides
@@ -196,9 +198,11 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     if (command === WebViewMessages.toWebview.nextSlide) {
       const nextSlide = crntSlide ? crntSlide.index + 1 : 1;
       updateSlideIdx(nextSlide);
+      messageHandler.send(WebViewMessages.toVscode.updateSlideIndex, nextSlide);
     } else if (command === WebViewMessages.toWebview.previousSlide) {
       const previousSlide = crntSlide ? crntSlide.index - 1 : 0;
       updateSlideIdx(previousSlide);
+      messageHandler.send(WebViewMessages.toVscode.updateSlideIndex, previousSlide);
     }
   }, [crntSlide, updateSlideIdx]);
 
@@ -240,6 +244,10 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       setCrntSlide(allSlides[0]);
       if (allSlides.length > 1) {
         messageHandler.send(WebViewMessages.toVscode.hasNextSlide, true);
+        const nextTitle = extractFirstH1(allSlides[1].content);
+        if (nextTitle) {
+          messageHandler.send(WebViewMessages.toVscode.nextSlideTitle, nextTitle);
+        }
       }
     }
   }, [content]);
@@ -264,18 +272,27 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     }
   }, [crntSlide, webviewUrl, fetchHeader, fetchFooter]);
 
+
   React.useEffect(() => {
     Messenger.listen(slidesListener);
 
     if (slides === null || slides.length === 0 || slides.length === 1) {
       messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
       messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, false);
+      messageHandler.send(WebViewMessages.toVscode.nextSlideTitle, undefined);
     } else if (slides.length > 1 && crntSlide?.index === slides.length - 1) {
       messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
       messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, true);
+      messageHandler.send(WebViewMessages.toVscode.nextSlideTitle, undefined);
     } else if (slides.length > 1) {
       messageHandler.send(WebViewMessages.toVscode.hasNextSlide, true);
       messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, (crntSlide?.index !== undefined && crntSlide.index > 0));
+
+      const nextSlideIdx = crntSlide?.index !== undefined ? crntSlide.index + 1 : 0;
+      const nextTitle = extractFirstH1(slides[nextSlideIdx].content);
+      if (nextTitle) {
+        messageHandler.send(WebViewMessages.toVscode.nextSlideTitle, nextTitle);
+      }
     }
 
     return () => {

@@ -4,18 +4,22 @@
 
 - [#269](https://github.com/estruyf/vscode-demo-time/issues/269): Added a new `video` slide layout
   to allow video as slide background
-- [#271](https://github.com/estruyf/vscode-demo-time/issues/271): Add new `previous` API endpoint
-  for PWA integration
-- [#273](https://github.com/estruyf/vscode-demo-time/issues/273): Added the new `notes` API endpoint
-  to retrieve the notes of the current slide
+- [#271](https://github.com/estruyf/vscode-demo-time/issues/271): Add new `/api/previous` API
+  endpoint for PWA integration
+- [#273](https://github.com/estruyf/vscode-demo-time/issues/273): Added the new `/api/notes` API
+  endpoint to retrieve the notes of the current slide
 - [#274](https://github.com/estruyf/vscode-demo-time/issues/274): Added support for
   `shellIntegration` by VS Code terminals
+- [#280](https://github.com/estruyf/vscode-demo-time/issues/280): Added new `/api/screenshot` API
+  endpoint to retrieve a screenshot of the next slide
 - [#282](https://github.com/estruyf/vscode-demo-time/issues/282): Updated the GitHub Copilot chat
   actions to use the new commands
 - [#283](https://github.com/estruyf/vscode-demo-time/issues/283): Added a new `customCopilotChat`
   action to allow users to start a chat in a specific mode
 - [#284](https://github.com/estruyf/vscode-demo-time/issues/284): Added clock information to the
   `/api/demos` endpoint
+- [#285](https://github.com/estruyf/vscode-demo-time/issues/285): Render the next screenshot in the
+  PWA remote control view
 
 ## [1.10.0] - 2025-10-01
 

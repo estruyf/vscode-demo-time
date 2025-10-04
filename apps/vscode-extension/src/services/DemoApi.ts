@@ -10,6 +10,7 @@ import { bringToFront, readFile, getDemoApiData } from '../utils';
 import { COMMAND } from '@demotime/common';
 import { DemoRunner } from './DemoRunner';
 import { ScreenshotService } from './ScreenshotService';
+
 export class DemoApi {
   private static statusBarItem: StatusBarItem;
   private static server: Server;
@@ -236,6 +237,11 @@ export class DemoApi {
     }
 
     const screenshot = await ScreenshotService.getNextSlideScreenshot();
+    if (!screenshot) {
+      res.status(500).send('Failed to take screenshot');
+      return;
+    }
+
     res.status(200).send(screenshot);
   }
 

@@ -1,8 +1,8 @@
-import { Uri } from 'vscode';
+import { Uri, workspace } from 'vscode';
 import { Extension } from './Extension';
 import { DemoStatusBar } from './DemoStatusBar';
 import { Logger } from './Logger';
-import { getAbsolutePath, getTheme, readFile } from '../utils';
+import { getAbsolutePath, getTheme, readFile, writeFile } from '../utils';
 import {
   Action,
   Config,
@@ -18,10 +18,11 @@ import rehypePrettyCode from 'rehype-pretty-code';
 import { resolve } from 'mlly';
 import { Preview } from '../preview/Preview';
 import { DemoRunner } from './DemoRunner';
+import type { BrowserType } from 'playwright-chromium';
 
 export class ScreenshotService {
   private static cachedScreenshot: string | null = null;
-  private static cachedSlideIdx: number | null = null;
+  private static cachedSlideIdx: number | undefined = undefined;
   private static lastDemoId: string | undefined = undefined;
 
   /**
@@ -30,9 +31,15 @@ export class ScreenshotService {
    */
   public static async getNextSlideScreenshot(): Promise<string | null> {
     try {
+      const { chromium } = await ScreenshotService.getPlaywright();
+      if (!chromium) {
+        Logger.error('Playwright is not available');
+        return null;
+      }
+
       const hasNextSlide = Preview.checkIfHasNextSlide();
       const crntSlideIdx = Preview.getCurrentSlideIndex();
-      let demo = hasNextSlide ? DemoRunner.currentDemo : DemoStatusBar.getNextDemo();
+      const demo = hasNextSlide ? DemoRunner.currentDemo : DemoStatusBar.getNextDemo();
       const nextSlideIdx = hasNextSlide ? crntSlideIdx + 1 : 0;
 
       // Check cache validity
@@ -91,7 +98,7 @@ export class ScreenshotService {
       const targetSlide = slides[slideIndex] || slides[0];
 
       // Generate screenshot
-      const screenshot = await ScreenshotService.generateScreenshot(targetSlide);
+      const screenshot = await ScreenshotService.generateScreenshot(chromium, targetSlide);
 
       // Cache the result
       ScreenshotService.cachedScreenshot = screenshot;
@@ -111,20 +118,37 @@ export class ScreenshotService {
   public static clearCache(): void {
     ScreenshotService.cachedScreenshot = null;
     ScreenshotService.lastDemoId = undefined;
+    ScreenshotService.cachedSlideIdx = undefined;
+  }
+
+  /**
+   * Get Playwright module
+   */
+  public static async getPlaywright(): Promise<typeof import('playwright-chromium')> {
+    const wsFolder = Extension.getInstance().workspaceFolder;
+
+    try {
+      return await import(await resolve('playwright-chromium', { url: wsFolder?.uri.fsPath }));
+    } catch {}
+
+    try {
+      return await import('playwright-chromium');
+    } catch {
+      throw new Error('Playwright not found. Please install playwright-chromium.');
+    }
   }
 
   /**
    * Generate a screenshot from slide content
    */
-  private static async generateScreenshot(slide: any): Promise<string> {
-    const { chromium } = await ScreenshotService.getPlaywright();
+  private static async generateScreenshot(chromium: BrowserType<{}>, slide: any): Promise<string> {
     const browser = await chromium.launch({
       args: ['--allow-file-access-from-files', '--enable-local-file-accesses'],
     });
 
     try {
       const context = await browser.newContext({
-        viewport: { width: 1280, height: 720 }, // 16:9 aspect ratio
+        viewport: { width: 960, height: 540 }, // 16:9 aspect ratio
       });
       const page = await context.newPage();
 
@@ -132,12 +156,21 @@ export class ScreenshotService {
       const html = await ScreenshotService.generateSlideHtml(slide);
 
       // Load the HTML
+      const workspaceFolder = Extension.getInstance().workspaceFolder;
+      if (!workspaceFolder) {
+        throw new Error('No workspace folder found');
+      }
+      await page.goto(`file://${workspaceFolder.uri.fsPath}`);
       await page.setContent(html, { waitUntil: 'networkidle' });
+      await page.waitForLoadState('networkidle');
+      await page.emulateMedia({ media: 'print' });
 
       // Take screenshot
       const screenshot = await page.screenshot({
         type: 'png',
         fullPage: false,
+        clip: { x: 0, y: 0, width: 960, height: 540 },
+        omitBackground: false,
       });
 
       await page.close();
@@ -152,10 +185,48 @@ export class ScreenshotService {
     }
   }
 
+  public static async getThemeCss(slideTheme: SlideTheme): Promise<string> {
+    let themeCss: string | null = null;
+    const extensionPath = Extension.getInstance().extensionPath;
+
+    if (slideTheme === SlideTheme.default) {
+      themeCss = await readFile(
+        Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'default.css'),
+      );
+    } else if (slideTheme === SlideTheme.minimal) {
+      themeCss = await readFile(
+        Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'minimal.css'),
+      );
+    } else if (slideTheme === SlideTheme.monomi) {
+      themeCss = await readFile(
+        Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'monomi.css'),
+      );
+    } else if (slideTheme === SlideTheme.unnamed) {
+      themeCss = await readFile(
+        Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'unnamed.css'),
+      );
+    } else if (slideTheme === SlideTheme.quantum) {
+      themeCss = await readFile(
+        Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'quantum.css'),
+      );
+    } else if (slideTheme === SlideTheme.frost) {
+      themeCss = await readFile(
+        Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'frost.css'),
+      );
+    }
+
+    const removeCustomVariant = (css: string) =>
+      css.replace(/@custom-variant dark\s*\(&:is\(\.vscode-dark \*\)\);?/g, '');
+    themeCss = removeCustomVariant(themeCss || '');
+
+    return themeCss || '';
+  }
+
   /**
    * Generate HTML for a single slide
    */
   private static async generateSlideHtml(slide: any): Promise<string> {
+    const extension = Extension.getInstance();
     const theme = await getTheme(undefined);
     const ext = Extension.getInstance();
     const headerSetting = ext.getSetting<string>(Config.slides.slideHeaderTemplate);
@@ -192,6 +263,20 @@ export class ScreenshotService {
       footerTemplate = await readFile(abs);
     }
 
+    if (
+      headerTemplate?.includes(`{{crntSlideIdx}}`) ||
+      footerTemplate?.includes(`{{crntSlideIdx}}`)
+    ) {
+      slide.frontmatter.crntSlideIdx = 1; // For single slide screenshots, this is always 1
+    }
+
+    if (
+      headerTemplate?.includes(`{{totalSlides}}`) ||
+      footerTemplate?.includes(`{{totalSlides}}`)
+    ) {
+      slide.frontmatter.totalSlides = 1; // For single slide screenshots, this is always 1
+    }
+
     if (headerTemplate) {
       headerTemplate = convertTemplateToHtml(headerTemplate, slide.frontmatter);
     }
@@ -202,10 +287,11 @@ export class ScreenshotService {
     let html = renderToString(reactContent);
 
     if (customLayout) {
-      const wsFolder = Extension.getInstance().workspaceFolder;
+      const wsFolder = extension.workspaceFolder;
       if (wsFolder) {
         const customLayoutPath = Uri.joinPath(wsFolder.uri, customLayout);
         const customLayoutContent = await readFile(customLayoutPath);
+
         html = convertTemplateToHtml(customLayoutContent, {
           metadata: { ...slide.frontmatter },
           content: html,
@@ -213,141 +299,148 @@ export class ScreenshotService {
       }
     }
 
-    // Build the full HTML page
+    // Isolate the styles for the custom layout to the slide
+    html = html.replace(/<style>/g, `<style type="text/tailwindcss">#slide-1 {`);
+    html = html.replace(/<\/style>/g, '}</style>');
+
+    // Load the appropriate theme CSS
+    const themeCss = await ScreenshotService.getThemeCss(slideTheme);
+
+    // Load base styles
+    const baseStyles = await readFile(
+      Uri.joinPath(
+        Uri.parse(Extension.getInstance().extensionPath),
+        'assets',
+        'styles',
+        'print.css',
+      ),
+    );
+    const processedBaseStyles = await ScreenshotService.insertCssVariables(baseStyles);
+
+    // Build the full HTML page with proper theme and layout
+    const slideBg =
+      image && layout !== SlideLayout.ImageLeft && layout !== SlideLayout.ImageRight
+        ? `background-image: url(${image});`
+        : ``;
+
+    // Custom themes on global level
+    const customThemes = [];
+    const customThemeUrls = [];
+    const globalCustomTheme = extension.getSetting<string>(Config.slides.customTheme);
+    if (globalCustomTheme) {
+      const workspaceFolder = extension.workspaceFolder;
+      if (globalCustomTheme.startsWith('http')) {
+        customThemeUrls.push(globalCustomTheme);
+      } else if (workspaceFolder) {
+        const theme = await readFile(Uri.joinPath(workspaceFolder.uri, globalCustomTheme));
+        if (theme) {
+          customThemes.push(theme);
+        }
+      }
+    }
+
     const fullHtml = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background: #1e1e1e;
-      color: #d4d4d4;
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-    .slide-container {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 60px;
-    }
-    .slide-header {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      right: 20px;
-    }
-    .slide-footer {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      right: 20px;
-    }
-    .slide-content {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      max-width: 1100px;
-    }
-    h1, h2, h3, h4, h5, h6 {
-      color: #e0e0e0;
-      margin-bottom: 0.5em;
-    }
-    h1 { font-size: 3em; }
-    h2 { font-size: 2.5em; }
-    h3 { font-size: 2em; }
-    p {
-      font-size: 1.5em;
-      line-height: 1.6;
-      margin-bottom: 1em;
-    }
-    code {
-      background: #2d2d2d;
-      padding: 0.2em 0.4em;
-      border-radius: 3px;
-      font-family: 'Courier New', monospace;
-    }
-    pre {
-      background: #2d2d2d;
-      padding: 1em;
-      border-radius: 5px;
-      overflow-x: auto;
-      margin-bottom: 1em;
-    }
-    pre code {
-      background: transparent;
-      padding: 0;
-    }
-    ul, ol {
-      font-size: 1.5em;
-      margin-left: 2em;
-      margin-bottom: 1em;
-    }
-    li {
-      margin-bottom: 0.5em;
-    }
-    img {
-      max-width: 100%;
-      height: auto;
-    }
-    ${
-      slideTheme === SlideTheme.light
-        ? `
-      body { background: #ffffff; color: #333333; }
-      h1, h2, h3, h4, h5, h6 { color: #111111; }
-      code { background: #f5f5f5; }
-      pre { background: #f5f5f5; }
-    `
-        : ''
-    }
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+  ${processedBaseStyles}
+  ${themeCss}
   </style>
+  ${customThemes ? `<style type="text/tailwindcss">${customThemes}</style>` : ``}
+  ${customThemeUrls ? `<link rel="stylesheet" href="${customThemeUrls}">` : ``}
   ${customTheme ? `<link rel="stylesheet" href="${customTheme}">` : ''}
 </head>
 <body>
-  <div class="slide-container">
-    ${headerTemplate ? `<div class="slide-header">${headerTemplate}</div>` : ''}
-    <div class="slide-content">
-      ${image ? `<img src="${image}" alt="Slide image" />` : html}
+  <div class="w-full h-full flex items-center justify-center" id="slide-1">
+    <div class="slide ${slideTheme.toLowerCase()}" data-theme="${slideTheme.toLowerCase()}" data-layout="${layout.toLowerCase()}">
+      <div class="slide__container">
+        <div class="slide__layout ${layout.toLowerCase()}" style="${slideBg}">
+          ${headerTemplate ? `<header class="slide__header">${headerTemplate}</header>` : ''}
+
+          ${
+            layout === SlideLayout.ImageLeft
+              ? `<div class="slide__image_left" style="background-image: url(${image});"></div>`
+              : ``
+          }
+
+          <div class="slide__content">
+            <div class="${customLayout ? `slide__content__custom` : `slide__content__inner`}">
+              ${html}
+            </div>
+          </div>
+
+          ${
+            layout === SlideLayout.ImageRight
+              ? `<div class="slide__image_right" style="background-image: url(${image});"></div>`
+              : ``
+          }
+
+          ${footerTemplate ? `<footer class="slide__footer">${footerTemplate}</footer>` : ''}
+        </div>
+      </div>
     </div>
-    ${footerTemplate ? `<div class="slide-footer">${footerTemplate}</div>` : ''}
   </div>
 </body>
 </html>`;
 
+    const isDebug = Extension.getInstance().getSetting<boolean>(Config.debug);
+    if (isDebug) {
+      const workspaceFolder = Extension.getInstance().workspaceFolder;
+      if (!workspaceFolder) {
+        return fullHtml;
+      }
+
+      await writeFile(Uri.joinPath(workspaceFolder.uri, 'slide.debug.html'), fullHtml);
+    }
     return fullHtml;
   }
 
   /**
-   * Get Playwright module
+   * Inserts CSS variables based on the current VS Code theme and editor settings into the provided CSS string.
+   *
+   * This method retrieves the active theme's color variables and the editor's font size and font family settings,
+   * then constructs a `:root` CSS block containing these variables. The generated CSS is prepended to the provided
+   * CSS string.
+   *
+   * @param css - The existing CSS string to which the theme and editor variables will be added. Defaults to an empty string.
+   * @returns A promise that resolves to the updated CSS string with the inserted variables.
    */
-  private static async getPlaywright(): Promise<typeof import('playwright-chromium')> {
-    const wsFolder = Extension.getInstance().workspaceFolder;
-
-    try {
-      return await import(await resolve('playwright-chromium', { url: wsFolder?.uri.fsPath }));
-    } catch {}
-
-    try {
-      return await import('playwright-chromium');
-    } catch {
-      throw new Error('Playwright not found. Please install playwright-chromium.');
+  private static async insertCssVariables(css: string = ''): Promise<string> {
+    const theme = await getTheme(undefined);
+    if (!theme) {
+      return css;
     }
+
+    // Get the color variables from the theme
+    const colors = Object.entries(theme.colors).reduce(
+      (acc, [key, value]) => {
+        acc[key] = value as string;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
+
+    // Get the font size and family from the editor settings
+    // --vscode-editor-font-size
+    const editorFontSize = workspace.getConfiguration('editor').get('fontSize') as number;
+    // --vscode-editor-font-family
+    const editorFontFamily = workspace.getConfiguration('editor').get('fontFamily') as string;
+
+    // Add the colors to the top of the CSS
+    let updatedCss = '@reference "tailwindcss";\n\n';
+    updatedCss += ':root {\n';
+    updatedCss += `  --vscode-editor-font-size: ${editorFontSize}px;\n`;
+    updatedCss += `  --vscode-editor-font-family: ${editorFontFamily};\n`;
+    for (const [key, value] of Object.entries(colors)) {
+      updatedCss += `  --vscode-${key.replace(/\./g, '-')}: ${value};\n`;
+    }
+    updatedCss += '}\n';
+    updatedCss += css;
+
+    return updatedCss;
   }
 }

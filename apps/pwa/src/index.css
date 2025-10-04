@@ -32,7 +32,7 @@ code {
   }
 
   .card {
-    @apply bg-gray-800/40 p-6;
+    @apply bg-gray-800/40 px-6 py-0;
   }
 
   .input-field {
@@ -49,6 +49,12 @@ code {
 
   .status-connecting {
     @apply bg-[#FFD23F] text-[#202736] px-3 py-1 rounded-full text-sm font-bold shadow-md;
+  }
+}
+
+.notes {
+  h1 {
+    margin-top: 0;
   }
 }
 

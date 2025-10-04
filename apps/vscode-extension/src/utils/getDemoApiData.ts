@@ -2,6 +2,8 @@ import { DemoFileProvider } from '../services/DemoFileProvider';
 import { DemoStatusBar } from '../services/DemoStatusBar';
 import { DemoPanel } from '../panels/DemoPanel';
 import { DemoRunner } from '../services';
+import { Preview } from '../preview/Preview';
+import { Action } from '@demotime/common';
 
 /**
  * Maps an array of demo objects to an array of objects containing only the `id` and `title` properties.
@@ -24,8 +26,22 @@ export async function getDemoApiData() {
     return null;
   }
 
-  const nextDemoFull = DemoStatusBar.getNextDemo();
-  const nextDemo = nextDemoFull ? { title: nextDemoFull.title, id: nextDemoFull.id } : undefined;
+  let hasNextSlide = Preview.checkIfHasNextSlide();
+  const nextSlideTitle = hasNextSlide ? Preview.getNextSlideTitle() : undefined;
+  const demo = hasNextSlide ? DemoRunner.currentDemo : DemoStatusBar.getNextDemo();
+
+  if (!hasNextSlide) {
+    const slideStep = demo?.steps.find((step) => step.action === Action.OpenSlide && step.path);
+    if (slideStep) {
+      hasNextSlide = true;
+    }
+  }
+
+  let nextDemo = demo ? { title: demo.title, id: demo.id } : undefined;
+  if (nextSlideTitle) {
+    nextDemo = { title: nextSlideTitle, id: '' };
+  }
+
   const demos = DemoPanel.getDemos();
   const previousEnabled = DemoRunner.allowPrevious();
 
@@ -43,6 +59,11 @@ export async function getDemoApiData() {
     demos,
     currentDemoFile,
     previousEnabled,
+    slides: {
+      hasNext: hasNextSlide,
+      nextTitle: nextSlideTitle,
+      slideIdx: Preview.getCurrentSlideIndex(),
+    },
     clock: {
       current: clock,
       countdown: countdown,
