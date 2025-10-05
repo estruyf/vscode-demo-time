@@ -20,6 +20,8 @@
   `/api/demos` endpoint
 - [#285](https://github.com/estruyf/vscode-demo-time/issues/285): Render the next screenshot in the
   PWA remote control view
+- [#287](https://github.com/estruyf/vscode-demo-time/issues/287): Added the `/api/zoom-in` and
+  `/api/zoom-out` API endpoints to control the font size in the editor
 
 ## [1.10.0] - 2025-10-01
 
