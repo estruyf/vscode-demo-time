@@ -184,6 +184,38 @@ export const useApi = () => {
     }
   }, [connectionStatus]);
 
+  const zoomIn = useCallback(
+    async (bringToFront = true) => {
+      if (!connectionStatus.connected || !connectionStatus.url) {
+        throw new Error('Not connected to API');
+      }
+
+      const response = await fetch(
+        `${connectionStatus.url}/api/zoom-in?bringToFront=${bringToFront}`,
+      );
+      if (!response.ok) {
+        throw new Error(`Failed to zoom in: ${response.statusText}`);
+      }
+    },
+    [connectionStatus],
+  );
+
+  const zoomOut = useCallback(
+    async (bringToFront = true) => {
+      if (!connectionStatus.connected || !connectionStatus.url) {
+        throw new Error('Not connected to API');
+      }
+
+      const response = await fetch(
+        `${connectionStatus.url}/api/zoom-out?bringToFront=${bringToFront}`,
+      );
+      if (!response.ok) {
+        throw new Error(`Failed to zoom out: ${response.statusText}`);
+      }
+    },
+    [connectionStatus],
+  );
+
   const clearNotes = useCallback(() => {
     setNotes(null);
   }, []);
@@ -223,5 +255,7 @@ export const useApi = () => {
     fetchNotes,
     clearNotes,
     fetchScreenshot,
+    zoomIn,
+    zoomOut,
   };
 };

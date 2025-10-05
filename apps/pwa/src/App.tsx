@@ -7,6 +7,7 @@ import { InstallPrompt } from './components/InstallPrompt';
 import { Header } from './components/Header';
 import { useEffect, useMemo } from 'react';
 import { NextSlide } from './components/NextSlide';
+import { ZoomControls } from './components/ZoomControls';
 import 'vscrui/dist/codicon.css';
 
 function App() {
@@ -23,6 +24,8 @@ function App() {
     refreshData,
     fetchNotes,
     clearNotes,
+    zoomIn,
+    zoomOut,
   } = useApi();
 
   // Detect mobile screen size
@@ -131,7 +134,7 @@ function App() {
           />
 
           {apiData && (
-            <div className="container mx-auto max-w-7xl flex-1 overflow-hidden">
+            <div className="container mx-auto max-w-7xl flex-1 overflow-hidden relative">
               <div className="flex h-full">
                 <div className={`max-w-4xl md:max-w-none h-full mx-auto md:mx-0 ${splitView ? 'md:w-1/3' : 'w-full'}`}>
                   <DemoList
@@ -143,7 +146,6 @@ function App() {
                 {
                   splitView && (
                     <div className='w-2/3 flex flex-col'>
-
                       {apiData.settings.showScreenshot && (
                         <NextSlide {...apiData.slides} />
                       )}
@@ -155,6 +157,8 @@ function App() {
                   )
                 }
               </div>
+
+              <ZoomControls onZoomIn={zoomIn} onZoomOut={zoomOut} />
             </div>
           )}
 
