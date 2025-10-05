@@ -52,6 +52,10 @@ export interface ApiData {
   previousEnabled?: boolean;
   clock?: Clock;
   slides?: Slide;
+  settings: {
+    showScreenshot?: boolean;
+    showNotes?: boolean;
+  };
 }
 
 export interface ConnectionStatus {

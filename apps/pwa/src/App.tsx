@@ -4,10 +4,10 @@ import { DemoList } from './components/DemoList';
 import { NextDemo } from './components/NextDemo';
 import { Notes } from './components/Notes';
 import { InstallPrompt } from './components/InstallPrompt';
-import 'vscrui/dist/codicon.css';
 import { Header } from './components/Header';
-import { useEffect } from 'react';
-import { Screenshot } from './components/Screenshot';
+import { useEffect, useMemo } from 'react';
+import { NextSlide } from './components/NextSlide';
+import 'vscrui/dist/codicon.css';
 
 function App() {
   const {
@@ -27,6 +27,16 @@ function App() {
 
   // Detect mobile screen size
   const isMobile = window.innerWidth < 768;
+  // Determine if split view should be shown
+  const splitView = useMemo(
+    () =>
+      !isMobile &&
+      Boolean(
+        apiData?.settings?.showScreenshot ||
+        apiData?.settings?.showNotes
+      ),
+    [isMobile, apiData?.settings?.showScreenshot, apiData?.settings?.showNotes]
+  );
 
   // Check for PWA updates
   const checkForUpdates = async () => {
@@ -123,7 +133,7 @@ function App() {
           {apiData && (
             <div className="container mx-auto max-w-7xl flex-1 overflow-hidden">
               <div className="flex h-full">
-                <div className={`max-w-4xl md:w-1/3 md:max-w-max h-full mx-auto md:mx-0`}>
+                <div className={`max-w-4xl md:max-w-none h-full mx-auto md:mx-0 ${splitView ? 'md:w-1/3' : 'w-full'}`}>
                   <DemoList
                     apiData={apiData}
                     onRunById={runById}
@@ -131,11 +141,14 @@ function App() {
                 </div>
 
                 {
-                  !isMobile && (
+                  splitView && (
                     <div className='w-2/3 flex flex-col'>
-                      <Screenshot {...apiData.slides} nextTitle={apiData?.slides?.nextTitle || apiData.nextDemo?.title || ''} />
 
-                      {notes && (
+                      {apiData.settings.showScreenshot && (
+                        <NextSlide {...apiData.slides} />
+                      )}
+
+                      {(apiData.settings.showNotes && notes) && (
                         <Notes notes={notes} />
                       )}
                     </div>

@@ -1,9 +1,9 @@
 import { DemoFileProvider } from '../services/DemoFileProvider';
 import { DemoStatusBar } from '../services/DemoStatusBar';
 import { DemoPanel } from '../panels/DemoPanel';
-import { DemoRunner } from '../services';
+import { DemoRunner, Extension } from '../services';
 import { Preview } from '../preview/Preview';
-import { Action } from '@demotime/common';
+import { Action, Config } from '@demotime/common';
 
 /**
  * Maps an array of demo objects to an array of objects containing only the `id` and `title` properties.
@@ -54,6 +54,8 @@ export async function getDemoApiData() {
   const clock = DemoStatusBar.getClock();
   const countdown = DemoStatusBar.getCountdown();
 
+  const extension = Extension.getInstance();
+
   return {
     nextDemo,
     demos,
@@ -68,6 +70,10 @@ export async function getDemoApiData() {
       current: clock,
       countdown: countdown,
       isPaused: DemoStatusBar.getCountdownPaused(),
+    },
+    settings: {
+      showScreenshot: extension.getSetting<boolean>(Config.remote.showScreenshot),
+      showNotes: extension.getSetting<boolean>(Config.remote.showNotes),
     },
   };
 }

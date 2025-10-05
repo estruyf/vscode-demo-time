@@ -25,6 +25,39 @@ export class ScreenshotService {
   private static cachedSlideIdx: number | undefined = undefined;
   private static lastDemoId: string | undefined = undefined;
 
+  public static async generate(): Promise<string | null> {
+    try {
+      const slideData = await ScreenshotService.getTargetSlide();
+      if (!slideData) {
+        return null;
+      }
+
+      const { targetSlide, demo, slideIndex } = slideData;
+
+      // Check cache validity
+      if (
+        demo?.id === ScreenshotService.lastDemoId &&
+        ScreenshotService.cachedSlideIdx === slideIndex &&
+        ScreenshotService.cachedScreenshot
+      ) {
+        Logger.info('Returning cached next slide screenshot');
+        return ScreenshotService.cachedScreenshot;
+      }
+
+      // Generate HTML for the slide
+      const html = await ScreenshotService.generateSlideHtml(targetSlide);
+
+      // Cache the result
+      ScreenshotService.lastDemoId = demo.id;
+      ScreenshotService.cachedSlideIdx = slideIndex;
+
+      return html;
+    } catch (error) {
+      Logger.error(`Error generating next slide screenshot: ${(error as Error).message}`);
+      return null;
+    }
+  }
+
   /**
    * Get a screenshot of the next slide
    * Returns a base64-encoded PNG image or null if no slide available
@@ -37,65 +70,22 @@ export class ScreenshotService {
         return null;
       }
 
-      const hasNextSlide = Preview.checkIfHasNextSlide();
-      const crntSlideIdx = Preview.getCurrentSlideIndex();
-      const demo = hasNextSlide ? DemoRunner.currentDemo : DemoStatusBar.getNextDemo();
-      const nextSlideIdx = hasNextSlide ? crntSlideIdx + 1 : 0;
+      const slideData = await ScreenshotService.getTargetSlide();
+      if (!slideData) {
+        return null;
+      }
+
+      const { targetSlide, demo, slideIndex } = slideData;
 
       // Check cache validity
       if (
         demo?.id === ScreenshotService.lastDemoId &&
-        ScreenshotService.cachedSlideIdx === nextSlideIdx &&
+        ScreenshotService.cachedSlideIdx === slideIndex &&
         ScreenshotService.cachedScreenshot
       ) {
         Logger.info('Returning cached next slide screenshot');
         return ScreenshotService.cachedScreenshot;
       }
-
-      if (!demo) {
-        Logger.info('No next demo available for screenshot');
-        return null;
-      }
-
-      // Find the first openSlide step in the next demo
-      const slideStep = demo.steps.find((step) => step.action === Action.OpenSlide && step.path);
-
-      if (!slideStep || !slideStep.path) {
-        Logger.info('No slide step found in next demo');
-        return null;
-      }
-
-      const wsFolder = Extension.getInstance().workspaceFolder;
-      if (!wsFolder) {
-        Logger.error('No workspace folder found');
-        return null;
-      }
-
-      // Get the slide content
-      const slideUri = Uri.joinPath(wsFolder.uri, slideStep.path);
-      const slideContent = await readFile(slideUri);
-
-      if (!slideContent) {
-        Logger.error('Failed to read slide content');
-        return null;
-      }
-
-      // Parse and get the first slide (or specific slide index if specified)
-      const parser = new SlideParser();
-      const slides = parser.parseSlides(slideContent);
-
-      if (slides.length === 0) {
-        Logger.error('No slides parsed from content');
-        return null;
-      }
-
-      let slideIndex = 0;
-      if (nextSlideIdx !== null) {
-        slideIndex = nextSlideIdx;
-      } else if (typeof slideStep.slide === 'number') {
-        slideIndex = slideStep.slide;
-      }
-      const targetSlide = slides[slideIndex] || slides[0];
 
       // Generate screenshot
       const screenshot = await ScreenshotService.generateScreenshot(chromium, targetSlide);
@@ -110,6 +100,63 @@ export class ScreenshotService {
       Logger.error(`Error generating next slide screenshot: ${(error as Error).message}`);
       return null;
     }
+  }
+
+  /**
+   * Get the target slide for the next slide (either current demo's next slide or next demo's first slide)
+   */
+  private static async getTargetSlide(): Promise<any | null> {
+    const hasNextSlide = Preview.checkIfHasNextSlide();
+    const crntSlideIdx = Preview.getCurrentSlideIndex();
+    const demo = hasNextSlide ? DemoRunner.currentDemo : DemoStatusBar.getNextDemo();
+    const nextSlideIdx = hasNextSlide ? crntSlideIdx + 1 : 0;
+
+    if (!demo) {
+      Logger.info('No next demo available for screenshot');
+      return null;
+    }
+
+    // Find the first openSlide step in the next demo
+    const slideStep = demo.steps.find((step) => step.action === Action.OpenSlide && step.path);
+
+    if (!slideStep || !slideStep.path) {
+      Logger.info('No slide step found in next demo');
+      return null;
+    }
+
+    const wsFolder = Extension.getInstance().workspaceFolder;
+    if (!wsFolder) {
+      Logger.error('No workspace folder found');
+      return null;
+    }
+
+    // Get the slide content
+    const slideUri = Uri.joinPath(wsFolder.uri, slideStep.path);
+    const slideContent = await readFile(slideUri);
+
+    if (!slideContent) {
+      Logger.error('Failed to read slide content');
+      return null;
+    }
+
+    // Parse and get the first slide (or specific slide index if specified)
+    const parser = new SlideParser();
+    const slides = parser.parseSlides(slideContent);
+
+    if (slides.length === 0) {
+      Logger.error('No slides parsed from content');
+      return null;
+    }
+
+    let slideIndex = 0;
+    if (nextSlideIdx !== null) {
+      slideIndex = nextSlideIdx;
+    } else if (typeof slideStep.slide === 'number') {
+      slideIndex = slideStep.slide;
+    }
+    const targetSlide = slides[slideIndex] || slides[0];
+
+    return { targetSlide, demo, slideIndex };
   }
 
   /**

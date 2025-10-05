@@ -49,4 +49,8 @@ export const Config = {
   configEditor: {
     openInConfigEditor: 'openInConfigEditor',
   },
+  remote: {
+    showScreenshot: 'remote.showScreenshot',
+    showNotes: 'remote.showNotes',
+  },
 };

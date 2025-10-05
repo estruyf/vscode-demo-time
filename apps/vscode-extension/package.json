@@ -266,6 +266,16 @@
           "type": "boolean",
           "default": true,
           "description": "Open the config file in the custom config editor."
+        },
+        "demoTime.remote.showScreenshot": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable remote screenshot functionality."
+        },
+        "demoTime.remote.showNotes": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable remote notes functionality."
         }
       }
     },
