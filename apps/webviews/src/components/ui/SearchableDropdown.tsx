@@ -74,7 +74,7 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
 
   // Calculate dropdown position
   const calculatePosition = () => {
-    if (!dropdownRef.current) return;
+    if (!dropdownRef.current) { return; }
 
     const rect = dropdownRef.current.getBoundingClientRect();
     const viewportHeight = window.innerHeight;

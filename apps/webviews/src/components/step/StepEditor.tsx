@@ -251,6 +251,8 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       label = "Script ID";
     } else if (field === 'openInVSCode') {
       label = 'Open in VS Code';
+    } else if (field === 'startOnOpen') {
+      label = 'Start the poll when opening it';
     }
 
     switch (field) {
@@ -378,6 +380,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
           </div>
         );
       }
+
       case 'focusTop':
       case 'overwrite':
       case 'openInVSCode':
@@ -388,6 +391,23 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
               <input
                 type="checkbox"
                 checked={typeof step[field] === 'undefined' ? true : step[field]}
+                onChange={(e) => handleChange(field, e.target.checked)}
+                className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                {label} {isRequired && <span className="text-red-500">*</span>}
+              </span>
+            </label>
+          </div>
+        );
+
+      case 'startOnOpen':
+        return (
+          <div key={field}>
+            <label className="h-full flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={typeof step[field] === 'undefined' ? false : step[field]}
                 onChange={(e) => handleChange(field, e.target.checked)}
                 className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500"
               />

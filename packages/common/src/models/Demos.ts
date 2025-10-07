@@ -77,6 +77,7 @@ export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
   // EngageTime
   sessionId?: string;
   pollId?: string;
+  startOnOpen?: boolean;
 }
 
 export interface ITerminal {

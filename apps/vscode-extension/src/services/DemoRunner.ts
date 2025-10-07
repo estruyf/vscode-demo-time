@@ -977,7 +977,7 @@ export class DemoRunner {
       }
 
       if (step.action === Action.ShowEngageTimePoll) {
-        await EngageTimeService.showPoll(step.pollId);
+        await EngageTimeService.showPoll(step.pollId, step.startOnOpen);
         return;
       }
     }

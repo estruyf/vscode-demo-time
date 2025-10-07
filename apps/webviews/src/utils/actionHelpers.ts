@@ -306,7 +306,7 @@ export const getFieldsForAction = (action: Action): string[] => {
     [Action.CloseEngageTimeSession]: [],
     [Action.CloseEngageTimePoll]: ['pollId'],
     [Action.ShowEngageTimeSession]: [],
-    [Action.ShowEngageTimePoll]: ['pollId'],
+    [Action.ShowEngageTimePoll]: ['pollId', 'startOnOpen'],
   };
 
   return fieldMap[action] || [];

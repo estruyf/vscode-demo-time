@@ -4,6 +4,8 @@
 
 - [#269](https://github.com/estruyf/vscode-demo-time/issues/269): Added a new `video` slide layout
   to allow video as slide background
+- [#270](https://github.com/estruyf/vscode-demo-time/issues/270): Added the `startOnOpen` property
+  to the `showEngageTimePoll` action to automatically start the poll when it is shown
 - [#271](https://github.com/estruyf/vscode-demo-time/issues/271): Add new `/api/previous` API
   endpoint for PWA integration
 - [#273](https://github.com/estruyf/vscode-demo-time/issues/273): Added the new `/api/notes` API

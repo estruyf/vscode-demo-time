@@ -8,32 +8,27 @@ demos:
     title: Start a session
     steps:
       - action: startEngageTimeSession
-        sessionId: 4fn3gy
   - id: demo-mevobz7w-vig5
     title: Show the session details
     steps:
       - action: showEngageTimeSession
-        sessionId: 4fn3gy
   - id: demo-mevobcl3-jsy0
     title: Start a poll
     steps:
       - action: startEngageTimePoll
-        sessionId: 4fn3gy
         pollId: 2ftkkx
   - id: demo-mevoc9uh-vk2i
     title: Show the poll
     steps:
       - action: showEngageTimePoll
-        sessionId: 4fn3gy
         pollId: 2ftkkx
+        startOnOpen: true
   - id: demo-mevobuhg-bwu1
     title: Close a poll
     steps:
       - action: closeEngageTimePoll
-        sessionId: 4fn3gy
         pollId: 2ftkkx
   - id: demo-mevobi88-cosm
     title: Stop a session
     steps:
       - action: closeEngageTimeSession
-        sessionId: 4fn3gy

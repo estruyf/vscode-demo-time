@@ -31,10 +31,14 @@ export class EngageTimeService {
     );
   }
 
-  public static async showPoll(pollId?: string): Promise<void> {
+  public static async showPoll(pollId?: string, startOnOpen?: boolean): Promise<void> {
     if (!pollId) {
       Notifications.error(`EngageTime poll ID is required to show a poll.`);
       return;
+    }
+
+    if (startOnOpen) {
+      await EngageTimeService.startPoll(pollId);
     }
 
     await vscode.commands.executeCommand(
