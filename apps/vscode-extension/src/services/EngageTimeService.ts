@@ -1,4 +1,4 @@
-import { Config, Poll } from '@demotime/common';
+import { Config, EngageTimeMessageType, Poll } from '@demotime/common';
 import { Extension, Notifications } from '.';
 import * as vscode from 'vscode';
 
@@ -95,6 +95,58 @@ export class EngageTimeService {
     } catch (error: any) {
       Notifications.error(`Error getting EngageTime polls: ${error.message}`);
       return [];
+    }
+  }
+
+  public static async sendMessage(
+    sessionId: string | undefined,
+    messageType?: EngageTimeMessageType,
+    title?: string,
+    description?: string,
+  ): Promise<void> {
+    if (!sessionId) {
+      Notifications.error(`EngageTime session ID is required to send a message.`);
+      return;
+    }
+
+    const apiKey = await EngageTimeService.getApiKey();
+    if (!apiKey) {
+      Notifications.error(`EngageTime API key is required to send a message.`);
+      return;
+    }
+
+    if (!messageType) {
+      Notifications.error(`EngageTime message type is required to send a message.`);
+      return;
+    }
+
+    if (!title) {
+      Notifications.error(`EngageTime message title is required to send a message.`);
+      return;
+    }
+
+    try {
+      const response = await fetch(`${EngageTimeService.API_URL}/sessions/${sessionId}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Basic ${apiKey}`,
+        },
+        body: JSON.stringify({
+          messageType,
+          title,
+          description,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        Notifications.error(`Failed to send EngageTime message: ${response.status} ${errorText}`);
+        return;
+      }
+    } catch (error: any) {
+      Notifications.error(`Error sending EngageTime message: ${error.message}`);
+      return;
     }
   }
 

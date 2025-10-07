@@ -1,4 +1,5 @@
 import { Action } from '@demotime/common';
+import { title } from 'process';
 import { QuickPickItem } from 'vscode';
 
 export const getActionTemplate = (selectedAction: QuickPickItem): any => {
@@ -467,14 +468,12 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.StartEngageTimeSession) {
     return {
       action: Action.StartEngageTimeSession,
-      sessionId: '',
     };
   }
 
   if (action === Action.StartEngageTimePoll) {
     return {
       action: Action.StartEngageTimePoll,
-      sessionId: '',
       pollId: '',
     };
   }
@@ -482,14 +481,12 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.CloseEngageTimeSession) {
     return {
       action: Action.CloseEngageTimeSession,
-      sessionId: '',
     };
   }
 
   if (action === Action.CloseEngageTimePoll) {
     return {
       action: Action.CloseEngageTimePoll,
-      sessionId: '',
       pollId: '',
     };
   }
@@ -497,7 +494,6 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.ShowEngageTimePoll) {
     return {
       action: Action.ShowEngageTimePoll,
-      sessionId: '',
       pollId: '',
     };
   }
@@ -505,7 +501,15 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.ShowEngageTimeSession) {
     return {
       action: Action.ShowEngageTimeSession,
-      sessionId: '',
+    };
+  }
+
+  if (action === Action.SendEngageTimeMessage) {
+    return {
+      action: Action.SendEngageTimeMessage,
+      type: '',
+      title: '',
+      message: '',
     };
   }
 

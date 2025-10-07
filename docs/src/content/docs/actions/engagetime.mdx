@@ -1,13 +1,14 @@
 ---
 title: EngageTime actions
 description: Actions for controlling EngageTime sessions
-lastmod: 2025-10-01T12:13:45.817Z
+lastmod: 2025-10-07T14:27:05.684Z
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 import { Image } from 'astro:assets';
 
 import engageTimeSessionIdImg from "../../../assets/docs/engagetime-sessionid.webp";
+import timelineMessagesImg from "../../../assets/docs/timeline-messages.webp";
 
 The EngageTime actions allow you to control the behavior of the EngageTime integration during your demos. You can use these actions to start/close an EngageTime session or poll for responses.
 
@@ -34,6 +35,7 @@ The following EngageTime actions are available:
 - `startEngageTimePoll` — Start a poll within an EngageTime session. Requires `pollId`.
 - `closeEngageTimePoll` — Close a running poll. Requires `pollId`.
 - `showEngageTimePoll` — Show poll results. Requires `pollId`.
+- `sendEngageTimeMessage` — Send a message to the EngageTime session timeline. Requires `type`, and `title`.
 
 All these actions require you to define the `sessionId` of the EngageTime session you want to control. You define the `sessionId` at the root of your demo file:
 
@@ -216,3 +218,35 @@ pollId: poll-1
 
 </TabItem>
 </Tabs>
+
+
+### Send a message
+
+Send a message to the EngageTime session timeline using `sendEngageTimeMessage`. Requires `type`, and `title`.
+
+<Tabs syncKey="send-engagetime-message">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "sendEngageTimeMessage",
+  "type": "demo", // "demo", "slide", "custom"
+  "title": "New message",
+  "message": "Optional message body"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: sendEngageTimeMessage
+type: demo # "demo", "slide", "custom"
+title: New message
+message: Optional message body
+```
+
+</TabItem>
+</Tabs>
+
+<Image class="mx-auto" src={timelineMessagesImg} alt="Send messages to the EngageTime timeline" width="400" />

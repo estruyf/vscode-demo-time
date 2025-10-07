@@ -980,6 +980,16 @@ export class DemoRunner {
         await EngageTimeService.showPoll(step.pollId, step.startOnOpen);
         return;
       }
+
+      if (step.action === Action.SendEngageTimeMessage) {
+        await EngageTimeService.sendMessage(
+          crntDemoFile?.engageTime?.sessionId,
+          step.type,
+          step.title,
+          step.message,
+        );
+        return;
+      }
     }
 
     /**

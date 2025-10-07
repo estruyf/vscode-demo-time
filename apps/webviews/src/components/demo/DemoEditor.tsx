@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { validateDemo } from '../../utils/validation';
-import { Demo } from '../../types/demo';
 import { Card, Input, PathInput, Textarea, Switch, SearchableDropdown } from '../ui';
 import { Icon } from 'vscrui';
 import { VSCODE_ICONS } from '../../constants/icons';
 import { ChevronDown, ChevronUp, FilePlus } from 'lucide-react';
 import { messageHandler } from '@estruyf/vscode/dist/client';
-import { WebViewMessages } from '@demotime/common';
+import { Demo, WebViewMessages } from '@demotime/common';
 
 interface DemoEditorProps {
   demo: Demo;

@@ -28,6 +28,27 @@ demos:
     steps:
       - action: closeEngageTimePoll
         pollId: 2ftkkx
+  - id: demo-mggn29g3-0zfm
+    title: Send message (demo)
+    steps:
+      - action: sendEngageTimeMessage
+        type: demo
+        title: Start demo 1
+        message: This is the message for demo 1
+  - id: demo-mggn3lhr-t9hc
+    title: Send message (slide)
+    steps:
+      - action: sendEngageTimeMessage
+        type: slide
+        title: Start slide 1
+        message: This is the message for slide 1
+  - id: demo-mggn415c-x724
+    title: Send message (custom)
+    steps:
+      - action: sendEngageTimeMessage
+        type: custom
+        message: Custom message
+        title: Custom title
   - id: demo-mevobi88-cosm
     title: Stop a session
     steps:

@@ -138,7 +138,8 @@
                     "closeEngageTimeSession",
                     "closeEngageTimePoll",
                     "showEngageTimeSession",
-                    "showEngageTimePoll"
+                    "showEngageTimePoll",
+                    "sendEngageTimeMessage"
                   ]
                 },
                 "disabled": {
@@ -787,6 +788,29 @@
                   "if": {
                     "properties": {
                       "action": {
+                        "enum": ["sendEngageTimeMessage"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["type", "title"],
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/type"
+                      },
+                      "title": {
+                        "$ref": "#/definitions/title"
+                      },
+                      "description": {
+                        "$ref": "#/definitions/description"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
                         "const": "copyToClipboard"
                       }
                     }
@@ -1061,6 +1085,19 @@
       "type": "boolean",
       "description": "Start the poll when the demo is started. Default is false.",
       "default": false
+    },
+    "type": {
+      "type": "string",
+      "enum": ["demo", "slide", "custom"],
+      "title": "The type of EngageTime message"
+    },
+    "title": {
+      "type": "string",
+      "title": "The title of the EngageTime message"
+    },
+    "description": {
+      "type": "string",
+      "title": "The description of the EngageTime message"
     }
   }
 }

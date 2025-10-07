@@ -9,7 +9,7 @@ import { messageHandler } from '@estruyf/vscode/dist/client';
 import { Switch } from '../ui/Switch';
 import { SnippetArguments } from './SnippetArguments';
 import { DemoIdPicker } from '../ui/DemoIdPicker';
-import { Action, Step, WebViewMessages } from '@demotime/common';
+import { Action, EngageTimeMessageType, Step, WebViewMessages } from '@demotime/common';
 import { PollIdPicker } from './PollIdPicker';
 import { useDemoConfigContext } from '../../hooks';
 
@@ -233,7 +233,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
   const renderField = (field: string) => {
     const isRequired = requiredFields.includes(field);
-    const fieldErrors = stepValidation.errors.filter(error => error.field === field);
+    const fieldErrors = stepValidation.errors.filter(error => error[`field:${field}`]);
     const hasError = fieldErrors.length > 0;
     let label = field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1');
 
@@ -330,6 +330,21 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
               value={step.pollId || ''}
               onChange={(value) => handleChange('pollId', value || undefined)}
               error={fieldErrors.length > 0 ? fieldErrors[0].message : undefined}
+            />
+          </div>
+        );
+
+      case 'type':
+        return (
+          <div key={field}>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              {label} {isRequired && <span className="text-red-500">*</span>}
+            </label>
+            <SearchableDropdown
+              value={step[field] || ''}
+              options={["demo", "slide", "custom"] as EngageTimeMessageType[]}
+              onChange={(value) => handleChange(field, value as typeof step.type)}
+              placeholder="Select type..."
             />
           </div>
         );

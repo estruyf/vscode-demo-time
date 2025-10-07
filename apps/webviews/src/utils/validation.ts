@@ -1,9 +1,8 @@
-import { Action, Step } from '@demotime/common';
-import { DemoConfig, Demo } from '../types/demo';
+import { Action, Demo, DemoConfig, Step } from '@demotime/common';
 import { getRequiredFields } from './actionHelpers';
 
 export interface ValidationError {
-  field: string;
+  [key: string]: string | number | undefined;
   message: string;
   demoIndex?: number;
   stepIndex?: number;
@@ -70,7 +69,7 @@ export const validateStep = (
   requiredFields.forEach((field) => {
     if (!isFieldValid(step, field)) {
       errors.push({
-        field,
+        [`field:${field}`]: field,
         message: `${getFieldLabel(field)} is required for ${step.action} action`,
         demoIndex,
         stepIndex,
