@@ -138,7 +138,8 @@
                     "closeEngageTimeSession",
                     "closeEngageTimePoll",
                     "showEngageTimeSession",
-                    "showEngageTimePoll"
+                    "showEngageTimePoll",
+                    "sendEngageTimeMessage"
                   ]
                 },
                 "disabled": {
@@ -750,7 +751,7 @@
                   "if": {
                     "properties": {
                       "action": {
-                        "enum": ["startEngageTimePoll", "closeEngageTimePoll", "showEngageTimePoll"]
+                        "enum": ["startEngageTimePoll", "closeEngageTimePoll"]
                       }
                     }
                   },
@@ -759,6 +760,49 @@
                     "properties": {
                       "pollId": {
                         "$ref": "#/definitions/pollId"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "enum": ["showEngageTimePoll"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["pollId"],
+                    "properties": {
+                      "pollId": {
+                        "$ref": "#/definitions/pollId"
+                      },
+                      "startOnOpen": {
+                        "$ref": "#/definitions/startOnOpen"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "enum": ["sendEngageTimeMessage"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["type", "title"],
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/type"
+                      },
+                      "title": {
+                        "$ref": "#/definitions/title"
+                      },
+                      "description": {
+                        "$ref": "#/definitions/description"
                       }
                     }
                   }
@@ -1036,6 +1080,24 @@
     "pollId": {
       "type": "string",
       "title": "The ID of the EngageTime poll"
+    },
+    "startOnOpen": {
+      "type": "boolean",
+      "description": "Start the poll when the demo is started. Default is false.",
+      "default": false
+    },
+    "type": {
+      "type": "string",
+      "enum": ["demo", "slide", "custom"],
+      "title": "The type of EngageTime message"
+    },
+    "title": {
+      "type": "string",
+      "title": "The title of the EngageTime message"
+    },
+    "description": {
+      "type": "string",
+      "title": "The description of the EngageTime message"
     }
   }
 }

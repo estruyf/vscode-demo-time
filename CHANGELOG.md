@@ -6,6 +6,8 @@
   after selecting a new action
 - [#269](https://github.com/estruyf/vscode-demo-time/issues/269): Added a new `video` slide layout
   to allow video as slide background
+- [#270](https://github.com/estruyf/vscode-demo-time/issues/270): Added the `startOnOpen` property
+  to the `showEngageTimePoll` action to automatically start the poll when it is shown
 - [#271](https://github.com/estruyf/vscode-demo-time/issues/271): Add new `/api/previous` API
   endpoint for PWA integration
 - [#273](https://github.com/estruyf/vscode-demo-time/issues/273): Added the new `/api/notes` API
@@ -24,6 +26,8 @@
   PWA remote control view
 - [#287](https://github.com/estruyf/vscode-demo-time/issues/287): Added the `/api/zoom-in` and
   `/api/zoom-out` API endpoints to control the font size in the editor
+- [#288](https://github.com/estruyf/vscode-demo-time/issues/288): Added the `sendEngageTimeMessage`
+  action to send messages to EngageTime timeline
 
 ## [1.10.0] - 2025-10-01
 

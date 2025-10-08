@@ -9,7 +9,7 @@ import { messageHandler } from '@estruyf/vscode/dist/client';
 import { Switch } from '../ui/Switch';
 import { SnippetArguments } from './SnippetArguments';
 import { DemoIdPicker } from '../ui/DemoIdPicker';
-import { Action, Step, WebViewMessages } from '@demotime/common';
+import { Action, EngageTimeMessageType, Step, WebViewMessages } from '@demotime/common';
 import { PollIdPicker } from './PollIdPicker';
 import { useDemoConfigContext } from '../../hooks';
 
@@ -233,7 +233,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
   const renderField = (field: string) => {
     const isRequired = requiredFields.includes(field);
-    const fieldErrors = stepValidation.errors.filter(error => error.field === field);
+    const fieldErrors = stepValidation.errors.filter(error => error[`field:${field}`]);
     const hasError = fieldErrors.length > 0;
     let label = field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1');
 
@@ -251,6 +251,8 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       label = "Script ID";
     } else if (field === 'openInVSCode') {
       label = 'Open in VS Code';
+    } else if (field === 'startOnOpen') {
+      label = 'Start the poll when opening it';
     }
 
     switch (field) {
@@ -332,6 +334,21 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
           </div>
         );
 
+      case 'type':
+        return (
+          <div key={field}>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              {label} {isRequired && <span className="text-red-500">*</span>}
+            </label>
+            <SearchableDropdown
+              value={step[field] || ''}
+              options={["demo", "slide", "custom"] as EngageTimeMessageType[]}
+              onChange={(value) => handleChange(field, value as typeof step.type)}
+              placeholder="Select type..."
+            />
+          </div>
+        );
+
       case 'insertTypingMode':
         return (
           <div key={field}>
@@ -378,6 +395,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
           </div>
         );
       }
+
       case 'focusTop':
       case 'overwrite':
       case 'openInVSCode':
@@ -388,6 +406,23 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
               <input
                 type="checkbox"
                 checked={typeof step[field] === 'undefined' ? true : step[field]}
+                onChange={(e) => handleChange(field, e.target.checked)}
+                className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                {label} {isRequired && <span className="text-red-500">*</span>}
+              </span>
+            </label>
+          </div>
+        );
+
+      case 'startOnOpen':
+        return (
+          <div key={field}>
+            <label className="h-full flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={typeof step[field] === 'undefined' ? false : step[field]}
                 onChange={(e) => handleChange(field, e.target.checked)}
                 className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500"
               />

@@ -8,32 +8,48 @@ demos:
     title: Start a session
     steps:
       - action: startEngageTimeSession
-        sessionId: 4fn3gy
   - id: demo-mevobz7w-vig5
     title: Show the session details
     steps:
       - action: showEngageTimeSession
-        sessionId: 4fn3gy
   - id: demo-mevobcl3-jsy0
     title: Start a poll
     steps:
       - action: startEngageTimePoll
-        sessionId: 4fn3gy
         pollId: 2ftkkx
   - id: demo-mevoc9uh-vk2i
     title: Show the poll
     steps:
       - action: showEngageTimePoll
-        sessionId: 4fn3gy
         pollId: 2ftkkx
+        startOnOpen: true
   - id: demo-mevobuhg-bwu1
     title: Close a poll
     steps:
       - action: closeEngageTimePoll
-        sessionId: 4fn3gy
         pollId: 2ftkkx
+  - id: demo-mggn29g3-0zfm
+    title: Send message (demo)
+    steps:
+      - action: sendEngageTimeMessage
+        type: demo
+        title: Start demo 1
+        message: This is the message for demo 1
+  - id: demo-mggn3lhr-t9hc
+    title: Send message (slide)
+    steps:
+      - action: sendEngageTimeMessage
+        type: slide
+        title: Start slide 1
+        message: This is the message for slide 1
+  - id: demo-mggn415c-x724
+    title: Send message (custom)
+    steps:
+      - action: sendEngageTimeMessage
+        type: custom
+        message: Custom message
+        title: Custom title
   - id: demo-mevobi88-cosm
     title: Stop a session
     steps:
       - action: closeEngageTimeSession
-        sessionId: 4fn3gy

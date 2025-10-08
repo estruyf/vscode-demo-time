@@ -70,6 +70,7 @@ export const getActionIcon = (action: Action): string => {
     [Action.CloseEngageTimePoll]: 'question',
     [Action.ShowEngageTimeSession]: 'question',
     [Action.ShowEngageTimePoll]: 'question',
+    [Action.SendEngageTimeMessage]: 'question',
   };
   return iconMap[action] || 'circle';
 };
@@ -202,6 +203,7 @@ export const getRequiredFields = (action: Action): string[] => {
     [Action.CloseEngageTimePoll]: ['pollId'],
     [Action.ShowEngageTimeSession]: [],
     [Action.ShowEngageTimePoll]: ['pollId'],
+    [Action.SendEngageTimeMessage]: ['type', 'title'],
   };
   return requiredMap[action] || [];
 };
@@ -306,7 +308,8 @@ export const getFieldsForAction = (action: Action): string[] => {
     [Action.CloseEngageTimeSession]: [],
     [Action.CloseEngageTimePoll]: ['pollId'],
     [Action.ShowEngageTimeSession]: [],
-    [Action.ShowEngageTimePoll]: ['pollId'],
+    [Action.ShowEngageTimePoll]: ['pollId', 'startOnOpen'],
+    [Action.SendEngageTimeMessage]: ['type', 'title', 'message'],
   };
 
   return fieldMap[action] || [];

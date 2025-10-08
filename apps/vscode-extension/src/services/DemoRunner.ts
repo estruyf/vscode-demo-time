@@ -977,7 +977,17 @@ export class DemoRunner {
       }
 
       if (step.action === Action.ShowEngageTimePoll) {
-        await EngageTimeService.showPoll(step.pollId);
+        await EngageTimeService.showPoll(step.pollId, step.startOnOpen);
+        return;
+      }
+
+      if (step.action === Action.SendEngageTimeMessage) {
+        await EngageTimeService.sendMessage(
+          crntDemoFile?.engageTime?.sessionId,
+          step.type,
+          step.title,
+          step.message,
+        );
         return;
       }
     }

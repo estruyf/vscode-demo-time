@@ -80,4 +80,5 @@ export enum Action {
   CloseEngageTimePoll = 'closeEngageTimePoll',
   ShowEngageTimeSession = 'showEngageTimeSession',
   ShowEngageTimePoll = 'showEngageTimePoll',
+  SendEngageTimeMessage = 'sendEngageTimeMessage',
 }

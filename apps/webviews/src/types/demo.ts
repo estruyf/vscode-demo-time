@@ -143,6 +143,7 @@ export const CATEGORIZED_ACTIONS: {
       Action.StartEngageTimePoll,
       Action.CloseEngageTimeSession,
       Action.CloseEngageTimePoll,
+      Action.SendEngageTimeMessage,
     ],
   },
 ];

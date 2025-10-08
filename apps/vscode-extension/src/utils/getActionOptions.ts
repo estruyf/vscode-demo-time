@@ -462,5 +462,10 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: 'Show the EngageTime poll',
   } as QuickPickItem);
 
+  actions.push({
+    label: Action.SendEngageTimeMessage,
+    description: 'Send a message in the EngageTime session',
+  } as QuickPickItem);
+
   return actions;
 };
