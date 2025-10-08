@@ -2,6 +2,8 @@
 
 ## [1.11.0] - 2025-xx-xx
 
+- [#267](https://github.com/estruyf/vscode-demo-time/issues/267): Clean up unrelated properties
+  after selecting a new action
 - [#269](https://github.com/estruyf/vscode-demo-time/issues/269): Added a new `video` slide layout
   to allow video as slide background
 - [#271](https://github.com/estruyf/vscode-demo-time/issues/271): Add new `/api/previous` API
