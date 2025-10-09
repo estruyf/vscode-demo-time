@@ -5,7 +5,7 @@ import { Clock } from './Clock';
 
 interface DemoListProps {
   apiData: ApiData;
-  onRunById: (id: string, bringToFront?: boolean) => Promise<void>;
+  onRunById: (id: string) => Promise<void>;
 }
 
 export const DemoList: React.FC<DemoListProps> = ({ apiData, onRunById }) => {
@@ -14,7 +14,7 @@ export const DemoList: React.FC<DemoListProps> = ({ apiData, onRunById }) => {
 
   const handleRunDemo = async (id: string) => {
     try {
-      await onRunById(id, true);
+      await onRunById(id);
     } catch (error) {
       console.error('Failed to run demo:', error);
     }
