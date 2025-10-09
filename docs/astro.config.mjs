@@ -63,6 +63,13 @@ export default defineConfig({
             href: "https://fonts.googleapis.com/css2?family=Hubot+Sans:ital,wght@0,600;1,900&family=Mona+Sans:ital,wght@0,400..900;1,400..900&display=swap",
             rel: "stylesheet"
           }
+        },
+        {
+          tag: 'script',
+          attrs: {
+            async: true,
+            src: 'https://cdn.tinystats.net/scripts/capi.js',
+          }
         }
       ],
       sidebar: [
