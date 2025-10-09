@@ -28,6 +28,8 @@
   `/api/zoom-out` API endpoints to control the font size in the editor
 - [#288](https://github.com/estruyf/vscode-demo-time/issues/288): Added the `sendEngageTimeMessage`
   action to send messages to EngageTime timeline
+- [#289](https://github.com/estruyf/vscode-demo-time/issues/289): Added support for `code-insiders`
+  when using the `bringToFront` argument
 
 ## [1.10.0] - 2025-10-01
 
