@@ -2,6 +2,8 @@
 
 ## [1.11.0] - 2025-xx-xx
 
+- [#262](https://github.com/estruyf/vscode-demo-time/issues/262): Added a recent files dropdown to
+  the path input component in the config editor
 - [#266](https://github.com/estruyf/vscode-demo-time/issues/266): Added a `generate demo id` button
   to (re)generate a unique id for the demo
 - [#267](https://github.com/estruyf/vscode-demo-time/issues/267): Clean up unrelated properties

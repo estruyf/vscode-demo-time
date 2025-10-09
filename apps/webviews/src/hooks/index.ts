@@ -9,3 +9,4 @@ export * from './usePrevious';
 export * from './useRemark';
 export * from './useScale';
 export * from './useTheme';
+export * from './useRecentFiles';
