@@ -3,16 +3,17 @@ import { validateDemo } from '../../utils/validation';
 import { Card, Input, PathInput, Textarea, Switch, SearchableDropdown } from '../ui';
 import { Icon } from 'vscrui';
 import { VSCODE_ICONS } from '../../constants/icons';
-import { ChevronDown, ChevronUp, FilePlus } from 'lucide-react';
+import { ChevronDown, ChevronUp, FilePlus, RefreshCw } from 'lucide-react';
 import { messageHandler } from '@estruyf/vscode/dist/client';
 import { Demo, WebViewMessages } from '@demotime/common';
 
 interface DemoEditorProps {
   demo: Demo;
   onChange: (demo: Demo) => void;
+  onGenerateId?: () => string;
 }
 
-export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange }) => {
+export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange, onGenerateId }) => {
   const [collapsed, setCollapsed] = useState<boolean>(false);
 
   // Notes file helpers
@@ -119,13 +120,33 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange }) => {
             />
 
             <div>
-              <Input
-                label="Demo ID"
-                value={demo.id || ''}
-                onChange={(value) => handleChange('id', value || undefined)}
-                placeholder="Enter demo ID (optional)"
-                error={getFieldError('id')}
-              />
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Demo ID
+              </label>
+              <div className="flex items-center gap-2">
+                <Input
+                  label={undefined}
+                  value={demo.id || ''}
+                  onChange={(value) => handleChange('id', value || undefined)}
+                  placeholder="Enter demo ID (optional)"
+                  error={getFieldError('id')}
+                  className="flex-1"
+                />
+                <button
+                  type="button"
+                  className="px-3 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-md flex items-center gap-1 whitespace-nowrap"
+                  onClick={() => {
+                    if (onGenerateId) {
+                      handleChange('id', onGenerateId());
+                    }
+                  }}
+                  title="Generate unique demo ID"
+                  disabled={!onGenerateId}
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  Generate
+                </button>
+              </div>
               <p className="text-xs text-gray-500 dark:text-gray-300 mt-2">Optional. This ID can be used to trigger this demo from the API of URI handler.</p>
             </div>
 

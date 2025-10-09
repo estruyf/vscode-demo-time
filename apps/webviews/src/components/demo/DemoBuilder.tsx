@@ -44,6 +44,22 @@ export const DemoBuilder: React.FC = () => {
     handleSave,
   } = useFileOperations();
 
+  // Function to generate unique demo ID
+  const generateUniqueDemoId = React.useCallback(() => {
+    const generateDemoId = () => {
+      const timestamp = Date.now().toString(36);
+      const random = Math.random().toString(36).substr(2, 4);
+      return `demo-${timestamp}-${random}`;
+    };
+
+    let newId = generateDemoId();
+    // Ensure uniqueness across all demos
+    while (config.demos.some(demo => demo.id === newId)) {
+      newId = generateDemoId();
+    }
+    return newId;
+  }, [config.demos]);
+
   // Auto-save functionality
   const {
     isAutoSaving,
@@ -396,6 +412,7 @@ export const DemoBuilder: React.FC = () => {
                 <DemoEditor
                   demo={config.demos[selectedDemo]}
                   onChange={(demo) => handleDemoChange(selectedDemo, demo)}
+                  onGenerateId={generateUniqueDemoId}
                 />
 
                 <Card padding="md">

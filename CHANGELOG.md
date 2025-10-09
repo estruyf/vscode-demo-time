@@ -2,6 +2,8 @@
 
 ## [1.11.0] - 2025-xx-xx
 
+- [#266](https://github.com/estruyf/vscode-demo-time/issues/266): Added a `generate demo id` button
+  to (re)generate a unique id for the demo
 - [#267](https://github.com/estruyf/vscode-demo-time/issues/267): Clean up unrelated properties
   after selecting a new action
 - [#269](https://github.com/estruyf/vscode-demo-time/issues/269): Added a new `video` slide layout
