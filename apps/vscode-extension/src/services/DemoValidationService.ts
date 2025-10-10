@@ -283,20 +283,28 @@ export class DemoValidationService {
         continue;
       }
 
-      // Detect start of a new demo
+      // Detect start of a new demo object
       let isNewDemo = false;
       if (isYaml) {
-        // YAML: look for "- id:" or "- title:" or just "- " at start of line (accounting for indentation)
-        if (
-          trimmedLine.startsWith('- ') &&
-          (trimmedLine.includes('id:') || trimmedLine.includes('title:') || trimmedLine === '-')
-        ) {
-          isNewDemo = true;
+        // YAML: look for lines that start with "- " but be more specific
+        // We need to ensure we're detecting actual demo items, not sub-items like steps
+        if (trimmedLine.startsWith('- ')) {
+          // Check if this is likely a demo object by looking for demo properties
+          const isLikelyDemo = this.isLikelyYamlDemoObject(lines, lineNum);
+          if (isLikelyDemo) {
+            isNewDemo = true;
+          }
         }
       } else {
-        // JSON: look for opening brace that starts a demo object
-        if (trimmedLine === '{') {
-          isNewDemo = true;
+        // JSON: We need to be very specific about demo objects
+        // A demo object should be a direct child of the demos array
+        // Look for opening braces that are likely demo objects by checking the next few lines
+        if (trimmedLine === '{' && line.indexOf('{') > 0) {
+          // Check if this brace is followed by demo-like properties within a reasonable distance
+          const isLikelyDemo = this.isLikelyDemoObject(lines, lineNum);
+          if (isLikelyDemo) {
+            isNewDemo = true;
+          }
         }
       }
 
@@ -315,6 +323,75 @@ export class DemoValidationService {
   }
 
   /**
+   * Check if an opening brace is likely the start of a demo object
+   */
+  private static isLikelyDemoObject(lines: string[], braceLineNum: number): boolean {
+    // Look for typical demo properties in the next few lines
+    const searchLimit = Math.min(braceLineNum + 10, lines.length);
+
+    for (let i = braceLineNum + 1; i < searchLimit; i++) {
+      const line = lines[i];
+      const trimmedLine = line.trim();
+
+      // Stop if we hit a closing brace at the same level
+      if (trimmedLine === '}' || trimmedLine === '},') {
+        break;
+      }
+
+      // Look for demo-specific properties
+      if (
+        trimmedLine.includes('"id"') ||
+        trimmedLine.includes('"title"') ||
+        trimmedLine.includes('"description"') ||
+        trimmedLine.includes('"steps"')
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Check if a YAML "- " line is likely the start of a demo object
+   */
+  private static isLikelyYamlDemoObject(lines: string[], dashLineNum: number): boolean {
+    const startLine = lines[dashLineNum];
+    const startIndentation = startLine.length - startLine.trimStart().length;
+    const searchLimit = Math.min(dashLineNum + 15, lines.length);
+
+    // Look for demo-specific properties at the right indentation level
+    for (let i = dashLineNum; i < searchLimit; i++) {
+      const line = lines[i];
+      const trimmedLine = line.trim();
+      const currentIndentation = line.length - line.trimStart().length;
+
+      // Stop if we hit another "- " at the same indentation level (next demo)
+      if (
+        i > dashLineNum &&
+        trimmedLine.startsWith('- ') &&
+        currentIndentation <= startIndentation
+      ) {
+        break;
+      }
+
+      // Look for demo-specific properties
+      if (
+        trimmedLine.startsWith('id:') ||
+        trimmedLine.startsWith('title:') ||
+        trimmedLine.startsWith('description:') ||
+        trimmedLine.startsWith('steps:') ||
+        // Also check for inline format: "- id: value"
+        (i === dashLineNum && (trimmedLine.includes('id:') || trimmedLine.includes('title:')))
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
    * Find a specific property within a demo object
    */
   private static findPropertyInDemo(
@@ -323,21 +400,26 @@ export class DemoValidationService {
     property: string,
     isYaml: boolean,
   ): Position {
+    const startIndentation = lines[startLine].length - lines[startLine].trimStart().length;
+
     for (let lineNum = startLine; lineNum < lines.length; lineNum++) {
       const line = lines[lineNum];
       const trimmedLine = line.trim();
+      const currentIndentation = line.length - line.trimStart().length;
 
       // Stop searching if we hit the next demo or end of current demo
       if (lineNum > startLine) {
         if (isYaml) {
-          if (
-            trimmedLine.startsWith('- ') &&
-            (trimmedLine.includes('id:') || trimmedLine.includes('title:'))
-          ) {
+          // In YAML, if we encounter another item at the same level or less indented, we've left this demo
+          if (trimmedLine.startsWith('- ') && currentIndentation <= startIndentation) {
             break; // Start of next demo
           }
         } else {
-          if (trimmedLine === '}' || trimmedLine === '},') {
+          // In JSON, look for closing brace at the same indentation level as the opening brace
+          if (
+            (trimmedLine === '}' || trimmedLine === '},') &&
+            currentIndentation <= startIndentation
+          ) {
             break; // End of current demo
           }
         }
@@ -358,8 +440,7 @@ export class DemoValidationService {
     }
 
     // If property not found, return the demo start position
-    const indentation = lines[startLine].length - lines[startLine].trimStart().length;
-    return new Position(startLine, indentation);
+    return new Position(startLine, startIndentation);
   }
 
   /**

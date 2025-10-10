@@ -4,6 +4,8 @@
 
 - [#262](https://github.com/estruyf/vscode-demo-time/issues/262): Added a recent files dropdown to
   the path input component in the config editor
+- [#265](https://github.com/estruyf/vscode-demo-time/issues/265): Verify the demo IDs when in source
+  mode so that there are no duplicate IDs across multiple files in the workspace
 - [#266](https://github.com/estruyf/vscode-demo-time/issues/266): Added a `generate demo id` button
   to (re)generate a unique id for the demo
 - [#267](https://github.com/estruyf/vscode-demo-time/issues/267): Clean up unrelated properties
