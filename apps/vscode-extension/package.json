@@ -359,6 +359,12 @@
         "category": "Demo Time"
       },
       {
+        "command": "demoTime.fixDuplicateIds",
+        "title": "Fix duplicate demo IDs",
+        "category": "Demo Time",
+        "icon": "$(warning)"
+      },
+      {
         "command": "demo-time.reset",
         "title": "Reset",
         "category": "Demo Time",

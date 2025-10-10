@@ -1,0 +1,31 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Test Global Duplicates",
+  "description": "Demo file to test global duplicate ID validation",
+  "demos": [
+    {
+      "id": "demo1",
+      "title": "Global Duplicate Demo",
+      "description": "This demo has an ID that conflicts with test-validation.json",
+      "steps": [
+        {
+          "action": "create",
+          "path": "global-test.txt",
+          "content": "Global duplicate test"
+        }
+      ]
+    },
+    {
+      "id": "yaml-demo1",
+      "title": "Another Global Duplicate",
+      "description": "This demo conflicts with the YAML file",
+      "steps": [
+        {
+          "action": "create",
+          "path": "another-global-test.txt",
+          "content": "Another global duplicate test"
+        }
+      ]
+    }
+  ]
+}
