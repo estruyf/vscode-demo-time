@@ -70,11 +70,9 @@ const reviews = data.reviews.filter(
         class="event-card microsoft"
       >
         <div class="event-name">Microsoft Ignite</div>
-        <div class="event-description">Microsoft's premier tech conference</div>
       </a>
       <a href="https://openai.com/devday/" target="_blank" rel="noopener" class="event-card openai">
         <div class="event-name">OpenAI DevDay</div>
-        <div class="event-description">AI's biggest developer event</div>
       </a>
       <a
         href="https://www.cloudbrew.be/"
@@ -83,11 +81,9 @@ const reviews = data.reviews.filter(
         class="event-card cloudbrew"
       >
         <div class="event-name">CloudBrew</div>
-        <div class="event-description">Belgium's cloud conference</div>
       </a>
       <a href="https://wasmio.tech/" target="_blank" rel="noopener" class="event-card wasm">
         <div class="event-name">Wasm I/O</div>
-        <div class="event-description">WebAssembly conference</div>
       </a>
       <a
         href="https://www.sharepointeurope.com/"
@@ -96,19 +92,31 @@ const reviews = data.reviews.filter(
         class="event-card espc"
       >
         <div class="event-name">ESPC</div>
-        <div class="event-description">European SharePoint conference</div>
       </a>
       <a href="https://reactsummit.com/" target="_blank" rel="noopener" class="event-card react">
         <div class="event-name">React Summit</div>
-        <div class="event-description">The biggest React conference</div>
       </a>
       <a href="https://ndcconferences.com/" target="_blank" rel="noopener" class="event-card ndc">
         <div class="event-name">NDC Conferences</div>
-        <div class="event-description">Developer conferences worldwide</div>
+      </a>
+      <a
+        href="https://www.azurefest.nl/"
+        target="_blank"
+        rel="noopener"
+        class="event-card azurefest"
+      >
+        <div class="event-name">Azure Fest</div>
+      </a>
+      <a
+        href="https://cloudtechtallinn.com/"
+        target="_blank"
+        rel="noopener"
+        class="event-card cttt"
+      >
+        <div class="event-name">Cloud Tech Tallinn</div>
       </a>
       <div class="event-card">
         <div class="event-name">and many more...</div>
-        <div class="event-description">Workshops, meetups & training sessions</div>
       </div>
     </div>
     <div class="text-center mt-8">
@@ -177,7 +185,7 @@ const reviews = data.reviews.filter(
     padding: 3rem 2rem;
     background: linear-gradient(135deg, var(--sl-color-gray-6) 0%, var(--sl-color-gray-5) 100%);
     border-radius: 20px;
-    border: 1px solid var(--sl-color-gray-4);
+    border: 1px solid var(--sl-color-gray-5);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     position: relative;
     overflow: hidden;
@@ -250,7 +258,7 @@ const reviews = data.reviews.filter(
       0 20px 40px rgba(16, 163, 127, 0.2),
       0 0 0 1px rgba(16, 163, 127, 0.3);
   }
-  .event-card.cloudbrew:hover {
+  .event-card.azurefest:hover {
     border-color: #ff6b35;
     box-shadow:
       0 20px 40px rgba(255, 107, 53, 0.2),
@@ -280,6 +288,24 @@ const reviews = data.reviews.filter(
       0 20px 40px rgba(27, 161, 226, 0.2),
       0 0 0 1px rgba(27, 161, 226, 0.3);
   }
+  .event-card.azurefest:hover {
+    border-color: #e74c3c;
+    box-shadow:
+      0 20px 40px rgba(231, 76, 60, 0.2),
+      0 0 0 1px rgba(231, 76, 60, 0.3);
+  }
+  .event-card.cloudbrew:hover {
+    border-color: #091b68;
+    box-shadow:
+      0 20px 40px rgba(9, 27, 104, 0.2),
+      0 0 0 1px rgba(9, 27, 104, 0.3);
+  }
+  .event-card.cttt:hover {
+    border-color: #0072ce;
+    box-shadow:
+      0 20px 40px rgba(0, 114, 206, 0.2),
+      0 0 0 1px rgba(0, 114, 206, 0.3);
+  }
   .event-card.more:hover {
     border-color: var(--sl-color-accent);
     box-shadow:
@@ -298,7 +324,6 @@ const reviews = data.reviews.filter(
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--sl-color-white);
-    margin-bottom: 0.5rem;
     text-align: center;
     line-height: 1.3;
   }
