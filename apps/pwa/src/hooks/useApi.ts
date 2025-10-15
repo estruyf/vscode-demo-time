@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ApiData, ConnectionStatus } from '../types/api';
+import { useBringToFront } from '../contexts/BringToFrontContext';
 
 export const useApi = () => {
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>({
@@ -8,6 +9,7 @@ export const useApi = () => {
   const [apiData, setApiData] = useState<ApiData | null>(null);
   const [loading, setLoading] = useState(false);
   const [notes, setNotes] = useState<string | null>(null);
+  const { bringToFront } = useBringToFront();
 
   const connect = useCallback(async (url: string) => {
     setLoading(true);
@@ -51,56 +53,52 @@ export const useApi = () => {
     localStorage.removeItem('demoTimeApiUrl');
   }, []);
 
-  const triggerNext = useCallback(
-    async (bringToFront = true) => {
-      if (!connectionStatus.connected || !connectionStatus.url) {
-        throw new Error('Not connected to API');
-      }
+  const triggerNext = useCallback(async () => {
+    if (!connectionStatus.connected || !connectionStatus.url) {
+      throw new Error('Not connected to API');
+    }
 
-      const response = await fetch(`${connectionStatus.url}/api/next?bringToFront=${bringToFront}`);
-      if (!response.ok) {
-        throw new Error(`Failed to trigger next demo: ${response.statusText}`);
-      }
+    const response = await fetch(`${connectionStatus.url}/api/next?bringToFront=${bringToFront}`);
+    if (!response.ok) {
+      throw new Error(`Failed to trigger next demo: ${response.statusText}`);
+    }
 
-      refreshData(true);
-    },
-    [connectionStatus],
-  );
+    refreshData(true);
+  }, [connectionStatus, bringToFront]);
 
-  const triggerPrevious = useCallback(
-    async (bringToFront = true) => {
-      if (!connectionStatus.connected || !connectionStatus.url) {
-        throw new Error('Not connected to API');
-      }
+  const triggerPrevious = useCallback(async () => {
+    if (!connectionStatus.connected || !connectionStatus.url) {
+      throw new Error('Not connected to API');
+    }
 
-      const response = await fetch(
-        `${connectionStatus.url}/api/previous?bringToFront=${bringToFront}`,
-      );
-      if (!response.ok) {
-        throw new Error(`Failed to trigger previous demo: ${response.statusText}`);
-      }
+    const response = await fetch(
+      `${connectionStatus.url}/api/previous?bringToFront=${bringToFront}`,
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to trigger previous demo: ${response.statusText}`);
+    }
 
-      refreshData(true);
-    },
-    [connectionStatus],
-  );
+    refreshData(true);
+  }, [connectionStatus, bringToFront]);
 
   const runById = useCallback(
-    async (id: string, bringToFront = true) => {
+    async (id: string) => {
       if (!connectionStatus.connected || !connectionStatus.url) {
         throw new Error('Not connected to API');
       }
 
       const url = new URL(`${connectionStatus.url}/api/runById`);
       url.searchParams.set('id', id);
-      url.searchParams.set('bringToFront', bringToFront.toString());
+      if (bringToFront) {
+        url.searchParams.set('bringToFront', 'true');
+      }
 
       const response = await fetch(url.toString());
       if (!response.ok) {
         throw new Error(`Failed to run demo: ${response.statusText}`);
       }
     },
-    [connectionStatus],
+    [connectionStatus, bringToFront],
   );
 
   const refreshData = useCallback(
@@ -184,37 +182,31 @@ export const useApi = () => {
     }
   }, [connectionStatus]);
 
-  const zoomIn = useCallback(
-    async (bringToFront = true) => {
-      if (!connectionStatus.connected || !connectionStatus.url) {
-        throw new Error('Not connected to API');
-      }
+  const zoomIn = useCallback(async () => {
+    if (!connectionStatus.connected || !connectionStatus.url) {
+      throw new Error('Not connected to API');
+    }
 
-      const response = await fetch(
-        `${connectionStatus.url}/api/zoom-in?bringToFront=${bringToFront}`,
-      );
-      if (!response.ok) {
-        throw new Error(`Failed to zoom in: ${response.statusText}`);
-      }
-    },
-    [connectionStatus],
-  );
+    const response = await fetch(
+      `${connectionStatus.url}/api/zoom-in?bringToFront=${bringToFront}`,
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to zoom in: ${response.statusText}`);
+    }
+  }, [connectionStatus, bringToFront]);
 
-  const zoomOut = useCallback(
-    async (bringToFront = true) => {
-      if (!connectionStatus.connected || !connectionStatus.url) {
-        throw new Error('Not connected to API');
-      }
+  const zoomOut = useCallback(async () => {
+    if (!connectionStatus.connected || !connectionStatus.url) {
+      throw new Error('Not connected to API');
+    }
 
-      const response = await fetch(
-        `${connectionStatus.url}/api/zoom-out?bringToFront=${bringToFront}`,
-      );
-      if (!response.ok) {
-        throw new Error(`Failed to zoom out: ${response.statusText}`);
-      }
-    },
-    [connectionStatus],
-  );
+    const response = await fetch(
+      `${connectionStatus.url}/api/zoom-out?bringToFront=${bringToFront}`,
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to zoom out: ${response.statusText}`);
+    }
+  }, [connectionStatus, bringToFront]);
 
   const clearNotes = useCallback(() => {
     setNotes(null);
@@ -246,6 +238,7 @@ export const useApi = () => {
     apiData,
     loading,
     notes,
+    bringToFront,
     connect,
     disconnect,
     triggerNext,

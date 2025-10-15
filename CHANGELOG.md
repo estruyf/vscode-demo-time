@@ -2,6 +2,14 @@
 
 ## [1.11.0] - 2025-xx-xx
 
+- [#262](https://github.com/estruyf/vscode-demo-time/issues/262): Added a recent files dropdown to
+  the path input component in the config editor
+- [#265](https://github.com/estruyf/vscode-demo-time/issues/265): Verify the demo IDs when in source
+  mode so that there are no duplicate IDs across multiple files in the workspace
+- [#266](https://github.com/estruyf/vscode-demo-time/issues/266): Added a `generate demo id` button
+  to (re)generate a unique id for the demo
+- [#267](https://github.com/estruyf/vscode-demo-time/issues/267): Clean up unrelated properties
+  after selecting a new action
 - [#269](https://github.com/estruyf/vscode-demo-time/issues/269): Added a new `video` slide layout
   to allow video as slide background
 - [#270](https://github.com/estruyf/vscode-demo-time/issues/270): Added the `startOnOpen` property
@@ -26,6 +34,8 @@
   `/api/zoom-out` API endpoints to control the font size in the editor
 - [#288](https://github.com/estruyf/vscode-demo-time/issues/288): Added the `sendEngageTimeMessage`
   action to send messages to EngageTime timeline
+- [#289](https://github.com/estruyf/vscode-demo-time/issues/289): Added support for `code-insiders`
+  when using the `bringToFront` argument
 
 ## [1.10.0] - 2025-10-01
 

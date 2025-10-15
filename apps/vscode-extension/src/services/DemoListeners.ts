@@ -1,4 +1,4 @@
-import { TextDocument, Uri, workspace } from 'vscode';
+import { ExtensionContext, TextDocument, Uri, workspace } from 'vscode';
 import { parseWinPath } from '../utils';
 import { DemoPanel } from '../panels/DemoPanel';
 import { General } from '../constants';
@@ -7,9 +7,21 @@ import { DemoRunner } from './DemoRunner';
 import { DemoStatusBar } from './DemoStatusBar';
 import { Config } from '@demotime/common';
 import { Overview } from '../overview/Overview';
+import { DemoValidationService } from './DemoValidationService';
+import { Extension } from '.';
 
 export class DemoListeners {
   public static register() {
+    const ext = Extension.getInstance();
+    if (!ext) {
+      return;
+    }
+
+    const ctx = ext.context;
+
+    // Initialize validation service
+    DemoValidationService.register(ctx);
+
     workspace.onDidSaveTextDocument(DemoListeners.checkToUpdate);
     workspace.onDidChangeConfiguration((e) => {
       if (e.affectsConfiguration(Config.root)) {

@@ -1,7 +1,8 @@
-import React, { useCallback } from 'react';
-import { Folder, File, Eye } from 'lucide-react';
+import React, { useCallback, useState, useRef, useEffect } from 'react';
+import { Folder, File, Eye, Clock } from 'lucide-react';
 import { messageHandler } from '@estruyf/vscode/dist/client';
 import { WebViewMessages } from '@demotime/common';
+import { useRecentFiles } from '../../hooks/useRecentFiles';
 
 interface PathInputProps {
   label?: string;
@@ -30,11 +31,68 @@ export const PathInput: React.FC<PathInputProps> = ({
   fileTypes = [],
   showOpenButton = true,
 }) => {
+  const [showRecentFiles, setShowRecentFiles] = useState(false);
+  const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const { recentFiles, addRecentFile } = useRecentFiles(fileTypes);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node) &&
+        inputRef.current && !inputRef.current.contains(event.target as Node)) {
+        setShowRecentFiles(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Clear timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (dropdownTimeout) {
+        clearTimeout(dropdownTimeout);
+      }
+    };
+  }, [dropdownTimeout]);
+
   const openFileExplorer = useCallback(() => {
     messageHandler.request<string>(WebViewMessages.toVscode.configEditor.filePicker, { fileTypes }).then((result: string) => {
-      onChange(result);
+      if (result) {
+        onChange(result);
+        addRecentFile(result);
+      }
     });
-  }, [onChange, fileTypes]);
+  }, [onChange, fileTypes, addRecentFile]);
+
+  const handleInputFocus = useCallback(() => {
+    if (recentFiles.length > 0) {
+      setShowRecentFiles(true);
+    }
+  }, [recentFiles.length]);
+
+  const handleInputBlur = useCallback(() => {
+    // Delay hiding the dropdown to allow for clicks on dropdown items
+    const timeout = setTimeout(() => {
+      setShowRecentFiles(false);
+    }, 150);
+    setDropdownTimeout(timeout);
+  }, []);
+
+  const selectRecentFile = useCallback((filePath: string) => {
+    // Clear any pending timeout
+    if (dropdownTimeout) {
+      clearTimeout(dropdownTimeout);
+      setDropdownTimeout(null);
+    }
+    onChange(filePath);
+    addRecentFile(filePath);
+    setShowRecentFiles(false);
+  }, [onChange, addRecentFile, dropdownTimeout]);
 
   const openFileEditor = useCallback(() => {
     messageHandler.send(WebViewMessages.toVscode.openFile, value);
@@ -55,13 +113,54 @@ export const PathInput: React.FC<PathInputProps> = ({
       <div className='flex items-center w-full gap-2' style={{ height: '42px' }}>
         <div className="relative w-full">
           <input
+            ref={inputRef}
             type="text"
             value={value}
             onChange={(e) => onChange(e.target.value)}
+            onFocus={handleInputFocus}
+            onBlur={handleInputBlur}
             className={inputClasses}
             placeholder={placeholder}
             disabled={disabled}
           />
+
+          {/* Recent files dropdown */}
+          {showRecentFiles && recentFiles.length > 0 && (
+            <div
+              ref={dropdownRef}
+              className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-xl z-50 max-h-60 overflow-hidden"
+              style={{ zIndex: 1000 }}
+            >
+              {/* Header */}
+              <div className="px-4 py-2 text-xs font-semibold text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 flex items-center gap-2">
+                <Clock className="h-3 w-3" />
+                Recent Files
+              </div>
+
+              {/* File list */}
+              <div className="max-h-48 overflow-y-auto">
+                {recentFiles.map((file) => (
+                  <button
+                    key={file.path}
+                    type="button"
+                    onClick={() => selectRecentFile(file.path)}
+                    className="w-full px-4 py-3 text-left hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-700 dark:hover:text-blue-300 transition-colors flex items-center gap-3 group border-b border-gray-100 dark:border-gray-700 last:border-b-0"
+                    title={file.path}
+                  >
+                    <File className="h-4 w-4 text-gray-400 dark:text-gray-500 group-hover:text-blue-500 dark:group-hover:text-blue-400 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                        {file.fileName}
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        {file.path}
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Main browse button */}
           <button
@@ -93,8 +192,6 @@ export const PathInput: React.FC<PathInputProps> = ({
           </button>
         )}
       </div>
-
-
 
       {error && (
         <p className="text-sm text-red-600 dark:text-red-400 mt-1">{error}</p>
