@@ -54,10 +54,6 @@ export const CATEGORIZED_ACTIONS: {
     options: [Action.MarkdownPreview, Action.ImagePreview, Action.OpenSlide],
   },
   {
-    category: 'Patch actions',
-    options: [Action.ApplyPatch],
-  },
-  {
     category: 'Setting actions',
     options: [
       Action.SetSetting,
