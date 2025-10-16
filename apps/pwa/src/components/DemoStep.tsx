@@ -36,6 +36,9 @@ export const DemoStep: React.FC<DemoStepProps> = ({
     return desc;
   }, [step.description]);
 
+  if (!step.demoFilePath) {
+    return null;
+  }
 
   return (
     <div
@@ -47,13 +50,13 @@ export const DemoStep: React.FC<DemoStepProps> = ({
       <div className='flex items-center gap-3'>
         <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
           {isExecuted ? (
-            <Icon name={step.iconPath.id as never} className="!text-[#4ade80]" size={18} />
+            <Icon name={step.iconPath?.id as never} className="!text-[#4ade80]" size={18} />
           ) : isActive ? (
-            <Icon name={step.iconPath.id as never} className="!text-blue-400" size={18} />
+            <Icon name={step.iconPath?.id as never} className="!text-blue-400" size={18} />
           ) : isNext ? (
-            <Icon name={step.iconPath.id as never} className="!text-[#FFD23F]" size={18} />
+            <Icon name={step.iconPath?.id as never} className="!text-[#FFD23F]" size={18} />
           ) : (
-            <Icon name={step.iconPath.id as never} className="!text-gray-500" size={18} />
+            <Icon name={step.iconPath?.id as never} className="!text-gray-500" size={18} />
           )}
         </div>
         <span
