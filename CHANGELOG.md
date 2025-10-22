@@ -36,6 +36,8 @@
   action to send messages to EngageTime timeline
 - [#289](https://github.com/estruyf/vscode-demo-time/issues/289): Added support for `code-insiders`
   when using the `bringToFront` argument
+- [#293](https://github.com/estruyf/vscode-demo-time/issues/293): Add the command name to step when
+  using the `executeVSCodeCommand` action
 
 ## [1.10.0] - 2025-10-01
 
