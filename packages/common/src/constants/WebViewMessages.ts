@@ -164,6 +164,7 @@ export const WebViewMessages = {
        * createConfigEditorNotes
        */
       createNotes: 'createConfigEditorNotes',
+      commands: 'configEditorCommands',
       /**
        * EngageTime
        */

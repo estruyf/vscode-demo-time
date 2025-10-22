@@ -12,6 +12,7 @@ import { DemoIdPicker } from '../ui/DemoIdPicker';
 import { Action, EngageTimeMessageType, Step, WebViewMessages } from '@demotime/common';
 import { PollIdPicker } from './PollIdPicker';
 import { useDemoConfigContext } from '../../hooks';
+import { VSCodeCommandPicker } from './VSCodeCommandPicker';
 
 interface StepEditorProps {
   step: Step;
@@ -618,17 +619,30 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Command {isRequired && <span className="text-red-500">*</span>}
             </label>
-            <input
-              type="text"
-              value={step[field] || ''}
-              onChange={(e) => handleChange(field, e.target.value || undefined)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
-                }`}
-              placeholder={commandPlaceholder}
-            />
-            {fieldErrors.map((error, index) => (
-              <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
-            ))}
+            {
+              step.action === 'executeVSCodeCommand' ? (
+                <VSCodeCommandPicker
+                  value={step.command || ''}
+                  onChange={(value) => handleChange('command', value || undefined)}
+                  placeholder={commandPlaceholder}
+                  error={fieldErrors.length > 0 ? fieldErrors[0].message : undefined}
+                />
+              ) : (
+                <>
+                  <input
+                    type="text"
+                    value={step[field] || ''}
+                    onChange={(e) => handleChange(field, e.target.value || undefined)}
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
+                      }`}
+                    placeholder={commandPlaceholder}
+                  />
+                  {fieldErrors.map((error, index) => (
+                    <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
+                  ))}
+                </>
+              )
+            }
           </div>
         );
       }

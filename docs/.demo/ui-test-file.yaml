@@ -83,5 +83,4 @@ demos:
   - id: demo-mh1xnh1m-00ey
     title: Demo 8
     steps:
-      - action: insert
-      - action: open
+      - action: executeVSCodeCommand

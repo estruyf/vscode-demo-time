@@ -36,6 +36,8 @@
   action to send messages to EngageTime timeline
 - [#289](https://github.com/estruyf/vscode-demo-time/issues/289): Added support for `code-insiders`
   when using the `bringToFront` argument
+- [#291](https://github.com/estruyf/vscode-demo-time/issues/291): Added VS Code Command Picker to
+  select commands when using the `executeVSCodeCommand` action
 - [#292](https://github.com/estruyf/vscode-demo-time/issues/292): Dark mode fixes for the config
   editor
 - [#293](https://github.com/estruyf/vscode-demo-time/issues/293): Add the command name to step when
