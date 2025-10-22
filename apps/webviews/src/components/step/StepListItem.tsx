@@ -176,7 +176,7 @@ export const StepListItem: React.FC<StepListItemProps> = ({
                 )}
               </span>
               {step.disabled && (
-                <span className="ml-2 px-2 py-0.5 rounded-xs bg-gray-200 text-xs text-gray-600 dark:text-gray-300 font-semibold border border-gray-300">Disabled</span>
+                <span className="ml-2 px-2 py-0.5 rounded-xs text-xs text-gray-600 dark:text-gray-300 font-semibold border border-gray-300">Disabled</span>
               )}
             </div>
             <ChevronRight className={`h-4 w-4 text-gray-400 dark:text-gray-500 transition-transform duration-200 ${isEditing ? 'rotate-90' : ''} ml-2`} />

@@ -115,12 +115,12 @@ export const MainConfigForm: React.FC<MainConfigFormProps> = ({ config, onChange
               placeholder="Enter EngageTime session ID"
             />
 
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2 space-y-1">
-              <p className="text-sm text-yellow-800">
+            <div className="bg-yellow-50 dark:bg-gray-900 border border-yellow-200 dark:border-yellow-300 rounded-lg p-3 mt-2 space-y-1">
+              <p className="text-sm text-yellow-800 dark:text-yellow-300">
                 <strong>Note:</strong> Make sure you configure your EngageTime API key in the Demo Time settings.
                 <button
                   type="button"
-                  className="bg-transparent p-0 m-0 border-none underline decoration-dotted hover:decoration-solid text-blue-700 cursor-pointer"
+                  className="bg-transparent p-0 m-0 border-none underline decoration-dotted hover:decoration-solid text-blue-700 dark:text-blue-300 cursor-pointer"
                   style={{ font: 'inherit' }}
                   onClick={(e) => {
                     e.preventDefault();
@@ -130,8 +130,8 @@ export const MainConfigForm: React.FC<MainConfigFormProps> = ({ config, onChange
                   Open Demo Time Settings
                 </button>
               </p>
-              <p className="text-sm text-yellow-800">
-                You can get it at <a href="https://engagetime.live" target="_blank" rel="noopener noreferrer" className="underline! decoration-dotted! hover:decoration-solid! text-blue-700!">https://engagetime.live</a>.
+              <p className="text-sm text-yellow-800 dark:text-yellow-300">
+                You can get it at <a href="https://engagetime.live" target="_blank" rel="noopener noreferrer" className="underline! decoration-dotted! hover:decoration-solid! text-blue-700! dark:text-blue-300!">https://engagetime.live</a>.
               </p>
             </div>
           </div>

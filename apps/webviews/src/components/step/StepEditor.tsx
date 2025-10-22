@@ -640,10 +640,10 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Position {isRequired && <span className="text-red-500">*</span>}
             </label>
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col gap-4">
+            <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 flex flex-col gap-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="position-start-line">Start Line</label>
+                  <label className="text-xs font-medium text-gray-600 dark:text-gray-200 mb-1" htmlFor="position-start-line">Start Line</label>
                   <input
                     id="position-start-line"
                     type="text"
@@ -654,7 +654,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="position-start-char">Start Character</label>
+                  <label className="text-xs font-medium text-gray-600 dark:text-gray-200 mb-1" htmlFor="position-start-char">Start Character</label>
                   <input
                     id="position-start-char"
                     type="text"
@@ -692,16 +692,16 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                 <p className="text-sm text-red-600 dark:text-red-400">{positionError}</p>
               )}
 
-              <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
-                <p className="text-sm text-blue-800 mb-2">
+              <div className="bg-blue-50 dark:bg-gray-800 border border-blue-100 dark:border-blue-900 rounded-lg p-3">
+                <p className="text-sm text-blue-800 dark:text-blue-200 mb-2">
                   <strong>Position Examples:</strong>
                 </p>
-                <div className="text-xs text-blue-700 space-y-1">
-                  <p><code className="bg-blue-50 px-1 rounded-xs">10</code> - Line 10 (Start Line only)</p>
-                  <p><code className="bg-blue-50 px-1 rounded-xs">10:20</code> - Lines 10 to 20 (Start + End Line)</p>
-                  <p><code className="bg-blue-50 px-1 rounded-xs">10,5</code> - Line 10, character 5 (Start Line + Character)</p>
-                  <p><code className="bg-blue-50 px-1 rounded-xs">10,5:20,10</code> - From line 10, char 5 to line 20, char 10 (All fields)</p>
-                  <p><code className="bg-blue-50 px-1 rounded-xs">start</code> or <code className="bg-blue-50 px-1 rounded-xs">end</code> - Special keywords (Start Line only)</p>
+                <div className="text-xs text-blue-700 dark:text-blue-200 space-y-1">
+                  <p><code className="px-1 rounded-xs">10</code> - Line 10 (Start Line only)</p>
+                  <p><code className="px-1 rounded-xs">10:20</code> - Lines 10 to 20 (Start + End Line)</p>
+                  <p><code className="px-1 rounded-xs">10,5</code> - Line 10, character 5 (Start Line + Character)</p>
+                  <p><code className="px-1 rounded-xs">10,5:20,10</code> - From line 10, char 5 to line 20, char 10 (All fields)</p>
+                  <p><code className="px-1 rounded-xs">start</code> or <code className="px-1 rounded-xs">end</code> - Special keywords (Start Line only)</p>
                 </div>
               </div>
             </div>
@@ -720,10 +720,10 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Placeholders {(requiredFields.includes('startPlaceholder') || requiredFields.includes('endPlaceholder')) && <span className="text-red-500">*</span>}
               </label>
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col gap-4">
+              <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 flex flex-col gap-4">
                 <div className="grid grid-cols-1 gap-4">
                   <div className="flex flex-col gap-1">
-                    <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="start-placeholder">Start Placeholder</label>
+                    <label className="text-xs font-medium text-gray-600 dark:text-gray-200  mb-1" htmlFor="start-placeholder">Start Placeholder</label>
                     <input
                       id="start-placeholder"
                       type="text"
@@ -737,7 +737,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                     )}
                   </div>
                   <div className="flex flex-col gap-1">
-                    <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="end-placeholder">End Placeholder</label>
+                    <label className="text-xs font-medium text-gray-600 dark:text-gray-200 mb-1" htmlFor="end-placeholder">End Placeholder</label>
                     <input
                       id="end-placeholder"
                       type="text"
@@ -867,32 +867,32 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
       {/* Show validation hints for complex actions */}
       {(step.action === 'insert' || step.action === 'replace') && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-          <p className="text-sm text-blue-800">
+        <div className="bg-blue-50 dark:bg-gray-800 border border-blue-200 dark:border-blue-500 rounded-lg p-3">
+          <p className="text-sm text-blue-800 dark:text-blue-200">
             <strong>Note:</strong> This action requires either content OR contentPath, and either position OR startPlaceholder.
           </p>
         </div>
       )}
 
       {step.action === 'create' && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-          <p className="text-sm text-blue-800">
+        <div className="bg-blue-50 dark:bg-gray-800 border border-blue-200 dark:border-blue-500 rounded-lg p-3">
+          <p className="text-sm text-blue-800 dark:text-blue-200">
             <strong>Note:</strong> This action requires a path. You can optionally provide either content OR contentPath (but not both), or leave both empty to create an empty file.
           </p>
         </div>
       )}
 
       {step.action === 'highlight' && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-          <p className="text-sm text-blue-800">
+        <div className="bg-blue-50 dark:bg-gray-800 border border-blue-200 dark:border-blue-500 rounded-lg p-3">
+          <p className="text-sm text-blue-800 dark:text-blue-200">
             <strong>Note:</strong> This action requires either position OR both startPlaceholder and endPlaceholder.
           </p>
         </div>
       )}
 
       {step.action === 'copyToClipboard' && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-          <p className="text-sm text-blue-800">
+        <div className="bg-blue-50 dark:bg-gray-800 border border-blue-200 dark:border-blue-500 rounded-lg p-3">
+          <p className="text-sm text-blue-800 dark:text-blue-200">
             <strong>Note:</strong> This action requires either <code className="bg-white px-1 rounded-xs">content</code> OR <code className="bg-white px-1 rounded-xs">contentPath</code>.
           </p>
         </div>
