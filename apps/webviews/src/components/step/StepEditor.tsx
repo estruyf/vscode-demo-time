@@ -267,7 +267,9 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
               options={CATEGORIZED_ACTIONS}
               onChange={(value) => handleChange('action', value as Action)}
               placeholder="Select action..."
+              autoFocus={!step.action}
             />
+
             {
               step.action && step.action.toLowerCase().includes('engagetime') && (
                 <>

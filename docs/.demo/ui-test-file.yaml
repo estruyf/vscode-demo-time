@@ -80,3 +80,8 @@ demos:
       start: bell
       end: stop
     description: In this demo I'm going to show how to open it...
+  - id: demo-mh1xnh1m-00ey
+    title: Demo 8
+    steps:
+      - action: insert
+      - action: open

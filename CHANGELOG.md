@@ -40,6 +40,8 @@
   editor
 - [#293](https://github.com/estruyf/vscode-demo-time/issues/293): Add the command name to step when
   using the `executeVSCodeCommand` action
+- [#294](https://github.com/estruyf/vscode-demo-time/issues/294): When adding a new action, the
+  action dropdown will now be focused automatically
 
 ## [1.10.0] - 2025-10-01
 

@@ -141,7 +141,7 @@ export const useDemoConfig = (initialConfig?: DemoConfig) => {
   }, []);
 
   const handleAddStep = useCallback((demoIndex: number) => {
-    const newStep: Step = { action: Action.Create };
+    const newStep: Step = { action: '' as Action };
     setConfig((prev) => ({
       ...prev,
       demos: prev.demos.map((demo, idx) =>
