@@ -1,11 +1,17 @@
-import { useApi } from './hooks/useApi';
+import {
+  useApi,
+  usePwaUpdates,
+  useNotesAutoFetch,
+  useViewport,
+  useSplitView,
+  useWakeLock
+} from './hooks';
 import { Connection } from './components/Connection';
 import { DemoList } from './components/DemoList';
 import { NextDemo } from './components/NextDemo';
 import { Notes } from './components/Notes';
 import { InstallPrompt } from './components/InstallPrompt';
 import { Header } from './components/Header';
-import { useEffect, useMemo } from 'react';
 import { NextSlide } from './components/NextSlide';
 import { ZoomControls } from './components/ZoomControls';
 import 'vscrui/dist/codicon.css';
@@ -28,75 +34,21 @@ function App() {
     zoomOut,
   } = useApi();
 
-  // Detect mobile screen size
-  const isMobile = window.innerWidth < 768;
-  // Determine if split view should be shown
-  const splitView = useMemo(
-    () =>
-      !isMobile &&
-      Boolean(
-        apiData?.settings?.showScreenshot ||
-        apiData?.settings?.showNotes
-      ),
-    [isMobile, apiData?.settings?.showScreenshot, apiData?.settings?.showNotes]
-  );
+  // Custom hooks for cleaner logic
+  const { isMobile } = useViewport();
+  const { splitView } = useSplitView(apiData, isMobile);
+  const { checkForUpdates } = usePwaUpdates();
 
-  // Check for PWA updates
-  const checkForUpdates = async () => {
-    if ('serviceWorker' in navigator) {
-      try {
-        const registrations = await navigator.serviceWorker.getRegistrations();
-        let updateFound = false;
+  // Keep screen awake when connected
+  useWakeLock(connectionStatus.connected);
 
-        for (const registration of registrations) {
-          // Force update check
-          await registration.update();
-
-          // Check if there's a waiting worker (new version available)
-          if (registration.waiting) {
-            updateFound = true;
-            // Notify user that update is available
-            if (confirm('A new version is available! Reload to update?')) {
-              // Tell the waiting worker to skip waiting and become active
-              registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-              // Reload the page
-              window.location.reload();
-            }
-            break;
-          }
-        }
-
-        if (!updateFound) {
-          alert('No updates available. You\'re running the latest version!');
-        }
-      } catch (error) {
-        console.error('Error checking for updates:', error);
-        alert('Error checking for updates. Please try again.');
-      }
-    } else {
-      alert('Service workers not supported in this browser.');
-    }
-  };
-
-  // Fetch notes when current demo step has notes and not on mobile
-  useEffect(() => {
-    if (apiData && !isMobile) {
-      // Find the current active step
-      const currentStep = apiData.demos
-        .flatMap(demo => demo.children)
-        .find(step => step.isActive);
-
-      if (currentStep?.notes) {
-        fetchNotes(currentStep.notes);
-      } else {
-        // Clear notes if no current step has notes
-        clearNotes();
-      }
-    } else if (isMobile) {
-      // Clear notes on mobile
-      clearNotes();
-    }
-  }, [apiData, isMobile, fetchNotes, clearNotes]);
+  // Auto-fetch notes based on active step
+  useNotesAutoFetch({
+    apiData,
+    isMobile,
+    fetchNotes,
+    clearNotes,
+  });
 
   return (
     <div className="h-screen bg-[#202736] text-white flex flex-col overflow-hidden">
