@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ThemeConfig, DEFAULT_THEME } from './types/theme';
 import { ThemeEditor } from './components/ThemeEditor';
 import { PreviewPanel } from './components/PreviewPanel';

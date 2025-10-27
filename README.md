@@ -34,6 +34,8 @@
 - **Customizable Actions**: Execute various VS Code commands and tasks as part of your demo.
 - **PowerPoint Integration**: Seamlessly move from slides to code using the
   [PowerPoint integration](https://demotime.show/integrations/powerpoint/).
+- **Theme Builder**: Create custom slide themes visually with the
+  [Theme Builder](./apps/theme-builder) web application.
 
 ## Getting Started
 
