@@ -133,9 +133,6 @@ export class SlideParser {
       if (slide.docFrontMatter.customTheme) {
         slide.frontmatter.customTheme = slide.docFrontMatter.customTheme;
       }
-      if (slide.docFrontMatter.customLayout) {
-        slide.frontmatter.customLayout = slide.docFrontMatter.customLayout;
-      }
       if (slide.docFrontMatter.transition && !slide.frontmatter.transition) {
         slide.frontmatter.transition = slide.docFrontMatter.transition;
       }

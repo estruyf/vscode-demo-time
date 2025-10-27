@@ -66,13 +66,12 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
             crntSlideContent = renderToString(processedContent.reactContent);
           }
 
-          let html = convertTemplateToHtml(templateHtml, {
+          metadata.webViewUrl = webviewUrl || undefined;
+
+          const html = convertTemplateToHtml(templateHtml, {
             metadata,
             content: crntSlideContent,
           }, webviewUrl);
-
-          // Replace all the `<style>` tags with `<style type="text/tailwindcss">`
-          html = html.replace(/<style>/g, '<style type="text/tailwindcss">');
 
           setTemplate(html);
           setIsReady(true);
