@@ -357,7 +357,7 @@ export const DemoBuilder: React.FC = () => {
         }}
       />
 
-      <div className="flex-1 max-w-7xl mx-auto px-6 py-8 w-full overflow-hidden">
+      <div className="flex-1 max-w-7xl mx-auto px-6 py-8 w-full overflow-y-auto lg:overflow-hidden">
         {showValidation && (
           <div className="mb-8">
             <ValidationSummary
@@ -369,7 +369,7 @@ export const DemoBuilder: React.FC = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full min-h-0">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full min-h-0 lg:min-h-screen">
           <Sidebar className="lg:sticky lg:top-0 lg:self-start h-full lg:overflow-y-auto">
             <Card className='space-y-6'>
               <div className="flex items-center">
