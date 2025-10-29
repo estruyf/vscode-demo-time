@@ -369,7 +369,7 @@ export const DemoBuilder: React.FC = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full min-h-0 lg:min-h-screen">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full min-h-0">
           <Sidebar className="lg:sticky lg:top-0 lg:self-start h-full lg:overflow-y-auto">
             <Card className='space-y-6'>
               <div className="flex items-center">
