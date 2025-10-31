@@ -38,6 +38,15 @@ export class SlideParser {
     let inCodeBlock = false;
     let codeBlockMarker = '```';
 
+    // If document frontmatter exists, create an initial block for it
+    if (Object.keys(docFrontMatter).length > 0) {
+      // Create a synthetic frontmatter block for document-level metadata
+      const frontmatterBlock = `---\n${Object.entries(docFrontMatter)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join('\n')}\n---`;
+      slideBlocks.push(frontmatterBlock);
+    }
+
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
       const trimmed = line.trim();
