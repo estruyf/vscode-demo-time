@@ -38,8 +38,12 @@ export class SlideParser {
     let inCodeBlock = false;
     let codeBlockMarker = '```';
 
-    // If document frontmatter exists, create an initial block for it
-    if (Object.keys(docFrontMatter).length > 0) {
+    // If document frontmatter exists and remaining content starts with another slide delimiter,
+    // create an initial slide block for the document frontmatter
+    const hasDocFrontmatter = Object.keys(docFrontMatter).length > 0;
+    const remainingStartsWithSlide = processedMarkdown.trimStart().startsWith('---');
+
+    if (hasDocFrontmatter && remainingStartsWithSlide) {
       // Create a synthetic frontmatter block for document-level metadata
       const frontmatterBlock = `---\n${Object.entries(docFrontMatter)
         .map(([key, value]) => `${key}: ${value}`)
