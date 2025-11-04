@@ -1,6 +1,6 @@
 # Change Log
 
-## [1.11.0] - 2025-xx-xx
+## [1.11.0] - 2025-11-04
 
 - [#262](https://github.com/estruyf/vscode-demo-time/issues/262): Added a recent files dropdown to
   the path input component in the config editor

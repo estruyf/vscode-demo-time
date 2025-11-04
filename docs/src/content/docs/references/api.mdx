@@ -1,7 +1,7 @@
 ---
 title: API
 description: Demo Time provides an API to control the extension programmatically.
-lastmod: 2025-08-02T15:56:10.675Z
+lastmod: 2025-11-04T00:00:00.000Z
 tableOfContents: false
 ---
 
@@ -101,3 +101,71 @@ Returns all demo files, the next demo, and the currently executing demo file.
 - `demoFiles`: Array of demo files, each with its file path and contained demos (id and title).
 - `nextDemo`: The next demo to be executed (id and title), if available.
 - `currentDemoFile`: The currently executing demo file, with its file path and demos.
+
+### `/api/previous`
+
+This endpoint will execute the previous step in the demo.
+
+- Method: `GET`
+- Query parameters:
+  - `bringToFront`: Bring the Visual Studio Code window to the front. Default is `false`.
+
+### `/api/notes`
+
+Returns the notes of the current slide or demo step.
+
+- Method: `GET`
+
+#### Response
+
+```json title="Notes API Response"
+{
+  "notes": "Your slide or step notes here..."
+}
+```
+
+#### Description
+
+- `notes`: The notes content of the current slide or step, if available.
+
+### `/api/screenshot`
+
+Returns a screenshot of the next slide as a base64-encoded image.
+
+- Method: `GET`
+
+#### Response
+
+```json title="Screenshot API Response"
+{
+  "screenshot": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA..."
+}
+```
+
+#### Description
+
+- `screenshot`: Base64-encoded PNG image data of the next slide or step. Perfect for remote control
+  PWA previews.
+
+<Aside type="tip">
+  Use this endpoint in the Remote Control PWA to show a live preview of the upcoming slide before
+  advancing.
+</Aside>
+
+### `/api/zoom-in`
+
+Increases the editor font size.
+
+- Method: `GET`
+
+### `/api/zoom-out`
+
+Decreases the editor font size.
+
+- Method: `GET`
+
+<Aside type="note">
+  Font size changes are temporary and apply to the active editor session. Use with other demo
+  actions for comprehensive presentation control.
+</Aside>
+

@@ -1,7 +1,7 @@
 ---
 title: Visual Studio Code actions
 description: Perform Visual Studio Code actions in your demos like executing commands or showing an information message.
-lastmod: 2025-07-04T17:51:35.344Z
+lastmod: 2025-11-04T00:00:00.000Z
 ---
 
 import { Image } from 'astro:assets';
@@ -46,6 +46,16 @@ path: <relative path to the file> # optional, when defined, the args property is
 
 </TabItem>
 </Tabs>
+
+<Aside type="tip">
+  When editing the `executeVSCodeCommand` action in the config editor, a **Command Picker** appears
+  to help you search and select commands visually—no need to manually type command IDs!
+</Aside>
+
+<Aside type="note">
+  When you select a command via the Command Picker, the command name is **automatically inserted**
+  alongside the command ID for clarity in your demo configuration.
+</Aside>
 
 ### How to find the command to execute
 
