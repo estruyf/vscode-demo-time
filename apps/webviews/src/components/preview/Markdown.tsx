@@ -66,10 +66,10 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
             crntSlideContent = renderToString(processedContent.reactContent);
           }
 
-          metadata.webViewUrl = webviewUrl || undefined;
+          const metadataWithUrl = { ...metadata, webViewUrl: webviewUrl || undefined };
 
           const html = convertTemplateToHtml(templateHtml, {
-            metadata,
+            metadata: metadataWithUrl,
             content: crntSlideContent,
           }, webviewUrl);
 
