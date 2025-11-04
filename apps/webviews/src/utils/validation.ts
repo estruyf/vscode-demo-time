@@ -63,6 +63,36 @@ export const validateStep = (
   stepIndex?: number,
 ): ValidationResult => {
   const errors: ValidationError[] = [];
+
+  // Validate that action is present and valid
+  if (!step.action) {
+    errors.push({
+      field: 'action',
+      message: 'Action is required',
+      demoIndex,
+      stepIndex,
+    });
+    return {
+      isValid: false,
+      errors,
+    };
+  }
+
+  // Validate that action is a valid Action enum value
+  const validActions = Object.values(Action);
+  if (!validActions.includes(step.action as Action)) {
+    errors.push({
+      field: 'action',
+      message: `Invalid action: ${step.action}. Must be one of: ${validActions.join(', ')}`,
+      demoIndex,
+      stepIndex,
+    });
+    return {
+      isValid: false,
+      errors,
+    };
+  }
+
   const requiredFields = getRequiredFields(step.action);
 
   // Check basic required fields
