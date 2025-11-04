@@ -277,6 +277,12 @@ export class DemoApi {
   private static async zoomIn(req: Request, res: Response) {
     Logger.info('Received zoom in request');
     res.status(200).send('OK');
+
+    const show = DemoApi.toFront(req);
+    if (show) {
+      await bringToFront();
+    }
+
     await commands.executeCommand(`editor.action.fontZoomIn`);
   }
 
@@ -289,6 +295,12 @@ export class DemoApi {
   private static async zoomOut(req: Request, res: Response) {
     Logger.info('Received zoom out request');
     res.status(200).send('OK');
+
+    const show = DemoApi.toFront(req);
+    if (show) {
+      await bringToFront();
+    }
+
     await commands.executeCommand(`editor.action.fontZoomOut`);
   }
 
