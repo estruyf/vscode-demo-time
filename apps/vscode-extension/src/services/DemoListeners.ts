@@ -12,12 +12,7 @@ import { Extension } from '.';
 
 export class DemoListeners {
   public static register() {
-    const ext = Extension.getInstance();
-    if (!ext) {
-      return;
-    }
-
-    const ctx = ext.context;
+    const ctx = Extension.getInstance().context;
 
     // Initialize validation service
     DemoValidationService.register(ctx);
