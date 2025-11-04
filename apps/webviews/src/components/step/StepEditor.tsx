@@ -234,7 +234,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
   const renderField = (field: string) => {
     const isRequired = requiredFields.includes(field);
-    const fieldErrors = stepValidation.errors.filter(error => error[`field:${field}`]);
+    const fieldErrors = stepValidation.errors.filter(error => error.field === field);
     const hasError = fieldErrors.length > 0;
     let label = field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1');
 

@@ -21,7 +21,6 @@ export const VSCodeCommandPicker: React.FunctionComponent<IVSCodeCommandPickerPr
   React.useEffect(() => {
     const fetchCommands = async () => {
       const fetchedCommands = await messageHandler.request<string[]>(WebViewMessages.toVscode.configEditor.commands);
-      console.log('Fetched commands:', fetchedCommands);
       setCommands(fetchedCommands);
     };
 
