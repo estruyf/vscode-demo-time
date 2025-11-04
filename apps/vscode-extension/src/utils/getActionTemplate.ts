@@ -1,5 +1,4 @@
 import { Action } from '@demotime/common';
-import { title } from 'process';
 import { QuickPickItem } from 'vscode';
 
 export const getActionTemplate = (selectedAction: QuickPickItem): any => {

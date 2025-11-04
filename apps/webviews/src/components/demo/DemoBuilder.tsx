@@ -48,7 +48,7 @@ export const DemoBuilder: React.FC = () => {
   const generateUniqueDemoId = React.useCallback(() => {
     const generateDemoId = () => {
       const timestamp = Date.now().toString(36);
-      const random = Math.random().toString(36).substr(2, 4);
+      const random = Math.random().toString(36).substring(2, 6);
       return `demo-${timestamp}-${random}`;
     };
 

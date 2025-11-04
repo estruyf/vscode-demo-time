@@ -6,6 +6,7 @@ export const bringToFront = () => {
   return new Promise<void>((resolve) => {
     const workspaceFolder = Extension.getInstance().workspaceFolder;
     if (!workspaceFolder) {
+      resolve();
       return;
     }
 
@@ -16,7 +17,10 @@ export const bringToFront = () => {
       command = 'code-insiders';
     }
 
-    exec(`${command} .`, { cwd: workspaceFolder?.uri.fsPath }, () => {
+    exec(`${command} .`, { cwd: workspaceFolder?.uri.fsPath }, (error) => {
+      if (error) {
+        console.error(`Error bringing ${appName} to front: ${error.message}`);
+      }
       resolve();
     });
   });
