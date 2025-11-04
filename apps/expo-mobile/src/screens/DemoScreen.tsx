@@ -10,6 +10,9 @@ import {
 import * as Haptics from 'expo-haptics';
 import { ApiData, DemoFile, DemoStep } from '../types/api';
 
+// Constants
+const REFRESH_DELAY_MS = 500;
+
 interface DemoScreenProps {
   apiData: ApiData;
   loading: boolean;
@@ -35,7 +38,7 @@ export const DemoScreen: React.FC<DemoScreenProps> = ({
     
     try {
       await onTriggerNext();
-      setTimeout(() => onRefresh(), 500);
+      setTimeout(() => onRefresh(), REFRESH_DELAY_MS);
     } catch (error) {
       console.error('Failed to trigger next demo:', error);
     }
@@ -47,7 +50,7 @@ export const DemoScreen: React.FC<DemoScreenProps> = ({
     
     try {
       await onTriggerPrevious();
-      setTimeout(() => onRefresh(), 500);
+      setTimeout(() => onRefresh(), REFRESH_DELAY_MS);
     } catch (error) {
       console.error('Failed to trigger previous demo:', error);
     }
@@ -57,7 +60,7 @@ export const DemoScreen: React.FC<DemoScreenProps> = ({
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     try {
       await onRunById(id);
-      setTimeout(() => onRefresh(), 500);
+      setTimeout(() => onRefresh(), REFRESH_DELAY_MS);
     } catch (error) {
       console.error('Failed to run demo:', error);
     }
@@ -215,7 +218,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   stepsContainer: {
-    gap: 8,
+    marginTop: 8,
   },
   stepItem: {
     backgroundColor: '#1a1f2e',
@@ -223,6 +226,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderLeftWidth: 3,
     borderLeftColor: 'transparent',
+    marginBottom: 8,
   },
   stepActive: {
     borderLeftColor: '#eab308',
@@ -279,7 +283,6 @@ const styles = StyleSheet.create({
   navigationButtons: {
     flexDirection: 'row',
     paddingHorizontal: 16,
-    gap: 8,
   },
   navButton: {
     flex: 1,
@@ -287,6 +290,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
+    marginHorizontal: 4,
   },
   previousButton: {
     backgroundColor: '#374151',

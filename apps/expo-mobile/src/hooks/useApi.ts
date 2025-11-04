@@ -195,7 +195,7 @@ export const useApi = () => {
 
     const interval = setInterval(() => {
       refreshData(true);
-    }, 3000); // Poll every 3 seconds
+    }, 5000); // Poll every 5 seconds (optimized for mobile battery)
 
     return () => clearInterval(interval);
   }, [connectionStatus.connected, refreshData]);
