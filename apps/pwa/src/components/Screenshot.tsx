@@ -17,16 +17,24 @@ export const Screenshot: React.FunctionComponent<ScreenshotProps> = ({
   const [loading, setLoading] = React.useState<boolean>(false);
 
   React.useEffect(() => {
+    let cancelled = false;
+
     const getScreenshot = async () => {
       setLoading(true);
       try {
         const img = await fetchScreenshot();
-        setScreenshot(img || undefined);
+        if (!cancelled) {
+          setScreenshot(img || undefined);
+        }
       } catch (error) {
         console.error('Failed to fetch screenshot:', error);
-        setScreenshot(undefined);
+        if (!cancelled) {
+          setScreenshot(undefined);
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     };
 
@@ -34,6 +42,7 @@ export const Screenshot: React.FunctionComponent<ScreenshotProps> = ({
       getScreenshot();
     } else {
       setScreenshot(undefined);
+      setLoading(false);
     }
   }, [fetchScreenshot, hasNext, slideIdx]);
 

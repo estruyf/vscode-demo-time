@@ -227,13 +227,20 @@ export class DemoApi {
     }
 
     const workspaceFolder = Extension.getInstance().workspaceFolder;
-    const notesPath = workspaceFolder ? Uri.joinPath(workspaceFolder.uri, path) : undefined;
-    if (!notesPath) {
+    if (!workspaceFolder) {
       res.status(404).send('Notes not found');
       return;
     }
 
-    const notes = await readFile(notesPath);
+    const baseFsPath = path.resolve(workspaceFolder.uri.fsPath);
+    const notesFsPath = path.resolve(baseFsPath, path);
+
+    if (!notesFsPath.startsWith(baseFsPath)) {
+      res.status(403).send('Invalid notes path');
+      return;
+    }
+
+    const notes = await readFile(Uri.file(notesFsPath));
     res.status(200).send(notes);
   }
 
