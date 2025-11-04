@@ -207,7 +207,14 @@ export class ScreenshotService {
       if (!workspaceFolder) {
         throw new Error('No workspace folder found');
       }
-      await page.goto(`file://${workspaceFolder.uri.fsPath}`);
+
+      const baseUri = workspaceFolder.uri.with({
+        path: workspaceFolder.uri.path.endsWith('/')
+          ? workspaceFolder.uri.path
+          : `${workspaceFolder.uri.path}/`,
+      });
+
+      await page.goto(baseUri.toString(true));
       await page.setContent(html, { waitUntil: 'networkidle' });
       await page.waitForLoadState('networkidle');
       await page.emulateMedia({ media: 'print' });
@@ -238,27 +245,27 @@ export class ScreenshotService {
 
     if (slideTheme === SlideTheme.default) {
       themeCss = await readFile(
-        Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'default.css'),
+        Uri.joinPath(Uri.file(extensionPath), 'assets', 'styles', 'themes', 'default.css'),
       );
     } else if (slideTheme === SlideTheme.minimal) {
       themeCss = await readFile(
-        Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'minimal.css'),
+        Uri.joinPath(Uri.file(extensionPath), 'assets', 'styles', 'themes', 'minimal.css'),
       );
     } else if (slideTheme === SlideTheme.monomi) {
       themeCss = await readFile(
-        Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'monomi.css'),
+        Uri.joinPath(Uri.file(extensionPath), 'assets', 'styles', 'themes', 'monomi.css'),
       );
     } else if (slideTheme === SlideTheme.unnamed) {
       themeCss = await readFile(
-        Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'unnamed.css'),
+        Uri.joinPath(Uri.file(extensionPath), 'assets', 'styles', 'themes', 'unnamed.css'),
       );
     } else if (slideTheme === SlideTheme.quantum) {
       themeCss = await readFile(
-        Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'quantum.css'),
+        Uri.joinPath(Uri.file(extensionPath), 'assets', 'styles', 'themes', 'quantum.css'),
       );
     } else if (slideTheme === SlideTheme.frost) {
       themeCss = await readFile(
-        Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'frost.css'),
+        Uri.joinPath(Uri.file(extensionPath), 'assets', 'styles', 'themes', 'frost.css'),
       );
     }
 
@@ -397,8 +404,10 @@ export class ScreenshotService {
   ${processedBaseStyles}
   ${themeCss}
   </style>
-  ${customThemes ? `<style type="text/tailwindcss">${customThemes}</style>` : ``}
-  ${customThemeUrls ? `<link rel="stylesheet" href="${customThemeUrls}">` : ``}
+  ${
+    customThemes.length ? `<style type="text/tailwindcss">${customThemes.join('\n')}</style>` : ``
+  }  
+  ${customThemeUrls.map((url) => `<link rel="stylesheet" href="${url}">`).join('\n')}  
   ${customTheme ? `<link rel="stylesheet" href="${customTheme}">` : ''}
 </head>
 <body>
