@@ -49,7 +49,7 @@
       "steps": [
         {
           "action": "openSlide",
-          "path": "/.demo/slides/frost/video-slide.md"
+          "path": "/.demo/slides/frost/video.md"
         }
       ]
     },

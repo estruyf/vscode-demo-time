@@ -46,7 +46,10 @@ export class SlideParser {
     if (hasDocFrontmatter && remainingStartsWithSlide) {
       // Create a synthetic frontmatter block for document-level metadata
       const frontmatterBlock = `---\n${Object.entries(docFrontMatter)
-        .map(([key, value]) => `${key}: ${value}`)
+        .map(([key, value]) => {
+          const serializedValue = typeof value === 'object' ? JSON.stringify(value) : value;
+          return `${key}: ${serializedValue}`;
+        })
         .join('\n')}\n---`;
       slideBlocks.push(frontmatterBlock);
     }

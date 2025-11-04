@@ -237,7 +237,9 @@ const reviews = data.reviews.filter(
     left: 100%;
   }
 
-  .event-card:hover {
+  .event-card:focus-visible {
+    outline: 2px solid var(--sl-color-accent);
+    outline-offset: 2px;
     transform: translateY(-8px) scale(1.02);
     border-color: var(--sl-color-accent);
     box-shadow:
@@ -246,67 +248,65 @@ const reviews = data.reviews.filter(
     background: linear-gradient(135deg, var(--sl-color-gray-6) 0%, var(--sl-color-gray-5) 100%);
   }
 
-  .event-card.microsoft:hover {
+  .event-card:focus-visible::before {
+    left: 100%;
+  }
+
+  .event-card.microsoft:focus-visible {
     border-color: #00bcf2;
     box-shadow:
       0 20px 40px rgba(0, 188, 242, 0.2),
       0 0 0 1px rgba(0, 188, 242, 0.3);
   }
-  .event-card.openai:hover {
+  .event-card.openai:focus-visible {
     border-color: #10a37f;
     box-shadow:
       0 20px 40px rgba(16, 163, 127, 0.2),
       0 0 0 1px rgba(16, 163, 127, 0.3);
   }
-  .event-card.azurefest:hover {
-    border-color: #ff6b35;
-    box-shadow:
-      0 20px 40px rgba(255, 107, 53, 0.2),
-      0 0 0 1px rgba(255, 107, 53, 0.3);
-  }
-  .event-card.wasm:hover {
+  .event-card.wasm:focus-visible {
     border-color: #654ff0;
     box-shadow:
       0 20px 40px rgba(101, 79, 240, 0.2),
       0 0 0 1px rgba(101, 79, 240, 0.3);
   }
-  .event-card.espc:hover {
+  .event-card.espc:focus-visible {
     border-color: #0078d4;
     box-shadow:
       0 20px 40px rgba(0, 120, 212, 0.2),
       0 0 0 1px rgba(0, 120, 212, 0.3);
   }
-  .event-card.react:hover {
+  .event-card.react:focus-visible {
     border-color: #61dafb;
     box-shadow:
       0 20px 40px rgba(97, 218, 251, 0.2),
       0 0 0 1px rgba(97, 218, 251, 0.3);
   }
-  .event-card.ndc:hover {
+  .event-card.ndc:focus-visible {
     border-color: #1ba1e2;
     box-shadow:
       0 20px 40px rgba(27, 161, 226, 0.2),
       0 0 0 1px rgba(27, 161, 226, 0.3);
   }
-  .event-card.azurefest:hover {
+  .event-card.azurefest:focus-visible {
     border-color: #e74c3c;
     box-shadow:
       0 20px 40px rgba(231, 76, 60, 0.2),
       0 0 0 1px rgba(231, 76, 60, 0.3);
   }
-  .event-card.cloudbrew:hover {
+  .event-card.cloudbrew:focus-visible {
     border-color: #091b68;
     box-shadow:
       0 20px 40px rgba(9, 27, 104, 0.2),
       0 0 0 1px rgba(9, 27, 104, 0.3);
   }
-  .event-card.cttt:hover {
+  .event-card.cttt:focus-visible {
     border-color: #0072ce;
     box-shadow:
       0 20px 40px rgba(0, 114, 206, 0.2),
       0 0 0 1px rgba(0, 114, 206, 0.3);
   }
-  .event-card.more:hover {
+  .event-card.more:focus-visible {
     border-color: var(--sl-color-accent);
     box-shadow:
       0 20px 40px rgba(168, 85, 247, 0.2),

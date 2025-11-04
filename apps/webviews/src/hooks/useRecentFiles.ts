@@ -26,15 +26,11 @@ export const useRecentFiles = (fileTypes: string[]) => {
       if (!fileTypes || fileTypes.length === 0) {
         return true;
       }
-      const ext = getFileExtension(filePath);
+      const ext = getFileExtension(filePath).toLowerCase();
       return fileTypes
-        .map((type) => {
-          if (!type.startsWith('.')) {
-            return `.${type}`;
-          }
-          return type;
-        })
-        .includes(ext.toLowerCase());
+        .map((type) => (type.startsWith('.') ? type : `.${type}`))
+        .map((type) => type.toLowerCase())
+        .includes(ext);
     },
     [fileTypes],
   );
