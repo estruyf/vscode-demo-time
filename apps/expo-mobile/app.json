@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Demo Time Mobile",
-    "slug": "demo-time-mobile",
+    "name": "Demo Time Remote",
+    "slug": "demo-time-remote",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -28,8 +28,6 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "expo-haptics"
-    ]
+    "plugins": []
   }
 }

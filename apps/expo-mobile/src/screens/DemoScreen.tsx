@@ -34,8 +34,8 @@ export const DemoScreen: React.FC<DemoScreenProps> = ({
 }) => {
   const handleTriggerNext = async () => {
     // Trigger haptic feedback
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+
     try {
       await onTriggerNext();
       setTimeout(() => onRefresh(), REFRESH_DELAY_MS);
@@ -47,7 +47,7 @@ export const DemoScreen: React.FC<DemoScreenProps> = ({
   const handleTriggerPrevious = async () => {
     // Trigger haptic feedback
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    
+
     try {
       await onTriggerPrevious();
       setTimeout(() => onRefresh(), REFRESH_DELAY_MS);
@@ -68,7 +68,7 @@ export const DemoScreen: React.FC<DemoScreenProps> = ({
 
   const renderDemoStep = (step: DemoStep, demoFile: DemoFile) => {
     const stepId = `${demoFile.demoFilePath}-${step.stepIndex}`;
-    
+
     return (
       <TouchableOpacity
         key={stepId}
@@ -128,7 +128,7 @@ export const DemoScreen: React.FC<DemoScreenProps> = ({
             <Text style={styles.nextDemoTitle}>{apiData.nextDemo.title}</Text>
           </View>
         )}
-        
+
         <View style={styles.navigationButtons}>
           {apiData.previousEnabled && (
             <TouchableOpacity
@@ -143,7 +143,7 @@ export const DemoScreen: React.FC<DemoScreenProps> = ({
               )}
             </TouchableOpacity>
           )}
-          
+
           <TouchableOpacity
             style={[
               styles.navButton,
