@@ -34,6 +34,16 @@
 - **Customizable Actions**: Execute various VS Code commands and tasks as part of your demo.
 - **PowerPoint Integration**: Seamlessly move from slides to code using the
   [PowerPoint integration](https://demotime.show/integrations/powerpoint/).
+- **Remote Control**: Control your presentations remotely via PWA (web) or native mobile apps (iOS & Android) with haptic feedback support.
+
+## Remote Control Apps
+
+Demo Time includes companion apps for remote control of your presentations:
+
+- **PWA (Progressive Web App)**: Located in `apps/pwa` - A web-based remote control that works on any device with a modern browser
+- **Expo Mobile App**: Located in `apps/expo-mobile` - Native iOS and Android app with haptic feedback for navigation buttons, providing tactile confirmation when advancing through demo steps
+
+Both apps connect to the Demo Time API server running in VS Code to control your presentation remotely. The mobile app offers enhanced user experience with haptic touch feedback that isn't available in web/PWA environments.
 
 ## Getting Started
 
