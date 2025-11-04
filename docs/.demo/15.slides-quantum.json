@@ -44,6 +44,16 @@
       ]
     },
     {
+      "title": "Video slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/quantum/video.md"
+        }
+      ]
+    },
+    {
       "title": "Image slide",
       "description": "",
       "steps": [

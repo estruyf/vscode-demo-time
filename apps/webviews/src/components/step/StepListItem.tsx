@@ -1,9 +1,8 @@
 import React from 'react';
 import { ChevronRight, Trash2, Copy, Play, GripVertical } from 'lucide-react';
-import { Step } from '../../types/demo';
 import { messageHandler } from '@estruyf/vscode/dist/client';
 import { cn } from '../../utils/cn';
-import { WebViewMessages } from '@demotime/common';
+import { Action, Step, WebViewMessages } from '@demotime/common';
 
 interface StepListItemProps {
   step: Step;
@@ -166,15 +165,18 @@ export const StepListItem: React.FC<StepListItemProps> = ({
               </span>
               <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                 {step.action}
-                {step.action === 'snippet' && (step.path || step.contentPath) && (
+                {step.action === Action.Snippet && (step.path || step.contentPath) && (
                   <span className="ml-2 text-xs text-gray-500 dark:text-gray-300 font-normal">{step.path || step.contentPath}</span>
                 )}
-                {step.action === 'runDemoById' && (step.id) && (
+                {step.action === Action.RunDemoById && (step.id) && (
                   <span className="ml-2 text-xs text-gray-500 dark:text-gray-300 font-normal">{step.id}</span>
+                )}
+                {step.action === Action.ExecuteVSCodeCommand && (step.command) && (
+                  <span className="ml-2 text-xs text-gray-500 dark:text-gray-300 font-normal">{step.command}</span>
                 )}
               </span>
               {step.disabled && (
-                <span className="ml-2 px-2 py-0.5 rounded-xs bg-gray-200 text-xs text-gray-600 dark:text-gray-300 font-semibold border border-gray-300">Disabled</span>
+                <span className="ml-2 px-2 py-0.5 rounded-xs text-xs text-gray-600 dark:text-gray-300 font-semibold border border-gray-300">Disabled</span>
               )}
             </div>
             <ChevronRight className={`h-4 w-4 text-gray-400 dark:text-gray-500 transition-transform duration-200 ${isEditing ? 'rotate-90' : ''} ml-2`} />

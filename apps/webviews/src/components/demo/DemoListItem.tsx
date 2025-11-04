@@ -145,7 +145,7 @@ export const DemoListItem: React.FC<DemoListItemProps> = ({
                   {demo.title}
                 </h4>
                 {demo.disabled && (
-                  <span className="ml-2 px-2 py-0.5 rounded-xs bg-gray-200 text-xs text-gray-600 dark:text-gray-300 font-semibold border border-gray-300">Disabled</span>
+                  <span className="ml-2 px-2 py-0.5 rounded-xs text-xs text-gray-600 dark:text-gray-300 font-semibold border border-gray-300">Disabled</span>
                 )}
               </div>
 

@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { ApiData, DemoStep } from '../types/api';
-import { Icon } from 'vscrui';
+import { DemoStep as DemoStepComponent } from './DemoStep';
+import { Clock } from './Clock';
 
 interface DemoListProps {
   apiData: ApiData;
-  onRunById: (id: string, bringToFront?: boolean) => Promise<void>;
+  onRunById: (id: string) => Promise<void>;
 }
 
 export const DemoList: React.FC<DemoListProps> = ({ apiData, onRunById }) => {
@@ -13,22 +14,20 @@ export const DemoList: React.FC<DemoListProps> = ({ apiData, onRunById }) => {
 
   const handleRunDemo = async (id: string) => {
     try {
-      await onRunById(id, true);
+      await onRunById(id);
     } catch (error) {
       console.error('Failed to run demo:', error);
     }
   };
 
-  const allSteps: DemoStep[] = [];
-  apiData.demos.forEach(demoFile => {
-    demoFile.children.forEach(step => {
-      allSteps.push(step);
-    });
-  });
-
   const isNextDemo = (step: DemoStep) => {
     return apiData.nextDemo?.title === step.originalLabel;
   };
+
+  const nextDemoFile = useMemo(() => {
+    const currentFileIdx = apiData.demos.findIndex(demo => demo.demoFilePath === apiData.currentDemoFile);
+    return apiData.demos[currentFileIdx + 1];
+  }, [apiData.demos, apiData.currentDemoFile]);
 
   useEffect(() => {
     const scrollToCenter = () => {
@@ -58,13 +57,16 @@ export const DemoList: React.FC<DemoListProps> = ({ apiData, onRunById }) => {
 
   return (
     <div className="card flex flex-col h-full">
-      <div className="mb-4 flex-shrink-0">
-        <h2 className="text-xl font-bold text-white">
-          All steps
-        </h2>
+      <div className="mb-4 flex-shrink-0 flex items-center justify-between">
+        <div className="p-4 border-b border-gray-700/30">
+          <h2 className="text-lg font-semibold text-white">Steps</h2>
+        </div>
+        <div className='block md:hidden'>
+          <Clock clock={apiData?.clock} />
+        </div>
       </div>
 
-      {allSteps.length === 0 ? (
+      {apiData.demos.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">📁</div>
           <p className="text-gray-400 text-lg">No demo steps found</p>
@@ -75,45 +77,61 @@ export const DemoList: React.FC<DemoListProps> = ({ apiData, onRunById }) => {
       ) : (
         <div
           ref={scrollContainerRef}
-          className="space-y-1 overflow-y-auto flex-1 -mx-6 px-6"
+          className="space-y-4 overflow-y-auto flex-1 -mx-6 px-6"
           style={{ scrollbarGutter: 'stable' }}
         >
-          {allSteps.map((step, index) => {
-            const isExecuted = step.hasExecuted;
-            const isNext = isNextDemo(step);
+          {apiData.demos.map((demoFile, demoIndex) => {
+            const isCurrentFile = demoFile.demoFilePath === apiData.currentDemoFile;
+            const isNextFile = nextDemoFile?.demoFilePath === demoFile.demoFilePath;
+            const hasExecutedSteps = demoFile.children.some(step => step.hasExecuted);
 
             return (
-              <div
-                key={index}
-                ref={isNext ? nextItemRef : null}
-                className={`flex items-center gap-3 py-3 transition-all duration-200 hover:bg-gray-700/20 rounded-lg px-3 -mx-3 ${isNext ? 'bg-[#FFD23F]/10' : ''} ${step.id ? 'cursor-pointer' : ''}`}
-                onClick={step.id ? () => handleRunDemo(step.id as string) : undefined}
-              >
-                <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
-                  {isExecuted ? (
-                    <Icon name={step.iconPath.id as never} className="!text-[#4ade80]" size={18} />
-                  ) : isNext ? (
-                    <Icon name={step.iconPath.id as never} className="!text-[#FFD23F]" size={18} />
-                  ) : (
-                    <Icon name={step.iconPath.id as never} className="!text-gray-500" size={18} />
+              <div key={demoIndex} className="space-y-2">
+                {/* Demo File Header */}
+                <div className={`sticky top-0 z-10 px-3 py-2 rounded-lg border backdrop-blur ${isCurrentFile
+                  ? 'bg-blue-500/20 border-blue-500/30 text-blue-300'
+                  : isNextFile
+                    ? 'bg-yellow-500/20 border-yellow-500/30 text-yellow-300'
+                    : hasExecutedSteps
+                      ? 'bg-green-500/10 border-green-500/20 text-green-300'
+                      : 'bg-gray-700/50 border-gray-600/30 text-gray-400'
+                  }`}>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full flex-shrink-0" style={{
+                      backgroundColor: isCurrentFile ? '#3b82f6' :
+                        isNextFile ? '#eab308' :
+                          hasExecutedSteps ? '#22c55e' : '#6b7280'
+                    }}></div>
+                    <span className="font-semibold text-sm truncate">{demoFile.label}</span>
+                    {isCurrentFile && <span className="text-xs bg-blue-500/20 px-2 py-0.5 rounded-full ml-auto">CURRENT</span>}
+                    {isNextFile && <span className="text-xs bg-yellow-500/20 px-2 py-0.5 rounded-full ml-auto">NEXT</span>}
+                  </div>
+                  {demoFile.description && (
+                    <p className="text-xs mt-1 opacity-80">{demoFile.description}</p>
                   )}
                 </div>
-                <span
-                  className={`font-medium text-base ${isNext
-                    ? 'text-white font-semibold'
-                    : isExecuted
-                      ? 'text-gray-400'
-                      : 'text-gray-200'
-                    }`}
-                >
-                  {step.originalLabel}
-                </span>
 
-                {
-                  step.id && (
-                    <Icon name={`play`} className={`isExecuted ? 'text-gray-400' : 'text-gray-200'} ml-auto`} size={16} />
-                  )
-                }
+                {/* Demo Steps */}
+                <div className="space-y-1">
+                  {demoFile.children.map((step, stepIndex) => {
+                    const isExecuted = step.hasExecuted;
+                    const isNext = isNextDemo(step);
+                    const isActive = step.isActive;
+
+                    return (
+                      <DemoStepComponent
+                        key={`${demoIndex}-${stepIndex}`}
+                        step={step}
+                        index={stepIndex}
+                        isNext={isNext}
+                        isActive={isActive}
+                        isExecuted={isExecuted}
+                        nextItemRef={nextItemRef}
+                        onRunDemo={handleRunDemo}
+                      />
+                    );
+                  })}
+                </div>
               </div>
             );
           })}

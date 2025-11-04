@@ -21,6 +21,7 @@ export class DemoStatusBar {
   private static pausedTimeRemaining: number | undefined;
   private static nextDemo: Demo | undefined;
   private static clockTimer: ReturnType<typeof setTimeout> | undefined;
+  private static countDownTime: string | undefined;
 
   public static register() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
@@ -49,6 +50,18 @@ export class DemoStatusBar {
 
   public static getCountdownStarted() {
     return DemoStatusBar.countdownStarted;
+  }
+
+  public static getClock() {
+    return DemoStatusBar.getCurrentClock();
+  }
+
+  public static getCountdown() {
+    return DemoStatusBar.countDownTime;
+  }
+
+  public static getCountdownPaused() {
+    return DemoStatusBar.countdownPaused;
   }
 
   public static createStatusBarItems() {
@@ -285,6 +298,7 @@ export class DemoStatusBar {
     DemoStatusBar.statusBarPause.hide();
     PresenterView.postMessage(WebViewMessages.toWebview.updateCountdownStarted, undefined);
     PresenterView.postMessage(WebViewMessages.toWebview.resetCountdown, undefined);
+    DemoStatusBar.countDownTime = undefined;
   }
 
   private static async pauseCountdown() {
@@ -414,6 +428,7 @@ export class DemoStatusBar {
     }
     // Send the countdown to the presenter view
     PresenterView.postMessage(WebViewMessages.toWebview.updateCountdown, countdown);
+    DemoStatusBar.countDownTime = countdown;
     return `    $(dt-timer-off) ${countdown}`;
   }
 

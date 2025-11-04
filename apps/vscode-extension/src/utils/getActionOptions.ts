@@ -337,6 +337,11 @@ export const getActionOptions = (): QuickPickItem[] => {
   } as QuickPickItem);
 
   actions.push({
+    label: Action.CustomChat,
+    description: 'Start a custom chat in GitHub Copilot Chat',
+  } as QuickPickItem);
+
+  actions.push({
     label: Action.CloseChat,
     description: 'Close the GitHub Copilot Chat',
   } as QuickPickItem);
@@ -455,6 +460,11 @@ export const getActionOptions = (): QuickPickItem[] => {
   actions.push({
     label: Action.ShowEngageTimePoll,
     description: 'Show the EngageTime poll',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.SendEngageTimeMessage,
+    description: 'Send a message in the EngageTime session',
   } as QuickPickItem);
 
   return actions;

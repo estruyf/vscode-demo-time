@@ -47,6 +47,7 @@ export const getActionIcon = (action: Action): string => {
     [Action.AskChat]: 'message-circle-question',
     [Action.EditChat]: 'message-circle-edit',
     [Action.AgentChat]: 'bot',
+    [Action.CustomChat]: 'bot',
     [Action.CloseChat]: 'message-circle-x',
     [Action.CopyToClipboard]: 'clipboard',
     [Action.PasteFromClipboard]: 'clipboard-paste',
@@ -69,6 +70,7 @@ export const getActionIcon = (action: Action): string => {
     [Action.CloseEngageTimePoll]: 'question',
     [Action.ShowEngageTimeSession]: 'question',
     [Action.ShowEngageTimePoll]: 'question',
+    [Action.SendEngageTimeMessage]: 'question',
   };
   return iconMap[action] || 'circle';
 };
@@ -178,6 +180,7 @@ export const getRequiredFields = (action: Action): string[] => {
     [Action.AskChat]: [],
     [Action.EditChat]: [],
     [Action.AgentChat]: [],
+    [Action.CustomChat]: ['mode'],
     [Action.CloseChat]: [],
     [Action.CopyToClipboard]: [],
     [Action.PasteFromClipboard]: [],
@@ -200,6 +203,7 @@ export const getRequiredFields = (action: Action): string[] => {
     [Action.CloseEngageTimePoll]: ['pollId'],
     [Action.ShowEngageTimeSession]: [],
     [Action.ShowEngageTimePoll]: ['pollId'],
+    [Action.SendEngageTimeMessage]: ['type', 'title'],
   };
   return requiredMap[action] || [];
 };
@@ -282,6 +286,7 @@ export const getFieldsForAction = (action: Action): string[] => {
     [Action.AskChat]: ['message'],
     [Action.EditChat]: ['message'],
     [Action.AgentChat]: ['message'],
+    [Action.CustomChat]: ['mode', 'message'],
     [Action.CloseChat]: [],
     [Action.CopyToClipboard]: ['content', 'contentPath'],
     [Action.PasteFromClipboard]: [],
@@ -303,7 +308,8 @@ export const getFieldsForAction = (action: Action): string[] => {
     [Action.CloseEngageTimeSession]: [],
     [Action.CloseEngageTimePoll]: ['pollId'],
     [Action.ShowEngageTimeSession]: [],
-    [Action.ShowEngageTimePoll]: ['pollId'],
+    [Action.ShowEngageTimePoll]: ['pollId', 'startOnOpen'],
+    [Action.SendEngageTimeMessage]: ['type', 'title', 'message'],
   };
 
   return fieldMap[action] || [];

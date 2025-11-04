@@ -9,6 +9,7 @@ export interface DemoStep {
   disabled: boolean;
   description: string;
   tooltip: string;
+  notes?: string;
   iconPath: {
     id: string;
     color: {
@@ -49,10 +50,28 @@ export interface ApiData {
   demos: DemoFile[];
   currentDemoFile?: string;
   previousEnabled?: boolean;
+  clock?: Clock;
+  slides?: Slide;
+  settings: {
+    showScreenshot?: boolean;
+    showNotes?: boolean;
+  };
 }
 
 export interface ConnectionStatus {
   connected: boolean;
   url?: string;
   error?: string;
+}
+
+export interface Clock {
+  current: string;
+  countdown: string;
+  isPaused: boolean;
+}
+
+export interface Slide {
+  nextTitle: string;
+  hasNext: boolean;
+  slideIdx: number;
 }

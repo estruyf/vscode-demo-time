@@ -1,3 +1,4 @@
+import { Step } from '@demotime/common';
 import { commands, window } from 'vscode';
 
 // Ref: https://github.com/microsoft/vscode/blob/main/src/vs/workbench/contrib/chat/browser/actions/chatActions.ts
@@ -13,29 +14,34 @@ export class ChatActionsService {
     await commands.executeCommand('workbench.action.chat.newChat');
   }
 
-  static async askChat(step: any) {
+  static async askChat(step: Step) {
     // Open a new chat in ask mode with a prompt
     await commands.executeCommand('workbench.action.chat.open');
-    await commands.executeCommand('workbench.action.chat.newChat', {
-      mode: 'ask',
+    await commands.executeCommand('workbench.action.chat.openask', {
       query: step.message || '',
     });
   }
 
-  static async editChat(step: any) {
+  static async editChat(step: Step) {
     // Open a new chat in edit mode with a prompt
     await commands.executeCommand('workbench.action.chat.open');
-    await commands.executeCommand('workbench.action.chat.newChat', {
-      mode: 'edit',
+    await commands.executeCommand('workbench.action.chat.openedit', {
       query: step.message || '',
     });
   }
 
-  static async agentChat(step: any) {
+  static async agentChat(step: Step) {
     // Open a new chat in agent mode with a prompt
     await commands.executeCommand('workbench.action.chat.open');
-    await commands.executeCommand('workbench.action.chat.newChat', {
-      mode: 'agent',
+    await commands.executeCommand('workbench.action.chat.openagent', {
+      query: step.message || '',
+    });
+  }
+
+  static async customChat(step: Step) {
+    // Open a new chat with a custom mode and prompt
+    await commands.executeCommand('workbench.action.chat.open', {
+      mode: step.mode,
       query: step.message || '',
     });
   }

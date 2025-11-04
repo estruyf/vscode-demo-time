@@ -1,0 +1,25 @@
+$schema: https://demotime.show/demo-time.schema.json
+title: Test YAML Validation
+description: YAML demo file to test duplicate ID validation
+demos:
+  - id: yaml-demo1
+    title: First YAML Demo
+    description: This is the first YAML demo
+    steps:
+      - action: create
+        path: yaml-test1.txt
+        content: YAML test content 1
+  - id: yaml-demo1
+    title: Second YAML Demo (Duplicate ID)
+    description: This YAML demo has a duplicate ID
+    steps:
+      - action: create
+        path: yaml-test2.txt
+        content: YAML test content 2
+  - id: yaml-demo3
+    title: Third YAML Demo
+    description: This YAML demo has a unique ID
+    steps:
+      - action: create
+        path: yaml-test3.txt
+        content: YAML test content 3

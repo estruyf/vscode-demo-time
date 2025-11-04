@@ -1,14 +1,16 @@
-import { commands, Terminal, window, Disposable } from 'vscode';
+import { commands, Terminal, window, Disposable, TerminalShellExecution } from 'vscode';
 import { Notifications } from './Notifications';
 import { sleep } from '../utils';
 import { DemoRunner } from './DemoRunner';
-import { Step } from '../models';
+import { Step } from '@demotime/common';
 
 /**
  * Service to manage terminal operations for demo execution.
  */
 export class TerminalService {
   private static terminal: { [id: string]: Terminal | null } = {};
+  private static onTerminalCompleted: { [id: string]: Disposable } = {};
+  private static lastExecution: { [id: string]: string } = {};
   private static readonly terminalName = 'DemoTime';
   private static closeTerminalDisposable: Disposable | undefined;
 
@@ -39,23 +41,13 @@ export class TerminalService {
       return;
     }
 
-    const terminal = await TerminalService.openTerminal(terminalId);
-
-    // Wait for the terminal to be ready before sending the command
-    await new Promise<void>((resolve) => {
-      const checkTerminal = () => {
-        // VSCode terminals are usually ready immediately, but we can check if the processId is available
-        (terminal!.processId as Promise<any>)
-          ?.then(() => resolve())
-          .catch(() => setTimeout(checkTerminal, 50));
-      };
-      checkTerminal();
-    });
-
     autoExecute = typeof autoExecute !== 'undefined' ? autoExecute : true;
+    const terminal = await TerminalService.openTerminal(terminalId);
 
     const typeMode = insertTypingMode ?? 'instant';
     const typeSpeed = insertTypingSpeed || 50;
+
+    let execution: TerminalShellExecution | undefined;
     if (typeMode === 'character-by-character') {
       terminal.sendText('', false);
       for (const char of command) {
@@ -65,9 +57,21 @@ export class TerminalService {
       if (autoExecute) {
         terminal.sendText('', true);
       }
-      return;
+    } else if (autoExecute) {
+      if (terminal.shellIntegration) {
+        execution = terminal.shellIntegration.executeCommand(command);
+      } else {
+        terminal.sendText(command, autoExecute);
+      }
     } else {
-      terminal.sendText(command, autoExecute);
+      terminal.sendText(command, false);
+    }
+
+    if (execution && typeMode === 'instant') {
+      await TerminalService.waitForTerminalExecuted(
+        command,
+        terminalId ?? TerminalService.terminalName,
+      );
     }
 
     // Wait for the command to be sent
@@ -137,6 +141,98 @@ export class TerminalService {
       }
     });
     TerminalService.terminal = {};
+    TerminalService.lastExecution = {};
+    Object.values(TerminalService.onTerminalCompleted).forEach((disposable) => {
+      disposable.dispose();
+    });
+  }
+
+  /**
+   * Opens a new terminal with the given ID or the default DemoTime terminal.
+   */
+  public static async openTerminal(terminalId?: string): Promise<Terminal> {
+    terminalId = terminalId ?? TerminalService.terminalName;
+    let terminal = TerminalService.terminal[terminalId];
+    if (!terminal) {
+      terminal = window.createTerminal(terminalId);
+      TerminalService.terminal[terminalId] = terminal;
+    }
+    terminal.show();
+
+    if (terminal.shellIntegration) {
+      return terminal;
+    }
+
+    const readyPromise = TerminalService.waitForTerminalReady(terminal);
+    const timeoutPromise = new Promise<Terminal>((resolve) =>
+      setTimeout(() => resolve(terminal as Terminal), 2000),
+    );
+    terminal = await Promise.race([readyPromise, timeoutPromise]);
+
+    if (terminal.shellIntegration) {
+      TerminalService.lastExecution[terminalId] = '';
+      TerminalService.onTerminalCompleted[terminalId] = window.onDidEndTerminalShellExecution(
+        (event) => {
+          if (event.terminal === terminal && event.execution.commandLine.value) {
+            TerminalService.lastExecution[terminalId] = event.execution.commandLine.value;
+          }
+        },
+      );
+    }
+
+    return terminal;
+  }
+
+  /**
+   * Waits for a specific command to be observed as the last executed command for a given terminal.
+   *
+   * @param command - The exact command string to wait for.
+   * @param terminalId - The identifier of the terminal whose last executed command will be observed.
+   * @returns A Promise that resolves when the command is observed or when the 5 second timeout elapses.
+   */
+  private static async waitForTerminalExecuted(command: string, terminalId: string): Promise<void> {
+    return new Promise<void>((resolve) => {
+      const startTime = Date.now();
+      const maxWaitTime = 5000; // 5 seconds
+
+      const checkExecution = () => {
+        if (TerminalService.lastExecution[terminalId] === command) {
+          resolve();
+          return;
+        }
+
+        // Check if we've exceeded the maximum wait time
+        if (Date.now() - startTime >= maxWaitTime) {
+          resolve();
+          return;
+        }
+
+        // Check again in a short interval
+        setTimeout(checkExecution, 100);
+      };
+      checkExecution();
+    });
+  }
+
+  /**
+   * Waits until the given terminal signals that its shell integration state has changed,
+   * indicating the terminal is ready to receive commands.
+   *
+   * @param myTerm - The terminal instance to wait for readiness on.
+   * @returns A promise that resolves with the same terminal once the shell integration
+   *          change event for that terminal is observed.
+   */
+  private static async waitForTerminalReady(myTerm: Terminal): Promise<Terminal> {
+    // Wait for the terminal to be ready before sending the command
+    return await new Promise<Terminal>((resolve) => {
+      let isConnected = false;
+      window.onDidChangeTerminalShellIntegration(async ({ terminal }) => {
+        if (terminal === myTerm && !isConnected) {
+          isConnected = true;
+          resolve(terminal);
+        }
+      });
+    });
   }
 
   /**
@@ -151,20 +247,7 @@ export class TerminalService {
       await sleep(500);
       // Focus the terminal after sending the command
       await commands.executeCommand('workbench.action.focusStatusBar');
+      await commands.executeCommand('workbench.action.focusActiveEditorGroup');
     }
-  }
-
-  /**
-   * Opens a new terminal with the given ID or the default DemoTime terminal.
-   */
-  public static async openTerminal(terminalId?: string): Promise<Terminal> {
-    terminalId = terminalId ?? TerminalService.terminalName;
-    let terminal = TerminalService.terminal[terminalId];
-    if (!terminal) {
-      terminal = window.createTerminal(terminalId);
-      TerminalService.terminal[terminalId] = terminal;
-    }
-    terminal.show();
-    return terminal;
   }
 }

@@ -71,9 +71,15 @@ export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
   slide?: number;
   focusTop?: boolean;
 
+  // Chats
+  mode?: string;
+
   // EngageTime
   sessionId?: string;
   pollId?: string;
+  startOnOpen?: boolean;
+  title?: string;
+  type?: EngageTimeMessageType;
 }
 
 export interface ITerminal {
@@ -104,3 +110,5 @@ export interface State {
   key: string;
   value: string;
 }
+
+export type EngageTimeMessageType = 'demo' | 'slide' | 'custom';

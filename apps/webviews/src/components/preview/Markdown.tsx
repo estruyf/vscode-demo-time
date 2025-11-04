@@ -66,13 +66,12 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
             crntSlideContent = renderToString(processedContent.reactContent);
           }
 
-          let html = convertTemplateToHtml(templateHtml, {
-            metadata,
+          const metadataWithUrl = { ...metadata, webViewUrl: webviewUrl || undefined };
+
+          const html = convertTemplateToHtml(templateHtml, {
+            metadata: metadataWithUrl,
             content: crntSlideContent,
           }, webviewUrl);
-
-          // Replace all the `<style>` tags with `<style type="text/tailwindcss">`
-          html = html.replace(/<style>/g, '<style type="text/tailwindcss">');
 
           setTemplate(html);
           setIsReady(true);
@@ -175,7 +174,9 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
         template ? (
           <div key={filePath} className={`slide__content__custom`} dangerouslySetInnerHTML={{ __html: template }} />
         ) : (
-          <div key={filePath} className={`slide__content__inner`}>{markdown}</div>
+          <div key={filePath} className={`slide__content__inner`}>
+            {markdown}
+          </div>
         )
       }
     </>

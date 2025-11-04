@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { validateConfig } from '../utils/validation';
 import { messageHandler } from '@estruyf/vscode/dist/client';
 import { Action, Demo, DemoConfig, Step, WebViewMessages } from '@demotime/common';
+import { cleanupStepProperties } from '../utils/stepCleanup';
 
 // Helper function to merge the initial config with default values.
 // This ensures that the config object always has the necessary properties.
@@ -96,7 +97,16 @@ export const useDemoConfig = (initialConfig?: DemoConfig) => {
         dIdx === demoIndex
           ? {
               ...demo,
-              steps: demo.steps.map((s, sIdx) => (sIdx === stepIndex ? step : s)),
+              steps: demo.steps.map((s, sIdx) => {
+                if (sIdx === stepIndex) {
+                  // If the action has changed, clean up properties that are not relevant to the new action
+                  if (s.action !== step.action) {
+                    return cleanupStepProperties(step);
+                  }
+                  return step;
+                }
+                return s;
+              }),
             }
           : demo,
       ),
@@ -131,7 +141,7 @@ export const useDemoConfig = (initialConfig?: DemoConfig) => {
   }, []);
 
   const handleAddStep = useCallback((demoIndex: number) => {
-    const newStep: Step = { action: Action.Create };
+    const newStep: Step = { action: '' as Action };
     setConfig((prev) => ({
       ...prev,
       demos: prev.demos.map((demo, idx) =>

@@ -38,6 +38,22 @@ export class SlideParser {
     let inCodeBlock = false;
     let codeBlockMarker = '```';
 
+    // If document frontmatter exists and remaining content starts with another slide delimiter,
+    // create an initial slide block for the document frontmatter
+    const hasDocFrontmatter = Object.keys(docFrontMatter).length > 0;
+    const remainingStartsWithSlide = processedMarkdown.trimStart().startsWith('---');
+
+    if (hasDocFrontmatter && remainingStartsWithSlide) {
+      // Create a synthetic frontmatter block for document-level metadata
+      const frontmatterBlock = `---\n${Object.entries(docFrontMatter)
+        .map(([key, value]) => {
+          const serializedValue = typeof value === 'object' ? JSON.stringify(value) : value;
+          return `${key}: ${serializedValue}`;
+        })
+        .join('\n')}\n---`;
+      slideBlocks.push(frontmatterBlock);
+    }
+
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
       const trimmed = line.trim();
@@ -132,9 +148,6 @@ export class SlideParser {
       }
       if (slide.docFrontMatter.customTheme) {
         slide.frontmatter.customTheme = slide.docFrontMatter.customTheme;
-      }
-      if (slide.docFrontMatter.customLayout) {
-        slide.frontmatter.customLayout = slide.docFrontMatter.customLayout;
       }
       if (slide.docFrontMatter.transition && !slide.frontmatter.transition) {
         slide.frontmatter.transition = slide.docFrontMatter.transition;

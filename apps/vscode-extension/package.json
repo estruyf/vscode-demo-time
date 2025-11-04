@@ -2,7 +2,7 @@
   "name": "vscode-demo-time",
   "displayName": "Demo Time — Presentations & Demos in VS Code",
   "description": "Script your coding demos and presentations to perfection and present slides — all within VS Code! No typos, no missteps—just flawless, stress-free presentations. Seamlessly execute each demo step and advance through slides like a pro, keeping your audience engaged without ever leaving your coding environment.",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "publisher": "eliostruyf",
   "keywords": [
     "demo",
@@ -68,7 +68,7 @@
     "url": "https://github.com/estruyf/vscode-demo-time"
   },
   "engines": {
-    "vscode": "^1.84.0"
+    "vscode": "^1.104.0"
   },
   "categories": [
     "Education"
@@ -266,6 +266,16 @@
           "type": "boolean",
           "default": true,
           "description": "Open the config file in the custom config editor."
+        },
+        "demoTime.remote.showScreenshot": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable remote screenshot functionality."
+        },
+        "demoTime.remote.showNotes": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable remote notes functionality."
         }
       }
     },
@@ -347,6 +357,12 @@
         "command": "demo-time.closePresentationView",
         "title": "Close presentation view",
         "category": "Demo Time"
+      },
+      {
+        "command": "demoTime.fixDuplicateIds",
+        "title": "Fix duplicate demo IDs",
+        "category": "Demo Time",
+        "icon": "$(warning)"
       },
       {
         "command": "demo-time.reset",
@@ -868,7 +884,7 @@
     "@types/node": "18.x",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
-    "@types/vscode": "^1.84.0",
+    "@types/vscode": "^1.104.0",
     "@vscode/test-electron": "^2.3.6",
     "cors": "^2.8.5",
     "diff": "^7.0.0",

@@ -177,11 +177,26 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           await handleCreateNotes(webviewPanel, command, requestId, payload);
         } else if (command === WebViewMessages.toVscode.configEditor.engageTime.getPolls) {
           await getPolls(webviewPanel, command, requestId, payload);
+        } else if (command === WebViewMessages.toVscode.configEditor.commands) {
+          await getCommands(webviewPanel, command, requestId);
         } else {
           console.warn(`Unknown message command: ${command}`);
         }
       },
     );
+
+    async function getCommands(
+      webviewPanel: WebviewPanel,
+      command: string,
+      requestId: string | undefined,
+    ) {
+      const allCommands = await commands.getCommands(false);
+      webviewPanel.webview.postMessage({
+        command,
+        requestId,
+        payload: allCommands,
+      });
+    }
 
     async function getPolls(
       webviewPanel: WebviewPanel,

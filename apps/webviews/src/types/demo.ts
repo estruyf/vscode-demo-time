@@ -54,10 +54,6 @@ export const CATEGORIZED_ACTIONS: {
     options: [Action.MarkdownPreview, Action.ImagePreview, Action.OpenSlide],
   },
   {
-    category: 'Patch actions',
-    options: [Action.ApplyPatch],
-  },
-  {
     category: 'Setting actions',
     options: [
       Action.SetSetting,
@@ -107,6 +103,7 @@ export const CATEGORIZED_ACTIONS: {
       Action.AskChat,
       Action.EditChat,
       Action.AgentChat,
+      Action.CustomChat,
       Action.CloseChat,
     ],
   },
@@ -142,6 +139,7 @@ export const CATEGORIZED_ACTIONS: {
       Action.StartEngageTimePoll,
       Action.CloseEngageTimeSession,
       Action.CloseEngageTimePoll,
+      Action.SendEngageTimeMessage,
     ],
   },
 ];

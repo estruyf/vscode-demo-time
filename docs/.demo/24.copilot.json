@@ -31,7 +31,7 @@
       ]
     },
     {
-      "title": "Star an edit chat with GitHub Copilot",
+      "title": "Start an edit chat with GitHub Copilot",
       "steps": [
         {
           "action": "editCopilotChat",
@@ -40,7 +40,7 @@
       ]
     },
     {
-      "title": "Star an agent chat with GitHub Copilot",
+      "title": "Start an agent chat with GitHub Copilot",
       "steps": [
         {
           "action": "agentCopilotChat",
@@ -49,13 +49,24 @@
       ]
     },
     {
-    "title": "Chat via VS Code command",
+      "title": "Start a custom chat mode",
+      "steps": [
+        {
+          "action": "customCopilotChat",
+          "message": "Write a function that returns \"Hello from Demo Time\".",
+          "mode": "Beast Mode 3.1"
+        }
+      ],
+      "id": "demo-mgbxoh5y-zgmw"
+    },
+    {
+      "title": "Chat via VS Code command",
       "steps": [
         {
           "action": "executeVSCodeCommand",
           "command": "workbench.action.chat.open",
           "args": {
-            "mode": "ask", // "ask", "agent", "edit"
+            "mode": "Beast Mode 3.1",
             "query": "Write a function that returns \"Hello from Demo Time\"."
           }
         }

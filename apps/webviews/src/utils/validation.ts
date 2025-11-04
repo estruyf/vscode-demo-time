@@ -1,9 +1,8 @@
-import { Action, Step } from '@demotime/common';
-import { DemoConfig, Demo } from '../types/demo';
+import { Action, Demo, DemoConfig, Step } from '@demotime/common';
 import { getRequiredFields } from './actionHelpers';
 
 export interface ValidationError {
-  field: string;
+  [key: string]: string | number | undefined;
   message: string;
   demoIndex?: number;
   stepIndex?: number;
@@ -64,13 +63,43 @@ export const validateStep = (
   stepIndex?: number,
 ): ValidationResult => {
   const errors: ValidationError[] = [];
+
+  // Validate that action is present and valid
+  if (!step.action) {
+    errors.push({
+      field: 'action',
+      message: 'Action is required',
+      demoIndex,
+      stepIndex,
+    });
+    return {
+      isValid: false,
+      errors,
+    };
+  }
+
+  // Validate that action is a valid Action enum value
+  const validActions = Object.values(Action);
+  if (!validActions.includes(step.action as Action)) {
+    errors.push({
+      field: 'action',
+      message: `Invalid action: ${step.action}. Must be one of: ${validActions.join(', ')}`,
+      demoIndex,
+      stepIndex,
+    });
+    return {
+      isValid: false,
+      errors,
+    };
+  }
+
   const requiredFields = getRequiredFields(step.action);
 
   // Check basic required fields
   requiredFields.forEach((field) => {
     if (!isFieldValid(step, field)) {
       errors.push({
-        field,
+        [`field:${field}`]: field,
         message: `${getFieldLabel(field)} is required for ${step.action} action`,
         demoIndex,
         stepIndex,

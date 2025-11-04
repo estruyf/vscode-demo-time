@@ -44,6 +44,17 @@
       ]
     },
     {
+      "title": "Video slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/minimal/video.md"
+        }
+      ],
+      "id": "demo-mganv1k0-xznv"
+    },
+    {
       "title": "Image slide",
       "description": "",
       "steps": [

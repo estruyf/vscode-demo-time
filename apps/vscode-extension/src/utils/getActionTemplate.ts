@@ -367,6 +367,13 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
       message: '',
     };
   }
+  if (action === Action.CustomChat) {
+    return {
+      action: Action.CustomChat,
+      mode: '',
+      message: '',
+    };
+  }
   if (action === Action.CloseChat) {
     return {
       action: Action.CloseChat,
@@ -460,14 +467,12 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.StartEngageTimeSession) {
     return {
       action: Action.StartEngageTimeSession,
-      sessionId: '',
     };
   }
 
   if (action === Action.StartEngageTimePoll) {
     return {
       action: Action.StartEngageTimePoll,
-      sessionId: '',
       pollId: '',
     };
   }
@@ -475,14 +480,12 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.CloseEngageTimeSession) {
     return {
       action: Action.CloseEngageTimeSession,
-      sessionId: '',
     };
   }
 
   if (action === Action.CloseEngageTimePoll) {
     return {
       action: Action.CloseEngageTimePoll,
-      sessionId: '',
       pollId: '',
     };
   }
@@ -490,7 +493,6 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.ShowEngageTimePoll) {
     return {
       action: Action.ShowEngageTimePoll,
-      sessionId: '',
       pollId: '',
     };
   }
@@ -498,7 +500,15 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.ShowEngageTimeSession) {
     return {
       action: Action.ShowEngageTimeSession,
-      sessionId: '',
+    };
+  }
+
+  if (action === Action.SendEngageTimeMessage) {
+    return {
+      action: Action.SendEngageTimeMessage,
+      type: '',
+      title: '',
+      message: '',
     };
   }
 

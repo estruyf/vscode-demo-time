@@ -106,6 +106,10 @@ export const WebViewMessages = {
      * slideReady
      */
     slideReady: 'slideReady',
+    /**
+     * nextSlideTitle
+     */
+    nextSlideTitle: 'nextSlideTitle',
     // Config editor
     configEditor: {
       /**
@@ -160,6 +164,7 @@ export const WebViewMessages = {
        * createConfigEditorNotes
        */
       createNotes: 'createConfigEditorNotes',
+      commands: 'configEditorCommands',
       /**
        * EngageTime
        */

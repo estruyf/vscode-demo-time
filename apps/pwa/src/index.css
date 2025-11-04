@@ -4,9 +4,9 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+    'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: #202736;
@@ -15,13 +15,12 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-[#FFD23F] hover:bg-[#FFC61A] text-[#202736] font-bold py-4 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98];
+    @apply bg-[#FFD23F] hover:bg-[#FFC61A] text-[#202736] font-bold py-4 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl;
   }
 
   .btn-secondary {
@@ -33,7 +32,7 @@ code {
   }
 
   .card {
-    @apply bg-gray-800/40 backdrop-blur-sm p-6;
+    @apply bg-gray-800/40 px-6 py-0;
   }
 
   .input-field {
@@ -50,6 +49,12 @@ code {
 
   .status-connecting {
     @apply bg-[#FFD23F] text-[#202736] px-3 py-1 rounded-full text-sm font-bold shadow-md;
+  }
+}
+
+.notes {
+  h1 {
+    margin-top: 0;
   }
 }
 

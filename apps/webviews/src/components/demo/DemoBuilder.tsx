@@ -44,6 +44,22 @@ export const DemoBuilder: React.FC = () => {
     handleSave,
   } = useFileOperations();
 
+  // Function to generate unique demo ID
+  const generateUniqueDemoId = React.useCallback(() => {
+    const generateDemoId = () => {
+      const timestamp = Date.now().toString(36);
+      const random = Math.random().toString(36).substring(2, 6);
+      return `demo-${timestamp}-${random}`;
+    };
+
+    let newId = generateDemoId();
+    // Ensure uniqueness across all demos
+    while (config.demos.some(demo => demo.id === newId)) {
+      newId = generateDemoId();
+    }
+    return newId;
+  }, [config.demos]);
+
   // Auto-save functionality
   const {
     isAutoSaving,
@@ -312,7 +328,7 @@ export const DemoBuilder: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       <AppHeader
         title="Config Editor"
         subtitle="Manage your demo configuration"
@@ -341,7 +357,7 @@ export const DemoBuilder: React.FC = () => {
         }}
       />
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="flex-1 max-w-7xl mx-auto px-6 py-8 w-full overflow-y-auto lg:overflow-hidden">
         {showValidation && (
           <div className="mb-8">
             <ValidationSummary
@@ -353,8 +369,8 @@ export const DemoBuilder: React.FC = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <Sidebar className="lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-205px)] lg:overflow-y-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full min-h-0">
+          <Sidebar className="lg:sticky lg:top-0 lg:self-start h-full lg:overflow-y-auto">
             <Card className='space-y-6'>
               <div className="flex items-center">
                 <button
@@ -396,6 +412,7 @@ export const DemoBuilder: React.FC = () => {
                 <DemoEditor
                   demo={config.demos[selectedDemo]}
                   onChange={(demo) => handleDemoChange(selectedDemo, demo)}
+                  onGenerateId={generateUniqueDemoId}
                 />
 
                 <Card padding="md">

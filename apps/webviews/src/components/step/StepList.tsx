@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Plus, List, Square, Play, Info } from 'lucide-react';
-import { Demo, Step } from '../../types/demo';
 import { DemoTestView } from './DemoTestView';
 import { StepListItem } from './StepListItem';
 import { StepEditor } from './StepEditor';
+import { Demo, Step } from '@demotime/common';
 
 interface StepListProps {
   demo: Demo;

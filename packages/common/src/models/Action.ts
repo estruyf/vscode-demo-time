@@ -56,6 +56,7 @@ export enum Action {
   AskChat = 'askCopilotChat',
   EditChat = 'editCopilotChat',
   AgentChat = 'agentCopilotChat',
+  CustomChat = 'customCopilotChat',
   CloseChat = 'closeCopilotChat',
   // Interaction
   TypeText = 'typeText',
@@ -79,4 +80,5 @@ export enum Action {
   CloseEngageTimePoll = 'closeEngageTimePoll',
   ShowEngageTimeSession = 'showEngageTimeSession',
   ShowEngageTimePoll = 'showEngageTimePoll',
+  SendEngageTimeMessage = 'sendEngageTimeMessage',
 }

@@ -76,8 +76,9 @@
       <h2 class="text-2xl font-semibold text-slate-900 mb-4">Getting Started</h2>
       <div class="bg-white rounded-xl shadow-xs border border-slate-200 p-6">
         <p class="text-slate-700 leading-relaxed mb-4">
-          Welcome to the Demo API! This simple REST API allows you to control and trigger demos programmatically. 
-          All endpoints support GET requests and return JSON responses.
+          Welcome to the Demo API! This simple HTTP API allows you to control and trigger demos programmatically from the Demo Time extension or external clients.
+          Endpoints are plain GET endpoints that return JSON and accept optional query parameters (for example <code>?bringToFront=true</code>).
+          For UI clients we recommend polling the <code>/api/demos</code> endpoint periodically (every ~2–5 seconds) to keep the remote UI in sync with the extension state.
         </p>
         <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div class="flex items-start gap-3">

@@ -21,6 +21,7 @@ interface SearchableDropdownProps {
   className?: string;
   allowFreeform?: boolean;
   isIconPicker?: boolean;
+  autoFocus?: boolean;
 }
 
 export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
@@ -31,7 +32,8 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
   noItemsText = "No options available",
   className = "",
   allowFreeform = false,
-  isIconPicker = false
+  isIconPicker = false,
+  autoFocus = false
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -44,7 +46,7 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
 
   // Convert options to flat array with categories
   const flattenOptions = (opts: string[] | DropdownGroup[]): DropdownOption[] => {
-    if (opts.length === 0) return [];
+    if (opts.length === 0) { return []; }
 
     // Check if it's already a simple string array
     if (typeof opts[0] === 'string') {
@@ -74,7 +76,7 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
 
   // Calculate dropdown position
   const calculatePosition = () => {
-    if (!dropdownRef.current) return;
+    if (!dropdownRef.current) { return; }
 
     const rect = dropdownRef.current.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
@@ -199,6 +201,14 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
     return { groups, ungrouped };
   };
 
+  useEffect(() => {
+    if (autoFocus) {
+      setIsOpen(true);
+      setTimeout(() => inputRef.current?.focus(), 100);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
       {/* Trigger Button */}
@@ -228,6 +238,7 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Search actions..."
+                autoFocus={autoFocus}
                 className="w-full pl-9 pr-3 py-2 border border-gray-200 dark:border-gray-600 rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               />
             </div>

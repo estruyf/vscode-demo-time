@@ -30,6 +30,7 @@ import {
   transformMarkdown,
   twoColumnFormatting,
 } from '@demotime/common';
+import { ScreenshotService } from './ScreenshotService';
 
 export class PdfExportService {
   private static workspaceFolder: WorkspaceFolder | undefined;
@@ -178,15 +179,10 @@ export class PdfExportService {
   }
 
   private static async getPlaywright(): Promise<typeof import('playwright-chromium')> {
-    try {
-      return await import(
-        await resolve('playwright-chromium', { url: PdfExportService.workspaceFolder?.uri.fsPath })
-      );
-    } catch {}
-
-    try {
-      return await import('playwright-chromium');
-    } catch {}
+    const playwrightModule = await ScreenshotService.getPlaywright();
+    if (playwrightModule) {
+      return playwrightModule;
+    }
 
     const markdownContent = `
   # Playwright Not Found
@@ -245,6 +241,7 @@ export class PdfExportService {
             ? crntSlide.frontmatter.customLayout
             : crntSlide.frontmatter.layout || SlideLayout.Default;
           const image = crntSlide.frontmatter.image || undefined;
+          const video = crntSlide.frontmatter.video || undefined;
           const customTheme = crntSlide.frontmatter.customTheme || undefined;
           const customLayout = crntSlide.frontmatter.customLayout || undefined;
           let headerTemplate = crntSlide.frontmatter.header || undefined;
@@ -304,6 +301,7 @@ export class PdfExportService {
             theme: slideTheme,
             layout,
             image,
+            video,
             customTheme,
             customLayout,
             headerTemplate,
@@ -325,29 +323,12 @@ export class PdfExportService {
     );
     const css = await PdfExportService.insertCssVariables(exportStyles);
 
-    let defaultTheme = await readFile(
-      Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'default.css'),
-    );
-
-    let minimalTheme = await readFile(
-      Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'minimal.css'),
-    );
-
-    let monomiTheme = await readFile(
-      Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'monomi.css'),
-    );
-
-    let unnamedTheme = await readFile(
-      Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'unnamed.css'),
-    );
-
-    let quantumTheme = await readFile(
-      Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'quantum.css'),
-    );
-
-    let frostTheme = await readFile(
-      Uri.joinPath(Uri.parse(extensionPath), 'assets', 'styles', 'themes', 'frost.css'),
-    );
+    let defaultTheme = await ScreenshotService.getThemeCss(SlideTheme.default);
+    let minimalTheme = await ScreenshotService.getThemeCss(SlideTheme.minimal);
+    let monomiTheme = await ScreenshotService.getThemeCss(SlideTheme.monomi);
+    let unnamedTheme = await ScreenshotService.getThemeCss(SlideTheme.unnamed);
+    let quantumTheme = await ScreenshotService.getThemeCss(SlideTheme.quantum);
+    let frostTheme = await ScreenshotService.getThemeCss(SlideTheme.frost);
 
     const webcomponentsUrl = Uri.joinPath(
       Uri.parse(extensionPath),
@@ -355,16 +336,6 @@ export class PdfExportService {
       'webcomponents',
       'index.mjs',
     ).toString();
-
-    const removeCustomVariant = (css: string) =>
-      css.replace(/@custom-variant dark\s*\(&:is\(\.vscode-dark \*\)\);?/g, '');
-
-    defaultTheme = removeCustomVariant(defaultTheme);
-    minimalTheme = removeCustomVariant(minimalTheme);
-    monomiTheme = removeCustomVariant(monomiTheme);
-    unnamedTheme = removeCustomVariant(unnamedTheme);
-    quantumTheme = removeCustomVariant(quantumTheme);
-    frostTheme = removeCustomVariant(frostTheme);
 
     const customComponents = [];
     const customComponentsUrls = [];

@@ -9,6 +9,7 @@ import { Logger } from './Logger';
 import { bringToFront, readFile, getDemoApiData } from '../utils';
 import { COMMAND } from '@demotime/common';
 import { DemoRunner } from './DemoRunner';
+import { ScreenshotService } from './ScreenshotService';
 
 export class DemoApi {
   private static statusBarItem: StatusBarItem;
@@ -62,11 +63,21 @@ export class DemoApi {
     app.use(cors());
 
     app.get('/', DemoApi.home);
+    app.get('/preview', DemoApi.previewNextSlide);
     app.get('/api/demos', DemoApi.demos);
     app.get('/api/next', DemoApi.next);
     app.get('/api/previous', DemoApi.previous);
     app.get('/api/runById', DemoApi.runById);
     app.post('/api/runById', DemoApi.runById);
+    app.post('/api/notes', DemoApi.notes);
+    app.get('/api/screenshot', DemoApi.screenshot);
+    app.get('/api/zoom-in', DemoApi.zoomIn);
+    app.get('/api/zoom-out', DemoApi.zoomOut);
+
+    const workspace = Extension.getInstance().workspaceFolder;
+    if (workspace) {
+      app.use('/.demo', express.static(Uri.joinPath(workspace.uri, '.demo').fsPath));
+    }
 
     DemoApi.server = app.listen(port, () => {
       DemoApi.statusBarItem = window.createStatusBarItem('api', StatusBarAlignment.Left, 100005);
@@ -90,7 +101,6 @@ export class DemoApi {
   private static async home(req: Request, res: Response) {
     Logger.info('Received request for home');
     const ext = Extension.getInstance();
-    const extensionPath = ext.extensionPath;
 
     try {
       let apiHtml = await readFile(Uri.joinPath(ext.extensionUri, 'assets', 'api', 'index.html'));
@@ -196,6 +206,109 @@ export class DemoApi {
     }
 
     await commands.executeCommand(COMMAND.runById, id);
+  }
+
+  /**
+   * API endpoint to get the notes for a specific path.
+   * @param req
+   * @param res
+   * @returns
+   */
+  private static async notes(req: Request, res: Response) {
+    if (req.method !== 'POST') {
+      res.status(405).send('Method not allowed');
+      return;
+    }
+
+    const path = typeof req.body?.path === 'string' ? req.body.path : undefined;
+    if (!path) {
+      res.status(400).send('Missing notes path');
+      return;
+    }
+
+    const workspaceFolder = Extension.getInstance().workspaceFolder;
+    if (!workspaceFolder) {
+      res.status(404).send('Notes not found');
+      return;
+    }
+
+    const baseFsPath = path.resolve(workspaceFolder.uri.fsPath);
+    const notesFsPath = path.resolve(baseFsPath, path);
+
+    if (!notesFsPath.startsWith(baseFsPath)) {
+      res.status(403).send('Invalid notes path');
+      return;
+    }
+
+    const notes = await readFile(Uri.file(notesFsPath));
+    res.status(200).send(notes);
+  }
+
+  private static async screenshot(req: Request, res: Response) {
+    if (req.method !== 'GET') {
+      res.status(405).send('Method not allowed');
+      return;
+    }
+
+    const screenshot = await ScreenshotService.getNextSlideScreenshot();
+    if (!screenshot) {
+      res.status(500).send('Failed to take screenshot');
+      return;
+    }
+
+    res.status(200).send(screenshot);
+  }
+
+  private static async previewNextSlide(req: Request, res: Response) {
+    if (req.method !== 'GET') {
+      res.status(405).send('Method not allowed');
+      return;
+    }
+
+    const html = await ScreenshotService.generate();
+    if (!html) {
+      res.status(500).send('Failed to take screenshot');
+      return;
+    }
+
+    res.setHeader('Content-Type', 'text/html');
+    res.status(200).send(html);
+  }
+
+  /**
+   * Handles the request to zoom in.
+   *
+   * @param req - The request object.
+   * @param res - The response object.
+   */
+  private static async zoomIn(req: Request, res: Response) {
+    Logger.info('Received zoom in request');
+    res.status(200).send('OK');
+
+    const show = DemoApi.toFront(req);
+    if (show) {
+      await bringToFront();
+    }
+
+    await commands.executeCommand(`editor.action.fontZoomIn`);
+  }
+
+  /**
+   * Handles the request to zoom out.
+   *
+   * @param req - The request object.
+   * @param res - The response object.
+   */
+  private static async zoomOut(req: Request, res: Response) {
+    Logger.info('Received zoom out request');
+    res.status(200).send('OK');
+
+    const show = DemoApi.toFront(req);
+    if (show) {
+      await bringToFront();
+    }
+
+    await commands.executeCommand(`editor.action.fontZoomOut`);
   }
 
   /**
