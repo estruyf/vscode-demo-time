@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { ApiData, ConnectionStatus } from '../types/api';
 import { useBringToFront } from '../contexts/BringToFrontContext';
 
@@ -10,6 +10,7 @@ export const useApi = () => {
   const [loading, setLoading] = useState(false);
   const [notes, setNotes] = useState<string | null>(null);
   const { bringToFront } = useBringToFront();
+  const latestRequestIdRef = useRef(0);
 
   const connect = useCallback(async (url: string) => {
     setLoading(true);
@@ -140,6 +141,9 @@ export const useApi = () => {
         return;
       }
 
+      // Increment request ID to track the latest request
+      const requestId = ++latestRequestIdRef.current;
+
       try {
         const response = await fetch(`${connectionStatus.url}/api/notes`, {
           method: 'POST',
@@ -154,10 +158,18 @@ export const useApi = () => {
         }
 
         const notesData = await response.text();
-        setNotes(notesData);
+
+        // Only update state if this is still the latest request
+        if (requestId === latestRequestIdRef.current) {
+          setNotes(notesData);
+        }
       } catch (error) {
         console.error('Failed to fetch notes:', error);
-        setNotes(null);
+
+        // Only update state if this is still the latest request
+        if (requestId === latestRequestIdRef.current) {
+          setNotes(null);
+        }
       }
     },
     [connectionStatus],

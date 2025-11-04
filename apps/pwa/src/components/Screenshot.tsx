@@ -19,9 +19,15 @@ export const Screenshot: React.FunctionComponent<ScreenshotProps> = ({
   React.useEffect(() => {
     const getScreenshot = async () => {
       setLoading(true);
-      const img = await fetchScreenshot();
-      setScreenshot(img || undefined);
-      setLoading(false);
+      try {
+        const img = await fetchScreenshot();
+        setScreenshot(img || undefined);
+      } catch (error) {
+        console.error('Failed to fetch screenshot:', error);
+        setScreenshot(undefined);
+      } finally {
+        setLoading(false);
+      }
     };
 
     if (hasNext) {

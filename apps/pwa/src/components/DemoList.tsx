@@ -27,7 +27,7 @@ export const DemoList: React.FC<DemoListProps> = ({ apiData, onRunById }) => {
   const nextDemoFile = useMemo(() => {
     const currentFileIdx = apiData.demos.findIndex(demo => demo.demoFilePath === apiData.currentDemoFile);
     return apiData.demos[currentFileIdx + 1];
-  }, [apiData.demos]);
+  }, [apiData.demos, apiData.currentDemoFile]);
 
   useEffect(() => {
     const scrollToCenter = () => {
