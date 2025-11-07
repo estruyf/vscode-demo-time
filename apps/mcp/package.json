@@ -30,7 +30,7 @@
     "README.md"
   ],
   "author": "Elio Struyf <elio@struyfconsulting.be>",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.11.5",
     "fuse.js": "^7.1.0",

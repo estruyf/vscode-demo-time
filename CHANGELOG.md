@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.12.0] - Unreleased
+
+- **BREAKING**: Changed project license from MIT to Apache License 2.0. See [LICENSE](./LICENSE) for
+  details.
+
 ## [1.11.0] - 2025-11-04
 
 - [#262](https://github.com/estruyf/vscode-demo-time/issues/262): Added a recent files dropdown to
