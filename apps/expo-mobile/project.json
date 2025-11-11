@@ -1,0 +1,44 @@
+{
+  "name": "expo-mobile",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/expo-mobile/src",
+  "targets": {
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx expo start",
+        "cwd": "apps/expo-mobile"
+      }
+    },
+    "android": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx expo run:android",
+        "cwd": "apps/expo-mobile"
+      }
+    },
+    "ios": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx expo run:ios",
+        "cwd": "apps/expo-mobile"
+      }
+    },
+    "build:android": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx eas build --platform android",
+        "cwd": "apps/expo-mobile"
+      }
+    },
+    "build:ios": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx eas build --platform ios",
+        "cwd": "apps/expo-mobile"
+      }
+    }
+  },
+  "tags": ["type:app", "scope:mobile"]
+}
