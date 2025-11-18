@@ -15,6 +15,7 @@ export enum Action {
   // Code
   Insert = 'insert',
   Highlight = 'highlight',
+  Selection = 'selection',
   Replace = 'replace',
   Unselect = 'unselect',
   Delete = 'delete',

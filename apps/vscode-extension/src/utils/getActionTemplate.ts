@@ -113,6 +113,15 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  if (action === Action.Selection) {
+    return {
+      action: Action.Selection,
+      path: '',
+      startPlaceholder: '',
+      endPlaceholder: '',
+    };
+  }
+
   if (action === Action.PositionCursor) {
     return {
       action: Action.PositionCursor,

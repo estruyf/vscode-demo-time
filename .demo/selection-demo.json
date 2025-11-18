@@ -1,0 +1,76 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Selection Action Demo",
+  "description": "Demonstrates the new selection action",
+  "demos": [
+    {
+      "title": "Selection with position",
+      "description": "Select text at a specific position",
+      "steps": [
+        {
+          "action": "create",
+          "path": "selection-test.js",
+          "content": "function greet(name) {\n  console.log('Hello, ' + name);\n  return true;\n}\n\ngreet('World');"
+        },
+        {
+          "action": "open",
+          "path": "selection-test.js"
+        },
+        {
+          "action": "selection",
+          "path": "selection-test.js",
+          "position": "1:10:1:15"
+        }
+      ]
+    },
+    {
+      "title": "Selection with placeholders",
+      "description": "Select text using placeholders",
+      "steps": [
+        {
+          "action": "create",
+          "path": "selection-placeholder-test.js",
+          "content": "function calculate(a, b) {\n  // #start\n  const sum = a + b;\n  return sum;\n  // #end\n}\n\ncalculate(5, 10);"
+        },
+        {
+          "action": "open",
+          "path": "selection-placeholder-test.js"
+        },
+        {
+          "action": "selection",
+          "path": "selection-placeholder-test.js",
+          "startPlaceholder": "#start",
+          "endPlaceholder": "#end"
+        }
+      ]
+    },
+    {
+      "title": "Highlight vs Selection comparison",
+      "description": "Show difference between highlight and selection",
+      "steps": [
+        {
+          "action": "open",
+          "path": "selection-test.js"
+        },
+        {
+          "action": "highlight",
+          "path": "selection-test.js",
+          "position": "2"
+        },
+        {
+          "action": "waitForTimeout",
+          "timeout": 2000
+        },
+        {
+          "action": "unselect",
+          "path": "selection-test.js"
+        },
+        {
+          "action": "selection",
+          "path": "selection-test.js",
+          "position": "2"
+        }
+      ]
+    }
+  ]
+}

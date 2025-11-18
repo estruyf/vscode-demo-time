@@ -1086,6 +1086,11 @@ export class DemoRunner {
       return;
     }
 
+    if (step.action === Action.Selection && (crntRange || crntPosition)) {
+      await DemoRunner.select(textEditor, crntRange, crntPosition, step.zoom);
+      return;
+    }
+
     // Code actions
     if (step.action === Action.Insert) {
       await TextTypingService.insert(textEditor, editor, fileUri, content, crntPosition, step);
@@ -1253,6 +1258,48 @@ export class DemoRunner {
   private static async unselect(textEditor?: TextEditor): Promise<void> {
     DecoratorService.unselect(textEditor);
   }
+
+  /**
+   * Selects text in the editor based on the provided range or position.
+   * Similar to highlight but actually selects the text instead of just visually highlighting it.
+   * @param textEditor The text editor to perform the selection in.
+   * @param range The range to select.
+   * @param position The position to select (if range is not provided).
+   * @param zoomLevel Optional zoom level to apply.
+   */
+  public static async select(
+    textEditor: TextEditor,
+    range: Range | undefined,
+    position: Position | undefined,
+    zoomLevel?: number,
+  ): Promise<void> {
+    if (!range && !position) {
+      return;
+    }
+
+    if (!textEditor) {
+      return;
+    }
+
+    if (!range && position) {
+      // If only position is provided, create a range at that position
+      range = new Range(position, position);
+    }
+
+    if (range) {
+      // Apply zoom if specified
+      if (zoomLevel) {
+        await updateConfig('window.zoomLevel', zoomLevel);
+      }
+
+      // Create selection from the range
+      textEditor.selection = new Selection(range.start, range.end);
+      
+      // Reveal the selection in the center of the editor
+      textEditor.revealRange(range, TextEditorRevealType.InCenter);
+    }
+  }
+
 
   /**
    * Retrieves the demo file associated with the given ActionTreeItem.

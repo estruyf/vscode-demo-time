@@ -85,6 +85,7 @@
                     "openSlide",
                     "insert",
                     "highlight",
+                    "selection",
                     "replace",
                     "unselect",
                     "delete",
@@ -300,6 +301,39 @@
                       },
                       "highlightWholeLine": {
                         "$ref": "#/definitions/highlightWholeLine"
+                      },
+                      "zoom": {
+                        "$ref": "#/definitions/zoom"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "enum": ["selection"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["path"],
+                    "oneOf": [
+                      { "required": ["position"] },
+                      { "required": ["startPlaceholder", "endPlaceholder"] }
+                    ],
+                    "properties": {
+                      "path": {
+                        "$ref": "#/definitions/path"
+                      },
+                      "position": {
+                        "$ref": "#/definitions/position"
+                      },
+                      "startPlaceholder": {
+                        "$ref": "#/definitions/startPlaceholder"
+                      },
+                      "endPlaceholder": {
+                        "$ref": "#/definitions/endPlaceholder"
                       },
                       "zoom": {
                         "$ref": "#/definitions/zoom"
