@@ -51,6 +51,7 @@ import {
   DemoFileProvider,
   Extension,
   EngageTimeService,
+  SelectionService,
 } from './';
 import { Preview } from '../preview/Preview';
 import { parse as jsonParse } from 'jsonc-parser';
@@ -1083,6 +1084,11 @@ export class DemoRunner {
         step.zoom,
         highlightWholeLine,
       );
+      return;
+    }
+
+    if (step.action === Action.Selection && (crntRange || crntPosition)) {
+      await SelectionService.select(textEditor, crntRange, crntPosition, step.zoom);
       return;
     }
 

@@ -1,6 +1,6 @@
 ---
 title: Text actions
-description: Text actions are used to insert, replace, highlight, delete or unselect text in the editor.
+description: Text actions are used to insert, replace, highlight, select, delete, or unselect text in the editor.
 lastmod: 2025-07-29T08:43:25.892Z
 ---
 
@@ -10,7 +10,7 @@ import GitHubFileOpener from '../../../components/GitHubFileOpener.astro';
 
 import hackerModeImg from "../../../assets/docs/hacker-typer-mode.webp";
 
-Text actions are used to insert, replace, highlight, delete or unselect text in the editor.
+Text actions are used to insert, replace, highlight, select, delete, or unselect text in the editor.
 
 Most of these actions make use of the `path` property to specify the location of the file.
 
@@ -80,6 +80,57 @@ Check out the <a href="../../references/settings" title="settings">settings</a> 
 When you use code area highlighting, which is when you use "line + character" position or setting `highlightWholeLine` property to `false` when using placeholder positioning, the highlighted code will not include a border.
 
 You can read more about it on the [highlighting](/tips/highlighting/) section.
+</Aside>
+
+## Select text
+
+Select text in the editor at a specific location. Unlike the highlight action which visually emphasizes text, the selection action actually selects the text as if the user had done it manually, allowing for operations like copy, cut, or delete.
+
+<Tabs syncKey="select-text">
+<TabItem label="JSON">
+
+```json
+// Via position
+{
+  "action": "selection",
+  "path": "<relative path to the file>",
+  "position": "<position>",
+  "zoom": "<zoom level> (optional)"
+}
+
+// Via placeholders
+{
+  "action": "selection",
+  "path": "<relative path to the file>",
+  "startPlaceholder": "<start placeholder>",
+  "endPlaceholder": "<end placeholder>",
+  "zoom": "<zoom level> (optional)"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+# Via position
+action: selection
+path: <relative path to the file>
+position: <position>
+zoom: <zoom level> # Optional
+
+# Via placeholders
+action: selection
+path: <relative path to the file>
+startPlaceholder: <start placeholder>
+endPlaceholder: <end placeholder>
+zoom: <zoom level> # Optional
+```
+
+</TabItem>
+</Tabs>
+
+<Aside>
+For more information about `positioning`, see the [positioning text/code](/actions/text#positioning-textcode) section.
 </Aside>
 
 ## Position cursor

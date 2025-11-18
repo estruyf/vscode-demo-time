@@ -111,6 +111,7 @@ export const CATEGORIZED_ACTIONS: {
     category: 'Interaction actions',
     options: [
       Action.Highlight,
+      Action.Selection,
       Action.Unselect,
       Action.PositionCursor,
       Action.CopyToClipboard,

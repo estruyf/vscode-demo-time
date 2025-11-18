@@ -111,6 +111,11 @@ export const getActionOptions = (): QuickPickItem[] => {
   } as QuickPickItem);
 
   actions.push({
+    label: Action.Selection,
+    description: 'Select text',
+  } as QuickPickItem);
+
+  actions.push({
     label: Action.Insert,
     description: 'Insert text',
   } as QuickPickItem);

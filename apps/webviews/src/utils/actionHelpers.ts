@@ -16,6 +16,7 @@ export const getActionIcon = (action: Action): string => {
     [Action.OpenSlide]: 'presentation',
     [Action.Insert]: 'plus',
     [Action.Highlight]: 'highlighter',
+    [Action.Selection]: 'mouse-pointer-click',
     [Action.Replace]: 'replace',
     [Action.Unselect]: 'mouse-pointer',
     [Action.Delete]: 'minus',
@@ -101,6 +102,7 @@ export const getActionColor = (action: Action): string => {
     action.includes('insert') ||
     action.includes('replace') ||
     action.includes('highlight') ||
+    action.includes('selection') ||
     action.includes('format')
   ) {
     return colorMap.edit;
@@ -149,6 +151,7 @@ export const getRequiredFields = (action: Action): string[] => {
     [Action.OpenSlide]: ['path'],
     [Action.Insert]: ['path'],
     [Action.Highlight]: ['path'],
+    [Action.Selection]: ['path'],
     [Action.Replace]: ['path'],
     [Action.Unselect]: [],
     [Action.Delete]: ['path'],
@@ -240,6 +243,7 @@ export const getFieldsForAction = (action: Action): string[] => {
       'highlightWholeLine',
       'zoom',
     ],
+    [Action.Selection]: ['path', 'position', 'startPlaceholder', 'endPlaceholder', 'zoom'],
     [Action.Replace]: [
       'path',
       'content',
