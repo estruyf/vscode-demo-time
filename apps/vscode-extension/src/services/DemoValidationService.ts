@@ -219,7 +219,7 @@ export class DemoValidationService {
           if (content && content.demos) {
             content.demos.forEach((demo: Demo) => {
               if (demo.id) {
-                globalIds.set(demo.id, filePath);
+                globalIds.set(demo.id, normalizedFilePath);
               }
             });
           }
