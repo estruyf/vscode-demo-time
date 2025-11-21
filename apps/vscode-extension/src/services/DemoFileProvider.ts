@@ -155,7 +155,7 @@ export class DemoFileProvider {
           continue;
         }
 
-        demoFiles[file.fsPath] = content;
+        demoFiles[parseWinPath(file.fsPath)] = content;
       } catch (error) {
         Logger.error(`Error reading demo file ${file.path}: ${(error as Error).message}`);
         continue;
