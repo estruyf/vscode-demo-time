@@ -4,9 +4,11 @@
 
 - **BREAKING**: Changed project license from MIT to Apache License 2.0. See
   [LICENSE](./LICENSE) for details.
-- [[#302](https://github.com/estruyf/vscode-demo-time/issues/302): Added a new
+- [#302](https://github.com/estruyf/vscode-demo-time/issues/302): Added a new
   `selection` action to select text in the editor based on start and end
   placeholders or line and character positioning
+- [#305](https://github.com/estruyf/vscode-demo-time/issues/305): Fix Windows
+  file parsing
 
 ## [1.11.0] - 2025-11-04
 
