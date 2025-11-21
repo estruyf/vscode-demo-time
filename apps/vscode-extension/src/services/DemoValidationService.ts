@@ -206,8 +206,11 @@ export class DemoValidationService {
       }
 
       // First, collect all IDs from other files
+      const currentFilePath = parseWinPath(currentDocument.uri.fsPath);
+
       for (const filePath of Object.keys(allFiles)) {
-        if (filePath === currentDocument.uri.fsPath) {
+        const normalizedFilePath = parseWinPath(filePath);
+        if (normalizedFilePath === currentFilePath) {
           continue; // Skip current file
         }
 
