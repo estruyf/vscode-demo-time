@@ -322,6 +322,8 @@ export class DemoRunner {
       // Set the current executing file to the next file
       executingFile.filePath = nextFile.filePath;
       executingFile.demo = [];
+      executingFile.version = nextFile.version;
+
       await DemoRunner.setExecutedDemoFile(executingFile);
       // Start the next demo file
       DemoRunner.start({
@@ -1273,6 +1275,7 @@ export class DemoRunner {
     | {
         filePath: string;
         demo: DemoConfig;
+        version?: Version;
       }
     | undefined
   > {

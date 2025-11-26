@@ -1,4 +1,4 @@
-import { DemoConfig, DemoFiles } from '@demotime/common';
+import { DemoConfig, DemoFiles, Version } from '@demotime/common';
 import { sortFiles } from '.';
 import { DemoFileProvider } from '../services';
 
@@ -8,6 +8,7 @@ export const getNextDemoFile = async (demoFile?: {
   | {
       filePath: string;
       demo: DemoConfig;
+      version?: Version;
     }
   | undefined
 > => {
@@ -29,5 +30,6 @@ export const getNextDemoFile = async (demoFile?: {
   return {
     filePath: nextFile,
     demo: demoFiles[nextFile],
+    version: demoFiles[nextFile]?.version,
   };
 };
