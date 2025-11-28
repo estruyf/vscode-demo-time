@@ -1238,6 +1238,10 @@ export class DemoRunner {
       range = new Range(position, position);
     }
 
+    if (highlightWholeLine === undefined) {
+      highlightWholeLine = true;
+    }
+
     if (range) {
       if (keepInMemory) {
         DemoRunner.setCrntHighlighting(

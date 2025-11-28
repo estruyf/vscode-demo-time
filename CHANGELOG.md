@@ -14,6 +14,8 @@
 - [#309](https://github.com/estruyf/vscode-demo-time/issues/309): Updated
   `InsertTypingModePicker` component to correctly fetch and display the current
   typing mode setting
+- [#310](https://github.com/estruyf/vscode-demo-time/issues/310): Fixed issue
+  where `InsertTypingModePicker` did not highlight on single line selection
 
 ## [1.11.0] - 2025-11-04
 

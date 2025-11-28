@@ -45,8 +45,7 @@
         {
           "action": "highlight",
           "path": "src/content/docs/actions/text.mdx",
-          "position": "3",
-          "highlightWholeLine": true
+          "position": "3"
         }
       ]
     },
