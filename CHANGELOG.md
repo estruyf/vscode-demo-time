@@ -11,6 +11,9 @@
   file parsing
 - [#308](https://github.com/estruyf/vscode-demo-time/issues/308): Fixed sticky
   header issue in StepEditor component
+- [#309](https://github.com/estruyf/vscode-demo-time/issues/309): Updated
+  `InsertTypingModePicker` component to correctly fetch and display the current
+  typing mode setting
 
 ## [1.11.0] - 2025-11-04
 

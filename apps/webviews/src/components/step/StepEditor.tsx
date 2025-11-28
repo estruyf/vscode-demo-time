@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CATEGORIZED_ACTIONS, THEMES, TYPING_MODES, TERMINAL_TYPING_MODES } from '../../types/demo';
+import { CATEGORIZED_ACTIONS, THEMES } from '../../types/demo';
 import { getFieldsForAction, getRequiredFields } from '../../utils/actionHelpers';
 import { validateStep } from '../../utils/validation';
 import { SearchableDropdown } from '../ui/SearchableDropdown';
@@ -13,6 +13,7 @@ import { Action, EngageTimeMessageType, Step, WebViewMessages } from '@demotime/
 import { PollIdPicker } from './PollIdPicker';
 import { useDemoConfigContext } from '../../hooks';
 import { VSCodeCommandPicker } from './VSCodeCommandPicker';
+import { InsertTypingModePicker } from '../ui/InsertTypingModePicker';
 
 interface StepEditorProps {
   step: Step;
@@ -224,14 +225,6 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
     handleChange('position', combinedPosition);
   };
 
-  const getTypingModeOptions = () => {
-    // Use terminal typing modes for terminal commands
-    if (step.action === 'executeTerminalCommand') {
-      return TERMINAL_TYPING_MODES;
-    }
-    return TYPING_MODES;
-  };
-
   const renderField = (field: string) => {
     const isRequired = requiredFields.includes(field);
     const fieldErrors = stepValidation.errors.filter(error => error.field === field);
@@ -354,24 +347,14 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
       case 'insertTypingMode':
         return (
-          <div key={field}>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Insert Typing Mode {isRequired && <span className="text-red-500">*</span>}
-            </label>
-            <select
-              value={step.insertTypingMode || 'instant'}
-              onChange={(e) => handleChange('insertTypingMode', (e.target.value || undefined) as typeof step.insertTypingMode)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
-                }`}
-            >
-              {getTypingModeOptions().map(mode => (
-                <option key={mode} value={mode}>{mode}</option>
-              ))}
-            </select>
-            {fieldErrors.map((error, index) => (
-              <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
-            ))}
-          </div>
+          <InsertTypingModePicker
+            key={field}
+            value={step.insertTypingMode}
+            action={step.action}
+            required={isRequired}
+            fieldErrors={fieldErrors}
+            onChange={(value) => handleChange('insertTypingMode', value)}
+          />
         );
 
       case 'highlightWholeLine': {

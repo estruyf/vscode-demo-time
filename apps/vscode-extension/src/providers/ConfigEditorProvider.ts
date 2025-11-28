@@ -147,7 +147,14 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     webviewPanel.webview.onDidReceiveMessage(
       async (message: { command: string; requestId?: string; payload?: any }) => {
         const { command, requestId, payload } = message;
-        if (command === WebViewMessages.toVscode.configEditor.getContents) {
+        if (command === WebViewMessages.toVscode.getSetting) {
+          const setting = Extension.getInstance().getSetting(payload);
+          webviewPanel.webview.postMessage({
+            command,
+            requestId,
+            payload: setting,
+          });
+        } else if (command === WebViewMessages.toVscode.configEditor.getContents) {
           handleGetContents(webviewPanel, requestId, getContent);
         } else if (command === WebViewMessages.toVscode.runCommand) {
           await handleRunCommand(payload);
