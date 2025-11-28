@@ -9,6 +9,8 @@
   placeholders or line and character positioning
 - [#305](https://github.com/estruyf/vscode-demo-time/issues/305): Fix Windows
   file parsing
+- [#308](https://github.com/estruyf/vscode-demo-time/issues/308): Fixed sticky
+  header issue in StepEditor component
 
 ## [1.11.0] - 2025-11-04
 
