@@ -89,7 +89,11 @@
       },
       "workbench.editorAssociations": {
         "{git,gitlens}:/**/*.{yml,json,yaml}": "default"
-      }
+      },
+      "terminal.integrated.commandsToSkipShell": [
+        "demo-time.start",
+        "demo-time.previous"
+      ]
     },
     "icons": {
       "dt-projector": {
