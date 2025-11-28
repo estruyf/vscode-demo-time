@@ -175,7 +175,7 @@
           "path": "temp/file-action.md",
           "position": "4",
           "contentPath": ".demo/content/file-insert.md",
-          "insertTypingMode": "instant",
+          "insertTypingMode": "line-by-line",
           "insertTypingSpeed": 50
         }
       ]
