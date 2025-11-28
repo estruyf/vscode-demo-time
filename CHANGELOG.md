@@ -16,6 +16,9 @@
   typing mode setting
 - [#310](https://github.com/estruyf/vscode-demo-time/issues/310): Fixed issue
   where `InsertTypingModePicker` did not highlight on single line selection
+- [#311](https://github.com/estruyf/vscode-demo-time/issues/311): Added support
+  for next and previous commands in the shell with the
+  `terminal.integrated.commandsToSkipShell` setting
 
 ## [1.11.0] - 2025-11-04
 
