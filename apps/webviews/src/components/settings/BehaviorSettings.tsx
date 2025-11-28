@@ -1,6 +1,6 @@
 import { Card } from "../ui/Card";
 import { Label } from "../ui/Label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/EnhancedSelect";
+import { EnhancedSelect, EnhancedSelectContent, EnhancedSelectItem, EnhancedSelectTrigger, EnhancedSelectValue } from "../ui/EnhancedSelect";
 import { IDemoTimeSettings } from "@demotime/common";
 
 interface BehaviorSettingsProps {
@@ -17,18 +17,18 @@ export default function BehaviorSettings({ settings, updateSetting }: BehaviorSe
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="nextAction">Next Action Behavior</Label>
-            <Select
+            <EnhancedSelect
               value={settings.nextActionBehaviour}
               onValueChange={(value: string) => updateSetting("nextActionBehaviour", value)}
             >
-              <SelectTrigger>
-                <SelectValue value={settings.nextActionBehaviour} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="lastExecuted">Last Executed</SelectItem>
-                <SelectItem value="currentPosition">Current Position</SelectItem>
-              </SelectContent>
-            </Select>
+              <EnhancedSelectTrigger>
+                <EnhancedSelectValue value={settings.nextActionBehaviour} />
+              </EnhancedSelectTrigger>
+              <EnhancedSelectContent>
+                <EnhancedSelectItem value="lastExecuted">Last Executed</EnhancedSelectItem>
+                <EnhancedSelectItem value="currentPosition">Current Position</EnhancedSelectItem>
+              </EnhancedSelectContent>
+            </EnhancedSelect>
             <p className="text-sm text-gray-600 dark:text-gray-300">Define the behavior of the next action</p>
           </div>
         </div>
