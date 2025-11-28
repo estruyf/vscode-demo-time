@@ -1,7 +1,7 @@
 import { Card } from "../ui/Card";
 import { Label } from "../ui/Label";
 import { Input } from "../ui/Input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/EnhancedSelect";
+import { EnhancedSelect, EnhancedSelectContent, EnhancedSelectItem, EnhancedSelectTrigger, EnhancedSelectValue } from "../ui/EnhancedSelect";
 import { IDemoTimeSettings } from "@demotime/common";
 
 interface TypingAnimationSettingsProps {
@@ -18,20 +18,20 @@ export default function TypingAnimationSettings({ settings, updateSetting }: Typ
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="typingMode">Typing Mode</Label>
-            <Select
+            <EnhancedSelect
               value={settings.insertTypingMode}
               onValueChange={(value: string) => updateSetting("insertTypingMode", value)}
             >
-              <SelectTrigger>
-                <SelectValue value={settings.insertTypingMode} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="instant">Instant</SelectItem>
-                <SelectItem value="line-by-line">Line by Line</SelectItem>
-                <SelectItem value="character-by-character">Character by Character</SelectItem>
-                <SelectItem value="hacker-typer">Hacker Typer</SelectItem>
-              </SelectContent>
-            </Select>
+              <EnhancedSelectTrigger>
+                <EnhancedSelectValue value={settings.insertTypingMode} />
+              </EnhancedSelectTrigger>
+              <EnhancedSelectContent>
+                <EnhancedSelectItem value="instant">Instant</EnhancedSelectItem>
+                <EnhancedSelectItem value="line-by-line">Line by Line</EnhancedSelectItem>
+                <EnhancedSelectItem value="character-by-character">Character by Character</EnhancedSelectItem>
+                <EnhancedSelectItem value="hacker-typer">Hacker Typer</EnhancedSelectItem>
+              </EnhancedSelectContent>
+            </EnhancedSelect>
             <p className="text-sm text-gray-600 dark:text-gray-300">Mode for inserting content during demos</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
