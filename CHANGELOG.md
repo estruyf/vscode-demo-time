@@ -19,6 +19,8 @@
 - [#311](https://github.com/estruyf/vscode-demo-time/issues/311): Added support
   for next and previous commands in the shell with the
   `terminal.integrated.commandsToSkipShell` setting
+- [#315](https://github.com/estruyf/vscode-demo-time/issues/315): Dark mode
+  fixes on the config and overview editor
 - [#318](https://github.com/estruyf/vscode-demo-time/issues/318): Added the
   `cancelCopilotChat` action to cancel the current Copilot chat request
 
