@@ -435,6 +435,33 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: 'Run a demo by its ID',
   } as QuickPickItem);
 
+  // macOS specific actions
+  actions.push({
+    label: 'macOS',
+    description: 'macOS specific actions',
+    kind: QuickPickItemKind.Separator,
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.EnableFocusMode,
+    description: 'Enable Focus Mode (Do Not Disturb) on macOS',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.DisableFocusMode,
+    description: 'Disable Focus Mode (Do Not Disturb) on macOS',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.HideMenubar,
+    description: 'Hide the menu bar on macOS',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.ShowMenubar,
+    description: 'Show the menu bar on macOS',
+  } as QuickPickItem);
+
   // EngageTime actions
   actions.push({
     label: 'EngageTime',

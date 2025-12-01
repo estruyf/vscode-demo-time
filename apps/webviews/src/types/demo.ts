@@ -133,6 +133,15 @@ export const CATEGORIZED_ACTIONS: {
     options: [Action.RunDemoById],
   },
   {
+    category: 'macOS actions',
+    options: [
+      Action.EnableFocusMode,
+      Action.DisableFocusMode,
+      Action.HideMenubar,
+      Action.ShowMenubar,
+    ],
+  },
+  {
     category: 'EngageTime actions',
     options: [
       Action.ShowEngageTimePoll,

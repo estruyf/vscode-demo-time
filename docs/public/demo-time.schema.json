@@ -135,6 +135,10 @@
                     "pressBackspace",
                     "pressDelete",
                     "runDemoById",
+                    "macos.enableFocusMode",
+                    "macos.disableFocusMode",
+                    "macos.hideMenubar",
+                    "macos.showMenubar",
                     "startEngageTimeSession",
                     "startEngageTimePoll",
                     "closeEngageTimeSession",
@@ -1133,6 +1137,10 @@
     "description": {
       "type": "string",
       "title": "The description of the EngageTime message"
+    },
+    "script": {
+      "type": "string",
+      "title": "The AppleScript content to execute on macOS"
     }
   }
 }

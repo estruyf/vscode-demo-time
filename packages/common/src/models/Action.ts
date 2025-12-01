@@ -75,6 +75,11 @@ export enum Action {
   PressDelete = 'pressDelete',
   // Demo Time
   RunDemoById = 'runDemoById',
+  // macOS specific actions
+  EnableFocusMode = 'macos.enableFocusMode',
+  DisableFocusMode = 'macos.disableFocusMode',
+  HideMenubar = 'macos.hideMenubar',
+  ShowMenubar = 'macos.showMenubar',
   // EngageTime
   StartEngageTimeSession = 'startEngageTimeSession',
   StartEngageTimePoll = 'startEngageTimePoll',

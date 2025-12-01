@@ -476,6 +476,31 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  // macOS specific actions
+  if (action === Action.EnableFocusMode) {
+    return {
+      action: Action.EnableFocusMode,
+    };
+  }
+
+  if (action === Action.DisableFocusMode) {
+    return {
+      action: Action.DisableFocusMode,
+    };
+  }
+
+  if (action === Action.HideMenubar) {
+    return {
+      action: Action.HideMenubar,
+    };
+  }
+
+  if (action === Action.ShowMenubar) {
+    return {
+      action: Action.ShowMenubar,
+    };
+  }
+
   // EngageTime actions
   if (action === Action.StartEngageTimeSession) {
     return {

@@ -52,6 +52,7 @@ import {
   Extension,
   EngageTimeService,
   SelectionService,
+  MacOSActionsService,
 } from './';
 import { Preview } from '../preview/Preview';
 import { parse as jsonParse } from 'jsonc-parser';
@@ -683,6 +684,21 @@ export class DemoRunner {
         return;
       }
       await DemoRunner.runById(step.id);
+      return;
+    }
+
+    // macOS specific actions
+    if (step.action === Action.EnableFocusMode) {
+      await MacOSActionsService.enableFocusMode();
+      return;
+    } else if (step.action === Action.DisableFocusMode) {
+      await MacOSActionsService.disableFocusMode();
+      return;
+    } else if (step.action === Action.HideMenubar) {
+      await MacOSActionsService.hideMenubar();
+      return;
+    } else if (step.action === Action.ShowMenubar) {
+      await MacOSActionsService.showMenubar();
       return;
     }
 
