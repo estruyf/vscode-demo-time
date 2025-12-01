@@ -14,6 +14,8 @@ import { PollIdPicker } from './PollIdPicker';
 import { useDemoConfigContext } from '../../hooks';
 import { VSCodeCommandPicker } from './VSCodeCommandPicker';
 import { InsertTypingModePicker } from '../ui/InsertTypingModePicker';
+import { SettingField } from './SettingField';
+import { StateField } from './StateField';
 
 interface StepEditorProps {
   step: Step;
@@ -466,89 +468,25 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
       case 'setting':
         return (
-          <div key={field} className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Setting {isRequired && <span className="text-red-500">*</span>}
-            </label>
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col gap-4">
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="setting-key">Key</label>
-                <input
-                  id="setting-key"
-                  type="text"
-                  value={step.setting?.key || ''}
-                  onChange={(e) => handleSettingChange(e.target.value, step.setting?.value)}
-                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
-                  placeholder="Setting key"
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="setting-value">Value</label>
-                <textarea
-                  id="setting-value"
-                  value={
-                    typeof step.setting?.value === 'object' && step.setting?.value !== null
-                      ? JSON.stringify(step.setting.value, null, 2)
-                      : typeof step.setting?.value === 'boolean'
-                        ? String(step.setting?.value)
-                        : step.setting?.value || ''
-                  }
-                  onChange={e => {
-                    try {
-                      const parsed = JSON.parse(e.target.value);
-                      handleSettingChange(step.setting?.key || '', parsed);
-                    } catch {
-                      // Optionally show error or ignore
-                      handleSettingChange(step.setting?.key || '', e.target.value);
-                    }
-                  }}
-                  rows={5}
-                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
-                  placeholder="Setting value (JSON or string)"
-                />
-              </div>
-
-              {fieldErrors.map((error, index) => (
-                <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
-              ))}
-            </div>
+          <div key={field}>
+            <SettingField
+              setting={step.setting}
+              onChange={handleSettingChange}
+              fieldErrors={fieldErrors}
+              isRequired={isRequired}
+            />
           </div>
         );
 
       case 'state':
         return (
-          <div key={field} className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              State {isRequired && <span className="text-red-500">*</span>}
-            </label>
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col gap-4">
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="state-key">Key</label>
-                <input
-                  id="state-key"
-                  type="text"
-                  value={step.state?.key || ''}
-                  onChange={(e) => handleStateChange(e.target.value, step.state?.value || '')}
-                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
-                  placeholder="State key"
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="state-value">Value</label>
-                <input
-                  id="state-value"
-                  type="text"
-                  value={step.state?.value || ''}
-                  onChange={(e) => handleStateChange(step.state?.key || '', e.target.value)}
-                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
-                  placeholder="State value"
-                />
-              </div>
-
-              {fieldErrors.map((error, index) => (
-                <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
-              ))}
-            </div>
+          <div key={field}>
+            <StateField
+              state={step.state}
+              onChange={handleStateChange}
+              fieldErrors={fieldErrors}
+              isRequired={isRequired}
+            />
           </div>
         );
 
