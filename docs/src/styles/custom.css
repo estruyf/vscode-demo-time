@@ -74,6 +74,10 @@ h1 {
   }
 }
 
+.navigation__docs_link {
+  @apply text-white font-semibold no-underline uppercase;
+}
+
 .social-icons {
   svg {
     @apply h-5 w-5;
