@@ -59,6 +59,7 @@ export enum Action {
   AgentChat = 'agentCopilotChat',
   CustomChat = 'customCopilotChat',
   CloseChat = 'closeCopilotChat',
+  CancelChat = 'cancelCopilotChat',
   // Interaction
   TypeText = 'typeText',
   CopyToClipboard = 'copyToClipboard',

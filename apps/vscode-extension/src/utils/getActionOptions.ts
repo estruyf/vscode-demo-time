@@ -351,6 +351,11 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: 'Close the GitHub Copilot Chat',
   } as QuickPickItem);
 
+  actions.push({
+    label: Action.CancelChat,
+    description: 'Cancel the current GitHub Copilot Chat request',
+  } as QuickPickItem);
+
   // Interaction actions
   actions.push({
     label: 'Interaction',

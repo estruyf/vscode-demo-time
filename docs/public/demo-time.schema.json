@@ -121,6 +121,7 @@
                     "agentCopilotChat",
                     "customCopilotChat",
                     "closeCopilotChat",
+                    "cancelCopilotChat",
                     "copyToClipboard",
                     "pasteFromClipboard",
                     "typeText",

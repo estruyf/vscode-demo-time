@@ -671,6 +671,9 @@ export class DemoRunner {
     } else if (step.action === Action.CloseChat) {
       await ChatActionsService.closeChat();
       return;
+    } else if (step.action === Action.CancelChat) {
+      await ChatActionsService.cancelChat();
+      return;
     }
 
     // Demo Time actions

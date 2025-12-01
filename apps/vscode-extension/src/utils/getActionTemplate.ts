@@ -387,6 +387,11 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
       action: Action.CloseChat,
     };
   }
+  if (action === Action.CancelChat) {
+    return {
+      action: Action.CancelChat,
+    };
+  }
 
   // Interaction actions
   if (action === Action.TypeText) {
