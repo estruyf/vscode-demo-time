@@ -16,6 +16,7 @@ import { VSCodeCommandPicker } from './VSCodeCommandPicker';
 import { InsertTypingModePicker } from '../ui/InsertTypingModePicker';
 import { SettingField } from './SettingField';
 import { StateField } from './StateField';
+import { NoteBox } from '../ui/NoteBox';
 
 interface StepEditorProps {
   step: Step;
@@ -269,31 +270,27 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
             {
               step.action && step.action.toLowerCase().includes('engagetime') && (
                 <>
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2 space-y-1">
-                    <p className="text-sm text-yellow-800 dark:text-yellow-900">
+                  <NoteBox variant="warning" className="mt-2 space-y-1">
+                    <>
                       <strong>Note:</strong> Make sure to set the EngageTime Session ID in the demo configuration.
-                    </p>
-                    <button
-                      type="button"
-                      className="!text-sm bg-transparent p-0 m-0 border-none underline decoration-dotted hover:decoration-solid text-blue-700 dark:text-blue-400 cursor-pointer"
-                      style={{ font: 'inherit' }}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        window.dispatchEvent(new CustomEvent('engagetime:open-config', {}));
-                      }}
-                    >
-                      Open EngageTime Config
-                    </button>
-                  </div>
-                  {
-                    config.engageTime?.sessionId ? null : (
-                      <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-2 space-y-1">
-                        <p className="text-sm text-red-700 dark:text-red-800 mt-1">
-                          <strong>Error:</strong> No EngageTime Session ID is set in the demo configuration.
-                        </p>
-                      </div>
-                    )
-                  }
+                      <button
+                        type="button"
+                        className="bg-transparent p-0 m-0 border-none underline decoration-dotted hover:decoration-solid text-blue-700 dark:text-blue-300 cursor-pointer"
+                        style={{ font: 'inherit' }}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.dispatchEvent(new CustomEvent('engagetime:open-config', {}));
+                        }}
+                      >
+                        Open EngageTime Config
+                      </button>
+                    </>
+                  </NoteBox>
+                  {config.engageTime?.sessionId ? null : (
+                    <NoteBox variant="error" className="mt-2">
+                      <strong>Error:</strong> No EngageTime Session ID is set in the demo configuration.
+                    </NoteBox>
+                  )}
                 </>
               )
             }
@@ -804,35 +801,29 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
       {/* Show validation hints for complex actions */}
       {(step.action === 'insert' || step.action === 'replace') && (
-        <div className="bg-blue-50 dark:bg-gray-800 border border-blue-200 dark:border-blue-500 rounded-lg p-3">
-          <p className="text-sm text-blue-800 dark:text-blue-200">
-            <strong>Note:</strong> This action requires either content OR contentPath, and either position OR startPlaceholder.
-          </p>
-        </div>
+        <NoteBox className="mt-2" variant="info">
+          <><strong>Note:</strong> This action requires either content OR contentPath, and either position OR startPlaceholder.</>
+        </NoteBox>
       )}
 
       {step.action === 'create' && (
-        <div className="bg-blue-50 dark:bg-gray-800 border border-blue-200 dark:border-blue-500 rounded-lg p-3">
-          <p className="text-sm text-blue-800 dark:text-blue-200">
-            <strong>Note:</strong> This action requires a path. You can optionally provide either content OR contentPath (but not both), or leave both empty to create an empty file.
-          </p>
-        </div>
+        <NoteBox className="mt-2" variant="info">
+          <><strong>Note:</strong> This action requires a path. You can optionally provide either content OR contentPath (but not both), or leave both empty to create an empty file.</>
+        </NoteBox>
       )}
 
       {step.action === 'highlight' && (
-        <div className="bg-blue-50 dark:bg-gray-800 border border-blue-200 dark:border-blue-500 rounded-lg p-3">
-          <p className="text-sm text-blue-800 dark:text-blue-200">
-            <strong>Note:</strong> This action requires either position OR both startPlaceholder and endPlaceholder.
-          </p>
-        </div>
+        <NoteBox className="mt-2" variant="info">
+          <><strong>Note:</strong> This action requires either position OR both startPlaceholder and endPlaceholder.</>
+        </NoteBox>
       )}
 
       {step.action === 'copyToClipboard' && (
-        <div className="bg-blue-50 dark:bg-gray-800 border border-blue-200 dark:border-blue-500 rounded-lg p-3">
-          <p className="text-sm text-blue-800 dark:text-blue-200">
+        <NoteBox className="mt-2" variant="info">
+          <>
             <strong>Note:</strong> This action requires either <code className="bg-white px-1 rounded-xs">content</code> OR <code className="bg-white px-1 rounded-xs">contentPath</code>.
-          </p>
-        </div>
+          </>
+        </NoteBox>
       )}
     </div>
   );
