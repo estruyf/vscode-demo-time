@@ -4,7 +4,7 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 import { toCodes } from 'astro:i18n';
 
 const response = await fetch(
-  'https://marketplace.visualstudio.com/_apis/public/gallery/publishers/eliostruyf/extensions/vscode-demo-time/reviews?count=4&filterOptions=3',
+  'https://marketplace.visualstudio.com/_apis/public/gallery/publishers/eliostruyf/extensions/vscode-demo-time/reviews?count=5&filterOptions=3',
 );
 const data = await response.json();
 const reviews = data.reviews.filter(
@@ -20,6 +20,26 @@ const reviews = data.reviews.filter(
   </p>
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 space-y-0">
+    <div class="social-proof-card flex flex-col justify-between h-full">
+      <blockquote class="mb-4">
+        "Demo Time was essential for delivering smooth and reliable demos at Ignite. Our schedule
+        was very tight, with absolutely no room for mistakes. Demo Time gave me the confidence and
+        control I needed to present without stress. I would not want to run a major demo without
+        it."
+      </blockquote>
+      <div class="flex items-center gap-3 mt-auto">
+        <img
+          src={`https://cdn.bsky.app/img/avatar_thumbnail/plain/did:plc:sswjk3m6nofdvbwbdonwcihq/bafkreigqlbignbqxgsa5574k3u2lhi54k6lzzwxyhun7giosp4rp37rvwe@jpeg`}
+          alt={`Sébastien Levert`}
+          class="rounded-full border-2 border-[var(--sl-color-gray-5)] flex-shrink-0"
+          style="height: 40px; width: 40px;"
+        />
+        <div class="flex flex-col min-w-0">
+          <p class="font-semibold text-[var(--sl-color-white)] !m-0 truncate">Sébastien Levert</p>
+          <p class="!m-0 text-sm opacity-75"><em>Microsoft</em></p>
+        </div>
+      </div>
+    </div>
     <!-- Quote Cards -->
     {
       reviews.map((review: any) => (
