@@ -12,6 +12,7 @@ import { DemoRunner, Slides } from '../services';
 import { COMMAND, WebViewMessages, Config } from '@demotime/common';
 import { BaseWebview } from '../webview/BaseWebviewPanel';
 import { WebviewType } from '../models';
+import { PresenterView } from '../presenterView/PresenterView';
 
 export class Preview extends BaseWebview {
   public static id: WebviewType = 'preview';
@@ -209,6 +210,7 @@ export class Preview extends BaseWebview {
       setContext(ContextKeys.hasPreviousSlide, payload);
     } else if (command === WebViewMessages.toVscode.nextSlideTitle) {
       Preview.nextSlideTitle = payload;
+      Preview.sendSlideData(payload);
     } else if (command === WebViewMessages.toVscode.openFile && payload) {
       const fileUri = getAbsolutePath(payload);
       await window.showTextDocument(fileUri, { preview: false });
@@ -216,6 +218,17 @@ export class Preview extends BaseWebview {
       Preview.currentSlideIndex = payload;
     } else if (command === WebViewMessages.toVscode.slideReady) {
       Preview.reveal();
+    }
+  }
+
+  private static async sendSlideData(nextSlideTitle?: string) {
+    if (PresenterView.isOpen && Preview.hasNextSlide) {
+      PresenterView.postMessage(
+        WebViewMessages.toWebview.presenter.nextSlide,
+        nextSlideTitle || '',
+      );
+    } else {
+      PresenterView.postMessage(WebViewMessages.toWebview.presenter.nextSlide, undefined);
     }
   }
 

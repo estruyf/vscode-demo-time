@@ -288,5 +288,8 @@ export const WebViewMessages = {
     overview: {
       update: 'updateOverview',
     },
+    presenter: {
+      nextSlide: 'presenterNextSlide',
+    },
   },
 };

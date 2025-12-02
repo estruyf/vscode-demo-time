@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import { EventData } from '@estruyf/vscode';
-import { Config, Demo, WebViewMessages } from '@demotime/common';
+import { Config, Demo, WebViewMessages, COMMAND, Step, Action } from '@demotime/common';
 import { DemoHeader } from './DemoHeader';
 import { Icon } from 'vscrui';
 
@@ -9,9 +9,7 @@ import { Icon } from 'vscrui';
 const SLIDE_WIDTH = 960;
 const SLIDE_HEIGHT = 540;
 
-export interface INextSlideProps { }
-
-export const NextSlide: React.FunctionComponent<INextSlideProps> = () => {
+export const NextSlide: React.FunctionComponent = () => {
   const [scale, setScale] = React.useState(1);
   const [apiPort, setApiPort] = React.useState<number | undefined>(undefined);
   const [apiEnabled, setApiEnabled] = React.useState<boolean>(false);
@@ -58,6 +56,17 @@ export const NextSlide: React.FunctionComponent<INextSlideProps> = () => {
     }
   }, []);
 
+  const updateNextTitle = (demo: Demo | undefined) => {
+    const hasSlides = demo?.steps.some((s: Step) => s.action === Action.OpenSlide);
+    if (hasSlides) {
+      setNextTitle(demo?.title);
+      setHasNext(!!demo);
+    } else {
+      setNextTitle(undefined);
+      setHasNext(false);
+    }
+  };
+
   const messageListener = React.useCallback((message: MessageEvent<EventData<unknown>>) => {
     const { command, payload } = message.data;
     if (!command) {
@@ -66,13 +75,31 @@ export const NextSlide: React.FunctionComponent<INextSlideProps> = () => {
 
     if (command === WebViewMessages.toWebview.updateNextDemo) {
       const demo = payload as Demo | undefined;
-      setNextTitle(demo?.title);
-      setHasNext(!!demo);
+      updateNextTitle(demo);
     } else if (command === WebViewMessages.toWebview.preview.updateNextStep) {
       const payloadObj = payload as { title: string; command: string } | undefined;
       if (payloadObj?.title) {
-        setNextTitle(payloadObj.title);
-        setHasNext(true);
+        // Hide preview when the next action is running another demo
+        if (payloadObj.command === COMMAND.runById) {
+          setNextTitle(payloadObj.title);
+          setHasNext(false);
+        } else {
+          setNextTitle(payloadObj.title);
+          setHasNext(true);
+        }
+      }
+    } else if (command === WebViewMessages.toWebview.presenter.nextSlide) {
+      const slideTitle = payload as string | undefined;
+      if (typeof slideTitle === 'string') {
+        // Unset first to force re-render even when title is the same empty string
+        setNextTitle(undefined);
+        setTimeout(() => {
+          setNextTitle(slideTitle);
+          setHasNext(true);
+        }, 0);
+      } else {
+        setNextTitle(undefined);
+        setHasNext(false);
       }
     }
   }, []);
@@ -100,8 +127,7 @@ export const NextSlide: React.FunctionComponent<INextSlideProps> = () => {
 
     // Get the next demo
     messageHandler.request<Demo | undefined>(WebViewMessages.toVscode.getNextDemo).then((demo) => {
-      setNextTitle(demo?.title);
-      setHasNext(!!demo);
+      updateNextTitle(demo);
     });
 
     return () => {
@@ -115,6 +141,20 @@ export const NextSlide: React.FunctionComponent<INextSlideProps> = () => {
       updateScale();
     }
   }, [hasNext, updateScale]);
+
+  // Refresh iframe when nextTitle changes (force reload via timestamp)
+  React.useEffect(() => {
+    if (iframeRef.current && apiPort) {
+      try {
+        const iframe = iframeRef.current;
+        const url = new URL(`http://localhost:${apiPort}/preview`);
+        url.searchParams.set('t', Date.now().toString());
+        iframe.src = url.toString();
+      } catch {
+        // ignore URL errors
+      }
+    }
+  }, [nextTitle, apiPort]);
 
   if (!apiEnabled || !apiPort || !hasNext) {
     return null;
