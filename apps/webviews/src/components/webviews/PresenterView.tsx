@@ -3,13 +3,14 @@ import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import { EventData } from '@estruyf/vscode';
 import { Config, WebViewMessages } from "@demotime/common";
 import '../../styles/presenter.css';
-import { Clock, Countdown, Demos, NextDemo, ResetAction, StartCountdown, StartPresentation } from '../presenter';
+import { Clock, Countdown, Demos, NextDemo, NextSlide, ResetAction, StartCountdown, StartPresentation } from '../presenter';
 
 const PresenterView = () => {
   const [isReady, setIsReady] = React.useState(false);
   const [showClock, setShowClock] = React.useState(false);
   const [countdown, setCountdown] = React.useState<number | undefined>(undefined);
   const [countdownStarted, setCountdownStarted] = React.useState<Date | undefined>(undefined);
+  const [showScreenshot, setShowScreenshot] = React.useState(false);
 
   const messageListener = (message: MessageEvent<EventData<unknown>>) => {
     const { command, payload } = message.data;
@@ -43,6 +44,10 @@ const PresenterView = () => {
 
     messageHandler.request<Date | undefined>(WebViewMessages.toVscode.getCountdownStarted).then((time) => {
       setCountdownStarted(time);
+    });
+
+    messageHandler.request<boolean>(WebViewMessages.toVscode.getSetting, Config.remote.showScreenshot).then((show) => {
+      setShowScreenshot(show);
     });
 
     return () => {
@@ -79,6 +84,8 @@ const PresenterView = () => {
         </header>
 
         <Demos />
+
+        {showScreenshot && <NextSlide />}
 
         {showClock && (
           <div className="grid grid-cols-2 gap-4">
