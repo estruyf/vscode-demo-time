@@ -8,8 +8,8 @@ import {
   setContext,
   togglePresentationView,
 } from '../utils';
-import { DemoRunner, Slides } from '../services';
-import { COMMAND, WebViewMessages, Config } from '@demotime/common';
+import { DemoRunner, DemoStatusBar, Slides } from '../services';
+import { COMMAND, WebViewMessages, Config, Action } from '@demotime/common';
 import { BaseWebview } from '../webview/BaseWebviewPanel';
 import { WebviewType } from '../models';
 import { PresenterView } from '../presenterView/PresenterView';
@@ -222,7 +222,23 @@ export class Preview extends BaseWebview {
   }
 
   private static async sendSlideData(nextSlideTitle?: string) {
-    if (PresenterView.isOpen && Preview.hasNextSlide) {
+    if (!PresenterView.isOpen) {
+      return;
+    }
+
+    let hasNextSlide = Preview.checkIfHasNextSlide();
+    const demo = hasNextSlide ? DemoRunner.currentDemo : DemoStatusBar.getNextDemo();
+
+    if (!hasNextSlide) {
+      const slideStep = demo?.steps.find((step) => step.action === Action.OpenSlide && step.path);
+      if (slideStep) {
+        hasNextSlide = true;
+      }
+    }
+
+    nextSlideTitle = hasNextSlide ? Preview.getNextSlideTitle() : 'undefined';
+    console.log('Preview sending slide data to PresenterView', { hasNextSlide, nextSlideTitle });
+    if (hasNextSlide) {
       PresenterView.postMessage(
         WebViewMessages.toWebview.presenter.nextSlide,
         nextSlideTitle || '',

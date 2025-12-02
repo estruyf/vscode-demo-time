@@ -73,6 +73,7 @@ export const NextSlide: React.FunctionComponent = () => {
       return;
     }
 
+    console.log(`PresenterView NextSlide received message: ${command}`, payload);
     if (command === WebViewMessages.toWebview.updateNextDemo) {
       const demo = payload as Demo | undefined;
       updateNextTitle(demo);
@@ -93,9 +94,9 @@ export const NextSlide: React.FunctionComponent = () => {
       if (typeof slideTitle === 'string') {
         // Unset first to force re-render even when title is the same empty string
         setNextTitle(undefined);
+        setHasNext(true);
         setTimeout(() => {
           setNextTitle(slideTitle);
-          setHasNext(true);
         }, 0);
       } else {
         setNextTitle(undefined);

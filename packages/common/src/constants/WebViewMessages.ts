@@ -197,6 +197,9 @@ export const WebViewMessages = {
       openSlide: 'openOverviewSlide',
       runDemoSteps: 'runOverviewDemoSteps',
     },
+    presenter: {
+      checkNextDemo: 'checkPresenterNextDemo',
+    },
   },
   toWebview: {
     /**
