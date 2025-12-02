@@ -5,6 +5,7 @@ import { EventData } from '@estruyf/vscode';
 import { DemoHeader } from './DemoHeader';
 import DemoListItem from './DemoListItem';
 import { Notes } from './Notes';
+import { NextSlide } from './NextSlide';
 import { WebViewMessages } from '@demotime/common';
 
 export const Demos = () => {
@@ -147,7 +148,10 @@ export const Demos = () => {
 
       {
         (crntDemos && crntDemos.demos) && (
-          <Notes content={notes} path={crntDemo?.notes?.path} />
+          <div className="space-y-2">
+            <NextSlide />
+            <Notes content={notes} path={crntDemo?.notes?.path} />
+          </div>
         )
       }
     </div>
