@@ -5,6 +5,10 @@ import { Config, Demo, WebViewMessages } from '@demotime/common';
 import { DemoHeader } from './DemoHeader';
 import { Icon } from 'vscrui';
 
+// Standard 16:9 slide dimensions used for scaling calculations
+const SLIDE_WIDTH = 960;
+const SLIDE_HEIGHT = 540;
+
 export interface INextSlideProps { }
 
 export const NextSlide: React.FunctionComponent<INextSlideProps> = () => {
@@ -16,7 +20,12 @@ export const NextSlide: React.FunctionComponent<INextSlideProps> = () => {
   const [isCollapsed, setIsCollapsed] = React.useState<boolean>(() => {
     try {
       const stored = localStorage.getItem('presenterNextSlideCollapsed');
-      return stored ? JSON.parse(stored) : false;
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        // Validate that parsed value is boolean
+        return typeof parsed === 'boolean' ? parsed : false;
+      }
+      return false;
     } catch {
       return false;
     }
@@ -42,8 +51,8 @@ export const NextSlide: React.FunctionComponent<INextSlideProps> = () => {
       const rect = divRef.current.getBoundingClientRect();
       const width = rect.width;
       const height = rect.height;
-      const scaleWidth = width / 960;
-      const scaleHeight = height / 540;
+      const scaleWidth = width / SLIDE_WIDTH;
+      const scaleHeight = height / SLIDE_HEIGHT;
       const newScale = Math.min(scaleWidth, scaleHeight);
       setScale(newScale);
     }
@@ -111,6 +120,7 @@ export const NextSlide: React.FunctionComponent<INextSlideProps> = () => {
     return null;
   }
 
+  // The API runs on localhost, so HTTP is appropriate for local development
   const previewUrl = `http://localhost:${apiPort}/preview`;
 
   return (
@@ -139,8 +149,8 @@ export const NextSlide: React.FunctionComponent<INextSlideProps> = () => {
             src={previewUrl}
             className="absolute inset-0 border-0 aspect-video"
             style={{
-              width: '960px',
-              height: '540px',
+              width: `${SLIDE_WIDTH}px`,
+              height: `${SLIDE_HEIGHT}px`,
               transform: `scale(${scale})`,
               transformOrigin: 'top left'
             }}
