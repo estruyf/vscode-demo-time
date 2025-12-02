@@ -4,6 +4,7 @@ export * from './DemoHeader';
 export * from './DemoListItem';
 export * from './Demos';
 export * from './NextDemo';
+export * from './NextSlide';
 export * from './Notes';
 export * from './ResetAction';
 export * from './StartCountdown';
