@@ -57,7 +57,7 @@ export const NextSlide: React.FunctionComponent = () => {
   }, []);
 
   const updateNextTitle = (demo: Demo | undefined) => {
-    const hasSlides = demo?.steps.some((s: Step) => s.action === Action.OpenSlide);
+    const hasSlides = demo?.steps?.some((s: Step) => s.action === Action.OpenSlide);
     if (hasSlides) {
       setNextTitle(demo?.title);
       setHasNext(!!demo);
