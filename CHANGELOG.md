@@ -23,6 +23,8 @@
   fixes on the config and overview editor
 - [#318](https://github.com/estruyf/vscode-demo-time/issues/318): Added the
   `cancelCopilotChat` action to cancel the current Copilot chat request
+- [#319](https://github.com/estruyf/vscode-demo-time/issues/319): Added preview
+  next slide support on the presenter view
 
 ## [1.11.0] - 2025-11-04
 
