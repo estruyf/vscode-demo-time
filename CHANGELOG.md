@@ -25,6 +25,8 @@
   `cancelCopilotChat` action to cancel the current Copilot chat request
 - [#319](https://github.com/estruyf/vscode-demo-time/issues/319): Added preview
   next slide support on the presenter view
+- [#321](https://github.com/estruyf/vscode-demo-time/issues/321): Fix the file
+  formatting when moving steps in the demo file
 
 ## [1.11.0] - 2025-11-04
 
