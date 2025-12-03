@@ -73,7 +73,7 @@ export const Countdown: React.FunctionComponent<ICountdownProps> = ({
       </div>
       <div className="presenter-card-footer flex items-center justify-center gap-3 px-5 py-4 bg-(--vscode-editor-background)/50 border-t border-(--vscode-panel-border)/50">
         {(!countdown || isPaused) && (
-          <Button onClick={countdown ? pauseCountdown : startCountdown}>
+          <Button onClick={startCountdown}>
             <Icon name={countdown ? 'debug-continue' : 'play'} className="text-inherit! mr-1" />
             {countdown ? "Resume" : "Start"}
           </Button>
