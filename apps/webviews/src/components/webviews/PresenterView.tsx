@@ -51,47 +51,51 @@ const PresenterView = () => {
   }, []);
 
   return (
-    <div className='min-h-screen'>
-      <section className='bg-(--vscode-editor-background) mb-4 flex items-center justify-between sticky top-0 w-full border-b border-(--vscode-panel-border)'>
-        <div className='flex gap-2 items-center py-2'>
-          <StartPresentation />
+    <div className='presenter-view min-h-screen bg-(--vscode-editor-background)'>
+      {/* Professional Header Bar */}
+      <header className='presenter-header bg-(--vscode-sideBar-background) sticky top-0 z-50 border-b border-(--vscode-panel-border) shadow-sm'>
+        <div className='max-w-7xl mx-auto px-4 py-3 flex items-center justify-between'>
+          <div className='flex items-center gap-4'>
+            <h1 className='text-lg font-semibold text-(--vscode-foreground) tracking-tight'>
+              Presenter View
+            </h1>
+            <div className='h-5 w-px bg-(--vscode-panel-border)'></div>
+            <div className='flex items-center gap-2'>
+              <StartPresentation />
+              {showClock && countdown && (
+                <StartCountdown isStarted={countdownStarted} />
+              )}
+              <NextDemo
+                className='bg-transparent! hover:bg-(--vscode-button-secondaryHoverBackground)!'
+                titleClass='sr-only'
+                secondary />
+            </div>
+          </div>
 
-          {
-            showClock && countdown && (
-              <StartCountdown isStarted={countdownStarted} />
-            )
-          }
-
-          <NextDemo
-            className='bg-transparent! hover:bg-(--vscode-button-secondaryHoverBackground)!'
-            titleClass='sr-only'
-            secondary />
+          <div className='flex items-center gap-2'>
+            <ResetAction />
+          </div>
         </div>
+      </header>
 
-        <div className='flex gap-2 items-center py-2'>
-          <ResetAction />
-        </div>
-      </section>
-
-      <div className="max-w-7xl mx-auto space-y-4 px-4">
-        <header className='flex justify-between items-center'>
-          <h1 className='text-2xl'>Presenter view</h1>
-        </header>
-
+      {/* Main Content Area */}
+      <main className='max-w-7xl mx-auto px-4 py-6 space-y-6'>
+        {/* Demo List and Notes Section */}
         <Demos />
 
+        {/* Clock and Countdown Section */}
         {showClock && (
-          <div className="grid grid-cols-2 gap-4">
+          <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Clock />
-
             <Countdown time={countdown} />
-          </div>
+          </section>
         )}
 
-        <div className={`flex justify-end`}>
-          <NextDemo iconClass='ml-1' />
-        </div>
-      </div>
+        {/* Navigation Footer */}
+        <footer className='flex justify-end pt-2'>
+          <NextDemo iconClass='ml-2' />
+        </footer>
+      </main>
     </div>
   );
 };
