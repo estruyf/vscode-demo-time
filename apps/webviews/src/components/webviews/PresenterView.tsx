@@ -73,7 +73,7 @@ const PresenterView = () => {
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto space-y-4">
+      <div className="max-w-7xl mx-auto space-y-4 px-4">
         <header className='flex justify-between items-center'>
           <h1 className='text-2xl'>Presenter view</h1>
         </header>
