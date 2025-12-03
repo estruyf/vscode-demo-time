@@ -29,7 +29,7 @@ const reviews = data.reviews.filter(
       </blockquote>
       <div class="flex items-center gap-3 mt-auto">
         <img
-          src={`https://cdn.bsky.app/img/avatar_thumbnail/plain/did:plc:sswjk3m6nofdvbwbdonwcihq/bafkreigqlbignbqxgsa5574k3u2lhi54k6lzzwxyhun7giosp4rp37rvwe@jpeg`}
+          src={`/testimonials/sebastien-levert.jpeg`}
           alt={`Sébastien Levert`}
           class="rounded-full border-2 border-[var(--sl-color-gray-5)] flex-shrink-0"
           style="height: 40px; width: 40px;"
@@ -40,6 +40,33 @@ const reviews = data.reviews.filter(
         </div>
       </div>
     </div>
+
+    <div class="social-proof-card flex flex-col justify-between h-full">
+      <blockquote class="mb-4">
+        "I started using Demo Time in my demos when I teach live sessions and create pre-recorded
+        instructor-led demos. It's helped me avoid typos, stay on track without looking at my notes,
+        and focus on the story and experience in a consistent flow. This has made my demos not only
+        more effective, but slashed the time it takes to edit the recorded demos... I love it!"
+      </blockquote>
+      <div class="flex items-center gap-3 mt-auto">
+        <img
+          src={`/testimonials/ac.jpeg`}
+          alt={`Andrew Connell`}
+          class="rounded-full border-2 border-[var(--sl-color-gray-5)] flex-shrink-0"
+          style="height: 40px; width: 40px;"
+        />
+        <div class="flex flex-col min-w-0">
+          <a
+            class="font-semibold !text-[var(--sl-color-white)] !m-0 truncate"
+            href="https://www.andrewconnell.com/"
+            target="_blank"
+            rel="noopener noreferrer">Andrew Connell</a
+          >
+          <p class="!m-0 text-sm opacity-75"><em>Voitanos</em></p>
+        </div>
+      </div>
+    </div>
+
     <!-- Quote Cards -->
     {
       reviews.map((review: any) => (
