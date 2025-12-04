@@ -18,7 +18,9 @@ I decided it was time to change that.
 
 ## The challenge: why demos take so much time
 
-When I talk to people who present regularly, they almost always describe the same friction points. I know I've felt them myself:
+When I talk to people who present regularly, they almost always describe the same friction points. I know I've felt them myself.
+
+It is not just frustration; it is lost time. **On average, a high-quality 15-minute technical demo takes 15-20 hours to build and refine.** That is two full days of lost engineering or sales time per demo.
 
 - **Maintenance:** You update your product or feature, and suddenly the old demo no longer works.
 - **Narrative:** You want to tell a clear story, but you aren't sure which commits or changes matter most.
@@ -74,6 +76,8 @@ Imagine this workflow:
 4. It generates a demo script that matches your story.
 5. Demo Time renders that script into presentation-ready steps.
 
+This is fundamentally different from screen recording tools or generic slide builders. Because it is tied to your git history, your demo remains a living part of your codebase, not a static artifact that rots the moment you merge a new PR.
+
 The long-term vision is a fully automated service that does the heavy lifting for you.
 
 > **Price point**: pay-per-use model (e.g., € 500 per generated demo).
@@ -99,6 +103,7 @@ If your company depends on demos for sales, onboarding, education, or internal c
 - Predictable structures for product walkthroughs
 - Optional on-site consulting
 - Priority access to automated demo generation features
+- **Dedicated support channels** for your team
 
 ## No hype, just commitment
 
@@ -106,6 +111,15 @@ Don't get me wrong, this is an early offering. I am checking if there is a genui
 
 The automated system begins manually so I can learn from real-world usage. Once the workflow is stable, the goal is a fully automated experience powered by AI and deeply integrated with Demo Time.
 
-I want to build this openly with your input. If you are interested, please reach out via [email: elio@struyfconsulting.be](mailto:elio@struyfconsulting.be). Let's make demos less stressful and more impactful—together!
+I want to build this openly with your input.
+
+## Ready to reclaim your time?
+
+If you are ready to stop stressing over demos, here are your next steps:
+
+- **Join the waitlist** for the automated service by [emailing me](mailto:elio@struyfconsulting.be).
+- Share this post with your network to help us validate the demand.
+
+Let's make demos less stressful and more impactful—together!
 
 <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fdemotime.show%2Fdemo-time-as-service&countColor=%23263759" style="display:none" />
