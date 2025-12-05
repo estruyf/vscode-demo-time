@@ -1,0 +1,636 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+---
+
+<StarlightPage
+  frontmatter={{
+    title: 'Demo Time as a Service',
+    description: 'Stop spending days building demos with Demo Time as a Service.',
+    tableOfContents: false,
+  }}
+>
+  <div class="service-page">
+    {/* Hero Section */}
+    <header class="hero">
+      <h1>Stop spending days building demos.</h1>
+
+      <p>
+        I must admit, creating great demos can be time-consuming, especially when it's your first
+        time.
+      </p>
+      <p>
+        Over the past two years, I built <strong>Demo Time</strong> to help presenters script, automate,
+        and deliver better presentations and demos without the stress. Developers, advocates, and trainers
+        are already using it to avoid the classic demo pitfalls: frantic window switching, broken commands,
+        tiny fonts, and lost flow.
+      </p>
+      <p>
+        But there was always one missing piece: <strong
+          >creating the demo itself still took too much time.</strong
+        >
+      </p>
+      <p>I decided it was time to change that.</p>
+    </header>
+
+    {/* Problem Section */}
+    <section>
+      <h2>The challenge: why demos take so much time</h2>
+      <p>
+        When I talk to people who present regularly, they almost always describe the same friction
+        points. I know I've felt them myself.
+      </p>
+
+      <p>
+        It is not just frustration; it is lost time. <strong
+          >On average, a high-quality technical demo, can easily take a day or more to build and
+          refine.</strong
+        > That is a lot of time lost engineering or sales time per demo.
+      </p>
+
+      <ul>
+        <li>
+          <strong>Maintenance:</strong> You update your product or feature, and suddenly the old demo
+          no longer works.
+        </li>
+        <li>
+          <strong>Narrative:</strong> You want to tell a clear story, but you aren't sure which commits
+          or changes matter most.
+        </li>
+        <li><strong>Organization:</strong> Your notes are scattered everywhere.</li>
+        <li>
+          <strong>Starting from scratch:</strong> You lack templates, so every demo feels like Day 1.
+        </li>
+        <li>
+          <strong>Fine-tuning:</strong> You spend hours tweaking code steps, commands, and highlights.
+        </li>
+        <li>
+          <strong>Anxiety:</strong> The pressure of "will the demo break on stage?" never fully disappears.
+        </li>
+      </ul>
+
+      <p>
+        <strong>Demo Time</strong> solves the <em>delivery</em> part. Now, I want to help solve the <em
+          >creation</em
+        >
+        part.
+      </p>
+    </section>
+
+    {/* Trust Section */}
+    <section>
+      <h2>Why demo failures cost more than you think</h2>
+
+      <p>A failed demo isn't just an awkward moment on stage, it damages trust.</p>
+
+      <p>
+        When your demo breaks, your audience doesn't just see a technical glitch. They see doubt.
+        They question whether your product works as promised. They wonder if you really understand
+        what you built. For companies, a single failed demo at a conference can undermine months of
+        marketing effort.
+      </p>
+
+      <p><strong>The trust equation is simple:</strong></p>
+      <ul>
+        <li>A flawless demo builds confidence in your product and your expertise</li>
+        <li>A broken demo creates doubt about both</li>
+      </ul>
+
+      <p>This matters whether you're:</p>
+      <ul>
+        <li>
+          A <strong>sales engineer</strong> trying to close a deal (one failed demo can kill the opportunity)
+        </li>
+        <li>
+          A <strong>developer advocate</strong> representing your company at a conference (your credibility
+          is on the line)
+        </li>
+        <li>
+          A <strong>product engineer</strong> showcasing a new feature (stakeholders need to trust it
+          works)
+        </li>
+        <li>
+          A <strong>teacher</strong> educating students (broken examples destroy learning momentum)
+        </li>
+      </ul>
+
+      <p>
+        The best demos aren't just technically accurate, they build a trust relationship between you
+        (or your company) and your audience. When everything works perfectly, every time, your
+        audience focuses on the value you're delivering, not on whether the technology will
+        cooperate.
+      </p>
+
+      <p>Demo Time ensures your demos work flawlessly, so you can focus on building that trust.</p>
+    </section>
+
+    {/* Solution Section */}
+    <section>
+      <h2>The solution: Demo Time as a Service</h2>
+
+      <h3>We turn your git commits into presentation-ready demos.</h3>
+
+      <p>Here's how it works:</p>
+
+      <ol>
+        <li><strong>Share your repository</strong> and tell us the story you want to tell</li>
+        <li><strong>We analyze your commits</strong> and generate a Demo Time script</li>
+        <li>
+          <strong>You present with confidence</strong>, no typos, no broken commands, no stress
+        </li>
+      </ol>
+
+      <p>
+        This is fundamentally different from screen recording tools or generic slide builders.
+        Because it is tied to your git history, your demo remains a living part of your codebase,
+        not a static artifact that rots the moment you merge a new PR.
+      </p>
+    </section>
+
+    {/* Pricing Section */}
+    <section>
+      <h2>Early Bird Pricing: € 500 per demo</h2>
+
+      <p><strong>What's included:</strong></p>
+      <ul>
+        <li>One demo/presentation (up to 15 minutes of content)</li>
+        <li>Based on 1 git repository you provide</li>
+        <li>Delivered as a Demo Time script</li>
+        <li>Up to 2 revision rounds included</li>
+        <li>Demo Time onboarding included (30-minute session for your team)</li>
+      </ul>
+
+      <p><strong>What costs extra:</strong></p>
+      <ul>
+        <li>Additional revisions: € 100 per round</li>
+        <li>Rush delivery (&lt; 3 days): +€ 250</li>
+        <li>Custom animations/branding: Available at coaching rate</li>
+      </ul>
+
+      <blockquote>
+        <p>
+          <strong>Early bird advantage:</strong> € 500 is the introductory price for the first 10 customers.
+          After that, pricing will increase based on demand and service refinement.
+        </p>
+        <p>
+          <strong>Note:</strong> This is an early offering. The service starts manually so I can learn
+          from real-world usage and build the best possible automated experience. Your feedback will
+          shape the future of this service.
+        </p>
+      </blockquote>
+
+      <hr />
+
+      <h3>Need help with an existing demo?</h3>
+
+      <p><strong>Expert coaching at € 200/hour</strong></p>
+
+      <p>Get hands-on guidance to elevate your presentation:</p>
+      <ul>
+        <li>Review and audit your existing demos</li>
+        <li>Rewrite complex sections for clarity</li>
+        <li>Improve flow, timing, and impact</li>
+        <li>Structure your narrative for your specific audience</li>
+        <li>Create reusable assets for your team</li>
+      </ul>
+    </section>
+
+    {/* Requirements Section */}
+    <section>
+      <h2>Requirements for the Demo Creation Service</h2>
+
+      <p>
+        To ensure we can create the best demo for you, your repository should meet these criteria:
+      </p>
+
+      <ul>
+        <li>Repository must be Git based</li>
+        <li>
+          Must have meaningful commit messages, with guidelines we provide for clarity and
+          consistency
+        </li>
+        <li>Feature should span 3-20 commits (not 1, not 500)</li>
+        <li>We'll need access (public repo or collaborator invite)</li>
+        <li>Provide a 1-paragraph description of the story you want to tell</li>
+      </ul>
+
+      <p>
+        <strong>Don't meet these requirements?</strong> No problem. We can provide guidance on preparing
+        your repository, or you can book coaching hours (€ 200/hour) to help you get ready.
+      </p>
+    </section>
+
+    {/* Who Is This For Section */}
+    <section>
+      <h2>Who is this for?</h2>
+
+      <p>
+        This service is built for organizations that create educational and training content at
+        scale:
+      </p>
+
+      <ul>
+        <li>
+          <strong>Training platforms</strong> like Microsoft Learn creating developer courses and hands-on
+          labs
+        </li>
+        <li>
+          <strong>Developer Relations teams</strong> at tech companies showcasing products and tools
+        </li>
+        <li><strong>Conference organizers</strong> building workshops and hands-on sessions</li>
+        <li><strong>Training companies</strong> delivering developer education programs</li>
+        <li>
+          <strong>Corporate training departments</strong> teaching internal tools and frameworks
+        </li>
+      </ul>
+
+      <p>
+        If your organization creates multiple demos and training materials regularly, Demo Time as a
+        Service helps you scale your content creation without scaling your headcount.
+      </p>
+
+      <blockquote>
+        <p>
+          <strong>Important:</strong> This service is specifically for technical presentations in Visual
+          Studio Code (or VS Code-based editors) where you control the repository. It's not designed
+          for third-party product demos or non-code presentations.
+        </p>
+      </blockquote>
+    </section>
+
+    {/* Benefits Section */}
+    <section>
+      <h2>Why Demo Time?</h2>
+
+      <p>With Demo Time, your organization gets:</p>
+
+      <ul>
+        <li>
+          <strong>Scalability:</strong> Create 10 demos in the time it used to take for 2, without hiring
+          more people
+        </li>
+        <li>
+          <strong>Consistency:</strong> Every demo follows the same professional standards across your
+          training materials
+        </li>
+        <li>
+          <strong>Reliability:</strong> No more "works on my machine" disasters during live training
+          sessions
+        </li>
+        <li>
+          <strong>Maintainability:</strong> Your demos live with your code and stay current as your product
+          evolves
+        </li>
+        <li>
+          <strong>Confidence:</strong> Training managers can trust their presenters won't embarrass the
+          company with broken demos
+        </li>
+      </ul>
+
+      <p>
+        <strong>For training managers:</strong> You're solving two problems at once. Reducing your team's
+        workload while eliminating the risk of public demo failures that damage your company's reputation.
+      </p>
+
+      <p>
+        <strong>For content creators:</strong> Clone the repository and deliver the same perfect demo
+        every time. No fiddling around with manual notes or making sure everything works before you begin.
+      </p>
+    </section>
+
+    {/* FAQ Section */}
+    <section>
+      <h2>Frequently Asked Questions</h2>
+
+      <h3>Do I need to be a Demo Time user already?</h3>
+      <p>
+        No. We'll provide everything you need to get started, including a 30-minute onboarding
+        session. Your team can start using the demos immediately.
+      </p>
+
+      <h3>What if my git history is messy?</h3>
+      <p>
+        We'll provide guidelines before you start. If you need help cleaning it up or structuring
+        your commits, we offer coaching at € 200/hour to help you prepare.
+      </p>
+
+      <h3>Can you demo third-party products or non-code content?</h3>
+      <p>
+        Not yet. This service is specifically for code-based demos where you control the repository
+        and present in VS Code or VS Code-based editors.
+      </p>
+
+      <h3>How long does it take?</h3>
+      <p>
+        Standard turnaround is 5-7 business days. Need it faster? Rush delivery (&lt; 3 days) is
+        available for an additional € 250.
+      </p>
+
+      <h3>What if I'm not happy with the result?</h3>
+      <p>
+        We'll work with you through 2 revision rounds to get it right. We're confident in the
+        quality of our work. That's why we can offer this service.
+      </p>
+
+      <h3>What format do I receive the demo in?</h3>
+      <p>
+        You'll receive a Demo Time script file (YAML), fully configured and ready to use in your
+        presentations.
+      </p>
+    </section>
+
+    {/* CTA Section */}
+    <section id="get-started">
+      <h2>Ready to reclaim your time?</h2>
+
+      <p>
+        We're launching with a limited pilot program, working with only <strong
+          >10 organizations</strong
+        > this quarter to ensure each demo gets our complete focus and expertise.
+      </p>
+
+      <p>
+        <strong>Lock in the € 500 early bird price</strong> - Payment upfront. Limited availability.
+      </p>
+
+      <form
+        id="interestForm"
+        class="interest-form"
+        action="https://formbold.com/s/obkNp"
+        method="POST"
+      >
+        <input type="hidden" name="apiKey" value="sf_2g9h855e668na16n94fl0lh4" />
+        <input type="hidden" name="subject" value="Demo Time Service Interest" />
+        <input type="hidden" name="replyTo" value="@replyEmail" />
+        <input type="text" name="honeypot" style="display: none" tabindex="-1" autocomplete="off" />
+
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <div class="input-group">
+            <input type="text" id="name" name="name" placeholder="John Doe" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="input-group">
+            <input type="email" id="email" name="email" placeholder="john@example.com" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="organization">Organization/Company</label>
+          <div class="input-group">
+            <input
+              type="text"
+              id="organization"
+              name="organization"
+              placeholder="Demo Time, etc."
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="role">Your Role</label>
+          <div class="input-group">
+            <select id="role" name="role" required>
+              <option value="">Select your role...</option>
+              <option value="training-manager">Training Manager</option>
+              <option value="devrel">Developer Relations</option>
+              <option value="content-creator">Content Creator</option>
+              <option value="conference-organizer">Conference Organizer</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Which services are you interested in?</label>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" name="$services" value="creation" checked />
+              Demo creation service (€ 500)
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="$services" value="coaching" />
+              Expert coaching (€ 200/hour)
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="demoDescription"
+            >What types of demos does your organization create? (1-2 sentences)</label
+          >
+          <div class="input-group">
+            <textarea
+              id="demoDescription"
+              name="demoDescription"
+              rows="2"
+              placeholder="e.g., Hands-on labs for developer training, product feature demonstrations, conference workshops"
+              required></textarea>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="frequency">How many demos does your team create per quarter?</label>
+          <div class="input-group">
+            <select id="frequency" name="frequency" required>
+              <option value="">Select quantity...</option>
+              <option value="1-5">1-5 demos</option>
+              <option value="6-10">6-10 demos</option>
+              <option value="11-20">11-20 demos</option>
+              <option value="20+">20+ demos</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="challenge">What's your biggest challenge with demo creation right now?</label>
+          <div class="input-group">
+            <textarea
+              id="challenge"
+              name="challenge"
+              rows="2"
+              placeholder="e.g., Takes too long to create, demos break during live sessions, hard to maintain when product updates"
+              required></textarea>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="willingness">Is € 500 per demo within your budget?</label>
+          <div class="input-group">
+            <select id="willingness" name="willingness" required>
+              <option value="">Select answer...</option>
+              <option value="yes">Yes, this is reasonable</option>
+              <option value="need-approval">Yes, but need approval</option>
+              <option value="multiple">Yes, interested in ordering multiple demos</option>
+              <option value="too-high">This seems too high</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="message">Additional questions or comments (Optional)</label>
+          <div class="input-group">
+            <textarea
+              id="message"
+              name="message"
+              rows="3"
+              placeholder="Any questions or specific requirements?"></textarea>
+          </div>
+        </div>
+
+        <div class="g-recaptcha" data-sitekey="6Lct-gkrAAAAANXSF_L-hUZUyP-pF4oWzyO0M4jL"></div>
+
+        <script src="https://www.google.com/recaptcha/api.js" is:inline></script>
+
+        <button id="submitButton" type="submit" class="button primary full-width">
+          Join the Waitlist
+        </button>
+      </form>
+
+      <div class="contact-info">
+        <p>
+          <strong>Questions?</strong> Reach out at <a href="mailto:elio@struyfconsulting.be"
+            >elio@struyfconsulting.be</a
+          >
+        </p>
+        <p>Let's make demos less stressful and more impactful—together!</p>
+      </div>
+    </section>
+  </div>
+</StarlightPage>
+
+<style>
+  :root {
+    --sl-content-width: 50rem;
+  }
+
+  .service-page {
+    max-width: 50rem;
+    margin: 0 auto;
+  }
+
+  section {
+    margin-bottom: 3rem;
+  }
+
+  .hero {
+    margin-bottom: 3rem;
+  }
+
+  /* Form */
+  .interest-form {
+    margin: 2rem auto;
+    padding: 2rem;
+    background: var(--sl-color-gray-6);
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.75rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  input[type='text'],
+  input[type='email'],
+  textarea,
+  select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--sl-color-gray-4);
+    border-radius: 0.375rem;
+    background: var(--sl-color-black);
+    color: var(--sl-color-white);
+    font-size: 1rem;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--sl-color-accent);
+    box-shadow: 0 0 0 2px var(--sl-color-accent-low);
+  }
+
+  select {
+    cursor: pointer;
+  }
+
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: normal;
+    cursor: pointer;
+  }
+
+  .checkbox-label input {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .button {
+    display: inline-block;
+    padding: 0.875rem 1.75rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .button.primary {
+    background: rgb(255 212 59 / var(--tw-bg-opacity, 1)) !important;
+    border: 1px solid var(--sl-color-text-accent);
+    color: #000;
+  }
+
+  .button.primary:hover {
+    color: #000;
+    background-color: rgb(255 212 59 / 0.8) !important;
+  }
+
+  .button.full-width {
+    width: 100%;
+  }
+
+  .contact-info {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .contact-info p {
+    margin-bottom: 0.5rem;
+  }
+
+  .contact-info a {
+    color: var(--sl-color-accent-high);
+    text-decoration: none;
+  }
+
+  .contact-info a:hover {
+    text-decoration: underline;
+  }
+
+  .g-recaptcha {
+    div,
+    iframe {
+      height: 78px !important;
+    }
+  }
+</style>
