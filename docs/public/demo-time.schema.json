@@ -3,7 +3,7 @@
   "$id": "https://demotime.show/demo-time.schema.json",
   "title": "Demo Time - Schema",
   "description": "The schema for the Demo Time - VSCode extension",
-  "lastModified": "2025-07-13",
+  "lastModified": "2025-12-06",
   "type": "object",
   "properties": {
     "title": {
@@ -14,8 +14,13 @@
     },
     "version": {
       "type": "number",
-      "enum": [1, 2],
-      "default": 1
+      "enum": [1, 2, 3],
+      "default": 1,
+      "description": "Version 3 introduces theatrical naming: scenes (replaces demos) and moves (replaces steps)"
+    },
+    "productIcon": {
+      "type": "string",
+      "description": "Product icon for version 3 .act files. Required for .act YAML files."
     },
     "timer": {
       "type": "number",
@@ -23,6 +28,7 @@
     },
     "demos": {
       "type": "array",
+      "description": "For version 1 & 2: Array of demo objects",
       "items": {
         "type": "object",
         "properties": {
@@ -886,9 +892,89 @@
         "required": ["title", "steps"],
         "additionalProperties": false
       }
+    },
+    "scenes": {
+      "type": "array",
+      "description": "For version 3: Array of scene objects (theatrical naming for demos)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "engageTime": {
+            "type": "object",
+            "properties": {
+              "sessionId": {
+                "type": "string",
+                "description": "The ID of the EngageTime session."
+              }
+            }
+          },
+          "disabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, the scene will not be shown in the UI."
+          },
+          "icons": {
+            "type": "object",
+            "properties": {
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              }
+            },
+            "required": ["start", "end"],
+            "description": "Provide the icon name of the VS Code codicon for the start and end of the scene"
+          },
+          "moves": {
+            "$ref": "#/properties/demos/items/properties/steps"
+          },
+          "notes": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Path to the file to open"
+              },
+              "showOnTrigger": {
+                "type": "boolean",
+                "description": "Show the notes when the trigger is activated. Default is false."
+              }
+            },
+            "required": ["path"]
+          }
+        },
+        "required": ["title", "moves"],
+        "additionalProperties": false
+      }
     }
   },
-  "required": ["title", "demos"],
+  "anyOf": [
+    {
+      "if": {
+        "properties": {
+          "version": {
+            "const": 3
+          }
+        }
+      },
+      "then": {
+        "required": ["title", "version", "scenes"]
+      }
+    },
+    {
+      "required": ["title", "demos"]
+    }
+  ],
   "definitions": {
     "args": {
       "type": ["object", "array", "string", "number", "boolean"],

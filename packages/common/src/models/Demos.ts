@@ -1,9 +1,27 @@
 import { Action, InsertTypingMode, Version } from '.';
 
 export interface DemoFiles {
-  [filePath: string]: DemoConfig;
+  [filePath: string]: DemoConfig | ActConfig;
 }
 
+// Version 3: Play structure (entire project)
+export interface PlayConfig {
+  acts: ActConfig[];
+}
+
+// Version 3: Act structure (demo file with product icon)
+export interface ActConfig {
+  $schema?: 'https://demotime.show/demo-time.schema.json';
+  title: string;
+  description?: string;
+  version: 3;
+  timer?: number;
+  productIcon?: string; // Required for .act files
+  engageTime?: EngageTimeConfig;
+  scenes: Scene[];
+}
+
+// Version 1 & 2: Legacy DemoConfig structure
 export interface DemoConfig {
   $schema?: 'https://demotime.show/demo-time.schema.json';
   title: string;
@@ -14,10 +32,27 @@ export interface DemoConfig {
   demos: Demo[];
 }
 
+// Type guard to check if config is version 3
+export function isActConfig(config: DemoConfig | ActConfig): config is ActConfig {
+  return (config as ActConfig).version === 3;
+}
+
 export interface EngageTimeConfig {
   sessionId?: string;
 }
 
+// Version 3: Scene (replaces Demo for version 3)
+export interface Scene {
+  id?: string;
+  title: string;
+  description?: string;
+  moves: Move[];
+  icons?: Icons;
+  notes?: Notes;
+  disabled?: boolean;
+}
+
+// Version 1 & 2: Legacy Demo structure
 export interface Demo {
   id?: string;
   title: string;
@@ -38,6 +73,10 @@ export interface Icons {
   end: string;
 }
 
+// Version 3: Move (replaces Step for version 3) - Same structure as Step
+export type Move = Step;
+
+// Version 1 & 2: Legacy Step structure
 export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
   action: Action;
   disabled?: boolean;
