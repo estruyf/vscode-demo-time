@@ -13,50 +13,56 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
     {/* Hero Section */}
     <header class="hero">
       <p class="eyebrow">Demo Time as a Service</p>
-      <h1>Stop spending days building demos.</h1>
+      <h1>Let's make your demos bulletproof.</h1>
       <p class="hero-sub">
-        Creating great demos is time-consuming. We turn your git commits into presentation-ready,
-        stress-proof demos so you can focus on delivery, not debugging.
+        <a href="https://eliostruyf.com" target="_blank" rel="noopener noreferrer">Elio</a> has been
+        done many technical talks and demos over the years. That is why he started Demo Time to perfect
+        the demo experience. The service allows you to hand over your repo, and it turns it into a <strong
+          >stress-free, scripted Demo Time presentation</strong
+        > that you can deliver with confidence.
       </p>
       <div class="hero-cta">
-        <a class="button primary" href="#get-started">Get Started</a>
-        <span class="subtext">Limited pilot program: Only 10 spots available.</span>
+        <a class="button primary" href="#get-started">Get started</a>
+        <span class="subtext">Only 10 early-bird slots available.</span>
       </div>
     </header>
 
     {/* Problem Section */}
     <section class="problem">
-      <h2>The Challenge: Why demos take so much time</h2>
+      <h2>The Challenge: Why we lose days on demos</h2>
       <p>
-        On average, a high-quality technical demo can easily take a day or more to build and refine.
-        That is a lot of lost engineering or sales time.
+        we all know the feeling. You want to tell a great story, but you're stuck fighting with
+        broken commands, messy configs, and the fear of a live failure. It's not just
+        frustrating—it's a waste of your engineering time.
       </p>
       <div class="grid-3">
         <div class="card">
-          <h3>Maintenance</h3>
-          <p>You update your product, and suddenly the old demo no longer works.</p>
+          <h3>Maintenance nightmares</h3>
+          <p>You update a feature, and suddenly your old demo script falls apart.</p>
         </div>
         <div class="card !mt-0">
-          <h3>Narrative</h3>
-          <p>You want to tell a clear story, but aren't sure which commits matter most.</p>
+          <h3>The narrative gap</h3>
+          <p>Great code doesn't always equal a great story. Finding the right flow is hard.</p>
         </div>
         <div class="card">
-          <h3>Anxiety</h3>
-          <p>The pressure of "will the demo break on stage?" never fully disappears.</p>
+          <h3>Demo anxiety</h3>
+          <p>The pressure of "Will this actually work when I'm on stage?" is real.</p>
         </div>
         <div class="card">
-          <h3>Organization</h3>
+          <h3>Scattered notes</h3>
           <p>
-            Your notes are scattered, and you lack templates, making every demo feel like Day 1.
+            No templates, no structure. Every time you present, it feels like starting from scratch.
           </p>
         </div>
         <div class="card">
           <h3>Fine-tuning</h3>
-          <p>Hours spent tweaking code steps, commands, and highlights.</p>
+          <p>
+            Hours spent tweaking code steps, commands, highlights, and practicing your delivery.
+          </p>
         </div>
         <div class="card">
-          <h3>The Cost</h3>
-          <p>A failed demo isn't just awkward; it damages trust and credibility.</p>
+          <h3>The trust cost</h3>
+          <p>A failed demo isn't just awkward. It damages trust and credibility.</p>
         </div>
       </div>
     </section>
@@ -65,10 +71,13 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
     <section class="solution">
       <div class="solution-content">
         <h2>The Solution: Demo Time as a Service</h2>
-        <p>We turn your git commits into presentation-ready demos.</p>
+        <p>
+          As the creator of Demo Time, Elio knows exactly how to leverage its power. He'll turn your
+          project into a seamless, presentation-ready experience.
+        </p>
         <ol class="process-list">
           <li>
-            <strong>Share your repository</strong> and tell us the story you want to tell.
+            <strong>Share your repository</strong> and the story you want to tell.
           </li>
           <li>
             <strong>We analyze your commits</strong> and generate a Demo Time script.
@@ -78,8 +87,21 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
           </li>
         </ol>
         <p>
-          This is fundamentally different from screen recording tools. Because it is tied to your
-          git history, your demo remains a living part of your codebase.
+          This isn't a video recording. It's a living, code-based demo that evolves with your
+          project. That way, you do not have to re-record your demos with every update.
+        </p>
+      </div>
+    </section>
+
+    {/* Authority / Trust */}
+    <section class="authority">
+      <div class="authority-content">
+        <h2>Why work with me?</h2>
+        <p>
+          <strong>Elio Struyf</strong> is a Solutions Architect, Microsoft MVP, GitHub Star, and Google
+          Developer Expert. He has built tools like Front Matter CMS and Demo Time to help developers
+          be more productive. He knows the friction points of technical presentations because he faces
+          them too. Let him use that experience to help you shine.
         </p>
       </div>
     </section>
@@ -87,12 +109,12 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
     {/* Audience Section */}
     <section class="audience">
       <h2>Who is this for?</h2>
-      <p>Built for organizations that create educational and training content at scale.</p>
+      <p>This service is for teams who need to deliver high-quality technical content at scale.</p>
       <ul class="audience-list">
-        <li><strong>Training Platforms</strong> creating developer courses and hands-on labs.</li>
-        <li><strong>Developer Relations</strong> teams showcasing products and tools.</li>
-        <li><strong>Conference Organizers</strong> building workshops and hands-on sessions.</li>
-        <li><strong>Corporate Training</strong> departments teaching internal tools.</li>
+        <li><strong>Training Platforms</strong> building hands-on developer labs.</li>
+        <li><strong>DevRel Teams</strong> showcasing new SDKs and tools.</li>
+        <li><strong>Conference Speakers</strong> who need rock-solid workshop materials.</li>
+        <li><strong>Corporate Trainers</strong> teaching internal frameworks.</li>
       </ul>
     </section>
 
@@ -139,7 +161,7 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
       <ul class="req-list">
         <li>Repository must be Git-based.</li>
         <li>Meaningful commit messages (guidelines provided).</li>
-        <li>Feature should span 3-20 commits.</li>
+        <li>Each step should be defined with a structured commit message.</li>
         <li>Access provided (public or collaborator).</li>
         <li>1-paragraph description of the story.</li>
       </ul>
