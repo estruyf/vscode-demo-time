@@ -221,3 +221,26 @@ action: closeCopilotChat
 
 </TabItem>
 </Tabs>
+
+## Cancel Copilot chat
+
+Use the `cancelCopilotChat` action to cancel an ongoing GitHub Copilot request while keeping the chat panel open. This is useful when a previous request is still running and you want to abort it before continuing with the demo.
+
+<Tabs syncKey="copilot-cancel-chat">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "cancelCopilotChat"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: cancelCopilotChat
+```
+
+</TabItem>
+</Tabs>

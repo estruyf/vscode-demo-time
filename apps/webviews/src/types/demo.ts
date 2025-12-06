@@ -105,6 +105,7 @@ export const CATEGORIZED_ACTIONS: {
       Action.AgentChat,
       Action.CustomChat,
       Action.CloseChat,
+      Action.CancelChat,
     ],
   },
   {
@@ -130,6 +131,15 @@ export const CATEGORIZED_ACTIONS: {
   {
     category: 'Run Demo actions',
     options: [Action.RunDemoById],
+  },
+  {
+    category: 'macOS actions',
+    options: [
+      Action.EnableFocusMode,
+      Action.DisableFocusMode,
+      Action.HideMenubar,
+      Action.ShowMenubar,
+    ],
   },
   {
     category: 'EngageTime actions',

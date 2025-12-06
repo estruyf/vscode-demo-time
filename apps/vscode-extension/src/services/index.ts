@@ -15,6 +15,7 @@ export * from './ImportService';
 export * from './InputService';
 export * from './InteractionService';
 export * from './Logger';
+export * from './MacOSActionsService';
 export * from './NotesService';
 export * from './Notifications';
 export * from './PdfExportService';

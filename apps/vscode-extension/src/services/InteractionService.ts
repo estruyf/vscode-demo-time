@@ -130,27 +130,85 @@ export class InteractionService {
    * @param linuxKey The key name for Linux xdotool (e.g., 'Return', 'Tab')
    * @returns A promise that resolves when the key press simulation is complete.
    */
-  private static async pressKey(
+  public static async pressKey(
     windowsKey: string,
     macKeyCode: number,
     linuxKey: string,
+    modifiers?: { meta?: boolean; ctrl?: boolean; alt?: boolean; shift?: boolean },
   ): Promise<void> {
     const osPlatform = platform();
     let command = '';
     if (osPlatform === 'darwin') {
       // macOS
+      const using: string[] = [];
+      if (modifiers) {
+        if (modifiers.meta) {
+          using.push('command down');
+        }
+        if (modifiers.ctrl) {
+          using.push('control down');
+        }
+        if (modifiers.alt) {
+          using.push('option down');
+        }
+        if (modifiers.shift) {
+          using.push('shift down');
+        }
+      }
+
       if (macKeyCode === 48 || linuxKey === 'Tab') {
-        // Use keystroke for Tab key
-        command = `osascript -e 'tell application "System Events" to keystroke tab'`;
+        // Use keystroke for Tab key - include modifiers if present
+        if (using.length > 0) {
+          command = `osascript -e 'tell application "System Events" to keystroke tab using {${using.join(', ')}}'`;
+        } else {
+          command = `osascript -e 'tell application "System Events" to keystroke tab'`;
+        }
       } else {
-        command = `osascript -e 'tell application "System Events" to key code ${macKeyCode}'`;
+        if (using.length > 0) {
+          command = `osascript -e 'tell application "System Events" to key code ${macKeyCode} using {${using.join(', ')}}'`;
+        } else {
+          command = `osascript -e 'tell application "System Events" to key code ${macKeyCode}'`;
+        }
       }
     } else if (osPlatform === 'win32') {
       // Windows - using PowerShell
-      command = `powershell -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('{${windowsKey}}')"`;
+      // Map modifiers to SendKeys format: ^ = CTRL; % = ALT; + = SHIFT. (No mapping for Meta / Win key)
+      let prefix = '';
+      if (modifiers) {
+        if (modifiers.ctrl) {
+          prefix += '^';
+        }
+        if (modifiers.alt) {
+          prefix += '%';
+        }
+        if (modifiers.shift) {
+          prefix += '+';
+        }
+      }
+      const sendKey = `${prefix}{${windowsKey}}`;
+      command = `powershell -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('${sendKey}')"`;
     } else {
       // Linux - using xdotool (needs to be installed)
-      command = `xdotool key ${linuxKey}`;
+      let combo = linuxKey;
+      if (modifiers) {
+        const parts: string[] = [];
+        if (modifiers.meta) {
+          parts.push('Super');
+        }
+        if (modifiers.ctrl) {
+          parts.push('Control');
+        }
+        if (modifiers.alt) {
+          parts.push('Alt');
+        }
+        if (modifiers.shift) {
+          parts.push('Shift');
+        }
+        if (parts.length > 0) {
+          combo = `${parts.join('+')}+${linuxKey}`;
+        }
+      }
+      command = `xdotool key ${combo}`;
     }
 
     await ScriptExecutor.executeScriptAsync(command, homedir());

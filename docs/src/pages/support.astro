@@ -1,5 +1,5 @@
 ---
-import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import {
   Heart,
   Gift,
@@ -11,16 +11,16 @@ import {
   FileText,
   Check,
   DollarSign,
-} from "lucide-react";
+} from 'lucide-react';
 
-import { Image } from "astro:assets";
-import stickerImage from "../assets/demo-time-sticker.png";
+import { Image } from 'astro:assets';
+import stickerImage from '../assets/demo-time-sticker.png';
 ---
 
 <StarlightPage
   frontmatter={{
-    title: "Support Demo Time, get stickers!",
-    description: "Get to know how you can sponsor the Demo Time project",
+    title: 'Support Demo Time, get stickers!',
+    description: 'Get to know how you can sponsor the Demo Time project',
     tableOfContents: false,
   }}
 >
@@ -28,8 +28,7 @@ import stickerImage from "../assets/demo-time-sticker.png";
     {/* Hero */}
     <header class="hero">
       <p>
-        By showing your support for Demo Time, you receive stickers as a token
-        of our appreciation!
+        By showing your support for Demo Time, you receive stickers as a token of our appreciation!
       </p>
       <div class="hero-buttons">
         <a href="#support" class="button">
@@ -44,33 +43,27 @@ import stickerImage from "../assets/demo-time-sticker.png";
         <div>
           <h3>Why support Demo Time?</h3>
           <p>
-            Demo Time is an innovative tool that allows developers, presenters,
-            and educators to deliver impactful presentations and demos from
-            Visual Studio Code. It ensures a distraction-free environment for
-            showcasing your work.
+            Demo Time is an innovative tool that allows developers, presenters, and educators to
+            deliver impactful presentations and demos from Visual Studio Code. It ensures a
+            distraction-free environment for showcasing your work.
           </p>
           <p>
-            Built and maintained by Elio Struyf, Demo Time is open-source and
-            free for everyone. Your support ensures its continuous development
-            and sustainability!
+            Built and maintained by Elio Struyf, Demo Time is open-source and free for everyone.
+            Your support ensures its continuous development and sustainability!
           </p>
         </div>
         <div class="md:!mt-0">
           <h3>Why Stickers?</h3>
           <p>
-            Stickers are a fun way to show your support for the tools you love.
-            Put them on your laptop, water bottle, or anywhere you want to
-            showcase your tech preferences.
+            Stickers are a fun way to show your support for the tools you love. Put them on your
+            laptop, water bottle, or anywhere you want to showcase your tech preferences.
           </p>
           <p>
-            Elio, the creator of Demo Time, loves stickers and even runs a
-            sticker store at
-            <a
-              href="https://pimpyourowndevice.com"
-              target="_blank"
-              rel="noopener noreferrer">Pimp Your Own Device</a
-            >. Supporting Demo Time is not only a great way to contribute to its
-            development but also to share in Elio's passion for stickers!
+            Elio, the creator of Demo Time, loves stickers and even runs a sticker store at
+            <a href="https://pimpyourowndevice.com" target="_blank" rel="noopener noreferrer"
+              >Pimp Your Own Device</a
+            >. Supporting Demo Time is not only a great way to contribute to its development but
+            also to share in Elio's passion for stickers!
           </p>
         </div>
       </div>
@@ -80,10 +73,7 @@ import stickerImage from "../assets/demo-time-sticker.png";
       <div class="container">
         <div class="section-header">
           <h2>Demo Time Sticker Preview</h2>
-          <p>
-            Here's a sneak peek of the sticker you'll receive for supporting
-            Demo Time!
-          </p>
+          <p>Here's a sneak peek of the sticker you'll receive for supporting Demo Time!</p>
         </div>
         <div class="sticker-image">
           <Image src={stickerImage} alt="Demo Time Sticker" width={350} />
@@ -97,8 +87,7 @@ import stickerImage from "../assets/demo-time-sticker.png";
         <div class="section-header">
           <h2>Support Demo Time</h2>
           <p>
-            Choose a support tier on GitHub Sponsors. All supporters receive
-            Demo Time stickers!
+            Choose a support tier on GitHub Sponsors. All supporters receive Demo Time stickers!
           </p>
         </div>
 
@@ -225,17 +214,12 @@ import stickerImage from "../assets/demo-time-sticker.png";
 
             <div class="custom-tier-input">
               <p>
-                Want to contribute a different amount? Enter your custom
-                sponsorship value below:
+                Want to contribute a different amount? Enter your custom sponsorship value below:
               </p>
               <div class="custom-amount-form">
                 <div class="input-group">
                   <DollarSign className="input-icon" />
-                  <input
-                    type="text"
-                    id="customAmount"
-                    placeholder="Enter amount"
-                  />
+                  <input type="text" id="customAmount" placeholder="Enter amount" />
                 </div>
                 <a
                   href="#"
@@ -247,9 +231,7 @@ import stickerImage from "../assets/demo-time-sticker.png";
                   <Heart className="icon" /> Sponsor on GitHub
                 </a>
               </div>
-              <p class="help-text" id="amountMessage">
-                Minimum $5 to receive stickers.
-              </p>
+              <p class="help-text" id="amountMessage">Minimum $5 to receive stickers.</p>
             </div>
           </div>
         </div>
@@ -262,14 +244,12 @@ import stickerImage from "../assets/demo-time-sticker.png";
         <div class="section-header">
           <h2>Get Your Stickers</h2>
           <p>
-            After sponsoring on GitHub, fill out this form so I can send your
-            Demo Time stickers.
+            After sponsoring on GitHub, fill out this form so I can send your Demo Time stickers.
           </p>
           <div class="important-notice">
             <p>
-              <strong>Important:</strong> Please sponsor the project on GitHub first
-              using one of the "Sponsor on GitHub" buttons above, then complete this
-              form.
+              <strong>Important:</strong> Please sponsor the project on GitHub first using one of the
+              "Sponsor on GitHub" buttons above, then complete this form.
             </p>
           </div>
         </div>
@@ -277,20 +257,11 @@ import stickerImage from "../assets/demo-time-sticker.png";
         <form
           id="stickerForm"
           class="sticker-form"
-          action="https://api.staticforms.xyz/submit"
+          action="https://formbold.com/s/3Z40q"
           method="POST"
         >
           <!-- Hidden StaticForms fields -->
-          <input
-            type="hidden"
-            name="apiKey"
-            value="sf_gld699cd736f4ml7e1chgb28"
-          />
-          <input
-            type="hidden"
-            name="subject"
-            value="Demo Time Sticker Request"
-          />
+          <input type="hidden" name="subject" value="Demo Time Sticker Request" />
           <input type="hidden" name="replyTo" value="@replyEmail" />
           <!-- Anti-spam honeypot field -->
           <input
@@ -305,13 +276,7 @@ import stickerImage from "../assets/demo-time-sticker.png";
             <label for="name">Full Name</label>
             <div class="input-group">
               <User className="input-icon" />
-              <input
-                type="text"
-                id="name"
-                name="name"
-                placeholder="John Doe"
-                required
-              />
+              <input type="text" id="name" name="name" placeholder="John Doe" required />
             </div>
           </div>
 
@@ -319,13 +284,7 @@ import stickerImage from "../assets/demo-time-sticker.png";
             <label for="email">Email Address</label>
             <div class="input-group">
               <Mail className="input-icon" />
-              <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder="john@example.com"
-                required
-              />
+              <input type="email" id="email" name="email" placeholder="john@example.com" required />
             </div>
           </div>
 
@@ -341,9 +300,7 @@ import stickerImage from "../assets/demo-time-sticker.png";
                 required
               />
             </div>
-            <p class="help-text">
-              We'll verify your sponsorship with this username.
-            </p>
+            <p class="help-text">We'll verify your sponsorship with this username.</p>
           </div>
 
           <div class="form-group">
@@ -367,31 +324,21 @@ import stickerImage from "../assets/demo-time-sticker.png";
                 id="message"
                 name="message"
                 rows={3}
-                placeholder="Any additional information or message for us"
-              ></textarea>
+                placeholder="Any additional information or message for us"></textarea>
             </div>
           </div>
 
-          <div
-            class="g-recaptcha"
-            data-sitekey="6Lct-gkrAAAAANXSF_L-hUZUyP-pF4oWzyO0M4jL"
-          >
-          </div>
+          <div class="g-recaptcha" data-sitekey="6Lct-gkrAAAAANXSF_L-hUZUyP-pF4oWzyO0M4jL"></div>
 
-          <!-- <script src="https://www.google.com/recaptcha/api.js" is:inline
-          ></script> -->
+          <script src="https://www.google.com/recaptcha/api.js" is:inline></script>
 
-          <button
-            id="stickerSubmitButton"
-            type="submit"
-            class="button primary full-width"
-          >
+          <button id="stickerSubmitButton" type="submit" class="button primary full-width">
             <Send className="icon" /> Request Stickers
           </button>
 
           <p class="form-footer">
-            Your GitHub sponsorship will be verified before stickers are
-            shipped. Thank you for supporting Demo Time!
+            Your GitHub sponsorship will be verified before stickers are shipped. Thank you for
+            supporting Demo Time!
           </p>
         </form>
       </div>
@@ -737,7 +684,7 @@ import stickerImage from "../assets/demo-time-sticker.png";
     transform: translateY(-50%);
     width: 1.25rem;
     height: 1.25rem;
-    color: var(--sl-color-gray-5);
+    color: var(--sl-color-white);
     margin-top: 0 !important;
   }
 
@@ -775,140 +722,9 @@ import stickerImage from "../assets/demo-time-sticker.png";
   }
 
   .g-recaptcha {
-    div {
-      height: auto !important;
+    div,
+    iframe {
+      height: 78px !important;
     }
   }
 </style>
-
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("stickerForm") as HTMLFormElement;
-
-    if (form) {
-      // Update reply-to email
-      const emailInput = document.getElementById("email");
-      const replyToField = document.querySelector(
-        'input[name="replyTo"]'
-      ) as HTMLInputElement;
-
-      if (emailInput && replyToField) {
-        emailInput.addEventListener("input", (e: any) => {
-          replyToField.value = e.target.value;
-        });
-      }
-
-      form.addEventListener("submit", (e) => {
-        e.preventDefault();
-
-        const submitButton = document.getElementById(
-          "stickerSubmitButton"
-        ) as HTMLButtonElement;
-        const buttonText = document.getElementById("buttonText");
-
-        if (submitButton && buttonText) {
-          submitButton.disabled = true;
-          buttonText.innerHTML = "Processing...";
-        }
-
-        // Create FormData from the form
-        const formData = new FormData(form);
-
-        // Convert FormData to URL-encoded string
-        const urlEncodedData = new URLSearchParams();
-        formData.forEach((value, key) => {
-          urlEncodedData.append(key, value);
-        });
-
-        // Send the form data to StaticForms
-        fetch("https://api.staticforms.xyz/submit", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: urlEncodedData.toString(),
-        })
-          .then((response) => response.text())
-          .then((result) => {
-            if (result === "Form submitted successfully") {
-              // Show success message
-              const formContainer = form.parentElement;
-
-              if (formContainer) {
-                formContainer.innerHTML = `
-          <div class="success-message">
-            <div class="success-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-              <polyline points="22 4 12 14.01 9 11.01"></polyline>
-            </svg>
-            </div>
-            <h2>Thank you for your support!</h2>
-            <p>
-            Your request for Demo Time stickers has been received. We'll verify your GitHub sponsorship and ship the stickers to you as soon as possible.
-            </p>
-          </div>
-          `;
-              }
-            } else {
-              // Handle error
-              alert(
-                "There was an error submitting the form. Please try again."
-              );
-              if (submitButton && buttonText) {
-                submitButton.disabled = false;
-                buttonText.innerHTML =
-                  '<span><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> Request Stickers</span>';
-              }
-            }
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-            alert("There was an error submitting the form. Please try again.");
-            if (submitButton && buttonText) {
-              submitButton.disabled = false;
-              buttonText.innerHTML =
-                '<span><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> Request Stickers</span>';
-            }
-          });
-      });
-    }
-
-    // Custom amount handling
-    const customAmountInput = document.getElementById("customAmount");
-    const customSponsorLink = document.getElementById("customSponsorLink");
-    const amountMessage = document.getElementById("amountMessage");
-
-    if (customAmountInput && customSponsorLink && amountMessage) {
-      customAmountInput.addEventListener("input", (e) => {
-        // Allow only numbers
-        const value = e.target.value.replace(/[^0-9]/g, "");
-        e.target.value = value;
-
-        // Update sponsor link and message
-        if (value && parseInt(value) >= 1) {
-          const sponsorUrl = `https://github.com/sponsors/estruyf/sponsorships?sponsor=estruyf&preview=true&frequency=recurring&amount=${value}`;
-          customSponsorLink.href = sponsorUrl;
-          customSponsorLink.classList.remove("disabled");
-
-          if (parseInt(value) >= 5) {
-            amountMessage.textContent = `You'll receive stickers based on your contribution amount.`;
-          } else {
-            amountMessage.textContent = "Minimum $5 to receive stickers.";
-          }
-        } else {
-          customSponsorLink.href = "#";
-          customSponsorLink.classList.add("disabled");
-          amountMessage.textContent = "Minimum $5 to receive stickers.";
-        }
-      });
-
-      customSponsorLink.addEventListener("click", (e) => {
-        const value = customAmountInput.value;
-        if (!value || parseInt(value) < 1) {
-          e.preventDefault();
-        }
-      });
-    }
-  });
-</script>

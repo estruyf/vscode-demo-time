@@ -7,15 +7,17 @@
 - [Supported actions | Demo Time](https://demotime.show/actions/): List of all supported actions in Demo Time
 - [GitHub Copilot actions | Demo Time](https://demotime.show/actions/copilot/): Actions for integrating GitHub Copilot in Demo Time
 - [Demo Time actions | Demo Time](https://demotime.show/actions/demotime/): Actions for controlling the Demo Time extension
+- [EngageTime actions | Demo Time](https://demotime.show/actions/engagetime/): Actions for controlling EngageTime sessions
 - [External application actions | Demo Time](https://demotime.show/actions/external/): Perform actions that interact with external applications from your demos.
 - [File actions | Demo Time](https://demotime.show/actions/file/): File actions are used to open, create, or preview files in the editor.
 - [Interaction actions | Demo Time](https://demotime.show/actions/interactions/): Perform interaction actions in your demos like copying to clipboard, pasting content, typing text, and pressing keys.
+- [macOS actions | Demo Time](https://demotime.show/actions/macos/): Actions for controlling macOS-specific features in Demo Time
 - [Patch actions | Demo Time](https://demotime.show/actions/patch/): File patch actions can be used to insert code based on a snapshot of the file and a patch file.
 - [Preview actions | Demo Time](https://demotime.show/actions/preview/): Preview actions are used to preview files like Markdown and images in the editor.
 - [Setting actions | Demo Time](https://demotime.show/actions/setting/): Perform setting actions in your demos like update settings, change themes, and more.
 - [Snippet actions | Demo Time](https://demotime.show/actions/snippet/): Snippets can be used when you have steps that you want to reuse in multiple demos.
 - [Terminal actions | Demo Time](https://demotime.show/actions/terminal/): Perform terminal actions in your demos like running commands, clearing the terminal, and more.
-- [Text actions | Demo Time](https://demotime.show/actions/text/): Text actions are used to insert, replace, highlight, delete or unselect text in the editor.
+- [Text actions | Demo Time](https://demotime.show/actions/text/): Text actions are used to insert, replace, highlight, select, delete, or unselect text in the editor.
 - [Time actions | Demo Time](https://demotime.show/actions/time/): Perform time actions in your demos like waiting for a specific time, waiting for user input, and more.
 - [Visual Studio Code actions | Demo Time](https://demotime.show/actions/vscode/): Perform Visual Studio Code actions in your demos like executing commands or showing an information message.
 
@@ -38,6 +40,7 @@
 ## Features
 
 - [MCP server support | Demo Time](https://demotime.show/features/mcp-server/): Learn how to use the Model Context Protocol (MCP) server with Demo Time for AI assistants and automation.
+- [Overview Dashboard | Demo Time](https://demotime.show/features/overview-dashboard/): Learn more about the overview dashboard in Demo Time.
 - [Presenter View | Demo Time](https://demotime.show/features/presenter-view/): Learn how to use the presenter view in Demo Time.
 - [Using clock and timer functions | Demo Time](https://demotime.show/features/timer-clock/): To keep an eye on the time, you can use the clock and timer functions from Demo Time.
 - [Trigger from a link | Demo Time](https://demotime.show/features/uri-handler/): Learn how to trigger a demo from a link.
@@ -66,9 +69,15 @@
 
 ## Releases
 
+- [v1.10.0 | Demo Time](https://demotime.show/releases/1.10.0/): "Release notes for v1.10.0: overview dashboard, remote control PWA, pause action, dark mode, slide variables, EngageTime improvements."
+- [v1.11.0 | Demo Time](https://demotime.show/releases/1.11.0/): 
 - [v1.7.0 | Demo Time](https://demotime.show/releases/1.7.0/): Release notes for version 1.7.0 of the Demo Time extension, including new features, improvements, and bug fixes.
 - [v1.8.0 | Demo Time](https://demotime.show/releases/1.8.0/): Release notes for version 1.8.0 of the Demo Time extension, including new features, improvements, and bug fixes.
 - [v1.9.0 | Demo Time](https://demotime.show/releases/1.9.0/): 
+
+## Remote-control
+
+- [Remote Control | Demo Time](https://demotime.show/remote-control/): Control your Demo Time presentations from any device using the Remote Control Progressive Web App (PWA).
 
 ## Showcases
 
@@ -92,6 +101,7 @@
 - [Quote Slide Layout | Demo Time](https://demotime.show/slides/layouts/quote/): Learn about the quote slide layout in Demo Time
 - [Section Slide Layout | Demo Time](https://demotime.show/slides/layouts/section/): Learn about the section slide layout in Demo Time
 - [Two Columns Slide Layout | Demo Time](https://demotime.show/slides/layouts/two-columns/): Learn about the two-columns slide layout in Demo Time
+- [Video Slide Layout | Demo Time](https://demotime.show/slides/layouts/video/): Learn about the video slide layout in Demo Time
 - [Mermaid Diagrams | Demo Time](https://demotime.show/slides/mermaid/): Learn how to use Mermaid diagrams in your slides.
 - [Import PowerPoint slides | Demo Time](https://demotime.show/slides/powerpoint-import/): Import images from a PowerPoint presentation as slides
 - [Slide themes | Demo Time](https://demotime.show/slides/themes/): Learn about the different slide themes available in Demo Time
