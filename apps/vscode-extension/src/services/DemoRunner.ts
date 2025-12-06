@@ -10,6 +10,7 @@ import {
   Uri,
   WorkspaceFolder,
   commands,
+  env,
   window,
   workspace,
 } from 'vscode';
@@ -634,14 +635,19 @@ export class DemoRunner {
       return;
     }
 
-    // Verify if the current step has a `STATE_` or `SCRIPT_` variable which needs to be updated
+    // Verify if the current step has a `STATE_`, `SCRIPT_`, or `DT_` variable which needs to be updated
     // This can happen when the `setState` action is used during the current demo execution (previous step)
     let stepJson = JSON.stringify(step);
     if (
-      (stepJson.includes(StateKeys.prefix.state) || stepJson.includes(StateKeys.prefix.script)) &&
+      (stepJson.includes(StateKeys.prefix.state) ||
+        stepJson.includes(StateKeys.prefix.script) ||
+        stepJson.includes(StateKeys.prefix.clipboard)) &&
       variables
     ) {
-      stepJson = await insertVariables(stepJson, variables);
+      if (stepJson.includes(StateKeys.prefix.clipboard)) {
+        variables[StateKeys.prefix.clipboard] = await env.clipboard.readText();
+      }
+      stepJson = await insertVariables(stepJson, variables, false);
       step = jsonParse(stepJson);
     }
 
