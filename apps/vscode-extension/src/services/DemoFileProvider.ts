@@ -34,13 +34,11 @@ export class DemoFileProvider {
 
   /**
    * Gets the appropriate file extension based on file type
-   * @param fileType The file type ('json', 'yaml', or 'act')
-   * @returns The file extension ('.json', '.yaml', or '.act')
+   * @param fileType The file type ('json' or 'yaml')
+   * @returns The file extension ('.json' or '.yaml')
    */
   private static getFileExtension(fileType: DemoFileType): string {
-    if (fileType === 'yaml') return '.yaml';
-    if (fileType === 'act') return '.act';
-    return '.json';
+    return fileType === 'yaml' ? '.yaml' : '.json';
   }
 
   /**
@@ -58,7 +56,7 @@ export class DemoFileProvider {
 
     let parsed: DemoConfig | ActConfig | undefined;
 
-    if (path.endsWith('.yaml') || path.endsWith('.yml') || path.endsWith('.act')) {
+    if (path.endsWith('.yaml') || path.endsWith('.yml')) {
       try {
         parsed = yamlLoad(content) as DemoConfig | ActConfig;
       } catch (error) {
@@ -97,26 +95,20 @@ export class DemoFileProvider {
 
   public static formatFileContent(content: any, filePath: Uri): string {
     const path = filePath.fsPath.toLowerCase();
-    let fileType: DemoFileType = 'json';
+    const fileType = path.endsWith('.yaml') || path.endsWith('.yml') ? 'yaml' : 'json';
 
-    if (path.endsWith('.act')) {
-      fileType = 'act';
-    } else if (path.endsWith('.yaml') || path.endsWith('.yml')) {
-      fileType = 'yaml';
-    }
-
-    return this.formatContent(fileType, content);
+    return this.formatContent(fileType as DemoFileType, content);
   }
 
   /**
    * Formats the provided demo content based on the specified file type.
    *
-   * @param fileType - The type of file to format the content for ('json', 'yaml', or 'act').
+   * @param fileType - The type of file to format the content for ('yaml' or 'json').
    * @param demoContent - The content to be formatted.
    * @returns The formatted content as a string.
    */
   public static formatContent(fileType: DemoFileType, demoContent: any): string {
-    if (fileType === 'yaml' || fileType === 'act') {
+    if (fileType === 'yaml') {
       delete (demoContent as { $schema?: string }).$schema;
 
       return yamlDump(demoContent, {
@@ -151,9 +143,8 @@ export class DemoFileProvider {
     let jsonFiles = await workspace.findFiles(`${General.demoFolder}/*.json`, `**/node_modules/**`);
     let yamlFiles = await workspace.findFiles(`${General.demoFolder}/*.yaml`, `**/node_modules/**`);
     let ymlFiles = await workspace.findFiles(`${General.demoFolder}/*.yml`, `**/node_modules/**`);
-    let actFiles = await workspace.findFiles(`${General.demoFolder}/*.act`, `**/node_modules/**`);
 
-    let files = [...jsonFiles, ...yamlFiles, ...ymlFiles, ...actFiles];
+    let files = [...jsonFiles, ...yamlFiles, ...ymlFiles];
 
     if (files.length <= 0) {
       return null;
@@ -258,8 +249,7 @@ export class DemoFileProvider {
       if (
         !fileName.endsWith('.json') &&
         !fileName.endsWith('.yaml') &&
-        !fileName.endsWith('.yml') &&
-        !fileName.endsWith('.act')
+        !fileName.endsWith('.yml')
       ) {
         fileName += fileExtension;
       }

@@ -1,1 +1,1 @@
-export type DemoFileType = 'json' | 'yaml' | 'act';
+export type DemoFileType = 'json' | 'yaml';

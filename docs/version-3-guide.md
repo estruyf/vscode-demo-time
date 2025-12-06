@@ -20,15 +20,15 @@ A Play represents everything you want to present. One Play can contain multiple 
 
 **What it is:** A demo file in your project.
 
-Each Act represents a single demo file (with the `.act` extension for version 3). Acts focus on specific topics or parts of your overall story. You can have as many Acts as you need, each with its own flow and purpose.
+Each Act represents a single demo file (`.json` or `.yaml`). Acts focus on specific topics or parts of your overall story. You can have as many Acts as you need, each with its own flow and purpose.
 
 **Version 3 Requirements:**
 - Must use `version: 3` in the file
 - Requires a `productIcon` field for visual identification
-- Uses YAML format with `.act` extension
+- Uses JSON or YAML format (`.json` or `.yaml` extension)
 - Contains `scenes` instead of `demos`
 
-**Example:** An Act named `getting-started.act` might cover installation and setup.
+**Example:** An Act named `getting-started.yaml` might cover installation and setup.
 
 ---
 
@@ -95,9 +95,9 @@ scenes:
 
 ### Required Fields
 
-For Version 3 (`.act` files):
+For Version 3 (`.json` or `.yaml` files):
 - `version: 3` - Must be set to 3
-- `productIcon` - Visual identifier for the Act
+- `productIcon` - Visual identifier for the Act (optional but recommended)
 - `scenes` - Array of scenes (replaces `demos`)
 - Each scene must have `moves` (replaces `steps`)
 
@@ -122,7 +122,7 @@ The `productIcon` field helps visually identify different Acts in your project. 
 
 | Version 1 & 2 | Version 3 | Description |
 |---------------|-----------|-------------|
-| Demo file (`.json`, `.yaml`) | Act (`.act`) | The demo file itself |
+| Demo file (`.json`, `.yaml`) | Act (`.json`, `.yaml`) | The demo file itself |
 | `demos` | `scenes` | Array of demo sections |
 | `steps` | `moves` | Individual actions |
 
@@ -148,7 +148,7 @@ demos:
         content: Hello
 ```
 
-**After (demo.act - Version 3):**
+**After (demo.yaml - Version 3):**
 ```yaml
 title: My Demo
 description: Demo description
@@ -278,7 +278,7 @@ The schema automatically validates:
 - Required fields for version 3
 - Proper use of `scenes` vs `demos`
 - Proper use of `moves` vs `steps`
-- Required `productIcon` for `.act` files
+- Product icon field for version 3
 
 ---
 
@@ -288,8 +288,8 @@ Demo Time Version 3 introduces:
 - ✅ **Theatrical naming**: Play, Act, Scene, Move
 - ✅ **Version 3 format**: `version: 3` with `scenes` and `moves`
 - ✅ **Product icons**: Visual identification for Acts
-- ✅ **`.act` files**: YAML-based Act files
+- ✅ **JSON/YAML support**: Works with both `.json` and `.yaml` files
 - ✅ **Backward compatibility**: Version 1 & 2 files work unchanged
 - ✅ **Automatic normalization**: Seamless internal conversion
 
-Start using version 3 today by creating `.act` files with the new theatrical structure!
+Start using version 3 today by setting `version: 3` in your demo files!

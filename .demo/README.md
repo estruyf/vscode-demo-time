@@ -7,7 +7,7 @@ This folder contains demonstration files for **Demo Time** using the new **Versi
 Demo Time uses an intuitive theatrical metaphor:
 
 - **Play** - Your entire demo project (this workspace)
-- **Act** - Each demo file (e.g., `example-v3.act`)
+- **Act** - Each demo file (e.g., `example-v3.yaml` or `my-demo.json`)
 - **Scene** - Sections within an Act (previously called "demos")
 - **Move** - Individual actions (previously called "steps")
 
@@ -15,10 +15,10 @@ Demo Time uses an intuitive theatrical metaphor:
 
 ### Version 3 (New Format)
 
-- **`example-v3.act`** - Example demonstration using version 3 theatrical naming
+- **`example-v3.yaml`** - Example demonstration using version 3 theatrical naming
   - Shows the new `scenes` and `moves` structure
   - Demonstrates product icon usage
-  - YAML-based format
+  - YAML format
 
 ### Version 1 & 2 (Legacy Format)
 
@@ -29,9 +29,9 @@ Demo Time uses an intuitive theatrical metaphor:
 
 ## 🚀 Quick Start
 
-### Creating a New Version 3 Act
+### Creating a New Version 3 Demo
 
-Create a file named `my-demo.act`:
+Create a file named `my-demo.yaml` (or `my-demo.json`):
 
 ```yaml
 title: My Demo Act
@@ -65,7 +65,7 @@ Choose from any VS Code codicon:
 
 - ✅ Theatrical naming (Play, Act, Scene, Move)
 - ✅ Product icons for visual identification
-- ✅ YAML-based `.act` files
+- ✅ Works with `.json` and `.yaml` files
 - ✅ Full backward compatibility with v1 & v2
 - ✅ Automatic normalization
 

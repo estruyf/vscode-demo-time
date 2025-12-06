@@ -11,16 +11,16 @@ This guide helps you migrate from Demo Time Version 1 or 2 to Version 3, which i
 | Concept | v1 & v2 | v3 | Description |
 |---------|---------|-----|-------------|
 | **Project** | Project | **Play** | Your entire demo project |
-| **Demo File** | `.json`, `.yaml` | **Act** (`.act`) | Individual demo files |
+| **Demo File** | `.json`, `.yaml` | **Act** (`.json`, `.yaml`) | Individual demo files |
 | **Demo Section** | `demos` | **scenes** | Sections within an Act |
 | **Action Step** | `steps` | **moves** | Individual actions |
 
 ### File Format Changes
 
 **Version 3 introduces:**
-- New file extension: `.act` (YAML-based)
+- Uses existing file extensions: `.json` or `.yaml`
 - Required `version: 3` field
-- Required `productIcon` field
+- Optional `productIcon` field for visual identification
 - `scenes` replaces `demos`
 - `moves` replaces `steps`
 
@@ -46,7 +46,7 @@ Create new demos using v3 format while keeping existing demos unchanged.
 
 **Steps:**
 1. Keep existing `.json` and `.yaml` files as-is
-2. Create new demos using `.act` files with v3 format
+2. Create new demos using v3 format in `.json` or `.yaml` files
 3. Gradually convert old demos as needed
 
 ### Approach 2: Full Migration
@@ -65,14 +65,7 @@ Convert all existing demos to v3 format.
 
 ## Step-by-Step Conversion
 
-### Step 1: Change File Extension
-
-```bash
-# Rename files from .json or .yaml to .act
-mv .demo/my-demo.yaml .demo/my-demo.act
-```
-
-### Step 2: Update Version and Add Product Icon
+### Step 1: Update Version and Add Product Icon
 
 **Before:**
 ```yaml
@@ -86,7 +79,7 @@ version: 2
 title: My Demo
 description: Demo description
 version: 3
-productIcon: presentation  # Add this!
+productIcon: presentation  # Add this (optional but recommended)
 ```
 
 **Available Product Icons:**
@@ -99,7 +92,7 @@ productIcon: presentation  # Add this!
 - `book` - Documentation walkthroughs
 - Any valid VS Code codicon
 
-### Step 3: Rename `demos` to `scenes`
+### Step 2: Rename `demos` to `scenes`
 
 **Before:**
 ```yaml
@@ -115,7 +108,7 @@ scenes:
     description: Description here
 ```
 
-### Step 4: Rename `steps` to `moves`
+### Step 3: Rename `steps` to `moves`
 
 **Before:**
 ```yaml
@@ -135,20 +128,9 @@ scenes:
         path: file.txt
 ```
 
-### Step 5: Remove Schema Reference (Optional)
+### Step 4: Schema Reference (Optional)
 
-For `.act` files, the `$schema` reference is not needed:
-
-**Before:**
-```yaml
-$schema: https://demotime.show/demo-time.schema.json
-title: My Demo
-```
-
-**After:**
-```yaml
-title: My Demo
-```
+For YAML files, the `$schema` reference is optional but can be kept for IDE autocomplete support.
 
 ## Complete Example
 
@@ -187,7 +169,7 @@ demos:
         path: features.ts
 ```
 
-### Version 3 File (demo.act)
+### Version 3 File (demo.yaml)
 
 ```yaml
 title: Getting Started
@@ -224,12 +206,10 @@ scenes:
 
 ### Changes Summary
 
-1. ✅ File extension: `.yaml` → `.act`
-2. ✅ Version: `2` → `3`
-3. ✅ Added: `productIcon: rocket`
-4. ✅ Renamed: `demos` → `scenes`
-5. ✅ Renamed: `steps` → `moves`
-6. ✅ Removed: `$schema` (optional for YAML)
+1. ✅ Version: `2` → `3`
+2. ✅ Added: `productIcon: rocket` (optional but recommended)
+3. ✅ Renamed: `demos` → `scenes`
+4. ✅ Renamed: `steps` → `moves`
 
 ## Automated Migration Script
 
@@ -237,12 +217,10 @@ While there's no automated tool yet, here's a manual checklist:
 
 - [ ] Backup `.demo` folder
 - [ ] For each demo file:
-  - [ ] Rename `.json`/`.yaml` to `.act`
   - [ ] Change `version: 2` to `version: 3`
-  - [ ] Add `productIcon: <icon-name>`
+  - [ ] Add `productIcon: <icon-name>` (optional but recommended)
   - [ ] Replace `demos:` with `scenes:`
   - [ ] Replace `steps:` with `moves:`
-  - [ ] Remove `$schema` reference (for YAML files)
   - [ ] Test the demo
 
 ## Validation
@@ -273,11 +251,11 @@ After migration, validate your files:
 
 **Solution:** Change `steps:` to `moves:` in version 3 scenes.
 
-### "Missing required property 'productIcon'" error
+### Missing product icon
 
-**Problem:** Version 3 `.act` files require a product icon.
+**Note:** The `productIcon` field is optional but recommended for visual identification.
 
-**Solution:** Add `productIcon: <icon-name>` to your Act file.
+**Solution:** Add `productIcon: <icon-name>` to your version 3 file if desired.
 
 ### Demo doesn't run
 
@@ -298,8 +276,7 @@ If you need to rollback:
    - Change `version: 3` to `version: 2`
    - Rename `scenes` to `demos`
    - Rename `moves` to `steps`
-   - Change `.act` extension to `.yaml` or `.json`
-   - Remove `productIcon` field
+   - Remove `productIcon` field (if added)
 
 ## Best Practices
 

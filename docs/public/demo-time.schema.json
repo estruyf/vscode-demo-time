@@ -20,7 +20,7 @@
     },
     "productIcon": {
       "type": "string",
-      "description": "Product icon for version 3 .act files. Required for .act YAML files."
+      "description": "Product icon for version 3 files. Optional but recommended for visual identification."
     },
     "timer": {
       "type": "number",
