@@ -1,0 +1,386 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+---
+
+<StarlightPage
+  frontmatter={{
+    title: 'Demo Time as a Service',
+    description: 'Stop spending days building demos with Demo Time as a Service.',
+    tableOfContents: false,
+  }}
+>
+  <div class="service-page">
+    {/* Hero Section */}
+    <header class="hero">
+      <h2>Ship a flawless demo in days, not weeks.</h2>
+      <p>
+        <strong>Demo Time as a Service</strong> turns your repo into a ready-to-present demo for VS Code.
+      </p>
+      <p>No broken commands. No scramble. Just a confident delivery your audience will trust.</p>
+    </header>
+
+    {/* Problem Section */}
+    <section>
+      <h3>The challenge: why demos take so much time</h3>
+      <p>
+        When I talk to people who present regularly, they almost always describe the same friction
+        points. I know I've felt them myself.
+      </p>
+
+      <p>
+        It is not just frustration; it is lost time. <strong
+          >On average, a high-quality technical demo, can easily take a day or more to build and
+          refine.</strong
+        > That is a lot of time lost engineering or sales time per demo.
+      </p>
+
+      <ul>
+        <li>
+          <strong>Close faster:</strong> A crisp, working demo removes doubt for buyers and stakeholders.
+        </li>
+        <li>
+          <strong>Save time:</strong> We build the flow so your team stays focused on product work.
+        </li>
+        <li>
+          <strong>Stress-proof:</strong> Every step is scripted, tested, and ready for live delivery.
+        </li>
+      </ul>
+    </section>
+
+    {/* Offer Section */}
+    <section>
+      <h3>What you get</h3>
+      <ul>
+        <li>One ready-to-run Demo Time script (up to ~15 minutes).</li>
+        <li>Storyline crafted from your git commits—no guesswork.</li>
+        <li>2 revision rounds and a 30-minute onboarding.</li>
+        <li>Standard turnaround: 5-7 business days.</li>
+      </ul>
+
+      <p><strong>Price: € 500 per demo (early bird for the first 10 teams).</strong></p>
+      <p>Need live help instead? Coaching is available at € 200/hour.</p>
+    </section>
+
+    {/* How It Works Section */}
+    <section>
+      <h3>How it works</h3>
+      <ol>
+        <li><strong>Share your repo</strong> and the story you need to tell.</li>
+        <li><strong>We script and test</strong> every step inside Demo Time.</li>
+        <li><strong>You present</strong> with a reliable, polished demo.</li>
+      </ol>
+    </section>
+
+    {/* Fit Section */}
+    <section>
+      <h3>Is this for you?</h3>
+      <ul>
+        <li>Sales engineers and solutions teams who need a clean, working demo next week.</li>
+        <li>DevRel and product teams showing new features with zero risk of breaking on stage.</li>
+        <li>Training orgs that want reusable, consistent demos for courses and workshops.</li>
+      </ul>
+      <p><strong>Works best for code-based demos you control in VS Code.</strong></p>
+    </section>
+
+    {/* Quick FAQ Section */}
+    <section>
+      <h3>Quick answers</h3>
+      <ul>
+        <li><strong>Format:</strong> Delivered as a Demo Time YAML script, ready to run.</li>
+        <li>
+          <strong>Turnaround:</strong> 5-7 business days (rush &lt;3 days available at +€ 250).
+        </li>
+        <li><strong>Not sure your repo is clean?</strong> We’ll guide you or add coaching time.</li>
+      </ul>
+    </section>
+
+    {/* CTA Section */}
+    <section id="get-started">
+      <h2>Lock in your slot</h2>
+      <p>
+        <strong>€ 500 per demo, limited early-bird capacity.</strong> Tell us about your demo and we’ll
+        start this week.
+      </p>
+
+      <form
+        id="interestForm"
+        class="interest-form"
+        action="https://formbold.com/s/obkNp"
+        method="POST"
+      >
+        <input type="hidden" name="apiKey" value="sf_2g9h855e668na16n94fl0lh4" />
+        <input type="hidden" name="subject" value="Demo Time Service Interest" />
+        <input type="hidden" name="replyTo" value="@replyEmail" />
+        <input type="text" name="honeypot" style="display: none" tabindex="-1" autocomplete="off" />
+
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <div class="input-group">
+            <input type="text" id="name" name="name" placeholder="John Doe" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="input-group">
+            <input type="email" id="email" name="email" placeholder="john@example.com" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="organization">Organization/Company</label>
+          <div class="input-group">
+            <input
+              type="text"
+              id="organization"
+              name="organization"
+              placeholder="Demo Time, etc."
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="role">Your Role</label>
+          <div class="input-group">
+            <select id="role" name="role" required>
+              <option value="">Select your role...</option>
+              <option value="training-manager">Training Manager</option>
+              <option value="devrel">Developer Relations</option>
+              <option value="content-creator">Content Creator</option>
+              <option value="conference-organizer">Conference Organizer</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Which services are you interested in?</label>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" name="$services" value="creation" checked />
+              Demo creation service (€ 500)
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="$services" value="coaching" />
+              Expert coaching (€ 200/hour)
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="demoDescription"
+            >What types of demos does your organization create? (1-2 sentences)</label
+          >
+          <div class="input-group">
+            <textarea
+              id="demoDescription"
+              name="demoDescription"
+              rows="2"
+              placeholder="e.g., Hands-on labs for developer training, product feature demonstrations, conference workshops"
+              required></textarea>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="frequency">How many demos does your team create per quarter?</label>
+          <div class="input-group">
+            <select id="frequency" name="frequency" required>
+              <option value="">Select quantity...</option>
+              <option value="1-5">1-5 demos</option>
+              <option value="6-10">6-10 demos</option>
+              <option value="11-20">11-20 demos</option>
+              <option value="20+">20+ demos</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="challenge">What's your biggest challenge with demo creation right now?</label>
+          <div class="input-group">
+            <textarea
+              id="challenge"
+              name="challenge"
+              rows="2"
+              placeholder="e.g., Takes too long to create, demos break during live sessions, hard to maintain when product updates"
+              required></textarea>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="willingness">Is € 500 per demo within your budget?</label>
+          <div class="input-group">
+            <select id="willingness" name="willingness" required>
+              <option value="">Select answer...</option>
+              <option value="yes">Yes, this is reasonable</option>
+              <option value="need-approval">Yes, but need approval</option>
+              <option value="multiple">Yes, interested in ordering multiple demos</option>
+              <option value="too-high">This seems too high</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="message">Additional questions or comments (Optional)</label>
+          <div class="input-group">
+            <textarea
+              id="message"
+              name="message"
+              rows="3"
+              placeholder="Any questions or specific requirements?"></textarea>
+          </div>
+        </div>
+
+        <div class="g-recaptcha" data-sitekey="6Lct-gkrAAAAANXSF_L-hUZUyP-pF4oWzyO0M4jL"></div>
+
+        <script src="https://www.google.com/recaptcha/api.js" is:inline></script>
+
+        <button id="submitButton" type="submit" class="button primary full-width">
+          Join the Waitlist
+        </button>
+      </form>
+
+      <div class="contact-info">
+        <p>
+          <strong>Questions?</strong> Reach out at <a href="mailto:elio@struyfconsulting.be"
+            >elio@struyfconsulting.be</a
+          >
+        </p>
+        <p>Let's make demos less stressful and more impactful—together!</p>
+      </div>
+    </section>
+  </div>
+</StarlightPage>
+
+<style>
+  :root {
+    --sl-content-width: 50rem;
+  }
+
+  .service-page {
+    max-width: 50rem;
+    margin: 0 auto;
+  }
+
+  section {
+    margin-bottom: 3rem;
+  }
+
+  .hero {
+    margin-bottom: 3rem;
+  }
+
+  /* Form */
+  .interest-form {
+    margin: 2rem auto;
+    padding: 2rem;
+    background: var(--sl-color-gray-6);
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.75rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  input[type='text'],
+  input[type='email'],
+  textarea,
+  select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--sl-color-gray-4);
+    border-radius: 0.375rem;
+    background: var(--sl-color-black);
+    color: var(--sl-color-white);
+    font-size: 1rem;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--sl-color-accent);
+    box-shadow: 0 0 0 2px var(--sl-color-accent-low);
+  }
+
+  select {
+    cursor: pointer;
+  }
+
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: normal;
+    cursor: pointer;
+  }
+
+  .checkbox-label input {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .button {
+    display: inline-block;
+    padding: 0.875rem 1.75rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .button.primary {
+    background: rgb(255 212 59 / var(--tw-bg-opacity, 1)) !important;
+    border: 1px solid var(--sl-color-text-accent);
+    color: #000;
+  }
+
+  .button.primary:hover {
+    color: #000;
+    background-color: rgb(255 212 59 / 0.8) !important;
+  }
+
+  .button.full-width {
+    width: 100%;
+  }
+
+  .contact-info {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .contact-info p {
+    margin-bottom: 0.5rem;
+  }
+
+  .contact-info a {
+    color: var(--sl-color-accent-high);
+    text-decoration: none;
+  }
+
+  .contact-info a:hover {
+    text-decoration: underline;
+  }
+
+  .g-recaptcha {
+    div,
+    iframe {
+      height: 78px !important;
+    }
+  }
+</style>

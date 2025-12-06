@@ -12,171 +12,85 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
   <div class="service-page">
     {/* Hero Section */}
     <header class="hero">
-      <p class="eyebrow">Demo Time as a Service</p>
-      <h1>Stop spending days building demos.</h1>
+      <h2>Flawless demos, built for you.</h2>
       <p class="hero-sub">
-        Creating great demos is time-consuming. We turn your git commits into presentation-ready,
-        stress-proof demos so you can focus on delivery, not debugging.
+        Hand off your repo and get a presentation-ready, stress-proof demo for VS Code. No broken
+        commands, no last-minute scramble—just a confident delivery that wins trust.
       </p>
       <div class="hero-cta">
-        <a class="button primary" href="#get-started">Get Started</a>
-        <span class="subtext">Limited pilot program: Only 10 spots available.</span>
+        <a class="button primary" href="#get-started">Lock in my demo (€500)</a>
+        <span class="subtext">Early-bird slots are limited.</span>
       </div>
     </header>
 
-    {/* Problem Section */}
-    <section class="problem">
-      <h2>The Challenge: Why demos take so much time</h2>
-      <p>
-        On average, a high-quality technical demo can easily take a day or more to build and refine.
-        That is a lot of lost engineering or sales time.
-      </p>
-      <div class="grid-3">
-        <div class="card">
-          <h3>Maintenance</h3>
-          <p>You update your product, and suddenly the old demo no longer works.</p>
-        </div>
-        <div class="card !mt-0">
-          <h3>Narrative</h3>
-          <p>You want to tell a clear story, but aren't sure which commits matter most.</p>
-        </div>
-        <div class="card">
-          <h3>Anxiety</h3>
-          <p>The pressure of "will the demo break on stage?" never fully disappears.</p>
-        </div>
-        <div class="card">
-          <h3>Organization</h3>
-          <p>
-            Your notes are scattered, and you lack templates, making every demo feel like Day 1.
-          </p>
-        </div>
-        <div class="card">
-          <h3>Fine-tuning</h3>
-          <p>Hours spent tweaking code steps, commands, and highlights.</p>
-        </div>
-        <div class="card">
-          <h3>The Cost</h3>
-          <p>A failed demo isn't just awkward; it damages trust and credibility.</p>
-        </div>
+    {/* Value Props */}
+    <section class="pillars">
+      <div>
+        <h3>Sell without stalls</h3>
+        <p>A crisp, working demo kills doubt for buyers and stakeholders.</p>
+      </div>
+      <div>
+        <h3>Save your week</h3>
+        <p>We build and test the flow so your team ships product instead of polishing slides.</p>
+      </div>
+      <div>
+        <h3>Stress-proof delivery</h3>
+        <p>Every step is scripted, timed, and verified for live sessions.</p>
       </div>
     </section>
 
-    {/* Solution Section */}
-    <section class="solution">
-      <div class="solution-content">
-        <h2>The Solution: Demo Time as a Service</h2>
-        <p>We turn your git commits into presentation-ready demos.</p>
-        <ol class="process-list">
-          <li>
-            <strong>Share your repository</strong> and tell us the story you want to tell.
-          </li>
-          <li>
-            <strong>We analyze your commits</strong> and generate a Demo Time script.
-          </li>
-          <li>
-            <strong>You present with confidence</strong>: no typos, no broken commands, no stress.
-          </li>
-        </ol>
-        <p>
-          This is fundamentally different from screen recording tools. Because it is tied to your
-          git history, your demo remains a living part of your codebase.
-        </p>
-      </div>
-    </section>
-
-    {/* Audience Section */}
-    <section class="audience">
-      <h2>Who is this for?</h2>
-      <p>Built for organizations that create educational and training content at scale.</p>
-      <ul class="audience-list">
-        <li><strong>Training Platforms</strong> creating developer courses and hands-on labs.</li>
-        <li><strong>Developer Relations</strong> teams showcasing products and tools.</li>
-        <li><strong>Conference Organizers</strong> building workshops and hands-on sessions.</li>
-        <li><strong>Corporate Training</strong> departments teaching internal tools.</li>
-      </ul>
-    </section>
-
-    {/* Pricing Section */}
-    <section class="pricing">
-      <div class="pricing-card featured">
-        <div class="pricing-header">
-          <h3>Demo Creation</h3>
-          <div class="price">€ 500 <span class="period">/ demo</span></div>
-          <p class="badge">Early Bird (First 10 customers)</p>
-        </div>
-        <ul class="features-list">
-          <li>One demo/presentation (up to 15 mins)</li>
-          <li>Based on 1 git repository</li>
-          <li>Delivered as a Demo Time script</li>
-          <li>2 revision rounds included</li>
-          <li>30-minute onboarding session</li>
-        </ul>
-        <p class="extra-info">Standard turnaround: 5-7 business days.</p>
-      </div>
-
-      <div class="pricing-card !mt-0">
-        <div class="pricing-header">
-          <h3>Expert Coaching</h3>
-          <div class="price">€ 200 <span class="period">/ hour</span></div>
-          <p class="badge" style="visibility: hidden;">Limited Availability</p>
-        </div>
-        <ul class="features-list">
-          <li>Review and audit existing demos</li>
-          <li>Rewrite complex sections for clarity</li>
-          <li>Improve flow, timing, and impact</li>
-          <li>Structure narrative for your audience</li>
-          <li>Create reusable assets</li>
-        </ul>
-      </div>
-    </section>
-
-    {/* Requirements Section */}
-    <section class="requirements">
-      <h2>Requirements</h2>
-      <p>
-        To ensure we can create the best demo for you, your repository should meet these criteria:
-      </p>
-      <ul class="req-list">
-        <li>Repository must be Git-based.</li>
-        <li>Meaningful commit messages (guidelines provided).</li>
-        <li>Feature should span 3-20 commits.</li>
-        <li>Access provided (public or collaborator).</li>
-        <li>1-paragraph description of the story.</li>
+    {/* Offer Section */}
+    <section class="offer">
+      <h2>What you get for €500</h2>
+      <ul>
+        <li>One ready-to-run Demo Time script (≈15 minutes).</li>
+        <li>Storyline crafted from your git commits—no guesswork.</li>
+        <li>2 revision rounds + 30-minute onboarding.</li>
+        <li>Standard turnaround: 5–7 business days (rush &lt;3 days: +€250).</li>
       </ul>
       <p class="note">
-        <em>Don't meet these? We can provide guidance or coaching to help you prepare.</em>
+        Early-bird pricing for the first 10 teams. Coaching available at €200/hour.
       </p>
     </section>
 
-    {/* FAQ Section */}
+    {/* How It Works Section */}
+    <section class="steps">
+      <h2>How it works</h2>
+      <ol>
+        <li><strong>Share your repo</strong> and the story you need.</li>
+        <li><strong>We script and test</strong> the entire run inside Demo Time.</li>
+        <li><strong>You present</strong> with a reliable, polished demo.</li>
+      </ol>
+    </section>
+
+    {/* Fit Section */}
+    <section class="fit">
+      <h2>Built for teams like yours</h2>
+      <ul>
+        <li>Sales engineers who need a clean, working demo next week.</li>
+        <li>DevRel and product teams launching features with zero onstage risk.</li>
+        <li>Training orgs that need reusable, consistent demos for workshops.</li>
+      </ul>
+      <p><strong>Works best for code-based demos you control in VS Code.</strong></p>
+    </section>
+
+    {/* Quick FAQ Section */}
     <section class="faq">
-      <h2>Frequently Asked Questions</h2>
-      <div class="faq-grid">
-        <div>
-          <strong>Do I need to be a Demo Time user already?</strong>
-          <p>No. We'll provide everything you need to get started, including onboarding.</p>
-        </div>
-        <div>
-          <strong>What if my git history is messy?</strong>
-          <p>We provide guidelines. If you need help cleaning it up, we offer coaching.</p>
-        </div>
-        <div>
-          <strong>Can you demo third-party products?</strong>
-          <p>
-            Not yet. This service is for code-based demos in VS Code where you control the repo.
-          </p>
-        </div>
-        <div>
-          <strong>What format do I receive?</strong>
-          <p>You'll receive a Demo Time script file (YAML), fully configured and ready to use.</p>
-        </div>
-      </div>
+      <h2>Quick answers</h2>
+      <ul>
+        <li><strong>Format:</strong> Demo Time YAML, ready to run.</li>
+        <li><strong>Turnaround:</strong> 5–7 business days (rush &lt;3 days: +€250).</li>
+        <li><strong>Messy repo?</strong> We guide you or add coaching time.</li>
+      </ul>
     </section>
 
     {/* CTA Section */}
     <section id="get-started">
-      <h2>Ready to reclaim your time?</h2>
-      <p>We're launching with a limited pilot program. Lock in the € 500 early bird price.</p>
+      <h2>Lock in your slot</h2>
+      <p>
+        <strong>€ 500 per demo, limited early-bird capacity.</strong> Tell us about your demo and we’ll
+        start this week.
+      </p>
 
       <form
         id="interestForm"
@@ -331,10 +245,6 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 <style>
   :root {
     --sl-content-width: 50rem;
-
-    .main-pane .content-panel:first-child {
-      display: none !important;
-    }
   }
 
   .service-page {
@@ -399,146 +309,31 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
     margin-top: 0 !important;
   }
 
-  .grid-3 {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-    gap: 1.5rem;
+  .offer ul,
+  .fit ul,
+  .faq ul,
+  .steps ol {
+    margin: 1rem 0 0 1rem;
+    line-height: 1.6;
   }
 
-  .card {
-    padding: 1.25rem;
-    border: 1px solid var(--sl-color-gray-5);
-    border-radius: 0.75rem;
-    background: var(--sl-color-gray-6);
-  }
-
-  .card h3 {
-    margin-top: 0;
-    font-size: 1.1rem;
-    color: var(--sl-color-white);
-  }
-
-  .card p {
-    margin-bottom: 0;
-    font-size: 0.95rem;
+  .offer .note {
+    margin-top: 0.75rem;
     color: var(--sl-color-gray-2);
   }
 
-  .pricing {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-    gap: 2rem;
+  .steps ol {
+    padding-left: 1.25rem;
   }
 
-  .pricing-card {
-    border: 1px solid var(--sl-color-gray-5);
-    border-radius: 0.75rem;
-    padding: 2rem;
-    background: var(--sl-color-gray-6);
-    display: flex;
-    flex-direction: column;
-  }
-
-  .pricing-card.featured {
-    border-color: var(--sl-color-accent);
-    background: var(--sl-color-gray-6);
-    position: relative;
-  }
-
-  .pricing-header {
-    margin-bottom: 1.5rem;
-    text-align: center;
-  }
-
-  .pricing-header h3 {
-    margin: 0;
-    font-size: 1.5rem;
-  }
-
-  .price {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin: 0.5rem 0;
-    color: var(--sl-color-white);
-  }
-
-  .period {
-    font-size: 1rem;
-    font-weight: 400;
-    color: var(--sl-color-gray-3);
-  }
-
-  .badge {
-    display: inline-block;
-    background: var(--sl-color-accent-low);
-    color: var(--sl-color-accent-high);
-    padding: 0.25rem 0.75rem;
-    border-radius: 1rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-    margin: 0.5rem 0 0;
-  }
-
-  .features-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    flex-grow: 1;
-  }
-
-  .features-list li {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid var(--sl-color-gray-5);
-    color: var(--sl-color-gray-2);
-  }
-
-  .features-list li:last-child {
-    border-bottom: none;
-  }
-
-  .extra-info {
-    margin-top: 1.5rem;
-    font-size: 0.875rem;
-    color: var(--sl-color-gray-3);
-    text-align: center;
-  }
-
-  .audience-list,
-  .req-list {
+  .fit ul {
     list-style: disc;
-    padding-left: 1.5rem;
-    margin-top: 1rem;
+    padding-left: 1.25rem;
   }
 
-  .audience-list li,
-  .req-list li {
-    margin-bottom: 0.5rem;
-  }
-
-  .faq-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
-    gap: 2rem;
-  }
-
-  .faq-grid strong {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: var(--sl-color-white);
-  }
-
-  .faq-grid p {
-    margin: 0;
-    color: var(--sl-color-gray-2);
-    font-size: 0.95rem;
-  }
-
-  .process-list {
-    padding-left: 1.5rem;
-  }
-
-  .process-list li {
-    margin-bottom: 0.75rem;
+  .faq ul {
+    list-style: disc;
+    padding-left: 1.25rem;
   }
 
   /* Form */
