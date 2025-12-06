@@ -259,6 +259,10 @@ export class InteractionService {
     }
   }
 
+  public static async copyFromSelection(): Promise<void> {
+    await commands.executeCommand('editor.action.clipboardCopyAction');
+  }
+
   public static async pasteFromClipboard(): Promise<void> {
     await commands.executeCommand('editor.action.clipboardPasteAction');
   }

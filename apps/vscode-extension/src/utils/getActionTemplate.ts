@@ -408,6 +408,12 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  if (action === Action.CopyFromSelection) {
+    return {
+      action: Action.CopyFromSelection,
+    };
+  }
+
   if (action === Action.PasteFromClipboard) {
     return {
       action: Action.PasteFromClipboard,

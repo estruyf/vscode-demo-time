@@ -957,6 +957,11 @@ export class DemoRunner {
       return;
     }
 
+    if (step.action === Action.CopyFromSelection) {
+      await InteractionService.copyFromSelection();
+      return;
+    }
+
     if (step.action === Action.PasteFromClipboard) {
       await InteractionService.pasteFromClipboard();
       return;

@@ -116,6 +116,7 @@ export const CATEGORIZED_ACTIONS: {
       Action.Unselect,
       Action.PositionCursor,
       Action.CopyToClipboard,
+      Action.CopyFromSelection,
       Action.PasteFromClipboard,
       Action.PressEnter,
       Action.PressTab,

@@ -80,3 +80,24 @@ demos:
       start: bell
       end: stop
     description: In this demo I'm going to show how to open it...
+  - title: Highlight, copy, run
+    description: ''
+    steps:
+      - action: open
+        path: .demo/scripts/demo-test.sh
+      - action: selection
+        path: .demo/scripts/demo-test.sh
+        position: '4:11'
+        highlightWholeLine: true
+      - action: copyFromSelection
+      - action: unselect
+      - action: highlight
+        path: .demo/scripts/demo-test.sh
+        position: '4:11'
+      - action: openTerminal
+      - action: waitForTimeout
+        timeout: 1000
+      - action: pasteFromClipboard
+        disabled: false
+      - action: pressEnter
+        disabled: false

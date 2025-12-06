@@ -123,6 +123,7 @@
                     "closeCopilotChat",
                     "cancelCopilotChat",
                     "copyToClipboard",
+                    "copyFromSelection",
                     "pasteFromClipboard",
                     "typeText",
                     "pressEnter",

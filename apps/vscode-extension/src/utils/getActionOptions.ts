@@ -374,6 +374,11 @@ export const getActionOptions = (): QuickPickItem[] => {
   } as QuickPickItem);
 
   actions.push({
+    label: Action.CopyFromSelection,
+    description: 'Copy text from selection',
+  } as QuickPickItem);
+
+  actions.push({
     label: Action.PasteFromClipboard,
     description: 'Paste text from clipboard',
   } as QuickPickItem);

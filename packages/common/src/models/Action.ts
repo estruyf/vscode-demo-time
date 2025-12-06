@@ -63,6 +63,7 @@ export enum Action {
   // Interaction
   TypeText = 'typeText',
   CopyToClipboard = 'copyToClipboard',
+  CopyFromSelection = 'copyFromSelection',
   PasteFromClipboard = 'pasteFromClipboard',
   PressEnter = 'pressEnter',
   PressTab = 'pressTab',

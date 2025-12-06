@@ -52,6 +52,7 @@ export const getActionIcon = (action: Action): string => {
     [Action.CloseChat]: 'message-circle-x',
     [Action.CancelChat]: 'circle-stop',
     [Action.CopyToClipboard]: 'clipboard',
+    [Action.CopyFromSelection]: 'clipboard',
     [Action.PasteFromClipboard]: 'clipboard-paste',
     [Action.TypeText]: 'type',
     [Action.PressEnter]: 'corner-down-left',
