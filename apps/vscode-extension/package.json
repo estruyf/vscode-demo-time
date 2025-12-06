@@ -58,7 +58,7 @@
   "sponsor": {
     "url": "https://github.com/sponsors/estruyf"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "author": "Elio Struyf <elio@struyfconsulting.be> (https://www.eliostruyf.com)",
   "bugs": {
     "url": "https://github.com/estruyf/vscode-demo-time/issues"
@@ -89,7 +89,11 @@
       },
       "workbench.editorAssociations": {
         "{git,gitlens}:/**/*.{yml,json,yaml}": "default"
-      }
+      },
+      "terminal.integrated.commandsToSkipShell": [
+        "demo-time.start",
+        "demo-time.previous"
+      ]
     },
     "icons": {
       "dt-projector": {

@@ -10,6 +10,7 @@ import {
   Uri,
   WorkspaceFolder,
   commands,
+  env,
   window,
   workspace,
 } from 'vscode';
@@ -51,6 +52,8 @@ import {
   DemoFileProvider,
   Extension,
   EngageTimeService,
+  SelectionService,
+  MacOSActionsService,
 } from './';
 import { Preview } from '../preview/Preview';
 import { parse as jsonParse } from 'jsonc-parser';
@@ -321,6 +324,8 @@ export class DemoRunner {
       // Set the current executing file to the next file
       executingFile.filePath = nextFile.filePath;
       executingFile.demo = [];
+      executingFile.version = nextFile.version;
+
       await DemoRunner.setExecutedDemoFile(executingFile);
       // Start the next demo file
       DemoRunner.start({
@@ -630,14 +635,19 @@ export class DemoRunner {
       return;
     }
 
-    // Verify if the current step has a `STATE_` or `SCRIPT_` variable which needs to be updated
+    // Verify if the current step has a `STATE_`, `SCRIPT_`, or `DT_` variable which needs to be updated
     // This can happen when the `setState` action is used during the current demo execution (previous step)
     let stepJson = JSON.stringify(step);
     if (
-      (stepJson.includes(StateKeys.prefix.state) || stepJson.includes(StateKeys.prefix.script)) &&
+      (stepJson.includes(StateKeys.prefix.state) ||
+        stepJson.includes(StateKeys.prefix.script) ||
+        stepJson.includes(StateKeys.prefix.clipboard)) &&
       variables
     ) {
-      stepJson = await insertVariables(stepJson, variables);
+      if (stepJson.includes(StateKeys.prefix.clipboard)) {
+        variables[StateKeys.prefix.clipboard] = await env.clipboard.readText();
+      }
+      stepJson = await insertVariables(stepJson, variables, false);
       step = jsonParse(stepJson);
     }
 
@@ -668,6 +678,9 @@ export class DemoRunner {
     } else if (step.action === Action.CloseChat) {
       await ChatActionsService.closeChat();
       return;
+    } else if (step.action === Action.CancelChat) {
+      await ChatActionsService.cancelChat();
+      return;
     }
 
     // Demo Time actions
@@ -677,6 +690,21 @@ export class DemoRunner {
         return;
       }
       await DemoRunner.runById(step.id);
+      return;
+    }
+
+    // macOS specific actions
+    if (step.action === Action.EnableFocusMode) {
+      await MacOSActionsService.enableFocusMode();
+      return;
+    } else if (step.action === Action.DisableFocusMode) {
+      await MacOSActionsService.disableFocusMode();
+      return;
+    } else if (step.action === Action.HideMenubar) {
+      await MacOSActionsService.hideMenubar();
+      return;
+    } else if (step.action === Action.ShowMenubar) {
+      await MacOSActionsService.showMenubar();
       return;
     }
 
@@ -935,6 +963,11 @@ export class DemoRunner {
       return;
     }
 
+    if (step.action === Action.CopyFromSelection) {
+      await InteractionService.copyFromSelection();
+      return;
+    }
+
     if (step.action === Action.PasteFromClipboard) {
       await InteractionService.pasteFromClipboard();
       return;
@@ -1086,6 +1119,11 @@ export class DemoRunner {
       return;
     }
 
+    if (step.action === Action.Selection && (crntRange || crntPosition)) {
+      await SelectionService.select(textEditor, crntRange, crntPosition, step.zoom);
+      return;
+    }
+
     // Code actions
     if (step.action === Action.Insert) {
       await TextTypingService.insert(textEditor, editor, fileUri, content, crntPosition, step);
@@ -1230,6 +1268,10 @@ export class DemoRunner {
       range = new Range(position, position);
     }
 
+    if (highlightWholeLine === undefined) {
+      highlightWholeLine = true;
+    }
+
     if (range) {
       if (keepInMemory) {
         DemoRunner.setCrntHighlighting(
@@ -1267,6 +1309,7 @@ export class DemoRunner {
     | {
         filePath: string;
         demo: DemoConfig;
+        version?: Version;
       }
     | undefined
   > {

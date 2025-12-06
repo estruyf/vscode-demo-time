@@ -1,0 +1,679 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+---
+
+<StarlightPage
+  frontmatter={{
+    title: 'Demo Time as a Service',
+    description: 'Stop spending days building demos with Demo Time as a Service.',
+    tableOfContents: false,
+  }}
+>
+  <div class="service-page">
+    {/* Hero Section */}
+    <header class="hero">
+      <p class="eyebrow">Demo Time as a Service</p>
+      <h1>Let's make your demos bulletproof.</h1>
+      <p class="hero-sub">
+        <a href="https://eliostruyf.com" target="_blank" rel="noopener noreferrer">Elio</a> has been
+        done many technical talks and demos over the years. That is why he started Demo Time to perfect
+        the demo experience. The service allows you to hand over your repo, and it turns it into a <strong
+          >stress-free, scripted Demo Time presentation</strong
+        > that you can deliver with confidence.
+      </p>
+      <div class="hero-cta">
+        <a class="button primary" href="#get-started">Get started</a>
+        <span class="subtext">Only 10 early-bird slots available.</span>
+      </div>
+    </header>
+
+    {/* Problem Section */}
+    <section class="problem">
+      <h2>The Challenge: Why creating good demos takes a lot of time</h2>
+      <p>
+        we all know the feeling. You want to tell a great story, but you're stuck fighting with
+        broken commands, messy configs, and the fear of a live failure. It's not just
+        frustrating—it's a waste of your engineering time.
+      </p>
+      <div class="grid-3">
+        <div class="card">
+          <h3>Maintenance nightmares</h3>
+          <p>You update a feature, and suddenly your old demo script falls apart.</p>
+        </div>
+        <div class="card !mt-0">
+          <h3>The narrative gap</h3>
+          <p>Great code doesn't always equal a great story. Finding the right flow is hard.</p>
+        </div>
+        <div class="card">
+          <h3>Demo anxiety</h3>
+          <p>The pressure of "Will this actually work when I'm on stage?" is real.</p>
+        </div>
+        <div class="card">
+          <h3>Scattered notes</h3>
+          <p>
+            No templates, no structure. Every time you present, it feels like starting from scratch.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Fine-tuning</h3>
+          <p>
+            Hours spent tweaking code steps, commands, highlights, and practicing your delivery.
+          </p>
+        </div>
+        <div class="card">
+          <h3>The trust cost</h3>
+          <p>A failed demo isn't just awkward. It damages trust and credibility.</p>
+        </div>
+      </div>
+    </section>
+
+    {/* Solution Section */}
+    <section class="solution">
+      <div class="solution-content">
+        <h2>The Solution: Demo Time as a Service</h2>
+        <p>
+          As the creator of Demo Time, Elio knows exactly how to leverage its power. He'll turn your
+          project into a seamless, presentation-ready experience.
+        </p>
+        <ol class="process-list">
+          <li>
+            <strong>Share your repository</strong> and the story you want to tell.
+          </li>
+          <li>
+            <strong>We analyze your commits</strong> and generate a Demo Time script.
+          </li>
+          <li>
+            <strong>You present with confidence</strong>: no typos, no broken commands, no stress.
+          </li>
+        </ol>
+        <p>
+          This isn't a video recording. It's a living, code-based demo that evolves with your
+          project. That way, you do not have to re-record your demos with every update.
+        </p>
+      </div>
+    </section>
+
+    {/* Authority / Trust */}
+    <section class="authority">
+      <div class="authority-content">
+        <h2>Why work with me?</h2>
+        <p>
+          <strong>Elio Struyf</strong> is a Solutions Architect, Microsoft MVP, GitHub Star, and Google
+          Developer Expert. He has built tools like Front Matter CMS and Demo Time to help developers
+          be more productive. He knows the friction points of technical presentations because he faces
+          them too. Let him use that experience to help you shine.
+        </p>
+      </div>
+    </section>
+
+    {/* Audience Section */}
+    <section class="audience">
+      <h2>Who is this for?</h2>
+      <p>This service is for teams who need to deliver high-quality technical content at scale.</p>
+      <ul class="audience-list">
+        <li><strong>Training Platforms</strong> building hands-on developer labs.</li>
+        <li><strong>DevRel Teams</strong> showcasing new SDKs and tools.</li>
+        <li><strong>Conference Speakers</strong> who need rock-solid workshop materials.</li>
+        <li><strong>Corporate Trainers</strong> teaching internal frameworks.</li>
+      </ul>
+    </section>
+
+    {/* Pricing Section */}
+    <section class="pricing">
+      <div class="pricing-card featured">
+        <div class="pricing-header">
+          <h3>Demo Creation</h3>
+          <div class="price">€ 500 <span class="period">/ demo</span></div>
+          <p class="badge">Early Bird (First 10 customers)</p>
+        </div>
+        <ul class="features-list">
+          <li>One demo/presentation (up to 15 mins)</li>
+          <li>Based on 1 git repository</li>
+          <li>Delivered as a Demo Time script</li>
+          <li>2 revision rounds included</li>
+          <li>30-minute onboarding session</li>
+        </ul>
+        <p class="extra-info">Standard turnaround: 5-7 business days.</p>
+      </div>
+
+      <div class="pricing-card !mt-0">
+        <div class="pricing-header">
+          <h3>Expert Coaching</h3>
+          <div class="price">€ 200 <span class="period">/ hour</span></div>
+          <p class="badge" style="visibility: hidden;">Limited Availability</p>
+        </div>
+        <ul class="features-list">
+          <li>Review and audit existing demos</li>
+          <li>Rewrite complex sections for clarity</li>
+          <li>Improve flow, timing, and impact</li>
+          <li>Structure narrative for your audience</li>
+          <li>Create reusable assets</li>
+        </ul>
+      </div>
+    </section>
+
+    {/* Requirements Section */}
+    <section class="requirements">
+      <h2>Requirements</h2>
+      <p>
+        To ensure we can create the best demo for you, your repository should meet these criteria:
+      </p>
+      <ul class="req-list">
+        <li>Repository must be Git-based.</li>
+        <li>Meaningful commit messages (guidelines provided).</li>
+        <li>Each step should be defined with a structured commit message.</li>
+        <li>Access provided (public or collaborator).</li>
+        <li>1-paragraph description of the story.</li>
+      </ul>
+      <p class="note">
+        <em>Don't meet these? We can provide guidance or coaching to help you prepare.</em>
+      </p>
+    </section>
+
+    {/* FAQ Section */}
+    <section class="faq">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-grid">
+        <div>
+          <strong>Do I need to be a Demo Time user already?</strong>
+          <p>No. We'll provide everything you need to get started, including onboarding.</p>
+        </div>
+        <div>
+          <strong>What if my git history is messy?</strong>
+          <p>We provide guidelines. If you need help cleaning it up, we offer coaching.</p>
+        </div>
+        <div>
+          <strong>Can you demo third-party products?</strong>
+          <p>
+            Not yet. This service is for code-based demos in VS Code where you control the repo.
+          </p>
+        </div>
+        <div>
+          <strong>What format do I receive?</strong>
+          <p>You'll receive a Demo Time script file (YAML), fully configured and ready to use.</p>
+        </div>
+      </div>
+    </section>
+
+    {/* CTA Section */}
+    <section id="get-started">
+      <h2>Ready to reclaim your time?</h2>
+      <p>We're launching with a limited pilot program. Lock in the € 500 early bird price.</p>
+
+      <form
+        id="interestForm"
+        class="interest-form"
+        action="https://formbold.com/s/obkNp"
+        method="POST"
+      >
+        <input type="hidden" name="apiKey" value="sf_2g9h855e668na16n94fl0lh4" />
+        <input type="hidden" name="subject" value="Demo Time Service Interest" />
+        <input type="hidden" name="replyTo" value="@replyEmail" />
+        <input type="text" name="honeypot" style="display: none" tabindex="-1" autocomplete="off" />
+
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <div class="input-group">
+            <input type="text" id="name" name="name" placeholder="John Doe" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="input-group">
+            <input type="email" id="email" name="email" placeholder="john@example.com" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="organization">Organization/Company</label>
+          <div class="input-group">
+            <input
+              type="text"
+              id="organization"
+              name="organization"
+              placeholder="Demo Time, etc."
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="role">Your Role</label>
+          <div class="input-group">
+            <select id="role" name="role" required>
+              <option value="">Select your role...</option>
+              <option value="training-manager">Training Manager</option>
+              <option value="devrel">Developer Relations</option>
+              <option value="content-creator">Content Creator</option>
+              <option value="conference-organizer">Conference Organizer</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Which services are you interested in?</label>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" name="$services" value="creation" checked />
+              Demo creation service (€ 500)
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="$services" value="coaching" />
+              Expert coaching (€ 200/hour)
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="demoDescription"
+            >What types of demos does your organization create? (1-2 sentences)</label
+          >
+          <div class="input-group">
+            <textarea
+              id="demoDescription"
+              name="demoDescription"
+              rows="2"
+              placeholder="e.g., Hands-on labs for developer training, product feature demonstrations, conference workshops"
+              required></textarea>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="frequency">How many demos does your team create per quarter?</label>
+          <div class="input-group">
+            <select id="frequency" name="frequency" required>
+              <option value="">Select quantity...</option>
+              <option value="1-5">1-5 demos</option>
+              <option value="6-10">6-10 demos</option>
+              <option value="11-20">11-20 demos</option>
+              <option value="20+">20+ demos</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="challenge">What's your biggest challenge with demo creation right now?</label>
+          <div class="input-group">
+            <textarea
+              id="challenge"
+              name="challenge"
+              rows="2"
+              placeholder="e.g., Takes too long to create, demos break during live sessions, hard to maintain when product updates"
+              required></textarea>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="willingness">Is € 500 per demo within your budget?</label>
+          <div class="input-group">
+            <select id="willingness" name="willingness" required>
+              <option value="">Select answer...</option>
+              <option value="yes">Yes, this is reasonable</option>
+              <option value="need-approval">Yes, but need approval</option>
+              <option value="multiple">Yes, interested in ordering multiple demos</option>
+              <option value="too-high">This seems too high</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="message">Additional questions or comments (Optional)</label>
+          <div class="input-group">
+            <textarea
+              id="message"
+              name="message"
+              rows="3"
+              placeholder="Any questions or specific requirements?"></textarea>
+          </div>
+        </div>
+
+        <div class="g-recaptcha" data-sitekey="6Lct-gkrAAAAANXSF_L-hUZUyP-pF4oWzyO0M4jL"></div>
+
+        <script src="https://www.google.com/recaptcha/api.js" is:inline></script>
+
+        <button id="submitButton" type="submit" class="button primary full-width">
+          Join the Waitlist
+        </button>
+      </form>
+
+      <div class="contact-info">
+        <p>
+          <strong>Questions?</strong> Reach out at <a href="mailto:elio@struyfconsulting.be"
+            >elio@struyfconsulting.be</a
+          >
+        </p>
+        <p>Let's make demos less stressful and more impactful—together!</p>
+      </div>
+    </section>
+  </div>
+</StarlightPage>
+
+<style>
+  :root {
+    --sl-content-width: 50rem;
+
+    .main-pane .content-panel:first-child {
+      display: none !important;
+    }
+  }
+
+  .service-page {
+    max-width: 50rem;
+    margin: 0 auto;
+  }
+
+  section {
+    margin-bottom: 3rem;
+  }
+
+  .hero {
+    margin-bottom: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    color: var(--sl-color-accent-high);
+    margin: 0;
+  }
+
+  .hero h1 {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    margin: 0;
+  }
+
+  .hero-sub {
+    margin: 0;
+    color: var(--sl-color-gray-2);
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+
+  .hero-cta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .subtext {
+    color: var(--sl-color-gray-3);
+    font-size: 0.95rem;
+  }
+
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 1.5rem;
+  }
+
+  .pillars div {
+    padding: 1.25rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.75rem;
+    background: var(--sl-color-gray-6);
+    margin-top: 0 !important;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    gap: 1.5rem;
+  }
+
+  .card {
+    padding: 1.25rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.75rem;
+    background: var(--sl-color-gray-6);
+  }
+
+  .card h3 {
+    margin-top: 0;
+    font-size: 1.1rem;
+    color: var(--sl-color-white);
+  }
+
+  .card p {
+    margin-bottom: 0;
+    font-size: 0.95rem;
+    color: var(--sl-color-gray-2);
+  }
+
+  .pricing {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    gap: 2rem;
+  }
+
+  .pricing-card {
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.75rem;
+    padding: 2rem;
+    background: var(--sl-color-gray-6);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pricing-card.featured {
+    border-color: var(--sl-color-accent);
+    background: var(--sl-color-gray-6);
+    position: relative;
+  }
+
+  .pricing-header {
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  .pricing-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+
+  .price {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0.5rem 0;
+    color: var(--sl-color-white);
+  }
+
+  .period {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--sl-color-gray-3);
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--sl-color-accent-low);
+    color: var(--sl-color-accent-high);
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin: 0.5rem 0 0;
+  }
+
+  .features-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1;
+  }
+
+  .features-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--sl-color-gray-5);
+    color: var(--sl-color-gray-2);
+  }
+
+  .features-list li:last-child {
+    border-bottom: none;
+  }
+
+  .extra-info {
+    margin-top: 1.5rem;
+    font-size: 0.875rem;
+    color: var(--sl-color-gray-3);
+    text-align: center;
+  }
+
+  .audience-list,
+  .req-list {
+    list-style: disc;
+    padding-left: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .audience-list li,
+  .req-list li {
+    margin-bottom: 0.5rem;
+  }
+
+  .faq-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    gap: 2rem;
+  }
+
+  .faq-grid strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--sl-color-white);
+  }
+
+  .faq-grid p {
+    margin: 0;
+    color: var(--sl-color-gray-2);
+    font-size: 0.95rem;
+  }
+
+  .process-list {
+    padding-left: 1.5rem;
+  }
+
+  .process-list li {
+    margin-bottom: 0.75rem;
+  }
+
+  /* Form */
+  .interest-form {
+    margin: 2rem auto;
+    padding: 2rem;
+    background: var(--sl-color-gray-6);
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.75rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  input[type='text'],
+  input[type='email'],
+  textarea,
+  select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--sl-color-gray-4);
+    border-radius: 0.375rem;
+    background: var(--sl-color-black);
+    color: var(--sl-color-white);
+    font-size: 1rem;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--sl-color-accent);
+    box-shadow: 0 0 0 2px var(--sl-color-accent-low);
+  }
+
+  select {
+    cursor: pointer;
+  }
+
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: normal;
+    cursor: pointer;
+  }
+
+  .checkbox-label input {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .button {
+    display: inline-block;
+    padding: 0.875rem 1.75rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .button.primary {
+    background: rgb(255 212 59 / var(--tw-bg-opacity, 1)) !important;
+    border: 1px solid var(--sl-color-text-accent);
+    color: #000;
+  }
+
+  .button.primary:hover {
+    color: #000;
+    background-color: rgb(255 212 59 / 0.8) !important;
+  }
+
+  .button.full-width {
+    width: 100%;
+  }
+
+  .contact-info {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .contact-info p {
+    margin-bottom: 0.5rem;
+  }
+
+  .contact-info a {
+    color: var(--sl-color-accent-high);
+    text-decoration: none;
+  }
+
+  .contact-info a:hover {
+    text-decoration: underline;
+  }
+
+  .g-recaptcha {
+    div,
+    iframe {
+      height: 78px !important;
+    }
+  }
+</style>

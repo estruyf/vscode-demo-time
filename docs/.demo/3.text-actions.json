@@ -45,8 +45,7 @@
         {
           "action": "highlight",
           "path": "src/content/docs/actions/text.mdx",
-          "position": "3",
-          "highlightWholeLine": true
+          "position": "3"
         }
       ]
     },
@@ -175,7 +174,7 @@
           "path": "temp/file-action.md",
           "position": "4",
           "contentPath": ".demo/content/file-insert.md",
-          "insertTypingMode": "instant",
+          "insertTypingMode": "line-by-line",
           "insertTypingSpeed": 50
         }
       ]
