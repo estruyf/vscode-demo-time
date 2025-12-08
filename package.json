@@ -54,7 +54,7 @@
     "url": "https://github.com/sponsors/estruyf"
   },
   "author": "Elio Struyf <elio@struyfconsulting.be> (https://www.eliostruyf.com)",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "workspaces": [
     "apps/*",
     "packages/*",

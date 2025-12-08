@@ -73,6 +73,29 @@
       ]
     },
     {
+      "id": "demo-min7a6pq-7v7v",
+      "title": "Cancel chat",
+      "steps": [
+        {
+          "action": "newCopilotChat"
+        },
+        {
+          "action": "typeText",
+          "content": "Can you tell me a joke about Demo Time"
+        },
+        {
+          "action": "pressEnter"
+        },
+        {
+          "action": "waitForTimeout",
+          "timeout": 2000
+        },
+        {
+          "action": "cancelCopilotChat"
+        }
+      ]
+    },
+    {
       "title": "Close GitHub Copilot",
       "steps": [
         {

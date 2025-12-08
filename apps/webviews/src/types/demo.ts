@@ -105,15 +105,18 @@ export const CATEGORIZED_ACTIONS: {
       Action.AgentChat,
       Action.CustomChat,
       Action.CloseChat,
+      Action.CancelChat,
     ],
   },
   {
     category: 'Interaction actions',
     options: [
       Action.Highlight,
+      Action.Selection,
       Action.Unselect,
       Action.PositionCursor,
       Action.CopyToClipboard,
+      Action.CopyFromSelection,
       Action.PasteFromClipboard,
       Action.PressEnter,
       Action.PressTab,
@@ -129,6 +132,15 @@ export const CATEGORIZED_ACTIONS: {
   {
     category: 'Run Demo actions',
     options: [Action.RunDemoById],
+  },
+  {
+    category: 'macOS actions',
+    options: [
+      Action.EnableFocusMode,
+      Action.DisableFocusMode,
+      Action.HideMenubar,
+      Action.ShowMenubar,
+    ],
   },
   {
     category: 'EngageTime actions',

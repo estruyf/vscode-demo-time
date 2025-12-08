@@ -29,7 +29,10 @@ export class SlideParser {
 
     const { frontmatter: docFrontMatter, remainingContent } =
       FrontMatterParser.extractFrontmatter(markdown);
-    const processedMarkdown = remainingContent || markdown;
+    // Use remainingContent if frontmatter was extracted (even if remainingContent is empty string),
+    // otherwise fall back to original markdown (for cases where frontmatter regex didn't match)
+    const hasDocFrontmatter = Object.keys(docFrontMatter).length > 0;
+    const processedMarkdown = hasDocFrontmatter ? remainingContent : markdown;
 
     const lines = processedMarkdown.split(/\r?\n/);
 
@@ -40,7 +43,6 @@ export class SlideParser {
 
     // If document frontmatter exists and remaining content starts with another slide delimiter,
     // create an initial slide block for the document frontmatter
-    const hasDocFrontmatter = Object.keys(docFrontMatter).length > 0;
     const remainingStartsWithSlide = processedMarkdown.trimStart().startsWith('---');
 
     if (hasDocFrontmatter && remainingStartsWithSlide) {
@@ -114,11 +116,16 @@ export class SlideParser {
         FrontMatterParser.extractFrontmatter(trimmedBlock);
       const slideContent = content ?? trimmedBlock;
 
-      if (
-        slideContent.trim() === '' &&
-        !mergedOptions.includeEmpty &&
-        (!frontmatter || Object.keys(frontmatter).length === 0)
-      ) {
+      // Skip empty slides unless:
+      // - includeEmpty option is true
+      // - the block has its own frontmatter
+      // - this is the first slide and we have document-level frontmatter
+      const isFirstSlide = slides.length === 0;
+      const hasBlockFrontmatter = frontmatter && Object.keys(frontmatter).length > 0;
+      const shouldIncludeEmptySlide =
+        mergedOptions.includeEmpty || hasBlockFrontmatter || (isFirstSlide && hasDocFrontmatter);
+
+      if (slideContent.trim() === '' && !shouldIncludeEmptySlide) {
         continue;
       }
 

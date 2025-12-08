@@ -16,6 +16,7 @@ export const getActionIcon = (action: Action): string => {
     [Action.OpenSlide]: 'presentation',
     [Action.Insert]: 'plus',
     [Action.Highlight]: 'highlighter',
+    [Action.Selection]: 'mouse-pointer-click',
     [Action.Replace]: 'replace',
     [Action.Unselect]: 'mouse-pointer',
     [Action.Delete]: 'minus',
@@ -49,7 +50,9 @@ export const getActionIcon = (action: Action): string => {
     [Action.AgentChat]: 'bot',
     [Action.CustomChat]: 'bot',
     [Action.CloseChat]: 'message-circle-x',
+    [Action.CancelChat]: 'circle-stop',
     [Action.CopyToClipboard]: 'clipboard',
+    [Action.CopyFromSelection]: 'clipboard',
     [Action.PasteFromClipboard]: 'clipboard-paste',
     [Action.TypeText]: 'type',
     [Action.PressEnter]: 'corner-down-left',
@@ -64,6 +67,10 @@ export const getActionIcon = (action: Action): string => {
     [Action.RunDemoById]: 'play-circle',
     [Action.BackupSettings]: 'settings-gear',
     [Action.RestoreSettings]: 'settings-gear',
+    [Action.EnableFocusMode]: 'bell-off',
+    [Action.DisableFocusMode]: 'bell',
+    [Action.HideMenubar]: 'panel-top-close',
+    [Action.ShowMenubar]: 'panel-top-open',
     [Action.StartEngageTimeSession]: 'question',
     [Action.StartEngageTimePoll]: 'question',
     [Action.CloseEngageTimeSession]: 'question',
@@ -101,6 +108,7 @@ export const getActionColor = (action: Action): string => {
     action.includes('insert') ||
     action.includes('replace') ||
     action.includes('highlight') ||
+    action.includes('selection') ||
     action.includes('format')
   ) {
     return colorMap.edit;
@@ -149,6 +157,7 @@ export const getRequiredFields = (action: Action): string[] => {
     [Action.OpenSlide]: ['path'],
     [Action.Insert]: ['path'],
     [Action.Highlight]: ['path'],
+    [Action.Selection]: ['path'],
     [Action.Replace]: ['path'],
     [Action.Unselect]: [],
     [Action.Delete]: ['path'],
@@ -182,6 +191,7 @@ export const getRequiredFields = (action: Action): string[] => {
     [Action.AgentChat]: [],
     [Action.CustomChat]: ['mode'],
     [Action.CloseChat]: [],
+    [Action.CancelChat]: [],
     [Action.CopyToClipboard]: [],
     [Action.PasteFromClipboard]: [],
     [Action.TypeText]: ['content'],
@@ -197,6 +207,10 @@ export const getRequiredFields = (action: Action): string[] => {
     [Action.RunDemoById]: ['id'],
     [Action.BackupSettings]: [],
     [Action.RestoreSettings]: [],
+    [Action.EnableFocusMode]: [],
+    [Action.DisableFocusMode]: [],
+    [Action.HideMenubar]: [],
+    [Action.ShowMenubar]: [],
     [Action.StartEngageTimeSession]: [],
     [Action.StartEngageTimePoll]: ['pollId'],
     [Action.CloseEngageTimeSession]: [],
@@ -240,6 +254,7 @@ export const getFieldsForAction = (action: Action): string[] => {
       'highlightWholeLine',
       'zoom',
     ],
+    [Action.Selection]: ['path', 'position', 'startPlaceholder', 'endPlaceholder', 'zoom'],
     [Action.Replace]: [
       'path',
       'content',
@@ -288,6 +303,7 @@ export const getFieldsForAction = (action: Action): string[] => {
     [Action.AgentChat]: ['message'],
     [Action.CustomChat]: ['mode', 'message'],
     [Action.CloseChat]: [],
+    [Action.CancelChat]: [],
     [Action.CopyToClipboard]: ['content', 'contentPath'],
     [Action.PasteFromClipboard]: [],
     [Action.TypeText]: ['content', 'insertTypingSpeed'],
@@ -303,6 +319,10 @@ export const getFieldsForAction = (action: Action): string[] => {
     [Action.RunDemoById]: ['id'],
     [Action.BackupSettings]: [],
     [Action.RestoreSettings]: [],
+    [Action.EnableFocusMode]: [],
+    [Action.DisableFocusMode]: [],
+    [Action.HideMenubar]: [],
+    [Action.ShowMenubar]: [],
     [Action.StartEngageTimeSession]: [],
     [Action.StartEngageTimePoll]: ['pollId'],
     [Action.CloseEngageTimeSession]: [],

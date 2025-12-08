@@ -51,6 +51,7 @@ demos:
       - action: insert
         path: sample.txt
         startPlaceholder: "// Start Insert"
+        endPlaceholder: "// End Insert"
         content: Overwrite the start placeholder
   - title: Replace at line number
     steps:

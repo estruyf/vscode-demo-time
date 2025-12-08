@@ -28,7 +28,7 @@ const DemoGridCard: React.FC<DemoGridCardProps> = ({
 
   return (
     <Card className={`h-full cursor-pointer transition-all duration-200 hover:shadow-lg border-l-4 border-l-blue-500 dark:hover:shadow-xl ${demo.disabled ? 'opacity-60 grayscale' : ''}`} padding="sm">
-      <button className="h-full flex flex-col" onClick={onClick} aria-label={`Trigger ${demo.title}`} aria-disabled={demo.disabled}>
+      <button className="h-full flex flex-col w-full" onClick={onClick} aria-label={`Trigger ${demo.title}`} aria-disabled={demo.disabled}>
         {/* Header with type indicator and number */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center space-x-2">
@@ -42,6 +42,7 @@ const DemoGridCard: React.FC<DemoGridCardProps> = ({
               </span>
             </div>
           </div>
+
           <button
             onClick={(e) => {
               e.stopPropagation();

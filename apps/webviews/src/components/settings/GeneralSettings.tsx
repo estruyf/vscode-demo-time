@@ -1,6 +1,6 @@
 import { Card } from "../ui/Card";
 import { Label } from "../ui/Label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/EnhancedSelect";
+import { EnhancedSelect, EnhancedSelectContent, EnhancedSelectItem, EnhancedSelectTrigger, EnhancedSelectValue } from "../ui/EnhancedSelect";
 import { IDemoTimeSettings } from "@demotime/common";
 import { useState } from "react";
 import { Icon } from "vscrui";
@@ -21,18 +21,18 @@ export default function GeneralSettings({ settings, updateSetting }: GeneralSett
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="fileType">Default File Type</Label>
-            <Select
+            <EnhancedSelect
               value={settings.defaultFileType}
               onValueChange={(value: string) => updateSetting("defaultFileType", value as string)}
             >
-              <SelectTrigger>
-                <SelectValue value={settings.defaultFileType.toUpperCase()} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="json">JSON</SelectItem>
-                <SelectItem value="yaml">YAML</SelectItem>
-              </SelectContent>
-            </Select>
+              <EnhancedSelectTrigger>
+                <EnhancedSelectValue value={settings.defaultFileType.toUpperCase()} />
+              </EnhancedSelectTrigger>
+              <EnhancedSelectContent>
+                <EnhancedSelectItem value="json">JSON</EnhancedSelectItem>
+                <EnhancedSelectItem value="yaml">YAML</EnhancedSelectItem>
+              </EnhancedSelectContent>
+            </EnhancedSelect>
             <p className="text-sm text-gray-600 dark:text-gray-300">
               Default format for new demo files - this is the most important setting
             </p>

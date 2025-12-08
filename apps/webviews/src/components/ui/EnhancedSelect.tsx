@@ -1,32 +1,32 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
 
-interface SelectProps {
+interface EnhancedSelectProps {
   value: string;
   onValueChange: (value: string) => void;
   children: React.ReactNode;
   disabled?: boolean;
 }
 
-interface SelectTriggerProps {
+interface EnhancedSelectTriggerProps {
   children: React.ReactNode;
   className?: string;
 }
 
-interface SelectContentProps {
+interface EnhancedSelectContentProps {
   children: React.ReactNode;
 }
 
-interface SelectItemProps {
+interface EnhancedSelectItemProps {
   value: string;
   children: React.ReactNode;
 }
 
-interface SelectValueProps {
+interface EnhancedSelectValueProps {
   placeholder?: string;
 }
 
-const SelectContext = React.createContext<{
+const EnhancedSelectContext = React.createContext<{
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   selectedValue: string;
@@ -34,7 +34,7 @@ const SelectContext = React.createContext<{
   disabled: boolean;
 } | null>(null);
 
-export const Select: React.FC<SelectProps> = ({
+export const EnhancedSelect: React.FC<EnhancedSelectProps> = ({
   value,
   onValueChange,
   children,
@@ -60,7 +60,7 @@ export const Select: React.FC<SelectProps> = ({
   };
 
   return (
-    <SelectContext.Provider value={{
+    <EnhancedSelectContext.Provider value={{
       isOpen,
       setIsOpen,
       selectedValue: value,
@@ -70,16 +70,16 @@ export const Select: React.FC<SelectProps> = ({
       <div className="relative" ref={dropdownRef}>
         {children}
       </div>
-    </SelectContext.Provider>
+    </EnhancedSelectContext.Provider>
   );
 };
 
-export const SelectTrigger: React.FC<SelectTriggerProps> = ({
+export const EnhancedSelectTrigger: React.FC<EnhancedSelectTriggerProps> = ({
   children,
   className = ''
 }) => {
-  const context = React.useContext(SelectContext);
-  if (!context) throw new Error('SelectTrigger must be used within Select');
+  const context = React.useContext(EnhancedSelectContext);
+  if (!context) { throw new Error('EnhancedSelectTrigger must be used within EnhancedSelect'); }
 
   const { isOpen, setIsOpen, disabled } = context;
 
@@ -100,15 +100,14 @@ export const SelectTrigger: React.FC<SelectTriggerProps> = ({
   );
 };
 
-export const SelectContent: React.FC<SelectContentProps> = ({
+export const EnhancedSelectContent: React.FC<EnhancedSelectContentProps> = ({
   children
 }) => {
-  const context = React.useContext(SelectContext);
-  if (!context) throw new Error('SelectContent must be used within Select');
-
+  const context = React.useContext(EnhancedSelectContext);
+  if (!context) { throw new Error('EnhancedSelectContent must be used within EnhancedSelect'); }
   const { isOpen } = context;
 
-  if (!isOpen) return null;
+  if (!isOpen) { return null; }
 
   return (
     <div className="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-y-auto">
@@ -117,12 +116,12 @@ export const SelectContent: React.FC<SelectContentProps> = ({
   );
 };
 
-export const SelectItem: React.FC<SelectItemProps> = ({
+export const EnhancedSelectItem: React.FC<EnhancedSelectItemProps> = ({
   value,
   children
 }) => {
-  const context = React.useContext(SelectContext);
-  if (!context) throw new Error('SelectItem must be used within Select');
+  const context = React.useContext(EnhancedSelectContext);
+  if (!context) { throw new Error('EnhancedSelectItem must be used within EnhancedSelect'); }
 
   const { selectedValue, onSelect } = context;
   const isSelected = value === selectedValue;
@@ -142,7 +141,7 @@ export const SelectItem: React.FC<SelectItemProps> = ({
   );
 };
 
-export const SelectValue: React.FC<SelectValueProps & { value?: string }> = ({
+export const EnhancedSelectValue: React.FC<EnhancedSelectValueProps & { value?: string }> = ({
   placeholder,
   value
 }) => {

@@ -456,7 +456,13 @@ export class DemoCreator {
     steps.splice(stepIndex, 1);
     steps.splice(direction === 'up' ? stepIndex - 1 : stepIndex + 1, 0, stepToMove);
 
-    await DemoFileProvider.saveFile(item.demoFilePath, JSON.stringify(demoFile, null, 2));
+    const isYaml = item.demoFilePath.endsWith('.yaml') || item.demoFilePath.endsWith('.yml');
+    const updatedContent = DemoFileProvider.formatContent(isYaml ? 'yaml' : 'json', {
+      ...demoFile,
+      demos: steps,
+    });
+
+    await DemoFileProvider.saveFile(item.demoFilePath, updatedContent);
 
     // Trigger a refresh of the treeview
     DemoPanel.update();

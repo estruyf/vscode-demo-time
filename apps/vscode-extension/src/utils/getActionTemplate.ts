@@ -113,6 +113,14 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  if (action === Action.Selection) {
+    return {
+      action: Action.Selection,
+      path: '',
+      position: '',
+    };
+  }
+
   if (action === Action.PositionCursor) {
     return {
       action: Action.PositionCursor,
@@ -379,6 +387,11 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
       action: Action.CloseChat,
     };
   }
+  if (action === Action.CancelChat) {
+    return {
+      action: Action.CancelChat,
+    };
+  }
 
   // Interaction actions
   if (action === Action.TypeText) {
@@ -392,6 +405,12 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     return {
       action: Action.CopyToClipboard,
       content: '',
+    };
+  }
+
+  if (action === Action.CopyFromSelection) {
+    return {
+      action: Action.CopyFromSelection,
     };
   }
 
@@ -460,6 +479,31 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     return {
       action: Action.RunDemoById,
       id: '',
+    };
+  }
+
+  // macOS specific actions
+  if (action === Action.EnableFocusMode) {
+    return {
+      action: Action.EnableFocusMode,
+    };
+  }
+
+  if (action === Action.DisableFocusMode) {
+    return {
+      action: Action.DisableFocusMode,
+    };
+  }
+
+  if (action === Action.HideMenubar) {
+    return {
+      action: Action.HideMenubar,
+    };
+  }
+
+  if (action === Action.ShowMenubar) {
+    return {
+      action: Action.ShowMenubar,
     };
   }
 

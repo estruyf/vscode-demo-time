@@ -1,0 +1,187 @@
+---
+title: macOS actions
+description: Actions for controlling macOS-specific features in Demo Time
+lastmod: 2025-08-02T16:00:00.000Z
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+macOS actions allow you to control macOS-specific features during your presentations. These actions are only available on macOS and include Focus Mode (Do Not Disturb) controls, menu bar visibility, and custom AppleScript execution.
+
+<Aside type="caution" title="macOS Only">
+  These actions are only available on macOS. On other platforms, they will show a warning and have no effect.
+</Aside>
+
+## Enable Focus Mode
+
+Enable Focus Mode (Do Not Disturb) on macOS. This action requires a Shortcuts automation named "Enable Do Not Disturb" to be set up on your Mac.
+
+<Tabs syncKey="macos-focus-on">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "macos.enableFocusMode"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: macos.enableFocusMode
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="tip" title="Setting up Shortcuts">
+  You need to create a Shortcut automation named "Enable Do Not Disturb" in the Shortcuts app on your Mac. This shortcut should toggle Focus Mode on.
+</Aside>
+
+## Disable Focus Mode
+
+Disable Focus Mode (Do Not Disturb) on macOS. This action requires a Shortcuts automation named "Disable Do Not Disturb" to be set up on your Mac.
+
+<Tabs syncKey="macos-focus-off">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "macos.disableFocusMode"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: macos.disableFocusMode
+```
+
+</TabItem>
+</Tabs>
+
+## Hide Menu Bar
+
+Hide the macOS menu bar by enabling auto-hide.
+
+<Tabs syncKey="macos-hide-menubar">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "macos.hideMenubar"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: macos.hideMenubar
+```
+
+</TabItem>
+</Tabs>
+
+## Show Menu Bar
+
+Show the macOS menu bar by disabling auto-hide.
+
+<Tabs syncKey="macos-show-menubar">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "macos.showMenubar"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: macos.showMenubar
+```
+
+</TabItem>
+</Tabs>
+
+## Presentation Mode Example
+
+Here's an example of how to set up your Mac for presentation mode at the start of a demo:
+
+<Tabs syncKey="macos-presentation-start">
+<TabItem label="JSON">
+
+```json
+{
+  "title": "Start Presentation Mode",
+  "description": "Set up Mac for presenting",
+  "steps": [
+    {
+      "action": "macos.enableFocusMode"
+    },
+    {
+      "action": "macos.hideMenubar"
+    },
+    {
+      "action": "setPresentationView"
+    }
+  ]
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+title: Start Presentation Mode
+description: Set up Mac for presenting
+steps:
+  - action: macos.enableFocusMode
+  - action: macos.hideMenubar
+  - action: setPresentationView
+```
+
+</TabItem>
+</Tabs>
+
+And to restore your Mac after the presentation:
+
+<Tabs syncKey="macos-presentation-end">
+<TabItem label="JSON">
+
+```json
+{
+  "title": "End Presentation Mode",
+  "description": "Restore Mac settings",
+  "steps": [
+    {
+      "action": "macos.disableFocusMode"
+    },
+    {
+      "action": "macos.showMenubar"
+    },
+    {
+      "action": "unsetPresentationView"
+    }
+  ]
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+title: End Presentation Mode
+description: Restore Mac settings
+steps:
+  - action: macos.disableFocusMode
+  - action: macos.showMenubar
+  - action: unsetPresentationView
+```
+
+</TabItem>
+</Tabs>

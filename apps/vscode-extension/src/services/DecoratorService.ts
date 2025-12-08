@@ -2,6 +2,7 @@ import {
   commands,
   DecorationRenderOptions,
   Range,
+  Selection,
   TextEditor,
   TextEditorDecorationType,
   TextEditorSelectionChangeKind,
@@ -185,11 +186,14 @@ export class DecoratorService {
     textEditor.setDecorations(DecoratorService.startBlockDecorator, []);
     textEditor.setDecorations(DecoratorService.betweenBlockDecorator, []);
     textEditor.setDecorations(DecoratorService.endBlockDecorator, []);
-
     if (DecoratorService.isZoomed) {
       DecoratorService.isZoomed = false;
       commands.executeCommand('editor.action.fontZoomReset');
     }
+
+    // Reset the cursor position to avoid selecting text
+    const cursorPosition = textEditor.selection.active;
+    textEditor.selection = new Selection(cursorPosition, cursorPosition);
   }
 
   private static getGenericStyles(): DecorationRenderOptions {

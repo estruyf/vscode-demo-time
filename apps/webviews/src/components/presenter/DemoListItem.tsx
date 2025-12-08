@@ -16,31 +16,68 @@ const DemoListItem = React.forwardRef<HTMLLIElement, DemoListItemProps>(({
   onOpenNotes,
 }, ref) => {
   return (
-    <li ref={ref} className={`flex items-center gap-2 ${isActive ? 'bg-(--vscode-list-activeSelectionBackground)' : ''}`}>
+    <li
+      ref={ref}
+      className={`
+        flex items-center gap-2 px-4 py-2.5 transition-colors duration-150
+        ${isActive
+          ? 'bg-(--vscode-list-activeSelectionBackground) text-(--vscode-list-activeSelectionForeground)'
+          : 'hover:bg-(--vscode-list-hoverBackground)'
+        }
+      `}
+    >
       <button
-        className="w-full flex items-center p-1 space-x-2 hover:text-(--vscode-list-hoverForeground) hover:bg-(--vscode-list-hoverBackground) rounded-[2px]"
+        className="flex-1 flex items-center gap-3 text-left transition-colors duration-150"
         onClick={onRun}
       >
-        {demo.executed ? (
-          <Icon
-            name={demo.icons?.end as never || 'pass-filled'}
-            className={demo.executed ? 'text-(--vscode-charts-green)!' : ''}
-          />
-        ) : (
-          <Icon
-            name={demo.icons?.start as never || 'run'}
-            className={demo.executed ? 'text-(--vscode-charts-green)!' : ''}
-          />
-        )}
-        <span>{demo.title}</span>
+        <span className={`
+          flex-shrink-0 w-5 h-5 flex items-center justify-center rounded-full
+          ${demo.executed
+            ? 'text-(--vscode-charts-green)'
+            : isActive
+              ? 'text-(--vscode-list-activeSelectionForeground)'
+              : 'text-(--vscode-descriptionForeground)'
+          }
+        `}>
+          {demo.executed ? (
+            <Icon
+              name={demo.icons?.end as never || 'pass-filled'}
+              className="text-inherit!"
+            />
+          ) : (
+            <Icon
+              name={demo.icons?.start as never || 'run'}
+              className="text-inherit!"
+            />
+          )}
+        </span>
+        <span className={`
+          font-medium truncate
+          ${isActive ? 'text-inherit' : 'text-(--vscode-foreground)'}
+        `}>
+          {demo.title}
+        </span>
       </button>
 
       {demo.notes?.path && (
         <button
-          className="flex items-center p-1 space-x-2 hover:text-(--vscode-list-hoverForeground) hover:bg-(--vscode-list-hoverBackground) rounded-[2px]"
+          className={`
+            flex-shrink-0 p-1.5 rounded transition-colors duration-150
+            ${isActive
+              ? 'hover:bg-(--vscode-list-activeSelectionBackground)/80'
+              : 'hover:bg-(--vscode-list-hoverBackground)'
+            }
+          `}
           onClick={onOpenNotes}
+          title="Open notes"
         >
-          <Icon name="book" />
+          <Icon
+            name="book"
+            className={`
+              w-4 h-4
+              ${isActive ? 'text-inherit!' : 'text-(--vscode-descriptionForeground)!'}
+            `}
+          />
         </button>
       )}
     </li>
