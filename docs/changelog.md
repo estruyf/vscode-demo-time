@@ -1,13 +1,95 @@
-## [1.10.0] - 2025-09-xx
+## [1.11.0] - 2025-11-04
+
+- [#262](https://github.com/estruyf/vscode-demo-time/issues/262): Added a recent files dropdown to
+  the path input component in the config editor
+- [#265](https://github.com/estruyf/vscode-demo-time/issues/265): Verify the demo IDs when in source
+  mode so that there are no duplicate IDs across multiple files in the workspace
+- [#266](https://github.com/estruyf/vscode-demo-time/issues/266): Added a `generate demo id` button
+  to (re)generate a unique id for the demo
+- [#267](https://github.com/estruyf/vscode-demo-time/issues/267): Clean up unrelated properties
+  after selecting a new action
+- [#269](https://github.com/estruyf/vscode-demo-time/issues/269): Added a new `video` slide layout
+  to allow video as slide background
+- [#270](https://github.com/estruyf/vscode-demo-time/issues/270): Added the `startOnOpen` property
+  to the `showEngageTimePoll` action to automatically start the poll when it is shown
+- [#271](https://github.com/estruyf/vscode-demo-time/issues/271): Add new `/api/previous` API
+  endpoint for PWA integration
+- [#273](https://github.com/estruyf/vscode-demo-time/issues/273): Added the new `/api/notes` API
+  endpoint to retrieve the notes of the current slide
+- [#274](https://github.com/estruyf/vscode-demo-time/issues/274): Added support for
+  `shellIntegration` by VS Code terminals
+- [#280](https://github.com/estruyf/vscode-demo-time/issues/280): Added new `/api/screenshot` API
+  endpoint to retrieve a screenshot of the next slide
+- [#282](https://github.com/estruyf/vscode-demo-time/issues/282): Updated the GitHub Copilot chat
+  actions to use the new commands
+- [#283](https://github.com/estruyf/vscode-demo-time/issues/283): Added a new `customCopilotChat`
+  action to allow users to start a chat in a specific mode
+- [#284](https://github.com/estruyf/vscode-demo-time/issues/284): Added clock information to the
+  `/api/demos` endpoint
+- [#285](https://github.com/estruyf/vscode-demo-time/issues/285): Render the next screenshot in the
+  PWA remote control view
+- [#287](https://github.com/estruyf/vscode-demo-time/issues/287): Added the `/api/zoom-in` and
+  `/api/zoom-out` API endpoints to control the font size in the editor
+- [#288](https://github.com/estruyf/vscode-demo-time/issues/288): Added the `sendEngageTimeMessage`
+  action to send messages to EngageTime timeline
+- [#289](https://github.com/estruyf/vscode-demo-time/issues/289): Added support for `code-insiders`
+  when using the `bringToFront` argument
+- [#291](https://github.com/estruyf/vscode-demo-time/issues/291): Added VS Code Command Picker to
+  select commands when using the `executeVSCodeCommand` action
+- [#292](https://github.com/estruyf/vscode-demo-time/issues/292): Dark mode fixes for the config
+  editor
+- [#293](https://github.com/estruyf/vscode-demo-time/issues/293): Add the command name to step when
+  using the `executeVSCodeCommand` action
+- [#294](https://github.com/estruyf/vscode-demo-time/issues/294): When adding a new action, the
+  action dropdown will now be focused automatically
+
+## [1.10.0] - 2025-10-01
 
 - [#201](https://github.com/estruyf/vscode-demo-time/issues/201): Project is moved to a new monorepo
   structure with Nx
 - [#227](https://github.com/estruyf/vscode-demo-time/issues/227): Open a slide at a specific
   location
+- [#229](https://github.com/estruyf/vscode-demo-time/issues/229): Integration with
+  [EngageTime](https://engagetime.live)
 - [#234](https://github.com/estruyf/vscode-demo-time/issues/234): Fix for negative values in the
   insert typing speed and improved the labels
 - [#235](https://github.com/estruyf/vscode-demo-time/issues/235): Added the `pause` action to pause
   the demo and wait until the `Demo Time: Continue Demo` command is triggered
+- [#236](https://github.com/estruyf/vscode-demo-time/issues/236): Visual improvements for the Config
+  Editor
+- [#239](https://github.com/estruyf/vscode-demo-time/issues/239): New overview dashboard which can
+  be opened by using the `Demo Time: Overview` command
+- [#240](https://github.com/estruyf/vscode-demo-time/issues/240): Every GitHub Copilot chat action
+  now opens the chat view by default
+- [#242](https://github.com/estruyf/vscode-demo-time/issues/242): Fix the content path in the
+  `Demo Time: Create patch for current file` command execution
+- [#244](https://github.com/estruyf/vscode-demo-time/issues/244): Moved the EngageTime session ID to
+  the demo file level
+- [#245](https://github.com/estruyf/vscode-demo-time/issues/245): Fix right panel height
+- [#246](https://github.com/estruyf/vscode-demo-time/issues/246): Added support for relative URLs to
+  images in CSS themes
+- [#249](https://github.com/estruyf/vscode-demo-time/issues/249): Fix reveal of slides after
+  navigating to another file
+- [#253](https://github.com/estruyf/vscode-demo-time/issues/253): Added support for other types of
+  keyboard keys: `tab`, `arrowLeft`, `arrowRight`, `arrowUp`, `arrowDown`, `escape`, `backspace`,
+  and `delete`
+- [#255](https://github.com/estruyf/vscode-demo-time/issues/255): Optimize the normalized source
+  path handling in the custom template conversion
+- [#256](https://github.com/estruyf/vscode-demo-time/issues/256): Added `{{crntSlideIdx}}` and
+  `{{totalSlides}}` variables to the slide header and footer templates
+- [#260](https://github.com/estruyf/vscode-demo-time/issues/260): Added dark mode support for the
+  config editor, settings editor, and overview dashboard
+- [#261](https://github.com/estruyf/vscode-demo-time/issues/261): Added a message for the PowerPoint
+  addin that it can be shown outside of the visible slide container
+- [#263](https://github.com/estruyf/vscode-demo-time/issues/263): Show icons in the icon picker
+- [#264](https://github.com/estruyf/vscode-demo-time/issues/264): New `focusTop` property for the
+  `openFile` action to control if the editor should focus on the top of the file or not
+- [#268](https://github.com/estruyf/vscode-demo-time/issues/268): Fix the `openInVSCode` property
+  which was not working as expected
+- [#271](https://github.com/estruyf/vscode-demo-time/issues/271): Added the new `/api/previous`
+  endpoint to trigger the previous demo step
+- [#272](https://github.com/estruyf/vscode-demo-time/issues/272): Added the Demo Time Remote Control
+  PWA to control your presentation from another device
 
 ## [1.9.0] - 2025-08-25
 
@@ -706,3 +788,4 @@
 ## [0.0.1] - 2023-12-08
 
 - Initial release
+
