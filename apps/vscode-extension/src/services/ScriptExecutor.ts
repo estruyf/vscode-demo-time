@@ -4,7 +4,7 @@ import { Notifications } from './Notifications';
 import { StateKeys } from '../constants';
 import { evaluateCommand, fileExists, getPlatform } from '../utils';
 import { Extension } from './Extension';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { Logger } from './Logger';
 import { StateManager } from './StateManager';
 import { Config, Action, Step } from '@demotime/common';
@@ -58,8 +58,8 @@ export class ScriptExecutor {
           command = `${command} -File`;
         }
 
-        const fullScript = `${command} "${scriptPath.fsPath}"`;
-        const output = await ScriptExecutor.executeScriptAsync(fullScript, wsPath.uri.fsPath);
+        const args = [scriptPath.fsPath];
+        const output = await ScriptExecutor.executeScriptAsync(command, args, wsPath.uri.fsPath);
         Logger.info(`Step ID: ${id} - Output: ${output}`);
 
         if (output) {
@@ -77,7 +77,7 @@ export class ScriptExecutor {
    */
   public static async executeScriptAsync(fullScript: string, wsPath: string): Promise<string> {
     return new Promise((resolve, reject) => {
-      exec(fullScript, { cwd: wsPath }, (error, stdout) => {
+      execFile(command, args, { cwd: wsPath }, (error, stdout) => {
         if (error) {
           Logger.error(error.message);
           reject(error.message);
