@@ -1,0 +1,145 @@
+{
+  "$schema": "https://demotime.show/schemas/demo.schema.json",
+  "demos": [
+    {
+      "title": "Demo with Companion App Effects",
+      "description": "Example demo showing how to use the Demo Time Companion app for smooth transitions",
+      "steps": [
+        {
+          "action": "executeCommand",
+          "command": "workbench.action.terminal.sendSequence",
+          "args": {
+            "text": "curl -s -X POST http://127.0.0.1:42042/action -H 'Content-Type: application/json' -d '{\"action\": \"message.show\", \"params\": {\"text\": \"Starting Demo...\"}}'  > /dev/null\n"
+          },
+          "description": "Show starting message"
+        },
+        {
+          "action": "wait",
+          "duration": 2000
+        },
+        {
+          "action": "executeCommand",
+          "command": "workbench.action.terminal.sendSequence",
+          "args": {
+            "text": "curl -s -X POST http://127.0.0.1:42042/action -H 'Content-Type: application/json' -d '{\"action\": \"message.hide\"}' > /dev/null\n"
+          },
+          "description": "Hide message"
+        },
+        {
+          "action": "openFile",
+          "file": "README.md",
+          "description": "Open README file"
+        },
+        {
+          "action": "executeCommand",
+          "command": "workbench.action.terminal.sendSequence",
+          "args": {
+            "text": "curl -s -X POST http://127.0.0.1:42042/action -H 'Content-Type: application/json' -d '{\"action\": \"spotlight.on\"}' > /dev/null\n"
+          },
+          "description": "Enable spotlight to focus attention"
+        },
+        {
+          "action": "wait",
+          "duration": 3000
+        },
+        {
+          "action": "executeCommand",
+          "command": "workbench.action.terminal.sendSequence",
+          "args": {
+            "text": "curl -s -X POST http://127.0.0.1:42042/action -H 'Content-Type: application/json' -d '{\"action\": \"spotlight.off\"}' > /dev/null\n"
+          },
+          "description": "Disable spotlight"
+        },
+        {
+          "action": "executeCommand",
+          "command": "workbench.action.terminal.sendSequence",
+          "args": {
+            "text": "curl -s -X POST http://127.0.0.1:42042/action -H 'Content-Type: application/json' -d '{\"action\": \"blur.on\"}' > /dev/null\n"
+          },
+          "description": "Enable blur before transition"
+        },
+        {
+          "action": "wait",
+          "duration": 500
+        },
+        {
+          "action": "executeCommand",
+          "command": "workbench.action.terminal.sendSequence",
+          "args": {
+            "text": "curl -s -X POST http://127.0.0.1:42042/action -H 'Content-Type: application/json' -d '{\"action\": \"message.show\", \"params\": {\"text\": \"Switching to code...\"}}' > /dev/null\n"
+          },
+          "description": "Show transition message"
+        },
+        {
+          "action": "wait",
+          "duration": 1000
+        },
+        {
+          "action": "openFile",
+          "file": "src/App.tsx",
+          "description": "Open source file"
+        },
+        {
+          "action": "wait",
+          "duration": 500
+        },
+        {
+          "action": "executeCommand",
+          "command": "workbench.action.terminal.sendSequence",
+          "args": {
+            "text": "curl -s -X POST http://127.0.0.1:42042/action -H 'Content-Type: application/json' -d '{\"action\": \"blur.off\"}' > /dev/null\n"
+          },
+          "description": "Disable blur"
+        },
+        {
+          "action": "executeCommand",
+          "command": "workbench.action.terminal.sendSequence",
+          "args": {
+            "text": "curl -s -X POST http://127.0.0.1:42042/action -H 'Content-Type: application/json' -d '{\"action\": \"message.hide\"}' > /dev/null\n"
+          },
+          "description": "Hide message"
+        },
+        {
+          "action": "executeCommand",
+          "command": "workbench.action.terminal.sendSequence",
+          "args": {
+            "text": "curl -s -X POST http://127.0.0.1:42042/action -H 'Content-Type: application/json' -d '{\"action\": \"zoom.set\", \"params\": {\"level\": 1.5}}' > /dev/null\n"
+          },
+          "description": "Zoom in for detail"
+        },
+        {
+          "action": "wait",
+          "duration": 4000
+        },
+        {
+          "action": "executeCommand",
+          "command": "workbench.action.terminal.sendSequence",
+          "args": {
+            "text": "curl -s -X POST http://127.0.0.1:42042/action -H 'Content-Type: application/json' -d '{\"action\": \"zoom.reset\"}' > /dev/null\n"
+          },
+          "description": "Reset zoom"
+        },
+        {
+          "action": "executeCommand",
+          "command": "workbench.action.terminal.sendSequence",
+          "args": {
+            "text": "curl -s -X POST http://127.0.0.1:42042/action -H 'Content-Type: application/json' -d '{\"action\": \"message.show\", \"params\": {\"text\": \"Demo Complete! ✅\"}}' > /dev/null\n"
+          },
+          "description": "Show completion message"
+        },
+        {
+          "action": "wait",
+          "duration": 2000
+        },
+        {
+          "action": "executeCommand",
+          "command": "workbench.action.terminal.sendSequence",
+          "args": {
+            "text": "curl -s -X POST http://127.0.0.1:42042/action -H 'Content-Type: application/json' -d '{\"action\": \"message.hide\"}' > /dev/null\n"
+          },
+          "description": "Hide message"
+        }
+      ]
+    }
+  ]
+}
