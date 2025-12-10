@@ -181,7 +181,6 @@ export default defineConfig({
             { label: 'Adding steps to your demo', slug: 'tips/adding-steps' },
             { label: 'Highlight code', slug: 'tips/highlighting' },
             { label: 'Working with variables', slug: 'tips/variables' },
-            { label: 'Activity bar action', slug: 'tips/move-to-activity-bar' },
             { label: 'Control the next demo shortcut', slug: 'tips/control-next-demo' },
             { label: 'VS Code Settings', slug: 'tips/vscode-settings' },
           ],

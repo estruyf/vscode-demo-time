@@ -27,6 +27,11 @@
   next slide support on the presenter view
 - [#321](https://github.com/estruyf/vscode-demo-time/issues/321): Fix the file
   formatting when moving steps in the demo file
+- [#326](https://github.com/estruyf/vscode-demo-time/issues/326): Move the Demo
+  Time to the activity bar
+- [#330](https://github.com/estruyf/vscode-demo-time/issues/330): Added new `
+  copyFromSelection` action to copy text from the current selection in the
+  editor
 
 ## [1.11.0] - 2025-11-04
 
@@ -170,9 +175,6 @@
   highlighting whole line when line number and character positioning is used
 - [#218](https://github.com/estruyf/vscode-demo-time/issues/218): Added a new
   `/api/demos` endpoint to retrieve the list of demos in the workspace
-- [#330](https://github.com/estruyf/vscode-demo-time/issues/330): Added new `
-  copyFromSelection` action to copy text from the current selection in the
-  editor
 
 ## [1.7.1] - 2025-07-10
 
