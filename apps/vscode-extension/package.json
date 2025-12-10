@@ -716,13 +716,21 @@
         }
       ]
     },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "demo-time-container",
+          "title": "Demo Time",
+          "icon": "assets/logo/demotime.svg"
+        }
+      ]
+    },
     "views": {
-      "explorer": [
+      "demo-time-container": [
         {
           "id": "demo-time",
           "name": "Demo Time",
-          "contextualTitle": "Demo Time",
-          "icon": "assets/logo/demotime.svg"
+          "contextualTitle": "Demo Time"
         }
       ]
     },
