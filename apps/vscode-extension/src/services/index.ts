@@ -24,6 +24,7 @@ export * from './ScriptExecutor';
 export * from './SelectionService';
 export * from './Slides';
 export * from './StateManager';
+export * from './SupportService';
 export * from './TemplateCreator';
 export * from './TerminalService';
 export * from './TextTypingService';

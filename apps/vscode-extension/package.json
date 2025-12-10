@@ -510,6 +510,11 @@
         "command": "demo-time.continueDemo",
         "title": "Continue Demo",
         "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.supportTheProject",
+        "title": "Support this project",
+        "category": "Demo Time"
       }
     ],
     "menus": {
@@ -774,7 +779,7 @@
     "viewsWelcome": [
       {
         "view": "demo-time",
-        "contents": "Welcome to Demo Time! Start by creating a demo file in JSON or YAML format, or click the initialize button.\n\n[Initialize](command:demo-time.initialize)\n\n[Learn More](https://demotime.show)"
+        "contents": "Welcome to Demo Time! Start by creating a demo file in JSON or YAML format, or click the initialize button.\n\n[Initialize](command:demo-time.initialize)\n\n[Learn More](https://demotime.show)\n\n[Become a sponsor](https://github.com/sponsors/estruyf)"
       }
     ],
     "walkthroughs": [

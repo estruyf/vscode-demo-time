@@ -16,6 +16,7 @@ import {
   UriHandler,
   TextTypingService,
   TerminalService,
+  SupportService,
 } from './services';
 import { DemoPanel } from './panels/DemoPanel';
 import { Preview } from './preview/Preview';
@@ -28,6 +29,8 @@ import { Overview } from './overview/Overview';
 
 export async function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);
+
+  SupportService.registerCommands();
 
   // Clearing the variable state when the extension starts
   clearVariablesState();
