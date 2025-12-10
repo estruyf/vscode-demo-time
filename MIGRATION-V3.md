@@ -309,7 +309,7 @@ Maintain backups of your original demo files until you've verified the migration
 ## Getting Help
 
 - **Documentation:** See `docs/version-3-guide.md` for complete v3 reference
-- **Example:** Check `.demo/example-v3.act` for a working example
+- **Example:** Check `.demo/example-v3.yaml` for a working example
 - **Issues:** Report problems on the GitHub repository
 
 ## Summary
