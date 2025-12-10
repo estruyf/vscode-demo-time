@@ -2,6 +2,12 @@ import { Position, Range, Selection, TextEditor, TextEditorRevealType } from 'vs
 import { updateConfig } from '../utils';
 
 export class SelectionService {
+  private static isSelected = false;
+
+  public static getSelection(): boolean {
+    return SelectionService.isSelected;
+  }
+
   /**
    * Selects text in the editor based on the provided range or position.
    * Similar to highlight but actually selects the text instead of just visually highlighting it.
@@ -31,15 +37,27 @@ export class SelectionService {
 
     if (range) {
       // Apply zoom if specified
-      if (zoomLevel) {
+      if (zoomLevel !== undefined) {
         await updateConfig('window.zoomLevel', zoomLevel);
       }
 
       // Create selection from the range
       textEditor.selection = new Selection(range.start, range.end);
+      SelectionService.isSelected = true;
 
       // Reveal the selection in the center of the editor
       textEditor.revealRange(range, TextEditorRevealType.InCenter);
     }
+  }
+
+  public static unselect(textEditor?: TextEditor) {
+    if (!textEditor) {
+      return;
+    }
+
+    // Reset the cursor position to avoid selecting text
+    const cursorPosition = textEditor.selection.active;
+    textEditor.selection = new Selection(cursorPosition, cursorPosition);
+    SelectionService.isSelected = false;
   }
 }

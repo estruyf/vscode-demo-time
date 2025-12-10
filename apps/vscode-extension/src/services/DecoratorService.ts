@@ -10,6 +10,7 @@ import {
 } from 'vscode';
 import { Extension } from './Extension';
 import { Config } from '@demotime/common';
+import { SelectionService } from './SelectionService';
 
 export class DecoratorService {
   private static lineDecorator: TextEditorDecorationType;
@@ -46,7 +47,7 @@ export class DecoratorService {
 
     // Remove the highlight when the user clicks in the editor
     window.onDidChangeTextEditorSelection((e) => {
-      if (e.kind === TextEditorSelectionChangeKind.Mouse) {
+      if (e.kind === TextEditorSelectionChangeKind.Mouse && DecoratorService.isHighlighted) {
         DecoratorService.unselect(e.textEditor);
       }
     });
@@ -191,9 +192,9 @@ export class DecoratorService {
       commands.executeCommand('editor.action.fontZoomReset');
     }
 
-    // Reset the cursor position to avoid selecting text
-    const cursorPosition = textEditor.selection.active;
-    textEditor.selection = new Selection(cursorPosition, cursorPosition);
+    if (SelectionService.getSelection()) {
+      SelectionService.unselect(textEditor);
+    }
   }
 
   private static getGenericStyles(): DecorationRenderOptions {

@@ -29,8 +29,8 @@
   formatting when moving steps in the demo file
 - [#326](https://github.com/estruyf/vscode-demo-time/issues/326): Move the Demo
   Time to the activity bar
-- [#330](https://github.com/estruyf/vscode-demo-time/issues/330): Added new `
-  copyFromSelection` action to copy text from the current selection in the
+- [#330](https://github.com/estruyf/vscode-demo-time/issues/330): Added new
+  `copyFromSelection` action to copy text from the current selection in the
   editor
 
 ## [1.11.0] - 2025-11-04
