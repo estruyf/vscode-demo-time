@@ -5,6 +5,8 @@ use warp::Filter;
 
 use crate::AppState;
 
+const API_PORT: u16 = 42042;
+
 #[derive(Debug, Deserialize, Serialize)]
 struct ActionRequest {
     action: String,
@@ -46,8 +48,8 @@ pub async fn start_server(app_handle: AppHandle, state: AppState) -> Result<(), 
         .or(health_route)
         .with(warp::cors().allow_any_origin());
 
-    println!("Starting API server on http://127.0.0.1:42042");
-    warp::serve(routes).run(([127, 0, 0, 1], 42042)).await;
+    println!("Starting API server on http://127.0.0.1:{}", API_PORT);
+    warp::serve(routes).run(([127, 0, 0, 1], API_PORT)).await;
     Ok(())
 }
 

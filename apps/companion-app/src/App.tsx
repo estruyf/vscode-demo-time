@@ -83,8 +83,9 @@ function App() {
   };
 
   const checkApiStatus = async () => {
+    const API_URL = "http://127.0.0.1:42042";
     try {
-      const response = await fetch("http://127.0.0.1:42042/health");
+      const response = await fetch(`${API_URL}/health`);
       if (response.ok) {
         setApiStatus("✓ API Server Running on port 42042");
       } else {
