@@ -56,6 +56,8 @@ export const COMMAND = {
   showSettings: `${EXTENSION_NAME}.showSettings`,
   // Overview
   showOverview: `${EXTENSION_NAME}.showOverview`,
-  // Support the project
-  supportTheProject: `${EXTENSION_NAME}.supportTheProject`,
+  // Resources
+  openSupportTheProject: `${EXTENSION_NAME}.openSupportTheProject`,
+  openRemoteControl: `${EXTENSION_NAME}.openRemoteControl`,
+  openPowerPointAddin: `${EXTENSION_NAME}.openPowerPointAddin`,
 };

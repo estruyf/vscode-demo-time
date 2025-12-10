@@ -96,6 +96,34 @@
       ]
     },
     "icons": {
+      "dt-play": {
+        "description": "Demo Time - Play",
+        "default": {
+          "fontPath": "assets/demo-time-panel.woff",
+          "fontCharacter": "\\e912"
+        }
+      },
+      "dt-act": {
+        "description": "Demo Time - Act",
+        "default": {
+          "fontPath": "assets/demo-time-panel.woff",
+          "fontCharacter": "\\e910"
+        }
+      },
+      "dt-scene": {
+        "description": "Demo Time - Scene",
+        "default": {
+          "fontPath": "assets/demo-time-panel.woff",
+          "fontCharacter": "\\e913"
+        }
+      },
+      "dt-move": {
+        "description": "Demo Time - Move",
+        "default": {
+          "fontPath": "assets/demo-time-panel.woff",
+          "fontCharacter": "\\e911"
+        }
+      },
       "dt-projector": {
         "description": "Demo Time - projector",
         "default": {
@@ -512,8 +540,18 @@
         "category": "Demo Time"
       },
       {
-        "command": "demo-time.supportTheProject",
+        "command": "demo-time.openSupportTheProject",
         "title": "Support this project",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.openRemoteControl",
+        "title": "Open Remote Control (PWA)",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.openPowerPointAddin",
+        "title": "Open PowerPoint Add-in",
         "category": "Demo Time"
       }
     ],
@@ -591,85 +629,89 @@
       "view/title": [
         {
           "command": "demo-time.togglePresentationMode",
-          "when": "view == demo-time && !demo-time.presentation",
+          "when": "view == demo-time-scenes && !demo-time.presentation",
           "group": "navigation@-1"
         },
         {
           "command": "demo-time.startCountdown",
-          "when": "view == demo-time && !demo-time.countdown && demo-time.showTimer",
+          "when": "view == demo-time-scenes && !demo-time.countdown && demo-time.showTimer",
           "group": "navigation@0"
         },
         {
           "command": "demo-time.showPresenterView",
-          "when": "view == demo-time",
+          "when": "view == demo-time-scenes-scenes",
           "group": "navigation@1"
         },
         {
           "command": "demo-time.reset",
-          "when": "view == demo-time",
+          "when": "view == demo-time-scenes",
           "group": "navigation@2"
         },
         {
           "command": "demo-time.exportToPdf",
-          "when": "view == demo-time",
+          "when": "view == demo-time-scenes",
           "group": "navigation@3"
         },
         {
           "command": "demo-time.treeviewFind",
-          "when": "view == demo-time",
+          "when": "view == demo-time-scenes",
           "group": "navigation@4"
         },
         {
           "command": "demo-time.createDemoFile",
-          "when": "view == demo-time"
+          "when": "view == demo-time-scenes"
         },
         {
           "command": "demo-time.docs",
-          "when": "view == demo-time"
+          "when": "view == demo-time-scenes"
         },
         {
           "command": "demo-time.showOverview",
-          "when": "view == demo-time"
+          "when": "view == demo-time-scenes"
         },
         {
           "command": "demo-time.showSettings",
-          "when": "view == demo-time"
+          "when": "view == demo-time-scenes"
+        },
+        {
+          "command": "demo-time.openSupportTheProject",
+          "when": "view == demo-time-scenes"
         }
       ],
       "view/item/context": [
         {
           "command": "demo-time.start",
-          "when": "view == demo-time && viewItem == demo-time.file",
+          "when": "view == demo-time-scenes && viewItem == demo-time.file",
           "group": "inline@1"
         },
         {
           "command": "demo-time.openDemoFile",
-          "when": "view == demo-time && viewItem == demo-time.file",
+          "when": "view == demo-time-scenes && viewItem == demo-time.file",
           "group": "inline@2"
         },
         {
           "command": "demo-time.stepMoveUp",
-          "when": "view == demo-time && (viewItem =~ /demo-time.step/ || viewItem =~ /demo-time.lastStep/)",
+          "when": "view == demo-time-scenes && (viewItem =~ /demo-time.step/ || viewItem =~ /demo-time.lastStep/)",
           "group": "inline@1"
         },
         {
           "command": "demo-time.stepMoveDown",
-          "when": "view == demo-time && (viewItem =~ /demo-time.step/ || viewItem =~ /demo-time.firstStep/)",
+          "when": "view == demo-time-scenes && (viewItem =~ /demo-time.step/ || viewItem =~ /demo-time.firstStep/)",
           "group": "inline@2"
         },
         {
           "command": "demo-time.viewStep",
-          "when": "view == demo-time && (viewItem =~ /demo-time.step/ || viewItem =~ /demo-time.firstStep/ || viewItem =~ /demo-time.lastStep/)",
+          "when": "view == demo-time-scenes && (viewItem =~ /demo-time.step/ || viewItem =~ /demo-time.firstStep/ || viewItem =~ /demo-time.lastStep/)",
           "group": "inline@3"
         },
         {
           "command": "demo-time.viewNotes",
-          "when": "view == demo-time && (viewItem =~ /demo-time.hasNotes/)",
+          "when": "view == demo-time-scenes && (viewItem =~ /demo-time.hasNotes/)",
           "group": "inline@4"
         },
         {
           "command": "demo-time.viewSlide",
-          "when": "view == demo-time && (viewItem =~ /demo-time.isSlide/)",
+          "when": "view == demo-time-scenes && (viewItem =~ /demo-time.isSlide/)",
           "group": "inline@4"
         }
       ],
@@ -733,9 +775,16 @@
     "views": {
       "demo-time-container": [
         {
-          "id": "demo-time",
-          "name": "Demo Time",
-          "contextualTitle": "Demo Time"
+          "id": "demo-time-scenes",
+          "name": "Scenes",
+          "contextualTitle": "Demo Time",
+          "icon": "$(dt-play)"
+        },
+        {
+          "id": "demo-time-resources",
+          "name": "Resources",
+          "contextualTitle": "Demo Time Resources",
+          "icon": "$(dt-logo)"
         }
       ]
     },
@@ -778,8 +827,8 @@
     ],
     "viewsWelcome": [
       {
-        "view": "demo-time",
-        "contents": "Welcome to Demo Time! Start by creating a demo file in JSON or YAML format, or click the initialize button.\n\n[Initialize](command:demo-time.initialize)\n\n[Learn More](https://demotime.show)\n\n[Become a sponsor](https://github.com/sponsors/estruyf)"
+        "view": "demo-time-scenes",
+        "contents": "Welcome to Demo Time! Start by creating a demo file in JSON or YAML format, or click the initialize button.\n\n[Initialize](command:demo-time.initialize)\n\n[Learn More](https://demotime.show)\n\n[Become a sponsor $(heart)](https://github.com/sponsors/estruyf)"
       }
     ],
     "walkthroughs": [
