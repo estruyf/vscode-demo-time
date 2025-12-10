@@ -40,19 +40,19 @@ function App() {
     checkApiStatus();
 
     // Listen for state changes
-    const unlistenBlur = listen<boolean>("blur-toggled", (event) => {
+    const unlistenBlur = listen<boolean>("blur-toggled", () => {
       loadState();
     });
 
-    const unlistenSpotlight = listen<boolean>("spotlight-toggled", (event) => {
+    const unlistenSpotlight = listen<boolean>("spotlight-toggled", () => {
       loadState();
     });
 
-    const unlistenZoom = listen<number>("zoom-changed", (event) => {
+    const unlistenZoom = listen<number>("zoom-changed", () => {
       loadState();
     });
 
-    const unlistenMessage = listen<string>("message-shown", (event) => {
+    const unlistenMessage = listen<string>("message-shown", () => {
       loadState();
     });
 
