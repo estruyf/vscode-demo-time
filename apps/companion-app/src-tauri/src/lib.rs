@@ -5,6 +5,12 @@ use tauri::tray::TrayIconBuilder;
 
 mod api_server;
 
+// #[cfg(target_os = "macos")]
+use window_vibrancy::{apply_vibrancy, clear_vibrancy, NSVisualEffectMaterial};
+
+// #[cfg(target_os = "windows")]
+use window_vibrancy::{apply_blur, clear_blur};
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Settings {
     pub api_port: u16,
@@ -121,29 +127,6 @@ fn back_to_settings(
 }
 
 #[tauri::command]
-fn set_blur(
-    app_handle: AppHandle,
-    blur_state: State<BlurStateArc>,
-    active: bool,
-    message: Option<String>,
-) -> Result<(), String> {
-    let mut blur = blur_state.lock().map_err(|e| e.to_string())?;
-    blur.active = active;
-    blur.message = message.unwrap_or_default();
-    
-    if let Some(window) = app_handle.get_webview_window("main") {
-        window.set_ignore_cursor_events(!active).map_err(|e| e.to_string())?;
-    }
-
-    let state_clone = blur.clone();
-    
-    // Emit event to frontend
-    app_handle.emit("blur-state-changed", state_clone).map_err(|e| e.to_string())?;
-    
-    Ok(())
-}
-
-#[tauri::command]
 fn toggle_blur(
     app_handle: AppHandle,
     blur_state: State<BlurStateArc>,
@@ -157,6 +140,25 @@ fn toggle_blur(
     
     if let Some(window) = app_handle.get_webview_window("main") {
         window.set_ignore_cursor_events(!blur.active).map_err(|e| e.to_string())?;
+        
+        // Apply or clear native backdrop blur effect
+        if blur.active {
+            #[cfg(target_os = "macos")]
+            apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, None)
+                .map_err(|e| format!("Failed to apply vibrancy: {}", e))?;
+            
+            #[cfg(target_os = "windows")]
+            apply_blur(&window, Some((18, 18, 18, 125)))
+                .map_err(|e| format!("Failed to apply blur: {}", e))?;
+        } else {
+            #[cfg(target_os = "macos")]
+            clear_vibrancy(&window)
+                .map_err(|e| format!("Failed to clear vibrancy: {}", e))?;
+            
+            #[cfg(target_os = "windows")]
+            clear_blur(&window)
+                .map_err(|e| format!("Failed to clear blur: {}", e))?;
+        }
     }
 
     let is_active = blur.active;
@@ -183,10 +185,29 @@ pub fn run() {
         .manage(blur_state.clone())
         .manage(view_mode.clone())
         .setup(move |app| {
-            // Set initial webview background to white for settings mode
+            // Force initial window state for settings mode
+            // This overrides any saved state from window-state plugin
             if let Some(window) = app.get_webview_window("main") {
                 use tauri::window::Color;
+                use tauri::{Size, LogicalSize, Position, LogicalPosition};
+                
+                // Set background color
                 let _ = window.set_background_color(Some(Color(255, 255, 255, 255)));
+                
+                // Force settings mode window configuration
+                let _ = window.set_decorations(true);
+                let _ = window.set_always_on_top(false);
+                let _ = window.set_skip_taskbar(false);
+                let _ = window.set_ignore_cursor_events(false);
+                
+                // Unmaximize if maximized
+                if let Ok(true) = window.is_maximized() {
+                    let _ = window.unmaximize();
+                }
+                
+                // Set size and center
+                let _ = window.set_size(Size::Logical(LogicalSize { width: 500.0, height: 700.0 }));
+                let _ = window.center();
             }
             
             // Setup system tray
@@ -243,6 +264,28 @@ pub fn run() {
                                     if !blur.active {
                                         blur.message = String::new();
                                     }
+                                    
+                                    // Apply or clear native backdrop blur effect
+                                    if let Some(window) = app_handle.get_webview_window("main") {
+                                        if blur.active {
+                                            #[cfg(target_os = "macos")]
+                                            let _ = apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, None);
+                                            
+                                            #[cfg(target_os = "windows")]
+                                            let _ = apply_blur(&window, Some((18, 18, 18, 125)));
+                                            
+                                            let _ = window.set_ignore_cursor_events(false);
+                                        } else {
+                                            #[cfg(target_os = "macos")]
+                                            let _ = clear_vibrancy(&window);
+                                            
+                                            #[cfg(target_os = "windows")]
+                                            let _ = clear_blur(&window);
+                                            
+                                            let _ = window.set_ignore_cursor_events(true);
+                                        }
+                                    }
+                                    
                                     let _ = app_handle.emit("blur-state-changed", blur.clone());
                                 }
                             });
@@ -270,7 +313,6 @@ pub fn run() {
             save_settings,
             start_overlay_mode,
             back_to_settings,
-            set_blur,
             toggle_blur,
         ])
         .run(tauri::generate_context!())

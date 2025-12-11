@@ -190,13 +190,12 @@ body:has(.overlay-container) {
   justify-content: center;
   transition: all 0.3s ease;
   pointer-events: none;
-}
 
-.blur-overlay.active {
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  pointer-events: auto;
+  &.active {
+    /* background: rgba(0, 0, 0, 0.8); */
+    background: transparent;
+    pointer-events: auto;
+  }
 }
 
 .blur-message {
