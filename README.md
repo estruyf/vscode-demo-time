@@ -34,6 +34,7 @@
 - **Customizable Actions**: Execute various VS Code commands and tasks as part of your demo.
 - **PowerPoint Integration**: Seamlessly move from slides to code using the
   [PowerPoint integration](https://demotime.show/integrations/powerpoint/).
+- **Companion Desktop App**: Use the [Demo Time Companion](./apps/companion-app/) desktop app for screen overlays, blur effects, spotlight mode, zoom, and message displays during your presentations.
 
 ## Getting Started
 
@@ -107,6 +108,45 @@ You can also explore a comprehensive example in the following GitHub Repositorie
 - [Introduction presentation about Demo Time](https://github.com/estruyf/demo-time-presentation)
 - [presentation-github-actions](https://github.com/estruyf/presentation-github-actions)
 - [presentation-m365-playwright-github-actions](https://github.com/estruyf/presentation-m365-playwright-github-actions)
+
+## Demo Time Companion App
+
+The **Demo Time Companion** is a desktop application that enhances your presentations with screen overlays and effects:
+
+- 🌫️ **Blur Overlay**: Temporarily blur the screen during transitions
+- 🔦 **Spotlight Mode**: Highlight specific areas by dimming everything else
+- 🔍 **Zoom In/Out**: Smooth zoom functionality for detailed views
+- 💬 **Message Overlay**: Display custom messages on screen
+- ⌨️ **Keyboard Shortcuts**: Global shortcuts for all actions
+- 🔌 **HTTP API**: Control from VS Code or any application
+
+### Quick Start
+
+```bash
+# Build the companion app
+cd apps/companion-app
+yarn install
+yarn tauri:build
+
+# Run in development
+yarn tauri:dev
+```
+
+The app starts an HTTP API on `http://127.0.0.1:42042` that you can call from your demos:
+
+```bash
+# Toggle blur overlay
+curl -X POST http://127.0.0.1:42042/action \
+  -H "Content-Type: application/json" \
+  -d '{"action": "blur.toggle"}'
+
+# Show a message
+curl -X POST http://127.0.0.1:42042/action \
+  -H "Content-Type: application/json" \
+  -d '{"action": "message.show", "params": {"text": "Switching to slides..."}}'
+```
+
+For full documentation, see [apps/companion-app/README.md](./apps/companion-app/README.md) and [apps/companion-app/INTEGRATION.md](./apps/companion-app/INTEGRATION.md).
 
 ## Testing
 
