@@ -1,0 +1,349 @@
+:root {
+  --primary-color: #0066cc;
+  --primary-hover: #0052a3;
+  --active-color: #00aa44;
+  --bg-color: #ffffff;
+  --surface-color: #f5f5f5;
+  --text-color: #333333;
+  --text-secondary: #666666;
+  --border-color: #dddddd;
+  --error-color: #cc0000;
+  --success-color: #00aa44;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --radius: 8px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  line-height: 1.6;
+  color: var(--text-color);
+  background-color: var(--bg-color);
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.app-header {
+  background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+  color: white;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.app-header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  font-weight: 400;
+}
+
+.status-bar {
+  background-color: var(--surface-color);
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-size: 0.85rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.status-good {
+  color: var(--success-color);
+  font-weight: 600;
+}
+
+.status-bad {
+  color: var(--error-color);
+  font-weight: 600;
+}
+
+.app-main {
+  flex: 1;
+  padding: 1.5rem 1rem;
+  overflow-y: auto;
+}
+
+.control-section {
+  background-color: white;
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+.control-section h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.control-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.quick-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.control-item {
+  text-align: center;
+}
+
+.control-button {
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--surface-color);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-color);
+}
+
+.control-button:hover {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.control-button.active {
+  background-color: var(--active-color);
+  border-color: var(--active-color);
+  color: white;
+}
+
+.control-button.small {
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+}
+
+.control-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--surface-color);
+  color: var(--text-secondary);
+}
+
+.control-button:disabled:hover {
+  transform: none;
+  box-shadow: none;
+  background-color: var(--surface-color);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+.icon {
+  font-size: 2rem;
+}
+
+.control-button.small .icon {
+  font-size: 1.2rem;
+}
+
+.control-hint {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.zoom-level {
+  background-color: var(--surface-color);
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius);
+  min-width: 100px;
+  text-align: center;
+}
+
+.zoom-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.message-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.message-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.message-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.button-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.button-row .control-button {
+  flex: 1;
+}
+
+.current-message {
+  padding: 0.75rem;
+  background-color: var(--surface-color);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+}
+
+.overlay-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.info-section {
+  background-color: var(--surface-color);
+}
+
+.shortcuts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.shortcut-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: white;
+  border-radius: 4px;
+}
+
+.shortcut-label {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.shortcut-item code {
+  background-color: var(--surface-color);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: var(--primary-color);
+}
+
+.api-info {
+  font-size: 0.9rem;
+}
+
+.api-info p {
+  margin-bottom: 0.75rem;
+}
+
+.api-info ul {
+  list-style-position: inside;
+  margin-bottom: 0.75rem;
+  padding-left: 1rem;
+}
+
+.api-info code {
+  background-color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  color: var(--primary-color);
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.actions-grid code {
+  display: block;
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.app-footer {
+  background-color: var(--surface-color);
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border-color);
+}
+
+.app-footer p {
+  margin: 0.25rem 0;
+}
+
+.app-footer a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.app-footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .control-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .zoom-controls {
+    flex-direction: column;
+  }
+
+  .button-row {
+    flex-direction: column;
+  }
+
+  .overlay-controls {
+    grid-template-columns: 1fr;
+  }
+}

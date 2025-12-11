@@ -1,221 +1,169 @@
 use serde::{Deserialize, Serialize};
 use std::sync::{Arc, Mutex};
-use tauri::{AppHandle, Emitter, Manager, State};
+use tauri::{AppHandle, Emitter, State};
 use tauri::tray::TrayIconBuilder;
 
 mod api_server;
-mod overlay;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AppConfig {
-    pub blur_opacity: f32,
-    pub spotlight_size: u32,
-    pub spotlight_opacity: f32,
-    pub zoom_level: f32,
-    pub overlay_color: String,
-    pub overlay_text_color: String,
-    pub shortcuts: ShortcutConfig,
+pub struct Settings {
+    pub api_port: u16,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ShortcutConfig {
-    pub spotlight_toggle: String,
-    pub zoom_in: String,
-    pub zoom_out: String,
-    pub zoom_reset: String,
-    pub blur_toggle: String,
-}
-
-impl Default for AppConfig {
+impl Default for Settings {
     fn default() -> Self {
         Self {
-            blur_opacity: 0.8,
-            spotlight_size: 200,
-            spotlight_opacity: 0.7,
-            zoom_level: 1.5,
-            overlay_color: "#000000".to_string(),
-            overlay_text_color: "#FFFFFF".to_string(),
-            shortcuts: ShortcutConfig::default(),
-        }
-    }
-}
-
-impl Default for ShortcutConfig {
-    fn default() -> Self {
-        Self {
-            spotlight_toggle: "CommandOrControl+Shift+L".to_string(),
-            zoom_in: "CommandOrControl+Shift+=".to_string(),
-            zoom_out: "CommandOrControl+Shift+-".to_string(),
-            zoom_reset: "CommandOrControl+Shift+0".to_string(),
-            blur_toggle: "CommandOrControl+Shift+B".to_string(),
+            api_port: 42042,
         }
     }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct OverlayState {
-    pub blur_active: bool,
-    pub spotlight_active: bool,
-    pub zoom_active: bool,
-    pub zoom_level: f32,
-    pub message: Option<String>,
+pub struct BlurState {
+    pub active: bool,
+    pub message: String,
 }
 
-impl Default for OverlayState {
+impl Default for BlurState {
     fn default() -> Self {
         Self {
-            blur_active: false,
-            spotlight_active: false,
-            zoom_active: false,
-            zoom_level: 1.0,
-            message: None,
+            active: false,
+            message: String::new(),
         }
     }
 }
 
-pub type AppState = Arc<Mutex<OverlayState>>;
-pub type ConfigState = Arc<Mutex<AppConfig>>;
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum ViewMode {
+    Settings,
+    Overlay,
+}
+
+pub type SettingsState = Arc<Mutex<Settings>>;
+pub type BlurStateArc = Arc<Mutex<BlurState>>;
+pub type ViewModeState = Arc<Mutex<ViewMode>>;
 
 // Tauri commands
 #[tauri::command]
-fn get_config(config: State<ConfigState>) -> Result<AppConfig, String> {
-    config.lock().map_err(|e| e.to_string()).map(|c| c.clone())
+fn get_settings(settings: State<SettingsState>) -> Result<Settings, String> {
+    settings.lock().map_err(|e| e.to_string()).map(|s| s.clone())
 }
 
 #[tauri::command]
-fn update_config(config: State<ConfigState>, new_config: AppConfig) -> Result<(), String> {
-    let mut c = config.lock().map_err(|e| e.to_string())?;
-    *c = new_config;
+fn save_settings(settings: State<SettingsState>, new_settings: Settings) -> Result<(), String> {
+    let mut s = settings.lock().map_err(|e| e.to_string())?;
+    *s = new_settings;
     Ok(())
 }
 
 #[tauri::command]
-fn get_state(state: State<AppState>) -> Result<OverlayState, String> {
-    state.lock().map_err(|e| e.to_string()).map(|s| s.clone())
+fn start_overlay_mode(
+    app_handle: AppHandle,
+    view_mode: State<ViewModeState>,
+) -> Result<(), String> {
+    let mut mode = view_mode.lock().map_err(|e| e.to_string())?;
+    *mode = ViewMode::Overlay;
+    
+    // Emit event to frontend
+    app_handle.emit("view-mode-changed", ViewMode::Overlay).map_err(|e| e.to_string())?;
+    
+    Ok(())
+}
+
+#[tauri::command]
+fn back_to_settings(
+    app_handle: AppHandle,
+    view_mode: State<ViewModeState>,
+    blur_state: State<BlurStateArc>,
+) -> Result<(), String> {
+    // Reset blur state
+    let mut blur = blur_state.lock().map_err(|e| e.to_string())?;
+    blur.active = false;
+    blur.message = String::new();
+    drop(blur);
+    
+    // Change view mode
+    let mut mode = view_mode.lock().map_err(|e| e.to_string())?;
+    *mode = ViewMode::Settings;
+    
+    // Emit events to frontend
+    app_handle.emit("view-mode-changed", ViewMode::Settings).map_err(|e| e.to_string())?;
+    app_handle.emit("blur-state-changed", BlurState::default()).map_err(|e| e.to_string())?;
+    
+    Ok(())
+}
+
+#[tauri::command]
+fn set_blur(
+    app_handle: AppHandle,
+    blur_state: State<BlurStateArc>,
+    active: bool,
+    message: Option<String>,
+) -> Result<(), String> {
+    let mut blur = blur_state.lock().map_err(|e| e.to_string())?;
+    blur.active = active;
+    blur.message = message.unwrap_or_default();
+    
+    let state_clone = blur.clone();
+    
+    // Emit event to frontend
+    app_handle.emit("blur-state-changed", state_clone).map_err(|e| e.to_string())?;
+    
+    Ok(())
 }
 
 #[tauri::command]
 fn toggle_blur(
     app_handle: AppHandle,
-    state: State<AppState>,
+    blur_state: State<BlurStateArc>,
 ) -> Result<bool, String> {
-    let mut s = state.lock().map_err(|e| e.to_string())?;
-    s.blur_active = !s.blur_active;
-    let is_active = s.blur_active;
+    let mut blur = blur_state.lock().map_err(|e| e.to_string())?;
+    blur.active = !blur.active;
+    
+    if !blur.active {
+        blur.message = String::new();
+    }
+    
+    let is_active = blur.active;
+    let state_clone = blur.clone();
     
     // Emit event to frontend
-    app_handle.emit("blur-toggled", is_active).map_err(|e| e.to_string())?;
+    app_handle.emit("blur-state-changed", state_clone).map_err(|e| e.to_string())?;
     
     Ok(is_active)
-}
-
-#[tauri::command]
-fn toggle_spotlight(
-    app_handle: AppHandle,
-    state: State<AppState>,
-) -> Result<bool, String> {
-    let mut s = state.lock().map_err(|e| e.to_string())?;
-    s.spotlight_active = !s.spotlight_active;
-    let is_active = s.spotlight_active;
-    
-    // Emit event to frontend
-    app_handle.emit("spotlight-toggled", is_active).map_err(|e| e.to_string())?;
-    
-    Ok(is_active)
-}
-
-#[tauri::command]
-fn set_zoom(
-    app_handle: AppHandle,
-    state: State<AppState>,
-    level: f32,
-) -> Result<f32, String> {
-    let mut s = state.lock().map_err(|e| e.to_string())?;
-    s.zoom_level = level;
-    s.zoom_active = level > 1.0;
-    
-    // Emit event to frontend
-    app_handle.emit("zoom-changed", level).map_err(|e| e.to_string())?;
-    
-    Ok(level)
-}
-
-#[tauri::command]
-fn show_message(
-    app_handle: AppHandle,
-    state: State<AppState>,
-    message: String,
-) -> Result<(), String> {
-    let mut s = state.lock().map_err(|e| e.to_string())?;
-    s.message = Some(message.clone());
-    
-    // Emit event to frontend
-    app_handle.emit("message-shown", message).map_err(|e| e.to_string())?;
-    
-    Ok(())
-}
-
-#[tauri::command]
-fn hide_message(
-    app_handle: AppHandle,
-    state: State<AppState>,
-) -> Result<(), String> {
-    let mut s = state.lock().map_err(|e| e.to_string())?;
-    s.message = None;
-    
-    // Emit event to frontend
-    app_handle.emit("message-hidden", ()).map_err(|e| e.to_string())?;
-    
-    Ok(())
-}
-
-#[tauri::command]
-fn create_overlay(
-    app_handle: AppHandle,
-    overlay_type: String,
-) -> Result<(), String> {
-    overlay::create_overlay_window(&app_handle, &overlay_type)
-        .map_err(|e| e.to_string())
-}
-
-#[tauri::command]
-fn close_overlay(
-    app_handle: AppHandle,
-    overlay_type: String,
-) -> Result<(), String> {
-    overlay::close_overlay_window(&app_handle, &overlay_type)
-        .map_err(|e| e.to_string())
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let app_state = Arc::new(Mutex::new(OverlayState::default()));
-    let config_state = Arc::new(Mutex::new(AppConfig::default()));
+    let settings_state = Arc::new(Mutex::new(Settings::default()));
+    let blur_state = Arc::new(Mutex::new(BlurState::default()));
+    let view_mode = Arc::new(Mutex::new(ViewMode::Settings));
 
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_window_state::Builder::default().build())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
-        .manage(app_state.clone())
-        .manage(config_state.clone())
+        .manage(settings_state.clone())
+        .manage(blur_state.clone())
+        .manage(view_mode.clone())
         .setup(move |app| {
             // Setup system tray
             let quit = tauri::menu::MenuItemBuilder::with_id("quit", "Quit").build(app)?;
-            let show = tauri::menu::MenuItemBuilder::with_id("show", "Show").build(app)?;
+            let settings = tauri::menu::MenuItemBuilder::with_id("settings", "Back to Settings").build(app)?;
             let toggle_blur = tauri::menu::MenuItemBuilder::with_id("toggle_blur", "Toggle Blur").build(app)?;
-            let toggle_spotlight = tauri::menu::MenuItemBuilder::with_id("toggle_spotlight", "Toggle Spotlight").build(app)?;
             
             let menu = tauri::menu::MenuBuilder::new(app)
-                .item(&show)
-                .separator()
+                .item(&settings)
                 .item(&toggle_blur)
-                .item(&toggle_spotlight)
                 .separator()
                 .item(&quit)
                 .build()?;
 
-            let tray_state = app_state.clone();
+            let blur_state_tray = blur_state.clone();
+            let view_mode_tray = view_mode.clone();
+            
             let _tray = TrayIconBuilder::new()
                 .icon(app.default_window_icon().unwrap().clone())
                 .menu(&menu)
@@ -225,29 +173,37 @@ pub fn run() {
                         "quit" => {
                             app.exit(0);
                         }
-                        "show" => {
-                            if let Some(window) = app.get_webview_window("main") {
-                                let _ = window.show();
-                                let _ = window.set_focus();
-                            }
-                        }
-                        "toggle_blur" => {
-                            let app_state_clone = tray_state.clone();
+                        "settings" => {
+                            let view_state = view_mode_tray.clone();
+                            let blur_state_clone = blur_state_tray.clone();
                             let app_handle = app.clone();
-                            let _ = tauri::async_runtime::spawn(async move {
-                                if let Ok(mut state) = app_state_clone.lock() {
-                                    state.blur_active = !state.blur_active;
-                                    let _ = app_handle.emit("blur-toggled", state.blur_active);
+                            
+                            tauri::async_runtime::spawn(async move {
+                                // Reset blur
+                                if let Ok(mut blur) = blur_state_clone.lock() {
+                                    blur.active = false;
+                                    blur.message = String::new();
+                                    let _ = app_handle.emit("blur-state-changed", blur.clone());
+                                }
+                                
+                                // Change view
+                                if let Ok(mut mode) = view_state.lock() {
+                                    *mode = ViewMode::Settings;
+                                    let _ = app_handle.emit("view-mode-changed", ViewMode::Settings);
                                 }
                             });
                         }
-                        "toggle_spotlight" => {
-                            let app_state_clone = tray_state.clone();
+                        "toggle_blur" => {
+                            let blur_state_clone = blur_state_tray.clone();
                             let app_handle = app.clone();
-                            let _ = tauri::async_runtime::spawn(async move {
-                                if let Ok(mut state) = app_state_clone.lock() {
-                                    state.spotlight_active = !state.spotlight_active;
-                                    let _ = app_handle.emit("spotlight-toggled", state.spotlight_active);
+                            
+                            tauri::async_runtime::spawn(async move {
+                                if let Ok(mut blur) = blur_state_clone.lock() {
+                                    blur.active = !blur.active;
+                                    if !blur.active {
+                                        blur.message = String::new();
+                                    }
+                                    let _ = app_handle.emit("blur-state-changed", blur.clone());
                                 }
                             });
                         }
@@ -258,9 +214,11 @@ pub fn run() {
 
             // Start API server for external communication
             let app_handle = app.handle().clone();
-            let api_state = app_state.clone();
+            let api_blur_state = blur_state.clone();
+            let api_settings = settings_state.clone();
+            
             tauri::async_runtime::spawn(async move {
-                if let Err(e) = api_server::start_server(app_handle, api_state).await {
+                if let Err(e) = api_server::start_server(app_handle, api_blur_state, api_settings).await {
                     eprintln!("Failed to start API server: {}", e);
                 }
             });
@@ -268,16 +226,12 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            get_config,
-            update_config,
-            get_state,
+            get_settings,
+            save_settings,
+            start_overlay_mode,
+            back_to_settings,
+            set_blur,
             toggle_blur,
-            toggle_spotlight,
-            set_zoom,
-            show_message,
-            hide_message,
-            create_overlay,
-            close_overlay,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

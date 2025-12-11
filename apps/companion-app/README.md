@@ -1,19 +1,42 @@
 # Demo Time Companion
 
-A desktop companion app for Demo Time that provides screen overlays, blur effects, spotlight mode, zoom functionality, and message overlays during presentations.
+A desktop companion app for Demo Time that provides screen overlays, blur
+effects, spotlight mode, system-level zoom functionality, and message overlays
+during presentations.
+
+Inspired by
+[ZoomIt](https://learn.microsoft.com/en-us/sysinternals/downloads/zoomit), this
+tool helps presenters create engaging demos with visual effects.
+
+## Architecture
+
+The app uses a **dual-webview architecture**:
+
+1. **Config Window** (`config`): A regular window for settings and controls
+2. **Overlay Window** (`overlay`): A transparent, maximizable window for effects
+   - Transparent background
+   - Maximized to cover screen (but resizable)
+   - Click-through when no effects are active
+   - Always on top
+   - Shows blur, messages, zoom indicators, and spotlight
 
 ## Features
 
-- **🌫️ Blur Overlay**: Temporarily blur the screen during transitions
-- **🔦 Spotlight Mode**: Highlight specific areas by dimming everything else (follows cursor)
-- **🔍 Zoom In/Out**: Smooth zoom functionality for detailed views (like ZoomIt)
-- **💬 Message Overlay**: Display custom messages on screen
+- **🌫️ Blur Overlay**: Temporarily blur the screen during transitions or breaks
+- **🔦 Spotlight Mode**: Highlight specific areas by dimming everything else
+  (follows cursor)
+- **🔍 System-Level Zoom**: Native OS zoom functionality (like ZoomIt)
+  - macOS: Uses Accessibility Zoom
+  - Windows: Uses Windows Magnifier
+  - Zoom in/out/reset with keyboard shortcuts
+  - Visual zoom indicator on overlay
+- **💬 Message Overlay**: Display custom messages with automatic blur
+  - Large, centered text
+  - Configurable colors and styling
+  - Quick action buttons for common messages
 - **⌨️ Keyboard Shortcuts**: Configurable global shortcuts for all actions
 - **🔌 API Server**: HTTP API for external control (e.g., from VS Code)
-- **🎨 Theming**: Configurable colors, opacity, and fonts
-- **🖥️ Multi-Screen Support**: Works across multiple displays
-- **🚀 Launch on Login**: Optional autostart on system login
-- **🎯 Always-on-Top**: Overlays stay on top with click-through support
+- **🎯 Smart Overlay**: Automatically shows/hides based on active effects
 
 ## Installation
 
@@ -42,8 +65,10 @@ xcode-select --install
 ```
 
 #### Windows
-- Install [Microsoft Visual Studio C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
-- Install [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
+- Install
+  [Microsoft Visual Studio C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+- Install
+  [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
 
 ### Building from Source
 
@@ -69,7 +94,8 @@ yarn tauri:dev  # Development mode
 The app will:
 1. Start in the system tray
 2. Launch an HTTP API server on `http://127.0.0.1:42042`
-3. Show the main control window
+3. Show the config window (control panel)
+4. Create a hidden transparent overlay window (shown when effects activate)
 
 ### System Tray
 
@@ -290,7 +316,8 @@ Apache-2.0 - Same as the main Demo Time project
 
 ## Credits
 
-Created by [Elio Struyf](https://www.eliostruyf.com) as part of the [Demo Time](https://demotime.show) project.
+Created by [Elio Struyf](https://www.eliostruyf.com) as part of the
+[Demo Time](https://demotime.show) project.
 
 ## Links
 

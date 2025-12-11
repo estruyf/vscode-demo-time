@@ -2,6 +2,13 @@
 
 Get up and running with Demo Time Companion in 5 minutes!
 
+## Overview
+
+The companion app provides a **dual-webview architecture**:
+- **Config Window**: Control panel for all features
+- **Overlay Window**: Transparent fullscreen for effects (blur, messages,
+  spotlight, zoom)
+
 ## Step 1: Install Prerequisites
 
 ### Linux
@@ -20,8 +27,10 @@ xcode-select --install
 ```
 
 ### Windows
-1. Install [Visual Studio C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
-2. Install [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
+1. Install
+   [Visual Studio C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+2. Install
+   [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
 
 ## Step 2: Build the App
 
@@ -48,7 +57,8 @@ yarn tauri:dev
 
 **For production (after building):**
 - **Linux:** `./src-tauri/target/release/demo-time-companion`
-- **macOS:** Open `src-tauri/target/release/bundle/macos/Demo Time Companion.app`
+- **macOS:** Open
+  `src-tauri/target/release/bundle/macos/Demo Time Companion.app`
 - **Windows:** Run `src-tauri\target\release\Demo Time Companion.exe`
 
 ## Step 4: Verify It's Working
@@ -150,7 +160,8 @@ Create a demo file `.demo/demo.json`:
 - Run `yarn install` again
 
 ### Keyboard Shortcuts Not Working
-- Make sure the app has accessibility permissions (macOS: System Preferences > Security & Privacy > Accessibility)
+- Make sure the app has accessibility permissions (macOS: System Preferences >
+  Security & Privacy > Accessibility)
 - Check for conflicts with other apps
 - Try different key combinations in the app settings
 
@@ -158,7 +169,8 @@ Create a demo file `.demo/demo.json`:
 
 - Read the [README.md](./README.md) for full documentation
 - Check [INTEGRATION.md](./INTEGRATION.md) for advanced integration examples
-- See [examples/demo-with-companion.json](./examples/demo-with-companion.json) for a complete demo
+- See [examples/demo-with-companion.json](./examples/demo-with-companion.json)
+  for a complete demo
 - Run [examples/test-api.sh](./examples/test-api.sh) to test all API endpoints
 
 ## Getting Help
