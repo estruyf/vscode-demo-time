@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::sync::{Arc, Mutex};
-use tauri::{AppHandle, Emitter, State};
+use tauri::{AppHandle, Emitter, State, Manager};
 use tauri::tray::TrayIconBuilder;
 
 mod api_server;
@@ -65,6 +65,18 @@ fn start_overlay_mode(
     let mut mode = view_mode.lock().map_err(|e| e.to_string())?;
     *mode = ViewMode::Overlay;
     
+    if let Some(window) = app_handle.get_webview_window("main") {
+        // Make the webview background transparent for overlay mode
+        use tauri::window::Color;
+        window.set_background_color(Some(Color(0, 0, 0, 0))).map_err(|e| e.to_string())?;
+        
+        window.set_decorations(false).map_err(|e| e.to_string())?;
+        window.set_always_on_top(true).map_err(|e| e.to_string())?;
+        window.set_skip_taskbar(true).map_err(|e| e.to_string())?;
+        window.maximize().map_err(|e| e.to_string())?;
+        window.set_ignore_cursor_events(true).map_err(|e| e.to_string())?;
+    }
+
     // Emit event to frontend
     app_handle.emit("view-mode-changed", ViewMode::Overlay).map_err(|e| e.to_string())?;
     
@@ -87,6 +99,20 @@ fn back_to_settings(
     let mut mode = view_mode.lock().map_err(|e| e.to_string())?;
     *mode = ViewMode::Settings;
     
+    if let Some(window) = app_handle.get_webview_window("main") {
+        // Set webview background to white for settings mode
+        use tauri::window::Color;
+        window.set_background_color(Some(Color(255, 255, 255, 255))).map_err(|e| e.to_string())?;
+        
+        window.set_decorations(true).map_err(|e| e.to_string())?;
+        window.set_always_on_top(false).map_err(|e| e.to_string())?;
+        window.set_skip_taskbar(false).map_err(|e| e.to_string())?;
+        window.unmaximize().map_err(|e| e.to_string())?;
+        window.set_ignore_cursor_events(false).map_err(|e| e.to_string())?;
+        window.set_size(tauri::Size::Logical(tauri::LogicalSize { width: 500.0, height: 400.0 })).map_err(|e| e.to_string())?;
+        window.center().map_err(|e| e.to_string())?;
+    }
+
     // Emit events to frontend
     app_handle.emit("view-mode-changed", ViewMode::Settings).map_err(|e| e.to_string())?;
     app_handle.emit("blur-state-changed", BlurState::default()).map_err(|e| e.to_string())?;
@@ -105,6 +131,10 @@ fn set_blur(
     blur.active = active;
     blur.message = message.unwrap_or_default();
     
+    if let Some(window) = app_handle.get_webview_window("main") {
+        window.set_ignore_cursor_events(!active).map_err(|e| e.to_string())?;
+    }
+
     let state_clone = blur.clone();
     
     // Emit event to frontend
@@ -125,6 +155,10 @@ fn toggle_blur(
         blur.message = String::new();
     }
     
+    if let Some(window) = app_handle.get_webview_window("main") {
+        window.set_ignore_cursor_events(!blur.active).map_err(|e| e.to_string())?;
+    }
+
     let is_active = blur.active;
     let state_clone = blur.clone();
     
@@ -149,6 +183,12 @@ pub fn run() {
         .manage(blur_state.clone())
         .manage(view_mode.clone())
         .setup(move |app| {
+            // Set initial webview background to white for settings mode
+            if let Some(window) = app.get_webview_window("main") {
+                use tauri::window::Color;
+                let _ = window.set_background_color(Some(Color(255, 255, 255, 255)));
+            }
+            
             // Setup system tray
             let quit = tauri::menu::MenuItemBuilder::with_id("quit", "Quit").build(app)?;
             let settings = tauri::menu::MenuItemBuilder::with_id("settings", "Back to Settings").build(app)?;

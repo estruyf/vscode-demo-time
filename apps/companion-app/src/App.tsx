@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import { getCurrentWindow } from "@tauri-apps/api/window";
 import "./App.css";
 
 type ViewMode = "settings" | "overlay";
@@ -39,29 +38,6 @@ function App() {
     };
   }, []);
 
-  useEffect(() => {
-    // Update window properties based on view mode
-    const window = getCurrentWindow();
-
-    if (viewMode === "overlay") {
-      // Make window transparent, fullscreen, click-through
-      window.setDecorations(false);
-      window.setAlwaysOnTop(true);
-      window.setSkipTaskbar(true);
-      window.maximize();
-      window.setIgnoreCursorEvents(!blurState.active);
-    } else {
-      // Normal window for settings
-      window.setDecorations(true);
-      window.setAlwaysOnTop(false);
-      window.setSkipTaskbar(false);
-      window.unmaximize();
-      window.setIgnoreCursorEvents(false);
-      window.setSize({ width: 500, height: 400, type: 'Logical' });
-      window.center();
-    }
-  }, [viewMode, blurState.active]);
-
   const loadSettings = async () => {
     try {
       const settings = await invoke<{ api_port: number }>("get_settings");
@@ -73,7 +49,7 @@ function App() {
 
   const handleStart = async () => {
     try {
-      await invoke("save_settings", { settings: { api_port: apiPort } });
+      await invoke("save_settings", { newSettings: { api_port: apiPort } });
       await invoke("start_overlay_mode");
     } catch (error) {
       console.error("Failed to start overlay:", error);
