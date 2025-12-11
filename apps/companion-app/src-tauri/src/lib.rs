@@ -9,7 +9,7 @@ mod api_server;
 use window_vibrancy::{apply_vibrancy, clear_vibrancy, NSVisualEffectMaterial};
 
 // #[cfg(target_os = "windows")]
-use window_vibrancy::{apply_blur, clear_blur};
+// use window_vibrancy::{apply_blur, clear_blur};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Settings {
@@ -81,6 +81,20 @@ fn start_overlay_mode(
         window.set_skip_taskbar(true).map_err(|e| e.to_string())?;
         window.maximize().map_err(|e| e.to_string())?;
         window.set_ignore_cursor_events(true).map_err(|e| e.to_string())?;
+
+        #[cfg(target_os = "macos")]
+        {
+            // apply_liquid_glass(&window, NSGlassEffectViewStyle::Clear, None, Some(26.0))
+            //     .expect(
+            //         "Unsupported platform! 'apply_liquid_glass' is only supported on macOS 26+",
+            //     );
+            apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, None)
+              .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
+        }
+
+        #[cfg(target_os = "windows")]
+        apply_blur(&window, Some((18, 18, 18, 125)))
+            .expect("Unsupported platform! 'apply_blur' is only supported on Windows");
     }
 
     // Emit event to frontend
@@ -264,28 +278,6 @@ pub fn run() {
                                     if !blur.active {
                                         blur.message = String::new();
                                     }
-                                    
-                                    // Apply or clear native backdrop blur effect
-                                    if let Some(window) = app_handle.get_webview_window("main") {
-                                        if blur.active {
-                                            #[cfg(target_os = "macos")]
-                                            let _ = apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, None);
-                                            
-                                            #[cfg(target_os = "windows")]
-                                            let _ = apply_blur(&window, Some((18, 18, 18, 125)));
-                                            
-                                            let _ = window.set_ignore_cursor_events(false);
-                                        } else {
-                                            #[cfg(target_os = "macos")]
-                                            let _ = clear_vibrancy(&window);
-                                            
-                                            #[cfg(target_os = "windows")]
-                                            let _ = clear_blur(&window);
-                                            
-                                            let _ = window.set_ignore_cursor_events(true);
-                                        }
-                                    }
-                                    
                                     let _ = app_handle.emit("blur-state-changed", blur.clone());
                                 }
                             });
@@ -313,6 +305,7 @@ pub fn run() {
             save_settings,
             start_overlay_mode,
             back_to_settings,
+            set_blur,
             toggle_blur,
         ])
         .run(tauri::generate_context!())

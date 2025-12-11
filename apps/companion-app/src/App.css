@@ -192,8 +192,7 @@ body:has(.overlay-container) {
   pointer-events: none;
 
   &.active {
-    /* background: rgba(0, 0, 0, 0.8); */
-    background: transparent;
+    background: rgba(0, 0, 0, 0.8);
     pointer-events: auto;
   }
 }

@@ -1,15 +1,9 @@
 use serde::{Deserialize, Serialize};
 use std::convert::Infallible;
-use tauri::{AppHandle, Emitter, Manager};
+use tauri::{AppHandle, Emitter};
 use warp::Filter;
 
 use crate::{BlurStateArc, BlurState, SettingsState};
-
-#[cfg(target_os = "macos")]
-use window_vibrancy::{apply_vibrancy, clear_vibrancy, NSVisualEffectMaterial};
-
-#[cfg(target_os = "windows")]
-use window_vibrancy::{apply_blur, clear_blur};
 
 #[derive(Debug, Deserialize, Serialize)]
 struct ActionRequest {
@@ -81,18 +75,6 @@ async fn handle_action(
             if let Ok(mut s) = state.lock() {
                 s.active = true;
                 s.message = req.message.unwrap_or_default();
-                
-                // Apply native backdrop blur effect
-                if let Some(window) = app_handle.get_webview_window("main") {
-                    #[cfg(target_os = "macos")]
-                    let _ = apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, None);
-                    
-                    #[cfg(target_os = "windows")]
-                    let _ = apply_blur(&window, Some((18, 18, 18, 125)));
-                    
-                    let _ = window.set_ignore_cursor_events(false);
-                }
-                
                 let _ = app_handle.emit("blur-state-changed", s.clone());
                 ActionResponse {
                     success: true,
@@ -109,18 +91,6 @@ async fn handle_action(
             if let Ok(mut s) = state.lock() {
                 s.active = false;
                 s.message = String::new();
-                
-                // Clear native backdrop blur effect
-                if let Some(window) = app_handle.get_webview_window("main") {
-                    #[cfg(target_os = "macos")]
-                    let _ = clear_vibrancy(&window);
-                    
-                    #[cfg(target_os = "windows")]
-                    let _ = clear_blur(&window);
-                    
-                    let _ = window.set_ignore_cursor_events(true);
-                }
-                
                 let _ = app_handle.emit("blur-state-changed", s.clone());
                 ActionResponse {
                     success: true,
@@ -139,28 +109,6 @@ async fn handle_action(
                 if !s.active {
                     s.message = String::new();
                 }
-                
-                // Apply or clear native backdrop blur effect
-                if let Some(window) = app_handle.get_webview_window("main") {
-                    if s.active {
-                        #[cfg(target_os = "macos")]
-                        let _ = apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, None);
-                        
-                        #[cfg(target_os = "windows")]
-                        let _ = apply_blur(&window, Some((18, 18, 18, 125)));
-                        
-                        let _ = window.set_ignore_cursor_events(false);
-                    } else {
-                        #[cfg(target_os = "macos")]
-                        let _ = clear_vibrancy(&window);
-                        
-                        #[cfg(target_os = "windows")]
-                        let _ = clear_blur(&window);
-                        
-                        let _ = window.set_ignore_cursor_events(true);
-                    }
-                }
-                
                 let _ = app_handle.emit("blur-state-changed", s.clone());
                 ActionResponse {
                     success: true,
@@ -177,18 +125,6 @@ async fn handle_action(
             if let Ok(mut s) = state.lock() {
                 s.active = true;
                 s.message = req.message.unwrap_or_else(|| "Message".to_string());
-                
-                // Apply native backdrop blur effect
-                if let Some(window) = app_handle.get_webview_window("main") {
-                    #[cfg(target_os = "macos")]
-                    let _ = apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, None);
-                    
-                    #[cfg(target_os = "windows")]
-                    let _ = apply_blur(&window, Some((18, 18, 18, 125)));
-                    
-                    let _ = window.set_ignore_cursor_events(false);
-                }
-                
                 let _ = app_handle.emit("blur-state-changed", s.clone());
                 ActionResponse {
                     success: true,
