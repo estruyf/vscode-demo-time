@@ -2,7 +2,7 @@
   "name": "vscode-demo-time",
   "displayName": "Demo Time — Presentations & Demos in VS Code",
   "description": "Script your coding demos and presentations to perfection and present slides — all within VS Code! No typos, no missteps—just flawless, stress-free presentations. Seamlessly execute each demo step and advance through slides like a pro, keeping your audience engaged without ever leaving your coding environment.",
-  "version": "1.11.0",
+  "version": "1.12.0",
   "publisher": "eliostruyf",
   "keywords": [
     "demo",
