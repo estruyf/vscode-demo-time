@@ -201,7 +201,8 @@ export class DemoFileProvider {
         return;
       }
 
-      demoFilePath = file.path;
+      // Normalize the created file path so it matches the keys used by `getFiles()`
+      demoFilePath = parseWinPath(file.fsPath);
       demoFiles = await DemoFileProvider.getFiles();
     } else if (!demoFilePick.description) {
       return;

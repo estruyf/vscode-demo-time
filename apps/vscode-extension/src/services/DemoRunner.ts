@@ -405,6 +405,8 @@ export class DemoRunner {
 
       executingFile.filePath = previousFile.filePath;
       executingFile.demo = [];
+      executingFile.version = previousFile.version;
+
       // Get the last demo step of the previous file
       const lastDemo = previousFile.demo.demos[previousFile.demo.demos.length - 1];
       const crntIdx = previousFile.demo.demos.length - 1;

@@ -778,7 +778,7 @@
 
 ## [0.0.20] - 2024-06-07
 
-- [#3](https://github.com/estruyf/vscode-demo-time/issues/3): Added a statusbar
+- [#3](https://github.com/estruyf/vscode-demo-time/issues/3): Added a status bar
   item to show the next step to execute
 
 ## [0.0.19] - 2024-05-18

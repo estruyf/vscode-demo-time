@@ -23,7 +23,7 @@ export const insertVariables = async (
 
     // Escape the variable value to ensure it's valid when inserted into JSON strings
     let value = variables[key];
-    if (typeof value === 'string') {
+    if (typeof value === 'string' && /^\s*[{[]/.test(text) && /[}\]]\s*$/.test(text)) {
       // Escape backslashes, quotes, and control characters for JSON compatibility
       value = value
         .replace(/\\/g, '\\\\')

@@ -94,7 +94,7 @@ end tell`;
       await MacOSActionsService.executeAppleScript(script);
       Logger.info('Focus Mode disabled');
     } catch (error) {
-      Notifications.error(`Failed to disable Focus Mode: ${(error as Error).message}`);
+      Notifications.error(`Failed to disable Focus Mode: ${String(error)}`);
     }
   }
 

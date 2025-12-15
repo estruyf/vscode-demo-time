@@ -216,8 +216,18 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
     handleChange('setting', { key, value: value === undefined ? null : value });
   };
 
-  const handleStateChange = (key: string, value: string) => {
-    handleChange('state', { key, value });
+  const handleStateChange = (key: string, value?: string) => {
+    const k = (key || '').trim();
+    const v = value === undefined ? undefined : value;
+
+    // If both key and value are empty/undefined, remove the state entirely
+    if (!k && v === undefined) {
+      handleChange('state', undefined);
+      return;
+    }
+
+    // Otherwise ensure we set the state object; default missing value to empty string to preserve previous behavior
+    handleChange('state', { key: k, value: v ?? '' });
   };
 
   // Handle position field changes
@@ -230,7 +240,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
   const renderField = (field: string) => {
     const isRequired = requiredFields.includes(field);
-    const fieldErrors = stepValidation.errors.filter(error => error.field === field);
+    const fieldErrors = stepValidation.errors.filter(error => error.field === field || error[`field:${field}`] !== undefined);
     const hasError = fieldErrors.length > 0;
     let label = field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1');
 

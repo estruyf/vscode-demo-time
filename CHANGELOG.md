@@ -299,7 +299,7 @@
   Demo Time via [@demotime/mcp](https://www.npmjs.com/package/@demotime/mcp)
 - [#113](https://github.com/estruyf/vscode-demo-time/pull/113): Enhancement for
   the end placeholder setting to look after the start placeholder index. Thanks
-  to [Leonardo Montini](https://github.com/Balastrong).
+  to, [Leonardo Montini](https://github.com/Balastrong).
 - [#114](https://github.com/estruyf/vscode-demo-time/issues/114): Fix to show
   the correct view step demo. Thanks to
   [Leonardo Montini](https://github.com/Balastrong).
@@ -785,7 +785,7 @@
 
 ## [0.0.20] - 2024-06-07
 
-- [#3](https://github.com/estruyf/vscode-demo-time/issues/3): Added a statusbar
+- [#3](https://github.com/estruyf/vscode-demo-time/issues/3): Added a status bar
   item to show the next step to execute
 
 ## [0.0.19] - 2024-05-18

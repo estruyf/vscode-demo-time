@@ -123,7 +123,7 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
       >
         <input type="hidden" name="apiKey" value="sf_2g9h855e668na16n94fl0lh4" />
         <input type="hidden" name="subject" value="Demo Time Service Interest" />
-        <input type="hidden" name="replyTo" value="@replyEmail" />
+        <input type="hidden" name="replyTo" value="elio@struyfconsulting.be" />
         <input type="text" name="honeypot" style="display: none" tabindex="-1" autocomplete="off" />
 
         <div class="form-group">
@@ -141,33 +141,6 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
         </div>
 
         <div class="form-group">
-          <label for="organization">Organization/Company</label>
-          <div class="input-group">
-            <input
-              type="text"
-              id="organization"
-              name="organization"
-              placeholder="Demo Time, etc."
-              required
-            />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="role">Your Role</label>
-          <div class="input-group">
-            <select id="role" name="role" required>
-              <option value="">Select your role...</option>
-              <option value="training-manager">Training Manager</option>
-              <option value="devrel">Developer Relations</option>
-              <option value="content-creator">Content Creator</option>
-              <option value="conference-organizer">Conference Organizer</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-group">
           <label>Which services are you interested in?</label>
           <div class="checkbox-group">
             <label class="checkbox-label">
@@ -178,69 +151,6 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
               <input type="checkbox" name="$services" value="coaching" />
               Expert coaching (€ 200/hour)
             </label>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="demoDescription"
-            >What types of demos does your organization create? (1-2 sentences)</label
-          >
-          <div class="input-group">
-            <textarea
-              id="demoDescription"
-              name="demoDescription"
-              rows="2"
-              placeholder="e.g., Hands-on labs for developer training, product feature demonstrations, conference workshops"
-              required></textarea>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="frequency">How many demos does your team create per quarter?</label>
-          <div class="input-group">
-            <select id="frequency" name="frequency" required>
-              <option value="">Select quantity...</option>
-              <option value="1-5">1-5 demos</option>
-              <option value="6-10">6-10 demos</option>
-              <option value="11-20">11-20 demos</option>
-              <option value="20+">20+ demos</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="challenge">What's your biggest challenge with demo creation right now?</label>
-          <div class="input-group">
-            <textarea
-              id="challenge"
-              name="challenge"
-              rows="2"
-              placeholder="e.g., Takes too long to create, demos break during live sessions, hard to maintain when product updates"
-              required></textarea>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="willingness">Is € 500 per demo within your budget?</label>
-          <div class="input-group">
-            <select id="willingness" name="willingness" required>
-              <option value="">Select answer...</option>
-              <option value="yes">Yes, this is reasonable</option>
-              <option value="need-approval">Yes, but need approval</option>
-              <option value="multiple">Yes, interested in ordering multiple demos</option>
-              <option value="too-high">This seems too high</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="message">Additional questions or comments (Optional)</label>
-          <div class="input-group">
-            <textarea
-              id="message"
-              name="message"
-              rows="3"
-              placeholder="Any questions or specific requirements?"></textarea>
           </div>
         </div>
 

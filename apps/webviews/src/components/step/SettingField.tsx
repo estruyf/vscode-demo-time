@@ -24,6 +24,14 @@ export const SettingField: React.FC<SettingFieldProps> = ({ setting, onChange, f
     }
   };
 
+  const settingValue = setting?.value;
+  const displayValue =
+    typeof settingValue === 'object' && settingValue !== null
+      ? JSON.stringify(settingValue, null, 2)
+      : typeof settingValue === 'boolean'
+        ? String(settingValue)
+        : settingValue ?? '';
+
   return (
     <div className="space-y-2">
       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -46,13 +54,7 @@ export const SettingField: React.FC<SettingFieldProps> = ({ setting, onChange, f
           <label className="text-xs font-medium text-gray-600 mb-1 dark:text-gray-400" htmlFor="setting-value">Value</label>
           <textarea
             id="setting-value"
-            value={
-              typeof setting?.value === 'object' && setting?.value !== null
-                ? JSON.stringify(setting.value, null, 2)
-                : typeof setting?.value === 'boolean'
-                  ? String(setting?.value)
-                  : setting?.value || ''
-            }
+            value={displayValue}
             onChange={(e) => handleValueChange(e.target.value)}
             rows={5}
             className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
@@ -61,7 +63,9 @@ export const SettingField: React.FC<SettingFieldProps> = ({ setting, onChange, f
         </div>
 
         {fieldErrors.map((error, index) => (
-          <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
+          <p key={`${index}-${error.message}`} className="text-sm text-red-600 dark:text-red-400 mt-1">
+            {error.message}
+          </p>
         ))}
       </div>
     </div>

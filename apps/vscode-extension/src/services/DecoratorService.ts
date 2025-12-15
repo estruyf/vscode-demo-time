@@ -2,7 +2,6 @@ import {
   commands,
   DecorationRenderOptions,
   Range,
-  Selection,
   TextEditor,
   TextEditorDecorationType,
   TextEditorSelectionChangeKind,
@@ -46,11 +45,13 @@ export class DecoratorService {
     DecoratorService.setAfterDecorators();
 
     // Remove the highlight when the user clicks in the editor
-    window.onDidChangeTextEditorSelection((e) => {
+    const disposable = window.onDidChangeTextEditorSelection((e) => {
       if (e.kind === TextEditorSelectionChangeKind.Mouse && DecoratorService.isHighlighted) {
         DecoratorService.unselect(e.textEditor);
       }
     });
+
+    Extension.getInstance().subscriptions.push(disposable);
   }
 
   public static isDecorated(): boolean {

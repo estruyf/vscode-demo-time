@@ -639,7 +639,7 @@
         },
         {
           "command": "demo-time.showPresenterView",
-          "when": "view == demo-time-scenes-scenes",
+          "when": "view == demo-time-scenes",
           "group": "navigation@1"
         },
         {

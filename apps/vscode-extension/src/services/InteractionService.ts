@@ -172,6 +172,41 @@ export class InteractionService {
       }
     } else if (osPlatform === 'win32') {
       // Windows - using PowerShell
+      // Validate windowsKey against a safe whitelist to avoid command injection.
+      const allowedSpecialKeys = new Set([
+        'ENTER',
+        'TAB',
+        'LEFT',
+        'RIGHT',
+        'UP',
+        'DOWN',
+        'ESCAPE',
+        'BACKSPACE',
+        'DELETE',
+        'HOME',
+        'END',
+        'PAGEUP',
+        'PAGEDOWN',
+        'INSERT',
+        'RETURN',
+      ]);
+
+      const fnKeyRegex = /^F([1-9][0-9]?)$/i; // F1..F24
+      const singleCharRegex = /^[A-Za-z0-9]$/; // single alphanumeric character
+
+      let normalizedKey = typeof windowsKey === 'string' ? windowsKey.trim() : '';
+
+      if (fnKeyRegex.test(normalizedKey) || allowedSpecialKeys.has(normalizedKey.toUpperCase())) {
+        // normalize to upper-case for special keys and function keys
+        normalizedKey = normalizedKey.toUpperCase();
+      } else if (singleCharRegex.test(normalizedKey)) {
+        // keep as-is for single characters
+        normalizedKey = normalizedKey;
+      } else {
+        Notifications.error(`Invalid key for Windows SendKeys: ${windowsKey}`);
+        return;
+      }
+
       // Map modifiers to SendKeys format: ^ = CTRL; % = ALT; + = SHIFT. (No mapping for Meta / Win key)
       let prefix = '';
       if (modifiers) {
@@ -185,7 +220,11 @@ export class InteractionService {
           prefix += '+';
         }
       }
-      const sendKey = `${prefix}{${windowsKey}}`;
+
+      // Use braces for special and function keys, no braces for single characters
+      const sendKey = singleCharRegex.test(normalizedKey)
+        ? `${prefix}${normalizedKey}`
+        : `${prefix}{${normalizedKey}}`;
       command = `powershell -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('${sendKey}')"`;
     } else {
       // Linux - using xdotool (needs to be installed)

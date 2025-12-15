@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { TYPING_MODES, TERMINAL_TYPING_MODES } from '../../types/demo';
 import { Action, Config, InsertTypingMode, WebViewMessages } from '@demotime/common';
 import { messageHandler } from '@estruyf/vscode/dist/client/webview';
@@ -22,23 +22,24 @@ export const InsertTypingModePicker: React.FC<InsertTypingModePickerProps> = ({
 }) => {
   const [crtnValue, setCrtnValue] = React.useState(value);
 
-  const getTypingModeOptions = () => {
+  const getTypingModeOptions = useCallback(() => {
     // Use terminal typing modes for terminal commands
     if (action === 'executeTerminalCommand') {
       return TERMINAL_TYPING_MODES;
     }
     return TYPING_MODES;
-  };
+  }, [action]);
 
   React.useEffect(() => {
+    const options = getTypingModeOptions() as InsertTypingMode[];
     if (value) {
-      setCrtnValue(value);
+      setCrtnValue(options.includes(value) ? value : options[0]);
     } else {
       messageHandler.request<InsertTypingMode>(WebViewMessages.toVscode.getSetting, Config.insert.typingMode).then((mode) => {
-        setCrtnValue(mode);
+        setCrtnValue(options.includes(mode) ? mode : options[0]);
       });
     }
-  }, [value]);
+  }, [value, action, getTypingModeOptions]);
 
   const hasError = error || fieldErrors.length > 0;
 

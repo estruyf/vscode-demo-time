@@ -70,9 +70,11 @@ export const NextSlide: React.FunctionComponent<INextSlideProps> = ({
     if (iframeRef.current && nextTitle) {
       const iframe = iframeRef.current;
       const currentSrc = iframe.src;
-      const url = new URL(currentSrc);
-      url.searchParams.set('t', Date.now().toString());
-      iframe.src = url.toString();
+      try {
+        const url = new URL(currentSrc);
+        url.searchParams.set('t', Date.now().toString());
+        iframe.src = url.toString();
+      } catch { }
     }
   }, [nextTitle]);
 

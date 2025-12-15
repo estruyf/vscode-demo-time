@@ -63,7 +63,7 @@ export class ChatActionsService {
       await InteractionService.pressKey('BACKSPACE', 8, 'Backspace', { alt: true });
     } else {
       // Simulate Ctrl+Esc on Linux using the InteractionService helper
-      await InteractionService.pressKey('Escape', 9, 'Escape', { ctrl: true });
+      await InteractionService.pressKey('ESCAPE', 9, 'ESCAPE', { ctrl: true });
     }
   }
 }

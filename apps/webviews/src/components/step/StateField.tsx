@@ -3,7 +3,7 @@ import { Step } from '@demotime/common';
 
 interface StateFieldProps {
   state?: Step['state'];
-  onChange: (key: string, value: string) => void;
+  onChange: (key: string, value?: string | undefined) => void;
   fieldErrors?: { message: string }[];
   isRequired?: boolean;
 }
@@ -12,11 +12,32 @@ export const StateField: React.FC<StateFieldProps> = ({ state, onChange, fieldEr
   const hasError = fieldErrors.length > 0;
 
   const handleKeyChange = (value: string) => {
-    onChange(value, state?.value || '');
+    const keyRaw = value || '';
+    const valueRaw = state?.value ?? '';
+
+    const keyNorm = keyRaw.trim();
+    const valueNorm = valueRaw === '' ? undefined : valueRaw;
+
+    if (!keyNorm && valueNorm === undefined) {
+      // Both inputs empty - signal removal by emitting undefined
+      onChange('', undefined);
+    } else {
+      onChange(keyRaw, valueRaw);
+    }
   };
 
   const handleValueChange = (value: string) => {
-    onChange(state?.key || '', value);
+    const keyRaw = state?.key || '';
+    const valueRaw = value || '';
+
+    const keyNorm = keyRaw.trim();
+    const valueNorm = valueRaw === '' ? undefined : valueRaw;
+
+    if (!keyNorm && valueNorm === undefined) {
+      onChange('', undefined);
+    } else {
+      onChange(keyRaw, valueRaw);
+    }
   };
 
   return (
@@ -50,7 +71,9 @@ export const StateField: React.FC<StateFieldProps> = ({ state, onChange, fieldEr
         </div>
 
         {fieldErrors.map((error, index) => (
-          <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
+          <p key={`${index}-${error.message}`} className="text-sm text-red-600 dark:text-red-400 mt-1">
+            {error.message}
+          </p>
         ))}
       </div>
     </div>
