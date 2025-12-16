@@ -20,20 +20,3 @@ Follow these steps to use the presenter view:
 <Image class="mx-auto" src={presenterViewImage} alt="Presenter view" />
 
 The advantage of using the presenter view is that you can see the [notes](/features/using-notes/) and the next steps while presenting.
-
-## Next slide preview
-
-The presenter view can show a live preview of the next slide. This helps you prepare for what's coming next while presenting.
-
-<Image class="mx-auto" src={nextSlideViewImage} alt="Next slide preview" />
-
-### Requirements
-
-To use the next slide preview feature, you need to enable the Demo Time API by setting `demoTime.api.enabled` to `true` in your VS Code settings.
-
-### How it works
-
-- When you navigate through your slides, the presenter view automatically updates to show a preview of the next slide.
-- The preview appears above the presenter notes in the right column of the presenter view.
-- You can collapse or expand the preview by clicking the chevron icon next to the "Next Slide" header.
-- The preview is hidden automatically when the next action is running another demo (e.g., using the `runDemoById` action).
