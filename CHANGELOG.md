@@ -1,6 +1,6 @@
 # Change Log
 
-## [1.12.0] - 2025-12-15
+## [1.12.0] - 2025-12-16
 
 - **BREAKING**: Changed project license from MIT to Apache License 2.0. See
   [LICENSE](./LICENSE) for details.
