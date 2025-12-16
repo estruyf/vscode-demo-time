@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo Time Terminology</title>
+  <link href="https://fonts.googleapis.com/css2?family=Mona+Sans:wght@400;500;600;700&family=Oswald:wght@200..700&family=Hubot+Sans:wght@400;600;700&display=swap" rel="stylesheet"> 
+  <style>
+    :root {
+      --primary: #816600;
+      --primary-dark: #624d00;
+      --primary-light: #ffd43b;
+      --secondary: #313848;
+      --bg-dark: #15181f;
+      --bg-card: #202736;
+      --text-light: #eaeef6;
+      --text-muted: #9ba4b7;
+      --accent-glow: rgba(255, 212, 59, 0.15);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Mona Sans', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    
+    .header h1 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 3rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    
+    .header h1 .highlight {
+      color: var(--primary-light);
+      text-transform: uppercase;
+      font-weight: 800;
+      font-style: italic;
+      margin-right: .25em;
+    }
+    
+    .header .subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    
+    /* Nested Hierarchy */
+    .nested-hierarchy {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .nest-box {
+      border: 2px solid;
+      border-radius: 12px;
+      padding: 32px;
+      position: relative;
+    }
+    
+    .nest-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .nest-icon {
+      width: 32px;
+      height: 32px;
+      flex-shrink: 0;
+      color: var(--text-light);
+    }
+    
+    .nest-icon svg {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .nest-info h3 {
+      font-family: 'Hubot Sans', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-light);
+    }
+    
+    .nest-info p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+    
+    /* Play Level */
+    .play-box {
+      border-color: var(--primary-light);
+      background: rgba(255, 212, 59, 0.02);
+    }
+    
+    .play-box > .nest-header .nest-icon {
+      color: var(--primary-light);
+    }
+    
+    /* Act Level */
+    .act-box {
+      border-color: var(--text-muted);
+      background: var(--bg-dark);
+      margin-left: 40px; /* Indentation */
+      margin-top: 40px;
+    }
+    
+    /* Scene Level */
+    .scene-box {
+      border-color: var(--primary-light);
+      background: rgba(129, 102, 0, 0.05);
+      margin-left: 40px; /* Indentation */
+      margin-top: 40px;
+    }
+    
+    .scene-box > .nest-header .nest-icon {
+      color: var(--primary-light);
+    }
+    
+    /* Moves List */
+    .move-box {
+      border-color: var(--text-muted);
+      background: var(--bg-dark);
+      margin-left: 40px; /* Indentation */
+    }
+    
+    .moves-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-left: 48px;
+    }
+    
+    .move-item {
+      background: var(--primary-light);
+      padding: 14px 20px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: var(--bg-dark);
+      font-weight: 600;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
+    .move-item svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--bg-dark);
+      stroke-width: 2.5;
+    }
+    
+    /* Dashed placeholders */
+    .placeholder-box {
+      border: 2px dashed var(--text-muted);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 16px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      text-align: center;
+      font-style: italic;
+    }
+    
+    /* Key Takeaway */
+    .takeaway {
+      margin-top: 48px;
+      background: var(--primary-light);
+      border-radius: 20px;
+      padding: 32px 40px;
+      text-align: center;
+      box-shadow: 0 12px 48px rgba(129, 102, 0, 0.3);
+    }
+    
+    .takeaway h4 {
+      font-family: 'Hubot Sans', sans-serif;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+      opacity: 0.9;
+      color: var(--bg-dark);
+    }
+    
+    .takeaway p {
+      font-size: 1.15rem;
+      line-height: 1.7;
+      max-width: 700px;
+      margin: 0 auto;
+      color: var(--bg-dark);
+    }
+    
+    .takeaway .hierarchy-path {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(21, 24, 31, 0.25);
+      padding: 8px 16px;
+      border-radius: 8px;
+      margin-top: 16px;
+      font-weight: 600;
+      color: var(--bg-dark);
+    }
+    
+    .takeaway .hierarchy-path span {
+      opacity: 0.6;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2rem;
+      }
+      
+      .level {
+        grid-template-columns: 60px 1fr;
+        gap: 16px;
+      }
+      
+      .level-number {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+      }
+      
+      .level-content {
+        grid-template-columns: 1fr;
+        padding: 20px;
+      }
+      
+      .visual-diagram {
+        justify-content: flex-start;
+      }
+      
+      .hierarchy::before {
+        left: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <h1>Master your demos:<br><span class="highlight">Demo Time</span> Terminology</h1>
+      <p class="subtitle">Simplify demo creation with our theatrical structure:<br /> Play, Act, Scene, and Move.</p>
+    </header>
+    
+    <!-- Nested Hierarchy -->
+    <div class="nested-hierarchy">
+      
+      <!-- Play (Outer Box) -->
+      <div class="nest-box play-box">
+        <div class="nest-header">
+          <div class="nest-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 11h.01"/>
+              <path d="M14 6h.01"/>
+              <path d="M18 6h.01"/>
+              <path d="M6.5 13.1h.01"/>
+              <path d="M22 5c0 9-4 12-6 12s-6-3-6-12c0-2 2-3 6-3s6 1 6 3"/>
+              <path d="M17.4 9.9c-.8.8-2 .8-2.8 0"/>
+              <path d="M10.1 7.1C9 7.2 7.7 7.7 6 8.6c-3.5 2-4.7 3.9-3.7 5.6 4.5 7.8 9.5 8.4 11.2 7.4.9-.5 1.9-2.1 1.9-4.7"/>
+              <path d="M9.1 16.5c.3-1.1 1.4-1.7 2.4-1.4"/>
+            </svg>
+          </div>
+          <div class="nest-info">
+            <h3>Play</h3>
+            <p>Your entire demo project (<code>.demo</code> folder). Contains all the Acts and assets you need for your presentation.</p>
+          </div>
+        </div>
+        
+        <!-- Act (Nested Box) -->
+        <div class="nest-box act-box">
+          <div class="nest-header">
+            <div class="nest-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/>
+                <path d="m6.2 5.3 3.1 3.9"/>
+                <path d="m12.4 3.4 3.1 4"/>
+                <path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/>
+              </svg>
+            </div>
+            <div class="nest-info">
+              <h3>Act</h3>
+              <p>A single demo file (<code>*.act</code>) focusing on a specific topic.</p>
+            </div>
+          </div>
+          
+          <!-- Scene (Nested Box) -->
+          <div class="nest-box scene-box">
+            <div class="nest-header">
+              <div class="nest-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M15.295 19.562 16 22"/>
+                  <path d="m17 16 3.758 2.098"/>
+                  <path d="m19 12.5 3.026-.598"/>
+                  <path d="M7.61 6.3a3 3 0 0 0-3.92 1.3l-1.38 2.79a3 3 0 0 0 1.3 3.91l6.89 3.597a1 1 0 0 0 1.342-.447l3.106-6.211a1 1 0 0 0-.447-1.341z"/>
+                  <path d="M8 9V2"/>
+                </svg>
+              </div>
+              <div class="nest-info">
+                <h3>Scene</h3>
+                <p>A single demo section (contains one or more moves).</p>
+              </div>
+            </div>
+            
+            <!-- Moves (List) -->
+            <div class="nest-box move-box">
+              <div class="nest-header">
+                <div class="nest-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z"/>
+                    <path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z"/>
+                    <path d="M16 17h4"/>
+                    <path d="M4 13h4"/>
+                  </svg>
+                </div>
+                <div class="nest-info">
+                  <h3>Moves</h3>
+                  <p>One or more steps inside a Scene. Executes in order to perform a clear action like showing text, highlighting code, or switching tools.</p>
+                </div>
+              </div>
+              
+              <div class="moves-list">
+                <div class="move-item">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 3h20"/><path d="M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3"/>
+                    <path d="m7 21 5-5 5 5"/>
+                  </svg>
+                  Move 1: Show text introduction
+                </div>
+                <div class="move-item">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m16 18 6-6-6-6"/>
+                    <path d="m8 6-6 6 6 6"/>
+                  </svg>
+                  Move 2: Open code file
+                </div>
+                <div class="move-item">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m9 11-6 6v3h9l3-3"/>
+                    <path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/>
+                  </svg>
+                  Move 3: Highlight code block
+                </div>
+                
+                <!-- Moves Placeholder -->
+                <div class="placeholder-box">
+                  More moves
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Scene 2 -->
+          <div class="nest-box scene-box">
+            <div class="nest-header">
+              <div class="nest-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+                  <path d="M15.295 19.562 16 22"/>
+                  <path d="m17 16 3.758 2.098"/>
+                  <path d="m19 12.5 3.026-.598"/>
+                  <path d="M7.61 6.3a3 3 0 0 0-3.92 1.3l-1.38 2.79a3 3 0 0 0 1.3 3.91l6.89 3.597a1 1 0 0 0 1.342-.447l3.106-6.211a1 1 0 0 0-.447-1.341z"/>
+                  <path d="M8 9V2"/>
+                </svg>
+              </div>
+              <div class="nest-info">
+                <h3>Scene 2</h3>
+                <p>Another demo section...</p>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+        
+        <!-- Act 2 -->
+        <div class="nest-box act-box">
+          <div class="nest-header">
+            <div class="nest-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/>
+                <path d="m6.2 5.3 3.1 3.9"/>
+                <path d="m12.4 3.4 3.1 4"/>
+                <path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/>
+              </svg>
+            </div>
+            <div class="nest-info">
+              <h3>Act 2</h3>
+              <p>Another demo file...</p>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    
+    <!-- Key Takeaway -->
+    <div class="takeaway">
+      <h4>Key Takeaway</h4>
+      <p>Demo Time uses a hierarchical structure to organize complex demos into manageable, <strong>narrative-driven</strong> presentations, making them easier to build and follow.</p>
+      <div class="hierarchy-path">
+        Play <span>›</span> Act <span>›</span> Scene <span>›</span> Move
+      </div>
+    </div>
+  </div>
+</body>
+</html>

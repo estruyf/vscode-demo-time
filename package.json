@@ -1,6 +1,6 @@
 {
   "name": "demo-time",
-  "version": "1.11.0",
+  "version": "1.12.0",
   "private": true,
   "description": "Demo Time - The extension to present and perform live coding demos with confidence.",
   "keywords": [
@@ -54,7 +54,7 @@
     "url": "https://github.com/sponsors/estruyf"
   },
   "author": "Elio Struyf <elio@struyfconsulting.be> (https://www.eliostruyf.com)",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "workspaces": [
     "apps/*",
     "packages/*",

@@ -16,8 +16,10 @@ import {
   UriHandler,
   TextTypingService,
   TerminalService,
+  ResourceService,
 } from './services';
 import { DemoPanel } from './panels/DemoPanel';
+import { ResourcesPanel } from './panels/ResourcesPanel';
 import { Preview } from './preview/Preview';
 import { PresenterView } from './presenterView/PresenterView';
 import { ConfigEditorProvider } from './providers/ConfigEditorProvider';
@@ -28,6 +30,8 @@ import { Overview } from './overview/Overview';
 
 export async function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);
+
+  ResourceService.registerCommands();
 
   // Clearing the variable state when the extension starts
   clearVariablesState();
@@ -42,6 +46,7 @@ export async function activate(context: vscode.ExtensionContext) {
   // Services
   DecoratorService.register();
   DemoPanel.register();
+  ResourcesPanel.register();
   DemoRunner.registerCommands();
   DemoCreator.registerCommands();
   DemoListeners.register();

@@ -3,6 +3,7 @@ import { validateConfig } from '../../utils/validation';
 import { messageHandler } from '@estruyf/vscode/dist/client/webview';
 import { DemoConfig, WebViewMessages } from '@demotime/common';
 import { Textarea } from '../ui';
+import { NoteBox } from '../ui/NoteBox';
 
 interface MainConfigFormProps {
   config: DemoConfig;
@@ -115,8 +116,8 @@ export const MainConfigForm: React.FC<MainConfigFormProps> = ({ config, onChange
               placeholder="Enter EngageTime session ID"
             />
 
-            <div className="bg-yellow-50 dark:bg-gray-900 border border-yellow-200 dark:border-yellow-300 rounded-lg p-3 mt-2 space-y-1">
-              <p className="text-sm text-yellow-800 dark:text-yellow-300">
+            <NoteBox variant="warning" className="mt-2 space-y-1">
+              <>
                 <strong>Note:</strong> Make sure you configure your EngageTime API key in the Demo Time settings.
                 <button
                   type="button"
@@ -129,11 +130,11 @@ export const MainConfigForm: React.FC<MainConfigFormProps> = ({ config, onChange
                 >
                   Open Demo Time Settings
                 </button>
-              </p>
-              <p className="text-sm text-yellow-800 dark:text-yellow-300">
+              </>
+              <div>
                 You can get it at <a href="https://engagetime.live" target="_blank" rel="noopener noreferrer" className="underline! decoration-dotted! hover:decoration-solid! text-blue-700! dark:text-blue-300!">https://engagetime.live</a>.
-              </p>
-            </div>
+              </div>
+            </NoteBox>
           </div>
         )}
       </div>

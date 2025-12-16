@@ -11,12 +11,13 @@
 - [External application actions | Demo Time](https://demotime.show/actions/external/): Perform actions that interact with external applications from your demos.
 - [File actions | Demo Time](https://demotime.show/actions/file/): File actions are used to open, create, or preview files in the editor.
 - [Interaction actions | Demo Time](https://demotime.show/actions/interactions/): Perform interaction actions in your demos like copying to clipboard, pasting content, typing text, and pressing keys.
+- [macOS actions | Demo Time](https://demotime.show/actions/macos/): Actions for controlling macOS-specific features in Demo Time
 - [Patch actions | Demo Time](https://demotime.show/actions/patch/): File patch actions can be used to insert code based on a snapshot of the file and a patch file.
 - [Preview actions | Demo Time](https://demotime.show/actions/preview/): Preview actions are used to preview files like Markdown and images in the editor.
 - [Setting actions | Demo Time](https://demotime.show/actions/setting/): Perform setting actions in your demos like update settings, change themes, and more.
 - [Snippet actions | Demo Time](https://demotime.show/actions/snippet/): Snippets can be used when you have steps that you want to reuse in multiple demos.
 - [Terminal actions | Demo Time](https://demotime.show/actions/terminal/): Perform terminal actions in your demos like running commands, clearing the terminal, and more.
-- [Text actions | Demo Time](https://demotime.show/actions/text/): Text actions are used to insert, replace, highlight, delete or unselect text in the editor.
+- [Text actions | Demo Time](https://demotime.show/actions/text/): Text actions are used to insert, replace, highlight, select, delete, or unselect text in the editor.
 - [Time actions | Demo Time](https://demotime.show/actions/time/): Perform time actions in your demos like waiting for a specific time, waiting for user input, and more.
 - [Visual Studio Code actions | Demo Time](https://demotime.show/actions/vscode/): Perform Visual Studio Code actions in your demos like executing commands or showing an information message.
 

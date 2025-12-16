@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CATEGORIZED_ACTIONS, THEMES, TYPING_MODES, TERMINAL_TYPING_MODES } from '../../types/demo';
+import { CATEGORIZED_ACTIONS, THEMES } from '../../types/demo';
 import { getFieldsForAction, getRequiredFields } from '../../utils/actionHelpers';
 import { validateStep } from '../../utils/validation';
 import { SearchableDropdown } from '../ui/SearchableDropdown';
@@ -13,6 +13,10 @@ import { Action, EngageTimeMessageType, Step, WebViewMessages } from '@demotime/
 import { PollIdPicker } from './PollIdPicker';
 import { useDemoConfigContext } from '../../hooks';
 import { VSCodeCommandPicker } from './VSCodeCommandPicker';
+import { InsertTypingModePicker } from '../ui/InsertTypingModePicker';
+import { SettingField } from './SettingField';
+import { StateField } from './StateField';
+import { NoteBox } from '../ui/NoteBox';
 
 interface StepEditorProps {
   step: Step;
@@ -212,8 +216,18 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
     handleChange('setting', { key, value: value === undefined ? null : value });
   };
 
-  const handleStateChange = (key: string, value: string) => {
-    handleChange('state', { key, value });
+  const handleStateChange = (key: string, value?: string) => {
+    const k = (key || '').trim();
+    const v = value === undefined ? undefined : value;
+
+    // If both key and value are empty/undefined, remove the state entirely
+    if (!k && v === undefined) {
+      handleChange('state', undefined);
+      return;
+    }
+
+    // Otherwise ensure we set the state object; default missing value to empty string to preserve previous behavior
+    handleChange('state', { key: k, value: v ?? '' });
   };
 
   // Handle position field changes
@@ -224,17 +238,9 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
     handleChange('position', combinedPosition);
   };
 
-  const getTypingModeOptions = () => {
-    // Use terminal typing modes for terminal commands
-    if (step.action === 'executeTerminalCommand') {
-      return TERMINAL_TYPING_MODES;
-    }
-    return TYPING_MODES;
-  };
-
   const renderField = (field: string) => {
     const isRequired = requiredFields.includes(field);
-    const fieldErrors = stepValidation.errors.filter(error => error.field === field);
+    const fieldErrors = stepValidation.errors.filter(error => error.field === field || error[`field:${field}`] !== undefined);
     const hasError = fieldErrors.length > 0;
     let label = field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1');
 
@@ -274,31 +280,27 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
             {
               step.action && step.action.toLowerCase().includes('engagetime') && (
                 <>
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2 space-y-1">
-                    <p className="text-sm text-yellow-800 dark:text-yellow-900">
+                  <NoteBox variant="warning" className="mt-2 space-y-1">
+                    <>
                       <strong>Note:</strong> Make sure to set the EngageTime Session ID in the demo configuration.
-                    </p>
-                    <button
-                      type="button"
-                      className="!text-sm bg-transparent p-0 m-0 border-none underline decoration-dotted hover:decoration-solid text-blue-700 dark:text-blue-400 cursor-pointer"
-                      style={{ font: 'inherit' }}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        window.dispatchEvent(new CustomEvent('engagetime:open-config', {}));
-                      }}
-                    >
-                      Open EngageTime Config
-                    </button>
-                  </div>
-                  {
-                    config.engageTime?.sessionId ? null : (
-                      <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-2 space-y-1">
-                        <p className="text-sm text-red-700 dark:text-red-800 mt-1">
-                          <strong>Error:</strong> No EngageTime Session ID is set in the demo configuration.
-                        </p>
-                      </div>
-                    )
-                  }
+                      <button
+                        type="button"
+                        className="bg-transparent p-0 m-0 border-none underline decoration-dotted hover:decoration-solid text-blue-700 dark:text-blue-300 cursor-pointer"
+                        style={{ font: 'inherit' }}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.dispatchEvent(new CustomEvent('engagetime:open-config', {}));
+                        }}
+                      >
+                        Open EngageTime Config
+                      </button>
+                    </>
+                  </NoteBox>
+                  {config.engageTime?.sessionId ? null : (
+                    <NoteBox variant="error" className="mt-2">
+                      <strong>Error:</strong> No EngageTime Session ID is set in the demo configuration.
+                    </NoteBox>
+                  )}
                 </>
               )
             }
@@ -354,24 +356,14 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
       case 'insertTypingMode':
         return (
-          <div key={field}>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Insert Typing Mode {isRequired && <span className="text-red-500">*</span>}
-            </label>
-            <select
-              value={step.insertTypingMode || 'instant'}
-              onChange={(e) => handleChange('insertTypingMode', (e.target.value || undefined) as typeof step.insertTypingMode)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
-                }`}
-            >
-              {getTypingModeOptions().map(mode => (
-                <option key={mode} value={mode}>{mode}</option>
-              ))}
-            </select>
-            {fieldErrors.map((error, index) => (
-              <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
-            ))}
-          </div>
+          <InsertTypingModePicker
+            key={field}
+            value={step.insertTypingMode}
+            action={step.action}
+            required={isRequired}
+            fieldErrors={fieldErrors}
+            onChange={(value) => handleChange('insertTypingMode', value)}
+          />
         );
 
       case 'highlightWholeLine': {
@@ -483,89 +475,25 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
       case 'setting':
         return (
-          <div key={field} className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Setting {isRequired && <span className="text-red-500">*</span>}
-            </label>
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col gap-4">
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="setting-key">Key</label>
-                <input
-                  id="setting-key"
-                  type="text"
-                  value={step.setting?.key || ''}
-                  onChange={(e) => handleSettingChange(e.target.value, step.setting?.value)}
-                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
-                  placeholder="Setting key"
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="setting-value">Value</label>
-                <textarea
-                  id="setting-value"
-                  value={
-                    typeof step.setting?.value === 'object' && step.setting?.value !== null
-                      ? JSON.stringify(step.setting.value, null, 2)
-                      : typeof step.setting?.value === 'boolean'
-                        ? String(step.setting?.value)
-                        : step.setting?.value || ''
-                  }
-                  onChange={e => {
-                    try {
-                      const parsed = JSON.parse(e.target.value);
-                      handleSettingChange(step.setting?.key || '', parsed);
-                    } catch {
-                      // Optionally show error or ignore
-                      handleSettingChange(step.setting?.key || '', e.target.value);
-                    }
-                  }}
-                  rows={5}
-                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
-                  placeholder="Setting value (JSON or string)"
-                />
-              </div>
-
-              {fieldErrors.map((error, index) => (
-                <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
-              ))}
-            </div>
+          <div key={field}>
+            <SettingField
+              setting={step.setting}
+              onChange={handleSettingChange}
+              fieldErrors={fieldErrors}
+              isRequired={isRequired}
+            />
           </div>
         );
 
       case 'state':
         return (
-          <div key={field} className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              State {isRequired && <span className="text-red-500">*</span>}
-            </label>
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col gap-4">
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="state-key">Key</label>
-                <input
-                  id="state-key"
-                  type="text"
-                  value={step.state?.key || ''}
-                  onChange={(e) => handleStateChange(e.target.value, step.state?.value || '')}
-                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
-                  placeholder="State key"
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-gray-600 mb-1" htmlFor="state-value">Value</label>
-                <input
-                  id="state-value"
-                  type="text"
-                  value={step.state?.value || ''}
-                  onChange={(e) => handleStateChange(step.state?.key || '', e.target.value)}
-                  className={`px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
-                  placeholder="State value"
-                />
-              </div>
-
-              {fieldErrors.map((error, index) => (
-                <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
-              ))}
-            </div>
+          <div key={field}>
+            <StateField
+              state={step.state}
+              onChange={handleStateChange}
+              fieldErrors={fieldErrors}
+              isRequired={isRequired}
+            />
           </div>
         );
 
@@ -858,7 +786,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
   return (
     <div className="space-y-4 h-full">
-      <div className="flex items-center justify-between sticky top-0 bg-white dark:bg-gray-800 z-10 pb-2">
+      <div className="flex items-center justify-between bg-white dark:bg-gray-800 z-10 pb-2">
         <h4 className="text-lg font-semibold text-gray-900 dark:text-white">Step Configuration</h4>
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-700 dark:text-gray-300">{step.disabled ? 'Disabled' : 'Enabled'}</span>
@@ -883,35 +811,29 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
       {/* Show validation hints for complex actions */}
       {(step.action === 'insert' || step.action === 'replace') && (
-        <div className="bg-blue-50 dark:bg-gray-800 border border-blue-200 dark:border-blue-500 rounded-lg p-3">
-          <p className="text-sm text-blue-800 dark:text-blue-200">
-            <strong>Note:</strong> This action requires either content OR contentPath, and either position OR startPlaceholder.
-          </p>
-        </div>
+        <NoteBox className="mt-2" variant="info">
+          <><strong>Note:</strong> This action requires either content OR contentPath, and either position OR startPlaceholder.</>
+        </NoteBox>
       )}
 
       {step.action === 'create' && (
-        <div className="bg-blue-50 dark:bg-gray-800 border border-blue-200 dark:border-blue-500 rounded-lg p-3">
-          <p className="text-sm text-blue-800 dark:text-blue-200">
-            <strong>Note:</strong> This action requires a path. You can optionally provide either content OR contentPath (but not both), or leave both empty to create an empty file.
-          </p>
-        </div>
+        <NoteBox className="mt-2" variant="info">
+          <><strong>Note:</strong> This action requires a path. You can optionally provide either content OR contentPath (but not both), or leave both empty to create an empty file.</>
+        </NoteBox>
       )}
 
       {step.action === 'highlight' && (
-        <div className="bg-blue-50 dark:bg-gray-800 border border-blue-200 dark:border-blue-500 rounded-lg p-3">
-          <p className="text-sm text-blue-800 dark:text-blue-200">
-            <strong>Note:</strong> This action requires either position OR both startPlaceholder and endPlaceholder.
-          </p>
-        </div>
+        <NoteBox className="mt-2" variant="info">
+          <><strong>Note:</strong> This action requires either position OR both startPlaceholder and endPlaceholder.</>
+        </NoteBox>
       )}
 
       {step.action === 'copyToClipboard' && (
-        <div className="bg-blue-50 dark:bg-gray-800 border border-blue-200 dark:border-blue-500 rounded-lg p-3">
-          <p className="text-sm text-blue-800 dark:text-blue-200">
+        <NoteBox className="mt-2" variant="info">
+          <>
             <strong>Note:</strong> This action requires either <code className="bg-white px-1 rounded-xs">content</code> OR <code className="bg-white px-1 rounded-xs">contentPath</code>.
-          </p>
-        </div>
+          </>
+        </NoteBox>
       )}
     </div>
   );

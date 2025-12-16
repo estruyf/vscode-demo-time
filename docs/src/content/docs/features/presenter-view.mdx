@@ -1,12 +1,13 @@
 ---
 title: Presenter View
 description: Learn how to use the presenter view in Demo Time.
-lastmod: 2025-12-02T14:32:29.671Z
+lastmod: 2025-12-04T16:17:13.843Z
 ---
 
 import { Image } from 'astro:assets';
 
 import presenterViewImage from "../../../assets/docs/notes-presenter-view.webp";
+import nextSlideViewImage from "../../../assets/docs/next-slide-view.webp";
 
 When you use two screens during a presentation, you can use the detachable presenter view which you can move to another screen. This way you can keep an eye on the next steps while presenting without showing it to your audience.
 
@@ -19,3 +20,20 @@ Follow these steps to use the presenter view:
 <Image class="mx-auto" src={presenterViewImage} alt="Presenter view" />
 
 The advantage of using the presenter view is that you can see the [notes](/features/using-notes/) and the next steps while presenting.
+
+## Next slide preview
+
+The presenter view can show a live preview of the next slide. This helps you prepare for what's coming next while presenting.
+
+<Image class="mx-auto" src={nextSlideViewImage} alt="Next slide preview" />
+
+### Requirements
+
+To use the next slide preview feature, you need to enable the Demo Time API by setting `demoTime.api.enabled` to `true` in your VS Code settings.
+
+### How it works
+
+- When you navigate through your slides, the presenter view automatically updates to show a preview of the next slide.
+- The preview appears above the presenter notes in the right column of the presenter view.
+- You can collapse or expand the preview by clicking the chevron icon next to the "Next Slide" header.
+- The preview is hidden automatically when the next action is running another demo (e.g., using the `runDemoById` action).

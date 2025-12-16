@@ -1,0 +1,20 @@
+title: macOS actions
+description: ''
+version: 2
+demos:
+  - id: demo-minbzhzy-pvee
+    title: Hide menubar
+    steps:
+      - action: macos.hideMenubar
+  - id: demo-minbzsli-h2ob
+    title: Show menubar
+    steps:
+      - action: macos.showMenubar
+  - id: demo-minc095q-me3d
+    title: Enable focus mode
+    steps:
+      - action: macos.enableFocusMode
+  - id: demo-minc0ifb-c8u9
+    title: Disable focus mode
+    steps:
+      - action: macos.disableFocusMode

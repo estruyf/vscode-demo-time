@@ -9,6 +9,7 @@ import {
 } from 'vscode';
 import { Extension } from './Extension';
 import { Config } from '@demotime/common';
+import { SelectionService } from './SelectionService';
 
 export class DecoratorService {
   private static lineDecorator: TextEditorDecorationType;
@@ -44,11 +45,13 @@ export class DecoratorService {
     DecoratorService.setAfterDecorators();
 
     // Remove the highlight when the user clicks in the editor
-    window.onDidChangeTextEditorSelection((e) => {
-      if (e.kind === TextEditorSelectionChangeKind.Mouse) {
+    const disposable = window.onDidChangeTextEditorSelection((e) => {
+      if (e.kind === TextEditorSelectionChangeKind.Mouse && DecoratorService.isHighlighted) {
         DecoratorService.unselect(e.textEditor);
       }
     });
+
+    Extension.getInstance().subscriptions.push(disposable);
   }
 
   public static isDecorated(): boolean {
@@ -185,10 +188,13 @@ export class DecoratorService {
     textEditor.setDecorations(DecoratorService.startBlockDecorator, []);
     textEditor.setDecorations(DecoratorService.betweenBlockDecorator, []);
     textEditor.setDecorations(DecoratorService.endBlockDecorator, []);
-
     if (DecoratorService.isZoomed) {
       DecoratorService.isZoomed = false;
       commands.executeCommand('editor.action.fontZoomReset');
+    }
+
+    if (SelectionService.getSelection()) {
+      SelectionService.unselect(textEditor);
     }
   }
 

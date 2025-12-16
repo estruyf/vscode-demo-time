@@ -147,7 +147,24 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     webviewPanel.webview.onDidReceiveMessage(
       async (message: { command: string; requestId?: string; payload?: any }) => {
         const { command, requestId, payload } = message;
-        if (command === WebViewMessages.toVscode.configEditor.getContents) {
+        if (command === WebViewMessages.toVscode.getSetting) {
+          // Validate payload is a string
+          if (typeof payload !== 'string') {
+            webviewPanel.webview.postMessage({
+              command,
+              requestId,
+              payload: undefined,
+            });
+            return;
+          }
+
+          const setting = Extension.getInstance().getSetting(payload);
+          webviewPanel.webview.postMessage({
+            command,
+            requestId,
+            payload: setting,
+          });
+        } else if (command === WebViewMessages.toVscode.configEditor.getContents) {
           handleGetContents(webviewPanel, requestId, getContent);
         } else if (command === WebViewMessages.toVscode.runCommand) {
           await handleRunCommand(payload);
@@ -351,6 +368,11 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
 
       const edit = new WorkspaceEdit();
       const demo = DemoFileProvider.formatFileContent(config, document.uri);
+      if (!demo) {
+        window.showErrorMessage('Failed to parse the demo configuration.');
+        return;
+      }
+
       const lastLine = document.lineCount - 1;
       const lastChar = document.lineAt(lastLine).text.length;
       edit.replace(document.uri, new Range(0, 0, lastLine, lastChar), demo);

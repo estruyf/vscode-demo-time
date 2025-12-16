@@ -3,7 +3,7 @@ import { Version } from './Version';
 export interface DemoFileCache {
   filePath: string;
   demo: DemoCache[];
-  version: Version;
+  version?: Version;
 }
 
 export interface DemoCache {

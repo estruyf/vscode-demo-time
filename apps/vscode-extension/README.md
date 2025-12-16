@@ -125,6 +125,11 @@ directory.
 If you enjoy my work and find them useful, consider sponsor me and the ecosystem to help Open Source
 sustainable. Thank you!
 
+## License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](./LICENSE) file for
+details.
+
 <p align="center">
   <a href="https://github.com/sponsors/estruyf" title="Sponsor Elio Struyf" target="_blank">
     <img src="https://img.shields.io/badge/Sponsor-Elio%20Struyf%20%E2%9D%A4-%23fe8e86?logo=GitHub&style=flat-square" height="25px" alt="Sponsor @estruyf" />
