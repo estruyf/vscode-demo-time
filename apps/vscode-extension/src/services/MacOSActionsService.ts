@@ -2,6 +2,7 @@ import { ScriptExecutor } from './ScriptExecutor';
 import { Notifications } from './Notifications';
 import { Logger } from './Logger';
 import { platform } from 'os';
+import { Extension } from './Extension';
 
 export class MacOSActionsService {
   /**
@@ -26,7 +27,8 @@ export class MacOSActionsService {
       // Escape single quotes in the script for shell execution
       const escapedScript = script.replace(/'/g, "'\\''");
       const command = `osascript -e '${escapedScript}'`;
-      return await ScriptExecutor.executeScriptAsync(command, process.cwd());
+      const wsPath = Extension.getInstance().workspaceFolder?.uri.fsPath || process.cwd();
+      return await ScriptExecutor.executeScriptAsync(command, wsPath);
     } catch (error) {
       Logger.error(`AppleScript execution failed: ${(error as Error).message}`);
       throw error;
@@ -94,7 +96,7 @@ end tell`;
       await MacOSActionsService.executeAppleScript(script);
       Logger.info('Focus Mode disabled');
     } catch (error) {
-      Notifications.error(`Failed to disable Focus Mode: ${String(error)}`);
+      Notifications.error(`Failed to disable Focus Mode: ${(error as Error).message}`);
     }
   }
 

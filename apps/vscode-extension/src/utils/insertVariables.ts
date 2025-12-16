@@ -7,7 +7,9 @@ export const insertVariables = async (
   skipClipboard: boolean = true,
 ) => {
   for (const key in variables) {
-    let regex = new RegExp(`{${key}}`, 'g');
+    // Escape regex metacharacters in the key so it is treated literally
+    const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    let regex = new RegExp(`{${escapedKey}}`, 'g');
     if (key === StateKeys.prefix.clipboard && skipClipboard === true) {
       continue;
     }
@@ -23,7 +25,8 @@ export const insertVariables = async (
 
     // Escape the variable value to ensure it's valid when inserted into JSON strings
     let value = variables[key];
-    if (typeof value === 'string' && /^\s*[{[]/.test(text) && /[}\]]\s*$/.test(text)) {
+    const isJson = /^\s*[{[]/.test(text) && /[}\]]\s*$/.test(text);
+    if (typeof value === 'string' && isJson) {
       // Escape backslashes, quotes, and control characters for JSON compatibility
       value = value
         .replace(/\\/g, '\\\\')
