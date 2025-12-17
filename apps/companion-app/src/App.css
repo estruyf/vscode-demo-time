@@ -1,12 +1,14 @@
 :root {
-  --primary-color: #0066cc;
-  --primary-hover: #0052a3;
+  --primary-color: #ffd43b;
+  --primary-hover: #ffc107;
+  --primary-dark: #816600;
   --bg-color: #ffffff;
-  --surface-color: #f5f5f5;
-  --text-color: #333333;
-  --text-secondary: #666666;
-  --border-color: #dddddd;
-  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --surface-color: #f4f6fa;
+  --text-color: #15181f;
+  --text-secondary: #505869;
+  --border-color: #c4c8d3;
+  --shadow: 0 2px 8px rgba(129, 102, 0, 0.1);
+  --shadow-lg: 0 4px 12px rgba(129, 102, 0, 0.15);
   --radius: 8px;
 }
 
@@ -47,10 +49,11 @@ body:has(.overlay-container) {
 }
 
 .settings-header {
-  background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
-  color: white;
+  background: var(--primary-color);
+  color: #15181f;
   padding: 1.5rem 1rem;
   text-align: center;
+  box-shadow: 0 2px 8px rgba(129, 102, 0, 0.2);
 }
 
 .settings-header h1 {
@@ -93,8 +96,8 @@ body:has(.overlay-container) {
 
 .setting-group input[type='number']:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 3px rgba(255, 212, 59, 0.2);
 }
 
 .setting-hint {
@@ -107,22 +110,26 @@ body:has(.overlay-container) {
   width: 100%;
   padding: 1rem;
   background: var(--primary-color);
-  color: white;
+  color: #15181f;
   border: none;
   border-radius: var(--radius);
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
   margin-bottom: 2rem;
+  box-shadow: var(--shadow);
 }
 
 .start-button:hover {
-  background: var(--primary-hover);
+  background: var(--primary-color);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
 }
 
 .start-button:active {
-  transform: translateY(1px);
+  transform: translateY(0);
+  box-shadow: var(--shadow);
 }
 
 .info-section {
@@ -154,13 +161,14 @@ body:has(.overlay-container) {
 }
 
 .settings-footer a {
-  color: var(--primary-color);
+  color: var(--primary-dark);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .settings-footer a:hover {
   text-decoration: underline;
+  color: var(--primary-color);
 }
 
 /* Overlay View */
