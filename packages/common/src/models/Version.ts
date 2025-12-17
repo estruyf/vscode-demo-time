@@ -1,1 +1,1 @@
-export type Version = 1 | 2;
+export type Version = 1 | 2 | 3;

@@ -1,0 +1,57 @@
+title: Example Version 3 Demo
+description: Demonstrates the new theatrical naming conventions in Demo Time v3
+version: 3
+productIcon: presentation
+timer: 15
+scenes:
+  - id: scene-1
+    title: Opening Scene - Introduction
+    description: Welcome the audience and introduce the demo
+    icons:
+      start: play-circle
+      end: check-circle
+    moves:
+      - action: create
+        path: welcome.md
+        content: |
+          # Welcome to Demo Time v3!
+
+          This demo uses the new theatrical structure:
+          - **Play**: Your entire demo project
+          - **Act**: This demo file (example-v3.yaml)
+          - **Scene**: Each section of your presentation
+          - **Move**: Individual actions that build your narrative
+      - action: open
+        path: welcome.md
+      - action: waitForTimeout
+        timeout: 2000
+
+  - id: scene-2
+    title: Feature Demonstration
+    description: Show off the key features
+    moves:
+      - action: create
+        path: features.ts
+        content: |
+          // Demo Time v3 Features
+          export const features = {
+            theatrical: 'Intuitive naming structure',
+            versioning: 'Version 3 with backward compatibility',
+            productIcons: 'Visual identification for Acts',
+            fileFormat: 'JSON or YAML files'
+          };
+      - action: open
+        path: features.ts
+      - action: highlight
+        path: features.ts
+        position: "2:1:6:3"
+      - action: showInfoMessage
+        message: These are the new features in Demo Time v3!
+
+  - id: scene-3
+    title: Closing Scene - Summary
+    description: Wrap up and thank the audience
+    moves:
+      - action: closeAll
+      - action: showInfoMessage
+        message: Thank you for watching this Demo Time v3 presentation!

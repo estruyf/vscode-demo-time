@@ -8,7 +8,7 @@ import { load as yamlLoad, dump as yamlDump } from 'js-yaml';
 import { createDemoFile, readFile, sanitizeFileName, sortFiles, writeFile } from '../utils';
 import { Preview } from '../preview/Preview';
 import { Logger } from './Logger';
-import { Config, DemoConfig, DemoFiles } from '@demotime/common';
+import { Config, DemoConfig, DemoFiles, ActConfig, normalizeDemoConfig } from '@demotime/common';
 
 export class DemoFileProvider {
   public static register() {
@@ -45,7 +45,7 @@ export class DemoFileProvider {
    * Parses the content of a demo file based on its extension
    * @param content The file content as string
    * @param filePath The file path to determine the format
-   * @returns The parsed content as DemoConfig object
+   * @returns The parsed content as DemoConfig (normalized from v3 if needed)
    */
   public static parseFileContent(content: string, filePath: Uri): DemoConfig | undefined {
     const path = filePath.fsPath.toLowerCase();
@@ -54,19 +54,26 @@ export class DemoFileProvider {
       content = JSON.stringify(DemoFileProvider.generateFileContent(''));
     }
 
+    let parsed: DemoConfig | ActConfig | undefined;
+
     if (path.endsWith('.yaml') || path.endsWith('.yml')) {
       try {
-        const parsed = yamlLoad(content) as DemoConfig;
-        return parsed;
+        parsed = yamlLoad(content) as DemoConfig | ActConfig;
       } catch (error) {
         console.error('Error parsing YAML demo file:', error);
         return undefined;
       }
     } else {
       // Default to JSON parsing (supports both .json and .jsonc)
-      const parsed = jsonParse(content);
-      return parsed;
+      parsed = jsonParse(content) as DemoConfig | ActConfig;
     }
+
+    if (!parsed) {
+      return undefined;
+    }
+
+    // Normalize version 3 configs to legacy format for compatibility
+    return normalizeDemoConfig(parsed);
   }
 
   /**
@@ -96,7 +103,7 @@ export class DemoFileProvider {
   /**
    * Formats the provided demo content based on the specified file type.
    *
-   * @param fileType - The type of file to format the content for ('yaml' or other).
+   * @param fileType - The type of file to format the content for ('yaml' or 'json').
    * @param demoContent - The content to be formatted.
    * @returns The formatted content as a string.
    */
