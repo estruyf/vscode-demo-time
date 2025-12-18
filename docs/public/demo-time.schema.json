@@ -1168,8 +1168,8 @@
     },
     "zoom": {
       "type": "number",
-      "title": "The zoom level for the editor when highlighting code",
-      "default": 0
+      "title": "The number of times to zoom in or out",
+      "default": 1
     },
     "pollId": {
       "type": "string",

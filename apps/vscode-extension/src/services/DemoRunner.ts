@@ -844,6 +844,7 @@ export class DemoRunner {
 
     // Zoom actions
     if (step.action === Action.ZoomIn) {
+      // Use step.zoom if provided, otherwise fall back to demoTime.highlightZoomEnabled setting, or default to 1
       const zoomCount =
         step.zoom ||
         Extension.getInstance().getSetting<number>(Config.highlight.zoom) ||
@@ -855,6 +856,7 @@ export class DemoRunner {
     }
 
     if (step.action === Action.ZoomOut) {
+      // Use step.zoom if provided, otherwise fall back to demoTime.highlightZoomEnabled setting, or default to 1
       const zoomCount =
         step.zoom ||
         Extension.getInstance().getSetting<number>(Config.highlight.zoom) ||
