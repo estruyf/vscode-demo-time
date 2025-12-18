@@ -88,6 +88,7 @@ export class DemoRunner {
   private static crntZoom: number | undefined;
   private static crntHighlightWholeLine: boolean | undefined;
   public static currentDemo: Demo | undefined;
+  private static nextStepIsHighlight = false;
 
   /**
    * Registers the commands for the demo runner.
@@ -618,7 +619,14 @@ export class DemoRunner {
     }
 
     // Loop over all the demo steps and execute them.
-    for (let step of stepsToExecute) {
+    for (let currentIndex = 0; currentIndex < stepsToExecute.length; currentIndex++) {
+      const step = stepsToExecute[currentIndex];
+      
+      // Check if the next step is a Highlight action
+      DemoRunner.nextStepIsHighlight = 
+        currentIndex + 1 < stepsToExecute.length && 
+        stepsToExecute[currentIndex + 1]?.action === Action.Highlight;
+      
       await DemoRunner.runStep(step, variables, workspaceFolder, crntFilePath);
     }
 
@@ -1117,6 +1125,8 @@ export class DemoRunner {
         crntPosition,
         step.zoom,
         highlightWholeLine,
+        true,
+        DemoRunner.nextStepIsHighlight,
       );
       return;
     }
@@ -1249,6 +1259,10 @@ export class DemoRunner {
    * @param textEditor - The text editor in which to highlight the range or position.
    * @param range - The range to highlight. If not provided, the position will be used to create a range.
    * @param position - The position to highlight. If not provided, the range will be used to set the selection.
+   * @param zoomLevel - The zoom level to apply.
+   * @param highlightWholeLine - Whether to highlight the whole line.
+   * @param keepInMemory - Whether to keep the highlight in memory.
+   * @param preserveZoom - Whether to preserve the current zoom level when moving to the next highlight.
    */
   public static async highlight(
     textEditor: TextEditor,
@@ -1257,6 +1271,7 @@ export class DemoRunner {
     zoomLevel?: number,
     highlightWholeLine?: boolean,
     keepInMemory = true,
+    preserveZoom = false,
   ): Promise<void> {
     if (!range && !position) {
       return;
@@ -1285,7 +1300,7 @@ export class DemoRunner {
         await setContext(ContextKeys.hasCodeHighlighting, true);
       }
 
-      DecoratorService.hightlightLines(textEditor, range, zoomLevel, highlightWholeLine);
+      DecoratorService.hightlightLines(textEditor, range, zoomLevel, highlightWholeLine, preserveZoom);
       textEditor.revealRange(range, TextEditorRevealType.InCenter);
     }
   }
