@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.13.0] - unreleased
+
+- [#340](https://github.com/estruyf/vscode-demo-time/issues/340): Fix an issue
+  with the `path` label for the `executeScript` action in the step editor
+
 ## [1.12.0] - 2025-12-16
 
 - **BREAKING**: Changed project license from MIT to Apache License 2.0. See
