@@ -4,7 +4,7 @@ import { Notifications } from './Notifications';
 import { StateKeys } from '../constants';
 import { evaluateCommand, fileExists, getPlatform } from '../utils';
 import { Extension } from './Extension';
-import { spawn } from 'child_process';
+import { exec, spawn } from 'child_process';
 import { Logger } from './Logger';
 import { StateManager } from './StateManager';
 import { Config, Action, Step } from '@demotime/common';
@@ -59,7 +59,7 @@ export class ScriptExecutor {
         }
 
         const args = step.args as string[] | undefined;
-        const output = await ScriptExecutor.executeScriptAsync(
+        const output = await ScriptExecutor.spawnScriptAsync(
           command,
           scriptPath.fsPath,
           wsPath.uri.fsPath,
@@ -89,13 +89,38 @@ export class ScriptExecutor {
 
   /**
    * Execute script async
+   * @param fullScript
+   * @param wsPath
+   * @returns
+   */
+  public static async executeScriptAsync(fullScript: string, wsPath: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      exec(fullScript, { cwd: wsPath }, (error, stdout) => {
+        if (error) {
+          Logger.error(error.message);
+          reject(error.message);
+          return;
+        }
+
+        if (stdout && stdout.endsWith(`\n`)) {
+          // Remove empty line at the end of the string
+          stdout = stdout.slice(0, -1);
+        }
+
+        resolve(stdout);
+      });
+    });
+  }
+
+  /**
+   * Spawn script async
    * @param command The command to execute (e.g., 'node', 'python', 'bash')
    * @param scriptPath Path to the script file
    * @param wsPath Workspace path
    * @param args Optional array of arguments to pass to the script
    * @returns Script output
    */
-  public static async executeScriptAsync(
+  public static async spawnScriptAsync(
     command: string,
     scriptPath: string,
     wsPath: string,
