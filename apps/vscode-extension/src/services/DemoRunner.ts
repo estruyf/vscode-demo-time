@@ -576,6 +576,9 @@ export class DemoRunner {
     // Reset the highlight
     await setContext(ContextKeys.hasCodeHighlighting, false);
     DemoRunner.setCrntHighlighting();
+    
+    // Reset the lookahead flag
+    DemoRunner.nextStepIsHighlight = false;
 
     const workspaceFolder = Extension.getInstance().workspaceFolder;
     if (!workspaceFolder) {
