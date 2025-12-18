@@ -107,6 +107,9 @@
                     "showInfoMessage",
                     "setState",
                     "openWebsite",
+                    "zoomIn",
+                    "zoomOut",
+                    "zoomReset",
                     "openTerminal",
                     "executeTerminalCommand",
                     "executeScript",
@@ -736,6 +739,50 @@
                         "$ref": "#/definitions/openInVSCode"
                       }
                     }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "zoomIn"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "zoom": {
+                        "$ref": "#/definitions/zoom"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "zoomOut"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "zoom": {
+                        "$ref": "#/definitions/zoom"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "zoomReset"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {}
                   }
                 },
                 {

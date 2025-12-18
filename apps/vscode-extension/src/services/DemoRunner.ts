@@ -842,6 +842,34 @@ export class DemoRunner {
       }
     }
 
+    // Zoom actions
+    if (step.action === Action.ZoomIn) {
+      const zoomCount =
+        step.zoom ||
+        Extension.getInstance().getSetting<number>(Config.highlight.zoom) ||
+        1;
+      for (let i = 0; i < zoomCount; i++) {
+        await commands.executeCommand('workbench.action.zoomIn');
+      }
+      return;
+    }
+
+    if (step.action === Action.ZoomOut) {
+      const zoomCount =
+        step.zoom ||
+        Extension.getInstance().getSetting<number>(Config.highlight.zoom) ||
+        1;
+      for (let i = 0; i < zoomCount; i++) {
+        await commands.executeCommand('workbench.action.zoomOut');
+      }
+      return;
+    }
+
+    if (step.action === Action.ZoomReset) {
+      await commands.executeCommand('workbench.action.zoomReset');
+      return;
+    }
+
     // Open a new terminal
     if (step.action === Action.OpenTerminal) {
       await TerminalService.openTerminal(step.terminalId);
