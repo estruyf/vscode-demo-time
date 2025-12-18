@@ -601,6 +601,13 @@
                       },
                       "path": {
                         "$ref": "#/definitions/path"
+                      },
+                      "args": {
+                        "type": "array",
+                        "description": "Arguments to pass to the script as command-line arguments in the order specified. Example: [\"arg1\", \"arg2\"] becomes: command script.js arg1 arg2",
+                        "items": {
+                          "type": "string"
+                        }
                       }
                     }
                   }

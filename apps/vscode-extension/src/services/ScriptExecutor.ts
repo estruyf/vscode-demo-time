@@ -4,7 +4,7 @@ import { Notifications } from './Notifications';
 import { StateKeys } from '../constants';
 import { evaluateCommand, fileExists, getPlatform } from '../utils';
 import { Extension } from './Extension';
-import { exec } from 'child_process';
+import { spawn } from 'child_process';
 import { Logger } from './Logger';
 import { StateManager } from './StateManager';
 import { Config, Action, Step } from '@demotime/common';
@@ -58,8 +58,13 @@ export class ScriptExecutor {
           command = `${command} -File`;
         }
 
-        const fullScript = `${command} "${scriptPath.fsPath}"`;
-        const output = await ScriptExecutor.executeScriptAsync(fullScript, wsPath.uri.fsPath);
+        const args = step.args as string[] | undefined;
+        const output = await ScriptExecutor.executeScriptAsync(
+          command,
+          scriptPath.fsPath,
+          wsPath.uri.fsPath,
+          args,
+        );
         Logger.info(`Step ID: ${id} - Output: ${output}`);
 
         if (output) {
@@ -70,26 +75,66 @@ export class ScriptExecutor {
   }
 
   /**
-   * Execute script async
-   * @param fullScript
-   * @param wsPath
-   * @returns
+   * Format args array, filtering out undefined/null values
+   * @param args Arguments array
+   * @returns Filtered array of argument values
    */
-  public static async executeScriptAsync(fullScript: string, wsPath: string): Promise<string> {
+  private static formatArgsArray(args: string[] | undefined): string[] {
+    if (!args || !Array.isArray(args)) {
+      return [];
+    }
+
+    return args.filter((value) => value !== undefined && value !== null);
+  }
+
+  /**
+   * Execute script async
+   * @param command The command to execute (e.g., 'node', 'python', 'bash')
+   * @param scriptPath Path to the script file
+   * @param wsPath Workspace path
+   * @param args Optional array of arguments to pass to the script
+   * @returns Script output
+   */
+  public static async executeScriptAsync(
+    command: string,
+    scriptPath: string,
+    wsPath: string,
+    args?: string[],
+  ): Promise<string> {
     return new Promise((resolve, reject) => {
-      exec(fullScript, { cwd: wsPath }, (error, stdout) => {
-        if (error) {
-          Logger.error(error.message);
-          reject(error.message);
+      const argsArray = ScriptExecutor.formatArgsArray(args);
+      const childProcess = spawn(command, [scriptPath, ...argsArray], { cwd: wsPath });
+
+      let stdout = '';
+      let stderr = '';
+
+      childProcess.stdout.on('data', (data) => {
+        stdout += data.toString();
+      });
+
+      childProcess.stderr.on('data', (data) => {
+        stderr += data.toString();
+      });
+
+      childProcess.on('close', (code) => {
+        if (code !== 0) {
+          const errorMsg = stderr || `Script exited with code ${code}`;
+          Logger.error(errorMsg);
+          reject(errorMsg);
           return;
         }
 
-        if (stdout && stdout.endsWith(`\n`)) {
+        if (stdout && stdout.endsWith('\n')) {
           // Remove empty line at the end of the string
           stdout = stdout.slice(0, -1);
         }
 
         resolve(stdout);
+      });
+
+      childProcess.on('error', (error) => {
+        Logger.error(error.message);
+        reject(error.message);
       });
     });
   }

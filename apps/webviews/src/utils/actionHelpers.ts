@@ -291,7 +291,7 @@ export const getFieldsForAction = (action: Action): string[] => {
       'insertTypingMode',
       'insertTypingSpeed',
     ],
-    [Action.ExecuteScript]: ['id', 'command', 'path'],
+    [Action.ExecuteScript]: ['id', 'command', 'path', 'args'],
     [Action.CloseTerminal]: ['terminalId'],
     [Action.Snippet]: ['contentPath', 'args'],
     [Action.OpenPowerPoint]: [],

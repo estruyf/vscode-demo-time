@@ -58,6 +58,12 @@ export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
   timeout?: number;
   command?: string;
   message?: string;
+  /**
+   * Arguments to pass to scripts or snippets.
+   * For executeScript actions: Array of strings passed as positional command-line arguments to the script.
+   * For snippet actions: Arguments are substituted into the snippet content.
+   * Example: ["arg1", "arg2"] becomes command: script.js arg1 arg2
+   */
   args?: any;
   lineInsertionDelay?: number;
   insertTypingMode?: InsertTypingMode;
