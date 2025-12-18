@@ -82,10 +82,9 @@ export class DecoratorService {
     DecoratorService.setAfterDecorators();
 
     // Apply zoom if needed
-    // When preserveZoom is true and we're already zoomed, skip applying zoom again
-    // When preserveZoom is false or we're not yet zoomed, apply the zoom
-    const shouldApplyZoom = (typeof zoomLevel !== 'undefined' || zoomEnabled) && 
-                            (!preserveZoom || !DecoratorService.isZoomed);
+    const hasZoomConfig = typeof zoomLevel !== 'undefined' || zoomEnabled;
+    const isPreservingZoomAndAlreadyZoomed = preserveZoom && DecoratorService.isZoomed;
+    const shouldApplyZoom = hasZoomConfig && !isPreservingZoomAndAlreadyZoomed;
     
     if (shouldApplyZoom) {
       DecoratorService.isZoomed = true;
@@ -101,7 +100,7 @@ export class DecoratorService {
       } else {
         commands.executeCommand('editor.action.fontZoomIn');
       }
-    } else if (typeof zoomLevel !== 'undefined' || zoomEnabled) {
+    } else if (hasZoomConfig) {
       // Ensure isZoomed flag is set even when preserving zoom
       DecoratorService.isZoomed = true;
     }

@@ -628,7 +628,7 @@ export class DemoRunner {
       // Check if the next step is a Highlight action
       DemoRunner.nextStepIsHighlight = 
         currentIndex + 1 < stepsToExecute.length && 
-        stepsToExecute[currentIndex + 1]?.action === Action.Highlight;
+        stepsToExecute[currentIndex + 1].action === Action.Highlight;
       
       await DemoRunner.runStep(step, variables, workspaceFolder, crntFilePath);
     }
