@@ -78,6 +78,9 @@ export const getActionIcon = (action: Action): string => {
     [Action.ShowEngageTimeSession]: 'question',
     [Action.ShowEngageTimePoll]: 'question',
     [Action.SendEngageTimeMessage]: 'question',
+    [Action.ZoomIn]: 'zoom-in',
+    [Action.ZoomOut]: 'zoom-out',
+    [Action.ZoomReset]: 'refresh-cw',
   };
   return iconMap[action] || 'circle';
 };
@@ -193,6 +196,7 @@ export const getRequiredFields = (action: Action): string[] => {
     [Action.CloseChat]: [],
     [Action.CancelChat]: [],
     [Action.CopyToClipboard]: [],
+    [Action.CopyFromSelection]: [],
     [Action.PasteFromClipboard]: [],
     [Action.TypeText]: ['content'],
     [Action.PressEnter]: [],
@@ -218,6 +222,9 @@ export const getRequiredFields = (action: Action): string[] => {
     [Action.ShowEngageTimeSession]: [],
     [Action.ShowEngageTimePoll]: ['pollId'],
     [Action.SendEngageTimeMessage]: ['type', 'title'],
+    [Action.ZoomIn]: [],
+    [Action.ZoomOut]: [],
+    [Action.ZoomReset]: [],
   };
   return requiredMap[action] || [];
 };
@@ -305,6 +312,7 @@ export const getFieldsForAction = (action: Action): string[] => {
     [Action.CloseChat]: [],
     [Action.CancelChat]: [],
     [Action.CopyToClipboard]: ['content', 'contentPath'],
+    [Action.CopyFromSelection]: [],
     [Action.PasteFromClipboard]: [],
     [Action.TypeText]: ['content', 'insertTypingSpeed'],
     [Action.PressEnter]: [],
@@ -330,6 +338,9 @@ export const getFieldsForAction = (action: Action): string[] => {
     [Action.ShowEngageTimeSession]: [],
     [Action.ShowEngageTimePoll]: ['pollId', 'startOnOpen'],
     [Action.SendEngageTimeMessage]: ['type', 'title', 'message'],
+    [Action.ZoomIn]: ['zoom'],
+    [Action.ZoomOut]: ['zoom'],
+    [Action.ZoomReset]: [],
   };
 
   return fieldMap[action] || [];

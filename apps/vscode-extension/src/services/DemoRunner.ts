@@ -54,6 +54,7 @@ import {
   EngageTimeService,
   SelectionService,
   MacOSActionsService,
+  ZoomService,
 } from './';
 import { Preview } from '../preview/Preview';
 import { parse as jsonParse } from 'jsonc-parser';
@@ -854,6 +855,22 @@ export class DemoRunner {
         await commands.executeCommand('vscode.open', Uri.parse(step.url));
         return;
       }
+    }
+
+    // Zoom actions
+    if (step.action === Action.ZoomIn) {
+      await ZoomService.zoomIn(step.zoom);
+      return;
+    }
+
+    if (step.action === Action.ZoomOut) {
+      await ZoomService.zoomOut(step.zoom);
+      return;
+    }
+
+    if (step.action === Action.ZoomReset) {
+      await ZoomService.zoomReset();
+      return;
     }
 
     // Open a new terminal

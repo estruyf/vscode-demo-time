@@ -318,6 +318,26 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  if (action === Action.ZoomIn) {
+    return {
+      action: Action.ZoomIn,
+      zoom: 1,
+    };
+  }
+
+  if (action === Action.ZoomOut) {
+    return {
+      action: Action.ZoomOut,
+      zoom: 1,
+    };
+  }
+
+  if (action === Action.ZoomReset) {
+    return {
+      action: Action.ZoomReset,
+    };
+  }
+
   /**
    * Extensibility actions
    */

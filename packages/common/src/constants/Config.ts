@@ -10,6 +10,7 @@ export const Config = {
   presentationMode: {
     previousEnabled: 'previousEnabled',
   },
+  zoom: 'zoomLevel',
   highlight: {
     borderColor: 'highlightBorderColor',
     background: 'highlightBackground',

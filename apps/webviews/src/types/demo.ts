@@ -81,7 +81,13 @@ export const CATEGORIZED_ACTIONS: {
   },
   {
     category: 'VS Code actions',
-    options: [Action.ExecuteVSCodeCommand, Action.ShowInfoMessage],
+    options: [
+      Action.ExecuteVSCodeCommand,
+      Action.ShowInfoMessage,
+      Action.ZoomIn,
+      Action.ZoomOut,
+      Action.ZoomReset,
+    ],
   },
   {
     category: 'Snippet actions',

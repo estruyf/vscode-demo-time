@@ -107,6 +107,9 @@
                     "showInfoMessage",
                     "setState",
                     "openWebsite",
+                    "zoomIn",
+                    "zoomOut",
+                    "zoomReset",
                     "openTerminal",
                     "executeTerminalCommand",
                     "executeScript",
@@ -742,6 +745,50 @@
                   "if": {
                     "properties": {
                       "action": {
+                        "const": "zoomIn"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "zoom": {
+                        "$ref": "#/definitions/zoom"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "zoomOut"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "zoom": {
+                        "$ref": "#/definitions/zoom"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "zoomReset"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {}
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
                         "const": "snippet"
                       }
                     }
@@ -1121,8 +1168,8 @@
     },
     "zoom": {
       "type": "number",
-      "title": "The zoom level for the editor when highlighting code",
-      "default": 0
+      "title": "The number of times to zoom in or out",
+      "default": 1
     },
     "pollId": {
       "type": "string",
