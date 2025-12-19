@@ -352,7 +352,19 @@ export class DemoRunner {
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     DemoRunner.currentDemo = nextDemo;
+
+    // Check if the next demo contains Highlight actions
+    let followingDemoIdx = nextDemoIdx + 1;
+    while (followingDemoIdx < demos.length && demos[followingDemoIdx].disabled) {
+      followingDemoIdx++;
+    }
+
     await DemoRunner.runSteps(demoSteps);
+
+    DemoRunner.nextStepIsHighlight =
+      followingDemoIdx < demos.length &&
+      demos[followingDemoIdx].steps.some((s: Step) => s.action === Action.Highlight);
+
     NotesService.showNotes(nextDemo);
   }
 
@@ -571,14 +583,11 @@ export class DemoRunner {
     crntFilePath: string | undefined = undefined,
   ): Promise<void> {
     // Unselect the current selection
-    DecoratorService.unselect();
+    DecoratorService.unselect(undefined, !DemoRunner.nextStepIsHighlight);
 
     // Reset the highlight
     await setContext(ContextKeys.hasCodeHighlighting, false);
     DemoRunner.setCrntHighlighting();
-    
-    // Reset the lookahead flag
-    DemoRunner.nextStepIsHighlight = false;
 
     const workspaceFolder = Extension.getInstance().workspaceFolder;
     if (!workspaceFolder) {
@@ -624,12 +633,6 @@ export class DemoRunner {
     // Loop over all the demo steps and execute them.
     for (let currentIndex = 0; currentIndex < stepsToExecute.length; currentIndex++) {
       const step = stepsToExecute[currentIndex];
-      
-      // Check if the next step is a Highlight action
-      DemoRunner.nextStepIsHighlight = 
-        currentIndex + 1 < stepsToExecute.length && 
-        stepsToExecute[currentIndex + 1].action === Action.Highlight;
-      
       await DemoRunner.runStep(step, variables, workspaceFolder, crntFilePath);
     }
 
@@ -1303,7 +1306,13 @@ export class DemoRunner {
         await setContext(ContextKeys.hasCodeHighlighting, true);
       }
 
-      DecoratorService.hightlightLines(textEditor, range, zoomLevel, highlightWholeLine, preserveZoom);
+      DecoratorService.hightlightLines(
+        textEditor,
+        range,
+        zoomLevel,
+        highlightWholeLine,
+        preserveZoom,
+      );
       textEditor.revealRange(range, TextEditorRevealType.InCenter);
     }
   }
