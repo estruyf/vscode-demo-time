@@ -1,0 +1,27 @@
+{
+  "name": "@demotime/companion-app",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/companion-app/src",
+  "projectType": "application",
+  "tags": ["type:app", "platform:desktop"],
+  "targets": {
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn tauri:dev",
+        "cwd": "apps/companion-app"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn build && yarn tauri:build",
+        "cwd": "apps/companion-app"
+      },
+      "outputs": ["{projectRoot}/src-tauri/target"]
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

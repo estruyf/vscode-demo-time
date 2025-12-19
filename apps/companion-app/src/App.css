@@ -1,0 +1,236 @@
+:root {
+  --primary-color: #ffd43b;
+  --primary-hover: #ffc107;
+  --primary-dark: #816600;
+  --bg-color: #ffffff;
+  --surface-color: #f4f6fa;
+  --text-color: #15181f;
+  --text-secondary: #505869;
+  --border-color: #c4c8d3;
+  --shadow: 0 2px 8px rgba(129, 102, 0, 0.1);
+  --shadow-lg: 0 4px 12px rgba(129, 102, 0, 0.15);
+  --radius: 8px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  line-height: 1.6;
+  color: var(--text-color);
+  background-color: transparent;
+  overflow: hidden;
+}
+
+#root {
+  background-color: transparent;
+}
+
+/* Settings View */
+.settings-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--bg-color);
+}
+
+body:has(.settings-container) {
+  background-color: var(--bg-color);
+}
+
+body:has(.overlay-container) {
+  background-color: transparent;
+}
+
+.settings-header {
+  background: var(--primary-color);
+  color: #15181f;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(129, 102, 0, 0.2);
+}
+
+.settings-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.subtitle {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  font-weight: 400;
+}
+
+.settings-main {
+  flex: 1;
+  padding: 2rem 1.5rem;
+  overflow-y: auto;
+}
+
+.setting-group {
+  margin-bottom: 1.5rem;
+}
+
+.setting-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+}
+
+.setting-group input[type='number'] {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.setting-group input[type='number']:focus {
+  outline: none;
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 3px rgba(255, 212, 59, 0.2);
+}
+
+.setting-hint {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.start-button {
+  width: 100%;
+  padding: 1rem;
+  background: var(--primary-color);
+  color: #15181f;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+
+.start-button:hover {
+  background: var(--primary-color);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+.start-button:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow);
+}
+
+.info-section {
+  background: var(--surface-color);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+}
+
+.info-section h3 {
+  margin-bottom: 1rem;
+  color: var(--text-color);
+}
+
+.info-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.info-section li {
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+.settings-footer {
+  padding: 1rem;
+  text-align: center;
+  border-top: 1px solid var(--border-color);
+  background: var(--surface-color);
+}
+
+.settings-footer a {
+  color: var(--primary-dark);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.settings-footer a:hover {
+  text-decoration: underline;
+  color: var(--primary-color);
+}
+
+/* Overlay View */
+.overlay-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: transparent;
+  overflow: hidden;
+  cursor: none;
+  user-select: none;
+}
+
+.blur-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  pointer-events: none;
+
+  &.active {
+    background: rgba(0, 0, 0, 0.8);
+    pointer-events: auto;
+  }
+}
+
+.blur-message {
+  color: white;
+  font-size: 4rem;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  padding: 2rem 4rem;
+  max-width: 80%;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .blur-message {
+    font-size: 2.5rem;
+    padding: 1rem 2rem;
+  }
+}
