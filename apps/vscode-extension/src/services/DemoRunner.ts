@@ -363,7 +363,7 @@ export class DemoRunner {
 
     DemoRunner.nextStepIsHighlight =
       followingDemoIdx < demos.length &&
-      demos[followingDemoIdx].steps.some((s: Step) => s.action === Action.Highlight);
+      !!demos[followingDemoIdx].steps?.some((s: Step) => s.action === Action.Highlight);
 
     NotesService.showNotes(nextDemo);
   }
