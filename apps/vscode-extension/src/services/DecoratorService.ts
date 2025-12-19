@@ -67,11 +67,13 @@ export class DecoratorService {
     range: Range,
     zoomLevel?: number,
     isWholeLine?: boolean,
+    preserveZoom = false,
   ) {
     const zoomEnabled = Extension.getInstance().getSetting<boolean | number>(Config.highlight.zoom);
 
     // Remove the previous highlight
-    DecoratorService.unselect(textEditor);
+    // When preserveZoom is true, don't reset the zoom (resetZoom = false)
+    DecoratorService.unselect(textEditor, !preserveZoom);
 
     // Reset the decorators
     DecoratorService.setLineDecorator();
@@ -79,7 +81,12 @@ export class DecoratorService {
     DecoratorService.setBetweenDecorators();
     DecoratorService.setAfterDecorators();
 
-    if (typeof zoomLevel !== 'undefined' || zoomEnabled) {
+    // Apply zoom if needed
+    const hasZoomConfig = typeof zoomLevel !== 'undefined' || zoomEnabled;
+    const isPreservingZoomAndAlreadyZoomed = preserveZoom && DecoratorService.isZoomed;
+    const shouldApplyZoom = hasZoomConfig && !isPreservingZoomAndAlreadyZoomed;
+    
+    if (shouldApplyZoom) {
       DecoratorService.isZoomed = true;
       let level = zoomEnabled;
       if (typeof zoomLevel === 'number') {
@@ -93,6 +100,9 @@ export class DecoratorService {
       } else {
         commands.executeCommand('editor.action.fontZoomIn');
       }
+    } else if (hasZoomConfig) {
+      // Ensure isZoomed flag is set even when preserving zoom
+      DecoratorService.isZoomed = true;
     }
 
     // Get before and after lines
@@ -173,7 +183,7 @@ export class DecoratorService {
     DecoratorService.isHighlighted = true;
   }
 
-  public static unselect(textEditor?: TextEditor) {
+  public static unselect(textEditor?: TextEditor, resetZoom = true) {
     if (!textEditor) {
       textEditor = window.activeTextEditor;
 
@@ -182,13 +192,16 @@ export class DecoratorService {
       }
     }
 
+    // Always perform decorator cleanup and set isHighlighted to false
     DecoratorService.isHighlighted = false;
     textEditor.setDecorations(DecoratorService.blurDecorator, []);
     textEditor.setDecorations(DecoratorService.lineDecorator, []);
     textEditor.setDecorations(DecoratorService.startBlockDecorator, []);
     textEditor.setDecorations(DecoratorService.betweenBlockDecorator, []);
     textEditor.setDecorations(DecoratorService.endBlockDecorator, []);
-    if (DecoratorService.isZoomed) {
+    
+    // Conditionally skip zoom reset when resetZoom is false
+    if (resetZoom && DecoratorService.isZoomed) {
       DecoratorService.isZoomed = false;
       commands.executeCommand('editor.action.fontZoomReset');
     }
