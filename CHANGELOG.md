@@ -2,6 +2,8 @@
 
 ## [1.13.0] - unreleased
 
+- [#339](https://github.com/estruyf/vscode-demo-time/issues/339): Prevent
+  unnecessary zoom when consecutive highlights are performed
 - [#340](https://github.com/estruyf/vscode-demo-time/issues/340): Fix an issue
   with the `path` label for the `executeScript` action in the step editor
 - [#341](https://github.com/estruyf/vscode-demo-time/issues/341): Added the
