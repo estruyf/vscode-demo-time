@@ -13,3 +13,14 @@ coverage
 
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
+
+# Expo
+.expo/
+.expo-shared/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
