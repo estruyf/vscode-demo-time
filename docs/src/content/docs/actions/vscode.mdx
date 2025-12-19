@@ -1,7 +1,7 @@
 ---
 title: Visual Studio Code actions
 description: Perform Visual Studio Code actions in your demos like executing commands or showing an information message.
-lastmod: 2025-11-04T00:00:00.000Z
+lastmod: 2025-12-19T00:00:00.000Z
 ---
 
 import { Image } from 'astro:assets';
@@ -179,6 +179,91 @@ content: |
   {
     "firstName": "{STATE_resourceID}"
   }
+```
+
+</TabItem>
+</Tabs>
+
+## Zoom actions
+
+Control the editor zoom level during your demo using the zoom actions.
+
+### Zoom in
+
+Zoom in the editor using the `zoomIn` action.
+
+<Tabs syncKey="vscode-zoom-in">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "zoomIn",
+  "zoom": 3
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: zoomIn
+zoom: 3
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="note">
+The `zoom` property is optional. If not provided, it defaults to the `demoTime.zoom` setting value, or `1` if the setting is not configured.
+</Aside>
+
+### Zoom out
+
+Zoom out the editor using the `zoomOut` action.
+
+<Tabs syncKey="vscode-zoom-out">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "zoomOut",
+  "zoom": 3
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: zoomOut
+zoom: 3
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="note">
+The `zoom` property is optional. If not provided, it defaults to the `demoTime.zoom` setting value, or `1` if the setting is not configured.
+</Aside>
+
+### Reset zoom
+
+Reset the editor zoom level to the default using the `zoomReset` action.
+
+<Tabs syncKey="vscode-zoom-reset">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "zoomReset"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: zoomReset
 ```
 
 </TabItem>

@@ -54,6 +54,7 @@ import {
   EngageTimeService,
   SelectionService,
   MacOSActionsService,
+  ZoomService,
 } from './';
 import { Preview } from '../preview/Preview';
 import { parse as jsonParse } from 'jsonc-parser';
@@ -844,31 +845,17 @@ export class DemoRunner {
 
     // Zoom actions
     if (step.action === Action.ZoomIn) {
-      // Use step.zoom if provided, otherwise fall back to demoTime.highlightZoomEnabled setting, or default to 1
-      const zoomCount =
-        step.zoom ||
-        Extension.getInstance().getSetting<number>(Config.highlight.zoom) ||
-        1;
-      for (let i = 0; i < zoomCount; i++) {
-        await commands.executeCommand('workbench.action.zoomIn');
-      }
+      await ZoomService.zoomIn(step.zoom);
       return;
     }
 
     if (step.action === Action.ZoomOut) {
-      // Use step.zoom if provided, otherwise fall back to demoTime.highlightZoomEnabled setting, or default to 1
-      const zoomCount =
-        step.zoom ||
-        Extension.getInstance().getSetting<number>(Config.highlight.zoom) ||
-        1;
-      for (let i = 0; i < zoomCount; i++) {
-        await commands.executeCommand('workbench.action.zoomOut');
-      }
+      await ZoomService.zoomOut(step.zoom);
       return;
     }
 
     if (step.action === Action.ZoomReset) {
-      await commands.executeCommand('workbench.action.zoomReset');
+      await ZoomService.zoomReset();
       return;
     }
 

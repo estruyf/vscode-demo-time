@@ -188,6 +188,11 @@
           "default": 1,
           "description": "Opacity of the text which is not highlighted"
         },
+        "demoTime.zoom": {
+          "type": "number",
+          "default": 1,
+          "description": "Zoom level to apply when using the zoomIn and zoomOut actions. This sets the editor font size accordingly."
+        },
         "demoTime.highlightZoomEnabled": {
           "type": [
             "boolean",
