@@ -1,5 +1,36 @@
 import type { APIContext } from 'astro';
 
+// GitHub username to check sponsorships for
+const MAINTAINER_USERNAME = 'eliostruyf';
+const MIN_SPONSOR_TIER = 10; // Minimum €10 or $10 per month
+
+interface SponsorEntity {
+  login: string;
+}
+
+interface SponsorTier {
+  monthlyPriceInDollars: number;
+}
+
+interface Sponsorship {
+  sponsorEntity: SponsorEntity;
+  tier: SponsorTier;
+}
+
+interface SponsorshipsData {
+  data?: {
+    user?: {
+      sponsorshipsAsMaintainer?: {
+        nodes: Sponsorship[];
+      };
+    };
+    viewer?: {
+      login: string;
+    };
+  };
+  errors?: any[];
+}
+
 /**
  * GitHub Sponsors API endpoint
  * Verifies if a user is a sponsor at the required tier
@@ -16,10 +47,13 @@ export async function POST(context: APIContext) {
       );
     }
 
-    // GraphQL query to check sponsorships
+    // GraphQL query to check sponsorships and get viewer info in one request
     const query = `
       query {
-        user(login: "eliostruyf") {
+        viewer {
+          login
+        }
+        user(login: "${MAINTAINER_USERNAME}") {
           sponsorshipsAsMaintainer(first: 100, activeOnly: true) {
             nodes {
               sponsorEntity {
@@ -52,7 +86,7 @@ export async function POST(context: APIContext) {
       );
     }
 
-    const data = await response.json();
+    const data: SponsorshipsData = await response.json();
 
     // Check for GraphQL errors
     if (data.errors) {
@@ -62,32 +96,24 @@ export async function POST(context: APIContext) {
       );
     }
 
-    // Get the authenticated user's login to check if they're a sponsor
-    const userResponse = await fetch('https://api.github.com/user', {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+    // Get the authenticated user's login from the GraphQL response
+    const userLogin = data.data?.viewer?.login;
 
-    if (!userResponse.ok) {
+    if (!userLogin) {
       return new Response(
-        JSON.stringify({ error: 'Failed to fetch user data' }),
-        { status: userResponse.status, headers: { 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: 'Failed to get user information' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
-    const userData = await userResponse.json();
-    const userLogin = userData.login;
-
     // Check if the user is among the sponsors with the minimum tier
-    const MIN_TIER = 10; // Minimum €10 or $10 per month
     const sponsors = data.data?.user?.sponsorshipsAsMaintainer?.nodes || [];
     
-    const isSponsor = sponsors.some((sponsorship: any) => {
+    const isSponsor = sponsors.some((sponsorship: Sponsorship) => {
       const sponsorLogin = sponsorship.sponsorEntity?.login;
       const monthlyPrice = sponsorship.tier?.monthlyPriceInDollars || 0;
       
-      return sponsorLogin === userLogin && monthlyPrice >= MIN_TIER;
+      return sponsorLogin === userLogin && monthlyPrice >= MIN_SPONSOR_TIER;
     });
 
     return new Response(
