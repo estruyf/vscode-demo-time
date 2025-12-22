@@ -6,9 +6,14 @@
     "prebuild": "node scripts/update-changelog.cjs && node scripts/update-llms.cjs",
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "build": "npm run build:static && npm run build:cloudflare",
+    "build:static": "astro build",
+    "build:cloudflare": "wrangler pages functions build --outdir=./dist/_worker.js/",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "deploy": "wrangler deploy --config wrangler.jsonc",
+    "deploy:dry-run": "wrangler deploy --config wrangler.jsonc --dry-run",
+    "cf:dev": "wrangler dev --config wrangler.jsonc"
   },
   "dependencies": {
     "@astrojs/react": "^4.1.2",
@@ -26,6 +31,7 @@
   },
   "devDependencies": {
     "@frontmatter/extensibility": "^0.0.18",
-    "sharp": "^0.33.5"
+    "sharp": "^0.33.5",
+    "wrangler": "^4.56.0"
   }
 }

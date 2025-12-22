@@ -71,6 +71,7 @@
 
 - [v1.10.0 | Demo Time](https://demotime.show/releases/1.10.0/): "Release notes for v1.10.0: overview dashboard, remote control PWA, pause action, dark mode, slide variables, EngageTime improvements."
 - [v1.11.0 | Demo Time](https://demotime.show/releases/1.11.0/): 
+- [v1.12.0 | Demo Time](https://demotime.show/releases/1.12.0/): 
 - [v1.7.0 | Demo Time](https://demotime.show/releases/1.7.0/): Release notes for version 1.7.0 of the Demo Time extension, including new features, improvements, and bug fixes.
 - [v1.8.0 | Demo Time](https://demotime.show/releases/1.8.0/): Release notes for version 1.8.0 of the Demo Time extension, including new features, improvements, and bug fixes.
 - [v1.9.0 | Demo Time](https://demotime.show/releases/1.9.0/): 
@@ -124,6 +125,5 @@
 - [Adding new steps to a demo | Demo Time](https://demotime.show/tips/adding-steps/): Learn how you can add new steps to a demo in Demo Time.
 - [Control the next demo shortcut | Demo Time](https://demotime.show/tips/control-next-demo/): Learn how you can control the next demo during your presentation in Demo Time.
 - [Highlighting code | Demo Time](https://demotime.show/tips/highlighting/): Learn how to highlight code in Demo Time to make it stand out in your demos.
-- [Move panel to activity bar | Demo Time](https://demotime.show/tips/move-to-activity-bar/): You can move the Demo Time panel to the activity bar to have its own dedicated space.
 - [Working with Variables | Demo Time](https://demotime.show/tips/variables/): Learn how to work with variables in Demo Time to reuse them across your demos.
 - [VS Code Settings | Demo Time](https://demotime.show/tips/vscode-settings/): Learn about additional VS Code Settings that may be useful

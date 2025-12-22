@@ -1,0 +1,14 @@
+{
+	// Cloudflare Workers configuration for Demo Time documentation site
+	// Migrated from Cloudflare Pages to Workers with static assets support
+	"name": "demo-time-docs",
+	"compatibility_date": "2025-12-22",
+	// Worker script compiled from Pages Functions
+	"main": "./dist/_worker.js/index.js",
+	"assets": {
+		// Astro build output directory containing static site files
+		"directory": "./dist",
+		// Bind assets to ASSETS variable for access in worker
+		"binding": "public"
+	}
+}

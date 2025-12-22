@@ -1,4 +1,14 @@
-## [1.12.0] - Unreleased
+## [1.13.0] - unreleased
+
+- [#339](https://github.com/estruyf/vscode-demo-time/issues/339): Prevent
+  unnecessary zoom when consecutive highlights are performed
+- [#340](https://github.com/estruyf/vscode-demo-time/issues/340): Fix an issue
+  with the `path` label for the `executeScript` action in the step editor
+- [#341](https://github.com/estruyf/vscode-demo-time/issues/341): Added the
+  `args` property to the `executeScript` action to allow passing command-line
+  arguments to the script being executed
+
+## [1.12.0] - 2025-12-16
 
 - **BREAKING**: Changed project license from MIT to Apache License 2.0. See
   [LICENSE](./LICENSE) for details.
@@ -25,6 +35,11 @@
   next slide support on the presenter view
 - [#321](https://github.com/estruyf/vscode-demo-time/issues/321): Fix the file
   formatting when moving steps in the demo file
+- [#326](https://github.com/estruyf/vscode-demo-time/issues/326): Move the Demo
+  Time to the activity bar
+- [#330](https://github.com/estruyf/vscode-demo-time/issues/330): Added new
+  `copyFromSelection` action to copy text from the current selection in the
+  editor
 
 ## [1.11.0] - 2025-11-04
 
@@ -292,7 +307,7 @@
   Demo Time via [@demotime/mcp](https://www.npmjs.com/package/@demotime/mcp)
 - [#113](https://github.com/estruyf/vscode-demo-time/pull/113): Enhancement for
   the end placeholder setting to look after the start placeholder index. Thanks
-  to [Leonardo Montini](https://github.com/Balastrong).
+  to, [Leonardo Montini](https://github.com/Balastrong).
 - [#114](https://github.com/estruyf/vscode-demo-time/issues/114): Fix to show
   the correct view step demo. Thanks to
   [Leonardo Montini](https://github.com/Balastrong).

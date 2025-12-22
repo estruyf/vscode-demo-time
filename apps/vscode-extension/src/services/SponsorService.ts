@@ -2,6 +2,7 @@ import { authentication, commands, ExtensionContext } from 'vscode';
 import { ContextKeys, General, StateKeys } from '../constants';
 import { Extension } from './Extension';
 import { Logger } from './Logger';
+import { COMMAND } from '@demotime/common';
 
 // GitHub scopes required for sponsor verification
 const GITHUB_AUTH_SCOPES = ['read:user', 'read:org'];
@@ -16,10 +17,10 @@ export class SponsorService {
 
     // Register the authenticate command
     context.subscriptions.push(
-      commands.registerCommand('demo-time.authenticate', async () => {
+      commands.registerCommand(COMMAND.authenticate, async () => {
         await authentication.getSession('github', GITHUB_AUTH_SCOPES, { createIfNone: true });
         await SponsorService.checkSponsor();
-      })
+      }),
     );
   }
 
@@ -31,7 +32,9 @@ export class SponsorService {
 
     try {
       // Try to get the GitHub authentication session silently (without prompting)
-      const githubAuth = await authentication.getSession('github', GITHUB_AUTH_SCOPES, { silent: true });
+      const githubAuth = await authentication.getSession('github', GITHUB_AUTH_SCOPES, {
+        silent: true,
+      });
 
       if (githubAuth && githubAuth.accessToken) {
         // User is authenticated, check sponsor status via API
@@ -49,10 +52,10 @@ export class SponsorService {
         if (response.ok) {
           const data = await response.json();
           const isSponsor = data.isSponsor === true;
-          
+
           // Get previous sponsor state
           const prevState = ext.getState<boolean>(StateKeys.sponsor);
-          
+
           // Update state and context
           await ext.setState(StateKeys.sponsor, isSponsor);
           await commands.executeCommand('setContext', ContextKeys.isSponsor, isSponsor);
