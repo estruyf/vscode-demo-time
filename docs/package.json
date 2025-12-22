@@ -6,13 +6,9 @@
     "prebuild": "node scripts/update-changelog.cjs && node scripts/update-llms.cjs",
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "npm run build:static && npm run build:cloudflare",
-    "build:static": "astro build",
-    "build:cloudflare": "wrangler pages functions build --outdir=./dist/_worker.js/",
+    "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy": "wrangler deploy --config wrangler.jsonc",
-    "deploy:dry-run": "wrangler deploy --config wrangler.jsonc --dry-run",
     "cf:dev": "npx wrangler pages dev function"
   },
   "dependencies": {
