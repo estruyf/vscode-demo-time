@@ -8,4 +8,5 @@ export const StateKeys = {
   executingDemoFile: 'executingDemoFile',
   variables: 'variables',
   presentationView: 'presentationView',
+  sponsor: 'sponsor',
 };

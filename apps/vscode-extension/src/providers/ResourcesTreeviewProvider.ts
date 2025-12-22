@@ -22,6 +22,16 @@ export class ResourcesTreeviewProvider implements TreeDataProvider<ResourceTreeI
   getChildren(): ProviderResult<ResourceTreeItem[]> {
     return Promise.resolve([
       new ResourceTreeItem(
+        'Get PRO Features',
+        'Unlock all Demo Time features',
+        {
+          name: 'lock',
+          custom: false,
+          color: new ThemeColor('charts.red'),
+        },
+        COMMAND.authenticate,
+      ),
+      new ResourceTreeItem(
         'Documentation',
         'Learn how to use Demo Time',
         {

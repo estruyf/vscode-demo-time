@@ -558,6 +558,12 @@
         "command": "demo-time.openPowerPointAddin",
         "title": "Open PowerPoint Add-in",
         "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.authenticate",
+        "title": "Authenticate with GitHub (Unlock Pro Features)",
+        "category": "Demo Time",
+        "icon": "$(github)"
       }
     ],
     "menus": {

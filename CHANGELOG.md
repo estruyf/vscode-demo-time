@@ -9,6 +9,9 @@
 - [#341](https://github.com/estruyf/vscode-demo-time/issues/341): Added the
   `args` property to the `executeScript` action to allow passing command-line
   arguments to the script being executed
+- [#343](https://github.com/estruyf/vscode-demo-time/issues/343): added the zoom
+  actions: `zoomIn`, `zoomOut`, and `zoomReset` to control the editor zoom level
+  during your demo
 
 ## [1.12.0] - 2025-12-16
 

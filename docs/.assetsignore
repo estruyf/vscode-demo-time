@@ -1,0 +1,2 @@
+# Prevent worker code from being served as static assets
+_worker.js
