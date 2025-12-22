@@ -3,7 +3,7 @@ import type { SponsorData, SponsorNode } from '../models/SponsorData';
 const headers = {
   'Content-Type': 'application/json',
   'User-Agent': 'demo-time',
-  Host: 'https://demotime.show',
+  Host: 'api.github.com',
 };
 
 const MAINTAINER_USERNAME = 'estruyf';
@@ -22,7 +22,7 @@ export class GitHubService {
       return;
     }
 
-    const data = await response.json();
+    const data: { login: string } = await response.json();
 
     return data.login;
   }
@@ -62,6 +62,8 @@ export class GitHubService {
     if (response && response.ok) {
       const data = (await response.json()) as SponsorData;
       sponsors = data.data?.user?.sponsorshipsAsMaintainer?.nodes || [];
+    } else {
+      return null;
     }
 
     if (sponsors && sponsors.length > 0) {

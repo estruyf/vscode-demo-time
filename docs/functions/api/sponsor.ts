@@ -51,6 +51,13 @@ export async function onRequestPost(context: {
       });
     }
 
+    if (!env.GITHUB_AUTH) {
+      return new Response(JSON.stringify({ error: 'Server misconfigured: missing GITHUB_AUTH' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     // Call GitHub GraphQL API
     const sponsorData = await GitHubService.getSponsors(env.GITHUB_AUTH!);
 
@@ -66,7 +73,9 @@ export async function onRequestPost(context: {
       const sponsorLogin = sponsorship.sponsorEntity?.login;
       const monthlyPrice = sponsorship.tier?.monthlyPriceInDollars || 0;
 
-      return sponsorLogin === username && monthlyPrice >= MIN_SPONSOR_TIER;
+      return (
+        sponsorLogin?.toLowerCase() === username.toLowerCase() && monthlyPrice >= MIN_SPONSOR_TIER
+      );
     });
 
     return new Response(JSON.stringify({ isSponsor }), {

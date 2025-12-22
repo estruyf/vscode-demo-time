@@ -19,15 +19,19 @@ export class SponsorService {
     // Register the authenticate command
     context.subscriptions.push(
       commands.registerCommand(COMMAND.authenticate, async () => {
-        const auth = await authentication.getSession('github', GITHUB_AUTH_SCOPES, {
-          createIfNone: true,
-        });
-        if (auth.accessToken) {
-          Notifications.info('GitHub authentication successful.');
-        } else {
-          Notifications.warning('GitHub authentication failed or was cancelled.');
+        try {
+          const auth = await authentication.getSession('github', GITHUB_AUTH_SCOPES, {
+            createIfNone: true,
+          });
+          if (auth.accessToken) {
+            Notifications.info('GitHub authentication successful.');
+          } else {
+            Notifications.warning('GitHub authentication failed or was cancelled.');
+          }
+          await SponsorService.checkSponsor();
+        } catch (err) {
+          Notifications.error(`GitHub authentication error: ${(err as Error).message}`);
         }
-        await SponsorService.checkSponsor();
       }),
     );
   }
