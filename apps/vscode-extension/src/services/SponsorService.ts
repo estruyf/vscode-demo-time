@@ -3,6 +3,7 @@ import { ContextKeys, General, StateKeys } from '../constants';
 import { Extension } from './Extension';
 import { Logger } from './Logger';
 import { COMMAND } from '@demotime/common';
+import { Notifications } from './Notifications';
 
 // GitHub scopes required for sponsor verification
 const GITHUB_AUTH_SCOPES = ['read:user', 'read:org'];
@@ -18,7 +19,14 @@ export class SponsorService {
     // Register the authenticate command
     context.subscriptions.push(
       commands.registerCommand(COMMAND.authenticate, async () => {
-        await authentication.getSession('github', GITHUB_AUTH_SCOPES, { createIfNone: true });
+        const auth = await authentication.getSession('github', GITHUB_AUTH_SCOPES, {
+          createIfNone: true,
+        });
+        if (auth.accessToken) {
+          Notifications.info('GitHub authentication successful.');
+        } else {
+          Notifications.warning('GitHub authentication failed or was cancelled.');
+        }
         await SponsorService.checkSponsor();
       }),
     );
