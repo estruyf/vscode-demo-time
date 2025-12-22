@@ -6,6 +6,6 @@ export const General = {
   slidesFolder: 'slides',
   htmlExportFile: 'demotime.export.html',
   pdfExportFile: 'demotime.export.pdf',
-  sponsorApiUrl: 'https://7cbdaab0.demo-time.pages.dev/api/sponsor',
+  sponsorApiUrl: 'https://beta.demotime.show/api/sponsor',
   minSponsorTier: 10, // Minimum monthly price in dollars/euros
 };
