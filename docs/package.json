@@ -13,7 +13,7 @@
     "astro": "astro",
     "deploy": "wrangler deploy --config wrangler.jsonc",
     "deploy:dry-run": "wrangler deploy --config wrangler.jsonc --dry-run",
-    "cf:dev": "wrangler dev --config wrangler.jsonc"
+    "cf:dev": "npx wrangler pages dev function"
   },
   "dependencies": {
     "@astrojs/react": "^4.1.2",
@@ -31,7 +31,6 @@
   },
   "devDependencies": {
     "@frontmatter/extensibility": "^0.0.18",
-    "sharp": "^0.33.5",
-    "wrangler": "^4.56.0"
+    "sharp": "^0.33.5"
   }
 }
