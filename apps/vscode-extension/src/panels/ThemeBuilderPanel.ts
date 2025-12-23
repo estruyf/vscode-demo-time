@@ -287,13 +287,18 @@ export class ThemeBuilderPanel extends BaseWebview {
     try {
       // Sanitize CSS: Remove potentially dangerous patterns
       const sanitizedCss = (payload.css || '')
-        .replace(/@import\s+/gi, '/* @import blocked */')
-        .replace(/javascript:/gi, '/* javascript: blocked */');
+        .replace(/@import\s*[^;]*;?/gi, '/* @import blocked */')
+        .replace(/javascript:/gi, '/* javascript: blocked */')
+        .replace(/expression\s*\(/gi, '/* expression() blocked */');
 
       // Sanitize HTML: Remove script tags and event handlers
+      // Note: This is basic sanitization. For production use, consider a library like DOMPurify.
       const sanitizedHtml = (payload.html || '<h1>Preview</h1><p>Add your HTML content to see the preview</p>')
         .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '<!-- script blocked -->')
-        .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '');
+        .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '<!-- iframe blocked -->')
+        .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
+        .replace(/on\w+\s*=\s*[^\s>]*/gi, '')
+        .replace(/javascript:/gi, '');
 
       // Generate a simple preview HTML
       const previewHtml = `

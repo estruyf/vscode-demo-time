@@ -175,8 +175,7 @@ const ThemeBuilderView = () => {
 
   const createNewTheme = () => {
     setThemeName('');
-    setThemeContent(
-      `/* Custom Theme CSS */
+    const newThemeContent = `/* Custom Theme CSS */
 body {
   background: var(--vscode-editor-background);
   color: var(--vscode-editor-foreground);
@@ -193,16 +192,15 @@ body {
     font-weight: bold;
   }
 }
-`,
-    );
+`;
+    setThemeContent(newThemeContent);
     setSelectedTheme('');
-    updatePreview(themeContent, layoutContent);
+    updatePreview(newThemeContent, layoutContent);
   };
 
   const createNewLayout = () => {
     setLayoutName('');
-    setLayoutContent(
-      `<style>
+    const newLayoutContent = `<style>
 /* Custom Layout Styles */
 .custom-layout {
   display: flex;
@@ -218,10 +216,10 @@ body {
   <h1>{{metadata.title}}</h1>
   {{{content}}}
 </div>
-`,
-    );
+`;
+    setLayoutContent(newLayoutContent);
     setSelectedLayout('');
-    updatePreview(themeContent, layoutContent);
+    updatePreview(themeContent, newLayoutContent);
   };
 
   if (loading) {
