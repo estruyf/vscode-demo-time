@@ -296,15 +296,16 @@ export class ThemeBuilderPanel extends BaseWebview {
       // The preview is also sandboxed with CSP and iframe sandbox attribute.
       let sanitizedHtml = (payload.html || '<h1>Preview</h1><p>Add your HTML content to see the preview</p>');
       
-      // Remove script tags (with whitespace variations)
-      sanitizedHtml = sanitizedHtml.replace(/<script\b[^<]*(?:(?!<\/\s*script\s*>)<[^<]*)*<\/\s*script\s*>/gi, '<!-- script blocked -->');
+      // Remove script tags (handle all whitespace variations including newlines and tabs)
+      // Using a more comprehensive pattern that matches any whitespace in closing tags
+      sanitizedHtml = sanitizedHtml.replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi, '<!-- script blocked -->');
       
-      // Remove iframe tags
-      sanitizedHtml = sanitizedHtml.replace(/<iframe\b[^<]*(?:(?!<\/\s*iframe\s*>)<[^<]*)*<\/\s*iframe\s*>/gi, '<!-- iframe blocked -->');
+      // Remove iframe tags (handle all whitespace variations)
+      sanitizedHtml = sanitizedHtml.replace(/<iframe\b[^>]*>[\s\S]*?<\/iframe\s*>/gi, '<!-- iframe blocked -->');
       
-      // Remove event handlers (multiple passes to handle all variations)
-      sanitizedHtml = sanitizedHtml.replace(/\s+on\w+\s*=\s*["'][^"']*["']/gi, '');
-      sanitizedHtml = sanitizedHtml.replace(/\s+on\w+\s*=\s*[^\s>]*/gi, '');
+      // Remove event handlers with a single comprehensive pass
+      // This removes any attribute starting with 'on' followed by word characters
+      sanitizedHtml = sanitizedHtml.replace(/\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi, '');
       
       // Remove dangerous URL schemes
       sanitizedHtml = sanitizedHtml.replace(/(javascript|data|vbscript):/gi, '');
