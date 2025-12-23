@@ -200,6 +200,15 @@ export const WebViewMessages = {
     presenter: {
       checkNextDemo: 'checkPresenterNextDemo',
     },
+    themeBuilder: {
+      getExistingThemes: 'getThemeBuilderExistingThemes',
+      getExistingLayouts: 'getThemeBuilderExistingLayouts',
+      loadTheme: 'loadThemeBuilderTheme',
+      loadLayout: 'loadThemeBuilderLayout',
+      saveTheme: 'saveThemeBuilderTheme',
+      saveLayout: 'saveThemeBuilderLayout',
+      getPreviewHtml: 'getThemeBuilderPreviewHtml',
+    },
   },
   toWebview: {
     /**
