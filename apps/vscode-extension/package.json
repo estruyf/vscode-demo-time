@@ -564,6 +564,12 @@
         "title": "Authenticate with GitHub (Unlock Pro Features)",
         "category": "Demo Time",
         "icon": "$(github)"
+      },
+      {
+        "command": "demo-time.openThemeBuilder",
+        "title": "Open Theme Builder (Pro)",
+        "category": "Demo Time",
+        "icon": "$(paintcan)"
       }
     ],
     "menus": {
@@ -682,6 +688,10 @@
         },
         {
           "command": "demo-time.showSettings",
+          "when": "view == demo-time-scenes"
+        },
+        {
+          "command": "demo-time.openThemeBuilder",
           "when": "view == demo-time-scenes"
         },
         {
