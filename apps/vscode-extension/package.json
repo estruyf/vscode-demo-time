@@ -691,6 +691,10 @@
           "when": "view == demo-time-scenes"
         },
         {
+          "command": "demo-time.openThemeBuilder",
+          "when": "view == demo-time-scenes"
+        },
+        {
           "command": "demo-time.openSupportTheProject",
           "when": "view == demo-time-scenes"
         }

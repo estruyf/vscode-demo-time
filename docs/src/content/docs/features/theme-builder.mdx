@@ -1,0 +1,140 @@
+---
+title: Theme Builder (Pro)
+description: Create and customize themes and layouts for your presentation slides
+---
+
+The **Theme Builder** is a Pro feature that allows you to create and customize themes and slide layouts visually, making it easier to style your presentation slides without manually editing CSS and Handlebars files.
+
+## Accessing the Theme Builder
+
+The Theme Builder is available to GitHub Sponsors. To unlock this feature:
+
+1. Run the command **"Demo Time: Authenticate with GitHub (Unlock Pro Features)"** from the command palette
+2. Sign in with your GitHub account
+3. If you're a sponsor, Pro features will be unlocked automatically
+
+Once authenticated, you can access the Theme Builder:
+
+- From the command palette: **"Demo Time: Open Theme Builder (Pro)"**
+- From the Demo Time Scenes view menu
+
+## Theme Editor
+
+The Theme Editor allows you to create custom CSS themes for your slides.
+
+### Creating a New Theme
+
+1. Open the Theme Builder
+2. Click on the **"Theme Editor"** tab
+3. Click the **"New"** button
+4. Enter your theme name
+5. Edit the CSS in the editor
+6. Preview your changes in real-time
+7. Click **"Save Theme"** to save to `.demo/slides/`
+
+### Editing an Existing Theme
+
+1. Select a theme from the dropdown
+2. The theme CSS will load in the editor
+3. Make your changes
+4. Save the updated theme
+
+### Theme Structure
+
+Themes are CSS files saved in the `.demo/slides/` folder. You can use VS Code CSS variables for consistent theming:
+
+```css
+/* Example theme */
+body {
+  background: var(--vscode-editor-background);
+  color: var(--vscode-editor-foreground);
+}
+
+.slide {
+  background: var(--vscode-editor-background) !important;
+  color: var(--vscode-editor-foreground) !important;
+}
+
+.intro h1 {
+  font-size: 3em;
+  font-weight: bold;
+  background: #ffd43b !important;
+  color: #000 !important;
+}
+```
+
+## Layout Editor
+
+The Layout Editor allows you to create custom Handlebars templates for slide layouts.
+
+### Creating a New Layout
+
+1. Open the Theme Builder
+2. Click on the **"Layout Editor"** tab
+3. Click the **"New"** button
+4. Enter your layout name
+5. Edit the Handlebars template
+6. Preview your changes
+7. Click **"Save Layout"** to save to `.demo/layouts/`
+
+### Editing an Existing Layout
+
+1. Select a layout from the dropdown
+2. The layout template will load in the editor
+3. Make your changes
+4. Save the updated layout
+
+### Layout Structure
+
+Layouts are Handlebars (`.hbs`) files saved in the `.demo/layouts/` folder. Use Handlebars syntax to create dynamic layouts:
+
+```handlebars
+<style>
+.custom-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 2rem;
+}
+</style>
+
+<div class="custom-layout">
+  <h1>{{metadata.title}}</h1>
+  {{#if metadata.subtitle}}
+    <h2>{{metadata.subtitle}}</h2>
+  {{/if}}
+  {{{content}}}
+</div>
+```
+
+### Available Variables
+
+- `{{{content}}}` - The main slide content (triple braces for unescaped HTML)
+- `{{metadata.*}}` - Access slide metadata properties
+  - `{{metadata.title}}` - Slide title
+  - `{{metadata.subtitle}}` - Slide subtitle
+  - Custom metadata properties from your slides
+
+## Live Preview
+
+Both the Theme Editor and Layout Editor include a live preview panel that updates as you type. This makes it easy to see how your changes will look without switching between files.
+
+## Tips
+
+- **Use VS Code CSS Variables**: For themes that adapt to the user's color scheme, use variables like `var(--vscode-editor-background)`
+- **Inspect Elements**: The preview iframe allows you to inspect elements for easier debugging
+- **Start with Examples**: Load an existing theme or layout as a starting point
+- **Test Across Slides**: After saving, test your theme/layout on multiple slide types
+
+## File Locations
+
+- **Themes**: Saved in `.demo/slides/` as `.css` files
+- **Layouts**: Saved in `.demo/layouts/` as `.hbs` files
+
+## Learn More
+
+- [Slides Documentation](https://demotime.show/slides/)
+- [Example Themes](https://github.com/estruyf/presentation-testing-smarter-ai-playwright/tree/mc2mc/.demo/theme)
+- [Example Layouts](https://github.com/estruyf/presentation-testing-smarter-ai-playwright/tree/main/.demo/layout)
