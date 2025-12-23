@@ -294,18 +294,30 @@ export class ThemeBuilderPanel extends BaseWebview {
       // Sanitize HTML: Remove dangerous tags and event handlers
       // Note: This is basic sanitization for a trusted Pro user environment.
       // The preview is also sandboxed with CSP and iframe sandbox attribute.
+      // Multiple layers of security: regex sanitization + CSP + iframe sandbox
       let sanitizedHtml = (payload.html || '<h1>Preview</h1><p>Add your HTML content to see the preview</p>');
       
-      // Remove script tags (handle all whitespace variations including newlines and tabs)
-      // Using a more comprehensive pattern that matches any whitespace in closing tags
-      sanitizedHtml = sanitizedHtml.replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi, '<!-- script blocked -->');
+      // Remove script tags iteratively to handle nested or malformed tags
+      // Matches <script...>...</script> with any attributes and any whitespace in closing tag
+      let prevHtml = '';
+      while (prevHtml !== sanitizedHtml) {
+        prevHtml = sanitizedHtml;
+        sanitizedHtml = sanitizedHtml.replace(/<script[^>]*>[\s\S]*?<\/script[^>]*>/gi, '<!-- script blocked -->');
+      }
       
-      // Remove iframe tags (handle all whitespace variations)
-      sanitizedHtml = sanitizedHtml.replace(/<iframe\b[^>]*>[\s\S]*?<\/iframe\s*>/gi, '<!-- iframe blocked -->');
+      // Remove iframe tags iteratively
+      prevHtml = '';
+      while (prevHtml !== sanitizedHtml) {
+        prevHtml = sanitizedHtml;
+        sanitizedHtml = sanitizedHtml.replace(/<iframe[^>]*>[\s\S]*?<\/iframe[^>]*>/gi, '<!-- iframe blocked -->');
+      }
       
-      // Remove event handlers with a single comprehensive pass
-      // This removes any attribute starting with 'on' followed by word characters
-      sanitizedHtml = sanitizedHtml.replace(/\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi, '');
+      // Remove event handlers iteratively to catch all variations
+      prevHtml = '';
+      while (prevHtml !== sanitizedHtml) {
+        prevHtml = sanitizedHtml;
+        sanitizedHtml = sanitizedHtml.replace(/\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi, '');
+      }
       
       // Remove dangerous URL schemes
       sanitizedHtml = sanitizedHtml.replace(/(javascript|data|vbscript):/gi, '');
