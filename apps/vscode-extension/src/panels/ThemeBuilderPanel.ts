@@ -276,6 +276,8 @@ export class ThemeBuilderPanel extends BaseWebview {
 
   /**
    * Get preview HTML for a slide with custom theme/layout
+   * Note: This generates HTML for preview in a sandboxed iframe.
+   * The content comes from the authenticated user's own files.
    */
   private static async getPreviewHtml(
     command: string,
@@ -283,6 +285,16 @@ export class ThemeBuilderPanel extends BaseWebview {
     payload: { css?: string; html?: string },
   ) {
     try {
+      // Sanitize CSS: Remove potentially dangerous patterns
+      const sanitizedCss = (payload.css || '')
+        .replace(/@import\s+/gi, '/* @import blocked */')
+        .replace(/javascript:/gi, '/* javascript: blocked */');
+
+      // Sanitize HTML: Remove script tags and event handlers
+      const sanitizedHtml = (payload.html || '<h1>Preview</h1><p>Add your HTML content to see the preview</p>')
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '<!-- script blocked -->')
+        .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '');
+
       // Generate a simple preview HTML
       const previewHtml = `
 <!DOCTYPE html>
@@ -290,6 +302,7 @@ export class ThemeBuilderPanel extends BaseWebview {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; font-src 'self';">
   <style>
     body {
       margin: 0;
@@ -307,12 +320,12 @@ export class ThemeBuilderPanel extends BaseWebview {
       padding: 2rem;
       box-sizing: border-box;
     }
-    ${payload.css || ''}
+    ${sanitizedCss}
   </style>
 </head>
 <body>
   <div class="slide">
-    ${payload.html || '<h1>Preview</h1><p>Add your HTML content to see the preview</p>'}
+    ${sanitizedHtml}
   </div>
 </body>
 </html>

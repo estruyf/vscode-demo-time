@@ -392,7 +392,7 @@ body {
                 srcDoc={previewHtml}
                 className="w-full h-96 border-0"
                 title="Theme Preview"
-                sandbox="allow-scripts"
+                sandbox="allow-same-origin"
               />
             </div>
           </div>
