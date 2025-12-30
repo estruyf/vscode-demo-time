@@ -77,26 +77,6 @@ export class ResourcesTreeviewProvider implements TreeDataProvider<ResourceTreeI
           },
           COMMAND.analyticsDashboard,
         ),
-        new ResourceTreeItem(
-          'Start Analytics Recording',
-          'Record your presentations for analytics',
-          {
-            name: 'play',
-            custom: false,
-            color: new ThemeColor('charts.green'),
-          },
-          COMMAND.analyticsStart,
-        ),
-        new ResourceTreeItem(
-          'Stop Analytics Recording',
-          'Stop the current analytics recording',
-          {
-            name: 'stop',
-            custom: false,
-            color: new ThemeColor('charts.red'),
-          },
-          COMMAND.analyticsStop,
-        ),
       );
     } else {
       resources.unshift(

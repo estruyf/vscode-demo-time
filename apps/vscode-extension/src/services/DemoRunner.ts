@@ -233,14 +233,17 @@ export class DemoRunner {
       WebViewMessages.toWebview.updatePresentationStarted,
       DemoRunner.isPresentationMode,
     );
+
     if (DemoRunner.isPresentationMode) {
       DemoPanel.updateMessage('Presentation mode enabled');
       await DemoRunner.getDemoFile(undefined, true);
       Preview.postMessage(WebViewMessages.toWebview.updateIsInPresentationMode, true);
+      commands.executeCommand(COMMAND.analyticsStart);
     } else {
       DemoPanel.updateMessage();
       Preview.postMessage(WebViewMessages.toWebview.updateIsInPresentationMode, false);
       await commands.executeCommand(COMMAND.resetCountdown);
+      commands.executeCommand(COMMAND.analyticsStop);
     }
     DemoPanel.update();
   }
