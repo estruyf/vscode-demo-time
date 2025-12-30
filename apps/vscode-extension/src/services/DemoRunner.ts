@@ -55,6 +55,7 @@ import {
   SelectionService,
   MacOSActionsService,
   ZoomService,
+  AnalyticsService,
 } from './';
 import { Preview } from '../preview/Preview';
 import { parse as jsonParse } from 'jsonc-parser';
@@ -90,6 +91,8 @@ export class DemoRunner {
   private static crntHighlightWholeLine: boolean | undefined;
   public static currentDemo: Demo | undefined;
   private static nextStepIsHighlight = false;
+  private static currentDemoIndex: number = 0;
+  private static currentStepIndex: number = 0;
 
   /**
    * Registers the commands for the demo runner.
@@ -246,6 +249,11 @@ export class DemoRunner {
    * Resets the DemoRunner state by clearing the executing demo file path and demo array.
    */
   private static async reset(): Promise<void> {
+    // End any active analytics session
+    if (AnalyticsService.isRecording()) {
+      await AnalyticsService.endSession();
+    }
+
     const ext = Extension.getInstance();
     const resetContent = Object.assign({}, DEFAULT_START_VALUE);
     await ext.setState(StateKeys.executingDemoFile, resetContent);
@@ -253,6 +261,8 @@ export class DemoRunner {
     PresenterView.postMessage(WebViewMessages.toWebview.updateRunningDemos, resetContent);
     PresenterView.postMessage(WebViewMessages.toWebview.resetNotes, undefined);
     DemoRunner.currentDemo = undefined;
+    DemoRunner.currentDemoIndex = 0;
+    DemoRunner.currentStepIndex = 0;
     DemoRunner.togglePresentationMode(false);
     DemoPanel.update();
     Preview.close();
@@ -353,6 +363,18 @@ export class DemoRunner {
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     DemoRunner.currentDemo = nextDemo;
+    DemoRunner.currentDemoIndex = nextDemoIdx;
+
+    // Start analytics session if this is the first demo and analytics is enabled
+    if (!AnalyticsService.isRecording() && lastDemoIdx === -1) {
+      const config = AnalyticsService.getConfig();
+      if (config.enabled) {
+        await AnalyticsService.startSession(
+          demoFile?.demo.title || 'Presentation',
+          true, // Default to dry run, can be changed via command
+        );
+      }
+    }
 
     // Check if the next demo contains Highlight actions
     let followingDemoIdx = nextDemoIdx + 1;
@@ -583,6 +605,11 @@ export class DemoRunner {
     needsUpdate: boolean = true,
     crntFilePath: string | undefined = undefined,
   ): Promise<void> {
+    // End the segment successfully
+    if (AnalyticsService.isRecording()) {
+      AnalyticsService.endSegment();
+    }
+
     // Unselect the current selection
     DecoratorService.unselect(undefined, !DemoRunner.nextStepIsHighlight);
 
@@ -634,7 +661,36 @@ export class DemoRunner {
     // Loop over all the demo steps and execute them.
     for (let currentIndex = 0; currentIndex < stepsToExecute.length; currentIndex++) {
       const step = stepsToExecute[currentIndex];
-      await DemoRunner.runStep(step, variables, workspaceFolder, crntFilePath);
+      DemoRunner.currentStepIndex = currentIndex;
+
+      // Start tracking this step for analytics
+      if (AnalyticsService.isRecording() && DemoRunner.currentDemo) {
+        const executingFile = await DemoRunner.getExecutedDemoFile();
+        const demoFile = await DemoFileProvider.getFile(Uri.file(executingFile.filePath));
+        AnalyticsService.startSegment(
+          executingFile.filePath, // Act file path
+          demoFile?.title || 'Untitled Act', // Act title
+          DemoRunner.currentDemo, // Scene (demo)
+          DemoRunner.currentDemoIndex, // Scene index
+          step, // Move (step)
+          currentIndex, // Move index
+        );
+      }
+
+      try {
+        await DemoRunner.runStep(step, variables, workspaceFolder, crntFilePath);
+      } catch (error) {
+        // Record error in analytics
+        if (AnalyticsService.isRecording()) {
+          AnalyticsService.recordError(
+            'action',
+            error instanceof Error ? error.message : String(error),
+            `Step ${currentIndex}: ${step.action}`,
+          );
+          AnalyticsService.endSegment();
+        }
+        throw error;
+      }
     }
 
     if (needsUpdate) {
@@ -1321,6 +1377,16 @@ export class DemoRunner {
           highlightWholeLine,
         );
         await setContext(ContextKeys.hasCodeHighlighting, true);
+      }
+
+      // Track highlight in analytics
+      if (AnalyticsService.isRecording()) {
+        AnalyticsService.recordHighlight(
+          textEditor.document.fileName,
+          range.start.line + 1, // Convert to 1-based
+          range.end.line + 1,
+          zoomLevel,
+        );
       }
 
       DecoratorService.hightlightLines(

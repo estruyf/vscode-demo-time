@@ -54,4 +54,9 @@ export const Config = {
     showScreenshot: 'remote.showScreenshot',
     showNotes: 'remote.showNotes',
   },
+  analytics: {
+    enabled: 'analytics.enabled',
+    dwellThreshold: 'analytics.dwellThreshold',
+    autoSaveInterval: 'analytics.autoSaveInterval',
+  },
 };

@@ -39,7 +39,7 @@ export class SponsorService {
   /**
    * Check if the authenticated user is a GitHub Sponsor
    */
-  public static async checkSponsor(): Promise<void> {
+  public static async checkSponsor(): Promise<boolean> {
     const ext = Extension.getInstance();
 
     try {
@@ -76,25 +76,33 @@ export class SponsorService {
           if (prevState !== isSponsor) {
             if (isSponsor) {
               Logger.info('GitHub Sponsor status verified. Pro features unlocked! 🎉');
+              return true;
             } else {
               Logger.info('Not a GitHub Sponsor. Pro features are locked.');
+              return false;
             }
           }
+
+          // No change in sponsor state; return current status
+          return isSponsor;
         } else {
           // API call failed, user is not a sponsor
           await ext.setState(StateKeys.sponsor, false);
           await commands.executeCommand('setContext', ContextKeys.isSponsor, false);
           Logger.warning('Failed to verify sponsor status. API returned non-OK response.');
+          return false;
         }
       } else {
         // User is not authenticated
         await ext.setState(StateKeys.sponsor, undefined);
         await commands.executeCommand('setContext', ContextKeys.isSponsor, false);
+        return false;
       }
     } catch (error) {
       Logger.error(`Failed to check sponsor status: ${(error as Error).message}`);
       await ext.setState(StateKeys.sponsor, false);
       await commands.executeCommand('setContext', ContextKeys.isSponsor, false);
+      return false;
     }
   }
 
@@ -103,6 +111,7 @@ export class SponsorService {
    */
   public static getSponsorStatus(): boolean {
     const ext = Extension.getInstance();
-    return ext.getState<boolean>(StateKeys.sponsor) ?? false;
+    const value = ext.getState<boolean>(StateKeys.sponsor) ?? false;
+    return value;
   }
 }

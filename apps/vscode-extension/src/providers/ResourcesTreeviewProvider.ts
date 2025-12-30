@@ -9,6 +9,7 @@ import {
   TreeItemCollapsibleState,
 } from 'vscode';
 import { COMMAND } from '@demotime/common';
+import { SponsorService } from '../services';
 
 export class ResourcesTreeviewProvider implements TreeDataProvider<ResourceTreeItem> {
   private _onDidChangeTreeData = new EventEmitter<ResourceTreeItem | undefined>();
@@ -19,18 +20,8 @@ export class ResourcesTreeviewProvider implements TreeDataProvider<ResourceTreeI
     return element;
   }
 
-  getChildren(): ProviderResult<ResourceTreeItem[]> {
-    return Promise.resolve([
-      new ResourceTreeItem(
-        'Get PRO Features',
-        'Unlock all Demo Time features',
-        {
-          name: 'lock',
-          custom: false,
-          color: new ThemeColor('charts.red'),
-        },
-        COMMAND.authenticate,
-      ),
+  async getChildren(): Promise<ResourceTreeItem[]> {
+    const resources: ResourceTreeItem[] = [
       new ResourceTreeItem(
         'Documentation',
         'Learn how to use Demo Time',
@@ -71,7 +62,58 @@ export class ResourcesTreeviewProvider implements TreeDataProvider<ResourceTreeI
         },
         COMMAND.openPowerPointAddin,
       ),
-    ]);
+    ];
+
+    const isSponsor = Boolean(await SponsorService.checkSponsor());
+    if (isSponsor) {
+      resources.unshift(
+        new ResourceTreeItem(
+          'Analytics Dashboard',
+          'View your presentation analytics',
+          {
+            name: 'graph',
+            custom: false,
+            color: new ThemeColor('charts.blue'),
+          },
+          COMMAND.analyticsDashboard,
+        ),
+        new ResourceTreeItem(
+          'Start Analytics Recording',
+          'Record your presentations for analytics',
+          {
+            name: 'play',
+            custom: false,
+            color: new ThemeColor('charts.green'),
+          },
+          COMMAND.analyticsStart,
+        ),
+        new ResourceTreeItem(
+          'Stop Analytics Recording',
+          'Stop the current analytics recording',
+          {
+            name: 'stop',
+            custom: false,
+            color: new ThemeColor('charts.red'),
+          },
+          COMMAND.analyticsStop,
+        ),
+      );
+    } else {
+      resources.unshift(
+        new ResourceTreeItem(
+          'Get PRO Features',
+          'Unlock all Demo Time features',
+          {
+            name: 'lock',
+            custom: false,
+            color: new ThemeColor('charts.red'),
+          },
+          COMMAND.authenticate,
+        ),
+      );
+    }
+
+    return resources;
   }
 
   update(): void {

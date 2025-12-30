@@ -313,6 +313,21 @@
           "type": "boolean",
           "default": true,
           "description": "Enable remote notes functionality."
+        },
+        "demoTime.analytics.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable presentation analytics to track timing, navigation, and performance during demos."
+        },
+        "demoTime.analytics.pauseThreshold": {
+          "type": "number",
+          "default": 3000,
+          "description": "Minimum pause duration in milliseconds to detect as a hesitation (default: 3000ms)."
+        },
+        "demoTime.analytics.autoSaveInterval": {
+          "type": "number",
+          "default": 30000,
+          "description": "Auto-save interval for analytics data in milliseconds. Set to 0 to only save at session end (default: 30000ms)."
         }
       }
     },
@@ -564,6 +579,36 @@
         "title": "Authenticate with GitHub (Unlock Pro Features)",
         "category": "Demo Time",
         "icon": "$(github)"
+      },
+      {
+        "command": "demo-time.analytics.start",
+        "title": "Start Analytics Recording",
+        "category": "Demo Time Analytics",
+        "icon": "$(record)"
+      },
+      {
+        "command": "demo-time.analytics.stop",
+        "title": "Stop Analytics Recording",
+        "category": "Demo Time Analytics",
+        "icon": "$(debug-stop)"
+      },
+      {
+        "command": "demo-time.analytics.toggle",
+        "title": "Toggle Analytics Recording",
+        "category": "Demo Time Analytics",
+        "icon": "$(pulse)"
+      },
+      {
+        "command": "demo-time.analytics.dashboard",
+        "title": "Open Analytics Dashboard",
+        "category": "Demo Time Analytics",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "demo-time.analytics.export",
+        "title": "Export Analytics Session",
+        "category": "Demo Time Analytics",
+        "icon": "$(export)"
       }
     ],
     "menus": {
