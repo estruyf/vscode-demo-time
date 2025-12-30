@@ -884,7 +884,11 @@
     "viewsWelcome": [
       {
         "view": "demo-time-scenes",
-        "contents": "Welcome to Demo Time! Start by creating a demo file in JSON or YAML format, or click the initialize button.\n\n[Initialize](command:demo-time.initialize)\n\n[Learn More](https://demotime.show)\n\n[Become a sponsor $(heart)](https://github.com/sponsors/estruyf)"
+        "contents": "Welcome to Demo Time! Start by creating a demo file in JSON or YAML format, or click the initialize button.\n\n[Initialize](command:demo-time.initialize)\n\n[Learn More](https://demotime.show)"
+      },
+      {
+        "view": "demo-time-resources",
+        "contents": "The Demo Time Resources view provides quick access to helpful resources such as documentation, tutorials, and support.\n\n[Open Documentation](command:demo-time.docs)\n\n[Become a sponsor $(heart)](https://github.com/sponsors/estruyf)"
       }
     ],
     "walkthroughs": [
