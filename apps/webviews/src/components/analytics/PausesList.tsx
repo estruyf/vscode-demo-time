@@ -15,10 +15,6 @@ export const PausesList: React.FC<PausesListProps> = ({ pauses }) => {
 
   return (
     <section>
-      <h3 className="m-0 mb-3 text-lg flex items-center gap-2">
-        <Pause className="w-5 h-5" />
-        Longest Narratives
-      </h3>
       <p className="text-sm text-(--vscode-descriptionForeground) m-0 mb-4 leading-relaxed">
         These are the moments where you spent the most time on a single action or slide, typically indicating extended explanations, Q&A, or detailed discussions. Use this to identify which topics engage your audience most.
       </p>

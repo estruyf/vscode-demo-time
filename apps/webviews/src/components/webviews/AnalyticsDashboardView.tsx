@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client';
 import { EventData } from '@estruyf/vscode';
 import { Loader, Button } from 'vscrui';
-import { BarChart3, Target, Video, Lightbulb } from 'lucide-react';
+import { BarChart3, Target, Video, Lightbulb, List, FolderOpen, Pause, AlertCircle } from 'lucide-react';
 import { WebViewMessages } from '@demotime/common';
 import { SessionInfo, SessionData, RecordingStatus } from '../../types/analytics';
 import {
@@ -17,6 +17,8 @@ import {
 } from '../analytics';
 import { formatDuration } from '../../utils';
 
+type TabType = 'scenes' | 'recommendations' | 'files' | 'narratives' | 'errors';
+
 const AnalyticsDashboardView = () => {
   const [sessions, setSessions] = useState<SessionInfo[] | null>(null);
   const [selectedSession, setSelectedSession] = useState<SessionInfo | null>(null);
@@ -26,6 +28,7 @@ const AnalyticsDashboardView = () => {
     session: null,
   });
   const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabType>('scenes');
 
   const loadSessions = useCallback(async () => {
     try {
@@ -123,97 +126,173 @@ const AnalyticsDashboardView = () => {
     return <Loader />;
   }
 
+  const tabs = [
+    { id: 'scenes' as TabType, label: 'Scene Breakdown', icon: List, count: sessionData?.summary.demoBreakdown.length },
+    { id: 'recommendations' as TabType, label: 'Recommendations', icon: Lightbulb, count: sessionData?.summary.recommendations.length },
+    { id: 'files' as TabType, label: 'File Activity', icon: FolderOpen, count: sessionData?.summary.fileBreakdown.length },
+    { id: 'narratives' as TabType, label: 'Longest Narratives', icon: Pause, count: sessionData?.summary.longestNarratives.length },
+    { id: 'errors' as TabType, label: 'Errors', icon: AlertCircle, count: sessionData?.summary.errorSummary.totalErrors },
+  ];
+
   return (
-    <div className="flex flex-col h-screen p-4 box-border text-[var(--vscode-foreground)] bg-[var(--vscode-editor-background)]">
-      <header className="flex justify-between items-center mb-4">
-        <h1 className="m-0 text-2xl flex items-center gap-2">
-          <BarChart3 className="w-6 h-6" />
+    <div className="h-screen flex flex-col">
+      <header className="flex justify-between items-center p-4 border-b border-(--vscode-panel-border)">
+        <h1 className="m-0 text-xl flex items-center gap-2">
+          <BarChart3 className="w-5 h-5" />
           Analytics Dashboard
         </h1>
         <RecordingIndicator isRecording={recordingStatus.isRecording} />
       </header>
 
-      <div className="flex flex-1 gap-4 overflow-hidden">
-        <aside className="w-[280px] flex-shrink-0 bg-[var(--vscode-sideBar-background)] border border-[var(--vscode-panel-border)] rounded p-4 overflow-y-auto">
-          <h2 className="m-0 mb-4 text-base border-b border-[var(--vscode-panel-border)] pb-2">
-            Sessions
-          </h2>
-          <SessionList
-            sessions={sessions}
-            selectedSession={selectedSession}
-            onSelectSession={setSelectedSession}
-          />
+      <div className="flex flex-1 overflow-hidden">
+        <aside className="w-64 border-r border-(--vscode-panel-border) overflow-y-auto">
+          <div className="p-4">
+            <h2 className="m-0 mb-3 text-sm font-semibold uppercase tracking-wide text-(--vscode-descriptionForeground)">
+              Sessions
+            </h2>
+            <SessionList
+              sessions={sessions}
+              selectedSession={selectedSession}
+              onSelectSession={(session) => {
+                setSelectedSession(session);
+                setActiveTab('scenes');
+              }}
+            />
+          </div>
         </aside>
 
-        <main className="flex-1 bg-[var(--vscode-sideBar-background)] border border-[var(--vscode-panel-border)] rounded p-4 overflow-y-auto">
+        <main className="flex-1 flex flex-col overflow-hidden">
           {loading ? (
-            <Loader />
+            <div className="flex-1 flex items-center justify-center">
+              <Loader />
+            </div>
           ) : selectedSession && sessionData ? (
-            <div className="flex flex-col gap-6">
-              <div className="flex justify-between items-center">
-                <h2 className="m-0 flex items-center gap-2">
-                  {sessionData.summary.isDryRun ? (
-                    <><Target className="w-5 h-5" /> Dry Run Session</>
-                  ) : (
-                    <><Video className="w-5 h-5" /> Live Session</>
-                  )}
-                </h2>
-                <div className="flex gap-2">
-                  <Button
-                    onClick={() => handleExportSession(selectedSession.filename, 'markdown')}
-                  >
-                    Export Markdown
-                  </Button>
-                  <Button onClick={() => handleOpenFile(selectedSession.filename)}>
-                    Open JSON
-                  </Button>
-                  <Button
-                    className="danger"
-                    onClick={() => handleDeleteSession(selectedSession.filename)}
-                  >
-                    Delete
-                  </Button>
+            <>
+              {/* Session header */}
+              <div className="p-4">
+                <div className="flex justify-between items-center mb-3">
+                  <h2 className="m-0 flex items-center gap-2 text-base">
+                    {sessionData.summary.isDryRun ? (
+                      <><Target className="w-4 h-4" /> Dry Run Session</>
+                    ) : (
+                      <><Video className="w-4 h-4" /> Live Session</>
+                    )}
+                  </h2>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => handleExportSession(selectedSession.filename, 'markdown')}
+                    >
+                      Export Markdown
+                    </Button>
+                    <Button onClick={() => handleOpenFile(selectedSession.filename)}>
+                      Open JSON
+                    </Button>
+                    <Button
+                      className="danger"
+                      onClick={() => handleDeleteSession(selectedSession.filename)}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-3 gap-3">
+                  <StatCard label="Duration" value={formatDuration(sessionData.summary.totalDuration)} />
+                  <StatCard label="Scenes" value={sessionData.summary.demoBreakdown.length} />
+                  <StatCard label="Files" value={sessionData.summary.fileBreakdown.length} />
                 </div>
               </div>
 
-              <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4">
-                <StatCard label="Duration" value={formatDuration(sessionData.summary.totalDuration)} />
-                <StatCard label="Scenes" value={sessionData.summary.demoBreakdown.length} />
-                <StatCard label="Files" value={sessionData.summary.fileBreakdown.length} />
+              {/* Tabs */}
+              <div className="border-b border-(--vscode-panel-border) bg-(--vscode-editor-background)">
+                <nav className="flex gap-0 px-2" role="tablist">
+                  {tabs.map((tab) => {
+                    const Icon = tab.icon;
+                    const isActive = activeTab === tab.id;
+                    const hasCount = tab.count !== undefined && tab.count > 0;
+
+                    return (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        role="tab"
+                        aria-selected={isActive}
+                        className={`
+                          relative flex items-center gap-2 px-3 py-2.5 
+                          border-b-2 transition-all cursor-pointer
+                          ${isActive
+                            ? 'border-(--vscode-focusBorder) text-(--vscode-foreground) font-medium'
+                            : 'border-transparent text-(--vscode-descriptionForeground) hover:text-(--vscode-foreground) hover:bg-(--vscode-list-hoverBackground)/30'
+                          }
+                        `}
+                      >
+                        <Icon className="w-4 h-4" />
+                        <span className="text-sm whitespace-nowrap">{tab.label}</span>
+                        {hasCount && (
+                          <span
+                            className={`
+                              inline-flex items-center justify-center min-w-5 h-5 px-1.5 
+                              rounded-full text-xs font-semibold tabular-nums
+                              ${isActive
+                                ? 'bg-(--vscode-badge-background) text-(--vscode-badge-foreground)'
+                                : 'bg-(--vscode-input-background) text-(--vscode-descriptionForeground)'
+                              }
+                            `}
+                          >
+                            {tab.count}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </nav>
               </div>
 
-              {sessionData.summary.recommendations.length > 0 && (
-                <section>
-                  <h3 className="m-0 mb-3 text-lg flex items-center gap-2">
-                    <Lightbulb className="w-5 h-5" />
-                    Recommendations
-                  </h3>
-                  <ul className="list-none p-0 m-0 flex flex-col gap-3">
-                    {sessionData.summary.recommendations.map((rec, idx) => (
-                      <RecommendationCard key={idx} recommendation={rec} />
-                    ))}
-                  </ul>
-                </section>
-              )}
+              {/* Tab content */}
+              <div className="flex-1 overflow-y-auto p-6">
+                {activeTab === 'scenes' && (
+                  <DemoBreakdown demos={sessionData.summary.demoBreakdown} />
+                )}
 
-              <DemoBreakdown
-                demos={sessionData.summary.demoBreakdown}
-              />
+                {activeTab === 'recommendations' && (
+                  sessionData.summary.recommendations.length > 0 ? (
+                    <ul className="list-none p-0 m-0 flex flex-col gap-3">
+                      {sessionData.summary.recommendations.map((rec, idx) => (
+                        <RecommendationCard key={idx} recommendation={rec} />
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="flex items-center justify-center h-full text-(--vscode-descriptionForeground)">
+                      <p>No recommendations available</p>
+                    </div>
+                  )
+                )}
 
-              <FileActivity
-                files={sessionData.summary.fileBreakdown}
-              />
+                {activeTab === 'files' && (
+                  <FileActivity files={sessionData.summary.fileBreakdown} />
+                )}
 
-              <PausesList
-                pauses={sessionData.summary.longestNarratives}
-              />
+                {activeTab === 'narratives' && (
+                  sessionData.summary.longestNarratives.length > 0 ? (
+                    <PausesList pauses={sessionData.summary.longestNarratives} />
+                  ) : (
+                    <div className="flex items-center justify-center h-full text-(--vscode-descriptionForeground)">
+                      <p>No narrative data available</p>
+                    </div>
+                  )
+                )}
 
-              <ErrorsSection
-                errorSummary={sessionData.summary.errorSummary}
-              />
-            </div>
+                {activeTab === 'errors' && (
+                  <ErrorsSection
+                    errorSummary={sessionData.summary.errorSummary}
+                    errors={sessionData.session.errors}
+                  />
+                )}
+              </div>
+            </>
           ) : (
-            <div className="flex items-center justify-center h-full text-[var(--vscode-descriptionForeground)]">
+            <div className="flex-1 flex items-center justify-center text-(--vscode-descriptionForeground)">
               <p>Select a session to view its analytics</p>
             </div>
           )}

@@ -14,10 +14,6 @@ export const FileActivity: React.FC<FileActivityProps> = ({ files }) => {
 
   return (
     <section>
-      <h3 className="m-0 mb-3 text-lg flex items-center gap-2">
-        <FolderOpen className="w-5 h-5" />
-        File Activity
-      </h3>
       <div className="flex flex-col gap-3">
         {files.slice(0, 10).map((file, idx) => (
           <Card

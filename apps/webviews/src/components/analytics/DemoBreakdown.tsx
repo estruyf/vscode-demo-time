@@ -24,10 +24,6 @@ export const DemoBreakdown: React.FC<DemoBreakdownProps> = ({ demos }) => {
   };
   return (
     <section>
-      <h3 className="m-0 mb-3 text-lg flex items-center gap-2">
-        <List className="w-5 h-5" />
-        Scene Breakdown
-      </h3>
       <div className="flex flex-col gap-3">
         {demos.map((demo, idx) => (
           <Card
