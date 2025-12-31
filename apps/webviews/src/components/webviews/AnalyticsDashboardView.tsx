@@ -127,11 +127,41 @@ const AnalyticsDashboardView = () => {
   }
 
   const tabs = [
-    { id: 'scenes' as TabType, label: 'Scene Breakdown', icon: List, count: sessionData?.summary.demoBreakdown.length },
-    { id: 'recommendations' as TabType, label: 'Recommendations', icon: Lightbulb, count: sessionData?.summary.recommendations.length },
-    { id: 'files' as TabType, label: 'File Activity', icon: FolderOpen, count: sessionData?.summary.fileBreakdown.length },
-    { id: 'narratives' as TabType, label: 'Longest Narratives', icon: Pause, count: sessionData?.summary.longestNarratives.length },
-    { id: 'errors' as TabType, label: 'Errors', icon: AlertCircle, count: sessionData?.summary.errorSummary.totalErrors },
+    {
+      id: 'scenes' as TabType,
+      label: 'Scene Breakdown',
+      icon: List,
+      count: sessionData?.summary.demoBreakdown.length,
+      description: 'Analyze time spent on each scene and action during your presentation'
+    },
+    {
+      id: 'recommendations' as TabType,
+      label: 'Recommendations',
+      icon: Lightbulb,
+      count: sessionData?.summary.recommendations.length,
+      description: 'Get AI-powered suggestions to improve your presentation flow and timing'
+    },
+    {
+      id: 'files' as TabType,
+      label: 'File Activity',
+      icon: FolderOpen,
+      count: sessionData?.summary.fileBreakdown.length,
+      description: 'See which files you focused on and identify your most-viewed code sections'
+    },
+    {
+      id: 'narratives' as TabType,
+      label: 'Longest Narratives',
+      icon: Pause,
+      count: sessionData?.summary.longestNarratives.length,
+      description: 'These are the moments where you spent the most time on a single action or slide, typically indicating extended explanations, Q&A, or detailed discussions. Use this to identify which topics engage your audience most.'
+    },
+    {
+      id: 'errors' as TabType,
+      label: 'Errors',
+      icon: AlertCircle,
+      count: sessionData?.summary.errorSummary.totalErrors,
+      description: 'Review errors encountered during the presentation and their recovery details'
+    },
   ];
 
   return (
@@ -251,6 +281,13 @@ const AnalyticsDashboardView = () => {
 
               {/* Tab content */}
               <div className="flex-1 overflow-y-auto p-6">
+                {/* Tab description */}
+                <div className="mb-6 pb-4 border-b border-(--vscode-panel-border)">
+                  <p className="m-0 text-sm text-(--vscode-descriptionForeground) leading-relaxed">
+                    {tabs.find(tab => tab.id === activeTab)?.description}
+                  </p>
+                </div>
+
                 {activeTab === 'scenes' && (
                   <DemoBreakdown demos={sessionData.summary.demoBreakdown} />
                 )}

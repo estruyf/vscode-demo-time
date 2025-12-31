@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pause, Clock, MapPin } from 'lucide-react';
+import { Clock, MapPin } from 'lucide-react';
 import { PauseRecord } from '@demotime/common';
 import { formatDuration } from '../../utils';
 import { Card } from '../ui/Card';
@@ -15,9 +15,6 @@ export const PausesList: React.FC<PausesListProps> = ({ pauses }) => {
 
   return (
     <section>
-      <p className="text-sm text-(--vscode-descriptionForeground) m-0 mb-4 leading-relaxed">
-        These are the moments where you spent the most time on a single action or slide, typically indicating extended explanations, Q&A, or detailed discussions. Use this to identify which topics engage your audience most.
-      </p>
       <div className="flex flex-col gap-3">
         {pauses.slice(0, 5).map((pause, idx) => (
           <Card
