@@ -307,7 +307,13 @@ const AnalyticsDashboardView = () => {
                 )}
 
                 {activeTab === 'files' && (
-                  <FileActivity files={sessionData.summary.fileBreakdown} />
+                  sessionData.summary.fileBreakdown.length > 0 ? (
+                    <FileActivity files={sessionData.summary.fileBreakdown} />
+                  ) : (
+                    <div className="flex items-center justify-center h-full text-(--vscode-descriptionForeground)">
+                      <p>No file activity data available</p>
+                    </div>
+                  )
                 )}
 
                 {activeTab === 'narratives' && (
