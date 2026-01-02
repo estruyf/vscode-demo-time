@@ -52,6 +52,11 @@ const DEFAULT_SLIDE_TEMPLATES = [
   'video',
 ];
 
+// Helper function to get a valid color value for color picker
+const getColorPickerValue = (colorValue: string | undefined, defaultColor: string): string => {
+  return colorValue?.startsWith('#') ? colorValue : defaultColor;
+};
+
 const ThemeBuilderView = () => {
   const [themes, setThemes] = useState<ThemeFile[]>([]);
   const [selectedTheme, setSelectedTheme] = useState<string>('');
@@ -112,6 +117,8 @@ const ThemeBuilderView = () => {
 
   const parseCSSToConfig = (css: string, name: string): ThemeConfig => {
     // Enhanced CSS parser to extract theme configuration
+    // Note: This parser handles common theme patterns but may not capture all edge cases.
+    // For production use with complex CSS, consider using a CSS parsing library.
     const config: ThemeConfig = {
       name,
       className: name,
@@ -151,8 +158,9 @@ const ThemeBuilderView = () => {
     const layoutBgMatch = css.match(/\.slide__layout\s*\{[^}]*background-image:\s*url\(['"]*([^'")\s]+)['"]*\)/);
     if (layoutBgMatch) config.globalBackgroundImage = layoutBgMatch[1];
 
-    // Extract slide templates
-    const templateRegex = /\.(default|intro|section|quote|image|image-left|image-right|two-columns|video)\s*\{([^}]*(?:\{[^}]*\}[^}]*)*)\}/g;
+    // Extract slide templates using the defined template list
+    const templateNames = DEFAULT_SLIDE_TEMPLATES.join('|');
+    const templateRegex = new RegExp(`\\.(${templateNames})\\s*\\{([^}]*(?:\\{[^}]*\\}[^}]*)*)\\}`, 'g');
     let templateMatch;
     
     while ((templateMatch = templateRegex.exec(css)) !== null) {
@@ -445,7 +453,7 @@ const ThemeBuilderView = () => {
                   <input
                     type="color"
                     className="w-16 h-10 border rounded"
-                    value={themeConfig.globalBackground?.startsWith('#') ? themeConfig.globalBackground : '#ffffff'}
+                    value={getColorPickerValue(themeConfig.globalBackground, '#ffffff')}
                     onChange={(e) => updateGlobalProperty('globalBackground', e.target.value)}
                   />
                   <input
@@ -464,7 +472,7 @@ const ThemeBuilderView = () => {
                   <input
                     type="color"
                     className="w-16 h-10 border rounded"
-                    value={themeConfig.globalColor?.startsWith('#') ? themeConfig.globalColor : '#000000'}
+                    value={getColorPickerValue(themeConfig.globalColor, '#000000')}
                     onChange={(e) => updateGlobalProperty('globalColor', e.target.value)}
                   />
                   <input
@@ -625,12 +633,10 @@ const ThemeBuilderView = () => {
                           <input
                             type="color"
                             className="w-16 h-10 border rounded"
-                            value={
-                              (() => {
-                                const h1Color = themeConfig.slideTemplates[activeTemplate]?.h1Color;
-                                return h1Color?.startsWith('#') ? h1Color : '#000000';
-                              })()
-                            }
+                            value={getColorPickerValue(
+                              themeConfig.slideTemplates[activeTemplate]?.h1Color,
+                              '#000000'
+                            )}
                             onChange={(e) =>
                               updateTemplateProperty(activeTemplate, 'h1Color', e.target.value)
                             }
