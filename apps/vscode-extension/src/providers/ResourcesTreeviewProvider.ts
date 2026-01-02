@@ -64,7 +64,10 @@ export class ResourcesTreeviewProvider implements TreeDataProvider<ResourceTreeI
       ),
     ];
 
-    const isSponsor = Boolean(await SponsorService.checkSponsor());
+    let isSponsor = false;
+    try {
+      isSponsor = SponsorService.getSponsorStatus();
+    } catch {}
     if (isSponsor) {
       resources.unshift(
         new ResourceTreeItem(

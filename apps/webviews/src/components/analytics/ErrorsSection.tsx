@@ -39,7 +39,7 @@ export const ErrorsSection: React.FC<ErrorsSectionProps> = ({ errorSummary, erro
           const typeErrors = errors.filter((e) => e.type === type);
 
           return (
-            <div className="pb-4">
+            <div key={type} className="pb-4">
               <div className="flex flex-col gap-2 mt-3 pt-3">
                 {typeErrors.map((error, idx) => (
                   <div key={idx} className="p-3 rounded bg-(--vscode-editor-background) border border-yellow-500/20">

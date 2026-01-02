@@ -49,17 +49,24 @@ export class SponsorService {
       });
 
       if (githubAuth && githubAuth.accessToken) {
+        const ext = Extension.getInstance();
+        const isProd = ext.isProductionMode;
         // User is authenticated, check sponsor status via API
-        const response = await fetch(General.sponsorApiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            accept: 'application/json',
+        const response = await fetch(
+          isProd
+            ? General.sponsorApiUrl
+            : General.sponsorApiUrl.replace('demotime.show', 'beta.demotime.show'),
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              accept: 'application/json',
+            },
+            body: JSON.stringify({
+              token: githubAuth.accessToken,
+            }),
           },
-          body: JSON.stringify({
-            token: githubAuth.accessToken,
-          }),
-        });
+        );
 
         if (response.ok) {
           const data = await response.json();

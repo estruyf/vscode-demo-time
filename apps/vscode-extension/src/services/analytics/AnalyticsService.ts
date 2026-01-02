@@ -22,6 +22,7 @@ import { Logger } from '../Logger';
 import { Extension } from '../Extension';
 import { DemoFileProvider } from '../DemoFileProvider';
 import { Uri } from 'vscode';
+import { SponsorService } from '../SponsorService';
 
 /**
  * Main analytics service that orchestrates all tracking during a presentation.
@@ -95,6 +96,10 @@ export class AnalyticsService {
     presentationTitle: string = 'Presentation',
     isDryRun: boolean = true,
   ): Promise<string> {
+    if (SponsorService.getSponsorStatus() === false) {
+      return '';
+    }
+
     // End any existing session first
     if (AnalyticsService.currentSession) {
       await AnalyticsService.endSession();

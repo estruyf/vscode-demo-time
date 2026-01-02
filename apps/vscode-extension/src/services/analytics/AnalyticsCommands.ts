@@ -11,6 +11,7 @@ import { DemoRunner } from '../DemoRunner';
 import { DemoFileProvider } from '../DemoFileProvider';
 import { SponsorService } from '../SponsorService';
 import { AnalyticsDashboard } from './AnalyticsDashboard';
+import { formatSessionFilename } from '../../utils';
 
 /**
  * Handles registration and execution of analytics-related commands.
@@ -203,7 +204,7 @@ export class AnalyticsCommands {
     const items = sessions.map((filename) => {
       const parts = filename.replace('.json', '').split('_');
       const type = parts.pop() || 'unknown';
-      const dateStr = parts.join('_').replace(/-/g, ':').replace('T', ' ');
+      const dateStr = formatSessionFilename(filename);
 
       return {
         label: `${type === 'dry-run' ? '🎯' : '🎬'} ${type === 'dry-run' ? 'Dry Run' : 'Live'}`,

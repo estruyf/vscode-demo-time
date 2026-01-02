@@ -57,6 +57,7 @@ import {
   ZoomService,
   AnalyticsService,
   AnalyticsCommands,
+  SponsorService,
 } from './';
 import { Preview } from '../preview/Preview';
 import { parse as jsonParse } from 'jsonc-parser';
@@ -370,7 +371,11 @@ export class DemoRunner {
     DemoRunner.currentDemoIndex = nextDemoIdx;
 
     // Start analytics session if this is the first demo and analytics is enabled
-    if (!AnalyticsService.isRecording() && lastDemoIdx === -1) {
+    if (
+      SponsorService.getSponsorStatus() &&
+      !AnalyticsService.isRecording() &&
+      lastDemoIdx === -1
+    ) {
       const config = AnalyticsService.getConfig();
       if (config.enabled) {
         await AnalyticsService.startSession(

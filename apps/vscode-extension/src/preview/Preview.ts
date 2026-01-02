@@ -220,7 +220,12 @@ export class Preview extends BaseWebview {
       Preview.reveal();
     } else if (command === WebViewMessages.toVscode.preview.recordOpenSlide) {
       // Record slide change in analytics if recording
-      if (AnalyticsService.isRecording() && payload !== undefined) {
+      if (
+        AnalyticsService.isRecording() &&
+        payload !== undefined &&
+        payload.filePath &&
+        typeof payload.slideIndex === 'number'
+      ) {
         AnalyticsService.recordSlideOpen(payload.filePath, payload.slideIndex, payload.slideTitle);
       }
     }
