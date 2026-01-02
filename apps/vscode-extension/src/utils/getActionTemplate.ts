@@ -507,6 +507,40 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  if (action === Action.MuteVolume) {
+    return {
+      action: Action.MuteVolume,
+    };
+  }
+
+  if (action === Action.UnmuteVolume) {
+    return {
+      action: Action.UnmuteVolume,
+    };
+  }
+
+  if (action === Action.SetScreenResolution) {
+    return {
+      action: Action.SetScreenResolution,
+      width: 1920,
+      height: 1080,
+      hidpi: false,
+    };
+  }
+
+  if (action === Action.EnableCaffeine) {
+    return {
+      action: Action.EnableCaffeine,
+      duration: undefined,
+    };
+  }
+
+  if (action === Action.DisableCaffeine) {
+    return {
+      action: Action.DisableCaffeine,
+    };
+  }
+
   // EngageTime actions
   if (action === Action.StartEngageTimeSession) {
     return {

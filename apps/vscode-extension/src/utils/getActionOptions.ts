@@ -467,6 +467,31 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: 'Show the menu bar on macOS',
   } as QuickPickItem);
 
+  actions.push({
+    label: Action.MuteVolume,
+    description: 'Mute the system volume on macOS',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.UnmuteVolume,
+    description: 'Unmute the system volume on macOS',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.SetScreenResolution,
+    description: 'Set screen resolution on macOS',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.EnableCaffeine,
+    description: 'Enable Caffeine (prevent system sleep) on macOS',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.DisableCaffeine,
+    description: 'Disable Caffeine (allow system sleep) on macOS',
+  } as QuickPickItem);
+
   // EngageTime actions
   actions.push({
     label: 'EngageTime',
