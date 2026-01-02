@@ -1,0 +1,173 @@
+---
+title: Pro Features
+description: Unlock advanced features with Demo Time Pro through GitHub Sponsors
+---
+
+import { Card, CardGrid, Aside } from '@astrojs/starlight/components';
+
+Demo Time offers powerful **Pro features** designed to enhance your presentation workflow with advanced analytics and export capabilities. These premium features are available to supporters who help sustain the project's development.
+
+## What are Pro Features?
+
+Pro features are advanced capabilities that go beyond the core Demo Time functionality. They help you analyze your presentations, improve your delivery, and export your content for offline use.
+
+<Aside type="tip" title="Support Open Source">
+By becoming a sponsor, you not only unlock Pro features but also directly support the continued development and maintenance of Demo Time.
+</Aside>
+
+## How to Unlock Pro Features
+
+Pro features are unlocked through **GitHub Sponsors**. Here's how to get started:
+
+### Step 1: Become a GitHub Sponsor
+
+To unlock Pro features, you need to sponsor the project creator at the **€10/month tier or higher**.
+
+1. Visit the [GitHub Sponsors page for @estruyf](https://github.com/sponsors/estruyf)
+2. Select a tier of **€10/month or higher**
+3. Complete the sponsorship setup
+
+### Step 2: Authenticate with GitHub
+
+After becoming a sponsor, authenticate Demo Time with your GitHub account:
+
+1. Open the Command Palette in VS Code (`Ctrl+Shift+P` or `Cmd+Shift+P`)
+2. Run the command: **Demo Time: Authenticate with GitHub (Unlock Pro Features)**
+3. Sign in with your GitHub account when prompted
+4. Grant the requested permissions (`read:user` and `read:org`)
+
+<Aside type="note">
+Your sponsorship status is verified through GitHub's API. The extension only checks if you're an active sponsor at the qualifying tier.
+</Aside>
+
+### Step 3: Start Using Pro Features
+
+Once authenticated and verified as a sponsor, Pro features will be automatically unlocked! You'll see:
+
+- A confirmation message in VS Code
+- New commands available in the Command Palette
+- The **Analytics Dashboard** option in the Demo Time resources panel
+
+## Available Pro Features
+
+### Analytics
+
+<Card title="Presentation Analytics" icon="graph">
+Track and analyze your presentation performance with detailed metrics and insights.
+</Card>
+
+#### What is Analytics?
+
+The Analytics feature provides comprehensive tracking of your demo presentations, helping you understand how you spend time during demos, identify areas for improvement, and optimize your delivery.
+
+#### Key Capabilities
+
+- **Session Recording**: Record complete presentation sessions with timing data
+- **Navigation Tracking**: See which demos and steps take the most time
+- **File Activity**: Monitor which files are opened and edited during demos
+- **Terminal Tracking**: Capture terminal commands executed during presentations
+- **Scroll & Cursor Events**: Track user interactions (optional)
+- **Pause Detection**: Automatically detect and record narrative moments
+- **Performance Insights**: Get recommendations based on your presentation patterns
+
+#### Getting Started with Analytics
+
+1. **Start Recording**: Use the command **Demo Time Analytics: Start Analytics Recording**
+2. **Choose Session Type**: Select either "Dry Run / Practice" or "Live Presentation"
+3. **Present Your Demo**: Run through your demo normally
+4. **Stop Recording**: Use **Demo Time Analytics: Stop Analytics Recording** when finished
+5. **View Dashboard**: Open **Demo Time Analytics: Open Analytics Dashboard** to see your data
+
+#### Configuration Options
+
+Configure analytics behavior in VS Code settings:
+
+- `demoTime.analytics.enabled`: Enable/disable analytics tracking
+- `demoTime.analytics.narrativeThreshold`: Minimum pause duration to detect speaking (default: 3000ms)
+- `demoTime.analytics.trackCursorMovements`: Track cursor movements (can be verbose)
+- `demoTime.analytics.trackScrollEvents`: Track scroll events in files
+- `demoTime.analytics.trackTerminalCommands`: Track terminal command execution
+- `demoTime.analytics.autoSaveInterval`: Auto-save interval for analytics data (default: 30s)
+
+#### Export Analytics Data
+
+Export your analytics sessions for archival or external analysis:
+
+- Use **Demo Time Analytics: Export Analytics Session**
+- Choose the session to export
+- Data is saved as JSON with complete session details
+
+---
+
+### PDF Export
+
+<Card title="Export Slides to PDF" icon="document">
+Export all your demo slides to a professional PDF document for sharing or offline viewing.
+</Card>
+
+#### What is PDF Export?
+
+The PDF Export feature allows you to generate a high-quality PDF document containing all slides from your demo files. This is perfect for:
+
+- Sharing presentation materials with attendees
+- Creating handouts or leave-behinds
+- Archiving your presentation content
+- Offline viewing and reference
+
+#### How to Use PDF Export
+
+1. Ensure you have slide content in your demo files (using the `openSlide` action)
+2. Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`)
+3. Run **Demo Time: Export slides to PDF**
+4. Wait for the export process to complete
+5. The PDF will be saved in your `.demo` folder
+
+#### What Gets Exported
+
+The PDF export includes:
+
+- All slides from all demo files in your workspace
+- Proper rendering of markdown content
+- Code syntax highlighting
+- Custom layouts and themes
+- Images and embedded content
+
+<Aside type="note">
+The export process uses a headless browser to render slides exactly as they appear in the slide preview, ensuring high-fidelity output.
+</Aside>
+
+---
+
+## Frequently Asked Questions
+
+### Do I need to be a sponsor to use Demo Time?
+
+No! Demo Time is completely free and open source. All core features for creating and presenting demos are available to everyone. Pro features are optional enhancements for those who want to support the project.
+
+### What happens if I stop sponsoring?
+
+If your sponsorship ends, Pro features will be locked again. However, your analytics data is stored locally and won't be lost—you just won't be able to record new sessions or access the dashboard until you renew your sponsorship.
+
+### Can I use Pro features offline?
+
+The initial authentication requires an internet connection to verify your sponsor status. After that, most Pro features work offline, though periodic online checks may occur.
+
+### How is my sponsor status verified?
+
+Demo Time uses GitHub's official API to verify your sponsorship. Your GitHub access token is used only for verification and is never stored permanently. The extension respects your privacy and only checks the minimum information needed.
+
+### Are there team or organizational sponsorships?
+
+Yes! Organizations can sponsor the project, and all members of the organization can benefit from Pro features when they authenticate with their GitHub accounts.
+
+---
+
+## Support & Feedback
+
+If you have questions about Pro features or encounter any issues:
+
+- Check the [GitHub Issues](https://github.com/estruyf/vscode-demo-time/issues) page
+- Join the community discussions
+- Reach out to [@eliostruyf](https://github.com/estruyf) directly
+
+Thank you for supporting Demo Time! ❤️
