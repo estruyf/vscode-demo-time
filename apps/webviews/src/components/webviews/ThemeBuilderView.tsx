@@ -111,8 +111,7 @@ const ThemeBuilderView = () => {
   };
 
   const parseCSSToConfig = (css: string, name: string): ThemeConfig => {
-    // Simple parser to extract basic properties
-    // This is a placeholder - you'd want a more sophisticated parser
+    // Enhanced CSS parser to extract theme configuration
     const config: ThemeConfig = {
       name,
       className: name,
@@ -123,13 +122,71 @@ const ThemeBuilderView = () => {
       slideTemplates: {},
     };
 
-    // Extract global background
-    const bgMatch = css.match(/background:\s*([^;]+);/);
+    // Extract main selector content
+    const mainSelectorMatch = css.match(/\.slide\.\S+\s*\{([^}]*(?:\{[^}]*\}[^}]*)*)\}/s);
+    if (!mainSelectorMatch) return config;
+
+    const mainContent = mainSelectorMatch[1];
+
+    // Extract global properties (before any nested selectors)
+    const globalSection = mainContent.split(/\.[a-z_]+\s*\{/)[0];
+    
+    // Extract background (handle both simple colors and complex values)
+    const bgMatch = globalSection.match(/background:\s*([^;]+);/);
     if (bgMatch) config.globalBackground = bgMatch[1].trim();
 
-    // Extract global color
-    const colorMatch = css.match(/color:\s*([^;]+);/);
+    // Extract color
+    const colorMatch = globalSection.match(/(?:^|[^-])color:\s*([^;]+);/);
     if (colorMatch) config.globalColor = colorMatch[1].trim();
+
+    // Extract font-size
+    const fontSizeMatch = globalSection.match(/font-size:\s*([^;]+);/);
+    if (fontSizeMatch) config.globalFontSize = fontSizeMatch[1].trim();
+
+    // Extract font-family
+    const fontFamilyMatch = globalSection.match(/font-family:\s*([^;]+);/);
+    if (fontFamilyMatch) config.globalFontFamily = fontFamilyMatch[1].trim();
+
+    // Extract background image from .slide__layout
+    const layoutBgMatch = css.match(/\.slide__layout\s*\{[^}]*background-image:\s*url\(['"]*([^'")\s]+)['"]*\)/);
+    if (layoutBgMatch) config.globalBackgroundImage = layoutBgMatch[1];
+
+    // Extract slide templates
+    const templateRegex = /\.(default|intro|section|quote|image|image-left|image-right|two-columns|video)\s*\{([^}]*(?:\{[^}]*\}[^}]*)*)\}/g;
+    let templateMatch;
+    
+    while ((templateMatch = templateRegex.exec(css)) !== null) {
+      const templateName = templateMatch[1];
+      const templateContent = templateMatch[2];
+      
+      const template: SlideTemplate = {
+        name: templateName,
+      };
+
+      // Check for layout type
+      if (templateContent.includes('align-items: center') && templateContent.includes('justify-content: center')) {
+        template.layout = 'center';
+      } else if (templateContent.includes('align-items: flex-start')) {
+        template.layout = 'flex-start';
+      }
+
+      // Extract padding
+      const paddingMatch = templateContent.match(/padding:\s*([^;]+);/);
+      if (paddingMatch) template.padding = paddingMatch[1].trim();
+
+      // Extract H1 styles
+      const h1Match = templateContent.match(/h1\s*\{([^}]+)\}/);
+      if (h1Match) {
+        const h1Content = h1Match[1];
+        const h1SizeMatch = h1Content.match(/font-size:\s*([^;]+);/);
+        if (h1SizeMatch) template.h1FontSize = h1SizeMatch[1].trim();
+        
+        const h1ColorMatch = h1Content.match(/color:\s*([^;]+);/);
+        if (h1ColorMatch) template.h1Color = h1ColorMatch[1].trim();
+      }
+
+      config.slideTemplates[templateName] = template;
+    }
 
     return config;
   };
@@ -568,7 +625,12 @@ const ThemeBuilderView = () => {
                           <input
                             type="color"
                             className="w-16 h-10 border rounded"
-                            value={themeConfig.slideTemplates[activeTemplate]?.h1Color?.startsWith('#') ? themeConfig.slideTemplates[activeTemplate].h1Color : '#000000'}
+                            value={
+                              (() => {
+                                const h1Color = themeConfig.slideTemplates[activeTemplate]?.h1Color;
+                                return h1Color?.startsWith('#') ? h1Color : '#000000';
+                              })()
+                            }
                             onChange={(e) =>
                               updateTemplateProperty(activeTemplate, 'h1Color', e.target.value)
                             }
