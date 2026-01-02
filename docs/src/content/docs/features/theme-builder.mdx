@@ -1,0 +1,139 @@
+---
+title: Theme Builder (Pro)
+description: Visual theme builder to create and customize presentation slide themes
+---
+
+The **Visual Theme Builder** is a Pro feature that provides an easy-to-use interface for creating custom themes for your presentation slides. No CSS knowledge required!
+
+## Accessing the Theme Builder
+
+The Theme Builder is available to GitHub Sponsors. To unlock this feature:
+
+1. Run the command **"Demo Time: Authenticate with GitHub (Unlock Pro Features)"** from the command palette
+2. Sign in with your GitHub account
+3. If you're a sponsor, Pro features will be unlocked automatically
+
+Once authenticated, you can access the Theme Builder:
+
+- From the command palette: **"Demo Time: Open Theme Builder (Pro)"**
+- From the Demo Time Scenes view menu
+
+## Creating a Theme
+
+### 1. Theme Information
+
+Start by defining your theme:
+
+- **Theme Name**: A descriptive name for your theme (e.g., "My Conference Theme")
+- **CSS Class Name**: The CSS class identifier (e.g., "my-theme", "espc25", "mc2mc")
+
+The class name will be used in your slide files as: `theme: my-theme`
+
+### 2. Global Slide Styles
+
+Configure styles that apply to all slides:
+
+- **Background Color**: Choose a color picker or enter a hex value
+- **Text Color**: Set the default text color for your slides
+- **Background Image**: Add a background image (URL or path to `.demo/assets/`)
+- **Font Size**: Default font size (e.g., "24px")
+- **Font Family**: Font stack (e.g., "Arial, sans-serif")
+
+### 3. Slide Templates
+
+Customize individual slide layouts:
+
+#### Available Templates
+- **default**: Standard content slide
+- **intro**: Title/intro slide
+- **section**: Section divider slide
+- **quote**: Quote slide
+- **image**: Image-focused slide
+- **image-left**: Content with left image
+- **image-right**: Content with right image
+- **two-columns**: Two-column layout
+- **video**: Video background slide
+
+#### Template Configuration
+
+For each template, you can configure:
+
+- **Layout**: Default, Center, or Flex Start
+- **Padding**: Custom padding values
+- **H1 Font Size**: Heading size for this template
+- **H1 Color**: Heading color for this template
+- **Background Image**: Template-specific background
+
+### 4. Save and Export
+
+Click **"Save Theme"** to save your theme to `.demo/theme/[classname].css`
+
+## Using Your Theme
+
+Once saved, reference your theme in slide markdown files:
+
+```markdown
+---
+theme: my-theme
+layout: intro
+---
+
+# Welcome to My Presentation
+```
+
+## Example Theme Structure
+
+Here's what a generated theme looks like:
+
+```css
+.slide.my-theme {
+  background: #ffffff;
+  color: #000000;
+  font-size: 24px;
+  font-family: "Arial", sans-serif;
+
+  .slide__layout {
+    background-image: url(".demo/assets/background.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+  }
+
+  .intro {
+    .slide__content__inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 42px;
+      color: #1b9ae0;
+    }
+  }
+
+  /* ... more templates ... */
+}
+```
+
+## Tips
+
+- **Start Simple**: Configure global styles first, then add template customizations
+- **Use Color Pickers**: Visual color selection makes it easy to match brand colors
+- **Preview CSS**: Check the CSS preview section to see the generated code
+- **Background Images**: Store images in `.demo/assets/` for portability
+- **Consistent Naming**: Use lowercase and hyphens for class names (e.g., "my-conference-2025")
+
+## File Locations
+
+- **Themes**: Saved in `.demo/theme/` as `.css` files
+- **Assets**: Store background images in `.demo/assets/`
+
+## Learn More
+
+- [Slides Documentation](https://demotime.show/slides/)
+- The visual builder generates CSS following common slide theme patterns
+- Example theme structure provided in the CSS Preview section
+

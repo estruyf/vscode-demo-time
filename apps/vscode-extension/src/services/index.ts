@@ -29,5 +29,6 @@ export * from './StateManager';
 export * from './TemplateCreator';
 export * from './TerminalService';
 export * from './TextTypingService';
+export * from './ThemeBuilderService';
 export * from './UriHandler';
 export * from './ZoomService';

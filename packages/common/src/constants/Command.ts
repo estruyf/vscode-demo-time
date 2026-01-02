@@ -3,6 +3,7 @@ export const EXTENSION_NAME = 'demo-time';
 export const COMMAND = {
   // Pro features
   authenticate: `${EXTENSION_NAME}.authenticate`,
+  openThemeBuilder: `${EXTENSION_NAME}.openThemeBuilder`,
   // Documentation
   documentation: `${EXTENSION_NAME}.docs`,
   // Demo file actions
