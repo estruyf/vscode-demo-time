@@ -279,15 +279,24 @@ end tell`;
     try {
       const wsPath = Extension.getInstance().workspaceFolder?.uri.fsPath || process.cwd();
       
-      // Kill all caffeinate processes
-      const command = 'pkill -f "caffeinate -d -i"';
+      // Use a more specific pattern to avoid killing unintended processes
+      // First check if our caffeinate processes exist
+      const checkCommand = 'pgrep -f "^caffeinate -d -i"';
       
       try {
-        await ScriptExecutor.executeScriptAsync(command, wsPath);
-        Logger.info('Caffeine disabled');
-        Notifications.info('System sleep prevention disabled');
+        const pids = await ScriptExecutor.executeScriptAsync(checkCommand, wsPath);
+        
+        if (pids && pids.trim()) {
+          // Kill only the specific caffeinate processes we started
+          const killCommand = 'pkill -f "^caffeinate -d -i"';
+          await ScriptExecutor.executeScriptAsync(killCommand, wsPath);
+          Logger.info('Caffeine disabled');
+          Notifications.info('System sleep prevention disabled');
+        } else {
+          Logger.info('Caffeine disabled (no processes found)');
+        }
       } catch (error) {
-        // pkill returns non-zero exit code if no processes found
+        // pgrep/pkill returns non-zero exit code if no processes found
         // This is fine, it just means caffeine wasn't running
         Logger.info('Caffeine disabled (no processes found)');
       }

@@ -174,12 +174,18 @@ describe('MacOSActionsService', () => {
 
     it('should disable caffeine on macOS', async () => {
       (os.platform as jest.Mock).mockReturnValue('darwin');
-      (ScriptExecutor.executeScriptAsync as jest.Mock).mockResolvedValue('');
+      (ScriptExecutor.executeScriptAsync as jest.Mock)
+        .mockResolvedValueOnce('12345\n12346\n') // pgrep returns PIDs
+        .mockResolvedValueOnce(''); // pkill succeeds
 
       await MacOSActionsService.disableCaffeine();
 
       expect(ScriptExecutor.executeScriptAsync).toHaveBeenCalledWith(
-        'pkill -f "caffeinate -d -i"',
+        'pgrep -f "^caffeinate -d -i"',
+        '/test/workspace',
+      );
+      expect(ScriptExecutor.executeScriptAsync).toHaveBeenCalledWith(
+        'pkill -f "^caffeinate -d -i"',
         '/test/workspace',
       );
       expect(Logger.info).toHaveBeenCalledWith('Caffeine disabled');
@@ -189,7 +195,7 @@ describe('MacOSActionsService', () => {
     it('should handle disabling caffeine when no process is running', async () => {
       (os.platform as jest.Mock).mockReturnValue('darwin');
       const error = new Error('No matching processes');
-      (ScriptExecutor.executeScriptAsync as jest.Mock).mockRejectedValue(error);
+      (ScriptExecutor.executeScriptAsync as jest.Mock).mockRejectedValueOnce(error);
 
       await MacOSActionsService.disableCaffeine();
 

@@ -531,7 +531,6 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.EnableCaffeine) {
     return {
       action: Action.EnableCaffeine,
-      duration: undefined,
     };
   }
 
