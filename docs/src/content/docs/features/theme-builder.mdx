@@ -1,9 +1,9 @@
 ---
 title: Theme Builder (Pro)
-description: Create and customize themes and layouts for your presentation slides
+description: Visual theme builder to create and customize presentation slide themes
 ---
 
-The **Theme Builder** is a Pro feature that allows you to create and customize themes and slide layouts visually, making it easier to style your presentation slides without manually editing CSS and Handlebars files.
+The **Visual Theme Builder** is a Pro feature that provides an easy-to-use interface for creating custom themes for your presentation slides. No CSS knowledge required!
 
 ## Accessing the Theme Builder
 
@@ -18,123 +18,121 @@ Once authenticated, you can access the Theme Builder:
 - From the command palette: **"Demo Time: Open Theme Builder (Pro)"**
 - From the Demo Time Scenes view menu
 
-## Theme Editor
+## Creating a Theme
 
-The Theme Editor allows you to create custom CSS themes for your slides.
+### 1. Theme Information
 
-### Creating a New Theme
+Start by defining your theme:
 
-1. Open the Theme Builder
-2. Click on the **"Theme Editor"** tab
-3. Click the **"New"** button
-4. Enter your theme name
-5. Edit the CSS in the editor
-6. Preview your changes in real-time
-7. Click **"Save Theme"** to save to `.demo/slides/`
+- **Theme Name**: A descriptive name for your theme (e.g., "My Conference Theme")
+- **CSS Class Name**: The CSS class identifier (e.g., "my-theme", "espc25", "mc2mc")
 
-### Editing an Existing Theme
+The class name will be used in your slide files as: `theme: my-theme`
 
-1. Select a theme from the dropdown
-2. The theme CSS will load in the editor
-3. Make your changes
-4. Save the updated theme
+### 2. Global Slide Styles
 
-### Theme Structure
+Configure styles that apply to all slides:
 
-Themes are CSS files saved in the `.demo/slides/` folder. You can use VS Code CSS variables for consistent theming:
+- **Background Color**: Choose a color picker or enter a hex value
+- **Text Color**: Set the default text color for your slides
+- **Background Image**: Add a background image (URL or path to `.demo/assets/`)
+- **Font Size**: Default font size (e.g., "24px")
+- **Font Family**: Font stack (e.g., "Arial, sans-serif")
+
+### 3. Slide Templates
+
+Customize individual slide layouts:
+
+#### Available Templates
+- **default**: Standard content slide
+- **intro**: Title/intro slide
+- **section**: Section divider slide
+- **quote**: Quote slide
+- **image**: Image-focused slide
+- **image-left**: Content with left image
+- **image-right**: Content with right image
+- **two-columns**: Two-column layout
+- **video**: Video background slide
+
+#### Template Configuration
+
+For each template, you can configure:
+
+- **Layout**: Default, Center, or Flex Start
+- **Padding**: Custom padding values
+- **H1 Font Size**: Heading size for this template
+- **H1 Color**: Heading color for this template
+- **Background Image**: Template-specific background
+
+### 4. Save and Export
+
+Click **"Save Theme"** to save your theme to `.demo/theme/[classname].css`
+
+## Using Your Theme
+
+Once saved, reference your theme in slide markdown files:
+
+```markdown
+---
+theme: my-theme
+layout: intro
+---
+
+# Welcome to My Presentation
+```
+
+## Example Theme Structure
+
+Here's what a generated theme looks like:
 
 ```css
-/* Example theme */
-body {
-  background: var(--vscode-editor-background);
-  color: var(--vscode-editor-foreground);
-}
+.slide.my-theme {
+  background: #ffffff;
+  color: #000000;
+  font-size: 24px;
+  font-family: "Arial", sans-serif;
 
-.slide {
-  background: var(--vscode-editor-background) !important;
-  color: var(--vscode-editor-foreground) !important;
-}
+  .slide__layout {
+    background-image: url(".demo/assets/background.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+  }
 
-.intro h1 {
-  font-size: 3em;
-  font-weight: bold;
-  background: #ffd43b !important;
-  color: #000 !important;
+  .intro {
+    .slide__content__inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 42px;
+      color: #1b9ae0;
+    }
+  }
+
+  /* ... more templates ... */
 }
 ```
-
-## Layout Editor
-
-The Layout Editor allows you to create custom Handlebars templates for slide layouts.
-
-### Creating a New Layout
-
-1. Open the Theme Builder
-2. Click on the **"Layout Editor"** tab
-3. Click the **"New"** button
-4. Enter your layout name
-5. Edit the Handlebars template
-6. Preview your changes
-7. Click **"Save Layout"** to save to `.demo/layouts/`
-
-### Editing an Existing Layout
-
-1. Select a layout from the dropdown
-2. The layout template will load in the editor
-3. Make your changes
-4. Save the updated layout
-
-### Layout Structure
-
-Layouts are Handlebars (`.hbs`) files saved in the `.demo/layouts/` folder. Use Handlebars syntax to create dynamic layouts:
-
-```handlebars
-<style>
-.custom-layout {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  padding: 2rem;
-}
-</style>
-
-<div class="custom-layout">
-  <h1>{{metadata.title}}</h1>
-  {{#if metadata.subtitle}}
-    <h2>{{metadata.subtitle}}</h2>
-  {{/if}}
-  {{{content}}}
-</div>
-```
-
-### Available Variables
-
-- `{{{content}}}` - The main slide content (triple braces for unescaped HTML)
-- `{{metadata.*}}` - Access slide metadata properties
-  - `{{metadata.title}}` - Slide title
-  - `{{metadata.subtitle}}` - Slide subtitle
-  - Custom metadata properties from your slides
-
-## Live Preview
-
-Both the Theme Editor and Layout Editor include a live preview panel that updates as you type. This makes it easy to see how your changes will look without switching between files.
 
 ## Tips
 
-- **Use VS Code CSS Variables**: For themes that adapt to the user's color scheme, use variables like `var(--vscode-editor-background)`
-- **Inspect Elements**: The preview iframe allows you to inspect elements for easier debugging
-- **Start with Examples**: Load an existing theme or layout as a starting point
-- **Test Across Slides**: After saving, test your theme/layout on multiple slide types
+- **Start Simple**: Configure global styles first, then add template customizations
+- **Use Color Pickers**: Visual color selection makes it easy to match brand colors
+- **Preview CSS**: Check the CSS preview section to see the generated code
+- **Background Images**: Store images in `.demo/assets/` for portability
+- **Consistent Naming**: Use lowercase and hyphens for class names (e.g., "my-conference-2025")
 
 ## File Locations
 
-- **Themes**: Saved in `.demo/slides/` as `.css` files
-- **Layouts**: Saved in `.demo/layouts/` as `.hbs` files
+- **Themes**: Saved in `.demo/theme/` as `.css` files
+- **Assets**: Store background images in `.demo/assets/`
 
 ## Learn More
 
 - [Slides Documentation](https://demotime.show/slides/)
-- [Example Themes](https://github.com/estruyf/presentation-testing-smarter-ai-playwright/tree/mc2mc/.demo/theme)
-- [Example Layouts](https://github.com/estruyf/presentation-testing-smarter-ai-playwright/tree/main/.demo/layout)
+- Example themes: mc2mc, espc25 (see the visual builder for inspiration)
+

@@ -72,12 +72,12 @@ export class ThemeBuilderPanel extends BaseWebview {
         return;
       }
 
-      const slidesFolder = Uri.joinPath(wsFolder.uri, General.demoFolder, General.slidesFolder);
+      const themeFolder = Uri.joinPath(wsFolder.uri, General.demoFolder, 'theme');
       const themeFiles: { name: string; path: string }[] = [];
 
-      // Look for CSS files in slides folder
+      // Look for CSS files in theme folder
       try {
-        const files = await Extension.getInstance().context.fs.readDirectory(slidesFolder);
+        const files = await Extension.getInstance().context.fs.readDirectory(themeFolder);
         for (const [file, type] of files) {
           if (type === 1 && file.endsWith('.css')) {
             // File type
@@ -149,7 +149,7 @@ export class ThemeBuilderPanel extends BaseWebview {
       const themePath = Uri.joinPath(
         wsFolder.uri,
         General.demoFolder,
-        General.slidesFolder,
+        'theme',
         `${payload.name}.css`,
       );
 
@@ -218,13 +218,14 @@ export class ThemeBuilderPanel extends BaseWebview {
         return;
       }
 
+      // Ensure theme folder exists
+      const themeFolder = Uri.joinPath(wsFolder.uri, General.demoFolder, 'theme');
+      if (!(await fileExists(themeFolder))) {
+        await Extension.getInstance().context.fs.createDirectory(themeFolder);
+      }
+
       const fileName = sanitizeFileName(payload.name, '.css');
-      const themePath = Uri.joinPath(
-        wsFolder.uri,
-        General.demoFolder,
-        General.slidesFolder,
-        fileName,
-      );
+      const themePath = Uri.joinPath(themeFolder, fileName);
 
       await writeFile(themePath, payload.content);
 

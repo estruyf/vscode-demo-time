@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button } from '../ui/Button';
-import { Save, Plus, FileCode, Paintbrush, Eye } from 'lucide-react';
+import { Save, Plus, Eye, Upload, X } from 'lucide-react';
 import { Loader as Spinner } from 'vscrui';
 import { messageHandler } from '@estruyf/vscode/dist/client';
 import { WebViewMessages } from '@demotime/common';
@@ -17,39 +17,75 @@ interface ThemeContent {
   content: string;
 }
 
+interface SlideTemplate {
+  name: string;
+  backgroundColor?: string;
+  backgroundImage?: string;
+  color?: string;
+  fontSize?: string;
+  h1FontSize?: string;
+  h1Color?: string;
+  padding?: string;
+  layout?: 'default' | 'center' | 'flex-start';
+}
+
+interface ThemeConfig {
+  name: string;
+  className: string;
+  globalBackground?: string;
+  globalBackgroundImage?: string;
+  globalColor?: string;
+  globalFontSize?: string;
+  globalFontFamily?: string;
+  slideTemplates: Record<string, SlideTemplate>;
+}
+
+const DEFAULT_SLIDE_TEMPLATES = [
+  'default',
+  'intro',
+  'section',
+  'quote',
+  'image',
+  'image-left',
+  'image-right',
+  'two-columns',
+  'video',
+];
+
 const ThemeBuilderView = () => {
-  const [mode, setMode] = useState<'theme' | 'layout'>('theme');
   const [themes, setThemes] = useState<ThemeFile[]>([]);
-  const [layouts, setLayouts] = useState<ThemeFile[]>([]);
   const [selectedTheme, setSelectedTheme] = useState<string>('');
-  const [selectedLayout, setSelectedLayout] = useState<string>('');
-  const [themeName, setThemeName] = useState<string>('');
-  const [themeContent, setThemeContent] = useState<string>('');
-  const [layoutName, setLayoutName] = useState<string>('');
-  const [layoutContent, setLayoutContent] = useState<string>('');
-  const [previewHtml, setPreviewHtml] = useState<string>('');
+  const [loading, setLoading] = useState(false);
   const [saveStatus, setSaveStatus] = useState<{
     type: 'blank' | 'success' | 'error';
     text: string;
   }>({ type: 'blank', text: '' });
-  const [loading, setLoading] = useState(false);
+
+  const [themeConfig, setThemeConfig] = useState<ThemeConfig>({
+    name: '',
+    className: '',
+    globalBackground: '#ffffff',
+    globalColor: '#000000',
+    globalFontSize: '24px',
+    globalFontFamily: 'Arial, sans-serif',
+    slideTemplates: {},
+  });
+
+  const [activeTemplate, setActiveTemplate] = useState<string>('default');
+  const [previewHtml, setPreviewHtml] = useState<string>('');
 
   useEffect(() => {
-    loadExistingFiles();
+    loadExistingThemes();
   }, []);
 
-  const loadExistingFiles = async () => {
+  const loadExistingThemes = async () => {
     try {
       const themesData = await messageHandler.request<ThemeFile[]>(
         WebViewMessages.toVscode.themeBuilder.getExistingThemes,
       );
-      const layoutsData = await messageHandler.request<ThemeFile[]>(
-        WebViewMessages.toVscode.themeBuilder.getExistingLayouts,
-      );
       setThemes(themesData || []);
-      setLayouts(layoutsData || []);
     } catch (error) {
-      console.error('Error loading existing files:', error);
+      console.error('Error loading existing themes:', error);
     }
   };
 
@@ -61,10 +97,11 @@ const ThemeBuilderView = () => {
         { name },
       );
       if (data) {
-        setThemeName(data.name);
-        setThemeContent(data.content);
+        // Parse the CSS to extract theme configuration
+        // This is a simplified parser - in production, you'd want a more robust solution
+        const parsedConfig = parseCSSToConfig(data.content, name);
+        setThemeConfig(parsedConfig);
         setSelectedTheme(name);
-        updatePreview(data.content, layoutContent);
       }
     } catch (error) {
       console.error('Error loading theme:', error);
@@ -73,56 +110,146 @@ const ThemeBuilderView = () => {
     }
   };
 
-  const loadLayout = async (name: string) => {
-    try {
-      setLoading(true);
-      const data = await messageHandler.request<ThemeContent>(
-        WebViewMessages.toVscode.themeBuilder.loadLayout,
-        { name },
-      );
-      if (data) {
-        setLayoutName(data.name);
-        setLayoutContent(data.content);
-        setSelectedLayout(name);
-        updatePreview(themeContent, data.content);
-      }
-    } catch (error) {
-      console.error('Error loading layout:', error);
-    } finally {
-      setLoading(false);
-    }
+  const parseCSSToConfig = (css: string, name: string): ThemeConfig => {
+    // Simple parser to extract basic properties
+    // This is a placeholder - you'd want a more sophisticated parser
+    const config: ThemeConfig = {
+      name,
+      className: name,
+      globalBackground: '#ffffff',
+      globalColor: '#000000',
+      globalFontSize: '24px',
+      globalFontFamily: 'Arial, sans-serif',
+      slideTemplates: {},
+    };
+
+    // Extract global background
+    const bgMatch = css.match(/background:\s*([^;]+);/);
+    if (bgMatch) config.globalBackground = bgMatch[1].trim();
+
+    // Extract global color
+    const colorMatch = css.match(/color:\s*([^;]+);/);
+    if (colorMatch) config.globalColor = colorMatch[1].trim();
+
+    return config;
   };
 
-  const updatePreview = async (css: string, html: string) => {
-    try {
-      const data = await messageHandler.request<{ html: string }>(
-        WebViewMessages.toVscode.themeBuilder.getPreviewHtml,
-        { css, html },
-      );
-      if (data) {
-        setPreviewHtml(data.html);
-      }
-    } catch (error) {
-      console.error('Error updating preview:', error);
+  const generateCSS = (): string => {
+    const { className, globalBackground, globalBackgroundImage, globalColor, globalFontSize, globalFontFamily, slideTemplates } = themeConfig;
+
+    let css = `.slide.${className} {\n`;
+    css += `  background: ${globalBackground};\n`;
+    css += `  color: ${globalColor};\n`;
+    css += `  font-size: ${globalFontSize};\n`;
+    css += `  font-family: ${globalFontFamily};\n\n`;
+
+    if (globalBackgroundImage) {
+      css += `  .slide__layout {\n`;
+      css += `    background-image: url("${globalBackgroundImage}");\n`;
+      css += `    background-repeat: no-repeat;\n`;
+      css += `    background-size: cover;\n`;
+      css += `    background-position: center center;\n`;
+      css += `  }\n\n`;
     }
+
+    css += `  .slide__content__inner {\n`;
+    css += `    padding: calc(var(--spacing) * 8);\n`;
+    css += `    box-sizing: border-box;\n`;
+    css += `    > :not([hidden]) ~ :not([hidden]) {\n`;
+    css += `      margin-top: 15px;\n`;
+    css += `    }\n`;
+    css += `  }\n\n`;
+
+    // Add heading styles
+    for (let i = 1; i <= 5; i++) {
+      const size = 32 - (i - 1) * 2;
+      css += `  h${i} {\n`;
+      if (i === 1) {
+        css += `    color: ${globalColor};\n`;
+      }
+      css += `    font-size: ${size}px;\n`;
+      if (i === 1) {
+        css += `    font-weight: 600;\n`;
+      }
+      css += `  }\n\n`;
+    }
+
+    // Add paragraph and list styles
+    css += `  p {\n`;
+    css += `    font-size: ${globalFontSize};\n`;
+    css += `  }\n\n`;
+
+    css += `  ul, ol {\n`;
+    css += `    font-size: ${globalFontSize};\n`;
+    css += `    margin-left: 19px;\n`;
+    css += `    li {\n`;
+    css += `      margin-bottom: calc(var(--spacing) * 2);\n`;
+    css += `    }\n`;
+    css += `  }\n\n`;
+
+    // Add slide template styles
+    Object.entries(slideTemplates).forEach(([templateName, template]) => {
+      css += `  .${templateName} {\n`;
+      
+      if (template.backgroundColor || template.backgroundImage || template.color || template.padding || template.layout) {
+        css += `    .slide__content__inner {\n`;
+        
+        if (template.layout === 'center') {
+          css += `      display: flex;\n`;
+          css += `      flex-direction: column;\n`;
+          css += `      align-items: center;\n`;
+          css += `      justify-content: center;\n`;
+          css += `      text-align: center;\n`;
+        } else if (template.layout === 'flex-start') {
+          css += `      display: flex;\n`;
+          css += `      flex-direction: column;\n`;
+          css += `      align-items: flex-start;\n`;
+          css += `      justify-content: center;\n`;
+        }
+        
+        if (template.padding) {
+          css += `      padding: ${template.padding};\n`;
+        }
+        
+        css += `    }\n\n`;
+      }
+
+      if (template.h1FontSize || template.h1Color) {
+        css += `    h1 {\n`;
+        if (template.h1FontSize) {
+          css += `      font-size: ${template.h1FontSize};\n`;
+        }
+        if (template.h1Color) {
+          css += `      color: ${template.h1Color};\n`;
+        }
+        css += `    }\n\n`;
+      }
+
+      css += `  }\n\n`;
+    });
+
+    css += `}\n`;
+
+    return css;
   };
 
   const saveTheme = async () => {
-    if (!themeName.trim()) {
-      setSaveStatus({ type: 'error', text: 'Theme name is required' });
+    if (!themeConfig.name.trim() || !themeConfig.className.trim()) {
+      setSaveStatus({ type: 'error', text: 'Theme name and class name are required' });
       return;
     }
 
     try {
       setLoading(true);
+      const css = generateCSS();
       const result = await messageHandler.request<{ success: boolean; path?: string }>(
         WebViewMessages.toVscode.themeBuilder.saveTheme,
-        { name: themeName, content: themeContent },
+        { name: themeConfig.className, content: css },
       );
 
       if (result?.success) {
         setSaveStatus({ type: 'success', text: 'Theme saved successfully!' });
-        await loadExistingFiles();
+        await loadExistingThemes();
         setTimeout(() => setSaveStatus({ type: 'blank', text: '' }), 3000);
       } else {
         setSaveStatus({ type: 'error', text: 'Failed to save theme' });
@@ -135,91 +262,56 @@ const ThemeBuilderView = () => {
     }
   };
 
-  const saveLayout = async () => {
-    if (!layoutName.trim()) {
-      setSaveStatus({ type: 'error', text: 'Layout name is required' });
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const result = await messageHandler.request<{ success: boolean; path?: string }>(
-        WebViewMessages.toVscode.themeBuilder.saveLayout,
-        { name: layoutName, content: layoutContent },
-      );
-
-      if (result?.success) {
-        setSaveStatus({ type: 'success', text: 'Layout saved successfully!' });
-        await loadExistingFiles();
-        setTimeout(() => setSaveStatus({ type: 'blank', text: '' }), 3000);
-      } else {
-        setSaveStatus({ type: 'error', text: 'Failed to save layout' });
-      }
-    } catch (error) {
-      console.error('Error saving layout:', error);
-      setSaveStatus({ type: 'error', text: 'Failed to save layout' });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleThemeContentChange = (value: string) => {
-    setThemeContent(value);
-    updatePreview(value, layoutContent);
-  };
-
-  const handleLayoutContentChange = (value: string) => {
-    setLayoutContent(value);
-    updatePreview(themeContent, value);
-  };
-
   const createNewTheme = () => {
-    setThemeName('');
-    const newThemeContent = `/* Custom Theme CSS */
-body {
-  background: var(--vscode-editor-background);
-  color: var(--vscode-editor-foreground);
-}
-
-.slide {
-  background: var(--vscode-editor-background) !important;
-  color: var(--vscode-editor-foreground) !important;
-}
-
-.intro {
-  h1 {
-    font-size: 3em;
-    font-weight: bold;
-  }
-}
-`;
-    setThemeContent(newThemeContent);
+    setThemeConfig({
+      name: '',
+      className: '',
+      globalBackground: '#ffffff',
+      globalColor: '#000000',
+      globalFontSize: '24px',
+      globalFontFamily: 'Arial, sans-serif',
+      slideTemplates: {},
+    });
     setSelectedTheme('');
-    updatePreview(newThemeContent, layoutContent);
   };
 
-  const createNewLayout = () => {
-    setLayoutName('');
-    const newLayoutContent = `<style>
-/* Custom Layout Styles */
-.custom-layout {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  padding: 2rem;
-}
-</style>
+  const updateGlobalProperty = (key: keyof ThemeConfig, value: any) => {
+    setThemeConfig((prev) => ({ ...prev, [key]: value }));
+  };
 
-<div class="custom-layout">
-  <h1>{{metadata.title}}</h1>
-  {{{content}}}
-</div>
-`;
-    setLayoutContent(newLayoutContent);
-    setSelectedLayout('');
-    updatePreview(themeContent, newLayoutContent);
+  const updateTemplateProperty = (templateName: string, key: keyof SlideTemplate, value: any) => {
+    setThemeConfig((prev) => ({
+      ...prev,
+      slideTemplates: {
+        ...prev.slideTemplates,
+        [templateName]: {
+          ...prev.slideTemplates[templateName],
+          [key]: value,
+        },
+      },
+    }));
+  };
+
+  const addTemplate = (templateName: string) => {
+    if (!themeConfig.slideTemplates[templateName]) {
+      setThemeConfig((prev) => ({
+        ...prev,
+        slideTemplates: {
+          ...prev.slideTemplates,
+          [templateName]: {
+            name: templateName,
+          },
+        },
+      }));
+    }
+  };
+
+  const removeTemplate = (templateName: string) => {
+    setThemeConfig((prev) => {
+      const newTemplates = { ...prev.slideTemplates };
+      delete newTemplates[templateName];
+      return { ...prev, slideTemplates: newTemplates };
+    });
   };
 
   if (loading) {
@@ -228,195 +320,335 @@ body {
 
   return (
     <div className="w-full h-full flex flex-col">
-      <AppHeader title="Theme Builder (Pro)" />
+      <AppHeader title="Visual Theme Builder (Pro)" />
 
       <div className="flex-1 overflow-auto p-4">
-        {/* Mode Selector */}
-        <div className="mb-4 flex gap-2">
-          <Button
-            onClick={() => setMode('theme')}
-            variant={mode === 'theme' ? 'primary' : 'secondary'}
-            className="flex items-center gap-2"
-          >
-            <Paintbrush size={16} />
-            Theme Editor
-          </Button>
-          <Button
-            onClick={() => setMode('layout')}
-            variant={mode === 'layout' ? 'primary' : 'secondary'}
-            className="flex items-center gap-2"
-          >
-            <FileCode size={16} />
-            Layout Editor
-          </Button>
+        {/* Theme Selection */}
+        <div className="mb-6 space-y-4">
+          <div className="flex gap-2 items-center">
+            <select
+              className="flex-1 px-3 py-2 border rounded"
+              value={selectedTheme}
+              onChange={(e) => loadTheme(e.target.value)}
+            >
+              <option value="">Select existing theme...</option>
+              {themes.map((theme) => (
+                <option key={theme.path} value={theme.name}>
+                  {theme.name}
+                </option>
+              ))}
+            </select>
+            <Button onClick={createNewTheme} className="flex items-center gap-2">
+              <Plus size={16} />
+              New Theme
+            </Button>
+          </div>
         </div>
 
-        {/* Theme Editor */}
-        {mode === 'theme' && (
-          <div className="space-y-4">
-            <div className="flex gap-2 items-center">
-              <select
-                className="flex-1 px-3 py-2 border rounded"
-                value={selectedTheme}
-                onChange={(e) => loadTheme(e.target.value)}
-              >
-                <option value="">Select existing theme...</option>
-                {themes.map((theme) => (
-                  <option key={theme.path} value={theme.name}>
-                    {theme.name}
-                  </option>
-                ))}
-              </select>
-              <Button onClick={createNewTheme} className="flex items-center gap-2">
-                <Plus size={16} />
-                New
-              </Button>
-            </div>
-
+        {/* Theme Configuration */}
+        <div className="space-y-6">
+          {/* Basic Info */}
+          <div className="border rounded p-4 space-y-4">
+            <h3 className="font-semibold text-lg">Theme Information</h3>
+            
             <div>
-              <label className="block mb-2 font-semibold">Theme Name</label>
+              <label className="block mb-2 font-medium">Theme Name</label>
               <input
                 type="text"
                 className="w-full px-3 py-2 border rounded"
-                placeholder="my-custom-theme"
-                value={themeName}
-                onChange={(e) => setThemeName(e.target.value)}
+                placeholder="My Awesome Theme"
+                value={themeConfig.name}
+                onChange={(e) => updateGlobalProperty('name', e.target.value)}
               />
             </div>
 
             <div>
-              <label className="block mb-2 font-semibold">CSS Content</label>
-              <textarea
-                className="w-full h-96 px-3 py-2 border rounded font-mono text-sm"
-                placeholder="Enter your CSS here..."
-                value={themeContent}
-                onChange={(e) => handleThemeContentChange(e.target.value)}
-              />
-            </div>
-
-            <div className="flex gap-2">
-              <Button onClick={saveTheme} className="flex items-center gap-2">
-                <Save size={16} />
-                Save Theme
-              </Button>
-              {saveStatus.text && (
-                <span
-                  className={`px-3 py-2 ${
-                    saveStatus.type === 'success' ? 'text-green-600' : 'text-red-600'
-                  }`}
-                >
-                  {saveStatus.text}
-                </span>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Layout Editor */}
-        {mode === 'layout' && (
-          <div className="space-y-4">
-            <div className="flex gap-2 items-center">
-              <select
-                className="flex-1 px-3 py-2 border rounded"
-                value={selectedLayout}
-                onChange={(e) => loadLayout(e.target.value)}
-              >
-                <option value="">Select existing layout...</option>
-                {layouts.map((layout) => (
-                  <option key={layout.path} value={layout.name}>
-                    {layout.name}
-                  </option>
-                ))}
-              </select>
-              <Button onClick={createNewLayout} className="flex items-center gap-2">
-                <Plus size={16} />
-                New
-              </Button>
-            </div>
-
-            <div>
-              <label className="block mb-2 font-semibold">Layout Name</label>
+              <label className="block mb-2 font-medium">CSS Class Name</label>
               <input
                 type="text"
                 className="w-full px-3 py-2 border rounded"
-                placeholder="my-custom-layout"
-                value={layoutName}
-                onChange={(e) => setLayoutName(e.target.value)}
+                placeholder="my-theme"
+                value={themeConfig.className}
+                onChange={(e) => updateGlobalProperty('className', e.target.value)}
               />
-            </div>
-
-            <div>
-              <label className="block mb-2 font-semibold">
-                Handlebars Template
-              </label>
-              <p className="text-sm text-gray-600 mb-2">
-                Use Handlebars syntax: {'{{{content}}}'}, {'{{metadata.title}}'}, etc.
+              <p className="text-sm text-gray-600 mt-1">
+                Used as: .slide.{themeConfig.className || 'class-name'}
               </p>
-              <textarea
-                className="w-full h-96 px-3 py-2 border rounded font-mono text-sm"
-                placeholder="Enter your Handlebars template here..."
-                value={layoutContent}
-                onChange={(e) => handleLayoutContentChange(e.target.value)}
-              />
-            </div>
-
-            <div className="flex gap-2">
-              <Button onClick={saveLayout} className="flex items-center gap-2">
-                <Save size={16} />
-                Save Layout
-              </Button>
-              {saveStatus.text && (
-                <span
-                  className={`px-3 py-2 ${
-                    saveStatus.type === 'success' ? 'text-green-600' : 'text-red-600'
-                  }`}
-                >
-                  {saveStatus.text}
-                </span>
-              )}
             </div>
           </div>
-        )}
 
-        {/* Preview Section */}
-        {previewHtml && (
-          <div className="mt-6">
-            <div className="flex items-center gap-2 mb-2">
-              <Eye size={16} />
-              <h3 className="font-semibold">Preview</h3>
+          {/* Global Styles */}
+          <div className="border rounded p-4 space-y-4">
+            <h3 className="font-semibold text-lg">Global Slide Styles</h3>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block mb-2 font-medium">Background Color</label>
+                <div className="flex gap-2">
+                  <input
+                    type="color"
+                    className="w-16 h-10 border rounded"
+                    value={themeConfig.globalBackground?.startsWith('#') ? themeConfig.globalBackground : '#ffffff'}
+                    onChange={(e) => updateGlobalProperty('globalBackground', e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    className="flex-1 px-3 py-2 border rounded"
+                    placeholder="#ffffff"
+                    value={themeConfig.globalBackground || ''}
+                    onChange={(e) => updateGlobalProperty('globalBackground', e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block mb-2 font-medium">Text Color</label>
+                <div className="flex gap-2">
+                  <input
+                    type="color"
+                    className="w-16 h-10 border rounded"
+                    value={themeConfig.globalColor?.startsWith('#') ? themeConfig.globalColor : '#000000'}
+                    onChange={(e) => updateGlobalProperty('globalColor', e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    className="flex-1 px-3 py-2 border rounded"
+                    placeholder="#000000"
+                    value={themeConfig.globalColor || ''}
+                    onChange={(e) => updateGlobalProperty('globalColor', e.target.value)}
+                  />
+                </div>
+              </div>
             </div>
-            <div className="border rounded p-4 bg-white">
-              <iframe
-                srcDoc={previewHtml}
-                className="w-full h-96 border-0"
-                title="Theme Preview"
-                sandbox="allow-same-origin"
+
+            <div>
+              <label className="block mb-2 font-medium">Background Image URL</label>
+              <input
+                type="text"
+                className="w-full px-3 py-2 border rounded"
+                placeholder=".demo/assets/background.png"
+                value={themeConfig.globalBackgroundImage || ''}
+                onChange={(e) => updateGlobalProperty('globalBackgroundImage', e.target.value)}
               />
+              <p className="text-sm text-gray-600 mt-1">
+                Relative to workspace root or full URL
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block mb-2 font-medium">Font Size</label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border rounded"
+                  placeholder="24px"
+                  value={themeConfig.globalFontSize || ''}
+                  onChange={(e) => updateGlobalProperty('globalFontSize', e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="block mb-2 font-medium">Font Family</label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border rounded"
+                  placeholder="Arial, sans-serif"
+                  value={themeConfig.globalFontFamily || ''}
+                  onChange={(e) => updateGlobalProperty('globalFontFamily', e.target.value)}
+                />
+              </div>
             </div>
           </div>
-        )}
 
-        {/* Help Section */}
-        <div className="mt-6 p-4 bg-blue-50 rounded">
-          <h3 className="font-semibold mb-2">💡 Tips</h3>
-          <ul className="text-sm space-y-1 list-disc list-inside">
-            <li>Themes are saved as CSS files in .demo/slides/</li>
-            <li>Layouts are saved as Handlebars (.hbs) files in .demo/layouts/</li>
-            <li>Use VS Code variables like var(--vscode-editor-background) for theming</li>
-            <li>Right-click in the preview to inspect elements (if enabled)</li>
-            <li>
-              See{' '}
-              <a
-                href="https://demotime.show/slides/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 underline"
+          {/* Slide Templates */}
+          <div className="border rounded p-4 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold text-lg">Slide Templates</h3>
+              <select
+                className="px-3 py-2 border rounded"
+                value=""
+                onChange={(e) => {
+                  if (e.target.value) {
+                    addTemplate(e.target.value);
+                    e.target.value = '';
+                  }
+                }}
               >
-                documentation
-              </a>{' '}
-              for more examples
-            </li>
-          </ul>
+                <option value="">Add template...</option>
+                {DEFAULT_SLIDE_TEMPLATES.map((template) => (
+                  <option key={template} value={template}>
+                    {template}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Template Tabs */}
+            {Object.keys(themeConfig.slideTemplates).length > 0 && (
+              <div className="space-y-4">
+                <div className="flex flex-wrap gap-2">
+                  {Object.keys(themeConfig.slideTemplates).map((templateName) => (
+                    <button
+                      key={templateName}
+                      className={`px-3 py-1 rounded ${
+                        activeTemplate === templateName
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-200'
+                      }`}
+                      onClick={() => setActiveTemplate(templateName)}
+                    >
+                      {templateName}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Active Template Editor */}
+                {activeTemplate && themeConfig.slideTemplates[activeTemplate] && (
+                  <div className="border rounded p-4 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-medium">Configure: {activeTemplate}</h4>
+                      <button
+                        className="text-red-600 hover:text-red-800"
+                        onClick={() => {
+                          removeTemplate(activeTemplate);
+                          setActiveTemplate(Object.keys(themeConfig.slideTemplates)[0] || '');
+                        }}
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block mb-2 font-medium">Layout</label>
+                        <select
+                          className="w-full px-3 py-2 border rounded"
+                          value={themeConfig.slideTemplates[activeTemplate]?.layout || 'default'}
+                          onChange={(e) =>
+                            updateTemplateProperty(activeTemplate, 'layout', e.target.value)
+                          }
+                        >
+                          <option value="default">Default</option>
+                          <option value="center">Center</option>
+                          <option value="flex-start">Flex Start</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block mb-2 font-medium">Padding</label>
+                        <input
+                          type="text"
+                          className="w-full px-3 py-2 border rounded"
+                          placeholder="60px 65px"
+                          value={themeConfig.slideTemplates[activeTemplate]?.padding || ''}
+                          onChange={(e) =>
+                            updateTemplateProperty(activeTemplate, 'padding', e.target.value)
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block mb-2 font-medium">H1 Font Size</label>
+                        <input
+                          type="text"
+                          className="w-full px-3 py-2 border rounded"
+                          placeholder="42px"
+                          value={themeConfig.slideTemplates[activeTemplate]?.h1FontSize || ''}
+                          onChange={(e) =>
+                            updateTemplateProperty(activeTemplate, 'h1FontSize', e.target.value)
+                          }
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block mb-2 font-medium">H1 Color</label>
+                        <div className="flex gap-2">
+                          <input
+                            type="color"
+                            className="w-16 h-10 border rounded"
+                            value={themeConfig.slideTemplates[activeTemplate]?.h1Color?.startsWith('#') ? themeConfig.slideTemplates[activeTemplate].h1Color : '#000000'}
+                            onChange={(e) =>
+                              updateTemplateProperty(activeTemplate, 'h1Color', e.target.value)
+                            }
+                          />
+                          <input
+                            type="text"
+                            className="flex-1 px-3 py-2 border rounded"
+                            placeholder="#000000"
+                            value={themeConfig.slideTemplates[activeTemplate]?.h1Color || ''}
+                            onChange={(e) =>
+                              updateTemplateProperty(activeTemplate, 'h1Color', e.target.value)
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block mb-2 font-medium">Background Image</label>
+                      <input
+                        type="text"
+                        className="w-full px-3 py-2 border rounded"
+                        placeholder=".demo/assets/template-bg.png"
+                        value={themeConfig.slideTemplates[activeTemplate]?.backgroundImage || ''}
+                        onChange={(e) =>
+                          updateTemplateProperty(activeTemplate, 'backgroundImage', e.target.value)
+                        }
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {Object.keys(themeConfig.slideTemplates).length === 0 && (
+              <p className="text-gray-600 text-center py-4">
+                No templates configured. Add a template from the dropdown above.
+              </p>
+            )}
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-2 items-center">
+            <Button onClick={saveTheme} className="flex items-center gap-2">
+              <Save size={16} />
+              Save Theme
+            </Button>
+            {saveStatus.text && (
+              <span
+                className={`px-3 py-2 ${
+                  saveStatus.type === 'success' ? 'text-green-600' : 'text-red-600'
+                }`}
+              >
+                {saveStatus.text}
+              </span>
+            )}
+          </div>
+
+          {/* Preview */}
+          <div className="border rounded p-4 space-y-4">
+            <h3 className="font-semibold text-lg flex items-center gap-2">
+              <Eye size={16} />
+              CSS Preview
+            </h3>
+            <pre className="bg-gray-100 p-4 rounded overflow-auto max-h-96 text-sm">
+              {generateCSS()}
+            </pre>
+          </div>
+
+          {/* Help */}
+          <div className="bg-blue-50 border border-blue-200 rounded p-4">
+            <h3 className="font-semibold mb-2">💡 How to Use</h3>
+            <ul className="text-sm space-y-1 list-disc list-inside">
+              <li>Configure global styles that apply to all slides</li>
+              <li>Add slide templates (intro, section, quote, etc.) and customize each one</li>
+              <li>Set background colors/images globally or per template</li>
+              <li>Themes are saved to <code>.demo/theme/</code> folder</li>
+              <li>Use the theme in your slide markdown: <code>theme: {themeConfig.className || 'your-theme'}</code></li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
