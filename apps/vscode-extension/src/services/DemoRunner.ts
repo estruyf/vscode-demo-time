@@ -715,7 +715,7 @@ export class DemoRunner {
       await MacOSActionsService.unmuteVolume();
       return;
     } else if (step.action === Action.SetScreenResolution) {
-      if (!step.width || !step.height) {
+      if (step.width === undefined || step.width === null || step.height === undefined || step.height === null) {
         Notifications.error('Width and height are required for screen resolution change.');
         return;
       }

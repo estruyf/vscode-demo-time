@@ -238,29 +238,19 @@ end tell`;
       if (duration) {
         const seconds = duration * 60;
         command += ` -t ${seconds}`;
-        // Run in background using nohup and redirect output
-        command = `nohup ${command} > /dev/null 2>&1 & echo $!`;
-        
-        try {
-          const pid = await ScriptExecutor.executeScriptAsync(command, wsPath);
-          Logger.info(`Caffeine enabled for ${duration} minutes (PID: ${pid.trim()})`);
-          Notifications.info(`System sleep prevention enabled for ${duration} minutes`);
-        } catch (error) {
-          Logger.error(`Failed to start caffeinate: ${(error as Error).message}`);
-          throw error;
-        }
-      } else {
-        // For indefinite caffeine, we'll use a background process
-        command = `nohup ${command} > /dev/null 2>&1 & echo $!`;
-        
-        try {
-          const pid = await ScriptExecutor.executeScriptAsync(command, wsPath);
-          Logger.info(`Caffeine enabled indefinitely (PID: ${pid.trim()})`);
-          Notifications.info('System sleep prevention enabled indefinitely');
-        } catch (error) {
-          Logger.error(`Failed to start caffeinate: ${(error as Error).message}`);
-          throw error;
-        }
+      }
+      
+      // Run in background using nohup and redirect output
+      command = `nohup ${command} > /dev/null 2>&1 & echo $!`;
+      
+      try {
+        const pid = await ScriptExecutor.executeScriptAsync(command, wsPath);
+        const durationMsg = duration ? `for ${duration} minutes` : 'indefinitely';
+        Logger.info(`Caffeine enabled ${durationMsg} (PID: ${pid.trim()})`);
+        Notifications.info(`System sleep prevention enabled ${durationMsg}`);
+      } catch (error) {
+        Logger.error(`Failed to start caffeinate: ${(error as Error).message}`);
+        throw error;
       }
     } catch (error) {
       Notifications.error(`Failed to enable Caffeine: ${(error as Error).message}`);
