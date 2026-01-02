@@ -12,12 +12,16 @@ import {
   Step,
   Config,
   ActionTime,
+  ActTimingInfo,
+  TimerStatus,
 } from '@demotime/common';
 import { v4 as uuidv4 } from 'uuid';
 import { AnalyticsStorage } from './AnalyticsStorage';
 import { AnalyticsReporter } from './AnalyticsReporter';
 import { Logger } from '../Logger';
 import { Extension } from '../Extension';
+import { DemoFileProvider } from '../DemoFileProvider';
+import { Uri } from 'vscode';
 
 /**
  * Main analytics service that orchestrates all tracking during a presentation.
@@ -30,6 +34,11 @@ export class AnalyticsService {
   private static currentSegment: SegmentAnalytics | null = null;
   private static fileActivityMap: Map<string, FileActivityRecord> = new Map();
   private static lastEventTime: number = Date.now();
+  /** Track per-act timing and timers */
+  private static actFileTimers: Map<
+    string,
+    { configuredTimer?: number; startTime: number; totalDuration: number }
+  > = new Map();
 
   /**
    * Loads analytics configuration from VS Code settings.
@@ -94,11 +103,16 @@ export class AnalyticsService {
     const sessionId = uuidv4();
     const now = new Date().toISOString();
 
+    // Get global timer setting
+    const ext = Extension.getInstance();
+    const globalTimerMinutes = ext.getSetting<number>(Config.clock.timer);
+
     AnalyticsService.currentSession = {
       id: sessionId,
       startTime: now,
       presentationTitle,
       isDryRun,
+      globalTimerMinutes,
       segments: [],
       fileActivity: [],
       terminalCommands: [],
@@ -107,6 +121,7 @@ export class AnalyticsService {
     };
 
     AnalyticsService.fileActivityMap.clear();
+    AnalyticsService.actFileTimers.clear();
     AnalyticsService.lastEventTime = Date.now();
 
     // Start auto-save if configured
@@ -152,6 +167,9 @@ export class AnalyticsService {
 
     // Convert file activity map to array
     session.fileActivity = Array.from(AnalyticsService.fileActivityMap.values());
+
+    // Calculate act timings with timer status
+    session.actTimings = await AnalyticsService.calculateActTimings();
 
     // Record session end navigation event
     AnalyticsService.recordNavigationEvent({
@@ -201,6 +219,9 @@ export class AnalyticsService {
     if (!AnalyticsService.currentSession) {
       return '';
     }
+
+    // Track this act file's timing
+    AnalyticsService.trackActTiming(actFilePath);
 
     const now = new Date().toISOString();
     const nowTimestamp = Date.now();
@@ -621,6 +642,77 @@ export class AnalyticsService {
       return timeSinceLastEvent;
     }
     return 0;
+  }
+
+  /**
+   * Tracks timing for an act (demo file) when a segment starts.
+   */
+  private static async trackActTiming(actFilePath: string): Promise<void> {
+    if (!AnalyticsService.actFileTimers.has(actFilePath)) {
+      // Load the demo file to get its timer configuration
+      let configuredTimer: number | undefined;
+      try {
+        const demoFile = await DemoFileProvider.getFile(Uri.file(actFilePath));
+        configuredTimer = demoFile?.timer;
+      } catch (error) {
+        Logger.error(`Failed to load demo file for timer: ${actFilePath} - ${error}`);
+      }
+
+      AnalyticsService.actFileTimers.set(actFilePath, {
+        configuredTimer,
+        startTime: Date.now(),
+        totalDuration: 0,
+      });
+    }
+  }
+
+  /**
+   * Calculates act timings with timer status for all acts in the session.
+   */
+  private static async calculateActTimings(): Promise<ActTimingInfo[]> {
+    const actTimings: ActTimingInfo[] = [];
+
+    // Calculate total duration per act from segments
+    const actDurations = new Map<string, number>();
+    if (AnalyticsService.currentSession) {
+      for (const segment of AnalyticsService.currentSession.segments) {
+        const actPath = segment.actFilePath || 'unknown';
+        const currentDuration = actDurations.get(actPath) || 0;
+        actDurations.set(actPath, currentDuration + (segment.duration || 0));
+      }
+    }
+
+    // Build ActTimingInfo for each act
+    for (const [actFilePath, actData] of AnalyticsService.actFileTimers.entries()) {
+      const actualDuration = actDurations.get(actFilePath) || 0;
+
+      // Calculate timer status
+      let timerStatus: TimerStatus;
+      if (!actData.configuredTimer || actData.configuredTimer <= 0) {
+        timerStatus = TimerStatus.NoTimer;
+      } else {
+        const expectedDuration = actData.configuredTimer * 60000; // Convert minutes to ms
+        const overage = actualDuration - expectedDuration;
+        const overagePercentage = (overage / expectedDuration) * 100;
+
+        if (overage <= 0) {
+          timerStatus = TimerStatus.OnTime;
+        } else if (overagePercentage < 10) {
+          timerStatus = TimerStatus.SlightlyOver;
+        } else {
+          timerStatus = TimerStatus.SignificantlyOver;
+        }
+      }
+
+      actTimings.push({
+        actFilePath,
+        configuredTimer: actData.configuredTimer,
+        actualDuration,
+        timerStatus,
+      });
+    }
+
+    return actTimings;
   }
 
   /**

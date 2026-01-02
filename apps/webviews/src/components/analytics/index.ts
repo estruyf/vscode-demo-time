@@ -6,3 +6,4 @@ export * from './DemoBreakdown';
 export * from './FileActivity';
 export * from './PausesList';
 export * from './ErrorsSection';
+export * from './TimerStatusBadge';

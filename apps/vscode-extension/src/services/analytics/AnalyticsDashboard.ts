@@ -88,7 +88,12 @@ export class AnalyticsDashboard extends BaseWebview {
         for (const filename of sessionFiles) {
           const parts = filename.replace('.json', '').split('_');
           const type = parts.pop() || 'unknown';
-          const dateStr = parts.join('_').replace(/-/g, ':').replace('T', ' ');
+          const dateStr = parts
+            .join('_')
+            .replace(
+              /(\d{4})-(\d{2})-(\d{2})T(\d{2})-(\d{2})-(\d{2})-(\d{3})/,
+              '$1/$2/$3 $4:$5:$6.$7',
+            );
 
           sessions.push({
             filename,

@@ -56,7 +56,7 @@ export class AnalyticsCommands {
   /**
    * Starts analytics recording for the current or next presentation.
    */
-  private static async startRecording(): Promise<void> {
+  public static async startRecording(): Promise<void> {
     if (!AnalyticsCommands.checkProAccess()) {
       return;
     }
@@ -124,7 +124,7 @@ export class AnalyticsCommands {
   /**
    * Stops the current analytics recording.
    */
-  private static async stopRecording(): Promise<void> {
+  public static async stopRecording(): Promise<void> {
     if (!AnalyticsCommands.checkProAccess()) {
       return;
     }

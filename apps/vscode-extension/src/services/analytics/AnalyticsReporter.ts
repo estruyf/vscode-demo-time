@@ -6,6 +6,8 @@ import {
   DemoBreakdownItem,
   ErrorSummary,
   Recommendation,
+  TimerStatus,
+  ActTimingInfo,
 } from '@demotime/common';
 
 /**
@@ -16,11 +18,18 @@ export class AnalyticsReporter {
    * Generates a comprehensive summary from a presentation session.
    */
   public static generateSummary(session: PresentationSession): AnalyticsSummary {
+    const timerStatus = AnalyticsReporter.calculateTimerStatus(session);
+    const expectedDuration = AnalyticsReporter.calculateExpectedDuration(session);
+
     return {
       sessionId: session.id,
       sessionDate: session.startTime,
       isDryRun: session.isDryRun,
       totalDuration: session.totalDuration || 0,
+      timerStatus,
+      globalTimerMinutes: session.globalTimerMinutes,
+      actTimings: session.actTimings,
+      expectedDuration,
       fileBreakdown: AnalyticsReporter.generateFileBreakdown(session),
       longestNarratives: AnalyticsReporter.findLongestNarratives(session),
       demoBreakdown: AnalyticsReporter.generateDemoBreakdown(session),
@@ -162,6 +171,9 @@ export class AnalyticsReporter {
           }
         }
 
+        // Find timer info for this act
+        const actTiming = session.actTimings?.find((a) => a.actFilePath === scene.actFilePath);
+
         return {
           actFilePath: scene.actFilePath,
           sceneId: scene.sceneId,
@@ -173,6 +185,8 @@ export class AnalyticsReporter {
           avgMoveDuration: scene.segments.length > 0 ? duration / scene.segments.length : 0,
           hadErrors,
           errors: hadErrors ? sceneErrors : undefined,
+          actTimerStatus: actTiming?.timerStatus,
+          actConfiguredTimer: actTiming?.configuredTimer,
           actionDetails: actionDetails.length > 0 ? actionDetails : undefined,
         };
       })
@@ -213,22 +227,6 @@ export class AnalyticsReporter {
    */
   private static generateRecommendations(session: PresentationSession): Recommendation[] {
     const recommendations: Recommendation[] = [];
-
-    // Check for long narrative segments
-    const longestNarratives = AnalyticsReporter.findLongestNarratives(session);
-    for (const narrative of longestNarratives.slice(0, 3)) {
-      if (narrative.duration > 10000) {
-        recommendations.push({
-          type: 'timing',
-          priority: narrative.duration > 30000 ? 'high' : 'medium',
-          title: 'Extended narrative segment',
-          description: `A ${Math.round(narrative.duration / 1000)}s speaking segment was detected at "${narrative.location}".`,
-          relatedTo: narrative.filePath,
-          suggestion:
-            'Consider adding visual elements or interactive demo actions to keep audience engaged.',
-        });
-      }
-    }
 
     // Check for errors
     if (session.errors.length > 0) {
@@ -271,7 +269,99 @@ export class AnalyticsReporter {
       });
     }
 
+    // Check timer compliance
+    const timerStatus = AnalyticsReporter.calculateTimerStatus(session);
+    const expectedDuration = AnalyticsReporter.calculateExpectedDuration(session);
+
+    if (timerStatus === TimerStatus.SignificantlyOver && expectedDuration) {
+      const overageMinutes = Math.round(((session.totalDuration || 0) - expectedDuration) / 60000);
+      recommendations.push({
+        type: 'timing',
+        priority: 'high',
+        title: 'Significantly over time',
+        description: `Your presentation ran ${overageMinutes} minute(s) over the allocated time.`,
+        suggestion:
+          'Review the per-act breakdown to identify areas where you can trim content or speed up delivery.',
+      });
+    } else if (timerStatus === TimerStatus.SlightlyOver && expectedDuration) {
+      const overageMinutes = Math.round(((session.totalDuration || 0) - expectedDuration) / 60000);
+      recommendations.push({
+        type: 'timing',
+        priority: 'medium',
+        title: 'Slightly over time',
+        description: `Your presentation ran ${overageMinutes} minute(s) over the allocated time.`,
+        suggestion: 'Consider minor adjustments to stay within your time limit.',
+      });
+    }
+
+    // Check per-act timer compliance
+    if (session.actTimings) {
+      for (const actTiming of session.actTimings) {
+        if (actTiming.timerStatus === TimerStatus.SignificantlyOver && actTiming.configuredTimer) {
+          const actName = actTiming.actFilePath.split('/').pop() || actTiming.actFilePath;
+          const overageMinutes = Math.round(
+            (actTiming.actualDuration - actTiming.configuredTimer * 60000) / 60000,
+          );
+          recommendations.push({
+            type: 'timing',
+            priority: 'medium',
+            title: `Act over time: ${actName}`,
+            description: `The act "${actName}" ran ${overageMinutes} minute(s) over its allocated ${actTiming.configuredTimer} minute timer.`,
+            relatedTo: actTiming.actFilePath,
+            suggestion: 'Focus on streamlining this portion of your presentation.',
+          });
+        }
+      }
+    }
+
     return recommendations;
+  }
+
+  /**
+   * Calculates the overall timer status for the presentation.
+   */
+  private static calculateTimerStatus(session: PresentationSession): TimerStatus {
+    const expectedDuration = AnalyticsReporter.calculateExpectedDuration(session);
+
+    if (!expectedDuration) {
+      return TimerStatus.NoTimer;
+    }
+
+    const actualDuration = session.totalDuration || 0;
+    const overage = actualDuration - expectedDuration;
+    const overagePercentage = (overage / expectedDuration) * 100;
+
+    if (overage <= 0) {
+      return TimerStatus.OnTime;
+    } else if (overagePercentage < 10) {
+      return TimerStatus.SlightlyOver;
+    } else {
+      return TimerStatus.SignificantlyOver;
+    }
+  }
+
+  /**
+   * Calculates the expected duration based on timer settings.
+   * Returns the expected duration in milliseconds, or undefined if no timer is set.
+   */
+  private static calculateExpectedDuration(session: PresentationSession): number | undefined {
+    // Global timer takes precedence as it represents the overall presentation target
+    if (session.globalTimerMinutes && session.globalTimerMinutes > 0) {
+      return session.globalTimerMinutes * 60000; // Convert to milliseconds
+    }
+
+    // If no global timer, check if we have per-act timings
+    if (session.actTimings && session.actTimings.length > 0) {
+      const totalConfiguredMinutes = session.actTimings.reduce((sum, act) => {
+        return sum + (act.configuredTimer || 0);
+      }, 0);
+
+      if (totalConfiguredMinutes > 0) {
+        return totalConfiguredMinutes * 60000; // Convert to milliseconds
+      }
+    }
+
+    return undefined;
   }
 
   /**

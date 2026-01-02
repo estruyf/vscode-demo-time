@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client';
 import { EventData } from '@estruyf/vscode';
-import { Loader, Button } from 'vscrui';
+import { Loader } from 'vscrui';
 import { BarChart3, Target, Video, Lightbulb, List, FolderOpen, Pause, AlertCircle } from 'lucide-react';
 import { WebViewMessages } from '@demotime/common';
 import { SessionInfo, SessionData, RecordingStatus } from '../../types/analytics';
@@ -14,8 +14,10 @@ import {
   FileActivity,
   PausesList,
   ErrorsSection,
+  TimerStatusBadge,
 } from '../analytics';
 import { formatDuration } from '../../utils';
+import { Button } from '../ui';
 
 type TabType = 'scenes' | 'recommendations' | 'files' | 'narratives' | 'errors';
 
@@ -135,13 +137,6 @@ const AnalyticsDashboardView = () => {
       description: 'Analyze time spent on each scene and action during your presentation'
     },
     {
-      id: 'recommendations' as TabType,
-      label: 'Recommendations',
-      icon: Lightbulb,
-      count: sessionData?.summary.recommendations.length,
-      description: 'Get AI-powered suggestions to improve your presentation flow and timing'
-    },
-    {
       id: 'files' as TabType,
       label: 'File Activity',
       icon: FolderOpen,
@@ -161,6 +156,13 @@ const AnalyticsDashboardView = () => {
       icon: AlertCircle,
       count: sessionData?.summary.errorSummary.totalErrors,
       description: 'Review errors encountered during the presentation and their recovery details'
+    },
+    {
+      id: 'recommendations' as TabType,
+      label: 'Recommendations',
+      icon: Lightbulb,
+      count: sessionData?.summary.recommendations.length,
+      description: 'Get AI-powered suggestions to improve your presentation flow and timing'
     },
   ];
 
@@ -211,6 +213,7 @@ const AnalyticsDashboardView = () => {
                   <div className="flex gap-2">
                     <Button
                       onClick={() => handleExportSession(selectedSession.filename, 'markdown')}
+                      variant='primary'
                     >
                       Export Markdown
                     </Button>
@@ -227,11 +230,18 @@ const AnalyticsDashboardView = () => {
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 gap-3 mb-3">
                   <StatCard label="Duration" value={formatDuration(sessionData.summary.totalDuration)} />
                   <StatCard label="Scenes" value={sessionData.summary.demoBreakdown.length} />
                   <StatCard label="Files" value={sessionData.summary.fileBreakdown.length} />
                 </div>
+
+                {/* Timer Status Badge */}
+                <TimerStatusBadge
+                  status={sessionData.summary.timerStatus}
+                  actualDuration={sessionData.summary.totalDuration}
+                  expectedDuration={sessionData.summary.expectedDuration}
+                />
               </div>
 
               {/* Tabs */}

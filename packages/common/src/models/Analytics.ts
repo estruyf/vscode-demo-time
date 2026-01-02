@@ -12,6 +12,34 @@
  */
 
 /**
+ * Timer status indicator for timing analysis.
+ */
+export enum TimerStatus {
+  /** Presentation finished within allocated time */
+  OnTime = 'on-time',
+  /** Presentation slightly over time (< 10% over) */
+  SlightlyOver = 'slightly-over',
+  /** Presentation significantly over time (>= 10% over) */
+  SignificantlyOver = 'significantly-over',
+  /** No timer was set */
+  NoTimer = 'no-timer',
+}
+
+/**
+ * Timing information for an Act (demo file).
+ */
+export interface ActTimingInfo {
+  /** Path to the Act (demo file) */
+  actFilePath: string;
+  /** Configured timer for this Act in minutes (if any) */
+  configuredTimer?: number;
+  /** Actual time spent on this Act in milliseconds */
+  actualDuration: number;
+  /** Timer status for this Act */
+  timerStatus: TimerStatus;
+}
+
+/**
  * Represents a complete presentation session (Play) with all tracked data.
  * A Play can consist of multiple Acts (demo files).
  */
@@ -28,6 +56,10 @@ export interface PresentationSession {
   isDryRun: boolean;
   /** Total duration in milliseconds */
   totalDuration?: number;
+  /** Global timer setting in minutes (from VS Code settings) */
+  globalTimerMinutes?: number;
+  /** Per-Act timing information */
+  actTimings?: ActTimingInfo[];
   /** Individual demo/step segments */
   segments: SegmentAnalytics[];
   /** File activity records */
@@ -238,6 +270,14 @@ export interface AnalyticsSummary {
   isDryRun: boolean;
   /** Total duration in milliseconds */
   totalDuration: number;
+  /** Overall timer status */
+  timerStatus: TimerStatus;
+  /** Global timer setting in minutes */
+  globalTimerMinutes?: number;
+  /** Per-Act timing information */
+  actTimings?: ActTimingInfo[];
+  /** Expected total duration based on timer settings (in milliseconds) */
+  expectedDuration?: number;
   /** Breakdown by file */
   fileBreakdown: FileBreakdownItem[];
   /** Longest narrative/speaking segments detected */
@@ -314,6 +354,10 @@ export interface DemoBreakdownItem {
   hadErrors: boolean;
   /** Errors that occurred in this Scene (demo) */
   errors?: ErrorRecord[];
+  /** Timer status for the Act this scene belongs to */
+  actTimerStatus?: TimerStatus;
+  /** Configured timer for the Act in minutes */
+  actConfiguredTimer?: number;
   /** Details of actions/slides within this scene */
   actionDetails?: {
     /** Type of action */
