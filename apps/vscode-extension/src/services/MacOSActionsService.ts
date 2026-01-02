@@ -196,23 +196,18 @@ end tell`;
       return;
     }
 
+    const command = `displayplacer "id:main ${hidpi ? 'scaled' : 'res'}:${width}x${height}"`;
+    const wsPath = Extension.getInstance().workspaceFolder?.uri.fsPath || process.cwd();
+    
     try {
-      // Use displayplacer tool if available, otherwise show a notification
-      const command = `displayplacer "id:main ${hidpi ? 'scaled' : 'res'}:${width}x${height}"`;
-      const wsPath = Extension.getInstance().workspaceFolder?.uri.fsPath || process.cwd();
-      
-      try {
-        await ScriptExecutor.executeScriptAsync(command, wsPath);
-        Logger.info(`Screen resolution set to ${width}x${height}${hidpi ? ' (HiDPI)' : ''}`);
-      } catch (error) {
-        // If displayplacer is not available, provide instructions
-        Notifications.warning(
-          'Screen resolution control requires the "displayplacer" tool. Install it with: brew install displayplacer',
-        );
-        Logger.error(`displayplacer not found: ${(error as Error).message}`);
-      }
+      await ScriptExecutor.executeScriptAsync(command, wsPath);
+      Logger.info(`Screen resolution set to ${width}x${height}${hidpi ? ' (HiDPI)' : ''}`);
     } catch (error) {
-      Notifications.error(`Failed to set screen resolution: ${(error as Error).message}`);
+      // If displayplacer is not available, provide instructions
+      Notifications.warning(
+        'Screen resolution control requires the "displayplacer" tool. Install it with: brew install displayplacer',
+      );
+      Logger.error(`displayplacer not found: ${(error as Error).message}`);
     }
   }
 
@@ -226,33 +221,29 @@ end tell`;
       return;
     }
 
+    const wsPath = Extension.getInstance().workspaceFolder?.uri.fsPath || process.cwd();
+    
+    // Use caffeinate command (built-in on macOS)
+    // -d: prevent display from sleeping
+    // -i: prevent system from idle sleeping
+    // -t: specify timeout in seconds
+    let command = 'caffeinate -d -i';
+    
+    if (duration !== undefined) {
+      const seconds = duration * 60;
+      command += ` -t ${seconds}`;
+    }
+    
+    // Run in background using nohup and redirect output
+    command = `nohup ${command} > /dev/null 2>&1 & echo $!`;
+    
     try {
-      const wsPath = Extension.getInstance().workspaceFolder?.uri.fsPath || process.cwd();
-      
-      // Use caffeinate command (built-in on macOS)
-      // -d: prevent display from sleeping
-      // -i: prevent system from idle sleeping
-      // -t: specify timeout in seconds
-      let command = 'caffeinate -d -i';
-      
-      if (duration) {
-        const seconds = duration * 60;
-        command += ` -t ${seconds}`;
-      }
-      
-      // Run in background using nohup and redirect output
-      command = `nohup ${command} > /dev/null 2>&1 & echo $!`;
-      
-      try {
-        const pid = await ScriptExecutor.executeScriptAsync(command, wsPath);
-        const durationMsg = duration ? `for ${duration} minutes` : 'indefinitely';
-        Logger.info(`Caffeine enabled ${durationMsg} (PID: ${pid.trim()})`);
-        Notifications.info(`System sleep prevention enabled ${durationMsg}`);
-      } catch (error) {
-        Logger.error(`Failed to start caffeinate: ${(error as Error).message}`);
-        throw error;
-      }
+      const pid = await ScriptExecutor.executeScriptAsync(command, wsPath);
+      const durationMsg = duration !== undefined ? `for ${duration} minutes` : 'indefinitely';
+      Logger.info(`Caffeine enabled ${durationMsg} (PID: ${pid.trim()})`);
+      Notifications.info(`System sleep prevention enabled ${durationMsg}`);
     } catch (error) {
+      Logger.error(`Failed to start caffeinate: ${(error as Error).message}`);
       Notifications.error(`Failed to enable Caffeine: ${(error as Error).message}`);
     }
   }
@@ -266,32 +257,28 @@ end tell`;
       return;
     }
 
+    const wsPath = Extension.getInstance().workspaceFolder?.uri.fsPath || process.cwd();
+    
+    // Use a more specific pattern to avoid killing unintended processes
+    // First check if our caffeinate processes exist
+    const checkCommand = 'pgrep -f "^caffeinate -d -i"';
+    
     try {
-      const wsPath = Extension.getInstance().workspaceFolder?.uri.fsPath || process.cwd();
+      const pids = await ScriptExecutor.executeScriptAsync(checkCommand, wsPath);
       
-      // Use a more specific pattern to avoid killing unintended processes
-      // First check if our caffeinate processes exist
-      const checkCommand = 'pgrep -f "^caffeinate -d -i"';
-      
-      try {
-        const pids = await ScriptExecutor.executeScriptAsync(checkCommand, wsPath);
-        
-        if (pids && pids.trim()) {
-          // Kill only the specific caffeinate processes we started
-          const killCommand = 'pkill -f "^caffeinate -d -i"';
-          await ScriptExecutor.executeScriptAsync(killCommand, wsPath);
-          Logger.info('Caffeine disabled');
-          Notifications.info('System sleep prevention disabled');
-        } else {
-          Logger.info('Caffeine disabled (no processes found)');
-        }
-      } catch (error) {
-        // pgrep/pkill returns non-zero exit code if no processes found
-        // This is fine, it just means caffeine wasn't running
+      if (pids && pids.trim()) {
+        // Kill only the specific caffeinate processes we started
+        const killCommand = 'pkill -f "^caffeinate -d -i"';
+        await ScriptExecutor.executeScriptAsync(killCommand, wsPath);
+        Logger.info('Caffeine disabled');
+        Notifications.info('System sleep prevention disabled');
+      } else {
         Logger.info('Caffeine disabled (no processes found)');
       }
     } catch (error) {
-      Notifications.error(`Failed to disable Caffeine: ${(error as Error).message}`);
+      // pgrep/pkill returns non-zero exit code if no processes found
+      // This is fine, it just means caffeine wasn't running
+      Logger.info('Caffeine disabled (no processes found)');
     }
   }
 }
