@@ -1169,7 +1169,7 @@
     "zoom": {
       "type": "number",
       "title": "The number of times to zoom in or out",
-      "default": 1
+      "default": 0
     },
     "pollId": {
       "type": "string",

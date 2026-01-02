@@ -9,7 +9,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "cf:dev": "npx wrangler pages dev function"
+    "cf:dev": "npx wrangler pages dev functions"
   },
   "dependencies": {
     "@astrojs/react": "^4.1.2",

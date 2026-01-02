@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { clearVariablesState } from './utils';
 import {
+  AnalyticsCommands,
   DecoratorService,
   DemoApi,
   DemoCreator,
@@ -62,6 +63,7 @@ export async function activate(context: vscode.ExtensionContext) {
   ImportService.register();
   TerminalService.register();
   InputService.registerCommands();
+  AnalyticsCommands.registerCommands();
   SponsorService.init(context);
 
   console.log(`${Config.title} is active!`);

@@ -62,4 +62,10 @@ export const COMMAND = {
   openSupportTheProject: `${EXTENSION_NAME}.openSupportTheProject`,
   openRemoteControl: `${EXTENSION_NAME}.openRemoteControl`,
   openPowerPointAddin: `${EXTENSION_NAME}.openPowerPointAddin`,
+  // Analytics
+  analyticsStart: `${EXTENSION_NAME}.analytics.start`,
+  analyticsStop: `${EXTENSION_NAME}.analytics.stop`,
+  analyticsDashboard: `${EXTENSION_NAME}.analytics.dashboard`,
+  analyticsExport: `${EXTENSION_NAME}.analytics.export`,
+  analyticsToggle: `${EXTENSION_NAME}.analytics.toggle`,
 };

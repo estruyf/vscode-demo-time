@@ -54,4 +54,12 @@ export const Config = {
     showScreenshot: 'remote.showScreenshot',
     showNotes: 'remote.showNotes',
   },
+  analytics: {
+    enabled: 'analytics.enabled',
+    narrativeThreshold: 'analytics.narrativeThreshold',
+    trackCursorMovements: 'analytics.trackCursorMovements',
+    trackScrollEvents: 'analytics.trackScrollEvents',
+    trackTerminalCommands: 'analytics.trackTerminalCommands',
+    autoSaveInterval: 'analytics.autoSaveInterval',
+  },
 };

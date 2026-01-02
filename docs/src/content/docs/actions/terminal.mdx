@@ -236,16 +236,16 @@ You can pass arguments to your scripts using the `args` property. Arguments are 
 ```js title="script.mjs"
 // Arguments are available in process.argv starting at index 2
 const args = process.argv.slice(2);
-console.log('First arg:', args[0]);  // "30" (age)
-console.log('Second arg:', args[1]); // "John" (name)
-
-// Or destructure directly
-const [age, name] = process.argv.slice(2First argument
+console.log('First arg:', args[0]);  // First argument
 console.log('Second arg:', args[1]); // Second argument
 
 // Or destructure directly
 const [firstArg, secondArg] = process.argv.slice(2);
-console.log(`First: ${firstArg}, Second: ${secondArg
+console.log(`First: ${firstArg}, Second: ${secondArg}`);
+```
+
+</TabItem>
+<TabItem label="Python">
 
 ```python title="script.py"
 import sys

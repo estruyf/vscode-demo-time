@@ -1,3 +1,4 @@
+export * from './analytics';
 export * from './ChatActionsService';
 export * from './DecoratorService';
 export * from './DemoApi';

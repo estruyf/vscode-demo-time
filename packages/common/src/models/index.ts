@@ -1,4 +1,5 @@
 export * from './Action';
+export * from './Analytics';
 export * from './DemoFileCache';
 export * from './Demos';
 export * from './EngageTimePoll';
