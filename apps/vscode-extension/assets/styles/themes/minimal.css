@@ -1,5 +1,3 @@
-@custom-variant dark (&:is(.vscode-dark *));
-
 /* Minimal Theme */
 .slide.minimal {
   --demotime-color: var(--vscode-editor-foreground);
@@ -56,8 +54,12 @@
   font-size: var(--demotime-font-size);
 
   .slide__content__inner {
-    @apply p-8 space-y-4;
+    @apply p-8;
     box-sizing: border-box;
+
+    > :not([hidden]) ~ :not([hidden]) {
+      margin-top: 1rem;
+    }
   }
 
   h1 {
@@ -202,6 +204,34 @@
   .image {
     .slide__content__inner {
       @apply flex flex-col items-center justify-center text-center;
+    }
+  }
+
+  .video {
+    .slide__content__inner {
+      @apply flex flex-col items-center justify-center text-center;
+      background-color: transparent;
+    }
+
+    .slide__video {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+
+      video {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: cover;
+        filter: brightness(0.65);
+      }
     }
   }
 

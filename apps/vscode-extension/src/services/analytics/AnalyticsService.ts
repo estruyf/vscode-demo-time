@@ -2,14 +2,12 @@ import {
   PresentationSession,
   SegmentAnalytics,
   FileActivityRecord,
-  TerminalCommandRecord,
   ErrorRecord,
   NavigationEvent,
   AnalyticsSummary,
   AnalyticsConfig,
   DEFAULT_ANALYTICS_CONFIG,
   Demo,
-  Step,
   Config,
   ActionTime,
   ActTimingInfo,
@@ -46,24 +44,14 @@ export class AnalyticsService {
    */
   public static loadConfigFromSettings(): void {
     const ext = Extension.getInstance();
+    const enabled = ext.getSetting<boolean>(Config.analytics.enabled);
     AnalyticsService.config = {
-      enabled:
-        ext.getSetting<boolean>(Config.analytics.enabled) ?? DEFAULT_ANALYTICS_CONFIG.enabled,
-      narrativeThreshold:
-        ext.getSetting<number>(Config.analytics.narrativeThreshold) ??
-        DEFAULT_ANALYTICS_CONFIG.narrativeThreshold,
-      trackCursorMovements:
-        ext.getSetting<boolean>(Config.analytics.trackCursorMovements) ??
-        DEFAULT_ANALYTICS_CONFIG.trackCursorMovements,
-      trackScrollEvents:
-        ext.getSetting<boolean>(Config.analytics.trackScrollEvents) ??
-        DEFAULT_ANALYTICS_CONFIG.trackScrollEvents,
-      trackTerminalCommands:
-        ext.getSetting<boolean>(Config.analytics.trackTerminalCommands) ??
-        DEFAULT_ANALYTICS_CONFIG.trackTerminalCommands,
-      autoSaveInterval:
-        ext.getSetting<number>(Config.analytics.autoSaveInterval) ??
-        DEFAULT_ANALYTICS_CONFIG.autoSaveInterval,
+      enabled: enabled ?? DEFAULT_ANALYTICS_CONFIG.enabled,
+      narrativeThreshold: DEFAULT_ANALYTICS_CONFIG.narrativeThreshold,
+      trackCursorMovements: DEFAULT_ANALYTICS_CONFIG.trackCursorMovements,
+      trackScrollEvents: DEFAULT_ANALYTICS_CONFIG.trackScrollEvents,
+      trackTerminalCommands: DEFAULT_ANALYTICS_CONFIG.trackTerminalCommands,
+      autoSaveInterval: DEFAULT_ANALYTICS_CONFIG.autoSaveInterval,
     };
   }
 

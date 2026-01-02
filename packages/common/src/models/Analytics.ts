@@ -425,8 +425,8 @@ export interface AnalyticsConfig {
  * Default analytics configuration.
  */
 export const DEFAULT_ANALYTICS_CONFIG: AnalyticsConfig = {
-  enabled: false,
-  narrativeThreshold: 3000, // 3 seconds
+  enabled: true,
+  narrativeThreshold: 30000, // 3 seconds
   trackCursorMovements: false, // Can be verbose
   trackScrollEvents: true,
   trackTerminalCommands: true,
