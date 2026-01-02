@@ -117,8 +117,12 @@ const ThemeBuilderView = () => {
 
   const parseCSSToConfig = (css: string, name: string): ThemeConfig => {
     // Enhanced CSS parser to extract theme configuration
-    // Note: This parser handles common theme patterns but may not capture all edge cases.
-    // For production use with complex CSS, consider using a CSS parsing library.
+    // Limitations: This parser handles common patterns but doesn't support:
+    // - Media queries, nested at-rules
+    // - Complex selectors (e.g., attribute selectors, pseudo-classes beyond basic ones)
+    // - CSS variables as values
+    // - Vendor-prefixed properties
+    // For complex themes, the parser extracts what it can and defaults the rest.
     const config: ThemeConfig = {
       name,
       className: name,
@@ -256,7 +260,7 @@ const ThemeBuilderView = () => {
     Object.entries(slideTemplates).forEach(([templateName, template]) => {
       css += `  .${templateName} {\n`;
       
-      if (template.backgroundColor || template.backgroundImage || template.color || template.padding || template.layout) {
+      if (template.padding || template.layout) {
         css += `    .slide__content__inner {\n`;
         
         if (template.layout === 'center') {
