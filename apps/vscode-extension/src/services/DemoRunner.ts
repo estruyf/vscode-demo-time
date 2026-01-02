@@ -676,7 +676,7 @@ export class DemoRunner {
       if (AnalyticsService.isRecording() && DemoRunner.currentDemo) {
         const executingFile = await DemoRunner.getExecutedDemoFile();
         const demoFile = await DemoFileProvider.getFile(Uri.file(executingFile.filePath));
-        AnalyticsService.startSegment(
+        await AnalyticsService.startSegment(
           executingFile.filePath, // Act file path
           demoFile?.title || 'Untitled Act', // Act title
           DemoRunner.currentDemo, // Scene (demo)

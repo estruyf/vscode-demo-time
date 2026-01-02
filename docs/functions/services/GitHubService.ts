@@ -60,8 +60,11 @@ export class GitHubService {
     let sponsors: SponsorNode[] = [];
 
     if (response && response.ok) {
-      const data = (await response.json()) as SponsorData;
-      sponsors = data.data?.user?.sponsorshipsAsMaintainer?.nodes || [];
+      const result = (await response.json()) as SponsorData & { errors?: unknown[] };
+      if (result.errors && result.errors.length) {
+        return null;
+      }
+      sponsors = result.data?.user?.sponsorshipsAsMaintainer?.nodes || [];
     } else {
       return null;
     }

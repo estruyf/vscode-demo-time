@@ -319,10 +319,25 @@
           "default": false,
           "description": "Enable presentation analytics to track timing, navigation, and performance during demos."
         },
-        "demoTime.analytics.pauseThreshold": {
+        "demoTime.analytics.narrativeThreshold": {
           "type": "number",
           "default": 3000,
-          "description": "Minimum pause duration in milliseconds to detect as a hesitation (default: 3000ms)."
+          "description": "Minimum narrative/speaking duration in milliseconds to detect and track (default: 3000ms)."
+        },
+        "demoTime.analytics.trackCursorMovements": {
+          "type": "boolean",
+          "default": false,
+          "description": "Track cursor movements during the presentation. Can be verbose and impact performance (default: false)."
+        },
+        "demoTime.analytics.trackScrollEvents": {
+          "type": "boolean",
+          "default": true,
+          "description": "Track scroll events in files during the presentation (default: true)."
+        },
+        "demoTime.analytics.trackTerminalCommands": {
+          "type": "boolean",
+          "default": true,
+          "description": "Track terminal commands executed during the presentation (default: true)."
         },
         "demoTime.analytics.autoSaveInterval": {
           "type": "number",

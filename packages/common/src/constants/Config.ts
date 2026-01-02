@@ -56,7 +56,10 @@ export const Config = {
   },
   analytics: {
     enabled: 'analytics.enabled',
-    dwellThreshold: 'analytics.dwellThreshold',
+    narrativeThreshold: 'analytics.narrativeThreshold',
+    trackCursorMovements: 'analytics.trackCursorMovements',
+    trackScrollEvents: 'analytics.trackScrollEvents',
+    trackTerminalCommands: 'analytics.trackTerminalCommands',
     autoSaveInterval: 'analytics.autoSaveInterval',
   },
 };

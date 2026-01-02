@@ -1,4 +1,4 @@
-import { commands, workspace } from 'vscode';
+import { commands, workspace, window } from 'vscode';
 import { WebviewType } from '../../models';
 import { WebViewMessages, Config } from '@demotime/common';
 import { BaseWebview } from '../../webview/BaseWebviewPanel';
@@ -43,7 +43,7 @@ export class AnalyticsDashboard extends BaseWebview {
   }
 
   protected static async messageListener(message: any) {
-    super.messageListener(message);
+    await super.messageListener(message);
     const { command, requestId, payload } = message;
 
     if (!command) {
@@ -67,6 +67,10 @@ export class AnalyticsDashboard extends BaseWebview {
         handleGetRecordingStatus(requestId);
         break;
       case WebViewMessages.toVscode.openFile:
+        if (!payload?.filename) {
+          Notifications.error('Failed to get URI for session file: missing filename');
+          return;
+        }
         const sessionUri = AnalyticsStorage.getSessionFileUri(payload.filename);
         if (!sessionUri) {
           Notifications.error(`Failed to get URI for session file: ${payload.filename}`);
@@ -210,7 +214,7 @@ export class AnalyticsDashboard extends BaseWebview {
           content,
           language,
         });
-        await (await import('vscode')).window.showTextDocument(doc);
+        await window.showTextDocument(doc);
 
         Notifications.info('Session exported. Save the document to keep it.');
       } catch (error) {

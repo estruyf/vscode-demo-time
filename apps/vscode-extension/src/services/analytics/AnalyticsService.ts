@@ -49,10 +49,18 @@ export class AnalyticsService {
     AnalyticsService.config = {
       enabled:
         ext.getSetting<boolean>(Config.analytics.enabled) ?? DEFAULT_ANALYTICS_CONFIG.enabled,
-      narrativeThreshold: DEFAULT_ANALYTICS_CONFIG.narrativeThreshold,
-      trackCursorMovements: DEFAULT_ANALYTICS_CONFIG.trackCursorMovements,
-      trackScrollEvents: DEFAULT_ANALYTICS_CONFIG.trackScrollEvents,
-      trackTerminalCommands: DEFAULT_ANALYTICS_CONFIG.trackTerminalCommands,
+      narrativeThreshold:
+        ext.getSetting<number>(Config.analytics.narrativeThreshold) ??
+        DEFAULT_ANALYTICS_CONFIG.narrativeThreshold,
+      trackCursorMovements:
+        ext.getSetting<boolean>(Config.analytics.trackCursorMovements) ??
+        DEFAULT_ANALYTICS_CONFIG.trackCursorMovements,
+      trackScrollEvents:
+        ext.getSetting<boolean>(Config.analytics.trackScrollEvents) ??
+        DEFAULT_ANALYTICS_CONFIG.trackScrollEvents,
+      trackTerminalCommands:
+        ext.getSetting<boolean>(Config.analytics.trackTerminalCommands) ??
+        DEFAULT_ANALYTICS_CONFIG.trackTerminalCommands,
       autoSaveInterval:
         ext.getSetting<number>(Config.analytics.autoSaveInterval) ??
         DEFAULT_ANALYTICS_CONFIG.autoSaveInterval,
@@ -210,23 +218,19 @@ export class AnalyticsService {
    * @param actTitle - Title of the Act (demo file)
    * @param scene - The Scene (demo) being executed
    * @param sceneIndex - Index of the Scene in the Act
-   * @param move - The Move (step) being executed
-   * @param moveIndex - Index of the Move within the Scene
    */
-  public static startSegment(
+  public static async startSegment(
     actFilePath: string,
     actTitle: string,
     scene: Demo,
     sceneIndex: number,
-    move: Step,
-    moveIndex: number,
-  ): string {
+  ): Promise<string> {
     if (!AnalyticsService.currentSession) {
       return '';
     }
 
     // Track this act file's timing
-    AnalyticsService.trackActTiming(actFilePath);
+    await AnalyticsService.trackActTiming(actFilePath);
 
     const now = new Date().toISOString();
     const nowTimestamp = Date.now();

@@ -2,6 +2,7 @@ import { Uri, workspace } from 'vscode';
 import { PresentationSession } from '@demotime/common';
 import { Extension } from '../Extension';
 import { Logger } from '../Logger';
+import { parseWinPath } from '@estruyf/vscode';
 
 const ANALYTICS_FOLDER = '.demo/analytics';
 const SESSIONS_FOLDER = 'sessions';
@@ -92,6 +93,8 @@ export class AnalyticsStorage {
    */
   public static async loadSession(filename: string): Promise<PresentationSession | undefined> {
     try {
+      filename = parseWinPath(filename);
+
       const sessionsFolder = AnalyticsStorage.getSessionsFolderUri();
       if (!sessionsFolder) {
         return undefined;
@@ -111,6 +114,7 @@ export class AnalyticsStorage {
    */
   public static getSessionFileUri(filename: string): Uri | undefined {
     try {
+      filename = parseWinPath(filename);
       const sessionsFolder = AnalyticsStorage.getSessionsFolderUri();
       if (!sessionsFolder) {
         return undefined;
@@ -150,6 +154,8 @@ export class AnalyticsStorage {
    */
   public static async deleteSession(filename: string): Promise<boolean> {
     try {
+      filename = parseWinPath(filename);
+
       const sessionsFolder = AnalyticsStorage.getSessionsFolderUri();
       if (!sessionsFolder) {
         return false;
