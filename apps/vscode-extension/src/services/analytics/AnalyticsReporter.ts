@@ -407,15 +407,6 @@ export class AnalyticsReporter {
       );
     }
 
-    if (summary.longestNarratives.length > 0) {
-      lines.push(`\n## Notable Narrative Segments`);
-      for (const narrative of summary.longestNarratives.slice(0, 5)) {
-        lines.push(
-          `- ${narrative.location}: ${AnalyticsReporter.formatDuration(narrative.duration)}`,
-        );
-      }
-    }
-
     if (summary.errorSummary.totalErrors > 0) {
       lines.push(`\n## Errors`);
       lines.push(`- Total: ${summary.errorSummary.totalErrors}`);
