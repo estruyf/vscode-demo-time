@@ -188,6 +188,11 @@
           "default": 1,
           "description": "Opacity of the text which is not highlighted"
         },
+        "demoTime.zoom": {
+          "type": "number",
+          "default": 1,
+          "description": "Zoom level to apply when using the zoomIn and zoomOut actions. This sets the editor font size accordingly."
+        },
         "demoTime.highlightZoomEnabled": {
           "type": [
             "boolean",
@@ -308,6 +313,36 @@
           "type": "boolean",
           "default": true,
           "description": "Enable remote notes functionality."
+        },
+        "demoTime.analytics.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable presentation analytics to track timing, navigation, and performance during demos."
+        },
+        "demoTime.analytics.narrativeThreshold": {
+          "type": "number",
+          "default": 3000,
+          "description": "Minimum narrative/speaking duration in milliseconds to detect and track (default: 3000ms)."
+        },
+        "demoTime.analytics.trackCursorMovements": {
+          "type": "boolean",
+          "default": false,
+          "description": "Track cursor movements during the presentation. Can be verbose and impact performance (default: false)."
+        },
+        "demoTime.analytics.trackScrollEvents": {
+          "type": "boolean",
+          "default": true,
+          "description": "Track scroll events in files during the presentation (default: true)."
+        },
+        "demoTime.analytics.trackTerminalCommands": {
+          "type": "boolean",
+          "default": true,
+          "description": "Track terminal commands executed during the presentation (default: true)."
+        },
+        "demoTime.analytics.autoSaveInterval": {
+          "type": "number",
+          "default": 30000,
+          "description": "Auto-save interval for analytics data in milliseconds. Set to 0 to only save at session end (default: 30000ms)."
         }
       }
     },
@@ -553,6 +588,42 @@
         "command": "demo-time.openPowerPointAddin",
         "title": "Open PowerPoint Add-in",
         "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.authenticate",
+        "title": "Authenticate with GitHub (Unlock Pro Features)",
+        "category": "Demo Time",
+        "icon": "$(github)"
+      },
+      {
+        "command": "demo-time.analytics.start",
+        "title": "Start Analytics Recording",
+        "category": "Demo Time Analytics",
+        "icon": "$(record)"
+      },
+      {
+        "command": "demo-time.analytics.stop",
+        "title": "Stop Analytics Recording",
+        "category": "Demo Time Analytics",
+        "icon": "$(debug-stop)"
+      },
+      {
+        "command": "demo-time.analytics.toggle",
+        "title": "Toggle Analytics Recording",
+        "category": "Demo Time Analytics",
+        "icon": "$(pulse)"
+      },
+      {
+        "command": "demo-time.analytics.dashboard",
+        "title": "Open Analytics Dashboard",
+        "category": "Demo Time Analytics",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "demo-time.analytics.export",
+        "title": "Export Analytics Session",
+        "category": "Demo Time Analytics",
+        "icon": "$(export)"
       }
     ],
     "menus": {
@@ -828,7 +899,11 @@
     "viewsWelcome": [
       {
         "view": "demo-time-scenes",
-        "contents": "Welcome to Demo Time! Start by creating a demo file in JSON or YAML format, or click the initialize button.\n\n[Initialize](command:demo-time.initialize)\n\n[Learn More](https://demotime.show)\n\n[Become a sponsor $(heart)](https://github.com/sponsors/estruyf)"
+        "contents": "Welcome to Demo Time! Start by creating a demo file in JSON or YAML format, or click the initialize button.\n\n[Initialize](command:demo-time.initialize)\n\n[Learn More](https://demotime.show)"
+      },
+      {
+        "view": "demo-time-resources",
+        "contents": "The Demo Time Resources view provides quick access to helpful resources such as documentation, tutorials, and support.\n\n[Open Documentation](command:demo-time.docs)\n\n[Become a sponsor $(heart)](https://github.com/sponsors/estruyf)"
       }
     ],
     "walkthroughs": [

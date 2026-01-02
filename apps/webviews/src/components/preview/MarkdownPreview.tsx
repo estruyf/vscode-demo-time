@@ -318,6 +318,16 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     };
   }, [isZoomed, toggleZoom]);
 
+  React.useEffect(() => {
+    if (crntSlide?.index !== undefined) {
+      messageHandler.send(WebViewMessages.toVscode.preview.recordOpenSlide, {
+        slideIndex: crntSlide.index,
+        filePath: crntFilePath,
+        slideTitle: extractFirstH1(crntSlide.content)
+      });
+    }
+  }, [crntFilePath, crntSlide]);
+
   return (
     <>
       <div

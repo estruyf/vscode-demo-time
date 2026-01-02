@@ -254,7 +254,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       label = "Insert Typing Speed (ms)";
     } else if (step.action === Action.RunDemoById) {
       label = "Demo ID";
-    } else if (step.action === Action.ExecuteScript) {
+    } else if (step.action === Action.ExecuteScript && field === 'id') {
       label = "Script ID";
     } else if (field === 'openInVSCode') {
       label = 'Open in VS Code';

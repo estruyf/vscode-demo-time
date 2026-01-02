@@ -179,6 +179,7 @@ export const WebViewMessages = {
       getSlide: 'getPreviewSlide',
       getTotalSlides: 'getPreviewTotalSlides',
       getGlobalSlideIndex: 'getPreviewGlobalSlideIndex',
+      recordOpenSlide: 'recordPreviewOpenSlide',
     },
     settingsView: {
       /**
@@ -196,6 +197,13 @@ export const WebViewMessages = {
       openConfigStep: 'openOverviewConfigStep',
       openSlide: 'openOverviewSlide',
       runDemoSteps: 'runOverviewDemoSteps',
+    },
+    analyticsDashboard: {
+      getSessions: 'getAnalyticsSessions',
+      getSessionSummary: 'getAnalyticsSessionSummary',
+      deleteSession: 'deleteAnalyticsSession',
+      exportSession: 'exportAnalyticsSession',
+      getRecordingStatus: 'getAnalyticsRecordingStatus',
     },
     presenter: {
       checkNextDemo: 'checkPresenterNextDemo',
@@ -290,6 +298,10 @@ export const WebViewMessages = {
     },
     overview: {
       update: 'updateOverview',
+    },
+    analyticsDashboard: {
+      updateSessions: 'updateAnalyticsSessions',
+      updateRecordingStatus: 'updateAnalyticsRecordingStatus',
     },
     presenter: {
       nextSlide: 'presenterNextSlide',

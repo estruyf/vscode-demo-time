@@ -41,6 +41,9 @@ export enum Action {
   ShowInfoMessage = 'showInfoMessage',
   SetState = 'setState',
   OpenWebsite = 'openWebsite',
+  ZoomIn = 'zoomIn',
+  ZoomOut = 'zoomOut',
+  ZoomReset = 'zoomReset',
   // Terminal
   OpenTerminal = 'openTerminal',
   ExecuteTerminalCommand = 'executeTerminalCommand',
