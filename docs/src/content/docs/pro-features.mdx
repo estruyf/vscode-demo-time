@@ -5,11 +5,11 @@ description: Unlock advanced features with Demo Time Pro through GitHub Sponsors
 
 import { Card, CardGrid, Aside } from '@astrojs/starlight/components';
 
-Demo Time offers powerful **Pro features** designed to enhance your presentation workflow with advanced analytics and export capabilities. These premium features are available to supporters who help sustain the project's development.
+Demo Time offers powerful **Pro features** designed to enhance your presentation workflow with advanced analytics capabilities. These premium features are available to supporters who help sustain the project's development.
 
 ## What are Pro Features?
 
-Pro features are advanced capabilities that go beyond the core Demo Time functionality. They help you analyze your presentations, improve your delivery, and export your content for offline use.
+Pro features are advanced capabilities that go beyond the core Demo Time functionality. They help you analyze your presentations and improve your delivery with detailed insights and metrics.
 
 <Aside type="tip" title="Support Open Source">
 By becoming a sponsor, you not only unlock Pro features but also directly support the continued development and maintenance of Demo Time.
@@ -48,9 +48,7 @@ Once authenticated and verified as a sponsor, Pro features will be automatically
 - New commands available in the Command Palette
 - The **Analytics Dashboard** option in the Demo Time resources panel
 
-## Available Pro Features
-
-### Analytics
+## Pro Feature: Analytics
 
 <Card title="Presentation Analytics" icon="graph">
 Track and analyze your presentation performance with detailed metrics and insights.
@@ -96,45 +94,6 @@ Export your analytics sessions for archival or external analysis:
 - Use **Demo Time Analytics: Export Analytics Session**
 - Choose the session to export
 - Data is saved as JSON with complete session details
-
----
-
-### PDF Export
-
-<Card title="Export Slides to PDF" icon="document">
-Export all your demo slides to a professional PDF document for sharing or offline viewing.
-</Card>
-
-#### What is PDF Export?
-
-The PDF Export feature allows you to generate a high-quality PDF document containing all slides from your demo files. This is perfect for:
-
-- Sharing presentation materials with attendees
-- Creating handouts or leave-behinds
-- Archiving your presentation content
-- Offline viewing and reference
-
-#### How to Use PDF Export
-
-1. Ensure you have slide content in your demo files (using the `openSlide` action)
-2. Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`)
-3. Run **Demo Time: Export slides to PDF**
-4. Wait for the export process to complete
-5. The PDF will be saved in your `.demo` folder
-
-#### What Gets Exported
-
-The PDF export includes:
-
-- All slides from all demo files in your workspace
-- Proper rendering of markdown content
-- Code syntax highlighting
-- Custom layouts and themes
-- Images and embedded content
-
-<Aside type="note">
-The export process uses a headless browser to render slides exactly as they appear in the slide preview, ensuring high-fidelity output.
-</Aside>
 
 ---
 
