@@ -2,7 +2,7 @@ import { Uri, workspace } from 'vscode';
 import { PresentationSession } from '@demotime/common';
 import { Extension } from '../Extension';
 import { Logger } from '../Logger';
-import { parseWinPath } from '@estruyf/vscode';
+import { parseWinPath } from '../../utils';
 
 const ANALYTICS_FOLDER = '.demo/analytics';
 const SESSIONS_FOLDER = 'sessions';

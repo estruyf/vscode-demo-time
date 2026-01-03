@@ -1,4 +1,4 @@
-import { commands, window } from 'vscode';
+import { commands, window, workspace } from 'vscode';
 import { COMMAND } from '@demotime/common';
 import { AnalyticsService } from './AnalyticsService';
 import { AnalyticsStorage } from './AnalyticsStorage';
@@ -7,11 +7,11 @@ import { Extension } from '../Extension';
 import { Notifications } from '../Notifications';
 import { Logger } from '../Logger';
 import { Subscription } from '../../models';
-import { DemoRunner } from '../DemoRunner';
 import { DemoFileProvider } from '../DemoFileProvider';
 import { SponsorService } from '../SponsorService';
 import { AnalyticsDashboard } from './AnalyticsDashboard';
 import { formatSessionFilename } from '../../utils';
+import { DemoRunner } from '../DemoRunner';
 
 /**
  * Handles registration and execution of analytics-related commands.
@@ -148,9 +148,7 @@ export class AnalyticsCommands {
         // Show a quick summary
         const textSummary = AnalyticsReporter.generateTextSummary(summary);
         await window.showTextDocument(
-          await (
-            await import('vscode')
-          ).workspace.openTextDocument({
+          await workspace.openTextDocument({
             content: textSummary,
             language: 'markdown',
           }),
@@ -258,9 +256,7 @@ export class AnalyticsCommands {
     }
 
     await window.showTextDocument(
-      await (
-        await import('vscode')
-      ).workspace.openTextDocument({
+      await workspace.openTextDocument({
         content,
         language,
       }),
