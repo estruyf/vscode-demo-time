@@ -276,6 +276,21 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: 'Open a website in the browser or the editor',
   } as QuickPickItem);
 
+  actions.push({
+    label: Action.ZoomIn,
+    description: 'Zoom in the editor',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.ZoomOut,
+    description: 'Zoom out the editor',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.ZoomReset,
+    description: 'Reset the editor zoom level',
+  } as QuickPickItem);
+
   /**
    * Extensibility actions
    */

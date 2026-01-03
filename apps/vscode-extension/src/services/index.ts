@@ -1,3 +1,4 @@
+export * from './analytics';
 export * from './ChatActionsService';
 export * from './DecoratorService';
 export * from './DemoApi';
@@ -24,8 +25,10 @@ export * from './ScreenshotService';
 export * from './ScriptExecutor';
 export * from './SelectionService';
 export * from './Slides';
+export * from './SponsorService';
 export * from './StateManager';
 export * from './TemplateCreator';
 export * from './TerminalService';
 export * from './TextTypingService';
 export * from './UriHandler';
+export * from './ZoomService';

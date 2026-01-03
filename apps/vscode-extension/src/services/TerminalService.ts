@@ -3,6 +3,7 @@ import { Notifications } from './Notifications';
 import { sleep } from '../utils';
 import { DemoRunner } from './DemoRunner';
 import { Step } from '@demotime/common';
+import { AnalyticsService } from './analytics';
 
 /**
  * Service to manage terminal operations for demo execution.
@@ -71,6 +72,15 @@ export class TerminalService {
       await TerminalService.waitForTerminalExecuted(
         command,
         terminalId ?? TerminalService.terminalName,
+      );
+    }
+
+    // Track terminal command in analytics
+    if (AnalyticsService.isRecording()) {
+      AnalyticsService.recordTerminalCommand(
+        command,
+        terminalId ?? TerminalService.terminalName,
+        typeMode === 'instant' ? false : undefined,
       );
     }
 

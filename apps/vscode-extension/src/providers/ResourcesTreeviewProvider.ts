@@ -9,6 +9,7 @@ import {
   TreeItemCollapsibleState,
 } from 'vscode';
 import { COMMAND } from '@demotime/common';
+import { SponsorService } from '../services';
 
 export class ResourcesTreeviewProvider implements TreeDataProvider<ResourceTreeItem> {
   private _onDidChangeTreeData = new EventEmitter<ResourceTreeItem | undefined>();
@@ -19,8 +20,8 @@ export class ResourcesTreeviewProvider implements TreeDataProvider<ResourceTreeI
     return element;
   }
 
-  getChildren(): ProviderResult<ResourceTreeItem[]> {
-    return Promise.resolve([
+  async getChildren(): Promise<ResourceTreeItem[]> {
+    const resources: ResourceTreeItem[] = [
       new ResourceTreeItem(
         'Documentation',
         'Learn how to use Demo Time',
@@ -61,7 +62,41 @@ export class ResourcesTreeviewProvider implements TreeDataProvider<ResourceTreeI
         },
         COMMAND.openPowerPointAddin,
       ),
-    ]);
+    ];
+
+    let isSponsor = false;
+    try {
+      isSponsor = SponsorService.getSponsorStatus();
+    } catch {}
+    if (isSponsor) {
+      resources.unshift(
+        new ResourceTreeItem(
+          'Analytics Dashboard',
+          'View your presentation analytics',
+          {
+            name: 'graph',
+            custom: false,
+            color: new ThemeColor('charts.blue'),
+          },
+          COMMAND.analyticsDashboard,
+        ),
+      );
+    } else {
+      resources.unshift(
+        new ResourceTreeItem(
+          'Get PRO Features',
+          'Unlock all Demo Time features',
+          {
+            name: 'lock',
+            custom: false,
+            color: new ThemeColor('charts.red'),
+          },
+          COMMAND.authenticate,
+        ),
+      );
+    }
+
+    return resources;
   }
 
   update(): void {

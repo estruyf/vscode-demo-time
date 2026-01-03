@@ -11,6 +11,7 @@ export * from './createSnapshot';
 export * from './evaluateCommand';
 export * from './fileExists';
 export * from './findPosition';
+export * from './formatSessionFilename';
 export * from './findPositionByLineNumbers';
 export * from './findPositionByPlaceholders';
 export * from './getAbsolutePath';
