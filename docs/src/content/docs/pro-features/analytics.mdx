@@ -1,7 +1,7 @@
 ---
 title: Presentation Analytics
 description: Track and analyze your presentation performance with detailed metrics and insights
-lastmod: 2026-01-02T19:58:00.000Z
+lastmod: 2026-01-03T09:59:14.272Z
 ---
 
 import { Aside, Card, Tabs, TabItem } from '@astrojs/starlight/components';
@@ -22,7 +22,6 @@ Presentation Analytics gives you deep insights into how you present your demos. 
 - **Navigation Tracking**: See which demos and steps take the most time
 - **File Activity**: Monitor which files are opened and edited during demos
 - **Terminal Tracking**: Capture terminal commands executed during presentations
-- **Scroll & Cursor Events**: Track user interactions (optional, can be verbose)
 - **Pause Detection**: Automatically detect and record narrative moments
 - **Performance Insights**: Get recommendations based on your presentation patterns
 - **Session Export**: Export your analytics data as JSON for archival or external analysis
@@ -30,6 +29,19 @@ Presentation Analytics gives you deep insights into how you present your demos. 
 ## Getting Started
 
 ### Starting a Recording Session
+
+To begin tracking your presentation you can start an Analytics recording session as follows:
+
+#### Automatic Start with Presentation Mode
+
+1. Start your presentation using **Demo Time: Start Presentation Mode** from the Command Palette.
+2. When prompted, choose the type of recording:
+   - **Dry Run / Practice**: For practice sessions and rehearsals
+   - **Live Presentation**: For actual presentations to audiences
+
+Once you are finished with your presentation, stop the presentation mode to end the recording (or use the reset command).
+
+#### Manual Start
 
 1. Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`)
 2. Run the command: **Demo Time Analytics: Start Analytics Recording**
@@ -102,61 +114,9 @@ Customize Analytics behavior through VS Code settings:
 ```json title=".vscode/settings.json"
 {
   // Enable or disable analytics tracking globally
-  "demoTime.analytics.enabled": true,
-  
-  // Auto-save interval in milliseconds (0 = save only at session end)
-  "demoTime.analytics.autoSaveInterval": 30000
+  "demoTime.analytics.enabled": true
 }
 ```
-
-### Tracking Options
-
-```json title=".vscode/settings.json"
-{
-  // Minimum pause duration (ms) to detect narrative moments
-  "demoTime.analytics.narrativeThreshold": 3000,
-  
-  // Track scroll events in files (default: true)
-  "demoTime.analytics.trackScrollEvents": true,
-  
-  // Track terminal commands (default: true)
-  "demoTime.analytics.trackTerminalCommands": true,
-  
-  // Track cursor movements (can be verbose, default: false)
-  "demoTime.analytics.trackCursorMovements": false
-}
-```
-
-<Aside type="note">
-Setting `trackCursorMovements` to `true` can generate a lot of data and may impact performance. Only enable this if you need granular interaction tracking.
-</Aside>
-
-## Exporting Analytics Data
-
-Export your analytics sessions for long-term storage or external analysis:
-
-1. Open the Command Palette
-2. Run: **Demo Time Analytics: Export Analytics Session**
-3. Select the session you want to export
-4. Choose a save location
-
-The exported data is saved as JSON with the following structure:
-
-```json
-{
-  "sessionId": "unique-session-id",
-  "sessionType": "live" | "practice",
-  "startTime": "2026-01-02T10:00:00.000Z",
-  "endTime": "2026-01-02T10:45:00.000Z",
-  "totalDuration": 2700000,
-  "demos": [...],
-  "fileActivity": [...],
-  "terminalCommands": [...],
-  "errors": [...]
-}
-```
-
-You can use this data with external analytics tools, share it with colleagues, or archive it for future reference.
 
 ## Best Practices
 
@@ -172,32 +132,13 @@ You can use this data with external analytics tools, share it with colleagues, o
 - **Compare to practice**: See how your live presentation differed from your practice runs
 - **Track improvements**: Record multiple presentations of the same content to see your progress
 
-### General Tips
-
-- **Use narrative threshold wisely**: Set it based on your speaking pace (3-5 seconds is typical)
-- **Disable cursor tracking**: Unless you specifically need it, keep this disabled for better performance
-- **Regular exports**: Export important sessions to avoid losing data if local storage is cleared
-- **Session types matter**: Use consistent labeling (practice vs. live) for better organization
-
 ## Troubleshooting
 
 ### Analytics not recording
 
 - Verify you're authenticated as a sponsor (run **Demo Time: Authenticate with GitHub**)
 - Check that `demoTime.analytics.enabled` is set to `true`
-- Ensure you've started recording with the Start Analytics command
-
-### Missing data in dashboard
-
-- Check if auto-save is enabled and the interval is reasonable
-- Verify the session completed normally (stopped with the Stop command)
-- Look for errors in the VS Code Developer Console (Help > Toggle Developer Tools)
-
-### Performance issues
-
-- Disable `trackCursorMovements` if enabled
-- Increase `autoSaveInterval` to reduce frequent writes
-- Consider disabling scroll tracking for very long sessions
+- Ensure you've started recording with the Start Analytics command or started presentation mode
 
 ## Privacy & Data Storage
 
@@ -205,13 +146,3 @@ You can use this data with external analytics tools, share it with colleagues, o
 - **No telemetry**: Analytics data is never sent to external servers
 - **You control exports**: Only you decide if and when to export or share your data
 - **Session isolation**: Each session is stored separately and can be deleted individually
-
-## Feedback & Feature Requests
-
-Have ideas for improving Analytics? We'd love to hear from you!
-
-- Submit feature requests on [GitHub Issues](https://github.com/estruyf/vscode-demo-time/issues)
-- Join discussions in the [community Discord](https://discord.gg/ETVDS8kqys)
-- Share your use cases and workflows
-
-Your feedback helps shape the future of Demo Time Analytics!

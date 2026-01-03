@@ -81,7 +81,14 @@ export default defineConfig({
             { label: 'Start presenting', slug: 'presentation-mode' },
           ],
         },
-        { label: 'Pro Features', slug: 'pro-features' },
+        { 
+          label: 'Pro Features',
+          collapsed: true,
+          items: [
+            { label: 'Overview', slug: 'pro-features' },
+            { label: 'Analytics', slug: 'pro-features/analytics' },
+          ] 
+        },
         {
           label: 'Actions',
           collapsed: true,
@@ -162,7 +169,6 @@ export default defineConfig({
             { label: 'URI handler', slug: 'features/uri-handler' },
             { label: 'Timer and clock', slug: 'features/timer-clock' },
             { label: 'MCP server support', slug: 'features/mcp-server' },
-            { label: 'Analytics (Pro)', slug: 'features/analytics' },
           ],
         },
         {
