@@ -681,8 +681,6 @@ export class DemoRunner {
           demoFile?.title || 'Untitled Act', // Act title
           DemoRunner.currentDemo, // Scene (demo)
           DemoRunner.currentDemoIndex, // Scene index
-          step, // Move (step)
-          currentIndex, // Move index
         );
       }
 
