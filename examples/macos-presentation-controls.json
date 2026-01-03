@@ -15,12 +15,6 @@
           "action": "macos.muteVolume"
         },
         {
-          "action": "macos.setScreenResolution",
-          "width": 1920,
-          "height": 1080,
-          "hidpi": false
-        },
-        {
           "action": "macos.enableFocusMode"
         },
         {

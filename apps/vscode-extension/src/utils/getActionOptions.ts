@@ -493,11 +493,6 @@ export const getActionOptions = (): QuickPickItem[] => {
   } as QuickPickItem);
 
   actions.push({
-    label: Action.SetScreenResolution,
-    description: 'Set screen resolution on macOS',
-  } as QuickPickItem);
-
-  actions.push({
     label: Action.EnableCaffeine,
     description: 'Enable Caffeine (prevent system sleep) on macOS',
   } as QuickPickItem);

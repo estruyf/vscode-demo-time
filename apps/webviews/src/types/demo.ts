@@ -146,6 +146,10 @@ export const CATEGORIZED_ACTIONS: {
       Action.DisableFocusMode,
       Action.HideMenubar,
       Action.ShowMenubar,
+      Action.MuteVolume,
+      Action.UnmuteVolume,
+      Action.EnableCaffeine,
+      Action.DisableCaffeine,
     ],
   },
   {

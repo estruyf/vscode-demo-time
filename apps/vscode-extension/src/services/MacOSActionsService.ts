@@ -181,37 +181,6 @@ end tell`;
   }
 
   /**
-   * Set screen resolution on macOS
-   * @param width Screen width in pixels
-   * @param height Screen height in pixels
-   * @param hidpi Whether to use HiDPI/Retina mode
-   */
-  public static async setScreenResolution(
-    width: number,
-    height: number,
-    hidpi: boolean = false,
-  ): Promise<void> {
-    if (!MacOSActionsService.isMacOS()) {
-      Notifications.warning('Screen resolution control is only available on macOS.');
-      return;
-    }
-
-    const command = `displayplacer "id:main ${hidpi ? 'scaled' : 'res'}:${width}x${height}"`;
-    const wsPath = Extension.getInstance().workspaceFolder?.uri.fsPath || process.cwd();
-    
-    try {
-      await ScriptExecutor.executeScriptAsync(command, wsPath);
-      Logger.info(`Screen resolution set to ${width}x${height}${hidpi ? ' (HiDPI)' : ''}`);
-    } catch (error) {
-      // If displayplacer is not available, provide instructions
-      Notifications.warning(
-        'Screen resolution control requires the "displayplacer" tool. Install it with: brew install displayplacer',
-      );
-      Logger.error(`displayplacer not found: ${(error as Error).message}`);
-    }
-  }
-
-  /**
    * Enable Caffeine (prevent system from sleeping) on macOS
    * @param duration Optional duration in minutes. If not provided, prevents sleep indefinitely.
    */

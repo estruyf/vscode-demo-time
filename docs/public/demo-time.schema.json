@@ -145,7 +145,6 @@
                     "macos.showMenubar",
                     "macos.muteVolume",
                     "macos.unmuteVolume",
-                    "macos.setScreenResolution",
                     "macos.enableCaffeine",
                     "macos.disableCaffeine",
                     "startEngageTimeSession",
@@ -967,29 +966,6 @@
                   "if": {
                     "properties": {
                       "action": {
-                        "const": "macos.setScreenResolution"
-                      }
-                    }
-                  },
-                  "then": {
-                    "required": ["width", "height"],
-                    "properties": {
-                      "width": {
-                        "$ref": "#/definitions/width"
-                      },
-                      "height": {
-                        "$ref": "#/definitions/height"
-                      },
-                      "hidpi": {
-                        "$ref": "#/definitions/hidpi"
-                      }
-                    }
-                  }
-                },
-                {
-                  "if": {
-                    "properties": {
-                      "action": {
                         "const": "macos.enableCaffeine"
                       }
                     }
@@ -1236,19 +1212,6 @@
     "description": {
       "type": "string",
       "title": "The description of the EngageTime message"
-    },
-    "width": {
-      "type": "number",
-      "title": "Screen width in pixels (for macos.setScreenResolution)"
-    },
-    "height": {
-      "type": "number",
-      "title": "Screen height in pixels (for macos.setScreenResolution)"
-    },
-    "hidpi": {
-      "type": "boolean",
-      "title": "Use HiDPI/Retina mode (for macos.setScreenResolution)",
-      "default": false
     },
     "duration": {
       "type": "number",

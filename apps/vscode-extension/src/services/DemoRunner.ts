@@ -794,17 +794,6 @@ export class DemoRunner {
     } else if (step.action === Action.UnmuteVolume) {
       await MacOSActionsService.unmuteVolume();
       return;
-    } else if (step.action === Action.SetScreenResolution) {
-      if (typeof step.width !== 'number' || typeof step.height !== 'number') {
-        Notifications.error('Width and height are required for screen resolution change.');
-        return;
-      }
-      await MacOSActionsService.setScreenResolution(
-        step.width,
-        step.height,
-        step.hidpi ?? false,
-      );
-      return;
     } else if (step.action === Action.EnableCaffeine) {
       await MacOSActionsService.enableCaffeine(step.duration as number | undefined);
       return;

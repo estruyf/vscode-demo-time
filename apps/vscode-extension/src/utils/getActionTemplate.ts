@@ -539,15 +539,6 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
-  if (action === Action.SetScreenResolution) {
-    return {
-      action: Action.SetScreenResolution,
-      width: 1920,
-      height: 1080,
-      hidpi: false,
-    };
-  }
-
   if (action === Action.EnableCaffeine) {
     return {
       action: Action.EnableCaffeine,

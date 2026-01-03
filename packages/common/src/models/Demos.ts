@@ -77,11 +77,6 @@ export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
   slide?: number;
   focusTop?: boolean;
 
-  // macOS screen resolution
-  width?: number;
-  height?: number;
-  hidpi?: boolean;
-
   // macOS caffeine
   duration?: number;
 

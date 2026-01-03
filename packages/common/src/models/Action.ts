@@ -86,7 +86,6 @@ export enum Action {
   ShowMenubar = 'macos.showMenubar',
   MuteVolume = 'macos.muteVolume',
   UnmuteVolume = 'macos.unmuteVolume',
-  SetScreenResolution = 'macos.setScreenResolution',
   EnableCaffeine = 'macos.enableCaffeine',
   DisableCaffeine = 'macos.disableCaffeine',
   // EngageTime

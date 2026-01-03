@@ -76,63 +76,6 @@ describe('MacOSActionsService', () => {
     });
   });
 
-  describe('Screen Resolution', () => {
-    beforeEach(() => {
-      (Extension.getInstance as jest.Mock).mockReturnValue({
-        workspaceFolder: { uri: { fsPath: '/test/workspace' } },
-      });
-    });
-
-    it('should set screen resolution on macOS', async () => {
-      (os.platform as jest.Mock).mockReturnValue('darwin');
-      (ScriptExecutor.executeScriptAsync as jest.Mock).mockResolvedValue('');
-
-      await MacOSActionsService.setScreenResolution(1920, 1080, false);
-
-      expect(ScriptExecutor.executeScriptAsync).toHaveBeenCalledWith(
-        'displayplacer "id:main res:1920x1080"',
-        '/test/workspace',
-      );
-      expect(Logger.info).toHaveBeenCalledWith('Screen resolution set to 1920x1080');
-    });
-
-    it('should set screen resolution with HiDPI on macOS', async () => {
-      (os.platform as jest.Mock).mockReturnValue('darwin');
-      (ScriptExecutor.executeScriptAsync as jest.Mock).mockResolvedValue('');
-
-      await MacOSActionsService.setScreenResolution(1920, 1080, true);
-
-      expect(ScriptExecutor.executeScriptAsync).toHaveBeenCalledWith(
-        'displayplacer "id:main scaled:1920x1080"',
-        '/test/workspace',
-      );
-      expect(Logger.info).toHaveBeenCalledWith('Screen resolution set to 1920x1080 (HiDPI)');
-    });
-
-    it('should show warning when displayplacer is not available', async () => {
-      (os.platform as jest.Mock).mockReturnValue('darwin');
-      const error = new Error('displayplacer: command not found');
-      (ScriptExecutor.executeScriptAsync as jest.Mock).mockRejectedValue(error);
-
-      await MacOSActionsService.setScreenResolution(1920, 1080, false);
-
-      expect(Notifications.warning).toHaveBeenCalledWith(
-        expect.stringContaining('displayplacer'),
-      );
-    });
-
-    it('should show warning when trying to set resolution on non-macOS', async () => {
-      (os.platform as jest.Mock).mockReturnValue('linux');
-
-      await MacOSActionsService.setScreenResolution(1920, 1080, false);
-
-      expect(Notifications.warning).toHaveBeenCalledWith(
-        'Screen resolution control is only available on macOS.',
-      );
-      expect(ScriptExecutor.executeScriptAsync).not.toHaveBeenCalled();
-    });
-  });
-
   describe('Caffeine (Sleep Prevention)', () => {
     beforeEach(() => {
       (Extension.getInstance as jest.Mock).mockReturnValue({

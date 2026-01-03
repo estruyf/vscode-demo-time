@@ -154,45 +154,6 @@ action: macos.unmuteVolume
 </TabItem>
 </Tabs>
 
-## Set Screen Resolution
-
-Change the screen resolution on macOS. This action requires the `displayplacer` tool to be installed.
-
-<Tabs syncKey="macos-set-resolution">
-<TabItem label="JSON">
-
-```json
-{
-  "action": "macos.setScreenResolution",
-  "width": 1920,
-  "height": 1080,
-  "hidpi": false
-}
-```
-
-</TabItem>
-<TabItem label="YAML">
-
-```yaml
-action: macos.setScreenResolution
-width: 1920
-height: 1080
-hidpi: false
-```
-
-</TabItem>
-</Tabs>
-
-### Parameters
-
-- `width` (required): The screen width in pixels
-- `height` (required): The screen height in pixels
-- `hidpi` (optional): Whether to use HiDPI/Retina mode. Default is `false`
-
-<Aside type="tip" title="Installing displayplacer">
-  Install the `displayplacer` tool using Homebrew: `brew install displayplacer`
-</Aside>
-
 ## Enable Caffeine
 
 Prevent the system from sleeping during presentations. You can enable it indefinitely or for a specific duration in minutes.
@@ -285,12 +246,6 @@ Here's a comprehensive example of how to set up your Mac for presentation mode a
       "action": "macos.muteVolume"
     },
     {
-      "action": "macos.setScreenResolution",
-      "width": 1920,
-      "height": 1080,
-      "hidpi": false
-    },
-    {
       "action": "macos.enableFocusMode"
     },
     {
@@ -313,10 +268,6 @@ steps:
   - action: macos.enableCaffeine
     duration: 90
   - action: macos.muteVolume
-  - action: macos.setScreenResolution
-    width: 1920
-    height: 1080
-    hidpi: false
   - action: macos.enableFocusMode
   - action: macos.hideMenubar
   - action: setPresentationView
