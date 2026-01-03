@@ -81,6 +81,14 @@ export default defineConfig({
             { label: 'Start presenting', slug: 'presentation-mode' },
           ],
         },
+        { 
+          label: 'Pro Features',
+          collapsed: true,
+          items: [
+            { label: 'Overview', slug: 'pro-features' },
+            { label: 'Analytics', slug: 'pro-features/analytics' },
+          ] 
+        },
         {
           label: 'Actions',
           collapsed: true,
