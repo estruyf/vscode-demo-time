@@ -788,6 +788,18 @@ export class DemoRunner {
     } else if (step.action === Action.ShowMenubar) {
       await MacOSActionsService.showMenubar();
       return;
+    } else if (step.action === Action.MuteVolume) {
+      await MacOSActionsService.muteVolume();
+      return;
+    } else if (step.action === Action.UnmuteVolume) {
+      await MacOSActionsService.unmuteVolume();
+      return;
+    } else if (step.action === Action.EnableCaffeine) {
+      await MacOSActionsService.enableCaffeine(step.duration as number | undefined);
+      return;
+    } else if (step.action === Action.DisableCaffeine) {
+      await MacOSActionsService.disableCaffeine();
+      return;
     }
 
     // Wait for the specified timeout

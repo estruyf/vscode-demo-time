@@ -143,6 +143,10 @@
                     "macos.disableFocusMode",
                     "macos.hideMenubar",
                     "macos.showMenubar",
+                    "macos.muteVolume",
+                    "macos.unmuteVolume",
+                    "macos.enableCaffeine",
+                    "macos.disableCaffeine",
                     "startEngageTimeSession",
                     "startEngageTimePoll",
                     "closeEngageTimeSession",
@@ -957,6 +961,22 @@
                       }
                     }
                   }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "macos.enableCaffeine"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "duration": {
+                        "$ref": "#/definitions/duration"
+                      }
+                    }
+                  }
                 }
               ],
               "additionalProperties": true
@@ -1192,6 +1212,10 @@
     "description": {
       "type": "string",
       "title": "The description of the EngageTime message"
+    },
+    "duration": {
+      "type": "number",
+      "title": "Duration in minutes (for macos.enableCaffeine). If not specified, prevents sleep indefinitely."
     }
   }
 }

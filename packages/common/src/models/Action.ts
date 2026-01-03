@@ -84,6 +84,10 @@ export enum Action {
   DisableFocusMode = 'macos.disableFocusMode',
   HideMenubar = 'macos.hideMenubar',
   ShowMenubar = 'macos.showMenubar',
+  MuteVolume = 'macos.muteVolume',
+  UnmuteVolume = 'macos.unmuteVolume',
+  EnableCaffeine = 'macos.enableCaffeine',
+  DisableCaffeine = 'macos.disableCaffeine',
   // EngageTime
   StartEngageTimeSession = 'startEngageTimeSession',
   StartEngageTimePoll = 'startEngageTimePoll',

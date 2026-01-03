@@ -143,4 +143,111 @@ end tell`;
       Notifications.error(`Failed to show menu bar: ${(error as Error).message}`);
     }
   }
+
+  /**
+   * Mute the system volume on macOS
+   */
+  public static async muteVolume(): Promise<void> {
+    if (!MacOSActionsService.isMacOS()) {
+      Notifications.warning('Volume control is only available on macOS.');
+      return;
+    }
+
+    try {
+      const script = `set volume output muted true`;
+      await MacOSActionsService.executeAppleScript(script);
+      Logger.info('Volume muted');
+    } catch (error) {
+      Notifications.error(`Failed to mute volume: ${(error as Error).message}`);
+    }
+  }
+
+  /**
+   * Unmute the system volume on macOS
+   */
+  public static async unmuteVolume(): Promise<void> {
+    if (!MacOSActionsService.isMacOS()) {
+      Notifications.warning('Volume control is only available on macOS.');
+      return;
+    }
+
+    try {
+      const script = `set volume output muted false`;
+      await MacOSActionsService.executeAppleScript(script);
+      Logger.info('Volume unmuted');
+    } catch (error) {
+      Notifications.error(`Failed to unmute volume: ${(error as Error).message}`);
+    }
+  }
+
+  /**
+   * Enable Caffeine (prevent system from sleeping) on macOS
+   * @param duration Optional duration in minutes. If not provided, prevents sleep indefinitely.
+   */
+  public static async enableCaffeine(duration?: number): Promise<void> {
+    if (!MacOSActionsService.isMacOS()) {
+      Notifications.warning('Caffeine is only available on macOS.');
+      return;
+    }
+
+    const wsPath = Extension.getInstance().workspaceFolder?.uri.fsPath || process.cwd();
+    
+    // Use caffeinate command (built-in on macOS)
+    // -d: prevent display from sleeping
+    // -i: prevent system from idle sleeping
+    // -t: specify timeout in seconds
+    let command = 'caffeinate -d -i';
+    
+    if (duration !== undefined) {
+      const seconds = duration * 60;
+      command += ` -t ${seconds}`;
+    }
+    
+    // Run in background using nohup and redirect output
+    command = `nohup ${command} > /dev/null 2>&1 & echo $!`;
+    
+    try {
+      const pid = await ScriptExecutor.executeScriptAsync(command, wsPath);
+      const durationMsg = duration !== undefined ? `for ${duration} minutes` : 'indefinitely';
+      Logger.info(`Caffeine enabled ${durationMsg} (PID: ${pid.trim()})`);
+      Notifications.info(`System sleep prevention enabled ${durationMsg}`);
+    } catch (error) {
+      Logger.error(`Failed to start caffeinate: ${(error as Error).message}`);
+      Notifications.error(`Failed to enable Caffeine: ${(error as Error).message}`);
+    }
+  }
+
+  /**
+   * Disable Caffeine (allow system to sleep) on macOS
+   */
+  public static async disableCaffeine(): Promise<void> {
+    if (!MacOSActionsService.isMacOS()) {
+      Notifications.warning('Caffeine is only available on macOS.');
+      return;
+    }
+
+    const wsPath = Extension.getInstance().workspaceFolder?.uri.fsPath || process.cwd();
+    
+    // Use a more specific pattern to avoid killing unintended processes
+    // First check if our caffeinate processes exist
+    const checkCommand = 'pgrep -f "^caffeinate -d -i"';
+    
+    try {
+      const pids = await ScriptExecutor.executeScriptAsync(checkCommand, wsPath);
+      
+      if (pids && pids.trim()) {
+        // Kill only the specific caffeinate processes we started
+        const killCommand = 'pkill -f "^caffeinate -d -i"';
+        await ScriptExecutor.executeScriptAsync(killCommand, wsPath);
+        Logger.info('Caffeine disabled');
+        Notifications.info('System sleep prevention disabled');
+      } else {
+        Logger.info('Caffeine disabled (no processes found)');
+      }
+    } catch (error) {
+      // pgrep/pkill returns non-zero exit code if no processes found
+      // This is fine, it just means caffeine wasn't running
+      Logger.info('Caffeine disabled (no processes found)');
+    }
+  }
 }

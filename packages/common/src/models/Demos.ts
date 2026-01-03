@@ -77,6 +77,9 @@ export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
   slide?: number;
   focusTop?: boolean;
 
+  // macOS caffeine
+  duration?: number;
+
   // Chats
   mode?: string;
 
