@@ -232,12 +232,15 @@ h1 {
   --bg-card: #1a1a1a;
   --bg-nested: #242424;
   --bg-deep: #2a2a2a;
-  --yellow: #f7c948;
+  --yellow: #ffd43b;
+  --purple: #8b5cf6;
+  --green: #10b981;
+  --blue: #3b82f6;
   --yellow-soft: #f7c94820;
   --text-primary: #ffffff;
   --text-secondary: #a0a0a0;
   --border-color: #3a3a3a;
-  --border-highlight: #f7c948;
+  --border-highlight: #ffd43b;
 }
 
 .terminology-container {
@@ -258,30 +261,35 @@ h1 {
 
 .card--play {
   background: var(--bg-card);
-  border-color: var(--border-highlight);
+  border-color: var(--yellow);
 }
 
 .card--act {
   background: var(--bg-nested);
-  border-color: var(--border-color);
+  border-color: var(--purple);
   margin-top: 20px;
 }
 
 .card--scene {
   background: var(--bg-deep);
-  border-color: var(--border-color);
+  border-color: var(--green);
+  margin-top: 16px;
+}
+
+.card--moves {
+  background: #1a1a1a;
+  border-color: var(--blue);
   margin-top: 16px;
 }
 
 .card--scene-placeholder {
   background: transparent;
-  border-style: solid;
+  border-style: dashed;
+  border-color: var(--green);
   padding: 20px 24px;
 }
 
 .card--act-placeholder {
-  background: var(--bg-card);
-  border-color: var(--border-highlight);
   padding: 20px 24px;
 }
 
