@@ -36,5 +36,6 @@
   //   "https://demotime.show/demo-time.schema.json": ".demo/*"
   // }
   "chat.tools.autoApprove": true,
-  "chat.agent.maxRequests": 100
+  "chat.agent.maxRequests": 100,
+  "demoTime.insertTypingMode": "character-by-character"
 }

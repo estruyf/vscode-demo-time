@@ -8,7 +8,7 @@ import {
   setContext,
   togglePresentationView,
 } from '../utils';
-import { DemoRunner, DemoStatusBar, Slides } from '../services';
+import { AnalyticsService, DemoRunner, DemoStatusBar, Slides } from '../services';
 import { COMMAND, WebViewMessages, Config, Action } from '@demotime/common';
 import { BaseWebview } from '../webview/BaseWebviewPanel';
 import { WebviewType } from '../models';
@@ -218,6 +218,16 @@ export class Preview extends BaseWebview {
       Preview.currentSlideIndex = payload;
     } else if (command === WebViewMessages.toVscode.slideReady) {
       Preview.reveal();
+    } else if (command === WebViewMessages.toVscode.preview.recordOpenSlide) {
+      // Record slide change in analytics if recording
+      if (
+        AnalyticsService.isRecording() &&
+        payload !== undefined &&
+        payload.filePath &&
+        typeof payload.slideIndex === 'number'
+      ) {
+        AnalyticsService.recordSlideOpen(payload.filePath, payload.slideIndex, payload.slideTitle);
+      }
     }
   }
 

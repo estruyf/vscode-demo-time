@@ -16,6 +16,7 @@ export const getActionIcon = (action: Action): string => {
     [Action.OpenSlide]: 'presentation',
     [Action.Insert]: 'plus',
     [Action.Highlight]: 'highlighter',
+    [Action.Selection]: 'mouse-pointer-click',
     [Action.Replace]: 'replace',
     [Action.Unselect]: 'mouse-pointer',
     [Action.Delete]: 'minus',
@@ -49,7 +50,9 @@ export const getActionIcon = (action: Action): string => {
     [Action.AgentChat]: 'bot',
     [Action.CustomChat]: 'bot',
     [Action.CloseChat]: 'message-circle-x',
+    [Action.CancelChat]: 'circle-stop',
     [Action.CopyToClipboard]: 'clipboard',
+    [Action.CopyFromSelection]: 'clipboard',
     [Action.PasteFromClipboard]: 'clipboard-paste',
     [Action.TypeText]: 'type',
     [Action.PressEnter]: 'corner-down-left',
@@ -64,6 +67,14 @@ export const getActionIcon = (action: Action): string => {
     [Action.RunDemoById]: 'play-circle',
     [Action.BackupSettings]: 'settings-gear',
     [Action.RestoreSettings]: 'settings-gear',
+    [Action.EnableFocusMode]: 'bell-off',
+    [Action.DisableFocusMode]: 'bell',
+    [Action.HideMenubar]: 'panel-top-close',
+    [Action.ShowMenubar]: 'panel-top-open',
+    [Action.MuteVolume]: 'volume-x',
+    [Action.UnmuteVolume]: 'volume-2',
+    [Action.EnableCaffeine]: 'coffee',
+    [Action.DisableCaffeine]: 'coffee',
     [Action.StartEngageTimeSession]: 'question',
     [Action.StartEngageTimePoll]: 'question',
     [Action.CloseEngageTimeSession]: 'question',
@@ -71,6 +82,9 @@ export const getActionIcon = (action: Action): string => {
     [Action.ShowEngageTimeSession]: 'question',
     [Action.ShowEngageTimePoll]: 'question',
     [Action.SendEngageTimeMessage]: 'question',
+    [Action.ZoomIn]: 'zoom-in',
+    [Action.ZoomOut]: 'zoom-out',
+    [Action.ZoomReset]: 'refresh-cw',
   };
   return iconMap[action] || 'circle';
 };
@@ -101,6 +115,7 @@ export const getActionColor = (action: Action): string => {
     action.includes('insert') ||
     action.includes('replace') ||
     action.includes('highlight') ||
+    action.includes('selection') ||
     action.includes('format')
   ) {
     return colorMap.edit;
@@ -149,6 +164,7 @@ export const getRequiredFields = (action: Action): string[] => {
     [Action.OpenSlide]: ['path'],
     [Action.Insert]: ['path'],
     [Action.Highlight]: ['path'],
+    [Action.Selection]: ['path'],
     [Action.Replace]: ['path'],
     [Action.Unselect]: [],
     [Action.Delete]: ['path'],
@@ -182,7 +198,9 @@ export const getRequiredFields = (action: Action): string[] => {
     [Action.AgentChat]: [],
     [Action.CustomChat]: ['mode'],
     [Action.CloseChat]: [],
+    [Action.CancelChat]: [],
     [Action.CopyToClipboard]: [],
+    [Action.CopyFromSelection]: [],
     [Action.PasteFromClipboard]: [],
     [Action.TypeText]: ['content'],
     [Action.PressEnter]: [],
@@ -197,6 +215,14 @@ export const getRequiredFields = (action: Action): string[] => {
     [Action.RunDemoById]: ['id'],
     [Action.BackupSettings]: [],
     [Action.RestoreSettings]: [],
+    [Action.EnableFocusMode]: [],
+    [Action.DisableFocusMode]: [],
+    [Action.HideMenubar]: [],
+    [Action.ShowMenubar]: [],
+    [Action.MuteVolume]: [],
+    [Action.UnmuteVolume]: [],
+    [Action.EnableCaffeine]: [],
+    [Action.DisableCaffeine]: [],
     [Action.StartEngageTimeSession]: [],
     [Action.StartEngageTimePoll]: ['pollId'],
     [Action.CloseEngageTimeSession]: [],
@@ -204,6 +230,9 @@ export const getRequiredFields = (action: Action): string[] => {
     [Action.ShowEngageTimeSession]: [],
     [Action.ShowEngageTimePoll]: ['pollId'],
     [Action.SendEngageTimeMessage]: ['type', 'title'],
+    [Action.ZoomIn]: [],
+    [Action.ZoomOut]: [],
+    [Action.ZoomReset]: [],
   };
   return requiredMap[action] || [];
 };
@@ -240,6 +269,7 @@ export const getFieldsForAction = (action: Action): string[] => {
       'highlightWholeLine',
       'zoom',
     ],
+    [Action.Selection]: ['path', 'position', 'startPlaceholder', 'endPlaceholder', 'zoom'],
     [Action.Replace]: [
       'path',
       'content',
@@ -276,7 +306,7 @@ export const getFieldsForAction = (action: Action): string[] => {
       'insertTypingMode',
       'insertTypingSpeed',
     ],
-    [Action.ExecuteScript]: ['id', 'command', 'path'],
+    [Action.ExecuteScript]: ['id', 'command', 'path', 'args'],
     [Action.CloseTerminal]: ['terminalId'],
     [Action.Snippet]: ['contentPath', 'args'],
     [Action.OpenPowerPoint]: [],
@@ -288,7 +318,9 @@ export const getFieldsForAction = (action: Action): string[] => {
     [Action.AgentChat]: ['message'],
     [Action.CustomChat]: ['mode', 'message'],
     [Action.CloseChat]: [],
+    [Action.CancelChat]: [],
     [Action.CopyToClipboard]: ['content', 'contentPath'],
+    [Action.CopyFromSelection]: [],
     [Action.PasteFromClipboard]: [],
     [Action.TypeText]: ['content', 'insertTypingSpeed'],
     [Action.PressEnter]: [],
@@ -303,6 +335,14 @@ export const getFieldsForAction = (action: Action): string[] => {
     [Action.RunDemoById]: ['id'],
     [Action.BackupSettings]: [],
     [Action.RestoreSettings]: [],
+    [Action.EnableFocusMode]: [],
+    [Action.DisableFocusMode]: [],
+    [Action.HideMenubar]: [],
+    [Action.ShowMenubar]: [],
+    [Action.MuteVolume]: [],
+    [Action.UnmuteVolume]: [],
+    [Action.EnableCaffeine]: ['duration'],
+    [Action.DisableCaffeine]: [],
     [Action.StartEngageTimeSession]: [],
     [Action.StartEngageTimePoll]: ['pollId'],
     [Action.CloseEngageTimeSession]: [],
@@ -310,6 +350,9 @@ export const getFieldsForAction = (action: Action): string[] => {
     [Action.ShowEngageTimeSession]: [],
     [Action.ShowEngageTimePoll]: ['pollId', 'startOnOpen'],
     [Action.SendEngageTimeMessage]: ['type', 'title', 'message'],
+    [Action.ZoomIn]: ['zoom'],
+    [Action.ZoomOut]: ['zoom'],
+    [Action.ZoomReset]: [],
   };
 
   return fieldMap[action] || [];

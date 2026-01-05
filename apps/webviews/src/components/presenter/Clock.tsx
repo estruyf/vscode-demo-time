@@ -2,6 +2,7 @@ import { Messenger } from '@estruyf/vscode/dist/client/webview';
 import * as React from 'react';
 import { WebViewMessages } from '@demotime/common';
 import { EventData } from '@estruyf/vscode';
+import { Icon } from 'vscrui';
 
 export const Clock = () => {
   const [clock, setClock] = React.useState("");
@@ -30,12 +31,19 @@ export const Clock = () => {
   }
 
   return (
-    <div className="rounded-[2px] border border-(--vscode-panel-border) shadow-xs">
-      <div className="flex flex-col space-y-1.5 p-4">
-        <h3 className="text-xl font-semibold leading-none tracking-tight">Current Time</h3>
+    <div className="presenter-card rounded-lg border border-(--vscode-panel-border) bg-(--vscode-sideBar-background) shadow-sm overflow-hidden transition-all duration-200 hover:shadow-md">
+      <div className="presenter-card-header flex items-center gap-3 px-5 py-4 border-b border-(--vscode-panel-border)/50">
+        <div className="flex-shrink-0 w-5 h-5 text-(--vscode-descriptionForeground)">
+          <Icon name="clock" className="text-inherit!" />
+        </div>
+        <h3 className="text-base font-semibold leading-none tracking-tight text-(--vscode-foreground)">
+          Current Time
+        </h3>
       </div>
-      <div className="p-4 pt-0">
-        <p className="text-2xl font-bold">{clock}</p>
+      <div className="presenter-card-body px-5 py-6 flex items-center justify-center">
+        <p className="text-4xl font-bold tracking-tight text-(--vscode-foreground) tabular-nums">
+          {clock}
+        </p>
       </div>
     </div>
   );

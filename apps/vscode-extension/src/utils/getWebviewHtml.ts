@@ -1,4 +1,4 @@
-import { Uri, Webview, workspace, WorkspaceFolder } from 'vscode';
+import { Uri, Webview } from 'vscode';
 import { WebviewType } from '../models';
 import { Extension, Logger, Notifications } from '../services';
 import { fileExists } from './fileExists';

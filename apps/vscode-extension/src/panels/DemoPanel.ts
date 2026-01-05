@@ -127,7 +127,7 @@ export class DemoPanel {
           disabled = true;
         } else {
           // Use normal icons if not disabled
-          const icons = { start: 'run', end: 'pass-filled' };
+          const icons = { start: 'dt-scene', end: 'pass-filled' };
           if (demo.icons?.start) {
             icons.start = demo.icons.start;
           }
@@ -136,9 +136,7 @@ export class DemoPanel {
           }
           icon = {
             name: hasExecuted ? icons.end : icons.start,
-            color: hasExecuted
-              ? new ThemeColor('notebookStatusSuccessIcon.foreground')
-              : new ThemeColor('disabledForeground'),
+            color: hasExecuted ? new ThemeColor('notebookStatusSuccessIcon.foreground') : undefined,
             custom: false,
           };
         }
@@ -172,7 +170,7 @@ export class DemoPanel {
           demos.title,
           path.split('/').pop() as string,
           {
-            name: executingDemoFile.filePath === path ? 'play-circle' : 'folder',
+            name: executingDemoFile.filePath === path ? 'play-circle' : 'dt-act',
             custom: false,
             color:
               executingDemoFile.filePath === path
@@ -238,18 +236,18 @@ export class DemoPanel {
   private static async registerTreeview() {
     DemoPanel.demoActionsProvider = new ActionTreeviewProvider();
     DemoPanel.demoActionsProvider.update();
-    this.treeView = window.createTreeView('demo-time', {
+    this.treeView = window.createTreeView('demo-time-scenes', {
       treeDataProvider: DemoPanel.demoActionsProvider,
       showCollapseAll: true,
     });
   }
 
   /**
-   * Collapses all items in the "demo-time" tree view.
+   * Collapses all items in the "demo-time-scenes" tree view.
    *
    * @private
    */
   private static collapseAll() {
-    commands.executeCommand('workbench.actions.treeView.demo-time.collapseAll');
+    commands.executeCommand('workbench.actions.treeView.demo-time-scenes.collapseAll');
   }
 }

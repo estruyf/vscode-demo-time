@@ -177,6 +177,39 @@ You can combine clipboard actions to create a copy-paste workflow:
 </TabItem>
 </Tabs>
 
+## Copy from selection
+
+Copy the currently selected text inside the active editor using the `copyFromSelection` action. This mirrors pressing `Cmd/Ctrl+C` and is useful when you want to reuse whatever is selected without reading from a file.
+
+<Tabs syncKey="copy-from-selection">
+<TabItem label="JSON">
+
+```json
+[
+  {
+    "action": "selection",
+    "position": "3"
+  },
+  {
+    "action": "copyFromSelection"
+  }
+]
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+- action: selection
+  position: "3"
+- action: copyFromSelection
+```
+
+</TabItem>
+</Tabs>
+
+You can combine `copyFromSelection` with `pasteFromClipboard` to move the selected content elsewhere in your demo.
+
 ## Type text
 
 Simulate typing text using the `typeText` action. This action will type the specified content character by character, making it appear as if someone is actually typing.

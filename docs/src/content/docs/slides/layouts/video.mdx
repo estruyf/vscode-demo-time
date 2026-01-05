@@ -7,11 +7,105 @@ lastmod: 2025-11-04T00:00:00.000Z
 import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
 import { Image } from 'astro:assets';
 
-The `video` layout is used to display a video as the background on the slide. It provides a large video area and a smaller content area.
+The `video` layout is used to display a video as the background on the slide. It provides a large video area with content overlayed on top, perfect for creating engaging presentations with multimedia content.
+
+## Basic Video Layout
 
 ```md
 ---
 layout: video
-video: "<url to the video (relative or absolute path)>"
+video: "path/to/your/video.mp4"
+---
+
+# Your slide title
+
+Your content here will appear over the video background.
+```
+
+## Video Properties
+
+You can control video playback behavior using these front matter properties:
+
+- `video` - Path to the video file (relative to workspace or absolute URL)
+- `controls` - Show video controls (default: false for background videos)
+- `autoplay` - Auto-play the video (default: true for background videos)
+- `loop` - Loop the video (default: true for background videos)  
+- `muted` - Mute the video (default: true for background videos)
+- `playsInline` - Play inline on mobile devices (default: true)
+- `playbackRate` - Playback speed of the video (default: 1.0)
+
+### Background Video (Default)
+
+By default, videos in the video layout play as background elements:
+
+```md
+---
+layout: video
+video: ".demo/assets/presentation-video.mp4"
+---
+
+# Welcome to Demo Time
+
+This content appears over the video background.
+```
+
+### Interactive Video with Controls
+
+For videos that users should interact with, enable controls:
+
+```md
+---
+layout: video
+video: ".demo/assets/tutorial-video.mp4"
+controls: true
+autoplay: false
+loop: false
+muted: false
+---
+
+# Video Tutorial
+
+Watch the video below to learn more.
+```
+
+## Video Sources
+
+### Local Video Files
+
+```md
+---
+layout: video
+video: ".demo/assets/my-video.mp4"
 ---
 ```
+
+### Remote Video URLs
+
+```md
+---
+layout: video
+video: "https://example.com/path/to/video.mp4"
+---
+```
+
+### Relative Paths
+
+```md
+---
+layout: video
+video: "../videos/presentation.mp4"
+---
+```
+
+## Best Practices
+
+### Performance
+- Keep video files under 50MB for smooth playback
+- Use compressed video formats (MP4 with H.264)
+- Consider using lower resolution for background videos
+
+### Accessibility  
+- Always provide alternative content for users who cannot see videos
+- Include captions for videos with audio content
+- Use `muted` for background videos to prevent unexpected audio
+

@@ -11,6 +11,7 @@ export interface SlideMetadata {
   autoAdvanceAfter?: number;
   image?: string;
   video?: string;
+  controls?: boolean;
 
   [key: string]: any;
 }

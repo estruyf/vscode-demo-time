@@ -81,6 +81,14 @@ export default defineConfig({
             { label: 'Start presenting', slug: 'presentation-mode' },
           ],
         },
+        { 
+          label: 'Pro Features',
+          collapsed: true,
+          items: [
+            { label: 'Overview', slug: 'pro-features' },
+            { label: 'Analytics', slug: 'pro-features/analytics' },
+          ] 
+        },
         {
           label: 'Actions',
           collapsed: true,
@@ -97,6 +105,7 @@ export default defineConfig({
             { label: 'External Apps actions', slug: 'actions/external' },
             { label: "GitHub Copilot actions", slug: 'actions/copilot' },
             { label: 'Interaction actions', slug: 'actions/interactions' },
+            { label: 'macOS actions', slug: 'actions/macos' },
             { label: 'Demo Time actions', slug: 'actions/demotime' },
             { label: 'EngageTime actions', slug: 'actions/engagetime' },
           ],
@@ -180,7 +189,6 @@ export default defineConfig({
             { label: 'Adding steps to your demo', slug: 'tips/adding-steps' },
             { label: 'Highlight code', slug: 'tips/highlighting' },
             { label: 'Working with variables', slug: 'tips/variables' },
-            { label: 'Activity bar action', slug: 'tips/move-to-activity-bar' },
             { label: 'Control the next demo shortcut', slug: 'tips/control-next-demo' },
             { label: 'VS Code Settings', slug: 'tips/vscode-settings' },
           ],

@@ -55,6 +55,17 @@
       ]
     },
     {
+      "title": "Video in content",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/default/video.md"
+        }
+      ],
+      "id": "demo-mk13bmah-pvbv"
+    },
+    {
       "title": "Image slide",
       "description": "",
       "steps": [

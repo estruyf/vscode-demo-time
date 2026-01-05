@@ -5,6 +5,7 @@ module.exports = {
   extensionsToTreatAsEsm: [".ts", ".tsx"],
   moduleNameMapper: {
     '^@demotime/common$': '<rootDir>/../../packages/common/src/index.ts',
+    '^vscode$': '<rootDir>/__mocks__/vscode.js',
     '^rehype-raw$': '<rootDir>/__mocks__/rehype.js',
     '^rehype-react$': '<rootDir>/__mocks__/rehype.js',
     '^remark-frontmatter$': '<rootDir>/__mocks__/rehype.js',

@@ -10,6 +10,7 @@ import {
   Uri,
   WorkspaceFolder,
   commands,
+  env,
   window,
   workspace,
 } from 'vscode';
@@ -51,6 +52,12 @@ import {
   DemoFileProvider,
   Extension,
   EngageTimeService,
+  SelectionService,
+  MacOSActionsService,
+  ZoomService,
+  AnalyticsService,
+  AnalyticsCommands,
+  SponsorService,
 } from './';
 import { Preview } from '../preview/Preview';
 import { parse as jsonParse } from 'jsonc-parser';
@@ -85,6 +92,9 @@ export class DemoRunner {
   private static crntZoom: number | undefined;
   private static crntHighlightWholeLine: boolean | undefined;
   public static currentDemo: Demo | undefined;
+  private static nextStepIsHighlight = false;
+  private static currentDemoIndex: number = 0;
+  private static currentStepIndex: number = 0;
 
   /**
    * Registers the commands for the demo runner.
@@ -225,11 +235,14 @@ export class DemoRunner {
       WebViewMessages.toWebview.updatePresentationStarted,
       DemoRunner.isPresentationMode,
     );
+
     if (DemoRunner.isPresentationMode) {
+      await AnalyticsCommands.startRecording();
       DemoPanel.updateMessage('Presentation mode enabled');
       await DemoRunner.getDemoFile(undefined, true);
       Preview.postMessage(WebViewMessages.toWebview.updateIsInPresentationMode, true);
     } else {
+      await AnalyticsCommands.stopRecording();
       DemoPanel.updateMessage();
       Preview.postMessage(WebViewMessages.toWebview.updateIsInPresentationMode, false);
       await commands.executeCommand(COMMAND.resetCountdown);
@@ -241,6 +254,11 @@ export class DemoRunner {
    * Resets the DemoRunner state by clearing the executing demo file path and demo array.
    */
   private static async reset(): Promise<void> {
+    // End any active analytics session
+    if (AnalyticsService.isRecording()) {
+      await AnalyticsService.endSession();
+    }
+
     const ext = Extension.getInstance();
     const resetContent = Object.assign({}, DEFAULT_START_VALUE);
     await ext.setState(StateKeys.executingDemoFile, resetContent);
@@ -248,6 +266,8 @@ export class DemoRunner {
     PresenterView.postMessage(WebViewMessages.toWebview.updateRunningDemos, resetContent);
     PresenterView.postMessage(WebViewMessages.toWebview.resetNotes, undefined);
     DemoRunner.currentDemo = undefined;
+    DemoRunner.currentDemoIndex = 0;
+    DemoRunner.currentStepIndex = 0;
     DemoRunner.togglePresentationMode(false);
     DemoPanel.update();
     Preview.close();
@@ -262,6 +282,11 @@ export class DemoRunner {
   private static async start(
     item: ActionTreeItem | { demoFilePath: string; description: string },
   ): Promise<void> {
+    if (TextTypingService.IsTyping) {
+      Logger.info('DemoRunner.start called while typing. Ignoring.');
+      return;
+    }
+
     if (Preview.isListening()) {
       return;
     }
@@ -321,6 +346,8 @@ export class DemoRunner {
       // Set the current executing file to the next file
       executingFile.filePath = nextFile.filePath;
       executingFile.demo = [];
+      executingFile.version = nextFile.version;
+
       await DemoRunner.setExecutedDemoFile(executingFile);
       // Start the next demo file
       DemoRunner.start({
@@ -346,7 +373,35 @@ export class DemoRunner {
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     DemoRunner.currentDemo = nextDemo;
+    DemoRunner.currentDemoIndex = nextDemoIdx;
+
+    // Start analytics session if this is the first demo and analytics is enabled
+    if (
+      SponsorService.getSponsorStatus() &&
+      !AnalyticsService.isRecording() &&
+      lastDemoIdx === -1
+    ) {
+      const config = AnalyticsService.getConfig();
+      if (config.enabled) {
+        await AnalyticsService.startSession(
+          demoFile?.demo.title || 'Presentation',
+          true, // Default to dry run, can be changed via command
+        );
+      }
+    }
+
+    // Check if the next demo contains Highlight actions
+    let followingDemoIdx = nextDemoIdx + 1;
+    while (followingDemoIdx < demos.length && demos[followingDemoIdx].disabled) {
+      followingDemoIdx++;
+    }
+
     await DemoRunner.runSteps(demoSteps);
+
+    DemoRunner.nextStepIsHighlight =
+      followingDemoIdx < demos.length &&
+      !!demos[followingDemoIdx].steps?.some((s: Step) => s.action === Action.Highlight);
+
     NotesService.showNotes(nextDemo);
   }
 
@@ -356,6 +411,11 @@ export class DemoRunner {
    * @returns {Promise<void>} A promise that resolves when the previous demo step has been executed.
    */
   private static async previous(): Promise<void> {
+    if (TextTypingService.IsTyping) {
+      Logger.info('DemoRunner.previous called while typing. Ignoring.');
+      return;
+    }
+
     if (Preview.checkIfHasPreviousSlide()) {
       await Preview.postMessage(WebViewMessages.toWebview.previousSlide);
       return;
@@ -400,6 +460,8 @@ export class DemoRunner {
 
       executingFile.filePath = previousFile.filePath;
       executingFile.demo = [];
+      executingFile.version = previousFile.version;
+
       // Get the last demo step of the previous file
       const lastDemo = previousFile.demo.demos[previousFile.demo.demos.length - 1];
       const crntIdx = previousFile.demo.demos.length - 1;
@@ -450,6 +512,11 @@ export class DemoRunner {
     idx: number;
     demo: Demo;
   }): Promise<void> {
+    if (TextTypingService.IsTyping) {
+      Logger.info('DemoRunner.startDemo called while typing. Ignoring.');
+      return;
+    }
+
     if (!demoToRun) {
       return;
     }
@@ -562,8 +629,18 @@ export class DemoRunner {
     needsUpdate: boolean = true,
     crntFilePath: string | undefined = undefined,
   ): Promise<void> {
+    if (TextTypingService.IsTyping) {
+      Logger.info('DemoRunner.runSteps called while typing. Ignoring.');
+      return;
+    }
+
+    // End the segment successfully
+    if (AnalyticsService.isRecording()) {
+      AnalyticsService.endSegment();
+    }
+
     // Unselect the current selection
-    DecoratorService.unselect();
+    DecoratorService.unselect(undefined, !DemoRunner.nextStepIsHighlight);
 
     // Reset the highlight
     await setContext(ContextKeys.hasCodeHighlighting, false);
@@ -611,8 +688,36 @@ export class DemoRunner {
     }
 
     // Loop over all the demo steps and execute them.
-    for (let step of stepsToExecute) {
-      await DemoRunner.runStep(step, variables, workspaceFolder, crntFilePath);
+    for (let currentIndex = 0; currentIndex < stepsToExecute.length; currentIndex++) {
+      const step = stepsToExecute[currentIndex];
+      DemoRunner.currentStepIndex = currentIndex;
+
+      // Start tracking this step for analytics
+      if (AnalyticsService.isRecording() && DemoRunner.currentDemo) {
+        const executingFile = await DemoRunner.getExecutedDemoFile();
+        const demoFile = await DemoFileProvider.getFile(Uri.file(executingFile.filePath));
+        await AnalyticsService.startSegment(
+          executingFile.filePath, // Act file path
+          demoFile?.title || 'Untitled Act', // Act title
+          DemoRunner.currentDemo, // Scene (demo)
+          DemoRunner.currentDemoIndex, // Scene index
+        );
+      }
+
+      try {
+        await DemoRunner.runStep(step, variables, workspaceFolder, crntFilePath);
+      } catch (error) {
+        // Record error in analytics
+        if (AnalyticsService.isRecording()) {
+          AnalyticsService.recordError(
+            'action',
+            error instanceof Error ? error.message : String(error),
+            `Step ${currentIndex}: ${step.action}`,
+          );
+          AnalyticsService.endSegment();
+        }
+        throw error;
+      }
     }
 
     if (needsUpdate) {
@@ -626,18 +731,28 @@ export class DemoRunner {
     workspaceFolder: WorkspaceFolder,
     crntFilePath: string | undefined,
   ): Promise<void> {
+    if (TextTypingService.IsTyping) {
+      Logger.info('DemoRunner.runStep called while typing. Ignoring.');
+      return;
+    }
+
     if (!step.action) {
       return;
     }
 
-    // Verify if the current step has a `STATE_` or `SCRIPT_` variable which needs to be updated
+    // Verify if the current step has a `STATE_`, `SCRIPT_`, or `DT_` variable which needs to be updated
     // This can happen when the `setState` action is used during the current demo execution (previous step)
     let stepJson = JSON.stringify(step);
     if (
-      (stepJson.includes(StateKeys.prefix.state) || stepJson.includes(StateKeys.prefix.script)) &&
+      (stepJson.includes(StateKeys.prefix.state) ||
+        stepJson.includes(StateKeys.prefix.script) ||
+        stepJson.includes(StateKeys.prefix.clipboard)) &&
       variables
     ) {
-      stepJson = await insertVariables(stepJson, variables);
+      if (stepJson.includes(StateKeys.prefix.clipboard)) {
+        variables[StateKeys.prefix.clipboard] = await env.clipboard.readText();
+      }
+      stepJson = await insertVariables(stepJson, variables, false);
       step = jsonParse(stepJson);
     }
 
@@ -668,6 +783,9 @@ export class DemoRunner {
     } else if (step.action === Action.CloseChat) {
       await ChatActionsService.closeChat();
       return;
+    } else if (step.action === Action.CancelChat) {
+      await ChatActionsService.cancelChat();
+      return;
     }
 
     // Demo Time actions
@@ -677,6 +795,33 @@ export class DemoRunner {
         return;
       }
       await DemoRunner.runById(step.id);
+      return;
+    }
+
+    // macOS specific actions
+    if (step.action === Action.EnableFocusMode) {
+      await MacOSActionsService.enableFocusMode();
+      return;
+    } else if (step.action === Action.DisableFocusMode) {
+      await MacOSActionsService.disableFocusMode();
+      return;
+    } else if (step.action === Action.HideMenubar) {
+      await MacOSActionsService.hideMenubar();
+      return;
+    } else if (step.action === Action.ShowMenubar) {
+      await MacOSActionsService.showMenubar();
+      return;
+    } else if (step.action === Action.MuteVolume) {
+      await MacOSActionsService.muteVolume();
+      return;
+    } else if (step.action === Action.UnmuteVolume) {
+      await MacOSActionsService.unmuteVolume();
+      return;
+    } else if (step.action === Action.EnableCaffeine) {
+      await MacOSActionsService.enableCaffeine(step.duration as number | undefined);
+      return;
+    } else if (step.action === Action.DisableCaffeine) {
+      await MacOSActionsService.disableCaffeine();
       return;
     }
 
@@ -812,6 +957,22 @@ export class DemoRunner {
       }
     }
 
+    // Zoom actions
+    if (step.action === Action.ZoomIn) {
+      await ZoomService.zoomIn(step.zoom);
+      return;
+    }
+
+    if (step.action === Action.ZoomOut) {
+      await ZoomService.zoomOut(step.zoom);
+      return;
+    }
+
+    if (step.action === Action.ZoomReset) {
+      await ZoomService.zoomReset();
+      return;
+    }
+
     // Open a new terminal
     if (step.action === Action.OpenTerminal) {
       await TerminalService.openTerminal(step.terminalId);
@@ -932,6 +1093,11 @@ export class DemoRunner {
         variables,
         workspaceFolder,
       });
+      return;
+    }
+
+    if (step.action === Action.CopyFromSelection) {
+      await InteractionService.copyFromSelection();
       return;
     }
 
@@ -1082,7 +1248,14 @@ export class DemoRunner {
         crntPosition,
         step.zoom,
         highlightWholeLine,
+        true,
+        DemoRunner.nextStepIsHighlight,
       );
+      return;
+    }
+
+    if (step.action === Action.Selection && (crntRange || crntPosition)) {
+      await SelectionService.select(textEditor, crntRange, crntPosition, step.zoom);
       return;
     }
 
@@ -1209,6 +1382,10 @@ export class DemoRunner {
    * @param textEditor - The text editor in which to highlight the range or position.
    * @param range - The range to highlight. If not provided, the position will be used to create a range.
    * @param position - The position to highlight. If not provided, the range will be used to set the selection.
+   * @param zoomLevel - The zoom level to apply.
+   * @param highlightWholeLine - Whether to highlight the whole line.
+   * @param keepInMemory - Whether to keep the highlight in memory.
+   * @param preserveZoom - Whether to preserve the current zoom level when moving to the next highlight.
    */
   public static async highlight(
     textEditor: TextEditor,
@@ -1217,6 +1394,7 @@ export class DemoRunner {
     zoomLevel?: number,
     highlightWholeLine?: boolean,
     keepInMemory = true,
+    preserveZoom = false,
   ): Promise<void> {
     if (!range && !position) {
       return;
@@ -1230,6 +1408,10 @@ export class DemoRunner {
       range = new Range(position, position);
     }
 
+    if (highlightWholeLine === undefined) {
+      highlightWholeLine = true;
+    }
+
     if (range) {
       if (keepInMemory) {
         DemoRunner.setCrntHighlighting(
@@ -1241,7 +1423,23 @@ export class DemoRunner {
         await setContext(ContextKeys.hasCodeHighlighting, true);
       }
 
-      DecoratorService.hightlightLines(textEditor, range, zoomLevel, highlightWholeLine);
+      // Track highlight in analytics
+      if (AnalyticsService.isRecording()) {
+        AnalyticsService.recordHighlight(
+          textEditor.document.fileName,
+          range.start.line + 1, // Convert to 1-based
+          range.end.line + 1,
+          zoomLevel,
+        );
+      }
+
+      DecoratorService.hightlightLines(
+        textEditor,
+        range,
+        zoomLevel,
+        highlightWholeLine,
+        preserveZoom,
+      );
       textEditor.revealRange(range, TextEditorRevealType.InCenter);
     }
   }
@@ -1267,6 +1465,7 @@ export class DemoRunner {
     | {
         filePath: string;
         demo: DemoConfig;
+        version?: Version;
       }
     | undefined
   > {

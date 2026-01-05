@@ -11,4 +11,5 @@ export const ContextKeys = {
   hasPreviousSlide: 'demo-time.hasPreviousSlide',
   isHackerTyper: 'demo-time.isHackerTyper',
   isWaitingForNext: 'demo-time.isWaitingForNext',
+  isSponsor: 'demo-time.isSponsor',
 };

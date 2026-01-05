@@ -1,0 +1,418 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+---
+
+<StarlightPage
+  frontmatter={{
+    title: 'Demo Time as a Service',
+    description: 'Stop spending days building demos with Demo Time as a Service.',
+    tableOfContents: false,
+  }}
+>
+  <div class="service-page">
+    {/* Hero Section */}
+    <header class="hero">
+      <p class="eyebrow">Demo Time as a Service</p>
+      <h1>Let's stop sweating your live demos.</h1>
+      <p class="hero-sub">
+        Hand me your repo and I'll build you a <strong
+          >bulletproof, scripted Demo Time presentation</strong
+        >. No typos, no broken environments, no "oops"—just a confident delivery that wins the room.
+      </p>
+      <div class="hero-cta">
+        <a class="button primary" href="#get-started">Lock in my demo (€500)</a>
+        <span class="subtext">Only 10 early-bird slots available.</span>
+      </div>
+    </header>
+
+    {/* Value Props */}
+    <section class="pillars">
+      <div>
+        <h3>Zero Risk</h3>
+        <p>
+          Live coding is terrifying. I script every keystroke so you literally can't fail on stage.
+        </p>
+      </div>
+      <div>
+        <h3>Save Days of Work</h3>
+        <p>
+          Stop writing throwaway code. I turn your features into a compelling story while you keep
+          shipping.
+        </p>
+      </div>
+      <div>
+        <h3>Perfect Timing</h3>
+        <p>
+          Demos that fit your time slot exactly. No more "I'll have to skip this part" apologies.
+        </p>
+      </div>
+    </section>
+
+    {/* Authority / Trust */}
+    <section class="authority">
+      <div class="authority-content">
+        <h2>Built by the creator of Demo Time</h2>
+        <p>
+          Who better to craft your perfect demo than the person who built the tool? As a Solutions
+          Architect and MVP, I know every trick, shortcut, and feature to make your product shine.
+        </p>
+      </div>
+    </section>
+
+    {/* Offer Section */}
+    <section class="offer">
+      <h2>The "Perfect Demo" Package (€500)</h2>
+      <div class="offer-grid">
+        <ul class="check-list">
+          <li><strong>Complete Demo Time Script</strong> (YAML) ready to run</li>
+          <li><strong>Storyline & Narrative</strong> crafted from your features</li>
+          <li><strong>2 Rounds of Refinement</strong> to nail the tone</li>
+          <li><strong>30-min Handoff Call</strong> to train you on delivery</li>
+          <li><strong>Standard Turnaround:</strong> 5–7 business days</li>
+        </ul>
+      </div>
+      <p class="note">
+        <em>Need it faster? Rush delivery (&lt;3 days) available for +€250.</em>
+      </p>
+    </section>
+
+    {/* How It Works Section */}
+    <section class="steps">
+      <h2>How it works</h2>
+      <ol>
+        <li><strong>Share your repo</strong> and the story you need.</li>
+        <li><strong>I script and test</strong> the entire run inside Demo Time.</li>
+        <li><strong>You present</strong> with a reliable, polished demo.</li>
+      </ol>
+    </section>
+
+    {/* Fit Section */}
+    <section class="fit">
+      <h2>Built for teams like yours</h2>
+      <ul>
+        <li>Sales engineers who need a clean, working demo next week.</li>
+        <li>DevRel and product teams launching features with zero onstage risk.</li>
+        <li>Training orgs that need reusable, consistent demos for workshops.</li>
+      </ul>
+      <p><strong>Works best for code-based demos you control in VS Code.</strong></p>
+    </section>
+
+    {/* Quick FAQ Section */}
+    <section class="faq">
+      <h2>Quick answers</h2>
+      <ul>
+        <li><strong>Format:</strong> Demo Time YAML, ready to run.</li>
+        <li><strong>Turnaround:</strong> 5–7 business days (rush &lt;3 days: +€250).</li>
+        <li><strong>Messy repo?</strong> We guide you or add coaching time.</li>
+      </ul>
+    </section>
+
+    {/* CTA Section */}
+    <section id="get-started">
+      <h2>Lock in your slot</h2>
+      <p>
+        <strong>€ 500 per demo, limited early-bird capacity.</strong> Tell us about your demo and we’ll
+        start this week.
+      </p>
+
+      <form
+        id="interestForm"
+        class="interest-form"
+        action="https://formbold.com/s/obkNp"
+        method="POST"
+      >
+        <input type="hidden" name="apiKey" value="sf_2g9h855e668na16n94fl0lh4" />
+        <input type="hidden" name="subject" value="Demo Time Service Interest" />
+        <input type="hidden" name="replyTo" value="elio@struyfconsulting.be" />
+        <input type="text" name="honeypot" style="display: none" tabindex="-1" autocomplete="off" />
+
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <div class="input-group">
+            <input type="text" id="name" name="name" placeholder="John Doe" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="input-group">
+            <input type="email" id="email" name="email" placeholder="john@example.com" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Which services are you interested in?</label>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" name="$services" value="creation" checked />
+              Demo creation service (€ 500)
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="$services" value="coaching" />
+              Expert coaching (€ 200/hour)
+            </label>
+          </div>
+        </div>
+
+        <div class="g-recaptcha" data-sitekey="6Lct-gkrAAAAANXSF_L-hUZUyP-pF4oWzyO0M4jL"></div>
+
+        <script src="https://www.google.com/recaptcha/api.js" is:inline></script>
+
+        <button id="submitButton" type="submit" class="button primary full-width">
+          Join the Waitlist
+        </button>
+      </form>
+
+      <div class="contact-info">
+        <p>
+          <strong>Questions?</strong> Reach out at <a href="mailto:elio@struyfconsulting.be"
+            >elio@struyfconsulting.be</a
+          >
+        </p>
+        <p>Let's make demos less stressful and more impactful—together!</p>
+      </div>
+    </section>
+  </div>
+</StarlightPage>
+
+<style>
+  :root {
+    --sl-content-width: 50rem;
+
+    .main-pane .content-panel:first-child {
+      display: none !important;
+    }
+  }
+
+  .service-page {
+    max-width: 50rem;
+    margin: 0 auto;
+  }
+
+  section {
+    margin-bottom: 3rem;
+  }
+
+  .hero {
+    margin-bottom: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    color: var(--sl-color-accent-high);
+    margin: 0;
+  }
+
+  .hero h1 {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    margin: 0;
+  }
+
+  .hero-sub {
+    margin: 0;
+    color: var(--sl-color-gray-2);
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+
+  .hero-cta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .subtext {
+    color: var(--sl-color-gray-3);
+    font-size: 0.95rem;
+  }
+
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 1.5rem;
+  }
+
+  .pillars div {
+    padding: 1.25rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.75rem;
+    background: var(--sl-color-gray-6);
+    margin-top: 0 !important;
+  }
+
+  .authority {
+    background: var(--sl-color-gray-6);
+    border-left: 4px solid var(--sl-color-accent);
+    padding: 1.5rem;
+    border-radius: 0 0.75rem 0.75rem 0;
+  }
+
+  .authority h2 {
+    margin-top: 0;
+    font-size: 1.5rem;
+  }
+
+  .authority p {
+    margin-bottom: 0;
+  }
+
+  .check-list {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .check-list li {
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .offer ul,
+  .fit ul,
+  .faq ul,
+  .steps ol {
+    margin: 1rem 0 0 1rem;
+    line-height: 1.6;
+  }
+
+  .offer .note {
+    margin-top: 0.75rem;
+    color: var(--sl-color-gray-2);
+  }
+
+  .steps ol {
+    padding-left: 1.25rem;
+  }
+
+  .fit ul {
+    list-style: disc;
+    padding-left: 1.25rem;
+  }
+
+  .faq ul {
+    list-style: disc;
+    padding-left: 1.25rem;
+  }
+
+  /* Form */
+  .interest-form {
+    margin: 2rem auto;
+    padding: 2rem;
+    background: var(--sl-color-gray-6);
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.75rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  input[type='text'],
+  input[type='email'],
+  textarea,
+  select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--sl-color-gray-4);
+    border-radius: 0.375rem;
+    background: var(--sl-color-black);
+    color: var(--sl-color-white);
+    font-size: 1rem;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--sl-color-accent);
+    box-shadow: 0 0 0 2px var(--sl-color-accent-low);
+  }
+
+  select {
+    cursor: pointer;
+  }
+
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: normal;
+    cursor: pointer;
+  }
+
+  .checkbox-label input {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .button {
+    display: inline-block;
+    padding: 0.875rem 1.75rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .button.primary {
+    background: rgb(255 212 59 / var(--tw-bg-opacity, 1)) !important;
+    border: 1px solid var(--sl-color-text-accent);
+    color: #000;
+  }
+
+  .button.primary:hover {
+    color: #000;
+    background-color: rgb(255 212 59 / 0.8) !important;
+  }
+
+  .button.full-width {
+    width: 100%;
+  }
+
+  .contact-info {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .contact-info p {
+    margin-bottom: 0.5rem;
+  }
+
+  .contact-info a {
+    color: var(--sl-color-accent-high);
+    text-decoration: none;
+  }
+
+  .contact-info a:hover {
+    text-decoration: underline;
+  }
+
+  .g-recaptcha {
+    div,
+    iframe {
+      height: 78px !important;
+    }
+  }
+</style>

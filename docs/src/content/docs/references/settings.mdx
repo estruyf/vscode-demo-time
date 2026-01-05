@@ -1,7 +1,7 @@
 ---
 title: Settings
 description: Customize the settings of Demo Time to fit your needs.
-lastmod: 2025-08-22T10:03:29.355Z
+lastmod: 2025-12-19T00:00:00.000Z
 tableOfContents: false
 ---
 
@@ -27,6 +27,7 @@ Here is a list of all the settings available in Demo Time.
 | `demoTime.highlightBorderColor` | The border color of the highlighted code. | `rgba(255,0,0,0.5)` |
 | `demoTime.highlightBlur` | Blur effect on the text which is not highlighted. | `0` |
 | `demoTime.highlightOpacity` | The opacity of the text which is not highlighted. Number between 0 and 1. | `0.5` |
+| `demoTime.zoom` | Zoom level to apply when using the zoomIn and zoomOut actions. | `1` |
 | `demoTime.highlightZoomEnabled` | Enable zooming when highlighting code. | `false` \| `number (zoom level)` |
 | `demoTime.nextActionBehaviour` | Defines how the next action/step behaves. <br /><br />**lastExecuted (default):** The "Next" action always advances from the furthest step you have executed, even if you go back and view previous steps. This is the current behavior.<br /><br />**currentPosition:** The "Next" action advances from your current position, regardless of how far you have previously gone. If you go back and then press "Next", it moves forward from where you are. | `lastExecuted` |
 | `demoTime.showClock` | Show a clock in the status bar. | `true` |
@@ -42,7 +43,10 @@ Here is a list of all the settings available in Demo Time.
 | `demoTime.defaultFileType` | The default file type for new demo files. Options: `json` (default), `yaml`. | `json` |
 | `demoTime.slideHeaderTemplate` | The template for the slide header. |  |
 | `demoTime.slideFooterTemplate` | The template for the slide footer. |  |
+| `demoTime.debug` | Enable debug mode for Demo Time. | `false` |
 | `demoTime.openInConfigEditor` | Open the demo file in the config editor GUI. | `true` |
+| `demoTime.remote.showScreenshot` | Enable remote screenshot functionality. | `true` |
+| `demoTime.remote.showNotes` | Enable remote notes functionality. | `true` |
 
 <Aside>
 The `demoTime.previousEnabled` is by default disabled to avoid conflicts when the previous action inserted content into a file.

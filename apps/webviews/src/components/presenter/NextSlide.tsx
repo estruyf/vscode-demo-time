@@ -2,7 +2,6 @@ import * as React from 'react';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import { EventData } from '@estruyf/vscode';
 import { Config, Demo, WebViewMessages, COMMAND, Step, Action } from '@demotime/common';
-import { DemoHeader } from './DemoHeader';
 import { Icon } from 'vscrui';
 
 // Standard 16:9 slide dimensions used for scaling calculations
@@ -165,19 +164,33 @@ export const NextSlide: React.FunctionComponent = () => {
   const previewUrl = `http://localhost:${apiPort}/preview`;
 
   return (
-    <div className="rounded-[2px] border border-(--vscode-panel-border) shadow-xs flex flex-col overflow-hidden">
-      <div className="flex items-center gap-2">
+    <div className="presenter-card rounded-lg border border-(--vscode-panel-border) bg-(--vscode-sideBar-background) shadow-sm overflow-hidden transition-all duration-200 hover:shadow-md">
+      <div className="presenter-card-header flex items-center gap-2 px-5 py-4 border-b border-(--vscode-panel-border)/50">
         <button
           onClick={toggleCollapsed}
-          className="text-(--vscode-foreground) hover:opacity-80 transition-opacity p-1 rounded ml-4"
+          className="flex-shrink-0 p-1 -ml-1 rounded transition-colors duration-150 hover:bg-(--vscode-list-hoverBackground)"
           title={isCollapsed ? 'Expand' : 'Collapse'}
         >
           <Icon
             name={isCollapsed ? 'chevron-right' : 'chevron-down'}
-            className="text-inherit!"
+            className="text-(--vscode-descriptionForeground)!"
           />
         </button>
-        <DemoHeader title={nextTitle ? `Next: ${nextTitle}` : 'Next Slide'} />
+        <div className="flex items-center gap-3">
+          <div className="flex-shrink-0 w-5 h-5 text-(--vscode-descriptionForeground)">
+            <Icon name="preview" className="text-inherit!" />
+          </div>
+          <h3 className="text-base font-semibold leading-none tracking-tight text-(--vscode-foreground)">
+            {nextTitle ? (
+              <>
+                <span className="text-(--vscode-descriptionForeground) font-medium">Next: </span>
+                {nextTitle}
+              </>
+            ) : (
+              'Next Slide'
+            )}
+          </h3>
+        </div>
       </div>
 
       {!isCollapsed && (

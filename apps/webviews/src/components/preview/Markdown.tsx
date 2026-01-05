@@ -13,6 +13,7 @@ export interface IMarkdownProps {
   vsCodeTheme: never;
   isDarkTheme: boolean;
   webviewUrl: string | null;
+  videoUrl?: string;
   updateBgStyles: (styles: React.CSSProperties | undefined) => void;
 }
 
@@ -23,13 +24,16 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   vsCodeTheme,
   isDarkTheme,
   webviewUrl,
+  videoUrl,
   updateBgStyles
 }: React.PropsWithChildren<IMarkdownProps>) => {
   const prevContent = usePrevious(content);
+  const videoRef = React.useRef<HTMLVideoElement>(null);
   const [isReady, setIsReady] = React.useState(false);
   const [customTheme, setCustomTheme] = React.useState<string | undefined>(undefined);
   const [customLayout, setCustomLayout] = React.useState<string | undefined>(undefined);
   const [template, setTemplate] = React.useState<string | undefined>(undefined);
+  const [currentLayoutPath, setCurrentLayoutPath] = React.useState<string | undefined>(undefined);
 
   const {
     markdown,
@@ -57,6 +61,12 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   const prevMatter = usePrevious(JSON.stringify(matter));
 
   const updateCustomLayout = React.useCallback((metadata: SlideMetadata, layout?: string) => {
+    // Clear previous template if layout path changed
+    if (layout !== currentLayoutPath) {
+      setTemplate(undefined);
+      setCurrentLayoutPath(layout);
+    }
+
     if (layout) {
       messageHandler.request<string>(WebViewMessages.toVscode.getFileContents, layout).then(async (templateHtml) => {
         if (templateHtml) {
@@ -142,6 +152,26 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     }
   }, [content, vsCodeTheme, isDarkTheme]);
 
+  // Set playback rate when video is ready
+  React.useEffect(() => {
+    if (videoRef.current && matter?.playbackRate) {
+      videoRef.current.playbackRate = parseFloat(matter.playbackRate);
+    }
+  }, [matter?.playbackRate, videoUrl]);
+
+  // Cleanup effect for video elements when component unmounts or slide changes
+  React.useEffect(() => {
+    return () => {
+      // Stop all video elements when component unmounts or slide changes
+      const videos = document.querySelectorAll('video');
+      videos.forEach(video => {
+        video.pause();
+        video.src = '';
+        video.load(); // Reset the video element
+      });
+    };
+  }, [filePath, matter?.customLayout]);
+
   React.useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
     if (isReady) {
@@ -172,10 +202,35 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
 
       {
         template ? (
-          <div key={filePath} className={`slide__content__custom`} dangerouslySetInnerHTML={{ __html: template }} />
+          <div
+            key={`custom-${filePath}-${matter?.customLayout}-${JSON.stringify(matter)}`}
+            className={`slide__content__custom`}
+            dangerouslySetInnerHTML={{ __html: template }}
+          />
         ) : (
-          <div key={filePath} className={`slide__content__inner`}>
-            {markdown}
+          <div
+            key={`standard-${filePath}-${matter?.video || 'no-video'}`}
+            className={`slide__content__inner`}
+          >
+            {
+              (videoUrl) ? (
+                <>
+                  <video
+                    ref={videoRef}
+                    controls={matter?.controls}
+                    autoPlay={matter?.autoplay || !matter?.controls}
+                    loop={matter?.loop || !matter?.controls}
+                    muted={matter?.muted || !matter?.controls}
+                    playsInline={matter?.playsInline || !matter?.controls}
+                    preload="auto"
+                    src={videoUrl}
+                    className='fixed inset-0 -z-1'></video>
+                  <div className='z-10'>{markdown}</div>
+                </>
+              ) : (
+                markdown
+              )
+            }
           </div>
         )
       }

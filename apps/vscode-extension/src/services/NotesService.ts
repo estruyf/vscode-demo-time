@@ -1,5 +1,6 @@
 import { commands, Uri } from 'vscode';
-import { Subscription, Demo } from '../models';
+import { Subscription } from '../models';
+import { Demo } from '@demotime/common';
 import { Extension } from './Extension';
 import { General } from '../constants';
 import { ActionTreeItem } from '../providers/ActionTreeviewProvider';

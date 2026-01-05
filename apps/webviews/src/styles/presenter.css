@@ -1,49 +1,143 @@
 @import 'tailwindcss';
 
+/* Presenter View Styles */
+
+/* Professional Card Styling */
+.presenter-card {
+  background: var(--vscode-sideBar-background);
+}
+
+.presenter-card-header {
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--vscode-sideBar-background) 100%, transparent),
+    color-mix(in srgb, var(--vscode-sideBar-background) 95%, var(--vscode-editor-background) 5%)
+  );
+}
+
+.presenter-card-body {
+  background: var(--vscode-sideBar-background);
+}
+
+.presenter-card-footer {
+  background: color-mix(in srgb, var(--vscode-editor-background) 50%, var(--vscode-sideBar-background) 50%);
+}
+
+/* Header Styling */
+.presenter-header {
+  background: linear-gradient(
+    to bottom,
+    var(--vscode-sideBar-background),
+    color-mix(in srgb, var(--vscode-sideBar-background) 98%, var(--vscode-editor-background) 2%)
+  );
+}
+
+/* Notes Container */
 .notes-container {
-  @apply p-4 bg-(--vscode-sideBar-background);
+  @apply p-5 bg-(--vscode-sideBar-background);
 
   h1 {
-    @apply text-2xl font-bold mb-4;
+    @apply text-xl font-bold mb-4 text-(--vscode-foreground) border-b border-(--vscode-panel-border)/30 pb-2;
   }
 
   h2 {
-    @apply text-xl font-semibold mb-2;
+    @apply text-lg font-semibold mb-3 text-(--vscode-foreground);
   }
 
   h3 {
-    @apply text-lg font-semibold mb-2;
+    @apply text-base font-semibold mb-2 text-(--vscode-foreground);
   }
 
   h4 {
-    @apply text-base font-semibold mb-2;
+    @apply text-sm font-semibold mb-2 text-(--vscode-foreground);
   }
 
   h5 {
-    @apply text-sm font-semibold mb-2;
+    @apply text-xs font-semibold mb-2 text-(--vscode-foreground);
   }
 
   h6 {
-    @apply text-xs font-semibold mb-2;
+    @apply text-xs font-semibold mb-2 text-(--vscode-descriptionForeground);
   }
 
   p {
-    @apply mb-4;
+    @apply mb-4 leading-relaxed text-(--vscode-foreground);
   }
 
   ul {
-    @apply list-disc pl-5 mb-4;
+    @apply list-disc pl-5 mb-4 space-y-1;
   }
 
   ol {
-    @apply list-decimal pl-5 mb-4;
+    @apply list-decimal pl-5 mb-4 space-y-1;
   }
 
   li {
-    @apply mb-2;
+    @apply mb-1 text-(--vscode-foreground);
   }
 
   hr {
-    @apply border-t border-(--vscode-panel-border) my-4;
+    @apply border-t border-(--vscode-panel-border)/50 my-6;
   }
+
+  code {
+    @apply px-1.5 py-0.5 rounded text-sm;
+    background-color: var(--vscode-textPreformat-background);
+    color: var(--vscode-textPreformat-foreground);
+  }
+
+  pre {
+    @apply p-4 rounded-md mb-4 overflow-x-auto;
+    background-color: var(--vscode-textCodeBlock-background);
+  }
+
+  pre code {
+    @apply p-0 bg-transparent;
+  }
+
+  blockquote {
+    @apply pl-4 border-l-4 border-(--vscode-textBlockQuote-border) my-4 italic;
+    color: var(--vscode-textBlockQuote-foreground);
+  }
+
+  a {
+    color: var(--vscode-textLink-foreground);
+    @apply hover:underline;
+  }
+
+  strong {
+    @apply font-semibold;
+  }
+
+  em {
+    @apply italic;
+  }
+}
+
+/* Custom Scrollbar for Presenter View */
+.presenter-card-body {
+  scrollbar-width: thin;
+  scrollbar-color: var(--vscode-scrollbarSlider-background) transparent;
+}
+
+.presenter-card-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.presenter-card-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.presenter-card-body::-webkit-scrollbar-thumb {
+  background-color: var(--vscode-scrollbarSlider-background);
+  border-radius: 4px;
+}
+
+.presenter-card-body::-webkit-scrollbar-thumb:hover {
+  background-color: var(--vscode-scrollbarSlider-hoverBackground);
+}
+
+/* Tabular Numbers for Clock/Countdown */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }

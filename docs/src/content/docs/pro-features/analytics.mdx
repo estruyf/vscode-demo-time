@@ -1,0 +1,148 @@
+---
+title: Presentation Analytics
+description: Track and analyze your presentation performance with detailed metrics and insights
+lastmod: 2026-01-03T09:59:14.272Z
+---
+
+import { Aside, Card, Tabs, TabItem } from '@astrojs/starlight/components';
+
+<Aside type="tip" title="Pro Feature">
+Analytics is a [Pro feature](/pro-features/). You need to be a GitHub Sponsor at the €10/month tier or higher to use this feature. Learn more about [unlocking Pro features](/pro-features/).
+</Aside>
+
+The Analytics feature provides comprehensive tracking of your demo presentations, helping you understand how you spend time during demos, identify areas for improvement, and optimize your delivery.
+
+## What is Analytics?
+
+Presentation Analytics gives you deep insights into how you present your demos. It records timing data, navigation patterns, file interactions, and more—helping you identify what works well and where you can improve.
+
+### Key Capabilities
+
+- **Session Recording**: Record complete presentation sessions with detailed timing data
+- **Navigation Tracking**: See which demos and steps take the most time
+- **File Activity**: Monitor which files are opened and edited during demos
+- **Terminal Tracking**: Capture terminal commands executed during presentations
+- **Pause Detection**: Automatically detect and record narrative moments
+- **Performance Insights**: Get recommendations based on your presentation patterns
+- **Session Export**: Export your analytics data as JSON for archival or external analysis
+
+## Getting Started
+
+### Starting a Recording Session
+
+To begin tracking your presentation you can start an Analytics recording session as follows:
+
+#### Automatic Start with Presentation Mode
+
+1. Start your presentation using **Demo Time: Start Presentation Mode** from the Command Palette.
+2. When prompted, choose the type of recording:
+   - **Dry Run / Practice**: For practice sessions and rehearsals
+   - **Live Presentation**: For actual presentations to audiences
+
+Once you are finished with your presentation, stop the presentation mode to end the recording (or use the reset command).
+
+#### Manual Start
+
+1. Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`)
+2. Run the command: **Demo Time Analytics: Start Analytics Recording**
+3. Choose your session type:
+   - **Dry Run / Practice**: For practice sessions and rehearsals
+   - **Live Presentation**: For actual presentations to audiences
+
+Once started, Analytics will begin tracking your presentation in the background.
+
+### During Your Presentation
+
+While Analytics is recording, it tracks:
+
+- **Step Timing**: How long you spend on each demo step
+- **Navigation Patterns**: Which steps you skip, repeat, or spend extra time on
+- **File Interactions**: Which files you open, edit, or reference
+- **Terminal Commands**: Commands you execute in the integrated terminal
+- **Pauses**: Moments when you stop to speak or explain (based on activity threshold)
+
+You can see a recording indicator in the Demo Time resources panel when Analytics is active.
+
+### Stopping the Recording
+
+When your presentation is complete:
+
+1. Open the Command Palette
+2. Run: **Demo Time Analytics: Stop Analytics Recording**
+
+Your session data will be automatically saved.
+
+### Quick Toggle
+
+You can also use **Demo Time Analytics: Toggle Analytics Recording** to quickly start or stop recording without choosing a session type (it will use "Practice" by default).
+
+## Viewing Your Analytics
+
+### Analytics Dashboard
+
+After recording a session, you can review your data in the Analytics Dashboard:
+
+1. Open the Command Palette
+2. Run: **Demo Time Analytics: Open Analytics Dashboard**
+
+The dashboard shows:
+
+- **Session Overview**: Total duration, demo count, step count
+- **Timing Breakdown**: Time spent per demo and per step
+- **Navigation Patterns**: Most and least visited steps
+- **File Activity**: Files opened and modified during the session
+- **Terminal Activity**: Commands executed
+- **Pauses & Narratives**: Detected speaking moments
+- **Performance Recommendations**: AI-generated suggestions for improvement
+
+### Understanding the Data
+
+The Analytics Dashboard provides several views:
+
+- **Session List**: All your recorded sessions with quick stats
+- **Demo Breakdown**: Time spent on each demo in the session
+- **Step Analysis**: Detailed timing for individual steps
+- **Error Tracking**: Any errors encountered during the demo
+- **File Activity**: Which files were accessed and when
+
+## Configuration Options
+
+Customize Analytics behavior through VS Code settings:
+
+### Basic Settings
+
+```json title=".vscode/settings.json"
+{
+  // Enable or disable analytics tracking globally
+  "demoTime.analytics.enabled": true
+}
+```
+
+## Best Practices
+
+### For Practice Sessions
+
+- **Record multiple runs**: Practice the same demo several times and compare analytics
+- **Focus on timing**: Use the data to identify sections that run too long or too short
+- **Note error patterns**: If you consistently encounter errors at certain steps, adjust your demo
+
+### For Live Presentations
+
+- **Review afterwards**: Don't watch the analytics during the presentation—focus on your audience
+- **Compare to practice**: See how your live presentation differed from your practice runs
+- **Track improvements**: Record multiple presentations of the same content to see your progress
+
+## Troubleshooting
+
+### Analytics not recording
+
+- Verify you're authenticated as a sponsor (run **Demo Time: Authenticate with GitHub**)
+- Check that `demoTime.analytics.enabled` is set to `true`
+- Ensure you've started recording with the Start Analytics command or started presentation mode
+
+## Privacy & Data Storage
+
+- **Local storage**: All analytics data is stored locally on your machine
+- **No telemetry**: Analytics data is never sent to external servers
+- **You control exports**: Only you decide if and when to export or share your data
+- **Session isolation**: Each session is stored separately and can be deleted individually

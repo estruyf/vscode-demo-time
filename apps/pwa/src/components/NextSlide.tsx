@@ -65,6 +65,19 @@ export const NextSlide: React.FunctionComponent<INextSlideProps> = ({
     localStorage.setItem('nextSlideCollapsed', JSON.stringify(isCollapsed));
   }, [isCollapsed]);
 
+  // Refresh iframe when nextTitle changes
+  React.useEffect(() => {
+    if (iframeRef.current && nextTitle) {
+      const iframe = iframeRef.current;
+      const currentSrc = iframe.src;
+      try {
+        const url = new URL(currentSrc);
+        url.searchParams.set('t', Date.now().toString());
+        iframe.src = url.toString();
+      } catch { }
+    }
+  }, [nextTitle]);
+
   if (!hasNext || !connectionStatus.connected) {
     return null;
   }
@@ -89,12 +102,14 @@ export const NextSlide: React.FunctionComponent<INextSlideProps> = ({
             <polyline points="6,9 12,15 18,9"></polyline>
           </svg>
         </button>
+
         <h3 className="text-lg font-semibold text-white">
           {
             nextTitle ? `Next: ${nextTitle}` : 'Next Slide'
           }
         </h3>
       </div>
+
       {!isCollapsed && (
         <div
           ref={divRef}

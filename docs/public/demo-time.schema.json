@@ -87,6 +87,7 @@
                     "openSlide",
                     "insert",
                     "highlight",
+                    "selection",
                     "replace",
                     "unselect",
                     "delete",
@@ -108,6 +109,9 @@
                     "showInfoMessage",
                     "setState",
                     "openWebsite",
+                    "zoomIn",
+                    "zoomOut",
+                    "zoomReset",
                     "openTerminal",
                     "executeTerminalCommand",
                     "executeScript",
@@ -122,7 +126,9 @@
                     "agentCopilotChat",
                     "customCopilotChat",
                     "closeCopilotChat",
+                    "cancelCopilotChat",
                     "copyToClipboard",
+                    "copyFromSelection",
                     "pasteFromClipboard",
                     "typeText",
                     "pressEnter",
@@ -135,6 +141,14 @@
                     "pressBackspace",
                     "pressDelete",
                     "runDemoById",
+                    "macos.enableFocusMode",
+                    "macos.disableFocusMode",
+                    "macos.hideMenubar",
+                    "macos.showMenubar",
+                    "macos.muteVolume",
+                    "macos.unmuteVolume",
+                    "macos.enableCaffeine",
+                    "macos.disableCaffeine",
                     "startEngageTimeSession",
                     "startEngageTimePoll",
                     "closeEngageTimeSession",
@@ -302,6 +316,39 @@
                       },
                       "highlightWholeLine": {
                         "$ref": "#/definitions/highlightWholeLine"
+                      },
+                      "zoom": {
+                        "$ref": "#/definitions/zoom"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "enum": ["selection"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["path"],
+                    "oneOf": [
+                      { "required": ["position"] },
+                      { "required": ["startPlaceholder", "endPlaceholder"] }
+                    ],
+                    "properties": {
+                      "path": {
+                        "$ref": "#/definitions/path"
+                      },
+                      "position": {
+                        "$ref": "#/definitions/position"
+                      },
+                      "startPlaceholder": {
+                        "$ref": "#/definitions/startPlaceholder"
+                      },
+                      "endPlaceholder": {
+                        "$ref": "#/definitions/endPlaceholder"
                       },
                       "zoom": {
                         "$ref": "#/definitions/zoom"
@@ -563,6 +610,13 @@
                       },
                       "path": {
                         "$ref": "#/definitions/path"
+                      },
+                      "args": {
+                        "type": "array",
+                        "description": "Arguments to pass to the script as command-line arguments in the order specified. Example: [\"arg1\", \"arg2\"] becomes: command script.js arg1 arg2",
+                        "items": {
+                          "type": "string"
+                        }
                       }
                     }
                   }
@@ -691,6 +745,50 @@
                         "$ref": "#/definitions/openInVSCode"
                       }
                     }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "zoomIn"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "zoom": {
+                        "$ref": "#/definitions/zoom"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "zoomOut"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "zoom": {
+                        "$ref": "#/definitions/zoom"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "zoomReset"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {}
                   }
                 },
                 {
@@ -862,6 +960,22 @@
                     "properties": {
                       "id": {
                         "$ref": "#/definitions/runDemoById"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "macos.enableCaffeine"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "duration": {
+                        "$ref": "#/definitions/duration"
                       }
                     }
                   }
@@ -1154,7 +1268,7 @@
     },
     "zoom": {
       "type": "number",
-      "title": "The zoom level for the editor when highlighting code",
+      "title": "The number of times to zoom in or out",
       "default": 0
     },
     "pollId": {
@@ -1178,6 +1292,10 @@
     "description": {
       "type": "string",
       "title": "The description of the EngageTime message"
+    },
+    "duration": {
+      "type": "number",
+      "title": "Duration in minutes (for macos.enableCaffeine). If not specified, prevents sleep indefinitely."
     }
   }
 }
