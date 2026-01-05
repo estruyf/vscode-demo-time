@@ -1,7 +1,7 @@
 ---
 title: Getting started
 description: Get started with Demo Time
-lastmod: 2025-08-22T07:51:32.455Z
+lastmod: 2026-01-05T16:20:58.824Z
 ---
 
 import {
@@ -35,6 +35,29 @@ Watch the video to learn more about why Demo Time was created and how it can hel
 
 <Aside type="tip">
 Demo Time works not only in Visual Studio Code, but also in any code editor built on top of Visual Studio Code (such as Cursor, Windsurf, GitHub Codespaces, and other VS Code derivatives).
+</Aside>
+
+## Demo Time Terminology
+
+Demo Time uses a theatrical structure to organize your demos into manageable, narrative-driven presentations. Understanding this hierarchy will help you build more effective demos:
+
+### Play
+Your entire demo project (`.demo` folder). Contains all the Acts and assets you need for your presentation.
+
+### Act
+A single demo file (`*.yml` or `*.json`) focusing on a specific topic. You can have multiple act files to split your demos into logical sections.
+
+### Scene
+A single demo section that contains one or more moves. Scenes help you group related actions together.
+
+### Moves
+Individual steps inside a Scene that execute in order to perform a clear action, such as:
+- **Move 1:** Show text introduction
+- **Move 2:** Open code file
+- **Move 3:** Highlight code block
+
+<Aside type="tip">
+The hierarchical structure **Play → Act → Scene → Move** makes it easy to organize complex demos into manageable, narrative-driven presentations that are easier to build and follow.
 </Aside>
 
 ## Initialize the extension

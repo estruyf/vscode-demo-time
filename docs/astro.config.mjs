@@ -175,6 +175,7 @@ export default defineConfig({
           label: 'References',
           collapsed: true,
           items: [
+            { label: 'Terminology', slug: 'references/terminology' },
             { label: 'Commands', slug: 'references/commands' },
             { label: 'Settings', slug: 'references/settings' },
             { label: 'API', slug: 'references/api' },
