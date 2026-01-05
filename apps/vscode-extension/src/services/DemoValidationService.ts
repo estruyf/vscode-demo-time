@@ -71,7 +71,7 @@ export class DemoValidationService {
   }
 
   /**
-   * Validate a single document if it's a act file
+   * Validate a single document if it's an act file
    */
   private static async validateDocument(document: TextDocument): Promise<void> {
     const fileName = parseWinPath(document.fileName);

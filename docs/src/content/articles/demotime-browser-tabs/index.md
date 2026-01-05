@@ -55,7 +55,7 @@ First we need Visual Studio Code, the Demo Time extension, and a demo to get
 started. For a detailed guide on how to start, see documentation
 [here](https://demotime.show/getting-started/).
 
-As preparation, I've already created a act file named **demo**.
+As preparation, I've already created an act file named **demo**.
 
 Next, I created a folder named **slides** and added three slides to it:
 

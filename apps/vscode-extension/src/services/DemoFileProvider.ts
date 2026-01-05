@@ -42,7 +42,7 @@ export class DemoFileProvider {
   }
 
   /**
-   * Parses the content of a act file based on its extension
+   * Parses the content of an act file based on its extension
    * @param content The file content as string
    * @param filePath The file path to determine the format
    * @returns The parsed content as DemoConfig (normalized from v3 if needed)
@@ -177,7 +177,7 @@ export class DemoFileProvider {
   }
 
   /**
-   * Retrieves a act file using a quick pick dialog.
+   * Retrieves an act file using a quick pick dialog.
    * @returns The selected act file, or undefined if no file was selected.
    */
   public static async demoQuickPick(): Promise<{ filePath: string; demo: DemoConfig } | undefined> {
@@ -198,7 +198,7 @@ export class DemoFileProvider {
 
     const demoFilePick = await window.showQuickPick(demoFileOptions, {
       title: Config.title,
-      placeHolder: 'Select a act file',
+      placeHolder: 'Select an act file',
     });
 
     if (!demoFilePick) {
@@ -234,7 +234,7 @@ export class DemoFileProvider {
   }
 
   /**
-   * Creates a act file if it doesn't exist in the workspace.
+   * Creates an act file if it doesn't exist in the workspace.
    * The file is created at `.demo/demo.json` or `.demo/demo.yaml` based on configuration.
    * @returns A promise that resolves when the file is created.
    */

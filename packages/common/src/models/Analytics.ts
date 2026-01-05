@@ -6,8 +6,8 @@
  *
  * Terminology:
  * - Play: The entire presentation session (can span multiple act files)
- * - Act: A act file being presented
- * - Scene: A demo within a act file
+ * - Act: An act file being presented
+ * - Scene: A demo within an act file
  * - Move: A step within a demo
  */
 

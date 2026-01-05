@@ -71,7 +71,7 @@ export const DemoList: React.FC<DemoListProps> = ({ apiData, onRunById }) => {
           <div className="text-6xl mb-4">📁</div>
           <p className="text-gray-400 text-lg">No moves found</p>
           <p className="text-sm text-gray-500 mt-2">
-            Load a act file in Demo Time to see demos here
+            Load an act file in Demo Time to see demos here
           </p>
         </div>
       ) : (

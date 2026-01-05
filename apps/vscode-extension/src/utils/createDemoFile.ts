@@ -20,7 +20,7 @@ export const createDemoFile = async () => {
     },
     ...Templates.map((sample) => ({
       label: sample.id,
-      detail: sample.description || 'Use this sample to create a act file',
+      detail: sample.description || 'Use this sample to create an act file',
     })),
   ];
 

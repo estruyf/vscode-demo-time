@@ -330,7 +330,7 @@
       },
       {
         "command": "demo-time.addStepToDemo",
-        "title": "Add new action to move",
+        "title": "Add new move to scene",
         "category": "Demo Time",
         "icon": "$(add)"
       },
@@ -874,7 +874,7 @@
     "viewsWelcome": [
       {
         "view": "demo-time-scenes",
-        "contents": "Welcome to Demo Time! Start by creating a act file in JSON or YAML format, or click the initialize button.\n\n[Initialize](command:demo-time.initialize)\n\n[Learn More](https://demotime.show)"
+        "contents": "Welcome to Demo Time! Start by creating an act file in JSON or YAML format, or click the initialize button.\n\n[Initialize](command:demo-time.initialize)\n\n[Learn More](https://demotime.show)"
       },
       {
         "view": "demo-time-resources",
@@ -900,7 +900,7 @@
           },
           {
             "id": "demo-time.welcome.createDemo",
-            "title": "Create a Act file",
+            "title": "Create an act file",
             "description": "Use the [Demo Time: Create a new act file](command:demo-time.createDemoFile) command to create a new act file.",
             "media": {
               "markdown": "walkthrough/create-demo.md"
