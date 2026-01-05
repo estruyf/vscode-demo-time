@@ -85,13 +85,13 @@ export class DemoFileProvider {
    * @param title The demo title
    * @returns The formatted content string
    */
-  private static generateFileContent(title: string): DemoConfig {
-    const demoContent: DemoConfig = {
+  private static generateFileContent(title: string): ActConfig {
+    const demoContent: ActConfig = {
       $schema: 'https://demotime.show/demo-time.schema.json',
       title: title,
       description: '',
-      version: 2,
-      demos: [],
+      version: 3,
+      scenes: [],
     };
 
     return demoContent;
