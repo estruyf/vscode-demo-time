@@ -328,10 +328,35 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     }
   }, [crntFilePath, crntSlide]);
 
+  // Cleanup effect for video elements when slide changes
+  React.useEffect(() => {
+    // Pause and cleanup any existing videos when slide changes
+    const videos = document.querySelectorAll('video');
+    videos.forEach(video => {
+      video.pause();
+    });
+
+    // Small delay to allow new slide to render before cleaning up DOM
+    const timeoutId = setTimeout(() => {
+      // Remove any orphaned video elements that might be left over
+      const orphanedVideos = document.querySelectorAll('video:not([src])');
+      orphanedVideos.forEach(video => {
+        const parent = video.parentElement;
+        if (parent && parent.children.length === 1) {
+          parent.remove();
+        } else {
+          video.remove();
+        }
+      });
+    }, 100);
+
+    return () => clearTimeout(timeoutId);
+  }, [crntSlide?.index, crntSlide?.frontmatter?.customLayout]);
+
   return (
     <>
       <div
-        key={crntFilePath}
+        key={`${crntFilePath}-${crntSlide?.index || 0}-${crntSlide?.frontmatter?.customLayout || 'standard'}`}
         ref={ref}
         className={`slide ${theme || "default"} relative w-full h-full overflow-hidden`}
         onMouseEnter={() => setShowControls(true)}
@@ -378,7 +403,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
                 <div className='slide__content'>
                   {
                     <Markdown
-                      key={crntSlide.index}
+                      key={`${crntSlide.index}-${crntSlide?.frontmatter?.customLayout || 'standard'}`}
                       filePath={crntFilePath}
                       content={crntSlide.content}
                       matter={crntSlide.frontmatter}

@@ -18,6 +18,8 @@
   support in slides
 - [#362](https://github.com/estruyf/vscode-demo-time/issues/362): Ignore next
   click when the editor is still in typing mode
+- [#363](https://github.com/estruyf/vscode-demo-time/issues/363): Fixed video
+  control support in custom slide layouts
 
 ## [1.12.0] - 2025-12-16
 
