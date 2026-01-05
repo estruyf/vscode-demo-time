@@ -51,6 +51,10 @@ export class TextTypingService {
     );
   }
 
+  public static get IsTyping() {
+    return TextTypingService.isTyping;
+  }
+
   /**
    * Inserts content into a text editor at the specified position or range.
    * If a position is provided, the content is inserted at that position.

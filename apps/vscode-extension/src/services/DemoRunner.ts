@@ -282,6 +282,11 @@ export class DemoRunner {
   private static async start(
     item: ActionTreeItem | { demoFilePath: string; description: string },
   ): Promise<void> {
+    if (TextTypingService.IsTyping) {
+      Logger.info('DemoRunner.start called while typing. Ignoring.');
+      return;
+    }
+
     if (Preview.isListening()) {
       return;
     }
@@ -406,6 +411,11 @@ export class DemoRunner {
    * @returns {Promise<void>} A promise that resolves when the previous demo step has been executed.
    */
   private static async previous(): Promise<void> {
+    if (TextTypingService.IsTyping) {
+      Logger.info('DemoRunner.previous called while typing. Ignoring.');
+      return;
+    }
+
     if (Preview.checkIfHasPreviousSlide()) {
       await Preview.postMessage(WebViewMessages.toWebview.previousSlide);
       return;
@@ -502,6 +512,11 @@ export class DemoRunner {
     idx: number;
     demo: Demo;
   }): Promise<void> {
+    if (TextTypingService.IsTyping) {
+      Logger.info('DemoRunner.startDemo called while typing. Ignoring.');
+      return;
+    }
+
     if (!demoToRun) {
       return;
     }
@@ -614,6 +629,11 @@ export class DemoRunner {
     needsUpdate: boolean = true,
     crntFilePath: string | undefined = undefined,
   ): Promise<void> {
+    if (TextTypingService.IsTyping) {
+      Logger.info('DemoRunner.runSteps called while typing. Ignoring.');
+      return;
+    }
+
     // End the segment successfully
     if (AnalyticsService.isRecording()) {
       AnalyticsService.endSegment();
@@ -711,6 +731,11 @@ export class DemoRunner {
     workspaceFolder: WorkspaceFolder,
     crntFilePath: string | undefined,
   ): Promise<void> {
+    if (TextTypingService.IsTyping) {
+      Logger.info('DemoRunner.runStep called while typing. Ignoring.');
+      return;
+    }
+
     if (!step.action) {
       return;
     }

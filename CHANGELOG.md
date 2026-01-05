@@ -16,6 +16,8 @@
   analytics PRO feature
 - [#361](https://github.com/estruyf/vscode-demo-time/issues/361): Video control
   support in slides
+- [#362](https://github.com/estruyf/vscode-demo-time/issues/362): Ignore next
+  click when the editor is still in typing mode
 
 ## [1.12.0] - 2025-12-16
 
