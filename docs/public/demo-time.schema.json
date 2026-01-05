@@ -18,10 +18,6 @@
       "default": 1,
       "description": "Version 3 introduces theatrical naming: scenes (replaces demos) and moves (replaces steps)"
     },
-    "productIcon": {
-      "type": "string",
-      "description": "Product icon for version 3 files. Optional but recommended for visual identification."
-    },
     "timer": {
       "type": "number",
       "description": "The timer in minutes for the demo."
@@ -958,21 +954,19 @@
       }
     }
   },
-  "anyOf": [
+  "allOf": [
     {
       "if": {
         "properties": {
-          "version": {
-            "const": 3
-          }
+          "version": { "const": 3 }
         }
       },
       "then": {
         "required": ["title", "version", "scenes"]
+      },
+      "else": {
+        "required": ["title", "demos"]
       }
-    },
-    {
-      "required": ["title", "demos"]
     }
   ],
   "definitions": {

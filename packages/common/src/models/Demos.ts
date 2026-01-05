@@ -16,7 +16,6 @@ export interface ActConfig {
   description?: string;
   version: 3;
   timer?: number;
-  productIcon?: string; // Required for .act files
   engageTime?: EngageTimeConfig;
   scenes: Scene[];
 }

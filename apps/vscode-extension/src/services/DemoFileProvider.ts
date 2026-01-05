@@ -73,7 +73,11 @@ export class DemoFileProvider {
     }
 
     // Normalize version 3 configs to legacy format for compatibility
-    return normalizeDemoConfig(parsed);
+    try {
+      return normalizeDemoConfig(parsed);
+    } catch {
+      return undefined;
+    }
   }
 
   /**
