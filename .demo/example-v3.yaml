@@ -17,7 +17,7 @@ scenes:
 
           This demo uses the new theatrical structure:
           - **Play**: Your entire demo project
-          - **Act**: This demo file (example-v3.yaml)
+          - **Act**: This act file (example-v3.yaml)
           - **Scene**: Each section of your presentation
           - **Move**: Individual actions that build your narrative
       - action: open

@@ -123,7 +123,7 @@ export class DemoStatusBar {
     const executingFile = await DemoRunner.getExecutedDemoFile();
 
     if (!demoFiles || !executingFile?.filePath) {
-      Logger.info('No next demo file path found');
+      Logger.info('No next act file path found');
       DemoStatusBar.nextDemo = undefined;
       DemoStatusBar.statusBarItem?.hide();
       DemoStatusBar.statusBarNotes?.hide();
@@ -133,7 +133,7 @@ export class DemoStatusBar {
 
     const fileEntry = demoFiles[executingFile.filePath];
     if (!fileEntry) {
-      Logger.info('Executing file not found in loaded demo files');
+      Logger.info('Executing file not found in loaded act files');
       DemoStatusBar.nextDemo = undefined;
       DemoStatusBar.statusBarItem?.hide();
       DemoStatusBar.statusBarNotes?.hide();
@@ -167,7 +167,7 @@ export class DemoStatusBar {
 
     // Check if exists and is the last demo
     if (crntDemoIdx !== -1 && crntDemoIdx === executingDemos.length - 1) {
-      // Check if there is a next demo file
+      // Check if there is a next act file
       const nextFile = await getNextDemoFile(executingFile);
       if (!nextFile) {
         DemoStatusBar.statusBarItem.hide();
@@ -232,7 +232,7 @@ export class DemoStatusBar {
   }
 
   /**
-   * Retrieves the timer setting from the current demo file or falls back to the extension setting.
+   * Retrieves the timer setting from the current act file or falls back to the extension setting.
    */
   public static async getTimer(): Promise<number | undefined> {
     const executingFile = await DemoRunner.getExecutedDemoFile();

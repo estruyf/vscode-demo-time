@@ -1,4 +1,4 @@
-# Demo Time Demo Files
+# Demo Time Act files
 
 This folder contains demonstration files for **Demo Time** using the new
 **Version 3** theatrical structure.
@@ -8,7 +8,7 @@ This folder contains demonstration files for **Demo Time** using the new
 Demo Time uses an intuitive theatrical metaphor:
 
 - **Play** - Your entire demo project (this workspace)
-- **Act** - Each demo file (e.g., `example-v3.yaml` or `my-demo.json`)
+- **Act** - Each act file (e.g., `example-v3.yaml` or `my-demo.json`)
 - **Scene** - Sections within an Act (previously called "demos")
 - **Move** - Individual actions (previously called "steps")
 
@@ -25,8 +25,8 @@ Demo Time uses an intuitive theatrical metaphor:
 ### Version 1 & 2 (Legacy Format)
 
 - **`demo.json`** - Legacy JSON format demo
-- **`sample.json`** - Sample demo file
-- **`sample.yaml`** - Sample YAML demo file
+- **`sample.json`** - Sample act file
+- **`sample.yaml`** - Sample YAML act file
 - Other `.json` and `.yaml` files - Various demo examples
 
 ## 🚀 Quick Start
@@ -72,7 +72,7 @@ Choose from any VS Code codicon:
 
 ## 🔄 Backward Compatibility
 
-All existing `.json` and `.yaml` demo files continue to work without
+All existing `.json` and `.yaml` act files continue to work without
 modification. You can mix version 1, 2, and 3 files in the same project.
 
 ## 🎬 Example Structure

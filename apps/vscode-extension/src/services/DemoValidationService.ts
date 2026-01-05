@@ -19,7 +19,7 @@ import {
   window,
 } from 'vscode';
 import { DemoFileProvider } from './DemoFileProvider';
-import { Demo, DemoConfig } from '@demotime/common';
+import { COMMAND, Demo, DemoConfig } from '@demotime/common';
 import { General } from '../constants';
 import { parseWinPath } from '../utils';
 
@@ -48,12 +48,12 @@ export class DemoValidationService {
 
     // Register command to manually fix duplicate IDs
     const fixDuplicateIdsCommand = vscode.commands.registerCommand(
-      'demoTime.fixDuplicateIds',
+      COMMAND.fixDuplicateIds,
       DemoValidationService.fixDuplicateIdsInActiveFile,
     );
     ctx.subscriptions.push(fixDuplicateIdsCommand);
 
-    // Listen for file changes and validate demo files
+    // Listen for file changes and validate act files
     const onDidSave = workspace.onDidSaveTextDocument(DemoValidationService.validateDocument);
     const onDidOpen = workspace.onDidOpenTextDocument(DemoValidationService.validateDocument);
     const onDidCreate = workspace.onDidCreateFiles((e) => {
@@ -64,14 +64,14 @@ export class DemoValidationService {
 
     ctx.subscriptions.push(onDidSave, onDidOpen, onDidCreate);
 
-    // Validate all existing demo files on startup
+    // Validate all existing act file on startup
     DemoValidationService.validateAllDemoFiles();
 
     DemoValidationService.registered = true;
   }
 
   /**
-   * Validate a single document if it's a demo file
+   * Validate a single document if it's a act file
    */
   private static async validateDocument(document: TextDocument): Promise<void> {
     const fileName = parseWinPath(document.fileName);
@@ -90,7 +90,7 @@ export class DemoValidationService {
   }
 
   /**
-   * Validate all demo files in the workspace
+   * Validate all act files in the workspace
    */
   private static async validateAllDemoFiles(): Promise<void> {
     try {
@@ -107,29 +107,29 @@ export class DemoValidationService {
           const document = await workspace.openTextDocument(uri);
           await DemoValidationService.validateDemoFile(document);
         } catch (error) {
-          console.error(`Error validating demo file ${filePath}:`, error);
+          console.error(`Error validating act file ${filePath}:`, error);
         }
       }
     } catch (error) {
-      console.error('Error validating all demo files:', error);
+      console.error('Error validating all act files:', error);
     }
   }
 
   /**
-   * Validate a single demo file and report diagnostics
+   * Validate a single act file and report diagnostics
    */
   private static async validateDemoFile(document: TextDocument): Promise<void> {
     const diagnostics: Diagnostic[] = [];
 
     try {
-      // Parse the demo file content
+      // Parse the act file content
       const content = await DemoFileProvider.getFile(document.uri);
 
       if (!content || !content.demos) {
         return;
       }
 
-      // Check for duplicate demo IDs within this file
+      // Check for duplicate scene IDs within this file
       const seenIds = new Map<string, { index: number; position: Position }>();
       const demos = content.demos;
 
@@ -145,7 +145,7 @@ export class DemoValidationService {
           const lineEnd = new Position(position.line, document.lineAt(position.line).text.length);
           const diagnostic = new Diagnostic(
             new Range(new Position(position.line, 0), lineEnd),
-            `Duplicate demo ID "${demo.id}" found. Demo IDs must be unique within a file. First occurrence at line ${existingDemo.position.line + 1}.`,
+            `Duplicate scene ID "${demo.id}" found. Scene IDs must be unique within a file. First occurrence at line ${existingDemo.position.line + 1}.`,
             DiagnosticSeverity.Error,
           );
           diagnostic.source = 'demo-time';
@@ -159,7 +159,7 @@ export class DemoValidationService {
           );
           const firstOccurrenceDiagnostic = new Diagnostic(
             new Range(new Position(existingDemo.position.line, 0), firstLineEnd),
-            `Duplicate demo ID "${demo.id}" found. This ID is also used at line ${position.line + 1}.`,
+            `Duplicate scene ID "${demo.id}" found. This ID is also used at line ${position.line + 1}.`,
             DiagnosticSeverity.Error,
           );
           firstOccurrenceDiagnostic.source = 'demo-time';
@@ -171,13 +171,13 @@ export class DemoValidationService {
         }
       });
 
-      // Check for duplicate IDs across all demo files
+      // Check for duplicate IDs across all act files
       await DemoValidationService.checkGlobalDuplicateIds(document, content, diagnostics);
     } catch (error) {
       // Add diagnostic for parsing errors
       const diagnostic = new Diagnostic(
         new Range(new Position(0, 0), new Position(0, 0)),
-        `Error parsing demo file: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `Error parsing act file: ${error instanceof Error ? error.message : 'Unknown error'}`,
         DiagnosticSeverity.Error,
       );
       diagnostic.source = 'demo-time';
@@ -190,7 +190,7 @@ export class DemoValidationService {
   }
 
   /**
-   * Check for duplicate demo IDs across all demo files in the workspace
+   * Check for duplicate scene IDs across all act files in the workspace
    */
   private static async checkGlobalDuplicateIds(
     currentDocument: TextDocument,
@@ -243,7 +243,7 @@ export class DemoValidationService {
 
             const diagnostic = new Diagnostic(
               new Range(new Position(position.line, 0), lineEnd),
-              `Demo ID "${demo.id}" conflicts with a demo in ${relativePath}. Demo IDs must be unique across all demo files.`,
+              `Scene ID "${demo.id}" conflicts with a demo in ${relativePath}. Scene IDs must be unique across all act files.`,
               DiagnosticSeverity.Error,
             );
             diagnostic.source = 'demo-time';
@@ -456,7 +456,7 @@ export class DemoValidationService {
   }
 
   /**
-   * Generate a unique demo ID for the given demos array
+   * Generate a unique scene ID for the given demos array
    */
   public static generateUniqueId(demos: Demo[], baseId?: string): string {
     const usedIds = new Set(demos.map((demo) => demo.id).filter(Boolean));
@@ -496,14 +496,14 @@ export class DemoValidationService {
     const document = activeEditor.document;
     const fileName = parseWinPath(document.fileName);
 
-    // Only process demo files
+    // Only process act files
     if (!fileName.includes(General.demoFolder)) {
       window.showErrorMessage('Active file is not in the demo folder');
       return;
     }
 
     if (!fileName.endsWith('.json') && !fileName.endsWith('.yaml') && !fileName.endsWith('.yml')) {
-      window.showErrorMessage('Active file is not a JSON or YAML demo file');
+      window.showErrorMessage('Active file is not a JSON or YAML act file');
       return;
     }
 
@@ -538,7 +538,7 @@ export class DemoValidationService {
       });
 
       if (!hasChanges) {
-        window.showInformationMessage('No duplicate demo IDs found');
+        window.showInformationMessage('No duplicate scene IDs found');
         return;
       }
 
@@ -556,7 +556,7 @@ export class DemoValidationService {
 
       if (success) {
         window.showInformationMessage(
-          `Fixed ${changedCount} duplicate demo ID${changedCount > 1 ? 's' : ''}`,
+          `Fixed ${changedCount} duplicate scene ID${changedCount > 1 ? 's' : ''}`,
         );
       } else {
         window.showErrorMessage('Failed to apply changes');
@@ -600,7 +600,7 @@ class DemoCodeActionProvider implements CodeActionProvider {
         diagnostic.code === 'global-duplicate-demo-id'
       ) {
         // Create quick fix to regenerate unique ID
-        const action = new CodeAction('Generate unique demo ID', CodeActionKind.QuickFix);
+        const action = new CodeAction('Generate unique scene ID', CodeActionKind.QuickFix);
 
         action.diagnostics = [diagnostic];
         action.edit = await this.createRegenerateIdEdit(document);

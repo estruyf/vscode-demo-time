@@ -202,8 +202,8 @@ export class AnalyticsService {
 
   /**
    * Starts tracking a new segment (Move - a step execution).
-   * @param actFilePath - Path to the Act (demo file)
-   * @param actTitle - Title of the Act (demo file)
+   * @param actFilePath - Path to the Act (act file)
+   * @param actTitle - Title of the Act (act file)
    * @param scene - The Scene (demo) being executed
    * @param sceneIndex - Index of the Scene in the Act
    */
@@ -642,17 +642,17 @@ export class AnalyticsService {
   }
 
   /**
-   * Tracks timing for an act (demo file) when a segment starts.
+   * Tracks timing for an act (act file) when a segment starts.
    */
   private static async trackActTiming(actFilePath: string): Promise<void> {
     if (!AnalyticsService.actFileTimers.has(actFilePath)) {
-      // Load the demo file to get its timer configuration
+      // Load the act file to get its timer configuration
       let configuredTimer: number | undefined;
       try {
         const demoFile = await DemoFileProvider.getFile(Uri.file(actFilePath));
         configuredTimer = demoFile?.timer;
       } catch (error) {
-        Logger.error(`Failed to load demo file for timer: ${actFilePath} - ${error}`);
+        Logger.error(`Failed to load act file for timer: ${actFilePath} - ${error}`);
       }
 
       AnalyticsService.actFileTimers.set(actFilePath, {

@@ -194,7 +194,7 @@ export class DemoApi {
     }
 
     if (!id) {
-      res.status(400).send('Missing demo ID');
+      res.status(400).send('Missing scene ID');
       return;
     }
 

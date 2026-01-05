@@ -83,7 +83,7 @@ export class AnalyticsCommands {
       return;
     }
 
-    // Get current demo file info
+    // Get current act file info
     const executingFile = await DemoRunner.getExecutedDemoFile();
     let demoFilePath = executingFile.filePath;
     let demoTitle = 'Untitled';
@@ -94,7 +94,7 @@ export class AnalyticsCommands {
         demoTitle = demoFiles[demoFilePath].title || 'Untitled';
       }
     } else {
-      // Try to get the first demo file
+      // Try to get the first act file
       const demoFiles = await DemoFileProvider.getFiles();
       if (demoFiles) {
         const firstPath = Object.keys(demoFiles)[0];
@@ -106,7 +106,7 @@ export class AnalyticsCommands {
     }
 
     if (!demoFilePath) {
-      Notifications.error('No demo file found. Please initialize a demo first.');
+      Notifications.error('No act file found. Please initialize a demo first.');
       return;
     }
 

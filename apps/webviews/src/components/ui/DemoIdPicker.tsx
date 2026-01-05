@@ -85,7 +85,7 @@ export const DemoIdPicker: React.FunctionComponent<IDemoIdPickerProps> = ({
   const handleDemoChange = (selectedId: string) => {
     if (!onDemoSelect) return;
 
-    // Check if this is an existing demo ID from our data
+    // Check if this is an existing scene ID from our data
     if (demoData?.demoFiles) {
       for (const demoFile of demoData.demoFiles) {
         const demo = demoFile.demos.find(d => d.id === selectedId);

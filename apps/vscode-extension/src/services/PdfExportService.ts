@@ -51,7 +51,7 @@ export class PdfExportService {
   }
 
   /**
-   * Export all slides from demo files to a PDF
+   * Export all slides from act files to a PDF
    */
   public static async exportToPdf(): Promise<void> {
     if (!PdfExportService.workspaceFolder) {
@@ -74,14 +74,14 @@ export class PdfExportService {
           const context = await browser.newContext();
           const page = await context.newPage();
 
-          // Get all demo files
+          // Get all act files
           let demoFiles = await DemoFileProvider.getFiles();
           if (!demoFiles) {
-            Notifications.error('No demo files found.');
+            Notifications.error('No act files found.');
             return;
           }
 
-          // Sort the demo files by their paths
+          // Sort the act files by their paths
           demoFiles = sortFiles(demoFiles).reduce(
             (sortedFiles, key) => {
               if (demoFiles) {

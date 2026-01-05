@@ -1,7 +1,7 @@
 {
   "$schema": "https://demotime.show/demo-time.schema.json",
   "title": "Test Validation",
-  "description": "Demo file to test duplicate ID validation",
+  "description": "Act file to test duplicate ID validation",
   "demos": [
     {
       "id": "demo1",

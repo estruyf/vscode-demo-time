@@ -42,7 +42,7 @@ export const DemoOverviewContainer: React.FC<DemoOverviewContainerProps> = ({
     setExpandedSections(new Set());
   };
 
-  // Calculate total stats across all demo files
+  // Calculate total stats across all act files
   const getTotalStats = () => {
     const totalDemos = demoFiles.reduce((sum, file) => sum + (file.config.demos || []).length, 0);
     const totalSteps = demoFiles.reduce((sum, file) =>
@@ -185,7 +185,7 @@ export const DemoOverviewContainer: React.FC<DemoOverviewContainerProps> = ({
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Overview</h1>
               <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">
-                <span>{stats.totalFiles} demo file{stats.totalFiles !== 1 ? 's' : ''} •</span>
+                <span>{stats.totalFiles} act file{stats.totalFiles !== 1 ? 's' : ''} •</span>
                 <span className="ml-1">{stats.totalItems} total items</span>
               </p>
             </div>
@@ -213,12 +213,12 @@ export const DemoOverviewContainer: React.FC<DemoOverviewContainerProps> = ({
         {demoFiles.length === 0 ? (
           <Card className="p-12 text-center">
             <FileText className="h-12 w-12 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No Demo Files Found</h3>
-            <p className="text-gray-600 dark:text-gray-300">Create some demo files to see the script overview</p>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No Act files Found</h3>
+            <p className="text-gray-600 dark:text-gray-300">Create some act files to see the script overview</p>
           </Card>
         ) : (
           <div className="space-y-6">
-            {/* Demo File Sections */}
+            {/* Act file Sections */}
             {demoFiles.map((fileData) => (
               <DemoFileSection
                 key={fileData.fileName}

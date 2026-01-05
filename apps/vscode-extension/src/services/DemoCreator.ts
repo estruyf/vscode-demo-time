@@ -79,7 +79,7 @@ export class DemoCreator {
   }
 
   /**
-   * Initializes the demo by getting the demo files, creating a file if none exists,
+   * Initializes the demo by getting the act files, creating a file if none exists,
    * and showing the text document. It also updates the demo panel and displays an
    * information message.
    */
@@ -97,7 +97,7 @@ export class DemoCreator {
 
     await setContext(ContextKeys.isInitialized, true);
     Notifications.infoWithProgress(
-      `${Config.title} is initialized, you can now start adding demo steps!`,
+      `${Config.title} - act is initialized, you can now start adding scenes and moves!`,
     );
 
     DemoPanel.showWelcome(false);
@@ -105,8 +105,8 @@ export class DemoCreator {
   }
 
   /**
-   * Opens the demo file associated with the given ActionTreeItem and highlights the specified step if applicable.
-   * @param item The ActionTreeItem containing the demo file path.
+   * Opens the act file associated with the given ActionTreeItem and highlights the specified step if applicable.
+   * @param item The ActionTreeItem containing the act file path.
    * @param isDemoStep A boolean indicating whether the item is a demo step and should be highlighted.
    */
   public static async openDemoFile(item: ActionTreeItem, isDemoStep: boolean) {
@@ -179,12 +179,12 @@ export class DemoCreator {
   }
 
   /**
-   * Copies the selected text and inserts it into the specified location in the demo file.
+   * Copies the selected text and inserts it into the specified location in the act file.
    * If no text is selected, the function does nothing.
    * The function prompts the user to choose whether to insert or delete the step.
    * If the user chooses to insert a new step, they are prompted to enter the step title and description.
    * If the user chooses to insert a step into an existing demo, they are prompted to select the demo.
-   * The modified demo file is saved after the step is added.
+   * The modified act fileis saved after the step is added.
    */
   private static async addToStep() {
     let demoFiles = await DemoFileProvider.getFiles();
@@ -469,7 +469,7 @@ export class DemoCreator {
   }
 
   /**
-   * Asks the user which demo file format they want to use.
+   * Asks the user which act file format they want to use.
    * @returns The selected file type or undefined if the prompt was cancelled.
    */
   private static async askFileType(): Promise<DemoFileType | undefined> {
@@ -477,7 +477,7 @@ export class DemoCreator {
 
     const pick = await window.showQuickPick(options, {
       title: Config.title,
-      placeHolder: 'In which format do you want to create the demo file(s)?',
+      placeHolder: 'In which format do you want to create the act file(s)?',
       ignoreFocusOut: true,
     });
 

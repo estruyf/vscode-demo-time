@@ -82,7 +82,7 @@ export const DemoFileSection: React.FC<DemoFileSectionProps> = ({
           </button>
 
           <Button variant="secondary" onClick={handleEditConfig} size="sm">
-            Open config
+            Open Act
           </Button>
         </div>
 

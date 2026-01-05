@@ -137,7 +137,7 @@ layout: ${layout.toLowerCase()}
   }
 
   public static async getTotalSlides(): Promise<number> {
-    // Get all demo files and count all slides
+    // Get all act files and count all slides
     const demoFiles = await DemoFileProvider.getFiles();
     let totalSlides = 0;
     if (demoFiles) {

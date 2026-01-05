@@ -292,7 +292,7 @@
             "yaml"
           ],
           "default": "json",
-          "description": "Default file type for new demo files. Choose between JSON and YAML formats."
+          "description": "Default file type for new act files. Choose between JSON and YAML formats."
         },
         "demoTime.debug": {
           "type": "boolean",
@@ -357,7 +357,7 @@
       },
       {
         "command": "demo-time.addToStep",
-        "title": "Add demo step",
+        "title": "Add move",
         "category": "Demo Time",
         "icon": "$(add)"
       },
@@ -368,7 +368,7 @@
       },
       {
         "command": "demo-time.openDemoFile",
-        "title": "Open demo file",
+        "title": "Open act file",
         "category": "Demo Time",
         "icon": "$(eye)"
       },
@@ -401,8 +401,8 @@
         "category": "Demo Time"
       },
       {
-        "command": "demoTime.fixDuplicateIds",
-        "title": "Fix duplicate demo IDs",
+        "command": "demo-time.fixDuplicateIds",
+        "title": "Fix duplicate scene IDs",
         "category": "Demo Time",
         "icon": "$(warning)"
       },
@@ -479,7 +479,7 @@
       },
       {
         "command": "demo-time.createDemoFile",
-        "title": "Create a new demo file",
+        "title": "Create a new act file",
         "category": "Demo Time"
       },
       {
@@ -874,7 +874,7 @@
     "viewsWelcome": [
       {
         "view": "demo-time-scenes",
-        "contents": "Welcome to Demo Time! Start by creating a demo file in JSON or YAML format, or click the initialize button.\n\n[Initialize](command:demo-time.initialize)\n\n[Learn More](https://demotime.show)"
+        "contents": "Welcome to Demo Time! Start by creating a act file in JSON or YAML format, or click the initialize button.\n\n[Initialize](command:demo-time.initialize)\n\n[Learn More](https://demotime.show)"
       },
       {
         "view": "demo-time-resources",
@@ -900,8 +900,8 @@
           },
           {
             "id": "demo-time.welcome.createDemo",
-            "title": "Create a Demo File",
-            "description": "Use the [Demo Time: Create a new demo file](command:demo-time.createDemoFile) command to create a new demo file.",
+            "title": "Create a Act file",
+            "description": "Use the [Demo Time: Create a new act file](command:demo-time.createDemoFile) command to create a new act file.",
             "media": {
               "markdown": "walkthrough/create-demo.md"
             }

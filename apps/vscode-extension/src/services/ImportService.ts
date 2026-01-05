@@ -55,9 +55,9 @@ export class ImportService {
           return;
         }
 
-        const createNewDemoFile = await window.showInformationMessage(
-          'Do you want to add the slides in a new demo file?',
-          { modal: true, detail: 'This will create a new demo file with the slides.' },
+        const createNewActFile = await window.showInformationMessage(
+          'Do you want to add the slides in a new act file?',
+          { modal: true, detail: 'This will create a new act file with the slides.' },
           'Yes',
         );
 
@@ -82,7 +82,7 @@ export class ImportService {
         }
 
         let demo: DemoConfig | undefined;
-        if (createNewDemoFile === 'Yes') {
+        if (createNewActFile === 'Yes') {
           demo = {
             $schema: 'https://demotime.show/demo-time.schema.json',
             title: slideFolderName,
@@ -138,7 +138,7 @@ export class ImportService {
             );
             await window.showTextDocument(demoFileUri, { preview: false });
           } catch (error) {
-            Notifications.error('Failed to create demo file.');
+            Notifications.error('Failed to create act file.');
             return;
           }
         }

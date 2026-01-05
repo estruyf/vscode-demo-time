@@ -2,7 +2,10 @@
   <img alt="Demo Time" src="./assets/logo/demotime.png">
 </h1>
 
-<h2 align="center">Demo Time empowers you to script flawless coding demonstrations and present slides seamlessly within Visual Studio Code. Eliminate typos and missteps, ensuring engaging and stress-free presentations.</h2>
+<h2 align="center">Demo Time empowers you to script flawless coding
+demonstrations and present slides seamlessly within Visual Studio Code.
+Eliminate typos and missteps, ensuring engaging and stress-free
+presentations.</h2>
 
 <p align="center">
   <a href="https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-demo-time" title="Check it out on the Visual Studio Marketplace">
@@ -28,31 +31,38 @@
 
 ## Features
 
-- **Scripted Demos**: Automate your coding demonstrations to maintain a perfect flow.​
-- **Code Highlighting**: Emphasize specific code segments to draw audience attention.​
-- **Integrated Slides**: Present slides directly within VS Code for a cohesive experience.​
-- **Customizable Actions**: Execute various VS Code commands and tasks as part of your demo.
+- **Scripted Demos**: Automate your coding demonstrations to maintain a perfect
+  flow.​
+- **Code Highlighting**: Emphasize specific code segments to draw audience
+  attention.​
+- **Integrated Slides**: Present slides directly within VS Code for a cohesive
+  experience.​
+- **Customizable Actions**: Execute various VS Code commands and tasks as part
+  of your demo.
 - **PowerPoint Integration**: Seamlessly move from slides to code using the
   [PowerPoint integration](https://demotime.show/integrations/powerpoint/).
 
 ## Getting Started
 
 1. **Installation**: Install the extension.​
-2. **Initialization**: After installation, initialize the extension in your project by opening the
-   Explorer panel in VS Code. Locate the **Demo Time** view and click on the "**Initialize**"
-   button. This action creates a `.demo` folder in your workspace containing either a `demo.json` or
-   `demo.yaml` file, depending on your chosen format.​
-3. **Creating Demos**: Populate the demo file with your actions, defining each step and action as
-   required.​ More information about the available actions can be found in the
-   [supported actions](https://demotime.show/actions/) documentation section.
+2. **Initialization**: After installation, initialize the extension in your
+   project by opening the Explorer panel in VS Code. Locate the **Demo Time**
+   view and click on the "**Initialize**" button. This action creates a `.demo`
+   folder in your workspace containing either a `demo.json` or `demo.yaml` file,
+   depending on your chosen format.​
+3. **Creating Demos**: Populate the act file with your actions, defining each
+   step and action as required.​ More information about the available actions
+   can be found in the [supported actions](https://demotime.show/actions/)
+   documentation section.
 
 ## Documentation
 
-For detailed instructions, advanced configurations, and best practices, please refer to the
-comprehensive documentation available at [https://demotime.show](https://demotime.show). This
-resource offers in-depth guides and examples to help you maximize the extension's capabilities.
+For detailed instructions, advanced configurations, and best practices, please
+refer to the comprehensive documentation available at
+[https://demotime.show](https://demotime.show). This resource offers in-depth
+guides and examples to help you maximize the extension's capabilities.
 
-## Example demo file
+## Example act file
 
 Here is an example demo:
 
@@ -102,7 +112,8 @@ Here is an example demo:
 }
 ```
 
-You can also explore a comprehensive example in the following GitHub Repositories:
+You can also explore a comprehensive example in the following GitHub
+Repositories:
 
 - [Introduction presentation about Demo Time](https://github.com/estruyf/demo-time-presentation)
 - [presentation-github-actions](https://github.com/estruyf/presentation-github-actions)
@@ -117,18 +128,18 @@ npm run lint
 npm test
 ```
 
-Tests use [Jest](https://jestjs.io/) with built-in coverage. New tests are located in the `tests/`
-directory.
+Tests use [Jest](https://jestjs.io/) with built-in coverage. New tests are
+located in the `tests/` directory.
 
 ## Support
 
-If you enjoy my work and find them useful, consider sponsor me and the ecosystem to help Open Source
-sustainable. Thank you!
+If you enjoy my work and find them useful, consider sponsor me and the ecosystem
+to help Open Source sustainable. Thank you!
 
 ## License
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](./LICENSE) file for
-details.
+This project is licensed under the Apache License 2.0 - see the
+[LICENSE](./LICENSE) file for details.
 
 <p align="center">
   <a href="https://github.com/sponsors/estruyf" title="Sponsor Elio Struyf" target="_blank">

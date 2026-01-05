@@ -9,7 +9,7 @@ export interface PlayConfig {
   acts: ActConfig[];
 }
 
-// Version 3: Act structure (demo file with product icon)
+// Version 3: Act structure (act file with product icon)
 export interface ActConfig {
   $schema?: 'https://demotime.show/demo-time.schema.json';
   title: string;

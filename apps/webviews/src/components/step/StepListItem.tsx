@@ -161,7 +161,7 @@ export const StepListItem: React.FC<StepListItemProps> = ({
           >
             <div className="flex items-center space-x-3 min-w-0">
               <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                Step {stepIndex + 1}:
+                Move {stepIndex + 1}:
               </span>
               <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                 {step.action}

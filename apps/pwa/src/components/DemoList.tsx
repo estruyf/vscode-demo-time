@@ -59,7 +59,7 @@ export const DemoList: React.FC<DemoListProps> = ({ apiData, onRunById }) => {
     <div className="card flex flex-col h-full">
       <div className="mb-4 flex-shrink-0 flex items-center justify-between">
         <div className="p-4 border-b border-gray-700/30">
-          <h2 className="text-lg font-semibold text-white">Steps</h2>
+          <h2 className="text-lg font-semibold text-white">Moves</h2>
         </div>
         <div className='block md:hidden'>
           <Clock clock={apiData?.clock} />
@@ -69,9 +69,9 @@ export const DemoList: React.FC<DemoListProps> = ({ apiData, onRunById }) => {
       {apiData.demos.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">📁</div>
-          <p className="text-gray-400 text-lg">No demo steps found</p>
+          <p className="text-gray-400 text-lg">No moves found</p>
           <p className="text-sm text-gray-500 mt-2">
-            Load a demo file in Demo Time to see demos here
+            Load a act file in Demo Time to see demos here
           </p>
         </div>
       ) : (
@@ -87,7 +87,7 @@ export const DemoList: React.FC<DemoListProps> = ({ apiData, onRunById }) => {
 
             return (
               <div key={demoIndex} className="space-y-2">
-                {/* Demo File Header */}
+                {/* Act */}
                 <div className={`sticky top-0 z-10 px-3 py-2 rounded-lg border backdrop-blur ${isCurrentFile
                   ? 'bg-blue-500/20 border-blue-500/30 text-blue-300'
                   : isNextFile
@@ -111,7 +111,7 @@ export const DemoList: React.FC<DemoListProps> = ({ apiData, onRunById }) => {
                   )}
                 </div>
 
-                {/* Demo Steps */}
+                {/* Moves */}
                 <div className="space-y-1">
                   {demoFile.children.map((step, stepIndex) => {
                     const isExecuted = step.hasExecuted;

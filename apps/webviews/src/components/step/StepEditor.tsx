@@ -253,7 +253,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
     } else if (field === 'insertTypingSpeed') {
       label = "Insert Typing Speed (ms)";
     } else if (step.action === Action.RunDemoById) {
-      label = "Demo ID";
+      label = "Scene ID";
     } else if (step.action === Action.ExecuteScript && field === 'id') {
       label = "Script ID";
     } else if (field === 'openInVSCode') {
@@ -787,7 +787,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
   return (
     <div className="space-y-4 h-full">
       <div className="flex items-center justify-between bg-white dark:bg-gray-800 z-10 pb-2">
-        <h4 className="text-lg font-semibold text-gray-900 dark:text-white">Step Configuration</h4>
+        <h4 className="text-lg font-semibold text-gray-900 dark:text-white">Move Configuration</h4>
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-700 dark:text-gray-300">{step.disabled ? 'Disabled' : 'Enabled'}</span>
           <Switch

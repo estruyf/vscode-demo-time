@@ -123,9 +123,9 @@ export const FormContainer: React.FC = () => {
   }, [slideId]);
 
   const handleRunCommand = async () => {
-    // Only proceed if we have a demo ID
+    // Only proceed if we have a scene ID
     if (!demoId) {
-      showStatus("Please enter a demo ID", "error");
+      showStatus("Please enter a scene ID", "error");
       return;
     }
 
@@ -195,8 +195,8 @@ export const FormContainer: React.FC = () => {
       />
 
       <FormField
-        id="demoId"
-        label="Demo ID"
+        id="sceneId"
+        label="Scene ID"
         value={demoId}
         onChange={setDemoId}
       />

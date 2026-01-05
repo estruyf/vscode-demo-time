@@ -33,7 +33,7 @@ import {
 } from '../utils';
 import { ActionTreeItem } from './ActionTreeviewProvider';
 import { SettingsView } from '../settingsView/SettingsView';
-import { COMMAND, Config, WebViewMessages } from '@demotime/common';
+import { COMMAND, Config, WebViewMessages, demoConfigToActConfig } from '@demotime/common';
 
 export class ConfigEditorProvider implements CustomTextEditorProvider {
   private static readonly viewType = 'demoTime.configEditor';
@@ -293,7 +293,7 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           payload: apiData,
         });
       } catch (error) {
-        console.error('Failed to get demo IDs:', error);
+        console.error('Failed to get scene IDs:', error);
         webviewPanel.webview.postMessage({
           command,
           requestId,
@@ -366,8 +366,11 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
         return;
       }
 
+      // Convert to ActConfig (version 3) if version is 3, otherwise keep as DemoConfig
+      const configToSave = config.version === 3 ? demoConfigToActConfig(config) : config;
+
       const edit = new WorkspaceEdit();
-      const demo = DemoFileProvider.formatFileContent(config, document.uri);
+      const demo = DemoFileProvider.formatFileContent(configToSave, document.uri);
       if (!demo) {
         window.showErrorMessage('Failed to parse the demo configuration.');
         return;
@@ -390,7 +393,11 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       if (!config) {
         return;
       }
-      const demo = DemoFileProvider.formatFileContent(config, document.uri);
+
+      // Convert to ActConfig (version 3) if version is 3, otherwise keep as DemoConfig
+      const configToSave = config.version === 3 ? demoConfigToActConfig(config) : config;
+
+      const demo = DemoFileProvider.formatFileContent(configToSave, document.uri);
       if (!demo) {
         window.showErrorMessage('Failed to parse the demo configuration.');
       }

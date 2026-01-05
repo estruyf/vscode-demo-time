@@ -153,8 +153,8 @@ export class DemoRunner {
   }
 
   /**
-   * Retrieves the executed demo file.
-   * @returns {Promise<DemoFileCache>} The executed demo file.
+   * Retrieves the executed act file.
+   * @returns {Promise<DemoFileCache>} The executed act file.
    */
   public static async getExecutedDemoFile(): Promise<DemoFileCache> {
     const ext = Extension.getInstance();
@@ -179,8 +179,8 @@ export class DemoRunner {
   }
 
   /**
-   * Sets the executed demo file in the extension state.
-   * @param demoFile - The demo file to be set as executed.
+   * Sets the executed act filein the extension state.
+   * @param demoFile - The act file to be set as executed.
    */
   private static async setExecutedDemoFile(demoFile: DemoFileCache) {
     const ext = Extension.getInstance();
@@ -198,9 +198,9 @@ export class DemoRunner {
   }
 
   /**
-   * Retrieves the current version of the executing demo file.
+   * Retrieves the current version of the executing act file.
    *
-   * @returns {Version} The detected version of the current demo file.
+   * @returns {Version} The detected version of the current act file.
    */
   public static getCurrentVersion(): Version {
     const executingFile = Extension.getInstance().getState<DemoFileCache>(
@@ -215,7 +215,7 @@ export class DemoRunner {
       return 2;
     }
 
-    // Only old demo files without a version property should be version 1
+    // Only old act file without a version property should be version 1
     return typeof executingFile.version === 'number' ? (executingFile.version as Version) : 1;
   }
 
@@ -251,7 +251,7 @@ export class DemoRunner {
   }
 
   /**
-   * Resets the DemoRunner state by clearing the executing demo file path and demo array.
+   * Resets the DemoRunner state by clearing the executing act file path and demo array.
    */
   private static async reset(): Promise<void> {
     // End any active analytics session
@@ -307,7 +307,7 @@ export class DemoRunner {
     // }
 
     if (demos.length <= 0) {
-      Notifications.error('No demo steps found');
+      Notifications.error('No moves found');
       return;
     }
 
@@ -328,11 +328,11 @@ export class DemoRunner {
     }
 
     if (!nextDemo) {
-      // Check if there is a next demo file
+      // Check if there is a next act file
       const nextFile = await getNextDemoFile(demoFile);
       if (!nextFile) {
         const yesOrNo = await Notifications.info(
-          'No next demo steps found. Do you want to reset?',
+          'No next moves found. Do you want to reset?',
           'Yes',
           'No',
         );
@@ -349,7 +349,7 @@ export class DemoRunner {
       executingFile.version = nextFile.version;
 
       await DemoRunner.setExecutedDemoFile(executingFile);
-      // Start the next demo file
+      // Start the next act file
       DemoRunner.start({
         demoFilePath: nextFile.filePath,
         description: nextFile.filePath.split('/').pop(),
@@ -431,7 +431,7 @@ export class DemoRunner {
     const demos = demoFile?.demos || [];
 
     if (demos.length <= 0) {
-      Notifications.error('No demo steps found');
+      Notifications.error('No moves found');
       return;
     }
 
@@ -454,7 +454,7 @@ export class DemoRunner {
         filePath,
       });
       if (!previousFile) {
-        Notifications.infoWithProgress('No previous demo steps found');
+        Notifications.infoWithProgress('No previous moves found');
         return;
       }
 
@@ -557,13 +557,13 @@ export class DemoRunner {
     const id = args[0];
     Logger.info(`Running demo with id: ${id}`);
 
-    // Get all the demo files
+    // Get all the act files
     const demoFiles = await DemoFileProvider.getFiles();
     if (!demoFiles) {
       return;
     }
 
-    // Find the demo file that contains the specified id
+    // Find the act file that contains the specified id
     let filePath = null;
     for (const crntFilePath in demoFiles) {
       const demos = demoFiles[crntFilePath].demos;
@@ -585,7 +585,7 @@ export class DemoRunner {
       executingFile.demo = [];
     }
 
-    // Get the demo idx
+    // Get the scene idx
     const demoIdx = demoFiles[filePath].demos.findIndex((demo) => demo.id === id);
     if (demoIdx < 0) {
       Notifications.error('No demo found with the specified id');
@@ -621,7 +621,7 @@ export class DemoRunner {
   }
 
   /**
-   * Runs the given demo steps.
+   * Runs the given move.
    * @param demoSteps An array of Step objects representing the steps to be executed.
    */
   public static async runSteps(
@@ -658,7 +658,7 @@ export class DemoRunner {
       demoSteps = jsonParse(tempSteps);
     }
 
-    // Replace the snippets in the demo steps
+    // Replace the snippets in the moves
     const stepsToExecute: Step[] = [];
     if (demoSteps.some((step) => step.action === Action.Snippet)) {
       for (const step of demoSteps) {
@@ -687,7 +687,7 @@ export class DemoRunner {
       stepsToExecute.push(...demoSteps);
     }
 
-    // Loop over all the demo steps and execute them.
+    // Loop over all the moves and execute them.
     for (let currentIndex = 0; currentIndex < stepsToExecute.length; currentIndex++) {
       const step = stepsToExecute[currentIndex];
       DemoRunner.currentStepIndex = currentIndex;
@@ -791,7 +791,7 @@ export class DemoRunner {
     // Demo Time actions
     if (step.action === Action.RunDemoById) {
       if (!step.id) {
-        Notifications.error('No demo id specified');
+        Notifications.error('No scene id specified');
         return;
       }
       await DemoRunner.runById(step.id);
@@ -1453,10 +1453,10 @@ export class DemoRunner {
   }
 
   /**
-   * Retrieves the demo file associated with the given ActionTreeItem.
-   * @param item The ActionTreeItem representing the demo file.
+   * Retrieves the act fileassociated with the given ActionTreeItem.
+   * @param item The ActionTreeItem representing the act file.
    * @param triggerFirstDemo A boolean indicating whether to trigger the first demo.
-   * @returns A Promise that resolves to an object containing the filePath and demo, or undefined if no demo file is found.
+   * @returns A Promise that resolves to an object containing the filePath and demo, or undefined if no act file is found.
    */
   private static async getDemoFile(
     item?: ActionTreeItem | Uri,
@@ -1476,14 +1476,14 @@ export class DemoRunner {
 
     if (item && itemPath) {
       if (!demoFiles) {
-        Notifications.warning('No demo files found');
+        Notifications.warning('No act files found');
         return;
       }
 
       const demoFile = await DemoFileProvider.getFile(Uri.file(itemPath));
       if (!demoFile) {
         const demoFileName = itemPath.split('/').pop();
-        Notifications.warning(`No demo file found with the name ${demoFileName}`);
+        Notifications.warning(`No act file found with the name ${demoFileName}`);
         return;
       }
 
@@ -1524,7 +1524,7 @@ export class DemoRunner {
     } else if (executingFile.filePath && !item && demoFiles) {
       const demoFile = demoFiles[executingFile.filePath];
       if (!demoFile) {
-        Notifications.warning('No demo file found');
+        Notifications.warning('No act file found');
         return;
       }
 

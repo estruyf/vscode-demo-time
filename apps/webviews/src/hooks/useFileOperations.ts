@@ -1,8 +1,7 @@
 import { useCallback } from 'react';
-import { DemoConfig } from '../types/demo';
 import { validateConfig } from '../utils/validation';
 import { messageHandler } from '@estruyf/vscode/dist/client';
-import { WebViewMessages } from '@demotime/common';
+import { DemoConfig, WebViewMessages, demoConfigToActConfig } from '@demotime/common';
 
 export const useFileOperations = () => {
   const handleSave = useCallback(async (config: DemoConfig) => {
@@ -12,7 +11,12 @@ export const useFileOperations = () => {
       return false;
     }
 
-    await messageHandler.request(WebViewMessages.toVscode.configEditor.saveFile, { config });
+    // Convert to ActConfig (version 3) if version is 3, otherwise keep as DemoConfig
+    const configToSave = config.version === 3 ? demoConfigToActConfig(config) : config;
+
+    await messageHandler.request(WebViewMessages.toVscode.configEditor.saveFile, {
+      config: configToSave,
+    });
     console.log('Config saved successfully');
     return true;
   }, []);
