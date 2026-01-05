@@ -9,7 +9,7 @@ import { cleanupStepProperties } from '../utils/stepCleanup';
 const initializeConfig = (initialConfig?: DemoConfig): DemoConfig => {
   const defaultConfig: DemoConfig = {
     title: 'Demo Time Sample',
-    description: 'A sample for the Demo Time Config Editor',
+    description: 'A sample for the Demo Time Act Editor',
     version: 3,
     timer: 30,
     demos: [

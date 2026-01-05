@@ -110,7 +110,7 @@ export const WebViewMessages = {
      * nextSlideTitle
      */
     nextSlideTitle: 'nextSlideTitle',
-    // Config editor
+    // Act Editor
     configEditor: {
       /**
        * getConfigEditorContents
@@ -281,7 +281,7 @@ export const WebViewMessages = {
        */
       updateNextStep: 'updateNextStep',
     },
-    // Config editor
+    // Act Editor
     configEditor: {
       /**
        * updateConfigEditorContents

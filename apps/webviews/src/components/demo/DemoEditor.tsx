@@ -96,7 +96,7 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange, onGenera
             <div className="flex items-center space-x-2">
               {collapsed ? <ChevronDown /> : <ChevronUp />}
 
-              <h2 className="text-xl font-semibold">Demo Information</h2>
+              <h2 className="text-xl font-semibold">Scene Information</h2>
             </div>
           </button>
           <div className="flex items-center">

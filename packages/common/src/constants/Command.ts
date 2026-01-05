@@ -50,7 +50,7 @@ export const COMMAND = {
   exportToPdf: `${EXTENSION_NAME}.exportToPdf`,
   // Importer
   importPowerPointImages: `${EXTENSION_NAME}.importPowerPointImages`,
-  // Config editor
+  // Act Editor
   openConfigInTextEditor: `${EXTENSION_NAME}.openConfigInTextEditor`,
   openConfigEditor: `${EXTENSION_NAME}.openConfigEditor`,
   // Hacker Typer

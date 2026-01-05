@@ -248,19 +248,19 @@
           "alt": "Hacker-typer mode enabled"
         },
         "config-editor.webp": {
-          "title": "Config Editor",
-          "caption": "Config Editor",
-          "alt": "Config Editor"
+          "title": "Act Editor",
+          "caption": "Act Editor",
+          "alt": "Act Editor"
         },
         "config-editor-demo.webp": {
-          "title": "Adding your first demo within the Config Editor",
-          "caption": "Adding your first demo within the Config Editor",
-          "alt": "Adding your first demo within the Config Editor"
+          "title": "Adding your first demo within the Act Editor",
+          "caption": "Adding your first demo within the Act Editor",
+          "alt": "Adding your first demo within the Act Editor"
         },
         "config-editor-step.webp": {
-          "title": "The first demo step in the Config Editor",
-          "caption": "The first demo step in the Config Editor",
-          "alt": "The first demo step in the Config Editor"
+          "title": "The first demo step in the Act Editor",
+          "caption": "The first demo step in the Act Editor",
+          "alt": "The first demo step in the Act Editor"
         },
         "config-editor-provided-step-settings.webp": {
           "title": "Provided the step settings for the create action",
@@ -273,9 +273,9 @@
           "alt": "Open the newly created file"
         },
         "config-editor-validation.webp": {
-          "title": "Validation status in the Config Editor",
-          "caption": "Validation status in the Config Editor",
-          "alt": "Validation status in the Config Editor"
+          "title": "Validation status in the Act Editor",
+          "caption": "Validation status in the Act Editor",
+          "alt": "Validation status in the Act Editor"
         },
         "adding-demo-step-from-file.webp": {
           "title": "Adding a demo step from a file",
@@ -283,9 +283,9 @@
           "alt": "Adding a demo step from a file"
         },
         "config-editor-notes.webp": {
-          "title": "Configure notes in the Config Editor",
-          "caption": "Configure notes in the Config Editor",
-          "alt": "Configure notes in the Config Editor"
+          "title": "Configure notes in the Act Editor",
+          "caption": "Configure notes in the Act Editor",
+          "alt": "Configure notes in the Act Editor"
         },
         "settings-view.webp": {
           "title": "Settings GUI",

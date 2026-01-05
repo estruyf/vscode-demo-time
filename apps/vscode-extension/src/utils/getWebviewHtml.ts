@@ -130,7 +130,7 @@ export const getWebviewHtml = async (
 
             <meta charset="UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <title>Demo Time Config Editor</title>
+            <title>Demo Time Act Editor</title>
           </head>
           <body>
             <div id="root" data-view-type="${type}" data-webview-url="${webviewWsUrl}" data-extension-url="${webviewExtUrl}"></div>

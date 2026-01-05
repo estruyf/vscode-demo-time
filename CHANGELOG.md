@@ -57,7 +57,7 @@
 ## [1.11.0] - 2025-11-04
 
 - [#262](https://github.com/estruyf/vscode-demo-time/issues/262): Added a recent
-  files dropdown to the path input component in the config editor
+  files dropdown to the path input component in the act editor
 - [#265](https://github.com/estruyf/vscode-demo-time/issues/265): Verify the
   demo IDs when in source mode so that there are no duplicate IDs across
   multiple files in the workspace
@@ -96,7 +96,7 @@
 - [#291](https://github.com/estruyf/vscode-demo-time/issues/291): Added VS Code
   Command Picker to select commands when using the `executeVSCodeCommand` action
 - [#292](https://github.com/estruyf/vscode-demo-time/issues/292): Dark mode
-  fixes for the config editor
+  fixes for the act editor
 - [#293](https://github.com/estruyf/vscode-demo-time/issues/293): Add the
   command name to step when using the `executeVSCodeCommand` action
 - [#294](https://github.com/estruyf/vscode-demo-time/issues/294): When adding a
@@ -116,7 +116,7 @@
   `pause` action to pause the demo and wait until the `Demo Time: Continue Demo`
   command is triggered
 - [#236](https://github.com/estruyf/vscode-demo-time/issues/236): Visual
-  improvements for the Config Editor
+  improvements for the Act Editor
 - [#239](https://github.com/estruyf/vscode-demo-time/issues/239): New overview
   dashboard which can be opened by using the `Demo Time: Overview` command
 - [#240](https://github.com/estruyf/vscode-demo-time/issues/240): Every GitHub
@@ -141,7 +141,7 @@
   `{{crntSlideIdx}}` and `{{totalSlides}}` variables to the slide header and
   footer templates
 - [#260](https://github.com/estruyf/vscode-demo-time/issues/260): Added dark
-  mode support for the config editor, settings editor, and overview dashboard
+  mode support for the act editor, settings editor, and overview dashboard
 - [#261](https://github.com/estruyf/vscode-demo-time/issues/261): Added a
   message for the PowerPoint addin that it can be shown outside of the visible
   slide container

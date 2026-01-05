@@ -302,7 +302,7 @@
         "demoTime.openInConfigEditor": {
           "type": "boolean",
           "default": true,
-          "description": "Open the config file in the custom config editor."
+          "description": "Open the config file in the custom act editor."
         },
         "demoTime.remote.showScreenshot": {
           "type": "boolean",
@@ -525,7 +525,7 @@
       },
       {
         "command": "demo-time.openConfigEditor",
-        "title": "Open config editor",
+        "title": "Open act editor",
         "category": "Demo Time",
         "icon": "$(settings-gear)"
       },
@@ -921,7 +921,7 @@
     "customEditors": [
       {
         "viewType": "demoTime.configEditor",
-        "displayName": "Demo Time Config Editor",
+        "displayName": "Demo Time Act Editor",
         "selector": [
           {
             "filenamePattern": "**/.demo/*.json"
