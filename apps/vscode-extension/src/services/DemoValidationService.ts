@@ -498,7 +498,7 @@ export class DemoValidationService {
 
     // Only process act files
     if (!fileName.includes(General.demoFolder)) {
-      window.showErrorMessage('Active file is not in the demo folder');
+      window.showErrorMessage('Active file is not in the act folder');
       return;
     }
 
@@ -511,7 +511,7 @@ export class DemoValidationService {
       const content = await DemoFileProvider.getFile(document.uri);
 
       if (!content || !content.demos) {
-        window.showErrorMessage('No demo content found in the active file');
+        window.showErrorMessage('No scene content found in the active file');
         return;
       }
 

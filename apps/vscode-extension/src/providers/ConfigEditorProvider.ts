@@ -313,14 +313,14 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     ) {
       // Example: payload could be { step: { ... } }
       if (!payload?.step) {
-        window.showErrorMessage('No demo step provided to run.');
+        window.showErrorMessage('No move provided to run.');
         return;
       }
       try {
-        Logger.info(`Running demo step from config editor: ${JSON.stringify(payload.step)}`);
+        Logger.info(`Running move from config editor: ${JSON.stringify(payload.step)}`);
         const crntFilePath = document.uri.fsPath;
         await DemoRunner.runSteps([payload.step], false, crntFilePath);
-        window.showInformationMessage('Demo step triggered from config editor.');
+        window.showInformationMessage('Move triggered from config editor.');
         // Optionally, send a response back to the webview
         webviewPanel.webview.postMessage({
           command: WebViewMessages.toVscode.configEditor.runDemoStep,
@@ -328,7 +328,7 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           payload: { success: true },
         });
       } catch (err) {
-        window.showErrorMessage('Failed to run demo step.');
+        window.showErrorMessage('Failed to run move.');
         webviewPanel.webview.postMessage({
           command: WebViewMessages.toVscode.configEditor.runDemoStep,
           requestId,

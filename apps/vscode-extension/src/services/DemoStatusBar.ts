@@ -71,7 +71,7 @@ export class DemoStatusBar {
         StatusBarAlignment.Left,
         100001,
       );
-      DemoStatusBar.statusBarItem.name = `${Config.title} - Next Demo`;
+      DemoStatusBar.statusBarItem.name = `${Config.title} - Next Scene`;
       DemoStatusBar.statusBarItem.command = COMMAND.start;
 
       DemoStatusBar.statusBarItem.backgroundColor = new ThemeColor(
@@ -89,7 +89,7 @@ export class DemoStatusBar {
       DemoStatusBar.statusBarNotes.name = `${Config.title} - Notes`;
       DemoStatusBar.statusBarNotes.command = COMMAND.viewNotes;
       DemoStatusBar.statusBarNotes.text = `$(book) Notes`;
-      DemoStatusBar.statusBarNotes.tooltip = `Show the notes for the current demo step`;
+      DemoStatusBar.statusBarNotes.tooltip = `Show the notes for the current move`;
     }
 
     if (!DemoStatusBar.statusBarPause) {
@@ -144,7 +144,7 @@ export class DemoStatusBar {
     let executingDemos = fileEntry.demos ?? [];
     const lastDemo = executingFile.demo[executingFile.demo.length - 1];
     if (!lastDemo) {
-      Logger.info('No current demo step found');
+      Logger.info('No current move found');
       DemoStatusBar.nextDemo = undefined;
       DemoStatusBar.statusBarItem?.hide();
       DemoStatusBar.statusBarNotes?.hide();

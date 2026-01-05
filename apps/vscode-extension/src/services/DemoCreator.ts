@@ -341,10 +341,10 @@ export class DemoCreator {
     stepDescription?: string,
     stepIcons?: Icons,
   ): Promise<DemoConfig | undefined> {
-    let demoStep: string | undefined = 'New demo step';
+    let demoStep: string | undefined = 'New move';
 
     if (demo.demos.length > 0) {
-      demoStep = await window.showQuickPick(['New demo step', 'Insert in existing demo'], {
+      demoStep = await window.showQuickPick(['New move', 'Insert in existing scene'], {
         title: Config.title,
         placeHolder: 'Where do you want to insert the step?',
         ignoreFocusOut: true,
@@ -355,11 +355,11 @@ export class DemoCreator {
       }
     }
 
-    if (demoStep === 'New demo step') {
+    if (demoStep === 'New move') {
       const title = !stepTitle
         ? await window.showInputBox({
             title: Config.title,
-            placeHolder: 'Enter the step title',
+            placeHolder: 'Enter the move title',
           })
         : stepTitle;
 
@@ -371,7 +371,7 @@ export class DemoCreator {
         typeof stepDescription === 'undefined'
           ? await window.showInputBox({
               title: Config.title,
-              placeHolder: 'Enter the step description',
+              placeHolder: 'Enter the move description',
             })
           : stepDescription;
 

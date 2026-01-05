@@ -575,7 +575,7 @@ export class DemoRunner {
     }
 
     if (!filePath) {
-      Notifications.error('No demo found with the specified id');
+      Notifications.error('No scene found with the specified id');
       return;
     }
 
@@ -588,7 +588,7 @@ export class DemoRunner {
     // Get the scene idx
     const demoIdx = demoFiles[filePath].demos.findIndex((demo) => demo.id === id);
     if (demoIdx < 0) {
-      Notifications.error('No demo found with the specified id');
+      Notifications.error('No scene found with the specified id');
       return;
     }
     const demoToRun = demoFiles[filePath].demos[demoIdx];

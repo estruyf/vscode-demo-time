@@ -52,8 +52,8 @@
     <div class="max-w-4xl mx-auto px-6 py-8">
       <div class="flex items-center gap-3 mb-4">
         <div>
-          <h1 class="text-3xl font-bold text-slate-900">Demo API</h1>
-          <p class="text-slate-600 mt-1">Control your demos with simple HTTP requests</p>
+          <h1 class="text-3xl font-bold text-slate-900">Act API</h1>
+          <p class="text-slate-600 mt-1">Control your act files (scenes and moves) with simple HTTP requests</p>
         </div>
       </div>
       <div class="flex items-center gap-4 text-sm text-slate-500">
@@ -78,7 +78,7 @@
         <p class="text-slate-700 leading-relaxed mb-4">
           Welcome to the Demo API! This simple HTTP API allows you to control and trigger demos programmatically from the Demo Time extension or external clients.
           Endpoints are plain GET endpoints that return JSON and accept optional query parameters (for example <code>?bringToFront=true</code>).
-          For UI clients we recommend polling the <code>/api/demos</code> endpoint periodically (every ~2–5 seconds) to keep the remote UI in sync with the extension state.
+          For UI clients we recommend polling the <code>/api/demos</code> endpoint periodically (every ~2–5 seconds) to keep scenes and moves in sync with the extension state.
         </p>
         <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div class="flex items-start gap-3">
@@ -110,8 +110,8 @@
                 GET
               </span>
               <div>
-                <h3 class="text-xl font-semibold text-slate-900">List Demos</h3>
-                <p class="text-slate-600 mt-1">Returns all act files, the next demo, and the currently executing act file</p>
+                <h3 class="text-xl font-semibold text-slate-900">List Scenes</h3>
+                <p class="text-slate-600 mt-1">Returns all act files, the next scene, and the currently executing act file</p>
               </div>
             </div>
           </div>
@@ -201,10 +201,10 @@
               <span class="text-sm font-medium text-slate-700">Description</span>
             </div>
             <ul class="list-disc ml-6 text-sm text-slate-700">
-              <li><code>nextDemo</code>: The next demo to be executed (title only), if available.</li>
-              <li><code>demos</code>: Array of act files with hierarchical structure. Each act file contains children array with individual demo steps.</li>
+              <li><code>nextDemo</code>: The next scene to be executed (title only), if available.</li>
+              <li><code>demos</code>: Array of act files with hierarchical structure. Each act file contains children array with individual moves.</li>
               <li><code>currentDemoFile</code>: String path to the currently executing act file.</li>
-              <li><code>children</code>: Array of demo steps within each file, containing stepIndex, labels, execution status, and contextValue.</li>
+              <li><code>children</code>: Array of moves within each file, containing stepIndex, labels, execution status, and contextValue.</li>
             </ul>
           </div>
           

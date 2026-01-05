@@ -31,7 +31,7 @@ export interface IDemoIdPickerProps {
 export const DemoIdPicker: React.FunctionComponent<IDemoIdPickerProps> = ({
   onDemoSelect,
   value = '',
-  placeholder = "Select a demo..."
+  placeholder = "Select a scene..."
 }) => {
   const [demoData, setDemoData] = React.useState<DemoData | null>(null);
   const [loading, setLoading] = React.useState(true);
@@ -45,7 +45,7 @@ export const DemoIdPicker: React.FunctionComponent<IDemoIdPickerProps> = ({
       setDemoData(response);
     } catch (error) {
       console.error('Failed to fetch demo data:', error);
-      setError('Failed to load demo data');
+      setError('Failed to load scene data');
     } finally {
       setLoading(false);
     }
@@ -103,7 +103,7 @@ export const DemoIdPicker: React.FunctionComponent<IDemoIdPickerProps> = ({
   if (loading) {
     return (
       <div className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-300">
-        Loading demos...
+        Loading scenes...
       </div>
     );
   }
@@ -125,7 +125,7 @@ export const DemoIdPicker: React.FunctionComponent<IDemoIdPickerProps> = ({
   if (!demoData || dropdownOptions.length === 0) {
     return (
       <div className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-300">
-        No demos with IDs found
+        No scenes with IDs found
       </div>
     );
   }
@@ -137,13 +137,13 @@ export const DemoIdPicker: React.FunctionComponent<IDemoIdPickerProps> = ({
         options={dropdownOptions}
         onChange={handleDemoChange}
         placeholder={placeholder}
-        noItemsText='No demo found with this ID'
+        noItemsText='No scene found with this ID'
         allowFreeform={true}
       />
       {selectedDemo && (
         <div className="mt-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
           <div className="text-sm font-medium text-blue-800 dark:text-blue-200">
-            Selected demo: {selectedDemo.title}
+            Selected scene: {selectedDemo.title}
           </div>
         </div>
       )}

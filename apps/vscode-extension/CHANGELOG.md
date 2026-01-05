@@ -15,15 +15,15 @@
   action `runDemoById` to allow to trigger a demo from another demo
 
 ## [1.8.0] - 2025-08-02
-
-- [#199](https://github.com/estruyf/vscode-demo-time/issues/199): Improve
-  loading the slides when switching between demo and slides
-- [#204](https://github.com/estruyf/vscode-demo-time/issues/204): Added the
-  `openTerminal` action to open a the terminal
-- [#205](https://github.com/estruyf/vscode-demo-time/issues/205): Added the
-  `hacker-typer` typing mode to the `insert`, `replace`, and `patch` actions
-- [#207](https://github.com/estruyf/vscode-demo-time/issues/207): Made the
-  `message` property optional for the GitHub Copilot chat actions
+- [#271](https://github.com/estruyf/vscode-demo-time/issues/271): Added the new
+  `/api/previous` endpoint to trigger the previous move loading the slides when
+  switching between demo and slides
+- [#221](https://github.com/estruyf/vscode-demo-time/issues/221): Added support
+  for the `autoAdvanceAfter` property in the slide front matter to automatically
+  advance to the next slide or scene `hacker-typer` typing mode to the `insert`,
+  `replace`, and `patch` actions
+- [#222](https://github.com/estruyf/vscode-demo-time/issues/222): Added the
+  ability to disable a scene or move
 - [#208](https://github.com/estruyf/vscode-demo-time/issues/208): The JSON
   schema has been refactored to have intellisense per action on which properties
   are required and optional

@@ -330,7 +330,7 @@
       },
       {
         "command": "demo-time.addStepToDemo",
-        "title": "Add new action to demo step",
+        "title": "Add new action to move",
         "category": "Demo Time",
         "icon": "$(add)"
       },
@@ -347,12 +347,12 @@
       },
       {
         "command": "demo-time.runStep",
-        "title": "Start a demo",
+        "title": "Start a scene",
         "category": "Demo Time"
       },
       {
         "command": "demo-time.runById",
-        "title": "Run by ID",
+        "title": "Run scene by ID",
         "category": "Demo Time"
       },
       {
@@ -374,7 +374,7 @@
       },
       {
         "command": "demo-time.viewStep",
-        "title": "View demo step in editor",
+        "title": "View scene in editor",
         "category": "Demo Time",
         "icon": "$(eye)"
       },

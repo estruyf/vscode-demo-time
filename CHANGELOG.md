@@ -153,7 +153,7 @@
 - [#268](https://github.com/estruyf/vscode-demo-time/issues/268): Fix the
   `openInVSCode` property which was not working as expected
 - [#271](https://github.com/estruyf/vscode-demo-time/issues/271): Added the new
-  `/api/previous` endpoint to trigger the previous demo step
+  `/api/previous` endpoint to trigger the previous move
 - [#272](https://github.com/estruyf/vscode-demo-time/issues/272): Added the Demo
   Time Remote Control PWA to control your presentation from another device
 
@@ -165,13 +165,13 @@
   title for the `waitForInput` action
 - [#221](https://github.com/estruyf/vscode-demo-time/issues/221): Added support
   for the `autoAdvanceAfter` property in the slide front matter to automatically
-  advance to the next slide or demo
+  advance to the next slide or scene
 - [#222](https://github.com/estruyf/vscode-demo-time/issues/222): Added the
-  ability to disable a demo or step
+  ability to disable a scene or move
 - [#225](https://github.com/estruyf/vscode-demo-time/issues/225): Added a GUI
   for editing all the settings from Demo Time
 - [#226](https://github.com/estruyf/vscode-demo-time/issues/226): New Demo Time
-  action `runDemoById` to allow to trigger a demo from another demo
+  action `runDemoById` to allow to trigger a scene from another scene
 
 ## [1.8.0] - 2025-08-02
 
