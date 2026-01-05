@@ -41,6 +41,8 @@ export class TextTypingService {
       }
     | undefined;
 
+  private static isTyping: boolean = false;
+
   public static registerCommands() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
 
@@ -110,7 +112,10 @@ export class TextTypingService {
       textEditor.selection = new Selection(range.start, range.start);
     }
 
-    await saveFiles();
+    // Only save if not currently typing to avoid conflicts
+    if (!TextTypingService.isTyping) {
+      await saveFiles();
+    }
   }
 
   private static async insertAtPosition(
@@ -574,22 +579,32 @@ export class TextTypingService {
     delayMs: number,
     token?: CancellationToken,
   ): Promise<void> {
+    TextTypingService.isTyping = true;
     let i = 0;
     let currentPos: Position =
       typeof startPosition === 'number' ? editor.document.positionAt(startPosition) : startPosition;
 
-    while (i < text.length) {
-      if (token?.isCancellationRequested) {
-        return;
+    try {
+      while (i < text.length) {
+        if (token?.isCancellationRequested) {
+          return;
+        }
+        const { char, nextIndex } = TextTypingService.getNextChar(text, i);
+        i = nextIndex;
+
+        // Use editor.edit instead of WorkspaceEdit to reduce file watcher conflicts
+        await editor.edit((editBuilder) => {
+          editBuilder.insert(currentPos, char);
+        });
+
+        currentPos = TextTypingService.getNextPosition(currentPos, char, editor, startPosition);
+        editor.selection = new Selection(currentPos, currentPos);
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
       }
-      const { char, nextIndex } = TextTypingService.getNextChar(text, i);
-      i = nextIndex;
-      const edit = new WorkspaceEdit();
-      edit.insert(editor.document.uri, currentPos, char);
-      await workspace.applyEdit(edit);
-      currentPos = TextTypingService.getNextPosition(currentPos, char, editor, startPosition);
-      editor.selection = new Selection(currentPos, currentPos);
-      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    } finally {
+      TextTypingService.isTyping = false;
+      // Save once after all typing is complete
+      await saveFiles();
     }
   }
 
