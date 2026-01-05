@@ -28,6 +28,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   updateBgStyles
 }: React.PropsWithChildren<IMarkdownProps>) => {
   const prevContent = usePrevious(content);
+  const videoRef = React.useRef<HTMLVideoElement>(null);
   const [isReady, setIsReady] = React.useState(false);
   const [customTheme, setCustomTheme] = React.useState<string | undefined>(undefined);
   const [customLayout, setCustomLayout] = React.useState<string | undefined>(undefined);
@@ -151,6 +152,13 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     }
   }, [content, vsCodeTheme, isDarkTheme]);
 
+  // Set playback rate when video is ready
+  React.useEffect(() => {
+    if (videoRef.current && matter?.playbackRate) {
+      videoRef.current.playbackRate = parseFloat(matter.playbackRate);
+    }
+  }, [matter?.playbackRate, videoUrl]);
+
   // Cleanup effect for video elements when component unmounts or slide changes
   React.useEffect(() => {
     return () => {
@@ -208,6 +216,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
               (videoUrl) ? (
                 <>
                   <video
+                    ref={videoRef}
                     controls={matter?.controls}
                     autoPlay={matter?.autoplay || !matter?.controls}
                     loop={matter?.loop || !matter?.controls}
