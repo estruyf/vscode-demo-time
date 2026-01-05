@@ -7,7 +7,7 @@ import { Extension } from './Extension';
 import { getNextDemoFile, setContext } from '../utils';
 import { PresenterView } from '../presenterView/PresenterView';
 import { Logger } from './Logger';
-import { WebViewMessages, COMMAND, Config, Demo } from '@demotime/common';
+import { WebViewMessages, COMMAND, Config, Demo, getDemosFromConfig } from '@demotime/common';
 
 export class DemoStatusBar {
   private static statusPresenting: StatusBarItem;
@@ -141,7 +141,7 @@ export class DemoStatusBar {
       return;
     }
 
-    let executingDemos = fileEntry.demos ?? [];
+    let executingDemos = getDemosFromConfig(fileEntry as any);
     const lastDemo = executingFile.demo[executingFile.demo.length - 1];
     if (!lastDemo) {
       Logger.info('No current move found');
@@ -178,7 +178,7 @@ export class DemoStatusBar {
 
       // Reset the current demo index + set the next demos
       crntDemoIdx = -1;
-      executingDemos = nextFile.demo.demos;
+      executingDemos = getDemosFromConfig(nextFile.demo as any);
     }
 
     // Get the next enabled demo (skip disabled ones)

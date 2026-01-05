@@ -74,6 +74,7 @@ import {
   Step,
   Version,
 } from '@demotime/common';
+import { isActConfig, Scene, getDemosFromConfig } from '@demotime/common';
 import { InputService } from './InputService';
 import { backupVSCodeSettings } from '../utils/backupVSCodeSettings';
 import { restoreVSCodeSettings } from '../utils/restoreVSCodeSettings';
@@ -299,7 +300,9 @@ export class DemoRunner {
     const executingFile = await DemoRunner.getExecutedDemoFile();
 
     const demoFile = await DemoRunner.getDemoFile(item);
-    let demos: Demo[] = demoFile?.demo.demos || [];
+    // Normalize ActConfig or DemoConfig -> Demo[] shape for backward compatibility
+    const fileDemo = demoFile?.demo;
+    const demos: Demo[] = getDemosFromConfig(fileDemo as any);
 
     // Filter out disabled demos for presentation mode
     // if (DemoRunner.isPresentationMode) {
@@ -428,7 +431,7 @@ export class DemoRunner {
     }
 
     const demoFile = await DemoFileProvider.getFile(Uri.file(filePath));
-    const demos = demoFile?.demos || [];
+    const demos = getDemosFromConfig(demoFile?.demo as any);
 
     if (demos.length <= 0) {
       Notifications.error('No moves found');
@@ -463,8 +466,9 @@ export class DemoRunner {
       executingFile.version = previousFile.version;
 
       // Get the last demo step of the previous file
-      const lastDemo = previousFile.demo.demos[previousFile.demo.demos.length - 1];
-      const crntIdx = previousFile.demo.demos.length - 1;
+      const prevDemos = getDemosFromConfig(previousFile.demo as any);
+      const lastDemo = prevDemos[prevDemos.length - 1];
+      const crntIdx = prevDemos.length - 1;
       executingFile.demo.push({
         idx: crntIdx,
         title: lastDemo.title,
@@ -566,7 +570,7 @@ export class DemoRunner {
     // Find the act file that contains the specified id
     let filePath = null;
     for (const crntFilePath in demoFiles) {
-      const demos = demoFiles[crntFilePath].demos;
+      const demos = getDemosFromConfig(demoFiles[crntFilePath] as any);
       const crntDemo = demos.find((demo) => demo.id === id);
       if (crntDemo) {
         filePath = crntFilePath;
@@ -585,13 +589,16 @@ export class DemoRunner {
       executingFile.demo = [];
     }
 
-    // Get the scene idx
-    const demoIdx = demoFiles[filePath].demos.findIndex((demo) => demo.id === id);
+    // Get the scene idx (normalize ActConfig or DemoConfig -> Demo[])
+    const targetFile = demoFiles[filePath];
+    const targetDemos: Demo[] = getDemosFromConfig(targetFile as any);
+
+    const demoIdx = targetDemos.findIndex((demo) => demo.id === id);
     if (demoIdx < 0) {
       Notifications.error('No scene found with the specified id');
       return;
     }
-    const demoToRun = demoFiles[filePath].demos[demoIdx];
+    const demoToRun = targetDemos[demoIdx];
     DemoRunner.currentDemo = demoToRun;
 
     // If in the same file and the demo appears before the last performed action, remove all actions after this demo

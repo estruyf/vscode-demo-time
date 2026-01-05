@@ -29,6 +29,7 @@ import {
   Step,
   transformMarkdown,
   twoColumnFormatting,
+  getDemosFromConfig,
 } from '@demotime/common';
 import { ScreenshotService } from './ScreenshotService';
 
@@ -95,7 +96,8 @@ export class PdfExportService {
           // Get all slide actions
           const slideActions: Step[] = [];
           for (const demoFile of Object.values(demoFiles)) {
-            for (const demo of demoFile.demos) {
+            const demos = getDemosFromConfig(demoFile as any);
+            for (const demo of demos) {
               for (const step of demo.steps) {
                 if (step.action === Action.OpenSlide && step.path) {
                   slideActions.push(step);

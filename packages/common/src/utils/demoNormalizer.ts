@@ -44,6 +44,18 @@ export function normalizeDemoConfig(config: DemoConfig | ActConfig): DemoConfig 
 }
 
 /**
+ * Returns the demos array from either a legacy DemoConfig or a v3 ActConfig
+ * If config is falsy, returns an empty array.
+ */
+export function getDemosFromConfig(config?: DemoConfig | ActConfig | null): Demo[] {
+  if (!config) {
+    return [];
+  }
+  const normalized = normalizeDemoConfig(config);
+  return normalized.demos || [];
+}
+
+/**
  * Converts a DemoConfig to an ActConfig (v3)
  * Useful when upgrading files or creating new v3 files
  */

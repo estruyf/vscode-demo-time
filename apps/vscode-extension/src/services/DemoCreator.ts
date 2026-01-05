@@ -28,7 +28,16 @@ import {
   upperCaseFirstLetter,
 } from '../utils';
 import { Notifications } from './Notifications';
-import { COMMAND, Config, Action, Demo, DemoConfig, Icons, Step } from '@demotime/common';
+import {
+  COMMAND,
+  Config,
+  Action,
+  Demo,
+  DemoConfig,
+  Icons,
+  Step,
+  getDemosFromConfig,
+} from '@demotime/common';
 import { ConfigEditorProvider } from '../providers/ConfigEditorProvider';
 
 export class DemoCreator {
@@ -154,7 +163,8 @@ export class DemoCreator {
     // If there are multiple matches and we have a stepIndex, find the correct occurrence
     if (matchingLineNumbers.length > 1) {
       const demoFile = await DemoFileProvider.getFile(fileUri);
-      if (!demoFile?.demos) {
+      const demos = getDemosFromConfig(demoFile as any);
+      if (!demos || demos.length === 0) {
         return;
       }
 
@@ -162,13 +172,13 @@ export class DemoCreator {
 
       // Count previous demos with the same title
       for (let i = 0; i < item.stepIndex; i++) {
-        if (includesLabel(demoFile.demos[i].title)) {
+        if (includesLabel(demos[i].title)) {
           occurrenceIndex++;
         }
       }
 
       // Go to the next occurrence if the title also matches
-      if (includesLabel(demoFile.title)) {
+      if (includesLabel(demoFile?.title || '')) {
         occurrenceIndex++;
       }
 

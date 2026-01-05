@@ -1,6 +1,6 @@
 import { commands, Uri } from 'vscode';
 import { Subscription } from '../models';
-import { Demo } from '@demotime/common';
+import { Demo, getDemosFromConfig } from '@demotime/common';
 import { Extension } from './Extension';
 import { General } from '../constants';
 import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
@@ -46,7 +46,7 @@ export class NotesService {
       const executingFile = await DemoRunner.getExecutedDemoFile();
 
       if (demoFiles && executingFile.filePath) {
-        let executingDemos = demoFiles[executingFile.filePath].demos;
+        let executingDemos = getDemosFromConfig(demoFiles[executingFile.filePath] as any);
         const lastDemo = executingFile.demo[executingFile.demo.length - 1];
 
         let crntDemoIdx = executingDemos.findIndex((d, idx) =>

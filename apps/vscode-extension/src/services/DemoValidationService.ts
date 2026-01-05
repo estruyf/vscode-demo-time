@@ -19,7 +19,7 @@ import {
   window,
 } from 'vscode';
 import { DemoFileProvider } from './DemoFileProvider';
-import { COMMAND, Demo, DemoConfig } from '@demotime/common';
+import { COMMAND, Demo, DemoConfig, getDemosFromConfig } from '@demotime/common';
 import { General } from '../constants';
 import { parseWinPath } from '../utils';
 
@@ -125,13 +125,13 @@ export class DemoValidationService {
       // Parse the act file content
       const content = await DemoFileProvider.getFile(document.uri);
 
-      if (!content || !content.demos) {
+      if (!content) {
         return;
       }
 
-      // Check for duplicate scene IDs within this file
+      // Normalize demos for validation
       const seenIds = new Map<string, { index: number; position: Position }>();
-      const demos = content.demos;
+      const demos = getDemosFromConfig(content as any);
 
       demos.forEach((demo: Demo, index: number) => {
         if (!demo.id) {
@@ -216,8 +216,9 @@ export class DemoValidationService {
 
         try {
           const content = allFiles[filePath];
-          if (content && content.demos) {
-            content.demos.forEach((demo: Demo) => {
+          if (content) {
+            const otherDemos = getDemosFromConfig(content as any);
+            otherDemos.forEach((demo: Demo) => {
               if (demo.id) {
                 globalIds.set(demo.id, normalizedFilePath);
               }
@@ -230,8 +231,9 @@ export class DemoValidationService {
       }
 
       // Check if any IDs in current file conflict with global IDs
-      if (currentContent.demos) {
-        currentContent.demos.forEach((demo: Demo, index: number) => {
+      const currentDemos = getDemosFromConfig(currentContent as any);
+      if (currentDemos) {
+        currentDemos.forEach((demo: Demo, index: number) => {
           if (demo.id && globalIds.has(demo.id)) {
             const conflictingFile = globalIds.get(demo.id);
             const relativePath = workspace.asRelativePath(conflictingFile || '');
@@ -510,7 +512,7 @@ export class DemoValidationService {
     try {
       const content = await DemoFileProvider.getFile(document.uri);
 
-      if (!content || !content.demos) {
+      if (!content) {
         window.showErrorMessage('No scene content found in the active file');
         return;
       }
@@ -520,14 +522,16 @@ export class DemoValidationService {
       let hasChanges = false;
       let changedCount = 0;
 
-      content.demos.forEach((demo) => {
+      const demos = getDemosFromConfig(content as any);
+
+      demos.forEach((demo) => {
         if (!demo.id) {
           return;
         }
 
         if (seenIds.has(demo.id)) {
           const oldId = demo.id;
-          const newId = DemoValidationService.generateUniqueId(content.demos, demo.id);
+          const newId = DemoValidationService.generateUniqueId(demos, demo.id);
           demo.id = newId;
           hasChanges = true;
           changedCount++;
@@ -619,7 +623,7 @@ class DemoCodeActionProvider implements CodeActionProvider {
       // Parse the current file content
       const content = await DemoFileProvider.getFile(document.uri);
 
-      if (!content || !content.demos) {
+      if (!content) {
         return undefined;
       }
 
@@ -628,14 +632,16 @@ class DemoCodeActionProvider implements CodeActionProvider {
       const edits: TextEdit[] = [];
       let hasChanges = false;
 
-      content.demos.forEach((demo) => {
+      const demos = getDemosFromConfig(content as any);
+
+      demos.forEach((demo) => {
         if (!demo.id) {
           return;
         }
 
         if (seenIds.has(demo.id)) {
           // Generate a new unique ID
-          const newId = DemoValidationService.generateUniqueId(content.demos, demo.id);
+          const newId = DemoValidationService.generateUniqueId(demos, demo.id);
           demo.id = newId;
           hasChanges = true;
         } else {
