@@ -1,6 +1,7 @@
 # Demo Time Demo Files
 
-This folder contains demonstration files for **Demo Time** using the new **Version 3** theatrical structure.
+This folder contains demonstration files for **Demo Time** using the new
+**Version 3** theatrical structure.
 
 ## 🎭 Theatrical Structure
 
@@ -15,7 +16,8 @@ Demo Time uses an intuitive theatrical metaphor:
 
 ### Version 3 (New Format)
 
-- **`example-v3.yaml`** - Example demonstration using version 3 theatrical naming
+- **`example-v3.yaml`** - Example demonstration using version 3 theatrical
+  naming
   - Shows the new `scenes` and `moves` structure
   - Demonstrates product icon usage
   - YAML format
@@ -37,7 +39,6 @@ Create a file named `my-demo.yaml` (or `my-demo.json`):
 title: My Demo Act
 description: What this Act demonstrates
 version: 3
-productIcon: presentation
 scenes:
   - title: Introduction Scene
     moves:
@@ -71,14 +72,14 @@ Choose from any VS Code codicon:
 
 ## 🔄 Backward Compatibility
 
-All existing `.json` and `.yaml` demo files continue to work without modification. You can mix version 1, 2, and 3 files in the same project.
+All existing `.json` and `.yaml` demo files continue to work without
+modification. You can mix version 1, 2, and 3 files in the same project.
 
 ## 🎬 Example Structure
 
 ```yaml
 title: Getting Started
 version: 3
-productIcon: rocket
 scenes:
   - title: Installation
     moves:
@@ -96,4 +97,5 @@ scenes:
 
 ## 📖 Learn More
 
-Visit [demotime.show](https://demotime.show/) for complete documentation and examples.
+Visit [demotime.show](https://demotime.show/) for complete documentation and
+examples.

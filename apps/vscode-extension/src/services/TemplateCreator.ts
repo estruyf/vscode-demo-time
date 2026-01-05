@@ -50,12 +50,12 @@ export class TemplateCreator {
       $schema: 'https://demotime.show/demo-time.schema.json',
       title: 'Hello World Demo',
       description: 'Simple intro with a slide and code highlight.',
-      version: 2,
-      demos: [
+      version: 3,
+      scenes: [
         {
           title: 'Show the slide',
           description: 'Show a slide and highlight a function in code.',
-          steps: [
+          moves: [
             {
               action: 'openSlide',
               path: '.demo/slides/intro-start.md',
@@ -65,7 +65,7 @@ export class TemplateCreator {
         {
           title: 'Highlight the code',
           description: 'Highlight the `helloWorld` function in the code.',
-          steps: [
+          moves: [
             {
               action: 'open',
               path: 'index.js',
@@ -80,7 +80,7 @@ export class TemplateCreator {
         {
           title: 'Show the end slide',
           description: 'Show the end slide.',
-          steps: [
+          moves: [
             {
               action: 'openSlide',
               path: '.demo/slides/intro-end.md',
@@ -158,13 +158,13 @@ sayHello();`;
       title: 'Advanced Demo: TypeScript Function Walkthrough',
       description:
         'A guided demo showing how to add and highlight a new function in a TypeScript file, with themed slides and VS Code integration.',
-      version: 2,
-      demos: [
+      version: 3,
+      scenes: [
         {
           title: 'Introduction Slide',
           description:
             'Display the opening slide to introduce the advanced demo and set the initial theme.',
-          steps: [
+          moves: [
             {
               action: Action.SetTheme,
               theme: 'Default Dark Modern',
@@ -179,7 +179,7 @@ sayHello();`;
           title: 'Implement multiply() in math.ts',
           description:
             'Switch to a light theme, open math.ts, and highlight where to add the multiply() function. Also, show the file in the explorer.',
-          steps: [
+          moves: [
             {
               action: Action.SetTheme,
               theme: 'Default Light Modern',
@@ -203,8 +203,8 @@ sayHello();`;
         {
           title: 'Review and Recap',
           description:
-            'Show a slide summarizing the steps taken and what was accomplished in the demo.',
-          steps: [
+            'Show a slide summarizing the moves taken and what was accomplished in the demo.',
+          moves: [
             {
               action: Action.SetTheme,
               theme: 'Default Dark Modern',
@@ -218,7 +218,7 @@ sayHello();`;
         {
           title: 'Reset Theme',
           description: 'Return the editor theme to its default state to clean up after the demo.',
-          steps: [
+          moves: [
             {
               action: Action.UnsetTheme,
             },

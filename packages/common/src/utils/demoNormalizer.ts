@@ -47,14 +47,13 @@ export function normalizeDemoConfig(config: DemoConfig | ActConfig): DemoConfig 
  * Converts a DemoConfig to an ActConfig (v3)
  * Useful when upgrading files or creating new v3 files
  */
-export function demoConfigToActConfig(config: DemoConfig, productIcon?: string): ActConfig {
+export function demoConfigToActConfig(config: DemoConfig): ActConfig {
   return {
     $schema: config.$schema,
     title: config.title,
     description: config.description,
     version: 3,
     timer: config.timer,
-    productIcon: productIcon,
     engageTime: config.engageTime,
     scenes: config.demos.map((demo) => demoToScene(demo)),
   };
