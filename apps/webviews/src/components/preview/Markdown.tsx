@@ -13,6 +13,7 @@ export interface IMarkdownProps {
   vsCodeTheme: never;
   isDarkTheme: boolean;
   webviewUrl: string | null;
+  videoUrl?: string;
   updateBgStyles: (styles: React.CSSProperties | undefined) => void;
 }
 
@@ -23,6 +24,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   vsCodeTheme,
   isDarkTheme,
   webviewUrl,
+  videoUrl,
   updateBgStyles
 }: React.PropsWithChildren<IMarkdownProps>) => {
   const prevContent = usePrevious(content);
@@ -175,7 +177,24 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
           <div key={filePath} className={`slide__content__custom`} dangerouslySetInnerHTML={{ __html: template }} />
         ) : (
           <div key={filePath} className={`slide__content__inner`}>
-            {markdown}
+            {
+              (videoUrl) ? (
+                <>
+                  <video
+                    controls={matter?.controls}
+                    autoPlay={matter?.autoplay || !matter?.controls}
+                    loop={matter?.loop || !matter?.controls}
+                    muted={matter?.muted || !matter?.controls}
+                    playsInline={matter?.playsInline || !matter?.controls}
+                    preload="auto"
+                    src={videoUrl}
+                    className='fixed inset-0 -z-1'></video>
+                  <div className='z-10'>{markdown}</div>
+                </>
+              ) : (
+                markdown
+              )
+            }
           </div>
         )
       }

@@ -360,7 +360,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             }
 
             {
-              (layout === SlideLayout.Video && videoUrl) && (
+              (layout === SlideLayout.Video && videoUrl && !crntSlide?.frontmatter.controls) && (
                 <div className="slide__video" aria-hidden="true">
                   <video autoPlay loop muted playsInline preload="auto" src={videoUrl}></video>
                 </div>
@@ -385,6 +385,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
                       vsCodeTheme={vsCodeTheme as never}
                       isDarkTheme={isDarkTheme}
                       webviewUrl={webviewUrl}
+                      videoUrl={videoUrl}
                       updateBgStyles={setBgStyles}
                     />
                   }

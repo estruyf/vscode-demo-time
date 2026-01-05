@@ -14,6 +14,8 @@
   during your demo
 - [#348](https://github.com/estruyf/vscode-demo-time/issues/348): Added the
   analytics PRO feature
+- [#361](https://github.com/estruyf/vscode-demo-time/issues/361): Video control
+  support in slides
 
 ## [1.12.0] - 2025-12-16
 
