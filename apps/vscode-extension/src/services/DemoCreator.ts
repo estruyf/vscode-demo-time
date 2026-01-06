@@ -163,6 +163,10 @@ export class DemoCreator {
     // If there are multiple matches and we have a stepIndex, find the correct occurrence
     if (matchingLineNumbers.length > 1) {
       const demoFile = await DemoFileProvider.getFile(fileUri);
+      if (!demoFile) {
+        return;
+      }
+
       const demos = getDemosFromConfig(demoFile as any);
       if (!demos || demos.length === 0) {
         return;
@@ -171,8 +175,8 @@ export class DemoCreator {
       let occurrenceIndex = 0;
 
       // Count previous demos with the same title
-      for (let i = 0; i < item.stepIndex; i++) {
-        if (includesLabel(demos[i].title)) {
+      for (let i = 0; i < Math.min(item.stepIndex, demos.length); i++) {
+        if (demos[i]?.title && includesLabel(demos[i].title)) {
           occurrenceIndex++;
         }
       }

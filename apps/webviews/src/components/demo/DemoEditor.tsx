@@ -155,7 +155,7 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange, onGenera
                 label="Description"
                 value={demo.description || ''}
                 onChange={(value) => handleChange('description', value || undefined)}
-                placeholder="Enter act description"
+                placeholder="Enter scene description"
                 error={getFieldError('description')}
               />
             </div>

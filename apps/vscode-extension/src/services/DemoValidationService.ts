@@ -245,7 +245,7 @@ export class DemoValidationService {
 
             const diagnostic = new Diagnostic(
               new Range(new Position(position.line, 0), lineEnd),
-              `Scene ID "${demo.id}" conflicts with a demo in ${relativePath}. Scene IDs must be unique across all act files.`,
+              `Scene ID "${demo.id}" conflicts with a scene in ${relativePath}. Scene IDs must be unique across all act files.`,
               DiagnosticSeverity.Error,
             );
             diagnostic.source = 'demo-time';

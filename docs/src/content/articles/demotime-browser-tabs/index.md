@@ -141,12 +141,12 @@ of your demo.
 ![Step 5 - Run the demo](./5-run-demo.gif)
 
 
-Now we’re going to add two more demos to the act file.
+Now we’re going to add two more scenes to the act file.
 
-Add a demo and a step to open the slide **second-slide.md**
+Add a scene and a step to open the slide **second-slide.md**
 
-Then, add another demo and step to open the second active tab in Edge, using the
-following command:
+Then, add another scene and step to open the second active tab in Edge, using
+the following command:
 
 ```
 osascript .demo/slides/open-browser-tab.scpt 3
