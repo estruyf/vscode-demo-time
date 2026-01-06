@@ -167,7 +167,7 @@ export class DemoCreator {
         return;
       }
 
-      const demos = getDemosFromConfig(demoFile as any);
+      const demos = getDemosFromConfig(demoFile);
       if (!demos || demos.length === 0) {
         return;
       }
@@ -198,7 +198,7 @@ export class DemoCreator {
    * The function prompts the user to choose whether to insert or delete the step.
    * If the user chooses to insert a new step, they are prompted to enter the step title and description.
    * If the user chooses to insert a step into an existing demo, they are prompted to select the demo.
-   * The modified act fileis saved after the step is added.
+   * The modified act file is saved after the step is added.
    */
   private static async addToStep() {
     let demoFiles = await DemoFileProvider.getFiles();

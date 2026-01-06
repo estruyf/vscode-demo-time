@@ -64,7 +64,7 @@ export class DemoValidationService {
 
     ctx.subscriptions.push(onDidSave, onDidOpen, onDidCreate);
 
-    // Validate all existing act file on startup
+    // Validate all existing act files on startup
     DemoValidationService.validateAllDemoFiles();
 
     DemoValidationService.registered = true;
@@ -131,7 +131,7 @@ export class DemoValidationService {
 
       // Normalize demos for validation
       const seenIds = new Map<string, { index: number; position: Position }>();
-      const demos = getDemosFromConfig(content as any);
+      const demos = getDemosFromConfig(content);
 
       demos.forEach((demo: Demo, index: number) => {
         if (!demo.id) {
@@ -522,7 +522,7 @@ export class DemoValidationService {
       let hasChanges = false;
       let changedCount = 0;
 
-      const demos = getDemosFromConfig(content as any);
+      const demos = getDemosFromConfig(content);
 
       demos.forEach((demo) => {
         if (!demo.id) {

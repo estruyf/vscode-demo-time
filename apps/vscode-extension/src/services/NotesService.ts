@@ -45,16 +45,36 @@ export class NotesService {
       const executingFile = await DemoRunner.getExecutedDemoFile();
 
       if (demoFiles && executingFile.filePath) {
-        let executingDemos = getDemosFromConfig(demoFiles[executingFile.filePath] as any);
-        const lastDemo = executingFile.demo[executingFile.demo.length - 1];
+        const demoFileEntry = demoFiles[executingFile.filePath];
+        const executingDemos = getDemosFromConfig(demoFileEntry);
 
-        let crntDemoIdx = executingDemos.findIndex((d, idx) =>
+        if (!executingDemos || executingDemos.length === 0) {
+          Notifications.error('No notes available for this step.');
+          return;
+        }
+
+        const lastDemo =
+          executingFile.demo && executingFile.demo.length > 0
+            ? executingFile.demo[executingFile.demo.length - 1]
+            : undefined;
+
+        if (!lastDemo) {
+          Notifications.error('No notes available for this step.');
+          return;
+        }
+
+        const crntDemoIdx = executingDemos.findIndex((d, idx) =>
           d.id ? d.id === lastDemo.id : idx === lastDemo.idx,
         );
 
+        if (crntDemoIdx === -1) {
+          Notifications.error('No notes available for this step.');
+          return;
+        }
+
         // Show the notes action
         const crntDemo = executingDemos[crntDemoIdx];
-        if (crntDemo.notes && crntDemo.notes.path) {
+        if (crntDemo && crntDemo.notes && crntDemo.notes.path) {
           NotesService.openNotes(crntDemo.notes.path);
           return;
         }
