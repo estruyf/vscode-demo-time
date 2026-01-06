@@ -65,7 +65,7 @@ export class DemoFileProvider {
       }
     } else {
       // Default to JSON parsing (supports both .json and .jsonc)
-      parsed = jsonParse(content) as DemoConfig | ActConfig;
+      parsed = jsonParse(content);
     }
 
     if (!parsed) {

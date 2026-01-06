@@ -1,6 +1,6 @@
 import { commands, Uri } from 'vscode';
 import { Subscription } from '../models';
-import { Demo, getDemosFromConfig } from '@demotime/common';
+import { Demo, getDemosFromConfig, COMMAND } from '@demotime/common';
 import { Extension } from './Extension';
 import { General } from '../constants';
 import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
@@ -8,7 +8,6 @@ import { Notifications } from './Notifications';
 import { fileExists } from '../utils';
 import { DemoFileProvider } from './DemoFileProvider';
 import { DemoRunner } from './DemoRunner';
-import { COMMAND } from '@demotime/common';
 
 export class NotesService {
   public static registerCommands() {

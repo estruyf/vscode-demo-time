@@ -73,8 +73,8 @@ import {
   ISlidePreview,
   Step,
   Version,
+  getDemosFromConfig,
 } from '@demotime/common';
-import { isActConfig, Scene, getDemosFromConfig } from '@demotime/common';
 import { InputService } from './InputService';
 import { backupVSCodeSettings } from '../utils/backupVSCodeSettings';
 import { restoreVSCodeSettings } from '../utils/restoreVSCodeSettings';

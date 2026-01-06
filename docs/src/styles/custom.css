@@ -227,7 +227,7 @@ h1 {
 }
 
 /* Terminology Diagram Styles */
-:root {
+.terminology-container {
   --bg-dark: #0d0d0d;
   --bg-card: #1a1a1a;
   --bg-nested: #242424;
