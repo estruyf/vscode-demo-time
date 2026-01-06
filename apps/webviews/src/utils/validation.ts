@@ -36,11 +36,11 @@ export const validateConfig = (config: DemoConfig): ValidationResult => {
 export const validateDemo = (demo: Demo, demoIndex?: number): ValidationResult => {
   const errors: ValidationError[] = [];
 
-  // Validate demo title
+  // Validate scene title
   if (!demo.title?.trim()) {
     errors.push({
       field: 'title',
-      message: 'Demo title is required',
+      message: 'Scene title is required',
       demoIndex,
     });
   }

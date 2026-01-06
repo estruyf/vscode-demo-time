@@ -101,7 +101,7 @@ export const createPatch = async () => {
 
   // Ask the user if they want to create a new demo starting from this file
   const createDemo = await window.showInformationMessage(
-    'Do you want to create a demo step with this patch?',
+    'Do you want to create a move with this patch?',
     { modal: true },
     'Yes',
   );

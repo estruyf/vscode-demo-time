@@ -9,12 +9,12 @@ import { cleanupStepProperties } from '../utils/stepCleanup';
 const initializeConfig = (initialConfig?: DemoConfig): DemoConfig => {
   const defaultConfig: DemoConfig = {
     title: 'Demo Time Sample',
-    description: 'A sample for the Demo Time Config Editor',
-    version: 2,
+    description: 'A sample for the Demo Time Act Editor',
+    version: 3,
     timer: 30,
     demos: [
       {
-        id: 'demo-sample-1',
+        id: 'scene-sample-1',
         title: 'Getting Started',
         steps: [
           { action: Action.AskChat },
@@ -114,16 +114,16 @@ export const useDemoConfig = (initialConfig?: DemoConfig) => {
   }, []);
 
   const handleAddDemo = useCallback(() => {
-    // Generate a unique demo ID
+    // Generate a unique scene ID
     const generateDemoId = () => {
       const timestamp = Date.now().toString(36);
       const random = Math.random().toString(36).substr(2, 4);
-      return `demo-${timestamp}-${random}`;
+      return `scene-${timestamp}-${random}`;
     };
 
     const newDemo: Demo = {
       id: generateDemoId(),
-      title: `Demo ${config.demos.length + 1}`,
+      title: `Scene ${config.demos.length + 1}`,
       steps: [],
     };
 
@@ -168,7 +168,7 @@ export const useDemoConfig = (initialConfig?: DemoConfig) => {
     (index: number) => {
       const demoToDuplicate = config.demos[index];
 
-      // Generate a unique demo ID
+      // Generate a unique scene ID
       const generateDemoId = () => {
         const timestamp = Date.now().toString(36);
         const random = Math.random().toString(36).substr(2, 4);

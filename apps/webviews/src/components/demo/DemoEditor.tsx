@@ -96,7 +96,7 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange, onGenera
             <div className="flex items-center space-x-2">
               {collapsed ? <ChevronDown /> : <ChevronUp />}
 
-              <h2 className="text-xl font-semibold">Demo Information</h2>
+              <h2 className="text-xl font-semibold">Scene Information</h2>
             </div>
           </button>
           <div className="flex items-center">
@@ -111,24 +111,24 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange, onGenera
         {!collapsed &&
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
-              label="Demo Title"
+              label="Scene title"
               required
               value={demo.title}
               onChange={(value) => handleChange('title', value)}
-              placeholder="Enter demo title"
+              placeholder="Enter scene title"
               error={getFieldError('title')}
             />
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Demo ID
+                Scene ID
               </label>
               <div className="flex items-center gap-2">
                 <Input
                   label={undefined}
                   value={demo.id || ''}
                   onChange={(value) => handleChange('id', value || undefined)}
-                  placeholder="Enter demo ID (optional)"
+                  placeholder="Enter scene ID (optional)"
                   error={getFieldError('id')}
                   className="flex-1"
                 />
@@ -140,7 +140,7 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange, onGenera
                       handleChange('id', onGenerateId());
                     }
                   }}
-                  title="Generate unique demo ID"
+                  title="Generate unique scene ID"
                   disabled={!onGenerateId}
                 >
                   <RefreshCw className="h-4 w-4" />
@@ -155,7 +155,7 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange, onGenera
                 label="Description"
                 value={demo.description || ''}
                 onChange={(value) => handleChange('description', value || undefined)}
-                placeholder="Enter demo description"
+                placeholder="Enter scene description"
                 error={getFieldError('description')}
               />
             </div>

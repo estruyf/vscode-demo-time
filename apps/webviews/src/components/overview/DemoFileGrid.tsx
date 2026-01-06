@@ -19,8 +19,8 @@ export const DemoFileGrid: React.FC<DemoFileGridProps> = ({
   if (gridItems.length === 0) {
     return (
       <div className="text-center py-8">
-        <div className="text-demo-time-gray-4 mb-2">No demos found in this file</div>
-        <p className="text-sm text-demo-time-gray-5">Add some demos to see them here</p>
+        <div className="text-demo-time-gray-4 mb-2">No scenes found in this file</div>
+        <p className="text-sm text-demo-time-gray-5">Add some scenes to see them here</p>
       </div>
     );
   }

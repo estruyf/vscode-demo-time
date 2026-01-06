@@ -5,8 +5,9 @@ export const COMMAND = {
   authenticate: `${EXTENSION_NAME}.authenticate`,
   // Documentation
   documentation: `${EXTENSION_NAME}.docs`,
-  // Demo file actions
+  // Act file actions
   addStepToDemo: `${EXTENSION_NAME}.addStepToDemo`,
+  fixDuplicateIds: `${EXTENSION_NAME}.fixDuplicateIds`,
   // Running the demo
   start: `${EXTENSION_NAME}.start`,
   previous: `${EXTENSION_NAME}.previous`,
@@ -49,7 +50,7 @@ export const COMMAND = {
   exportToPdf: `${EXTENSION_NAME}.exportToPdf`,
   // Importer
   importPowerPointImages: `${EXTENSION_NAME}.importPowerPointImages`,
-  // Config editor
+  // Act Editor
   openConfigInTextEditor: `${EXTENSION_NAME}.openConfigInTextEditor`,
   openConfigEditor: `${EXTENSION_NAME}.openConfigEditor`,
   // Hacker Typer

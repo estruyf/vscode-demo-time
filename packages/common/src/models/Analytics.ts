@@ -5,9 +5,9 @@
  * presentation sessions, including timing, navigation, and performance metrics.
  *
  * Terminology:
- * - Play: The entire presentation session (can span multiple demo files)
- * - Act: A demo file being presented
- * - Scene: A demo within a demo file
+ * - Play: The entire presentation session (can span multiple act files)
+ * - Act: An act file being presented
+ * - Scene: A demo within an act file
  * - Move: A step within a demo
  */
 
@@ -26,10 +26,10 @@ export enum TimerStatus {
 }
 
 /**
- * Timing information for an Act (demo file).
+ * Timing information for an Act (act file).
  */
 export interface ActTimingInfo {
-  /** Path to the Act (demo file) */
+  /** Path to the Act (act file) */
   actFilePath: string;
   /** Configured timer for this Act in minutes (if any) */
   configuredTimer?: number;
@@ -41,7 +41,7 @@ export interface ActTimingInfo {
 
 /**
  * Represents a complete presentation session (Play) with all tracked data.
- * A Play can consist of multiple Acts (demo files).
+ * A Play can consist of multiple Acts (act files).
  */
 export interface PresentationSession {
   /** Unique identifier for the session (Play) */
@@ -79,11 +79,11 @@ export interface PresentationSession {
 export interface SegmentAnalytics {
   /** Unique identifier for this segment */
   segmentId: string;
-  /** Path to the Act (demo file) this segment belongs to */
+  /** Path to the Act (act file) this segment belongs to */
   actFilePath: string;
-  /** Title of the Act (demo file) */
+  /** Title of the Act (act file) */
   actTitle?: string;
-  /** Scene ID if available (demo ID) */
+  /** Scene ID if available (scene ID) */
   sceneId?: string;
   /** Index of the Scene (demo) in the Act (file) */
   sceneIndex: number;
@@ -251,7 +251,7 @@ export interface NavigationEventDetails {
   /** Scene (demo) information */
   sceneId?: string;
   sceneTitle?: string;
-  /** Act (demo file) information */
+  /** Act (act file) information */
   actFilePath?: string;
   /** Slide information */
   slideIndex?: number;
@@ -334,11 +334,11 @@ export type PauseRecord = NarrativeRecord;
  * Demo breakdown item for summary (Scene breakdown).
  */
 export interface DemoBreakdownItem {
-  /** Act (demo file) path */
+  /** Act (act file) path */
   actFilePath?: string;
-  /** Scene ID if available (demo ID) */
+  /** Scene ID if available (scene ID) */
   sceneId?: string;
-  /** Scene title (demo title) */
+  /** Scene title (scene title) */
   sceneTitle: string;
   /** Scene index (demo index) */
   sceneIndex: number;

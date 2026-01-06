@@ -52,7 +52,7 @@ export const FileActionButtons: React.FC<FileActionButtonsProps> = ({ onSettings
       className="flex-1 sm:flex-none text-xs sm:text-sm"
       size="sm"
     >
-      <span className="font-medium hidden lg:inline">New Demo File</span>
+      <span className="font-medium hidden lg:inline">New Act File</span>
       <span className="font-medium lg:hidden">New</span>
     </Button>
   </div>

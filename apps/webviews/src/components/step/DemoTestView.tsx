@@ -4,7 +4,7 @@ import { Demo } from '../../types/demo';
 import { validateDemo } from '../../utils/validation';
 import { Button } from '../ui/Button';
 import { messageHandler } from '@estruyf/vscode/dist/client';
-import { WebViewMessages } from '@demotime/common';
+import { Step, WebViewMessages } from '@demotime/common';
 
 interface DemoTestViewProps {
   demo: Demo;
@@ -161,7 +161,7 @@ export const DemoTestView: React.FC<DemoTestViewProps> = ({
                 {validation.errors.map((error, index) => (
                   <div key={index} className="text-sm text-red-700 dark:text-red-300">
                     {error.stepIndex !== undefined && (
-                      <span className="font-medium">Step {error.stepIndex + 1}: </span>
+                      <span className="font-medium">Move {error.stepIndex + 1}: </span>
                     )}
                     {error.message}
                   </div>
@@ -180,16 +180,16 @@ export const DemoTestView: React.FC<DemoTestViewProps> = ({
         <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-6">
           <div className="flex items-center space-x-2">
             <CheckCircle className="h-5 w-5 text-green-600" />
-            <span className="text-green-800 dark:text-green-200 font-medium">Demo completed successfully!</span>
+            <span className="text-green-800 dark:text-green-200 font-medium">Scene completed successfully!</span>
           </div>
         </div>
       )}
 
       {/* Steps List */}
       <div>
-        <h4 className="font-medium text-gray-900 dark:text-white mb-4">Demo Steps</h4>
+        <h4 className="font-medium text-gray-900 dark:text-white mb-4">Moves</h4>
         <div className="space-y-3">
-          {demo.steps.map((step, index) => {
+          {demo.steps.map((step: Step, index: number) => {
             const isDisabled = !!step.disabled;
             const status = getStepStatus(index);
             const StepIcon = getStepIcon(status);
@@ -209,7 +209,7 @@ export const DemoTestView: React.FC<DemoTestViewProps> = ({
                 <div className="flex-1">
                   <div className="flex items-center space-x-2">
                     <span className="text-sm font-medium text-gray-900 dark:text-white">
-                      Step {index + 1}:
+                      Move {index + 1}:
                     </span>
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       {step.action}
@@ -239,10 +239,10 @@ export const DemoTestView: React.FC<DemoTestViewProps> = ({
           <div className="flex items-start space-x-2">
             <AlertTriangle className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
             <div>
-              <h4 className="text-blue-800 dark:text-blue-200 font-medium mb-1">Demo Simulation</h4>
+              <h4 className="text-blue-800 dark:text-blue-200 font-medium mb-1">Scene Simulation</h4>
               <p className="text-sm text-blue-700 dark:text-blue-300">
-                This is a simulation that validates your demo configuration.
-                Each step will be checked and simulated to ensure it would work properly.
+                This is a simulation that validates your scene configuration.
+                Each move will be checked and simulated to ensure it would work properly.
               </p>
             </div>
           </div>

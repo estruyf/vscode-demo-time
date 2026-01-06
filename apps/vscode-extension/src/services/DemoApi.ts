@@ -119,7 +119,7 @@ export class DemoApi {
     Logger.info('Received request for demos');
     const apiData = await getDemoApiData();
     if (!apiData) {
-      res.status(404).send('No demos found');
+      res.status(404).send('No scenes found');
       return;
     }
 
@@ -194,7 +194,7 @@ export class DemoApi {
     }
 
     if (!id) {
-      res.status(400).send('Missing demo ID');
+      res.status(400).send('Missing scene ID');
       return;
     }
 

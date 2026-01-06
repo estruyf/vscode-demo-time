@@ -7,7 +7,7 @@ import { Extension } from './Extension';
 import { getNextDemoFile, setContext } from '../utils';
 import { PresenterView } from '../presenterView/PresenterView';
 import { Logger } from './Logger';
-import { WebViewMessages, COMMAND, Config, Demo } from '@demotime/common';
+import { WebViewMessages, COMMAND, Config, Demo, getDemosFromConfig } from '@demotime/common';
 
 export class DemoStatusBar {
   private static statusPresenting: StatusBarItem;
@@ -71,7 +71,7 @@ export class DemoStatusBar {
         StatusBarAlignment.Left,
         100001,
       );
-      DemoStatusBar.statusBarItem.name = `${Config.title} - Next Demo`;
+      DemoStatusBar.statusBarItem.name = `${Config.title} - Next Scene`;
       DemoStatusBar.statusBarItem.command = COMMAND.start;
 
       DemoStatusBar.statusBarItem.backgroundColor = new ThemeColor(
@@ -89,7 +89,7 @@ export class DemoStatusBar {
       DemoStatusBar.statusBarNotes.name = `${Config.title} - Notes`;
       DemoStatusBar.statusBarNotes.command = COMMAND.viewNotes;
       DemoStatusBar.statusBarNotes.text = `$(book) Notes`;
-      DemoStatusBar.statusBarNotes.tooltip = `Show the notes for the current demo step`;
+      DemoStatusBar.statusBarNotes.tooltip = `Show the notes for the current move`;
     }
 
     if (!DemoStatusBar.statusBarPause) {
@@ -123,7 +123,7 @@ export class DemoStatusBar {
     const executingFile = await DemoRunner.getExecutedDemoFile();
 
     if (!demoFiles || !executingFile?.filePath) {
-      Logger.info('No next demo file path found');
+      Logger.info('No next act file path found');
       DemoStatusBar.nextDemo = undefined;
       DemoStatusBar.statusBarItem?.hide();
       DemoStatusBar.statusBarNotes?.hide();
@@ -133,7 +133,7 @@ export class DemoStatusBar {
 
     const fileEntry = demoFiles[executingFile.filePath];
     if (!fileEntry) {
-      Logger.info('Executing file not found in loaded demo files');
+      Logger.info('Executing file not found in loaded act files');
       DemoStatusBar.nextDemo = undefined;
       DemoStatusBar.statusBarItem?.hide();
       DemoStatusBar.statusBarNotes?.hide();
@@ -141,10 +141,10 @@ export class DemoStatusBar {
       return;
     }
 
-    let executingDemos = fileEntry.demos ?? [];
+    let executingDemos = getDemosFromConfig(fileEntry as any);
     const lastDemo = executingFile.demo[executingFile.demo.length - 1];
     if (!lastDemo) {
-      Logger.info('No current demo step found');
+      Logger.info('No current move found');
       DemoStatusBar.nextDemo = undefined;
       DemoStatusBar.statusBarItem?.hide();
       DemoStatusBar.statusBarNotes?.hide();
@@ -167,7 +167,7 @@ export class DemoStatusBar {
 
     // Check if exists and is the last demo
     if (crntDemoIdx !== -1 && crntDemoIdx === executingDemos.length - 1) {
-      // Check if there is a next demo file
+      // Check if there is a next act file
       const nextFile = await getNextDemoFile(executingFile);
       if (!nextFile) {
         DemoStatusBar.statusBarItem.hide();
@@ -178,7 +178,7 @@ export class DemoStatusBar {
 
       // Reset the current demo index + set the next demos
       crntDemoIdx = -1;
-      executingDemos = nextFile.demo.demos;
+      executingDemos = getDemosFromConfig(nextFile.demo as any);
     }
 
     // Get the next enabled demo (skip disabled ones)
@@ -232,7 +232,7 @@ export class DemoStatusBar {
   }
 
   /**
-   * Retrieves the timer setting from the current demo file or falls back to the extension setting.
+   * Retrieves the timer setting from the current act file or falls back to the extension setting.
    */
   public static async getTimer(): Promise<number | undefined> {
     const executingFile = await DemoRunner.getExecutedDemoFile();

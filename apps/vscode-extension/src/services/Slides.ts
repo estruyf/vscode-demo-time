@@ -33,6 +33,7 @@ import {
   Action,
   Step,
   SlideParser,
+  getDemosFromConfig,
 } from '@demotime/common';
 
 export class Slides {
@@ -137,12 +138,13 @@ layout: ${layout.toLowerCase()}
   }
 
   public static async getTotalSlides(): Promise<number> {
-    // Get all demo files and count all slides
+    // Get all act files and count all slides
     const demoFiles = await DemoFileProvider.getFiles();
     let totalSlides = 0;
     if (demoFiles) {
       for (const demoFile of Object.values(demoFiles)) {
-        for (const demo of demoFile.demos) {
+        const demos = getDemosFromConfig(demoFile as any);
+        for (const demo of demos) {
           for (const step of demo.steps) {
             if (step.action === 'openSlide' && step.path) {
               try {
@@ -188,7 +190,8 @@ layout: ${layout.toLowerCase()}
     let globalIdx = 0;
     if (demoFiles) {
       for (const demoFile of Object.values(demoFiles)) {
-        for (const demo of demoFile.demos) {
+        const demos = getDemosFromConfig(demoFile as any);
+        for (const demo of demos) {
           for (const step of demo.steps) {
             if (step.action === 'openSlide' && step.path) {
               let fileUri;
@@ -235,7 +238,7 @@ layout: ${layout.toLowerCase()}
       return;
     }
 
-    const executingDemos = demoFiles[item.demoFilePath].demos;
+    const executingDemos = getDemosFromConfig(demoFiles[item.demoFilePath] as any);
     const crntDemo = executingDemos.find((_, idx) => idx === item.stepIndex);
     if (!crntDemo) {
       return;
