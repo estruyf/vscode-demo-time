@@ -229,7 +229,7 @@ export class DemoFileProvider {
     const demo = (demoFiles as DemoFiles)[demoFilePath];
     return {
       filePath: demoFilePath,
-      demo: demo,
+      demo: normalizeDemoConfig(demo),
     };
   }
 

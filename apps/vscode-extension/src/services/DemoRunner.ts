@@ -74,6 +74,7 @@ import {
   Step,
   Version,
   getDemosFromConfig,
+  normalizeDemoConfig,
 } from '@demotime/common';
 import { InputService } from './InputService';
 import { backupVSCodeSettings } from '../utils/backupVSCodeSettings';
@@ -180,7 +181,7 @@ export class DemoRunner {
   }
 
   /**
-   * Sets the executed act filein the extension state.
+   * Sets the executed act file in the extension state.
    * @param demoFile - The act file to be set as executed.
    */
   private static async setExecutedDemoFile(demoFile: DemoFileCache) {
@@ -302,7 +303,7 @@ export class DemoRunner {
     const demoFile = await DemoRunner.getDemoFile(item);
     // Normalize ActConfig or DemoConfig -> Demo[] shape for backward compatibility
     const fileDemo = demoFile?.demo;
-    const demos: Demo[] = getDemosFromConfig(fileDemo as any);
+    const demos: Demo[] = getDemosFromConfig(fileDemo);
 
     // Filter out disabled demos for presentation mode
     // if (DemoRunner.isPresentationMode) {
@@ -431,7 +432,7 @@ export class DemoRunner {
     }
 
     const demoFile = await DemoFileProvider.getFile(Uri.file(filePath));
-    const demos = getDemosFromConfig(demoFile?.demo as any);
+    const demos = getDemosFromConfig(demoFile);
 
     if (demos.length <= 0) {
       Notifications.error('No moves found');
@@ -1460,7 +1461,7 @@ export class DemoRunner {
   }
 
   /**
-   * Retrieves the act fileassociated with the given ActionTreeItem.
+   * Retrieves the act file associated with the given ActionTreeItem.
    * @param item The ActionTreeItem representing the act file.
    * @param triggerFirstDemo A boolean indicating whether to trigger the first demo.
    * @returns A Promise that resolves to an object containing the filePath and demo, or undefined if no act file is found.
@@ -1526,7 +1527,7 @@ export class DemoRunner {
 
       return {
         filePath: demoFilePath,
-        demo: demoFiles[demoFilePath],
+        demo: normalizeDemoConfig(demoFiles[demoFilePath]),
       };
     } else if (executingFile.filePath && !item && demoFiles) {
       const demoFile = demoFiles[executingFile.filePath];
@@ -1537,7 +1538,7 @@ export class DemoRunner {
 
       return {
         filePath: executingFile.filePath,
-        demo: demoFile,
+        demo: normalizeDemoConfig(demoFile),
       };
     }
 
