@@ -1527,7 +1527,7 @@ export class DemoRunner {
 
       return {
         filePath: demoFilePath,
-        demo: normalizeDemoConfig(demoFiles[demoFilePath]),
+        demo: normalizeDemoConfig(demoFiles[demoFilePath]) || demoFiles[demoFilePath],
       };
     } else if (executingFile.filePath && !item && demoFiles) {
       const demoFile = demoFiles[executingFile.filePath];
@@ -1538,7 +1538,7 @@ export class DemoRunner {
 
       return {
         filePath: executingFile.filePath,
-        demo: normalizeDemoConfig(demoFile),
+        demo: normalizeDemoConfig(demoFile) || demoFile,
       };
     }
 
