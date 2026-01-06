@@ -74,7 +74,7 @@ export class NotesService {
 
         // Show the notes action
         const crntDemo = executingDemos[crntDemoIdx];
-        if (crntDemo && crntDemo.notes && crntDemo.notes.path) {
+        if (crntDemo?.notes?.path) {
           NotesService.openNotes(crntDemo.notes.path);
           return;
         }
