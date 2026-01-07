@@ -72,7 +72,11 @@ export class AnalyticsCommands {
       [
         { label: 'Dry Run / Practice', description: 'Record a practice session', isDryRun: true },
         { label: 'Live Presentation', description: 'Record a live presentation', isDryRun: false },
-        { label: "Don't record / Just present", description: 'Start presentation without recording', dontRecord: true },
+        {
+          label: "Don't record / Just present",
+          description: 'Start presentation without recording',
+          dontRecord: true,
+        },
       ],
       {
         title: 'Start Analytics Recording',
