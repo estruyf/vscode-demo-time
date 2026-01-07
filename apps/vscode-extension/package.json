@@ -822,7 +822,7 @@
       "demo-time-container": [
         {
           "id": "demo-time-scenes",
-          "name": "Scenes",
+          "name": "Acts & Scenes",
           "contextualTitle": "Demo Time",
           "icon": "$(dt-play)"
         },

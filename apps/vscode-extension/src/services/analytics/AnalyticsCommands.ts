@@ -72,6 +72,7 @@ export class AnalyticsCommands {
       [
         { label: 'Dry Run / Practice', description: 'Record a practice session', isDryRun: true },
         { label: 'Live Presentation', description: 'Record a live presentation', isDryRun: false },
+        { label: "Don't record / Just present", description: 'Start presentation without recording', dontRecord: true },
       ],
       {
         title: 'Start Analytics Recording',
@@ -80,6 +81,12 @@ export class AnalyticsCommands {
     );
 
     if (!sessionType) {
+      return;
+    }
+
+    // If user chose to not record, just return (start presentation without analytics)
+    if ((sessionType as any).dontRecord) {
+      Notifications.info('Presentation started without analytics recording');
       return;
     }
 
