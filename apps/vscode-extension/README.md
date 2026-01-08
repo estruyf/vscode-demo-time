@@ -62,20 +62,33 @@ refer to the comprehensive documentation available at
 [https://demotime.show](https://demotime.show). This resource offers in-depth
 guides and examples to help you maximize the extension's capabilities.
 
+## Demo Time Terminology
+
+Demo Time follows a theatrical hierarchy to keep your demos organized and easy
+to follow: Play → Act → Scene → Move.
+
+- **Play**: Your full demo project (`.demo` folder) containing all acts and
+  assets.
+- **Act**: A single demo file (`*.yml` or `*.json`) focused on one topic.
+- **Scene**: A section within an act that groups related moves.
+- **Moves**: The individual steps in a scene that run in order (for example:
+  create a file, open it, highlight a block).
+
 ## Example act file
 
-Here is an example demo:
+Here is an example act file in JSON format:
 
 ```json
 {
   "$schema": "https://demotime.show/demo-time.schema.json",
   "title": "Sample demo",
   "description": "This is a sample demo configuration to show the capabilities of the extension.",
-  "demos": [
+  "version": 3,
+  "scenes": [
     {
       "title": "Step 1",
       "description": "This is step 1",
-      "steps": [
+      "moves": [
         {
           "action": "create",
           "path": "sample.json",
@@ -95,7 +108,7 @@ Here is an example demo:
     {
       "title": "Step 2",
       "description": "This is step 2",
-      "steps": [
+      "moves": [
         {
           "action": "snippet",
           "contentPath": "./snippets/insert_and_highlight.json",
@@ -116,8 +129,11 @@ You can also explore a comprehensive example in the following GitHub
 Repositories:
 
 - [Introduction presentation about Demo Time](https://github.com/estruyf/demo-time-presentation)
+- [Demo Time - Demo Presentation](https://github.com/marcduiker/demotime-demotime)
 - [presentation-github-actions](https://github.com/estruyf/presentation-github-actions)
 - [presentation-m365-playwright-github-actions](https://github.com/estruyf/presentation-m365-playwright-github-actions)
+- [presentation-web-quality-playwright](https://github.com/estruyf/presentation-web-quality-playwright)
+- [presentation-testing-smarter-ai-playwright](https://github.com/estruyf/presentation-testing-smarter-ai-playwright)
 
 ## Testing
 
