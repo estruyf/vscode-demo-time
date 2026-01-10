@@ -20,6 +20,10 @@
   click when the editor is still in typing mode
 - [#363](https://github.com/estruyf/vscode-demo-time/issues/363): Fixed video
   control support in custom slide layouts
+- [#365](https://github.com/estruyf/vscode-demo-time/issues/365): New
+  `focusTerminal` action to focus the terminal view in VS Code
+- [#366](https://github.com/estruyf/vscode-demo-time/issues/366): Added the
+  `sendKeybinding` action to send keybindings to the focused terminal
 
 ## [1.12.0] - 2025-12-16
 

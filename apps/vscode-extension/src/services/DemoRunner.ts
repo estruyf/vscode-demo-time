@@ -987,6 +987,11 @@ export class DemoRunner {
       return;
     }
 
+    if (step.action === Action.FocusTerminal) {
+      await TerminalService.focusTerminal();
+      return;
+    }
+
     // Run the specified terminal command
     if (step.action === Action.ExecuteTerminalCommand) {
       await TerminalService.executeCommand(step);
@@ -1051,6 +1056,11 @@ export class DemoRunner {
 
     if (step.action === Action.PressEnter) {
       await InteractionService.pressEnter();
+      return;
+    }
+
+    if (step.action === Action.SendKeybinding) {
+      await InteractionService.pressKeybinding(step.keybinding);
       return;
     }
 

@@ -299,6 +299,60 @@ insertTypingSpeed: 250
 </TabItem>
 </Tabs>
 
+## Send a keyboard shortcut
+
+Trigger a keyboard shortcut (for example `ctrl+shift+p` or `cmd+.`) at the OS level. Pair this with `focusTerminal` when you need to target the integrated terminal.
+
+<Tabs syncKey="send-keybinding">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "sendKeybinding",
+  "keybinding": "ctrl+shift+p"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: sendKeybinding
+keybinding: ctrl+shift+p
+```
+
+</TabItem>
+</Tabs>
+
+### Properties
+
+- **keybinding**: The keyboard shortcut to send. Use `+` between modifiers and the key (for example: `ctrl+c`, `cmd+.`).
+
+### Examples
+
+#### Open the Command Palette
+
+<Tabs syncKey="send-keybinding-example">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "sendKeybinding",
+  "keybinding": "ctrl+shift+p"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: sendKeybinding
+keybinding: ctrl+shift+p
+```
+
+</TabItem>
+</Tabs>
+
 ## Press Enter
 
 Simulate pressing the Enter key using the `pressEnter` action. This is useful for confirming commands, submitting forms, or moving to the next line.

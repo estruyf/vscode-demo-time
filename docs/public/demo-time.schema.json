@@ -113,7 +113,9 @@
                     "zoomOut",
                     "zoomReset",
                     "openTerminal",
+                    "focusTerminal",
                     "executeTerminalCommand",
+                    "sendKeybinding",
                     "executeScript",
                     "closeTerminal",
                     "snippet",
@@ -587,6 +589,39 @@
                       },
                       "insertTypingSpeed": {
                         "$ref": "#/definitions/insertTypingSpeed"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "focusTerminal"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "terminalId": {
+                        "$ref": "#/definitions/terminalId"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "sendKeybinding"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["keybinding"],
+                    "properties": {
+                      "keybinding": {
+                        "$ref": "#/definitions/keybinding"
                       }
                     }
                   }
@@ -1218,6 +1253,10 @@
     "terminalCommand": {
       "type": "string",
       "title": "Terminal command to execute."
+    },
+    "keybinding": {
+      "type": "string",
+      "title": "Keyboard shortcut to send (e.g. ctrl+shift+p)."
     },
     "terminalId": {
       "type": "string",

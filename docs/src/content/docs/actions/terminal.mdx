@@ -39,6 +39,29 @@ terminalId: <terminal id (optional)>
 </TabItem>
 </Tabs>
 
+## Focus the terminal view
+
+Focus the terminal view in the editor.
+
+<Tabs syncKey="focus-terminal">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "focusTerminal",
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: focusTerminal
+```
+
+</TabItem>
+</Tabs>
+
 ## Execute a terminal command
 
 Execute a terminal command in the terminal.
@@ -180,6 +203,37 @@ insertTypingSpeed: 50
 action: executeTerminalCommand
 command: "echo 'Hello, world!'"
 terminalId: demo-terminal
+```
+
+</TabItem>
+</Tabs>
+
+## Send a keyboard shortcut to the terminal
+
+Use the `sendKeybinding` action for keyboard shortcuts. If you want the shortcut to land in the terminal, focus the terminal first and then send the keybinding.
+
+<Tabs syncKey="terminal-keybinding-example">
+<TabItem label="JSON">
+
+```json
+[
+  {
+    "action": "focusTerminal"
+  },
+  {
+    "action": "sendKeybinding",
+    "keybinding": "ctrl+c"
+  }
+]
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+- action: focusTerminal
+- action: sendKeybinding
+  keybinding: ctrl+c
 ```
 
 </TabItem>

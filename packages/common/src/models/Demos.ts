@@ -95,6 +95,7 @@ export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
   id?: string;
   timeout?: number;
   command?: string;
+  keybinding?: string;
   message?: string;
   /**
    * Arguments to pass to scripts or snippets.

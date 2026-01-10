@@ -239,6 +239,13 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  if (action === Action.FocusTerminal) {
+    return {
+      action: Action.FocusTerminal,
+      terminalId: '',
+    };
+  }
+
   if (action === Action.OpenTerminal) {
     return {
       action: Action.OpenTerminal,
@@ -252,6 +259,13 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
       id: '',
       path: '',
       command: 'node',
+    };
+  }
+
+  if (action === Action.SendKeybinding) {
+    return {
+      action: Action.SendKeybinding,
+      keybinding: 'ctrl+shift+p',
     };
   }
 

@@ -209,6 +209,11 @@ export const getActionOptions = (): QuickPickItem[] => {
   } as QuickPickItem);
 
   actions.push({
+    label: Action.FocusTerminal,
+    description: 'Focus (or open) a terminal',
+  } as QuickPickItem);
+
+  actions.push({
     label: Action.OpenTerminal,
     description: 'Open a new terminal',
   } as QuickPickItem);
@@ -221,6 +226,11 @@ export const getActionOptions = (): QuickPickItem[] => {
   actions.push({
     label: Action.CloseTerminal,
     description: 'Close the terminal',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.SendKeybinding,
+    description: 'Send a keyboard shortcut (global)',
   } as QuickPickItem);
 
   /**

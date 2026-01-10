@@ -70,6 +70,7 @@ export const CATEGORIZED_ACTIONS: {
     category: 'Terminal actions',
     options: [
       Action.OpenTerminal,
+      Action.FocusTerminal,
       Action.ExecuteTerminalCommand,
       Action.ExecuteScript,
       Action.CloseTerminal,
@@ -124,6 +125,7 @@ export const CATEGORIZED_ACTIONS: {
       Action.CopyToClipboard,
       Action.CopyFromSelection,
       Action.PasteFromClipboard,
+      Action.SendKeybinding,
       Action.PressEnter,
       Action.PressTab,
       Action.PressArrowLeft,

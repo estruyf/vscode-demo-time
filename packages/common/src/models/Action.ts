@@ -46,9 +46,12 @@ export enum Action {
   ZoomReset = 'zoomReset',
   // Terminal
   OpenTerminal = 'openTerminal',
+  FocusTerminal = 'focusTerminal',
   ExecuteTerminalCommand = 'executeTerminalCommand',
   CloseTerminal = 'closeTerminal',
   ExecuteScript = 'executeScript',
+  // Keyboard
+  SendKeybinding = 'sendKeybinding',
   // Extensibility
   Snippet = 'snippet',
   // External applications

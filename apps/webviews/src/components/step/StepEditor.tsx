@@ -17,6 +17,7 @@ import { InsertTypingModePicker } from '../ui/InsertTypingModePicker';
 import { SettingField } from './SettingField';
 import { StateField } from './StateField';
 import { NoteBox } from '../ui/NoteBox';
+import { KeybindingPicker } from './KeybindingPicker';
 
 interface StepEditorProps {
   step: Step;
@@ -493,6 +494,18 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
               onChange={handleStateChange}
               fieldErrors={fieldErrors}
               isRequired={isRequired}
+            />
+          </div>
+        );
+
+      case 'keybinding':
+        return (
+          <div key={field}>
+            <KeybindingPicker
+              value={step.keybinding || ''}
+              onChange={(value) => handleChange('keybinding', value || undefined)}
+              required={isRequired}
+              error={fieldErrors.length > 0 ? fieldErrors[0].message : undefined}
             />
           </div>
         );
