@@ -168,7 +168,7 @@ workbench.action.terminal.killAll
 
 Like in the example below
 
-![Step 8 - Clossing temrinal window](./8-terminal-window.png)
+![Step 8 - Closing terminal window](./8-terminal-window.png)
 
 
 ### Browser tabs
