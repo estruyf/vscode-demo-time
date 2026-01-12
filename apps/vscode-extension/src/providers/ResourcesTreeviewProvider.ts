@@ -91,7 +91,7 @@ export class ResourcesTreeviewProvider implements TreeDataProvider<ResourceTreeI
             custom: false,
             color: new ThemeColor('charts.red'),
           },
-          COMMAND.authenticate,
+          COMMAND.showProFeatures,
         ),
       );
     }
