@@ -214,6 +214,10 @@ export const WebViewMessages = {
   },
   toWebview: {
     /**
+     * updateSponsorStatus
+     */
+    updateSponsorStatus: 'updateSponsorStatus',
+    /**
      * updateClock
      */
     updateClock: 'updateClock',

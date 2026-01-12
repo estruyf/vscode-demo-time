@@ -21,6 +21,13 @@ export class ProFeaturesView extends BaseWebview {
     }
   }
 
+  /**
+   * Notify the webview of sponsor status changes
+   */
+  public static notifySponsorStatusChange(isSponsor: boolean) {
+    ProFeaturesView.postMessage(WebViewMessages.toWebview.updateSponsorStatus, { isSponsor });
+  }
+
   protected static onCreate() {
     ProFeaturesView.isDisposed = false;
   }

@@ -13,11 +13,6 @@ interface ProFeature {
   description: string;
 }
 
-// Polling configuration for authentication status
-const POLL_INTERVAL_MS = 1000;
-const MAX_POLL_ATTEMPTS = 10;
-const INITIAL_POLL_DELAY_MS = 1500;
-
 const ProFeaturesView = () => {
   const [loading, setLoading] = useState(true);
   const [isSponsor, setIsSponsor] = useState(false);
@@ -48,9 +43,15 @@ const ProFeaturesView = () => {
 
   useEffect(() => {
     loadSponsorStatus();
+
+    // Listen for sponsor status updates from the backend
+    messageHandler.on(WebViewMessages.toWebview.updateSponsorStatus, (data: { isSponsor: boolean }) => {
+      setIsSponsor(data.isSponsor);
+      setAuthenticating(false);
+    });
   }, []);
 
-  const loadSponsorStatus = async (): Promise<boolean> => {
+  const loadSponsorStatus = async () => {
     setLoading(true);
     try {
       const response = await messageHandler.request<{ isSponsor: boolean }>(
@@ -58,11 +59,9 @@ const ProFeaturesView = () => {
       );
       const sponsorStatus = response?.isSponsor || false;
       setIsSponsor(sponsorStatus);
-      return sponsorStatus;
     } catch (error) {
       console.error("Error loading sponsor status:", error);
       setIsSponsor(false);
-      return false;
     } finally {
       setLoading(false);
     }
@@ -72,29 +71,7 @@ const ProFeaturesView = () => {
     setAuthenticating(true);
     try {
       await messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.authenticate);
-      // Poll for sponsor status updates after authentication
-      // The authentication might take some time to complete
-      let attempts = 0;
-      
-      const pollForUpdate = async () => {
-        if (attempts >= MAX_POLL_ATTEMPTS) {
-          setAuthenticating(false);
-          return;
-        }
-        
-        attempts++;
-        const currentSponsorStatus = await loadSponsorStatus();
-        
-        // Continue polling if still not a sponsor
-        if (!currentSponsorStatus && attempts < MAX_POLL_ATTEMPTS) {
-          setTimeout(pollForUpdate, POLL_INTERVAL_MS);
-        } else {
-          setAuthenticating(false);
-        }
-      };
-      
-      // Start polling after a short delay to allow authentication to initiate
-      setTimeout(pollForUpdate, INITIAL_POLL_DELAY_MS);
+      // Backend will send a message when authentication completes
     } catch (error) {
       console.error("Error during authentication:", error);
       setAuthenticating(false);
