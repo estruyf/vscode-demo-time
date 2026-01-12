@@ -11,8 +11,12 @@ interface ProFeature {
   icon: React.ElementType;
   title: string;
   description: string;
-  available: boolean;
 }
+
+// Polling configuration for authentication status
+const POLL_INTERVAL_MS = 1000;
+const MAX_POLL_ATTEMPTS = 10;
+const INITIAL_POLL_DELAY_MS = 1500;
 
 const ProFeaturesView = () => {
   const [loading, setLoading] = useState(true);
@@ -24,25 +28,21 @@ const ProFeaturesView = () => {
       icon: BarChart3,
       title: "Presentation Analytics",
       description: "Track your demo performance with detailed analytics including timing, navigation patterns, and engagement metrics. Export sessions for review and improvement.",
-      available: true,
     },
     {
       icon: FileDown,
       title: "Advanced Export Options",
       description: "Export your slides to PDF with custom templates and branding. Share your presentations with ease.",
-      available: true,
     },
     {
       icon: Shield,
       title: "Priority Support",
       description: "Get faster response times and dedicated support channels to help you create amazing demos.",
-      available: true,
     },
     {
       icon: Headphones,
       title: "Exclusive Features Access",
       description: "Be the first to access new experimental features and beta releases. Shape the future of Demo Time.",
-      available: true,
     },
   ];
 
@@ -50,16 +50,19 @@ const ProFeaturesView = () => {
     loadSponsorStatus();
   }, []);
 
-  const loadSponsorStatus = async () => {
+  const loadSponsorStatus = async (): Promise<boolean> => {
     setLoading(true);
     try {
       const response = await messageHandler.request<{ isSponsor: boolean }>(
         WebViewMessages.toVscode.proFeatures.getSponsorStatus
       );
-      setIsSponsor(response?.isSponsor || false);
+      const sponsorStatus = response?.isSponsor || false;
+      setIsSponsor(sponsorStatus);
+      return sponsorStatus;
     } catch (error) {
       console.error("Error loading sponsor status:", error);
       setIsSponsor(false);
+      return false;
     } finally {
       setLoading(false);
     }
@@ -72,28 +75,26 @@ const ProFeaturesView = () => {
       // Poll for sponsor status updates after authentication
       // The authentication might take some time to complete
       let attempts = 0;
-      const maxAttempts = 10; // Poll for up to 10 seconds
-      const pollInterval = 1000; // Poll every second
       
       const pollForUpdate = async () => {
-        if (attempts >= maxAttempts) {
+        if (attempts >= MAX_POLL_ATTEMPTS) {
           setAuthenticating(false);
           return;
         }
         
         attempts++;
-        await loadSponsorStatus();
+        const currentSponsorStatus = await loadSponsorStatus();
         
         // Continue polling if still not a sponsor
-        if (!isSponsor && attempts < maxAttempts) {
-          setTimeout(pollForUpdate, pollInterval);
+        if (!currentSponsorStatus && attempts < MAX_POLL_ATTEMPTS) {
+          setTimeout(pollForUpdate, POLL_INTERVAL_MS);
         } else {
           setAuthenticating(false);
         }
       };
       
       // Start polling after a short delay to allow authentication to initiate
-      setTimeout(pollForUpdate, 1500);
+      setTimeout(pollForUpdate, INITIAL_POLL_DELAY_MS);
     } catch (error) {
       console.error("Error during authentication:", error);
       setAuthenticating(false);

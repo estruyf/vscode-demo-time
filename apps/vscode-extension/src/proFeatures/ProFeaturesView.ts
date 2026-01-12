@@ -31,17 +31,13 @@ export class ProFeaturesView extends BaseWebview {
 
   protected static async messageListener(message: any) {
     super.messageListener(message);
-    const { command, requestId, payload } = message;
+    const { command, requestId } = message;
 
     if (!command) {
       return;
     }
 
     if (command === WebViewMessages.toVscode.proFeatures.getSponsorStatus) {
-      await handleGetSponsorStatus(requestId);
-    }
-
-    async function handleGetSponsorStatus(requestId: string | undefined) {
       const isSponsor = SponsorService.getSponsorStatus();
       ProFeaturesView.postRequestMessage(
         WebViewMessages.toVscode.proFeatures.getSponsorStatus,
