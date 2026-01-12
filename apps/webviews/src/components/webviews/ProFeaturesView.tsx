@@ -69,11 +69,31 @@ const ProFeaturesView = () => {
     setAuthenticating(true);
     try {
       await messageHandler.send(WebViewMessages.toVscode.runCommand, "demo-time.authenticate");
-      // Wait a bit for the authentication to complete
-      setTimeout(async () => {
+      // Poll for sponsor status updates after authentication
+      // The authentication might take some time to complete
+      let attempts = 0;
+      const maxAttempts = 10; // Poll for up to 10 seconds
+      const pollInterval = 1000; // Poll every second
+      
+      const pollForUpdate = async () => {
+        if (attempts >= maxAttempts) {
+          setAuthenticating(false);
+          return;
+        }
+        
+        attempts++;
         await loadSponsorStatus();
-        setAuthenticating(false);
-      }, 2000);
+        
+        // Continue polling if still not a sponsor
+        if (!isSponsor && attempts < maxAttempts) {
+          setTimeout(pollForUpdate, pollInterval);
+        } else {
+          setAuthenticating(false);
+        }
+      };
+      
+      // Start polling after a short delay to allow authentication to initiate
+      setTimeout(pollForUpdate, 1500);
     } catch (error) {
       console.error("Error during authentication:", error);
       setAuthenticating(false);

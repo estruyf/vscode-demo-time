@@ -39,11 +39,6 @@ export class ProFeaturesView extends BaseWebview {
 
     if (command === WebViewMessages.toVscode.proFeatures.getSponsorStatus) {
       await handleGetSponsorStatus(requestId);
-    } else if (command === WebViewMessages.toVscode.runCommand && payload === COMMAND.authenticate) {
-      // Handle authentication command
-      await commands.executeCommand(COMMAND.authenticate);
-      // After authentication, check sponsor status and send update
-      await handleGetSponsorStatus(requestId);
     }
 
     async function handleGetSponsorStatus(requestId: string | undefined) {
