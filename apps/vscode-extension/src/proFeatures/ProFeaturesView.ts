@@ -1,0 +1,58 @@
+import { commands } from 'vscode';
+import { Subscription, WebviewType } from '../models';
+import { Extension, SponsorService } from '../services';
+import { COMMAND, WebViewMessages, Config } from '@demotime/common';
+import { BaseWebview } from '../webview/BaseWebviewPanel';
+
+export class ProFeaturesView extends BaseWebview {
+  public static id: WebviewType = 'pro-features';
+  public static title: string = `${Config.title}: Pro Features`;
+
+  public static register() {
+    const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
+    subscriptions.push(commands.registerCommand(COMMAND.showProFeatures, ProFeaturesView.show));
+  }
+
+  public static show() {
+    if (ProFeaturesView.isOpen) {
+      ProFeaturesView.reveal();
+    } else {
+      ProFeaturesView.create();
+    }
+  }
+
+  protected static onCreate() {
+    ProFeaturesView.isDisposed = false;
+  }
+
+  protected static onDispose() {
+    ProFeaturesView.isDisposed = true;
+  }
+
+  protected static async messageListener(message: any) {
+    super.messageListener(message);
+    const { command, requestId, payload } = message;
+
+    if (!command) {
+      return;
+    }
+
+    if (command === WebViewMessages.toVscode.proFeatures.getSponsorStatus) {
+      await handleGetSponsorStatus(requestId);
+    } else if (command === WebViewMessages.toVscode.runCommand && payload === COMMAND.authenticate) {
+      // Handle authentication command
+      await commands.executeCommand(COMMAND.authenticate);
+      // After authentication, check sponsor status and send update
+      await handleGetSponsorStatus(requestId);
+    }
+
+    async function handleGetSponsorStatus(requestId: string | undefined) {
+      const isSponsor = SponsorService.getSponsorStatus();
+      ProFeaturesView.postRequestMessage(
+        WebViewMessages.toVscode.proFeatures.getSponsorStatus,
+        requestId || '',
+        { isSponsor }
+      );
+    }
+  }
+}

@@ -59,6 +59,8 @@ export const COMMAND = {
   showSettings: `${EXTENSION_NAME}.showSettings`,
   // Overview
   showOverview: `${EXTENSION_NAME}.showOverview`,
+  // Pro Features
+  showProFeatures: `${EXTENSION_NAME}.showProFeatures`,
   // Resources
   openSupportTheProject: `${EXTENSION_NAME}.openSupportTheProject`,
   openRemoteControl: `${EXTENSION_NAME}.openRemoteControl`,

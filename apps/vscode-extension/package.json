@@ -545,6 +545,12 @@
         "category": "Demo Time"
       },
       {
+        "command": "demo-time.showProFeatures",
+        "title": "Pro Features",
+        "category": "Demo Time",
+        "icon": "$(star)"
+      },
+      {
         "command": "demo-time.continueDemo",
         "title": "Continue Demo",
         "category": "Demo Time"
@@ -717,6 +723,10 @@
         },
         {
           "command": "demo-time.showSettings",
+          "when": "view == demo-time-scenes"
+        },
+        {
+          "command": "demo-time.showProFeatures",
           "when": "view == demo-time-scenes"
         },
         {

@@ -205,6 +205,9 @@ export const WebViewMessages = {
       exportSession: 'exportAnalyticsSession',
       getRecordingStatus: 'getAnalyticsRecordingStatus',
     },
+    proFeatures: {
+      getSponsorStatus: 'getProFeaturesSponsorStatus',
+    },
     presenter: {
       checkNextDemo: 'checkPresenterNextDemo',
     },
