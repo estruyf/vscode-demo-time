@@ -303,6 +303,14 @@ insertTypingSpeed: 250
 
 Trigger a keyboard shortcut (for example `ctrl+shift+p` or `cmd+.`) at the OS level. Pair this with `focusTerminal` when you need to target the integrated terminal.
 
+<Aside type="caution" title="macOS Security Requirement">
+  On macOS, you need to enable Security & Privacy accessibility settings for Visual Studio Code to allow it to perform key presses. The first time you use this action, you'll see a system message prompting you to grant these permissions. Go to System Preferences > Security & Privacy > Privacy > Accessibility and ensure Visual Studio Code is checked.
+</Aside>
+
+<Aside type="caution" title="Linux Requirement">
+  On Linux, you need to have <code>xdotool</code> installed to allow Visual Studio Code to perform key presses. Install it using your package manager (for example, <code>sudo apt install xdotool</code> on Ubuntu). Without <code>xdotool</code>, key press actions will not work.
+</Aside>
+
 <Tabs syncKey="send-keybinding">
 <TabItem label="JSON">
 
