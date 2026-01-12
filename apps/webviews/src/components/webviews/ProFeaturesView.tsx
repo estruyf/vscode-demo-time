@@ -3,7 +3,7 @@ import { Button } from "../ui/Button";
 import { Github, Star, BarChart3, FileDown, Shield, Headphones } from "lucide-react";
 import { Loader as Spinner } from "vscrui";
 import { messageHandler } from "@estruyf/vscode/dist/client";
-import { WebViewMessages } from "@demotime/common";
+import { WebViewMessages, COMMAND } from "@demotime/common";
 import '../../styles/config.css';
 import { AppHeader } from "../layout";
 
@@ -71,7 +71,7 @@ const ProFeaturesView = () => {
   const handleAuthenticate = async () => {
     setAuthenticating(true);
     try {
-      await messageHandler.send(WebViewMessages.toVscode.runCommand, "demo-time.authenticate");
+      await messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.authenticate);
       // Poll for sponsor status updates after authentication
       // The authentication might take some time to complete
       let attempts = 0;
@@ -240,7 +240,7 @@ const ProFeaturesView = () => {
                   onClick={() => {
                     messageHandler.send(
                       WebViewMessages.toVscode.runCommand,
-                      "demo-time.openSupportTheProject"
+                      COMMAND.openSupportTheProject
                     );
                   }}
                   icon={Star}
