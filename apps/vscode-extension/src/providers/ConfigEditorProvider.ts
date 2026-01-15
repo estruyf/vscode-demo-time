@@ -394,8 +394,8 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
         return;
       }
 
-      // Convert to ActConfig (version 3) if version is 3, otherwise keep as DemoConfig
-      const configToSave = config.version === 3 ? demoConfigToActConfig(config) : config;
+      // If version is 3, it's already an ActConfig; otherwise convert from DemoConfig
+      const configToSave = config.version === 3 ? config : demoConfigToActConfig(config);
 
       const demo = DemoFileProvider.formatFileContent(configToSave, document.uri);
       if (!demo) {
