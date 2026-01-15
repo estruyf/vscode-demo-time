@@ -7,7 +7,7 @@ export const openFile = async (filePath: string) => {
   const workspaceFolder = extension?.workspaceFolder;
   const version = DemoRunner.getCurrentVersion();
   const fileUri = workspaceFolder
-    ? version === 2
+    ? version >= 2
       ? Uri.joinPath(workspaceFolder.uri, filePath)
       : Uri.joinPath(workspaceFolder.uri, General.demoFolder, filePath)
     : undefined;

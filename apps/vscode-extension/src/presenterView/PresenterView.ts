@@ -86,7 +86,7 @@ export class PresenterView extends BaseWebview {
         const workspaceFolder = Extension.getInstance().workspaceFolder;
         const version = DemoRunner.getCurrentVersion();
         const notesPath = workspaceFolder
-          ? version === 2
+          ? version >= 2
             ? Uri.joinPath(workspaceFolder.uri, path)
             : Uri.joinPath(workspaceFolder.uri, General.demoFolder, path)
           : undefined;

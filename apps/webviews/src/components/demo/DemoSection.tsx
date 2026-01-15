@@ -83,7 +83,7 @@ export const DemoSection: React.FC<DemoSectionProps> = ({
       {showInfo && (
         <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
           <p className="text-xs text-blue-800 dark:text-blue-200">
-            <span className="font-medium text-blue-900 dark:text-blue-100">About {version === 3 ? "Scenes" : "Demos"}:</span> Each {version === 3 ? "scene" : "demo"} can consist of multiple {version === 3 ? "moves" : "steps"} that will be running in sequence right after each other.
+            <span className="font-medium text-blue-900 dark:text-blue-100">About Scenes:</span> Each scene can consist of multiple moves that will be running in sequence right after each other.
             Create organized demonstrations by grouping related actions together.
           </p>
         </div>

@@ -26,7 +26,7 @@ export class NotesService {
     const workspaceFolder = Extension.getInstance().workspaceFolder;
     const version = DemoRunner.getCurrentVersion();
     const notesPath = workspaceFolder
-      ? version === 2
+      ? version >= 2
         ? Uri.joinPath(workspaceFolder.uri, filePath)
         : Uri.joinPath(workspaceFolder.uri, General.demoFolder, filePath)
       : undefined;
