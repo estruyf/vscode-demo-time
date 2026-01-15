@@ -267,6 +267,10 @@ export class ScreenshotService {
       themeCss = await readFile(
         Uri.joinPath(Uri.file(extensionPath), 'assets', 'styles', 'themes', 'frost.css'),
       );
+    } else if (slideTheme === SlideTheme.msug) {
+      themeCss = await readFile(
+        Uri.joinPath(Uri.file(extensionPath), 'assets', 'styles', 'themes', 'msug.css'),
+      );
     }
 
     const removeCustomVariant = (css: string) =>
