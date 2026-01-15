@@ -355,19 +355,19 @@ export const DemoBuilder: React.FC = () => {
           color: autoSaveStatusColor,
           isActive: isAutoSaving || isManuallySaving
         }}
-      />
-
-      <div className="flex-1 max-w-7xl mx-auto px-6 py-8 w-full overflow-y-auto lg:overflow-hidden">
-        {showValidation && (
-          <div className="mb-8">
+        validationDetails={
+          showValidation ? (
             <ValidationSummary
               validationResult={validation}
               config={config}
               onNavigateToDemo={handleNavigateToDemo}
               onNavigateToStep={handleNavigateToStep}
             />
-          </div>
-        )}
+          ) : undefined
+        }
+      />
+
+      <div className="flex-1 max-w-7xl mx-auto px-6 py-8 w-full overflow-y-auto lg:overflow-hidden">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full min-h-0">
           <Sidebar className="lg:sticky lg:top-0 lg:self-start h-full lg:overflow-y-auto">
