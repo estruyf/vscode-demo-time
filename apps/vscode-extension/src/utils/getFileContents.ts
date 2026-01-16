@@ -1,6 +1,6 @@
-import { Uri, WorkspaceFolder, workspace } from 'vscode';
-import { General } from '../constants';
+import { WorkspaceFolder, workspace } from 'vscode';
 import { DemoRunner } from '../services';
+import { getFileUri } from './getFileUri';
 
 export const getFileContents = async (workspaceFolder: WorkspaceFolder, contentPath?: string) => {
   if (!contentPath) {
@@ -8,11 +8,8 @@ export const getFileContents = async (workspaceFolder: WorkspaceFolder, contentP
   }
 
   const version = DemoRunner.getCurrentVersion();
+  const contentUri = getFileUri(contentPath, workspaceFolder, version);
 
-  const contentUri =
-    version >= 2
-      ? Uri.joinPath(workspaceFolder.uri, contentPath)
-      : Uri.joinPath(workspaceFolder.uri, General.demoFolder, contentPath);
   if (!contentUri) {
     return;
   }

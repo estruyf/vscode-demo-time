@@ -24,6 +24,7 @@ import { General } from '../constants';
 import {
   checkSnippetArgs,
   getDemoApiData,
+  getFileUri,
   getRelPath,
   getThemes,
   getWebviewHtml,
@@ -261,7 +262,17 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           return;
         }
 
-        const fileUri = Uri.joinPath(wsFolder.uri, General.demoFolder, payload.path);
+        const fileUri = getFileUri(payload.path, wsFolder, DemoRunner.getCurrentVersion());
+        if (!fileUri) {
+          webviewPanel.webview.postMessage({
+            command,
+            requestId,
+            payload: undefined,
+          });
+          Notifications.error('Failed to create notes: Invalid file URI.');
+          return;
+        }
+
         await writeFile(fileUri, payload.content);
         const relPath = getRelPath(fileUri.fsPath);
         await openFile(relPath);

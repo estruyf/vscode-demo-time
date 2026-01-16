@@ -209,12 +209,12 @@ export class DemoRunner {
       StateKeys.executingDemoFile,
     );
     if (!executingFile) {
-      return 2;
+      return 3;
     }
 
     const lastDemo = executingFile.demo[executingFile.demo.length - 1];
     if (!lastDemo) {
-      return 2;
+      return 3;
     }
 
     // Only old act file without a version property should be version 1

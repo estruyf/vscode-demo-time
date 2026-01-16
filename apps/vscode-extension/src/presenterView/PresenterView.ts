@@ -6,7 +6,7 @@ import { DemoFileProvider } from '../services/DemoFileProvider';
 import { DemoRunner } from '../services/DemoRunner';
 import { DemoStatusBar } from '../services/DemoStatusBar';
 import { NotesService } from '../services/NotesService';
-import { openFile, readFile } from '../utils';
+import { getFileUri, openFile, readFile } from '../utils';
 import { COMMAND, Config, EXTENSION_NAME, WebViewMessages } from '@demotime/common';
 import { BaseWebview } from '../webview/BaseWebviewPanel';
 
@@ -85,12 +85,14 @@ export class PresenterView extends BaseWebview {
       if (path) {
         const workspaceFolder = Extension.getInstance().workspaceFolder;
         const version = DemoRunner.getCurrentVersion();
-        const notesPath = workspaceFolder
-          ? version >= 2
-            ? Uri.joinPath(workspaceFolder.uri, path)
-            : Uri.joinPath(workspaceFolder.uri, General.demoFolder, path)
-          : undefined;
+        const notesPath = getFileUri(path, workspaceFolder, version);
+
         if (notesPath) {
+          if (notesPath.fsPath.includes('..')) {
+            PresenterView.postRequestMessage(command, requestId, undefined);
+            return;
+          }
+
           const notes = await readFile(notesPath);
           PresenterView.postRequestMessage(command, requestId, notes);
           return;
