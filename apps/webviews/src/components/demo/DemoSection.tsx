@@ -1,9 +1,9 @@
 import React from 'react';
 import { Plus, Info } from 'lucide-react';
-import { Demo } from '../../types/demo';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { DemoListItem } from './DemoListItem';
+import { Demo } from '@demotime/common';
 
 interface DemoSectionProps {
   demos: Demo[];
@@ -27,7 +27,6 @@ export const DemoSection: React.FC<DemoSectionProps> = ({
   onReorderDemo,
   onPlayDemo,
   onDuplicateDemo,
-  version = 3,
 }) => {
   const [showInfo, setShowInfo] = React.useState(false);
 

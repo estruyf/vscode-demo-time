@@ -215,7 +215,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
       if (matter?.playbackRate) {
         try {
           video.playbackRate = parseFloat(matter.playbackRate);
-        } catch (e) {
+        } catch {
           // ignore invalid values
         }
       }
@@ -234,7 +234,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     try {
       // Reload the media so the new `src`/`source` is picked up.
       video.load();
-    } catch (e) {
+    } catch {
       // ignore
     }
 
