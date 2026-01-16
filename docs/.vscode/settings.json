@@ -37,5 +37,6 @@
   // }
   "chat.tools.autoApprove": true,
   "chat.agent.maxRequests": 100,
-  "demoTime.insertTypingMode": "character-by-character"
+  "demoTime.insertTypingMode": "character-by-character",
+  "workbench.colorTheme": "GitHub Light"
 }

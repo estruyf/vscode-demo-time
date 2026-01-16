@@ -1,0 +1,97 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Slides - Pixels theme",
+  "description": "",
+  "demos": [
+    {
+      "title": "Default slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/pixels/default-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Intro slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/pixels/intro.md"
+        }
+      ]
+    },
+    {
+      "title": "Quote slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/pixels/quote-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Section slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/pixels/section-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Video slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/pixels/video.md"
+        }
+      ]
+    },
+    {
+      "title": "Image slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/pixels/image-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Image left slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/pixels/image-left-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Image right slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/pixels/image-right-slide.md"
+        }
+      ]
+    },
+    {
+      "title": "Two Column Slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/pixels/two-column-slide.md"
+        }
+      ]
+    }
+  ]
+}

@@ -331,6 +331,7 @@ export class PdfExportService {
     let unnamedTheme = await ScreenshotService.getThemeCss(SlideTheme.unnamed);
     let quantumTheme = await ScreenshotService.getThemeCss(SlideTheme.quantum);
     let frostTheme = await ScreenshotService.getThemeCss(SlideTheme.frost);
+    let pixelsTheme = await ScreenshotService.getThemeCss(SlideTheme.pixels);
 
     const webcomponentsUrl = Uri.joinPath(
       Uri.parse(extensionPath),
@@ -420,6 +421,7 @@ export class PdfExportService {
       [SlideTheme.unnamed]: [],
       [SlideTheme.quantum]: [],
       [SlideTheme.frost]: [],
+      [SlideTheme.pixels]: [],
     };
 
     for (const slide of allSlides) {
@@ -444,6 +446,8 @@ export class PdfExportService {
           slideThemes.quantum.push(index + 1);
         } else if (slide.theme === SlideTheme.frost) {
           slideThemes.frost.push(index + 1);
+        } else if (slide.theme === SlideTheme.pixels) {
+          slideThemes.pixels.push(index + 1);
         }
 
         html += `
@@ -500,6 +504,8 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
           html += `<style type="text/tailwindcss">${slideIds} { ${quantumTheme} }</style>`;
         } else if (theme === SlideTheme.frost) {
           html += `<style type="text/tailwindcss">${slideIds} { ${frostTheme} }</style>`;
+        } else if (theme === SlideTheme.pixels) {
+          html += `<style type="text/tailwindcss">${slideIds} { ${pixelsTheme} }</style>`;
         }
       }
     }

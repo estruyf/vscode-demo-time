@@ -11,6 +11,7 @@ import '../../themes/unnamed.css';
 import '../../themes/monomi.css';
 import '../../themes/quantum.css';
 import '../../themes/frost.css';
+import '../../themes/pixels.css';
 import '../../webcomponents';
 import { useWebviewSettings } from '../../providers';
 
