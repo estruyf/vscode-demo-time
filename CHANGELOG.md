@@ -24,6 +24,8 @@
   `focusTerminal` action to focus the terminal view in VS Code
 - [#366](https://github.com/estruyf/vscode-demo-time/issues/366): Added the
   `sendKeybinding` action to send keybindings to the focused terminal
+- [#373](https://github.com/estruyf/vscode-demo-time/issues/373): Added the
+  `pixels` theme to the slide themes
 
 ## [1.12.0] - 2025-12-16
 
