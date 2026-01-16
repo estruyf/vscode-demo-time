@@ -1,11 +1,9 @@
-@import 'tailwindcss';
-
-/* MSUG Theme for Demo Time
- * Retro pixelated/8-bit gaming theme inspired by https://14.msug.fi/
+/* Pixels Theme for Demo Time
+ * Retro pixelated/8-bit gaming theme
  * Features dark backgrounds, cyan borders, and pixel-art aesthetic
  */
 
-.slide.msug {
+.slide.pixels {
   --demotime-primary: #00d9ff;
   --demotime-secondary: #ffcc00;
   --demotime-accent: #ff6b00;
