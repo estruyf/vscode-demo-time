@@ -42,6 +42,30 @@ If you want, you can override the default keybindings for the presenter/clicker 
 More information about it can be found in the [control the next demo shortcut](/tips/control-next-demo) section.
 </Aside>
 
+## Customize what gets hidden
+
+When you toggle presentation view, Demo Time hides a few VS Code UI areas so you can focus on presenting. You can choose exactly which areas to hide via the `demoTime.presentationViewToggles` setting. Allowed values: `statusBar`, `tabs`, `activityBar`, `sideBar`, `panel`.
+
+```json title=".vscode/settings.json"
+{
+    "demoTime.presentationViewToggles": [
+        "statusBar",
+        "tabs",
+        "activityBar",
+        "sideBar",
+        "panel"
+    ]
+}
+```
+
+To keep the status bar and panel visible, for example:
+
+```json title=".vscode/settings.json"
+{
+    "demoTime.presentationViewToggles": ["tabs", "activityBar", "sideBar"]
+}
+```
+
 ## Stop presenting
 
 If you want to stop presenting, you can click on the `record` icon in the status bar, or use the `Demo Time: Toggle presentation mode` command from the command palette. This will stop the presentation mode and return you to the normal Demo Time view.

@@ -92,6 +92,7 @@ export class SettingsView extends BaseWebview {
     const settingsObject = {
       defaultFileType: ext.getSetting(Config.defaultFileType),
       previousEnabled: ext.getSetting(Config.presentationMode.previousEnabled),
+      presentationViewToggles: ext.getSetting(Config.presentationMode.viewToggles),
       highlightBorderColor: ext.getSetting(Config.highlight.borderColor),
       highlightBackground: ext.getSetting(Config.highlight.background),
       highlightBlur: ext.getSetting(Config.highlight.blur),

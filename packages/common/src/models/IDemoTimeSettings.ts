@@ -1,6 +1,7 @@
 export interface IDemoTimeSettings {
   defaultFileType: string;
   previousEnabled: boolean;
+  presentationViewToggles: string[];
   highlightBorderColor: string;
   highlightBackground: string;
   highlightBlur: number;

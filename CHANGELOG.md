@@ -2,6 +2,9 @@
 
 ## [1.13.0] - unreleased
 
+- [#257](https://github.com/estruyf/vscode-demo-time/issues/257): Have a new
+  `demoTime.presentationViewToggles` setting to control the UI areas that get
+  hidden when toggling presentation view
 - [#339](https://github.com/estruyf/vscode-demo-time/issues/339): Prevent
   unnecessary zoom when consecutive highlights are performed
 - [#340](https://github.com/estruyf/vscode-demo-time/issues/340): Fix an issue
