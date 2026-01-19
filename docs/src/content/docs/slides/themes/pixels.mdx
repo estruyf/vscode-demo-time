@@ -5,12 +5,33 @@ lastmod: 2026-01-16T00:00:00.000Z
 ---
 
 import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+
+import defaultImg from "../../../../assets/docs/slide-themes/pixels/default.webp";
+import introImg from "../../../../assets/docs/slide-themes/pixels/intro.webp";
+import sectionImg from "../../../../assets/docs/slide-themes/pixels/section.webp";
+import quoteImg from "../../../../assets/docs/slide-themes/pixels/quote.webp";
+import imageImg from "../../../../assets/docs/slide-themes/pixels/image.webp";
+import imageLeftImg from "../../../../assets/docs/slide-themes/pixels/image-left.webp";
+import imageRightImg from "../../../../assets/docs/slide-themes/pixels/image-right.webp";
+import twoColumnsImg from "../../../../assets/docs/slide-themes/pixels/two-columns.webp";
 
 The pixels theme is a retro pixelated/8-bit gaming theme featuring dark backgrounds, cyan borders, and a pixel-art aesthetic inspired by classic arcade games and retro computer terminals.
 
-<Aside type="note">
-  Screenshot placeholders will be added once the theme images are generated.
-</Aside>
+<div class="relative">
+  <div class="images w-full relative">
+    <div class="slideshow">
+      <Image class="h-full" src={defaultImg} alt="Default" />
+      <Image class="h-full" src={introImg} alt="Intro" />
+      <Image class="h-full" src={sectionImg} alt="Section" />
+      <Image class="h-full" src={quoteImg} alt="Quote" />
+      <Image class="h-full" src={imageImg} alt="Image" />
+      <Image class="h-full" src={imageLeftImg} alt="Image Left" />
+      <Image class="h-full" src={imageRightImg} alt="Image Right" />
+      <Image class="h-full" src={twoColumnsImg} alt="Two Columns" />
+    </div>
+  </div>
+</div>
 
 ## Features
 
