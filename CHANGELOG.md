@@ -15,6 +15,9 @@
 - [#343](https://github.com/estruyf/vscode-demo-time/issues/343): added the zoom
   actions: `zoomIn`, `zoomOut`, and `zoomReset` to control the editor zoom level
   during your demo
+- [#345](https://github.com/estruyf/vscode-demo-time/issues/345): Allow
+  `showEngageTimePoll` to close the poll on show via `closeOnOpen`, mutually
+  exclusive with `startOnOpen`
 - [#348](https://github.com/estruyf/vscode-demo-time/issues/348): Added the
   analytics PRO feature
 - [#361](https://github.com/estruyf/vscode-demo-time/issues/361): Video control

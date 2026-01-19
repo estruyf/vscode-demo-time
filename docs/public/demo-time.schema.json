@@ -915,7 +915,17 @@
                       },
                       "startOnOpen": {
                         "$ref": "#/definitions/startOnOpen"
+                      },
+                      "closeOnOpen": {
+                        "$ref": "#/definitions/closeOnOpen"
                       }
+                    },
+                    "not": {
+                      "properties": {
+                        "startOnOpen": { "const": true },
+                        "closeOnOpen": { "const": true }
+                      },
+                      "required": ["startOnOpen", "closeOnOpen"]
                     }
                   }
                 },
@@ -1317,6 +1327,11 @@
     "startOnOpen": {
       "type": "boolean",
       "description": "Start the poll when the demo is started. Default is false.",
+      "default": false
+    },
+    "closeOnOpen": {
+      "type": "boolean",
+      "description": "Close the poll when it is shown. Default is false.",
       "default": false
     },
     "type": {

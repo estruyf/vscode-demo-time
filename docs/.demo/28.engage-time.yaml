@@ -22,7 +22,8 @@ demos:
     steps:
       - action: showEngageTimePoll
         pollId: 2ftkkx
-        startOnOpen: true
+        startOnOpen: false
+        closeOnOpen: false
   - id: demo-mevobuhg-bwu1
     title: Close a poll
     steps:

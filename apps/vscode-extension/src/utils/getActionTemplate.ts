@@ -596,6 +596,8 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     return {
       action: Action.ShowEngageTimePoll,
       pollId: '',
+      startOnOpen: false,
+      closeOnOpen: false,
     };
   }
 
