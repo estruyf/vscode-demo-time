@@ -1,4 +1,4 @@
-import { lazy, StrictMode, Suspense } from 'react';
+import { lazy, StrictMode, Suspense, Component, ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Loader } from "vscrui";
 import './vscode.ts';
@@ -25,12 +25,32 @@ const viewType = root.getAttribute('data-view-type') || 'config-editor';
 const webviewUrl = root.getAttribute('data-webview-url') || '';
 const WebviewComponent = WEBVIEW_MAP[viewType] || WEBVIEW_MAP['config-editor'];
 
+class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div className="p-4 text-red-600">Something went wrong. Please reload the webview.</div>;
+    }
+    return this.props.children;
+  }
+}
+
 createRoot(root).render(
   <StrictMode>
     <WebviewSettingsProvider webviewUrl={webviewUrl}>
-      <Suspense fallback={<Loader />}>
-        <WebviewComponent />
-      </Suspense>
+      <ErrorBoundary>
+        <Suspense fallback={<Loader />}>
+          <WebviewComponent />
+        </Suspense>
+      </ErrorBoundary>
     </WebviewSettingsProvider>
 
     <img style={{

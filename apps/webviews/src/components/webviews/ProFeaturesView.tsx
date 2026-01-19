@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Button } from "../ui/Button";
-import { Github, Star, BarChart3, FileDown, Shield, Headphones } from "lucide-react";
+import { Github, Star, BarChart3, Shield } from "lucide-react";
 import { Loader as Spinner } from "vscrui";
-import { messageHandler } from "@estruyf/vscode/dist/client";
+import { messageHandler, Messenger } from "@estruyf/vscode/dist/client";
+import { EventData } from "@estruyf/vscode";
 import { WebViewMessages, COMMAND } from "@demotime/common";
 import '../../styles/config.css';
 import { AppHeader } from "../layout";
@@ -25,30 +26,30 @@ const ProFeaturesView = () => {
       description: "Track your demo performance with detailed analytics including timing, navigation patterns, and engagement metrics. Export sessions for review and improvement.",
     },
     {
-      icon: FileDown,
-      title: "Advanced Export Options",
-      description: "Export your slides to PDF with custom templates and branding. Share your presentations with ease.",
-    },
-    {
       icon: Shield,
       title: "Priority Support",
       description: "Get faster response times and dedicated support channels to help you create amazing demos.",
-    },
-    {
-      icon: Headphones,
-      title: "Exclusive Features Access",
-      description: "Be the first to access new experimental features and beta releases. Shape the future of Demo Time.",
     },
   ];
 
   useEffect(() => {
     loadSponsorStatus();
 
-    // Listen for sponsor status updates from the backend
-    messageHandler.on(WebViewMessages.toWebview.updateSponsorStatus, (data: { isSponsor: boolean }) => {
-      setIsSponsor(data.isSponsor);
-      setAuthenticating(false);
-    });
+    function messageListener(message: MessageEvent<EventData<unknown>>) {
+      const { command, payload } = message.data;
+
+      if (command === WebViewMessages.toWebview.updateSponsorStatus) {
+        const data = payload as { isSponsor: boolean };
+        setIsSponsor(data.isSponsor);
+        setAuthenticating(false);
+      }
+    }
+
+    Messenger.listen(messageListener);
+
+    return () => {
+      Messenger.unlisten(messageListener);
+    };
   }, []);
 
   const loadSponsorStatus = async () => {
@@ -96,32 +97,28 @@ const ProFeaturesView = () => {
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Status Banner */}
-        <div className={`mb-8 p-6 rounded-lg border-2 ${
-          isSponsor
-            ? "bg-green-50 dark:bg-green-900/20 border-green-500"
-            : "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-500"
-        }`}>
+        <div className={`mb-8 p-6 rounded-lg border-2 ${isSponsor
+          ? "bg-green-50 dark:bg-green-900/20 border-green-500"
+          : "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-500"
+          }`}>
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-start gap-3">
-              <Star className={`w-6 h-6 flex-shrink-0 mt-0.5 ${
-                isSponsor ? "text-green-600 dark:text-green-400" : "text-yellow-600 dark:text-yellow-400"
-              }`} />
+              <Star className={`w-6 h-6 flex-shrink-0 mt-0.5 ${isSponsor ? "text-green-600 dark:text-green-400" : "text-yellow-600 dark:text-yellow-400"
+                }`} />
               <div>
-                <h3 className={`text-lg font-semibold mb-1 ${
-                  isSponsor
-                    ? "text-green-900 dark:text-green-100"
-                    : "text-yellow-900 dark:text-yellow-100"
-                }`}>
+                <h3 className={`text-lg font-semibold mb-1 ${isSponsor
+                  ? "text-green-900 dark:text-green-100"
+                  : "text-yellow-900 dark:text-yellow-100"
+                  }`}>
                   {isSponsor ? "Pro Features Unlocked" : "Unlock Pro Features"}
                 </h3>
-                <p className={`text-sm ${
-                  isSponsor
-                    ? "text-green-700 dark:text-green-300"
-                    : "text-yellow-700 dark:text-yellow-300"
-                }`}>
+                <p className={`text-sm ${isSponsor
+                  ? "text-green-700 dark:text-green-300"
+                  : "text-yellow-700 dark:text-yellow-300"
+                  }`}>
                   {isSponsor
                     ? "You have full access to all Pro features. Thank you for supporting Demo Time!"
-                    : "Become a GitHub Sponsor to unlock all Pro features and support the continued development of Demo Time."}
+                    : "Become a GitHub Sponsor (from min. € 10/month) to unlock all Pro features and support the continued development of Demo Time."}
                 </p>
               </div>
             </div>
@@ -150,23 +147,20 @@ const ProFeaturesView = () => {
               return (
                 <div
                   key={index}
-                  className={`p-6 rounded-lg border transition-all ${
-                    isSponsor
-                      ? "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md"
-                      : "bg-gray-100 dark:bg-gray-800/50 border-gray-300 dark:border-gray-700 opacity-75"
-                  }`}
+                  className={`p-6 rounded-lg border transition-all ${isSponsor
+                    ? "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md"
+                    : "bg-gray-100 dark:bg-gray-800/50 border-gray-300 dark:border-gray-700 opacity-75"
+                    }`}
                 >
                   <div className="flex items-start gap-4">
-                    <div className={`p-3 rounded-lg ${
-                      isSponsor
-                        ? "bg-blue-100 dark:bg-blue-900/30"
-                        : "bg-gray-200 dark:bg-gray-700"
-                    }`}>
-                      <Icon className={`w-6 h-6 ${
-                        isSponsor
-                          ? "text-blue-600 dark:text-blue-400"
-                          : "text-gray-500 dark:text-gray-400"
-                      }`} />
+                    <div className={`p-3 rounded-lg ${isSponsor
+                      ? "bg-blue-100 dark:bg-blue-900/30"
+                      : "bg-gray-200 dark:bg-gray-700"
+                      }`}>
+                      <Icon className={`w-6 h-6 ${isSponsor
+                        ? "text-blue-600 dark:text-blue-400"
+                        : "text-gray-500 dark:text-gray-400"
+                        }`} />
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
@@ -197,10 +191,20 @@ const ProFeaturesView = () => {
               <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
                 Ready to Unlock Pro Features?
               </h3>
-              <p className="text-gray-700 dark:text-gray-300 mb-6">
-                By becoming a GitHub Sponsor, you'll get access to all Pro features and help support
+              <p className="text-gray-700 dark:text-gray-300 mb-2">
+                By becoming a GitHub Sponsor (from min. € 10/month), you'll get access to all Pro features and help support
                 the ongoing development of Demo Time. Your sponsorship helps keep this project free
                 and accessible to everyone.
+              </p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+                <a
+                  href="https://beta.demotime.show/pro-features/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline"
+                >
+                  Learn more about Pro features and sponsorship benefits →
+                </a>
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button
@@ -211,19 +215,6 @@ const ProFeaturesView = () => {
                   className="px-8 py-3"
                 >
                   {authenticating ? "Authenticating..." : "Authenticate with GitHub"}
-                </Button>
-                <Button
-                  variant="secondary"
-                  onClick={() => {
-                    messageHandler.send(
-                      WebViewMessages.toVscode.runCommand,
-                      COMMAND.openSupportTheProject
-                    );
-                  }}
-                  icon={Star}
-                  className="px-8 py-3"
-                >
-                  Learn About Sponsorship
                 </Button>
               </div>
             </div>

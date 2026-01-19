@@ -37,7 +37,7 @@ export class ProFeaturesView extends BaseWebview {
   }
 
   protected static async messageListener(message: any) {
-    super.messageListener(message);
+    await super.messageListener(message);
     const { command, requestId } = message;
 
     if (!command) {
@@ -49,7 +49,7 @@ export class ProFeaturesView extends BaseWebview {
       ProFeaturesView.postRequestMessage(
         WebViewMessages.toVscode.proFeatures.getSponsorStatus,
         requestId || '',
-        { isSponsor }
+        { isSponsor },
       );
     }
   }
