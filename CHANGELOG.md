@@ -1,7 +1,7 @@
 # Change Log
 
 ## [1.13.0] - unreleased
-
+ 
 - [#257](https://github.com/estruyf/vscode-demo-time/issues/257): Have a new
   `demoTime.presentationViewToggles` setting to control the UI areas that get
   hidden when toggling presentation view
