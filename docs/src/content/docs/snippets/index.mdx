@@ -9,6 +9,8 @@ import { Code } from '@astrojs/starlight/components';
 
 Here are some snippets that you can use to automate some tasks in your demo.
 
+Snippets are available in both **JSON** and **YAML** formats. Use whichever format you prefer!
+
 ## Prerequisites
 
 Create a `snippets` folder in the `.demo` directory of your project. This is where you will store your snippets.
@@ -19,8 +21,14 @@ You can change name of the snippets folder, but you will need to update the `con
 
 ## Insert and highlight code
 
-The `insert_and_highlight.json` snippet contains a couple of steps to insert code and highlight specific lines after inserting the content.
+The snippet is available in both JSON and YAML formats:
+- `insert_and_highlight.json`
+- `insert_and_highlight.yaml`
 
+This snippet contains a couple of steps to insert code and highlight specific lines after inserting the content.
+
+<Tabs syncKey="insert-snippet-format">
+<TabItem label="JSON">
 <Code code={`[
     {
       "action": "unselect"
@@ -43,12 +51,29 @@ The `insert_and_highlight.json` snippet contains a couple of steps to insert cod
 ]`} 
   lang="json" 
   title={`./snippets/insert_and_highlight.json`} />
+</TabItem>
+<TabItem label="YAML">
+<Code code={`- action: unselect
+  path: "{MAIN_FILE}"
+- action: insert
+  path: "{MAIN_FILE}"
+  contentPath: "{CONTENT_PATH}"
+  position: "{CONTENT_POSITION}"
+- action: waitForTimeout
+  timeout: 500
+- action: highlight
+  path: "{MAIN_FILE}"
+  position: "{HIGHLIGHT_POSITION}"`} 
+  lang="yaml" 
+  title={`./snippets/insert_and_highlight.yaml`} />
+</TabItem>
+</Tabs>
 
 You can configure the snippet action as follows:
 
 <Code code={`{
     "action": "snippet",
-    "contentPath": "./snippets/insert_and_highlight.json",
+    "contentPath": "./snippets/insert_and_highlight.json",  // or .yaml
     "args": {
       "MAIN_FILE": "<relative path from workspace to the file to update>",
       "CONTENT_PATH": "<relative path to the file with the contents to insert>",

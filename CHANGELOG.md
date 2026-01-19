@@ -5,6 +5,9 @@
 - [#257](https://github.com/estruyf/vscode-demo-time/issues/257): Have a new
   `demoTime.presentationViewToggles` setting to control the UI areas that get
   hidden when toggling presentation view
+- [#322](https://github.com/estruyf/vscode-demo-time/issues/322): Added support
+  for YAML snippets - snippets can now be created in both JSON and YAML formats
+  (`.json`, `.jsonc`, `.yaml`, `.yml`)
 - [#339](https://github.com/estruyf/vscode-demo-time/issues/339): Prevent
   unnecessary zoom when consecutive highlights are performed
 - [#340](https://github.com/estruyf/vscode-demo-time/issues/340): Fix an issue

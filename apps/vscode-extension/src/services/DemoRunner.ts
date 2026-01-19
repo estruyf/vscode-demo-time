@@ -33,6 +33,7 @@ import {
   togglePresentationView,
   removeDemosForCurrentPosition,
   saveFiles,
+  parseSnippetContent,
 } from '../utils';
 import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
 import {
@@ -685,7 +686,7 @@ export class DemoRunner {
             snippet = await insertVariables(snippet, variables);
           }
 
-          const newSteps = jsonParse(snippet);
+          const newSteps = parseSnippetContent(snippet, step.contentPath || '');
           stepsToExecute.push(...newSteps);
         } else {
           stepsToExecute.push(step);

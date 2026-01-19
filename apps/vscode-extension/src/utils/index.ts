@@ -43,6 +43,7 @@ export * from './isProjectInitialized';
 export * from './lowercaseFirstLetter';
 export * from './openFile';
 export * from './openFilePicker';
+export * from './parseSnippetContent';
 export * from './parseWinPath';
 export * from './readFile';
 export * from './removeDemoDuplicates';
