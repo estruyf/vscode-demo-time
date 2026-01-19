@@ -98,6 +98,13 @@ export const DemoFileSection: React.FC<DemoFileSectionProps> = ({
           </div>
 
           <div className="flex items-center space-x-2 text-sm">
+            <Footprints className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <span className="text-gray-600 dark:text-gray-300">
+              <span className="font-medium text-gray-900 dark:text-white">{stepCount}</span> move{stepCount !== 1 ? 's' : ''}
+            </span>
+          </div>
+
+          <div className="flex items-center space-x-2 text-sm">
             <Clapperboard className="h-4 w-4 text-blue-600 dark:text-blue-400" />
             <span className="text-gray-600 dark:text-gray-300">
               <span className="font-medium text-gray-900 dark:text-white">{demoCount}</span> demo{demoCount !== 1 ? 's' : ''}
@@ -108,13 +115,6 @@ export const DemoFileSection: React.FC<DemoFileSectionProps> = ({
             <Presentation className="h-4 w-4 text-blue-600 dark:text-blue-400" />
             <span className="text-gray-600 dark:text-gray-300">
               <span className="font-medium text-gray-900 dark:text-white">{slideCount}</span> slide{slideCount !== 1 ? 's' : ''}
-            </span>
-          </div>
-
-          <div className="flex items-center space-x-2 text-sm">
-            <Footprints className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-            <span className="text-gray-600 dark:text-gray-300">
-              <span className="font-medium text-gray-900 dark:text-white">{stepCount}</span> move{stepCount !== 1 ? 's' : ''}
             </span>
           </div>
         </div>
