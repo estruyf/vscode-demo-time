@@ -70,11 +70,11 @@ export class AnalyticsCommands {
     // Ask if this is a dry run or live presentation
     const sessionType = await window.showQuickPick(
       [
-        { label: 'Dry Run / Practice', description: 'Record a practice session', isDryRun: true },
-        { label: 'Live Presentation', description: 'Record a live presentation', isDryRun: false },
+        { label: 'Dry Run / Practice', detail: 'Record a practice session', isDryRun: true },
+        { label: 'Live Presentation', detail: 'Record a live presentation', isDryRun: false },
         {
-          label: "Don't record / Just present",
-          description: 'Start presentation without recording',
+          label: '$(circle-slash) No analytics',
+          detail: 'Start presentation without recording your actions',
           dontRecord: true,
         },
       ],
@@ -85,13 +85,17 @@ export class AnalyticsCommands {
     );
 
     if (!sessionType) {
+      AnalyticsService.setIsEnabled(false);
       return;
     }
 
-    // If user chose to not record, just return (start presentation without analytics)
+    // If user chose to not record, disable analytics and return
     if ((sessionType as any).dontRecord) {
+      AnalyticsService.setIsEnabled(false);
       Notifications.info('Presentation started without analytics recording');
       return;
+    } else {
+      AnalyticsService.setIsEnabled(true);
     }
 
     // Get current act file info
@@ -120,9 +124,6 @@ export class AnalyticsCommands {
       Notifications.error('No act file found. Please initialize a demo first.');
       return;
     }
-
-    // Enable analytics config
-    AnalyticsService.setConfig({ enabled: true });
 
     // Start the session with presentation title
     const sessionId = await AnalyticsService.startSession(demoTitle, sessionType.isDryRun);

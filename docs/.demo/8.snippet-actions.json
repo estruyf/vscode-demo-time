@@ -17,6 +17,21 @@
           "contentPath": ".demo/snippet/create-open.json"
         }
       ]
+    },
+    {
+      "title": "Using a snippet (YAML)",
+      "description": "",
+      "steps": [
+        {
+          "action": "snippet",
+          "args": {
+            "MAIN_FILE": "temp/snippet.md",
+            "MAIN_CONTENT": "# Hello from Demo Time! This is created from YAML."
+          },
+          "contentPath": ".demo/snippet/create-open.yml"
+        }
+      ],
+      "id": "demo-mkld6hkj-0awy"
     }
   ]
 }

@@ -24,6 +24,7 @@ import { General } from '../constants';
 import {
   checkSnippetArgs,
   getDemoApiData,
+  getFileUri,
   getRelPath,
   getThemes,
   getWebviewHtml,
@@ -261,7 +262,17 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           return;
         }
 
-        const fileUri = Uri.joinPath(wsFolder.uri, General.demoFolder, payload.path);
+        const fileUri = getFileUri(payload.path, wsFolder, DemoRunner.getCurrentVersion());
+        if (!fileUri) {
+          webviewPanel.webview.postMessage({
+            command,
+            requestId,
+            payload: undefined,
+          });
+          Notifications.error('Failed to create notes: Invalid file URI.');
+          return;
+        }
+
         await writeFile(fileUri, payload.content);
         const relPath = getRelPath(fileUri.fsPath);
         await openFile(relPath);
@@ -394,8 +405,8 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
         return;
       }
 
-      // Convert to ActConfig (version 3) if version is 3, otherwise keep as DemoConfig
-      const configToSave = config.version === 3 ? demoConfigToActConfig(config) : config;
+      // If version is 3, it's already an ActConfig; otherwise convert from DemoConfig
+      const configToSave = config.version === 3 ? config : demoConfigToActConfig(config);
 
       const demo = DemoFileProvider.formatFileContent(configToSave, document.uri);
       if (!demo) {

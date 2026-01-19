@@ -169,7 +169,7 @@ pollId: poll-1
 
 ### Show poll results or UI
 
-Use `showEngageTimePoll` to display poll results in the presenter view. Optionally, you can set `startOnOpen` to `true` to start the poll when it is shown.
+Use `showEngageTimePoll` to display poll results in the presenter view. You can set **either** `startOnOpen` to start the poll when shown, **or** `closeOnOpen` to close it immediately when shown (for quizzes or timed questions). These options are mutually exclusive.
 
 <Tabs syncKey="show-engagetime-poll">
 <TabItem label="JSON">
@@ -178,7 +178,8 @@ Use `showEngageTimePoll` to display poll results in the presenter view. Optional
 {
   "action": "showEngageTimePoll",
   "pollId": "poll-1",
-  "startOnOpen": false
+  "startOnOpen": false,
+  "closeOnOpen": true
 }
 ```
 
@@ -189,6 +190,7 @@ Use `showEngageTimePoll` to display poll results in the presenter view. Optional
 action: showEngageTimePoll
 pollId: poll-1
 startOnOpen: false
+closeOnOpen: true
 ```
 
 </TabItem>

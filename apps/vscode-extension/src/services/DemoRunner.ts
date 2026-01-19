@@ -33,6 +33,7 @@ import {
   togglePresentationView,
   removeDemosForCurrentPosition,
   saveFiles,
+  parseSnippetContent,
 } from '../utils';
 import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
 import {
@@ -209,12 +210,12 @@ export class DemoRunner {
       StateKeys.executingDemoFile,
     );
     if (!executingFile) {
-      return 2;
+      return 3;
     }
 
     const lastDemo = executingFile.demo[executingFile.demo.length - 1];
     if (!lastDemo) {
-      return 2;
+      return 3;
     }
 
     // Only old act file without a version property should be version 1
@@ -685,7 +686,7 @@ export class DemoRunner {
             snippet = await insertVariables(snippet, variables);
           }
 
-          const newSteps = jsonParse(snippet);
+          const newSteps = parseSnippetContent(snippet, step.contentPath || '');
           stepsToExecute.push(...newSteps);
         } else {
           stepsToExecute.push(step);
@@ -1161,7 +1162,7 @@ export class DemoRunner {
       }
 
       if (step.action === Action.ShowEngageTimePoll) {
-        await EngageTimeService.showPoll(step.pollId, step.startOnOpen);
+        await EngageTimeService.showPoll(step.pollId, step.startOnOpen, step.closeOnOpen);
         return;
       }
 

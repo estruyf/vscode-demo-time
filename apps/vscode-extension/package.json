@@ -168,6 +168,27 @@
           "default": false,
           "description": "Enable the previous command when in presentation mode"
         },
+        "demoTime.presentationViewToggles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "statusBar",
+              "tabs",
+              "activityBar",
+              "sideBar",
+              "panel"
+            ]
+          },
+          "default": [
+            "statusBar",
+            "tabs",
+            "activityBar",
+            "sideBar",
+            "panel"
+          ],
+          "description": "Choose which UI areas to hide when toggling presentation view (status bar, tabs, activity bar, side bar, or panel)."
+        },
         "demoTime.highlightBorderColor": {
           "type": "string",
           "default": "rgba(255,0,0,0.5)",

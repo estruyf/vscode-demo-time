@@ -33,6 +33,8 @@ export class AnalyticsService {
   private static currentSegment: SegmentAnalytics | null = null;
   private static fileActivityMap: Map<string, FileActivityRecord> = new Map();
   private static lastEventTime: number = Date.now();
+  private static isEnabled = true;
+
   /** Track per-act timing and timers */
   private static actFileTimers: Map<
     string,
@@ -53,6 +55,10 @@ export class AnalyticsService {
       trackTerminalCommands: DEFAULT_ANALYTICS_CONFIG.trackTerminalCommands,
       autoSaveInterval: DEFAULT_ANALYTICS_CONFIG.autoSaveInterval,
     };
+  }
+
+  public static setIsEnabled(isEnabled: boolean): void {
+    AnalyticsService.isEnabled = isEnabled;
   }
 
   /**
@@ -82,7 +88,7 @@ export class AnalyticsService {
   public static getConfig(): AnalyticsConfig {
     // Load from settings first
     AnalyticsService.loadConfigFromSettings();
-    return { ...AnalyticsService.config };
+    return { ...AnalyticsService.config, enabled: AnalyticsService.isEnabled };
   }
 
   /**
@@ -213,7 +219,7 @@ export class AnalyticsService {
     scene: Demo,
     sceneIndex: number,
   ): Promise<string> {
-    if (!AnalyticsService.currentSession) {
+    if (!AnalyticsService.isEnabled || !AnalyticsService.currentSession) {
       return '';
     }
 
@@ -302,7 +308,7 @@ export class AnalyticsService {
    * Records a file open event.
    */
   public static recordFileOpen(filePath: string): void {
-    if (!AnalyticsService.currentSession) {
+    if (!AnalyticsService.isEnabled || !AnalyticsService.currentSession) {
       return;
     }
 
@@ -339,7 +345,7 @@ export class AnalyticsService {
    * Records a file close event.
    */
   public static recordFileClose(filePath: string): void {
-    if (!AnalyticsService.currentSession) {
+    if (!AnalyticsService.isEnabled || !AnalyticsService.currentSession) {
       return;
     }
 
@@ -370,7 +376,7 @@ export class AnalyticsService {
     endLine: number,
     zoomLevel?: number,
   ): void {
-    if (!AnalyticsService.currentSession) {
+    if (!AnalyticsService.isEnabled || !AnalyticsService.currentSession) {
       return;
     }
 
@@ -505,7 +511,7 @@ export class AnalyticsService {
    * Records an error event.
    */
   public static recordError(type: ErrorRecord['type'], message: string, context?: string): void {
-    if (!AnalyticsService.currentSession) {
+    if (!AnalyticsService.isEnabled || !AnalyticsService.currentSession) {
       return;
     }
 
@@ -524,7 +530,7 @@ export class AnalyticsService {
    * Marks the last error as recovered.
    */
   public static markErrorRecovered(recoveryTime: number): void {
-    if (!AnalyticsService.currentSession) {
+    if (!AnalyticsService.isEnabled || !AnalyticsService.currentSession) {
       return;
     }
 
@@ -591,7 +597,7 @@ export class AnalyticsService {
    * Records a navigation event.
    */
   private static recordNavigationEvent(event: NavigationEvent): void {
-    if (!AnalyticsService.currentSession) {
+    if (!AnalyticsService.isEnabled || !AnalyticsService.currentSession) {
       return;
     }
 
@@ -616,7 +622,7 @@ export class AnalyticsService {
    * Auto-saves the current session.
    */
   private static async autoSave(): Promise<void> {
-    if (!AnalyticsService.currentSession) {
+    if (!AnalyticsService.isEnabled || !AnalyticsService.currentSession) {
       return;
     }
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronDown, ChevronRight, FileText, BarChart3, Clapperboard, Presentation } from 'lucide-react';
+import { ChevronDown, ChevronRight, FileText, Clapperboard, Presentation, Footprints, Spotlight } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { DemoFileGrid } from './DemoFileGrid';
@@ -23,7 +23,9 @@ export const DemoFileSection: React.FC<DemoFileSectionProps> = ({
   const { fileName, filePath, config } = fileData;
 
   // Calculate stats for this file
-  const demoCount = (config.demos || []).length;
+  const demoCount = (config.demos || []).filter(
+    demo => !demo.steps.some(step => step.action === 'openSlide')
+  ).length;
   const stepCount = (config.demos || []).reduce((sum, demo) => sum + demo.steps.length, 0);
   const slideCount = allGridItems.filter(item => item.type === 'slide').length;
   const itemCount = allGridItems.length;
@@ -87,7 +89,21 @@ export const DemoFileSection: React.FC<DemoFileSectionProps> = ({
         </div>
 
         {/* File Stats */}
-        <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="flex items-center space-x-2 text-sm">
+            <Spotlight className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <span className="text-gray-600 dark:text-gray-300">
+              <span className="font-medium text-gray-900 dark:text-white">{config.demos.length}</span> scene{demoCount !== 1 ? 's' : ''}
+            </span>
+          </div>
+
+          <div className="flex items-center space-x-2 text-sm">
+            <Footprints className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <span className="text-gray-600 dark:text-gray-300">
+              <span className="font-medium text-gray-900 dark:text-white">{stepCount}</span> move{stepCount !== 1 ? 's' : ''}
+            </span>
+          </div>
+
           <div className="flex items-center space-x-2 text-sm">
             <Clapperboard className="h-4 w-4 text-blue-600 dark:text-blue-400" />
             <span className="text-gray-600 dark:text-gray-300">
@@ -99,13 +115,6 @@ export const DemoFileSection: React.FC<DemoFileSectionProps> = ({
             <Presentation className="h-4 w-4 text-blue-600 dark:text-blue-400" />
             <span className="text-gray-600 dark:text-gray-300">
               <span className="font-medium text-gray-900 dark:text-white">{slideCount}</span> slide{slideCount !== 1 ? 's' : ''}
-            </span>
-          </div>
-
-          <div className="flex items-center space-x-2 text-sm">
-            <BarChart3 className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-            <span className="text-gray-600 dark:text-gray-300">
-              <span className="font-medium text-gray-900 dark:text-white">{stepCount}</span> step{stepCount !== 1 ? 's' : ''}
             </span>
           </div>
         </div>

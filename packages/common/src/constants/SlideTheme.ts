@@ -1,8 +1,9 @@
 export enum SlideTheme {
-  default = "default",
-  minimal = "minimal",
-  monomi = "monomi",
-  unnamed = "unnamed",
-  quantum = "quantum",
-  frost = "frost",
+  default = 'default',
+  minimal = 'minimal',
+  monomi = 'monomi',
+  unnamed = 'unnamed',
+  quantum = 'quantum',
+  frost = 'frost',
+  pixels = 'pixels',
 }

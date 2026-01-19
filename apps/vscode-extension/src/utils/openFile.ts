@@ -1,16 +1,12 @@
-import { Uri, window } from 'vscode';
+import { window } from 'vscode';
 import { DemoRunner, Extension } from '../services';
-import { General } from '../constants';
+import { getFileUri } from './getFileUri';
 
 export const openFile = async (filePath: string) => {
   const extension = Extension.getInstance();
   const workspaceFolder = extension?.workspaceFolder;
   const version = DemoRunner.getCurrentVersion();
-  const fileUri = workspaceFolder
-    ? version === 2
-      ? Uri.joinPath(workspaceFolder.uri, filePath)
-      : Uri.joinPath(workspaceFolder.uri, General.demoFolder, filePath)
-    : undefined;
+  const fileUri = getFileUri(filePath, workspaceFolder, version);
   if (fileUri) {
     try {
       await window.showTextDocument(fileUri, { preview: false });

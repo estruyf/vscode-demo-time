@@ -142,6 +142,7 @@ export default defineConfig({
                 { label: 'Unnamed theme', slug: 'slides/themes/unnamed' },
                 { label: 'Quantum theme', slug: 'slides/themes/quantum' },
                 { label: 'Frost theme', slug: 'slides/themes/frost' },
+                { label: 'Pixels theme', slug: 'slides/themes/pixels' },
                 { label: 'Custom theme', slug: 'slides/themes/custom' },
               ],
             },

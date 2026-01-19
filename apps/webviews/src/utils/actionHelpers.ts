@@ -354,7 +354,7 @@ export const getFieldsForAction = (action: Action): string[] => {
     [Action.CloseEngageTimeSession]: [],
     [Action.CloseEngageTimePoll]: ['pollId'],
     [Action.ShowEngageTimeSession]: [],
-    [Action.ShowEngageTimePoll]: ['pollId', 'startOnOpen'],
+    [Action.ShowEngageTimePoll]: ['pollId', 'startOnOpen', 'closeOnOpen'],
     [Action.SendEngageTimeMessage]: ['type', 'title', 'message'],
     [Action.ZoomIn]: ['zoom'],
     [Action.ZoomOut]: ['zoom'],

@@ -31,13 +31,26 @@ export class EngageTimeService {
     );
   }
 
-  public static async showPoll(pollId?: string, startOnOpen?: boolean): Promise<void> {
+  public static async showPoll(
+    pollId?: string,
+    startOnOpen?: boolean,
+    closeOnOpen?: boolean,
+  ): Promise<void> {
     if (!pollId) {
       Notifications.error(`EngageTime poll ID is required to show a poll.`);
       return;
     }
 
-    if (startOnOpen) {
+    if (startOnOpen && closeOnOpen) {
+      Notifications.error(
+        'Cannot enable both startOnOpen and closeOnOpen for EngageTime poll. Choose one.',
+      );
+      return;
+    }
+
+    if (closeOnOpen) {
+      await EngageTimeService.stopPoll(pollId);
+    } else if (startOnOpen) {
       await EngageTimeService.startPoll(pollId);
     }
 

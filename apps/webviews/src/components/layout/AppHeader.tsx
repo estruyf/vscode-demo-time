@@ -14,6 +14,7 @@ interface AppHeaderProps {
     color: string;
     isActive: boolean;
   };
+  validationDetails?: React.ReactNode;
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = ({
@@ -24,6 +25,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   fileControls,
   actionControls,
   autoSaveStatus,
+  validationDetails,
 }) => {
   return (
     <div className="bg-white dark:bg-gray-900 shadow-xs border-b border-gray-200 dark:border-gray-700 sticky top-0 z-20">
@@ -84,6 +86,18 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
               </div>
             )}
           </div>
+
+          {/* Validation Details - Expandable */}
+          {validationDetails && (
+            <div className="overflow-hidden transition-all duration-300 ease-in-out" style={{
+              maxHeight: validationDetails ? '1000px' : '0',
+              opacity: validationDetails ? 1 : 0
+            }}>
+              <div className="mt-4">
+                {validationDetails}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

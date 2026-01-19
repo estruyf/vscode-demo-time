@@ -9,6 +9,7 @@ export const Config = {
   },
   presentationMode: {
     previousEnabled: 'previousEnabled',
+    viewToggles: 'presentationViewToggles',
   },
   zoom: 'zoomLevel',
   highlight: {

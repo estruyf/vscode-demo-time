@@ -12,7 +12,7 @@ export function normalizeActConfig(config: ActConfig): DemoConfig {
     version: config.version,
     timer: config.timer,
     engageTime: config.engageTime,
-    demos: config.scenes.map((scene) => sceneToDemo(scene)),
+    demos: (config.scenes || []).map((scene) => sceneToDemo(scene)),
   };
 }
 
@@ -24,7 +24,7 @@ function sceneToDemo(scene: Scene): Demo {
     id: scene.id,
     title: scene.title,
     description: scene.description,
-    steps: scene.moves,
+    steps: scene.moves || [],
     icons: scene.icons,
     notes: scene.notes,
     disabled: scene.disabled,
@@ -38,6 +38,11 @@ function sceneToDemo(scene: Scene): Demo {
  */
 export function normalizeDemoConfig(config: DemoConfig | ActConfig): DemoConfig {
   if (isActConfig(config)) {
+    const configWithDemos = config as any;
+    if (configWithDemos.demos !== undefined && Array.isArray(configWithDemos.demos)) {
+      config.scenes = configWithDemos.demos.map((demo: Demo) => demoToScene(demo));
+      delete configWithDemos.demos;
+    }
     return normalizeActConfig(config);
   }
   return config;

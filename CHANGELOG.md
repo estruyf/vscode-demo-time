@@ -2,6 +2,12 @@
 
 ## [1.13.0] - unreleased
 
+- [#257](https://github.com/estruyf/vscode-demo-time/issues/257): Have a new
+  `demoTime.presentationViewToggles` setting to control the UI areas that get
+  hidden when toggling presentation view
+- [#322](https://github.com/estruyf/vscode-demo-time/issues/322): Added support
+  for YAML snippets - snippets can now be created in both JSON and YAML formats
+  (`.json`, `.jsonc`, `.yaml`, `.yml`)
 - [#339](https://github.com/estruyf/vscode-demo-time/issues/339): Prevent
   unnecessary zoom when consecutive highlights are performed
 - [#340](https://github.com/estruyf/vscode-demo-time/issues/340): Fix an issue
@@ -12,6 +18,9 @@
 - [#343](https://github.com/estruyf/vscode-demo-time/issues/343): added the zoom
   actions: `zoomIn`, `zoomOut`, and `zoomReset` to control the editor zoom level
   during your demo
+- [#345](https://github.com/estruyf/vscode-demo-time/issues/345): Allow
+  `showEngageTimePoll` to close the poll on show via `closeOnOpen`, mutually
+  exclusive with `startOnOpen`
 - [#348](https://github.com/estruyf/vscode-demo-time/issues/348): Added the
   analytics PRO feature
 - [#361](https://github.com/estruyf/vscode-demo-time/issues/361): Video control
@@ -24,6 +33,10 @@
   `focusTerminal` action to focus the terminal view in VS Code
 - [#366](https://github.com/estruyf/vscode-demo-time/issues/366): Added the
   `sendKeybinding` action to send keybindings to the focused terminal
+- [#371](https://github.com/estruyf/vscode-demo-time/issues/371): Fix demo count
+  on the overview page
+- [#373](https://github.com/estruyf/vscode-demo-time/issues/373): Added the
+  `pixels` theme to the slide themes
 
 ## [1.12.0] - 2025-12-16
 
