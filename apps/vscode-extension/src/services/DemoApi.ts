@@ -232,16 +232,20 @@ export class DemoApi {
       return;
     }
 
-    const baseFsPath = path.resolve(workspaceFolder.uri.fsPath);
-    const notesFsPath = path.resolve(baseFsPath, path);
+    const baseFsPath = workspaceFolder.uri.fsPath;
+    const notesFsPath = Uri.joinPath(workspaceFolder.uri, path).fsPath;
 
     if (!notesFsPath.startsWith(baseFsPath)) {
       res.status(403).send('Invalid notes path');
       return;
     }
 
-    const notes = await readFile(Uri.file(notesFsPath));
-    res.status(200).send(notes);
+    try {
+      const notes = await readFile(Uri.file(notesFsPath));
+      res.status(200).send(notes);
+    } catch (err) {
+      res.status(404).send('Notes not found');
+    }
   }
 
   private static async screenshot(req: Request, res: Response) {
