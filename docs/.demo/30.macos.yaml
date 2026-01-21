@@ -34,3 +34,11 @@ demos:
     title: Caffeine (sleep prevention - off)
     steps:
       - action: macos.disableCaffeine
+  - id: scene-mknw4jpw-1ui2
+    title: Hide dock
+    steps:
+      - action: macos.hideDock
+  - id: scene-mknw4xkr-is84
+    title: Show dock
+    steps:
+      - action: macos.showDock
