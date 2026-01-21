@@ -152,6 +152,8 @@ export const CATEGORIZED_ACTIONS: {
       Action.UnmuteVolume,
       Action.EnableCaffeine,
       Action.DisableCaffeine,
+      Action.HideDock,
+      Action.ShowDock,
     ],
   },
   {

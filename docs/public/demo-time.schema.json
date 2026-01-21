@@ -151,6 +151,8 @@
                     "macos.unmuteVolume",
                     "macos.enableCaffeine",
                     "macos.disableCaffeine",
+                    "macos.hideDock",
+                    "macos.showDock",
                     "startEngageTimeSession",
                     "startEngageTimePoll",
                     "closeEngageTimeSession",
