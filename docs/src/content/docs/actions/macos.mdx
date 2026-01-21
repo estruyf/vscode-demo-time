@@ -6,7 +6,7 @@ lastmod: 2026-01-02T12:21:00.000Z
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-macOS actions allow you to control macOS-specific features during your presentations. These actions are only available on macOS and include Focus Mode (Do Not Disturb) controls, menu bar visibility, volume control, screen resolution switching, and system sleep prevention (Caffeine).
+macOS actions allow you to control macOS-specific features during your presentations. These actions are only available on macOS and include Focus Mode (Do Not Disturb) controls, menu bar visibility, dock visibility, volume control, screen resolution switching, and system sleep prevention (Caffeine).
 
 <Aside type="caution" title="macOS Only">
   These actions are only available on macOS. On other platforms, they will show a warning and have no effect.
@@ -226,6 +226,52 @@ action: macos.disableCaffeine
 </TabItem>
 </Tabs>
 
+## Hide Dock
+
+Hide the macOS dock by enabling auto-hide. This provides a cleaner workspace during presentations by automatically hiding the dock until you move your cursor to the bottom of the screen.
+
+<Tabs syncKey="macos-hide-dock">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "macos.hideDock"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: macos.hideDock
+```
+
+</TabItem>
+</Tabs>
+
+## Show Dock
+
+Show the macOS dock by disabling auto-hide. This restores the dock to always be visible.
+
+<Tabs syncKey="macos-show-dock">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "macos.showDock"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: macos.showDock
+```
+
+</TabItem>
+</Tabs>
+
 ## Presentation Mode Example
 
 Here's a comprehensive example of how to set up your Mac for presentation mode at the start of a demo:
@@ -252,6 +298,9 @@ Here's a comprehensive example of how to set up your Mac for presentation mode a
       "action": "macos.hideMenubar"
     },
     {
+      "action": "macos.hideDock"
+    },
+    {
       "action": "setPresentationView"
     }
   ]
@@ -270,6 +319,7 @@ steps:
   - action: macos.muteVolume
   - action: macos.enableFocusMode
   - action: macos.hideMenubar
+  - action: macos.hideDock
   - action: setPresentationView
 ```
 
@@ -293,6 +343,9 @@ And to restore your Mac after the presentation:
       "action": "macos.showMenubar"
     },
     {
+      "action": "macos.showDock"
+    },
+    {
       "action": "macos.unmuteVolume"
     },
     {
@@ -314,6 +367,7 @@ description: Restore Mac settings
 steps:
   - action: macos.disableFocusMode
   - action: macos.showMenubar
+  - action: macos.showDock
   - action: macos.unmuteVolume
   - action: macos.disableCaffeine
   - action: unsetPresentationView

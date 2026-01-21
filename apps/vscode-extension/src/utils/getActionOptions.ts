@@ -512,6 +512,16 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: 'Disable Caffeine (allow system sleep) on macOS',
   } as QuickPickItem);
 
+  actions.push({
+    label: Action.HideDock,
+    description: 'Hide the dock on macOS',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.ShowDock,
+    description: 'Show the dock on macOS',
+  } as QuickPickItem);
+
   // EngageTime actions
   actions.push({
     label: 'EngageTime',

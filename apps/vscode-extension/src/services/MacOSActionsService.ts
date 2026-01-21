@@ -250,4 +250,48 @@ end tell`;
       Logger.info('Caffeine disabled (no processes found)');
     }
   }
+
+  /**
+   * Hide the macOS dock (set autohide to true)
+   */
+  public static async hideDock(): Promise<void> {
+    if (!MacOSActionsService.isMacOS()) {
+      Notifications.warning('Dock control is only available on macOS.');
+      return;
+    }
+
+    try {
+      const script = `tell application "System Events"
+    tell dock preferences
+        set autohide to true
+    end tell
+end tell`;
+      await MacOSActionsService.executeAppleScript(script);
+      Logger.info('Dock hidden');
+    } catch (error) {
+      Notifications.error(`Failed to hide dock: ${(error as Error).message}`);
+    }
+  }
+
+  /**
+   * Show the macOS dock (set autohide to false)
+   */
+  public static async showDock(): Promise<void> {
+    if (!MacOSActionsService.isMacOS()) {
+      Notifications.warning('Dock control is only available on macOS.');
+      return;
+    }
+
+    try {
+      const script = `tell application "System Events"
+    tell dock preferences
+        set autohide to false
+    end tell
+end tell`;
+      await MacOSActionsService.executeAppleScript(script);
+      Logger.info('Dock shown');
+    } catch (error) {
+      Notifications.error(`Failed to show dock: ${(error as Error).message}`);
+    }
+  }
 }

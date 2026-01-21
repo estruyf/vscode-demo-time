@@ -832,6 +832,12 @@ export class DemoRunner {
     } else if (step.action === Action.DisableCaffeine) {
       await MacOSActionsService.disableCaffeine();
       return;
+    } else if (step.action === Action.HideDock) {
+      await MacOSActionsService.hideDock();
+      return;
+    } else if (step.action === Action.ShowDock) {
+      await MacOSActionsService.showDock();
+      return;
     }
 
     // Wait for the specified timeout

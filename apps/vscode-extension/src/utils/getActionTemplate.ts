@@ -565,6 +565,18 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  if (action === Action.HideDock) {
+    return {
+      action: Action.HideDock,
+    };
+  }
+
+  if (action === Action.ShowDock) {
+    return {
+      action: Action.ShowDock,
+    };
+  }
+
   // EngageTime actions
   if (action === Action.StartEngageTimeSession) {
     return {
