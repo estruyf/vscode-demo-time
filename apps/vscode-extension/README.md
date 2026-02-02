@@ -152,6 +152,9 @@ located in the `tests/` directory.
 If you enjoy my work and find them useful, consider sponsor me and the ecosystem
 to help Open Source sustainable. Thank you!
 
+You can also show your support by getting
+[Demo Time merch](https://demo-time.myspreadshop.be/)!
+
 ## License
 
 This project is licensed under the Apache License 2.0 - see the
