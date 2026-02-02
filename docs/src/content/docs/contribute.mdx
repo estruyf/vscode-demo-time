@@ -20,11 +20,31 @@ If you want to contribute to the development of Demo Time, you can start by fork
 
 Once forked, follow these steps to get started:
 
+### Prerequisites
+
+- Node.js (LTS recommended)
+- Corepack (bundled with Node.js) to enable Yarn
+
+Enable Yarn via Corepack (one-time):
+
+- `corepack enable`
+
+### Development setup
+
 - Clone the repository to your local machine
-- Install the dependencies by running `npm install`
-- Run `npm run watch`
-- Press `F5` to start the extension in a new Visual Studio Code window
+- Install dependencies: `yarn install`
+- Start the dev watchers (extension + webviews + common): `yarn vscode:dev`
+- In VS Code, press `F5` (Run > Start Debugging) to launch the Extension Development Host
 - Start coding
+
+## Troubleshooting
+
+### “Could not resolve @demotime/common”
+
+Build the shared package once, then retry:
+
+- `yarn common:build`
+- `yarn vscode:dev`
 
 ## Reporting bugs and suggesting features
 
