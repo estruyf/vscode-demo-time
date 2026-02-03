@@ -37,6 +37,9 @@
   on the overview page
 - [#373](https://github.com/estruyf/vscode-demo-time/issues/373): Added the
   `pixels` theme to the slide themes
+- [#382](https://github.com/estruyf/vscode-demo-time/issues/382): Enable
+  per-step blur and opacity overrides for individual highlight actions via
+  `highlightBlur` and `highlightOpacity` properties
 
 ## [1.12.0] - 2025-12-16
 

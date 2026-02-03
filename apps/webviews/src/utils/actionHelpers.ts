@@ -276,6 +276,8 @@ export const getFieldsForAction = (action: Action): string[] => {
       'endPlaceholder',
       'highlightWholeLine',
       'zoom',
+      'highlightBlur',
+      'highlightOpacity',
     ],
     [Action.Selection]: ['path', 'position', 'startPlaceholder', 'endPlaceholder', 'zoom'],
     [Action.Replace]: [

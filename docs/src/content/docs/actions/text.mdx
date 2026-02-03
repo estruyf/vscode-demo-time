@@ -32,7 +32,9 @@ Highlight text in the editor at a specific location.
   "action": "highlight",
   "path": "<relative path to the file>",
   "position": "<position>",
-  "zoom": "<zoom level> (optional)"
+  "zoom": "<zoom level> (optional)",
+  "highlightBlur": "<blur effect for non-highlighted text (optional)>",
+  "highlightOpacity": "<opacity for non-highlighted text (optional)>"
 }
 
 // Via placeholders
@@ -42,7 +44,9 @@ Highlight text in the editor at a specific location.
   "startPlaceholder": "<start placeholder>",
   "endPlaceholder": "<end placeholder>",
   "highlightWholeLine": "<highlight whole line (optional, default is true)>",
-  "zoom": "<zoom level> (optional)"
+  "zoom": "<zoom level> (optional)",
+  "highlightBlur": "<blur effect for non-highlighted text (optional)>",
+  "highlightOpacity": "<opacity for non-highlighted text (optional)>"
 }
 ```
 
@@ -55,6 +59,8 @@ action: highlight
 path: <relative path to the file>
 position: <position>
 zoom: <zoom level> # Optional
+highlightBlur: <blur effect for non-highlighted text> # Optional
+highlightOpacity: <opacity for non-highlighted text> # Optional
 
 # Via placeholders
 action: highlight
@@ -63,6 +69,8 @@ startPlaceholder: <start placeholder>
 endPlaceholder: <end placeholder>
 highlightWholeLine: <highlight whole line (optional, default is true)>
 zoom: <zoom level> # Optional
+highlightBlur: <blur effect for non-highlighted text> # Optional
+highlightOpacity: <opacity for non-highlighted text> # Optional
 ```
 
 </TabItem>
@@ -74,6 +82,10 @@ For more information about `positioning`, see the [positioning text/code](/actio
 
 <Aside>
 Check out the <a href="../../references/settings" title="settings">settings</a> section to customize the highlight colors.
+</Aside>
+
+<Aside type="tip" title="Per-step blur and opacity">
+You can override the global `highlightBlur` and `highlightOpacity` settings on a per-step basis by adding `highlightBlur` and/or `highlightOpacity` properties to individual highlight steps. This allows you to control whether non-highlighted code is blurred and dimmed for each specific highlight. The `highlightBlur` value should be a number (e.g., `2` for 2px blur), and `highlightOpacity` should be a number between 0 and 1 (e.g., `0.5` for 50% opacity).
 </Aside>
 
 <Aside type="caution" title="Important">

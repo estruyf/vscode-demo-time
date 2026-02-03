@@ -91,6 +91,8 @@ export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
 
   zoom?: number;
   highlightWholeLine?: boolean;
+  highlightBlur?: number;
+  highlightOpacity?: number;
 
   id?: string;
   timeout?: number;

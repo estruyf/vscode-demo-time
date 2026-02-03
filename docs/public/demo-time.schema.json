@@ -323,6 +323,12 @@
                       },
                       "zoom": {
                         "$ref": "#/definitions/zoom"
+                      },
+                      "highlightBlur": {
+                        "$ref": "#/definitions/highlightBlur"
+                      },
+                      "highlightOpacity": {
+                        "$ref": "#/definitions/highlightOpacity"
                       }
                     }
                   }
@@ -1321,6 +1327,21 @@
       "type": "number",
       "title": "The number of times to zoom in or out",
       "default": 0
+    },
+    "highlightBlur": {
+      "type": "number",
+      "title": "Blur effect for non-highlighted text (overrides global setting)",
+      "description": "The blur effect in pixels to apply to non-highlighted text. Overrides the global highlightBlur setting for this specific highlight step.",
+      "minimum": 0,
+      "maximum": 50
+    },
+    "highlightOpacity": {
+      "type": "number",
+      "title": "Opacity for non-highlighted text (overrides global setting)",
+      "description": "The opacity value (0-1) for non-highlighted text. Overrides the global highlightOpacity setting for this specific highlight step.",
+      "minimum": 0,
+      "maximum": 1,
+      "multipleOf": 0.05
     },
     "pollId": {
       "type": "string",

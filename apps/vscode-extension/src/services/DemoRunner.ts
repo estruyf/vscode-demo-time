@@ -1275,6 +1275,8 @@ export class DemoRunner {
         highlightWholeLine,
         true,
         DemoRunner.nextStepIsHighlight,
+        step.highlightBlur,
+        step.highlightOpacity,
       );
       return;
     }
@@ -1411,6 +1413,8 @@ export class DemoRunner {
    * @param highlightWholeLine - Whether to highlight the whole line.
    * @param keepInMemory - Whether to keep the highlight in memory.
    * @param preserveZoom - Whether to preserve the current zoom level when moving to the next highlight.
+   * @param highlightBlur - Optional blur effect for non-highlighted text (overrides global setting).
+   * @param highlightOpacity - Optional opacity for non-highlighted text (overrides global setting).
    */
   public static async highlight(
     textEditor: TextEditor,
@@ -1420,6 +1424,8 @@ export class DemoRunner {
     highlightWholeLine?: boolean,
     keepInMemory = true,
     preserveZoom = false,
+    highlightBlur?: number,
+    highlightOpacity?: number,
   ): Promise<void> {
     if (!range && !position) {
       return;
@@ -1464,6 +1470,8 @@ export class DemoRunner {
         zoomLevel,
         highlightWholeLine,
         preserveZoom,
+        highlightBlur,
+        highlightOpacity,
       );
       textEditor.revealRange(range, TextEditorRevealType.InCenter);
     }
