@@ -88,6 +88,8 @@ export const CATEGORIZED_ACTIONS: {
       Action.ZoomIn,
       Action.ZoomOut,
       Action.ZoomReset,
+      Action.EnableZenMode,
+      Action.DisableZenMode,
     ],
   },
   {

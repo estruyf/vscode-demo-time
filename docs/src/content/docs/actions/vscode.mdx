@@ -1,7 +1,7 @@
 ---
 title: Visual Studio Code actions
 description: Perform Visual Studio Code actions in your demos like executing commands or showing an information message.
-lastmod: 2025-12-19T00:00:00.000Z
+lastmod: 2026-02-04T00:00:00.000Z
 ---
 
 import { Image } from 'astro:assets';
@@ -291,6 +291,56 @@ Open a website in your browser or in the editor using the `openWebsite` action.
 action: openWebsite
 url: <URL>
 openInVSCode: <true/false>
+```
+
+</TabItem>
+</Tabs>
+
+## Zen Mode actions
+
+Control Zen Mode during your demo.
+
+### Enable Zen Mode
+
+Enable Zen Mode using the `enableZenMode` action.
+
+<Tabs syncKey="vscode-zen-enable">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "enableZenMode"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: enableZenMode
+```
+
+</TabItem>
+</Tabs>
+
+### Disable Zen Mode
+
+Disable Zen Mode using the `disableZenMode` action.
+
+<Tabs syncKey="vscode-zen-disable">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "disableZenMode"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: disableZenMode
 ```
 
 </TabItem>

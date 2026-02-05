@@ -352,6 +352,18 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  if (action === Action.EnableZenMode) {
+    return {
+      action: Action.EnableZenMode,
+    };
+  }
+
+  if (action === Action.DisableZenMode) {
+    return {
+      action: Action.DisableZenMode,
+    };
+  }
+
   /**
    * Extensibility actions
    */

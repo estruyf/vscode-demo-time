@@ -89,6 +89,8 @@ export const getActionIcon = (action: Action): string => {
     [Action.ZoomIn]: 'zoom-in',
     [Action.ZoomOut]: 'zoom-out',
     [Action.ZoomReset]: 'refresh-cw',
+    [Action.EnableZenMode]: 'maximize',
+    [Action.DisableZenMode]: 'minimize',
   };
   return iconMap[action] || 'circle';
 };
@@ -241,6 +243,8 @@ export const getRequiredFields = (action: Action): string[] => {
     [Action.ZoomIn]: [],
     [Action.ZoomOut]: [],
     [Action.ZoomReset]: [],
+    [Action.EnableZenMode]: [],
+    [Action.DisableZenMode]: [],
   };
   return requiredMap[action] || [];
 };
@@ -367,6 +371,8 @@ export const getFieldsForAction = (action: Action): string[] => {
     [Action.ZoomIn]: ['zoom'],
     [Action.ZoomOut]: ['zoom'],
     [Action.ZoomReset]: [],
+    [Action.EnableZenMode]: [],
+    [Action.DisableZenMode]: [],
   };
 
   return fieldMap[action] || [];

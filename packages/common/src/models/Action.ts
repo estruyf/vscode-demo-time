@@ -44,6 +44,8 @@ export enum Action {
   ZoomIn = 'zoomIn',
   ZoomOut = 'zoomOut',
   ZoomReset = 'zoomReset',
+  EnableZenMode = 'enableZenMode',
+  DisableZenMode = 'disableZenMode',
   // Terminal
   OpenTerminal = 'openTerminal',
   FocusTerminal = 'focusTerminal',
