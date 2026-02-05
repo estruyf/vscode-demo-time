@@ -40,6 +40,8 @@
 - [#382](https://github.com/estruyf/vscode-demo-time/issues/382): Enable
   per-step blur and opacity overrides for individual highlight actions via
   `highlightBlur` and `highlightOpacity` properties
+- [#383](https://github.com/estruyf/vscode-demo-time/issues/383): Added the
+  `enableZenMode` and `disableZenMode` actions to control Zen Mode during Scenes
 
 ## [1.12.0] - 2025-12-16
 
