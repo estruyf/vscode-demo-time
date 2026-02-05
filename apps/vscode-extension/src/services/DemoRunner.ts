@@ -988,6 +988,17 @@ export class DemoRunner {
       return;
     }
 
+    if (step.action === Action.EnableZenMode) {
+      await commands.executeCommand('workbench.action.exitZenMode');
+      await commands.executeCommand('workbench.action.toggleZenMode');
+      return;
+    }
+
+    if (step.action === Action.DisableZenMode) {
+      await commands.executeCommand('workbench.action.exitZenMode');
+      return;
+    }
+
     // Open a new terminal
     if (step.action === Action.OpenTerminal) {
       await TerminalService.openTerminal(step.terminalId);

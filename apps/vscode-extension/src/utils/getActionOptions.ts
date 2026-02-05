@@ -301,6 +301,16 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: 'Reset the editor zoom level',
   } as QuickPickItem);
 
+  actions.push({
+    label: Action.EnableZenMode,
+    description: 'Enable Zen Mode',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.DisableZenMode,
+    description: 'Disable Zen Mode',
+  } as QuickPickItem);
+
   /**
    * Extensibility actions
    */

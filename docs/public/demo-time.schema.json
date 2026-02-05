@@ -112,6 +112,8 @@
                     "zoomIn",
                     "zoomOut",
                     "zoomReset",
+                    "enableZenMode",
+                    "disableZenMode",
                     "openTerminal",
                     "focusTerminal",
                     "executeTerminalCommand",
