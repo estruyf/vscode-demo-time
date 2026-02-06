@@ -100,7 +100,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   }, []);
 
   const focusPanel = React.useCallback(() => {
-    messageHandler.send(WebViewMessages.toVscode.runCommand, "demo-time.focus");
+    messageHandler.send(WebViewMessages.toVscode.runCommand, "demo-time-scenes.focus");
   }, []);
 
   const togglePresentationMode = React.useCallback(() => {
