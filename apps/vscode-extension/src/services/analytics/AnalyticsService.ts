@@ -50,8 +50,6 @@ export class AnalyticsService {
     AnalyticsService.config = {
       enabled: enabled ?? DEFAULT_ANALYTICS_CONFIG.enabled,
       narrativeThreshold: DEFAULT_ANALYTICS_CONFIG.narrativeThreshold,
-      trackCursorMovements: DEFAULT_ANALYTICS_CONFIG.trackCursorMovements,
-      trackScrollEvents: DEFAULT_ANALYTICS_CONFIG.trackScrollEvents,
       trackTerminalCommands: DEFAULT_ANALYTICS_CONFIG.trackTerminalCommands,
       autoSaveInterval: DEFAULT_ANALYTICS_CONFIG.autoSaveInterval,
     };
@@ -421,56 +419,6 @@ export class AnalyticsService {
         zoomLevel,
       },
     });
-
-    AnalyticsService.lastEventTime = Date.now();
-  }
-
-  /**
-   * Records a scroll event.
-   */
-  public static recordScroll(
-    filePath: string,
-    direction: 'up' | 'down',
-    linesScrolled: number,
-    visibleStart?: number,
-    visibleEnd?: number,
-  ): void {
-    if (!AnalyticsService.currentSession || !AnalyticsService.config.trackScrollEvents) {
-      return;
-    }
-
-    const now = new Date().toISOString();
-    const normalizedPath = AnalyticsService.normalizePath(filePath);
-
-    const activity = AnalyticsService.fileActivityMap.get(normalizedPath);
-    if (activity) {
-      // Calculate dwell time from last event
-      const dwellTime = Date.now() - AnalyticsService.lastEventTime;
-
-      activity.scrollEvents.push({
-        timestamp: now,
-        direction,
-        linesScrolled,
-        dwellTime,
-        visibleRange:
-          visibleStart !== undefined && visibleEnd !== undefined
-            ? { start: visibleStart, end: visibleEnd }
-            : undefined,
-      });
-
-      // Record navigation event
-      AnalyticsService.recordNavigationEvent({
-        timestamp: now,
-        type: 'scroll',
-        toFile: normalizedPath,
-        details: {
-          lineRange:
-            visibleStart !== undefined && visibleEnd !== undefined
-              ? { start: visibleStart, end: visibleEnd }
-              : undefined,
-        },
-      });
-    }
 
     AnalyticsService.lastEventTime = Date.now();
   }

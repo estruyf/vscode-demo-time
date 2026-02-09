@@ -80,6 +80,9 @@ export class DecoratorService {
     // Create blur decorator with step-specific or global blur/opacity values
     const blur = DecoratorService.getBlurValue(stepBlur);
     const opacity = DecoratorService.getOpacityValue(stepOpacity);
+    if (DecoratorService.blurDecorator) {
+      DecoratorService.blurDecorator.dispose();
+    }
     DecoratorService.blurDecorator = DecoratorService.createBlurDecorator(blur, opacity);
 
     // Reset the decorators

@@ -411,10 +411,6 @@ export interface AnalyticsConfig {
   enabled: boolean;
   /** Minimum narrative duration to detect (milliseconds) */
   narrativeThreshold: number;
-  /** Whether to track cursor movements */
-  trackCursorMovements: boolean;
-  /** Whether to track scroll events */
-  trackScrollEvents: boolean;
   /** Whether to track terminal commands */
   trackTerminalCommands: boolean;
   /** Auto-save interval in milliseconds (0 = only save at end) */
@@ -427,8 +423,6 @@ export interface AnalyticsConfig {
 export const DEFAULT_ANALYTICS_CONFIG: AnalyticsConfig = {
   enabled: true,
   narrativeThreshold: 30000, // 30 seconds
-  trackCursorMovements: false, // Can be verbose
-  trackScrollEvents: true,
   trackTerminalCommands: true,
   autoSaveInterval: 30000, // 30 seconds
 };
