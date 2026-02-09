@@ -10,7 +10,7 @@ import { Image } from 'astro:assets';
 import engageTimeSessionIdImg from "../../../assets/docs/engagetime-sessionid.webp";
 import timelineMessagesImg from "../../../assets/docs/timeline-messages.webp";
 
-The EngageTime actions allow you to control the behavior of the EngageTime integration during your demos. You can use these actions to start/close an EngageTime session or poll for responses.
+The EngageTime actions allow you to control the behavior of the EngageTime integration during your presentation. You can use these actions to start/close an EngageTime session or poll for responses.
 
 ## What is EngageTime?
 
@@ -54,13 +54,13 @@ You can set the `sessionId` at the root of your act file:
 ```yaml
 title: EngageTime
 description: Test out the EngageTime interaction
-version: 2
+version: 3
 engageTime:
   sessionId: 4fn3gy
-demos:
+scenes:
   - id: demo-mevoasl4-rp3l
     title: Start a session
-    steps:
+    moves:
       - action: startEngageTimeSession
 ```
 

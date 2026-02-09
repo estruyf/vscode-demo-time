@@ -20,7 +20,7 @@ import configEditorNotesImg from "../../assets/docs/config-editor-notes.webp";
 
 In the [getting started](/getting-started/) guide, you learned how to initialize the extension with a sample demo. In this guide, you will learn how to add your scene moves to the act configuration.
 
-<Aside type="note" title="How demos and steps work">
+<Aside type="note" title="How scenes and moves work">
   Each <b>scene</b> can contain multiple <b>moves</b>. When you trigger a scene, <b>all its moves will run automatically in sequence</b>, you do not need to trigger each move one by one. This is useful for automating multi-step tasks, such as:
   <ul>
     <li>Creating a new file, adding content, and highlighting code—all in a single scene.</li>
@@ -72,7 +72,7 @@ In the **Action** dropdown, you can pick the action to perform for your step. Th
 
 <Image class="mx-auto" src={configEditorCreateStepImg} alt="Provided the step settings for the create action" />
 
-Once a step is configured, you can add additional steps, or new demos. Here is an example to open the file after the `create` action:
+Once a move is configured, you can add additional moves, or new scenes. Here is an example to open the file after the `create` action:
 
 <Image class="mx-auto" src={configEditorOpenFileImg} alt="Open the newly created file" />
 
@@ -81,7 +81,7 @@ In the header of the Act Editor, you can see the validation status. If you click
 <Image class="mx-auto" src={configEditorValidationImg} alt="Validation status in the Act Editor" />
 
 <Aside type="tip">
-You can click on the **demo** or **demo step** to open the corresponding configuration in the Act Editor.
+You can click on the **scene** or **move** to open the corresponding configuration in the Act Editor.
 </Aside>
 
 </TabItem>
@@ -97,9 +97,9 @@ The default content of the `demo.json` file looks like this:
   "$schema": "https://demotime.show/demo-time.schema.json",
   "title": "Demo",
   "description": "Demo description",
-  "version": 2,
+  "version": 3,
   "timer": 5, // Optional timer in minutes. You can also set it on global level with the `demoTime.timer` setting.
-  "demos": []
+  "scenes": []
 }
 ```
 
@@ -109,15 +109,15 @@ The default content of the `demo.json` file looks like this:
 ```yaml
 title: Demo
 description: Demo description
-version: 2
+version: 3
 timer: 5 # Optional timer in minutes. You can also set it on global level with
-demos: []
+scenes: []
 ```
 
 </TabItem>
 </Tabs>
 
-You can start adding your demos in the `demos` array. Each demo should have the following structure:
+You can start adding your moves in the `moves` array. Each move should have the following structure:
 
 <Tabs syncKey="demo-structure">
 <TabItem label="JSON">
@@ -126,8 +126,8 @@ You can start adding your demos in the `demos` array. Each demo should have the 
 {
   "title": "<title>",
   "description": "<description>",
-  "disabled": false, // Disable a demo, when set to true, it will be skipped
-  "steps": []
+  "disabled": false, // Disable a move, when set to true, it will be skipped
+  "scenes": []
 }
 ```
 
@@ -137,18 +137,18 @@ You can start adding your demos in the `demos` array. Each demo should have the 
 ```yaml
 title: <title>
 description: <description>
-disabled: false # Disable a demo, when set to true, it will be skipped
-steps: []
+disabled: false # Disable a move, when set to true, it will be skipped
+scenes: []
 ```
 
 </TabItem>
 </Tabs>
 
 <Aside type="note">
-A single demo can contain multiple steps, which will be executed one after another when you trigger the demo. This allows you to automate a sequence of actions as part of a single demo, making your presentations smoother and more efficient.
+A single scene can contain multiple moves, which will be executed one after another when you trigger the scene. This allows you to automate a sequence of actions as part of a single scene, making your presentations smoother and more efficient.
 </Aside>
 
-You can also add icons to the demo to make them more recognizable.
+You can also add icons to the scene to make them more recognizable.
 
 <Tabs syncKey="demo-icons">
 <TabItem label="JSON">
@@ -157,12 +157,12 @@ You can also add icons to the demo to make them more recognizable.
 {
   "title": "<title>",
   "description": "<description>",
-  "version": 2,
+  "version": 3,
   "icons": {
     "start": "<name of the icon (optional)>",
     "end": "<name of the icon (optional)>"
   },
-  "steps": []
+  "scenes": []
 }
 ```
 
@@ -172,11 +172,11 @@ You can also add icons to the demo to make them more recognizable.
 ```yaml
 title: <title>
 description: <description>
-version: 2
+version: 3
 icons:
   start: <name of the icon (optional)>
   end: <name of the icon (optional)>
-steps: []
+scenes: []
 ```
 
 </TabItem>
@@ -198,8 +198,8 @@ Here is an example of a demo where you create a file and open it:
   "$schema": "https://demotime.show/demo-time.schema.json",
   "title": "Demo",
   "description": "Demo description",
-  "version": 2,
-  "demos": [
+  "version": 3,
+  "scenes": [
     {
       "title": "Create and open sample.json",
       "description": "Create a sample.json file with some content.",
@@ -207,7 +207,7 @@ Here is an example of a demo where you create a file and open it:
         "start": "file-code",
         "end": "pass-filled"
       },
-      "steps": [
+      "moves": [
         {
           "action": "create",
           "path": "sample.json",
@@ -229,14 +229,14 @@ Here is an example of a demo where you create a file and open it:
 ```yaml
 title: Demo
 description: Demo description
-version: 2
-demos:
+version: 3
+scenes:
   - title: Create and open sample.json
     description: Create a sample.json file with some content.
     icons:
       start: file-code
       end: pass-filled
-    steps:
+    moves:
       - action: create
         path: sample.json
         content: "{\n  \"firstName\": \"Elio\",\n  \"lastName\": \"Struyf\"\n}"
@@ -248,7 +248,7 @@ demos:
 </Tabs>
 
 <Aside type="note">
-Notice the `steps` array in the demo. Each move will be executed in sequence when you trigger the demo. In this example, when the `Create and open sample.json` scene is triggered, it creates a `sample.json` file with the specified content and then opens it in the editor all in one go.
+Notice the `moves` array in the scene. Each move will be executed in sequence when you trigger the demo. In this example, when the `Create and open sample.json` scene is triggered, it creates a `sample.json` file with the specified content and then opens it in the editor all in one go.
 </Aside>
 
 </TabItem>
@@ -279,9 +279,9 @@ Each demo you add will be available in the **Demo Time** view. You can execute e
 From the **Act Editor**, you have the ability to try out the configured demo/steps directly by clicking the play button.
 </Aside>
 
-## Adding notes to your demos
+## Adding notes to your scenes
 
-You are also able to add notes to your demos. These notes can be used to provide additional information for yourself or others who will be executing the demo.
+You are also able to add notes to your scenes. These notes can be used to provide additional information for yourself or others who will be executing the scene.
 
 The notes should be created as a markdown file.
 
@@ -306,8 +306,8 @@ Here is an example of how you can add notes to your demo:
 {
   "title": "<title>",
   "description": "<description>",
-  "version": 2,
-  "steps": [...],
+  "version": 3,
+  "scenes": [...],
   "notes": {
     "path": "<relative path to the file>",
     "showOnTrigger": "<show notes on trigger (optional) - default is false>"
@@ -321,8 +321,8 @@ Here is an example of how you can add notes to your demo:
 ```yaml
 title: <title>
 description: <description>
-version: 2
-steps: [...]
+version: 3
+scenes: [...]
 notes:
   path: <relative path to the notes file>
   showOnTrigger: <show notes on trigger (optional) - default is false>
@@ -334,10 +334,10 @@ notes:
 </TabItem>
 </Tabs>
 
-## Implementing other demos and steps
+## Implementing other scenes and moves
 
-You can add more demos and steps to the `demos` array. In the [actions section](/actions/) of the documentation, you can find all the available actions you can use to create your demos.
+You can add more scenes and moves to the `scenes` array. In the [actions section](/actions/) of the documentation, you can find all the available actions you can use to create your scenes.
 
 <Aside type="note">
-If you want to split your demos in multiple sections, you can do this by creating multiple act files in the `.demo` folder. The extension will automatically recognize them and display them in the **Demo Time** view.
+If you want to split your scenes in multiple sections, you can do this by creating multiple act files in the `.demo` folder. The extension will automatically recognize them and display them in the **Demo Time** view.
 </Aside>

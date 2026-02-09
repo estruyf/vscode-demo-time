@@ -8,6 +8,9 @@ import react from '@astrojs/react';
 export default defineConfig({
   site: 'https://demotime.show',
   trailingSlash: 'ignore',
+  redirects: {
+    '/adding-demos': '/adding-moves'
+  },
   integrations: [
     starlight({
       logo: {
@@ -77,7 +80,7 @@ export default defineConfig({
           label: 'It starts here',
           items: [
             { label: 'Getting started', slug: 'getting-started' },
-            { label: 'Adding demos', slug: 'adding-demos' },
+            { label: 'Adding moves', slug: 'adding-moves' },
             { label: 'Start presenting', slug: 'presentation-mode' },
           ],
         },

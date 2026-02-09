@@ -342,7 +342,7 @@ echo "First: $first_arg, Second: $second_arg"
 {
   "title": "Script with arguments example",
   "description": "Passing arguments to a script",
-  "steps": [
+  "moves": [
     {
       "action": "executeScript",
       "id": "greeting",
@@ -365,7 +365,7 @@ echo "First: $first_arg, Second: $second_arg"
 ```yaml title="demo.yaml"
 title: Script with arguments example
 description: Passing arguments to a script
-steps:
+moves:
   - action: executeScript
     id: greeting
     path: greet.mjs
@@ -397,7 +397,7 @@ This will execute: `node greet.mjs "Alice" "25"` and output: `Hello Alice, you a
 {
     "title": "Script example",
     "description": "",
-    "steps": [
+    "moves": [
         {
             "action": "executeScript",
             "id": "firstName",
@@ -423,7 +423,7 @@ This will execute: `node greet.mjs "Alice" "25"` and output: `Hello Alice, you a
 ```yaml title="demo.yaml"
 title: Script example
 description: ""
-steps:
+moves:
   - action: executeScript
     id: firstName
     path: writeFirstName.mjs
