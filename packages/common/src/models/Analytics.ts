@@ -73,7 +73,7 @@ export interface PresentationSession {
 }
 
 /**
- * Analytics for a single segment (scene/demo step).
+ * Analytics for a single segment (scene/move).
  * A segment tracks the time spent on a particular scene in the presentation.
  */
 export interface SegmentAnalytics {
