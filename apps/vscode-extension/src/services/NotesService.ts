@@ -4,7 +4,7 @@ import { Demo, getDemosFromConfig, COMMAND } from '@demotime/common';
 import { Extension } from './Extension';
 import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
 import { Notifications } from './Notifications';
-import { fileExists, getFileUri } from '../utils';
+import { fileExists, getFileUri, isPathInWorkspace } from '../utils';
 import { DemoFileProvider } from './DemoFileProvider';
 import { DemoRunner } from './DemoRunner';
 
@@ -25,7 +25,14 @@ export class NotesService {
     const workspaceFolder = Extension.getInstance().workspaceFolder;
     const version = DemoRunner.getCurrentVersion();
     const notesPath = getFileUri(filePath, workspaceFolder, version);
-    const notesFile = notesPath ? await fileExists(notesPath) : false;
+    
+    // Verify the resolved path is contained within the workspace
+    if (!notesPath || !isPathInWorkspace(notesPath, workspaceFolder)) {
+      Notifications.error('Notes file is not accessible or outside workspace.');
+      return;
+    }
+
+    const notesFile = await fileExists(notesPath);
     if (!notesFile) {
       Notifications.error('No notes available for this step.');
       return;

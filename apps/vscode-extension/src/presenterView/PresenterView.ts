@@ -6,8 +6,8 @@ import { DemoFileProvider } from '../services/DemoFileProvider';
 import { DemoRunner } from '../services/DemoRunner';
 import { DemoStatusBar } from '../services/DemoStatusBar';
 import { NotesService } from '../services/NotesService';
-import { getFileUri, openFile, readFile } from '../utils';
-import { COMMAND, Config, EXTENSION_NAME, WebViewMessages } from '@demotime/common';
+import { getFileUri, isPathInWorkspace, openFile, readFile } from '../utils';
+import { COMMAND, Config, WebViewMessages } from '@demotime/common';
 import { BaseWebview } from '../webview/BaseWebviewPanel';
 
 export class PresenterView extends BaseWebview {
@@ -88,11 +88,15 @@ export class PresenterView extends BaseWebview {
         const notesPath = getFileUri(path, workspaceFolder, version);
 
         if (notesPath) {
-          if (notesPath.fsPath.includes('..')) {
+          // Verify the resolved path is contained within the workspace
+          // This prevents path-traversal attacks by checking the resolved path
+          // doesn't escape the workspace directory
+          if (!isPathInWorkspace(notesPath, workspaceFolder)) {
             PresenterView.postRequestMessage(command, requestId, undefined);
             return;
           }
 
+          // Path has been validated - safe to read
           const notes = await readFile(notesPath);
           PresenterView.postRequestMessage(command, requestId, notes);
           return;
@@ -100,7 +104,14 @@ export class PresenterView extends BaseWebview {
       }
       PresenterView.postRequestMessage(command, requestId, undefined);
     } else if (command === WebViewMessages.toVscode.openFile && payload) {
-      await openFile(payload);
+      const workspaceFolder = Extension.getInstance().workspaceFolder;
+      const version = DemoRunner.getCurrentVersion();
+      const fileUri = getFileUri(payload, workspaceFolder, version);
+
+      // Verify the resolved path is contained within the workspace
+      if (fileUri && isPathInWorkspace(fileUri, workspaceFolder)) {
+        await openFile(payload);
+      }
     }
   }
 }

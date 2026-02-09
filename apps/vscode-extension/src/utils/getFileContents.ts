@@ -1,6 +1,7 @@
 import { WorkspaceFolder, workspace } from 'vscode';
 import { DemoRunner } from '../services';
 import { getFileUri } from './getFileUri';
+import { isPathInWorkspace } from './isPathInWorkspace';
 
 export const getFileContents = async (workspaceFolder: WorkspaceFolder, contentPath?: string) => {
   if (!contentPath) {
@@ -11,6 +12,11 @@ export const getFileContents = async (workspaceFolder: WorkspaceFolder, contentP
   const contentUri = getFileUri(contentPath, workspaceFolder, version);
 
   if (!contentUri) {
+    return;
+  }
+
+  // Verify the resolved path is contained within the workspace
+  if (!isPathInWorkspace(contentUri, workspaceFolder)) {
     return;
   }
 
