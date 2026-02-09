@@ -10,7 +10,7 @@
 - [EngageTime actions | Demo Time](https://demotime.show/actions/engagetime/): Actions for controlling EngageTime sessions
 - [External application actions | Demo Time](https://demotime.show/actions/external/): Perform actions that interact with external applications from your demos.
 - [File actions | Demo Time](https://demotime.show/actions/file/): File actions are used to open, create, or preview files in the editor.
-- [Interaction actions | Demo Time](https://demotime.show/actions/interactions/): Perform interaction actions in your demos like copying to clipboard, pasting content, typing text, and pressing keys.
+- [Interaction actions | Demo Time](https://demotime.show/actions/interactions/): Perform interaction actions in your scenes like copying to clipboard, pasting content, typing text, and pressing keys.
 - [macOS actions | Demo Time](https://demotime.show/actions/macos/): Actions for controlling macOS-specific features in Demo Time
 - [Patch actions | Demo Time](https://demotime.show/actions/patch/): File patch actions can be used to insert code based on a snapshot of the file and a patch file.
 - [Preview actions | Demo Time](https://demotime.show/actions/preview/): Preview actions are used to preview files like Markdown and images in the editor.
@@ -21,9 +21,9 @@
 - [Time actions | Demo Time](https://demotime.show/actions/time/): Perform time actions in your demos like waiting for a specific time, waiting for user input, and more.
 - [Visual Studio Code actions | Demo Time](https://demotime.show/actions/vscode/): Perform Visual Studio Code actions in your demos like executing commands or showing an information message.
 
-## Adding-demos
+## Adding-moves
 
-- [Adding demos | Demo Time](https://demotime.show/adding-demos/): Add your demos to your demo time configuration.
+- [Adding moves | Demo Time](https://demotime.show/adding-moves/): Add your scene moves to your act configuration.
 
 ## Beta
 
@@ -71,6 +71,7 @@
 - [Commands | Demo Time](https://demotime.show/references/commands/): Overview of all the Demo Time commands available in the editor.
 - [JSON schema | Demo Time](https://demotime.show/references/json-schema/): JSON schema for the Demo Time configuration.
 - [Settings | Demo Time](https://demotime.show/references/settings/): Customize the settings of Demo Time to fit your needs.
+- [Terminology | Demo Time](https://demotime.show/references/terminology/): Master Demo Time's theatrical structure - Play, Act, Scene, and Move
 
 ## Releases
 
@@ -80,6 +81,7 @@
 - [v1.7.0 | Demo Time](https://demotime.show/releases/1.7.0/): Release notes for version 1.7.0 of the Demo Time extension, including new features, improvements, and bug fixes.
 - [v1.8.0 | Demo Time](https://demotime.show/releases/1.8.0/): Release notes for version 1.8.0 of the Demo Time extension, including new features, improvements, and bug fixes.
 - [v1.9.0 | Demo Time](https://demotime.show/releases/1.9.0/): 
+- [v2.0.0 | Demo Time](https://demotime.show/releases/2.0.0/): 
 
 ## Remote-control
 
@@ -116,6 +118,7 @@
 - [Frost theme | Demo Time](https://demotime.show/slides/themes/frost/): Overview of the frost theme in Demo Time.
 - [Minimal theme | Demo Time](https://demotime.show/slides/themes/minimal/): Overview of the minimal theme in Demo Time.
 - [Monomi theme | Demo Time](https://demotime.show/slides/themes/monomi/): Overview of the Monomi theme in Demo Time.
+- [Pixels theme | Demo Time](https://demotime.show/slides/themes/pixels/): Overview of the pixels theme in Demo Time.
 - [Quantum theme | Demo Time](https://demotime.show/slides/themes/quantum/): Overview of the quantum theme in Demo Time.
 - [Unnamed theme | Demo Time](https://demotime.show/slides/themes/unnamed/): Overview of the Unnamed theme in Demo Time.
 - [Slide transitions | Demo Time](https://demotime.show/slides/transitions/): Learn about the different slide transitions available in Demo Time
@@ -127,7 +130,7 @@
 ## Tips
 
 - [Adding Content | Demo Time](https://demotime.show/tips/adding-content/): Learn how to add content to a file in Demo Time.
-- [Adding new steps to a demo | Demo Time](https://demotime.show/tips/adding-steps/): Learn how you can add new steps to a demo in Demo Time.
+- [Adding new moves to a scene | Demo Time](https://demotime.show/tips/adding-steps/): Learn how you can add new moves to a scene in Demo Time.
 - [Control the next demo shortcut | Demo Time](https://demotime.show/tips/control-next-demo/): Learn how you can control the next demo during your presentation in Demo Time.
 - [Highlighting code | Demo Time](https://demotime.show/tips/highlighting/): Learn how to highlight code in Demo Time to make it stand out in your demos.
 - [Working with Variables | Demo Time](https://demotime.show/tips/variables/): Learn how to work with variables in Demo Time to reuse them across your demos.

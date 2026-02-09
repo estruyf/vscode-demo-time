@@ -1,5 +1,14 @@
-## [1.13.0] - unreleased
+## [2.0.0] - 2026-02-09
 
+- [#257](https://github.com/estruyf/vscode-demo-time/issues/257): Have a new
+  `demoTime.presentationViewToggles` setting to control the UI areas that get
+  hidden when toggling presentation view
+- [#322](https://github.com/estruyf/vscode-demo-time/issues/322): Added support
+  for YAML snippets - snippets can now be created in both JSON and YAML formats
+  (`.json`, `.jsonc`, `.yaml`, `.yml`)
+- [#327](https://github.com/estruyf/vscode-demo-time/issues/327): Added the new
+  terminology - Play, Act, Scene, and Move - to replace the previous Demo, Step,
+  and Action terminology
 - [#339](https://github.com/estruyf/vscode-demo-time/issues/339): Prevent
   unnecessary zoom when consecutive highlights are performed
 - [#340](https://github.com/estruyf/vscode-demo-time/issues/340): Fix an issue
@@ -10,8 +19,30 @@
 - [#343](https://github.com/estruyf/vscode-demo-time/issues/343): added the zoom
   actions: `zoomIn`, `zoomOut`, and `zoomReset` to control the editor zoom level
   during your demo
+- [#345](https://github.com/estruyf/vscode-demo-time/issues/345): Allow
+  `showEngageTimePoll` to close the poll on show via `closeOnOpen`, mutually
+  exclusive with `startOnOpen`
 - [#348](https://github.com/estruyf/vscode-demo-time/issues/348): Added the
   analytics PRO feature
+- [#361](https://github.com/estruyf/vscode-demo-time/issues/361): Video control
+  support in slides
+- [#362](https://github.com/estruyf/vscode-demo-time/issues/362): Ignore next
+  click when the editor is still in typing mode
+- [#363](https://github.com/estruyf/vscode-demo-time/issues/363): Fixed video
+  control support in custom slide layouts
+- [#365](https://github.com/estruyf/vscode-demo-time/issues/365): New
+  `focusTerminal` action to focus the terminal view in VS Code
+- [#366](https://github.com/estruyf/vscode-demo-time/issues/366): Added the
+  `sendKeybinding` action to send keybindings to the focused terminal
+- [#371](https://github.com/estruyf/vscode-demo-time/issues/371): Fix demo count
+  on the overview page
+- [#373](https://github.com/estruyf/vscode-demo-time/issues/373): Added the
+  `pixels` theme to the slide themes
+- [#382](https://github.com/estruyf/vscode-demo-time/issues/382): Enable
+  per-step blur and opacity overrides for individual highlight actions via
+  `highlightBlur` and `highlightOpacity` properties
+- [#383](https://github.com/estruyf/vscode-demo-time/issues/383): Added the
+  `enableZenMode` and `disableZenMode` actions to control Zen Mode during Scenes
 
 ## [1.12.0] - 2025-12-16
 
@@ -145,7 +176,7 @@
 - [#268](https://github.com/estruyf/vscode-demo-time/issues/268): Fix the
   `openInVSCode` property which was not working as expected
 - [#271](https://github.com/estruyf/vscode-demo-time/issues/271): Added the new
-  `/api/previous` endpoint to trigger the previous demo step
+  `/api/previous` endpoint to trigger the previous move
 - [#272](https://github.com/estruyf/vscode-demo-time/issues/272): Added the Demo
   Time Remote Control PWA to control your presentation from another device
 
@@ -157,13 +188,13 @@
   title for the `waitForInput` action
 - [#221](https://github.com/estruyf/vscode-demo-time/issues/221): Added support
   for the `autoAdvanceAfter` property in the slide front matter to automatically
-  advance to the next slide or demo
+  advance to the next slide or scene
 - [#222](https://github.com/estruyf/vscode-demo-time/issues/222): Added the
-  ability to disable a demo or step
+  ability to disable a scene or move
 - [#225](https://github.com/estruyf/vscode-demo-time/issues/225): Added a GUI
   for editing all the settings from Demo Time
 - [#226](https://github.com/estruyf/vscode-demo-time/issues/226): New Demo Time
-  action `runDemoById` to allow to trigger a demo from another demo
+  action `runDemoById` to allow to trigger a scene from another scene
 
 ## [1.8.0] - 2025-08-02
 
