@@ -8,7 +8,7 @@ export const getFileContents = async (workspaceFolder: WorkspaceFolder, contentP
     return;
   }
 
-  const version = DemoRunner.getCurrentVersion();
+  const version = await DemoRunner.getCurrentVersion();
   const contentUri = getFileUri(contentPath, workspaceFolder, version);
 
   if (!contentUri) {

@@ -186,7 +186,7 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
         } else if (command === WebViewMessages.toVscode.configEditor.openSettings) {
           SettingsView.show();
         } else if (command === WebViewMessages.toVscode.openFile && payload) {
-          openFile(payload);
+          openFile(payload, document.uri);
         } else if (command === WebViewMessages.toVscode.configEditor.checkSnippetArgs && payload) {
           await handleCheckSnippetArgs(payload, webviewPanel, command, requestId);
         } else if (command === WebViewMessages.toVscode.configEditor.getDemoIds) {
@@ -262,7 +262,8 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           return;
         }
 
-        const fileUri = getFileUri(payload.path, wsFolder, DemoRunner.getCurrentVersion());
+        const version = await DemoRunner.getCurrentVersion(document.uri);
+        const fileUri = getFileUri(payload.path, wsFolder, version);
         if (!fileUri) {
           webviewPanel.webview.postMessage({
             command,
@@ -275,7 +276,7 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
 
         await writeFile(fileUri, payload.content);
         const relPath = getRelPath(fileUri.fsPath);
-        await openFile(relPath);
+        await openFile(relPath, document.uri);
         webviewPanel.webview.postMessage({
           command,
           requestId,

@@ -84,7 +84,7 @@ export class PresenterView extends BaseWebview {
       const { path } = payload;
       if (path) {
         const workspaceFolder = Extension.getInstance().workspaceFolder;
-        const version = DemoRunner.getCurrentVersion();
+        const version = await DemoRunner.getCurrentVersion();
         const notesPath = getFileUri(path, workspaceFolder, version);
 
         if (notesPath) {
@@ -105,7 +105,7 @@ export class PresenterView extends BaseWebview {
       PresenterView.postRequestMessage(command, requestId, undefined);
     } else if (command === WebViewMessages.toVscode.openFile && payload) {
       const workspaceFolder = Extension.getInstance().workspaceFolder;
-      const version = DemoRunner.getCurrentVersion();
+      const version = await DemoRunner.getCurrentVersion();
       const fileUri = getFileUri(payload, workspaceFolder, version);
 
       // Verify the resolved path is contained within the workspace

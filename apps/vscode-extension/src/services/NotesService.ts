@@ -23,9 +23,9 @@ export class NotesService {
 
   public static async openNotes(filePath: string) {
     const workspaceFolder = Extension.getInstance().workspaceFolder;
-    const version = DemoRunner.getCurrentVersion();
+    const version = await DemoRunner.getCurrentVersion();
     const notesPath = getFileUri(filePath, workspaceFolder, version);
-    
+
     // Verify the resolved path is contained within the workspace
     if (!notesPath || !isPathInWorkspace(notesPath, workspaceFolder)) {
       Notifications.error('Notes file is not accessible or outside workspace.');
