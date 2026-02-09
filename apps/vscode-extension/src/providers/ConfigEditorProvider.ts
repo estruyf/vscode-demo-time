@@ -20,7 +20,6 @@ import {
   Logger,
   Notifications,
 } from '../services';
-import { General } from '../constants';
 import {
   checkSnippetArgs,
   getDemoApiData,
@@ -379,6 +378,8 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       }
 
       // Convert to ActConfig (version 3) if version is 3, otherwise keep as DemoConfig
+      // Reason: the config is downgraded to the DemoConfig to keep supporting the older schema in the editor,
+      // but we want to save in the latest ActConfig format if the config is already in that format (version 3)
       const configToSave = config.version === 3 ? demoConfigToActConfig(config) : config;
 
       const edit = new WorkspaceEdit();
