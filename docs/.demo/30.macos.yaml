@@ -18,3 +18,27 @@ demos:
     title: Disable focus mode
     steps:
       - action: macos.disableFocusMode
+  - id: demo-mjyhesxj-ua6i
+    title: Mute
+    steps:
+      - action: macos.muteVolume
+  - id: demo-mjyhm0s5-fipj
+    title: Unmute
+    steps:
+      - action: macos.unmuteVolume
+  - id: demo-mjyhp4aa-uf2u
+    title: Caffeine (sleep prevention - on)
+    steps:
+      - action: macos.enableCaffeine
+  - id: demo-mjyhpm04-z5qd
+    title: Caffeine (sleep prevention - off)
+    steps:
+      - action: macos.disableCaffeine
+  - id: scene-mknw4jpw-1ui2
+    title: Hide dock
+    steps:
+      - action: macos.hideDock
+  - id: scene-mknw4xkr-is84
+    title: Show dock
+    steps:
+      - action: macos.showDock

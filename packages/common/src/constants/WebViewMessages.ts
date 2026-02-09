@@ -110,7 +110,7 @@ export const WebViewMessages = {
      * nextSlideTitle
      */
     nextSlideTitle: 'nextSlideTitle',
-    // Config editor
+    // Act Editor
     configEditor: {
       /**
        * getConfigEditorContents
@@ -205,11 +205,18 @@ export const WebViewMessages = {
       exportSession: 'exportAnalyticsSession',
       getRecordingStatus: 'getAnalyticsRecordingStatus',
     },
+    proFeatures: {
+      getSponsorStatus: 'getProFeaturesSponsorStatus',
+    },
     presenter: {
       checkNextDemo: 'checkPresenterNextDemo',
     },
   },
   toWebview: {
+    /**
+     * updateSponsorStatus
+     */
+    updateSponsorStatus: 'updateSponsorStatus',
     /**
      * updateClock
      */
@@ -281,7 +288,7 @@ export const WebViewMessages = {
        */
       updateNextStep: 'updateNextStep',
     },
-    // Config editor
+    // Act Editor
     configEditor: {
       /**
        * updateConfigEditorContents

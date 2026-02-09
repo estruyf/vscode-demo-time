@@ -15,6 +15,7 @@ import {
   chooseDemoFile,
   fileExists,
   getRelPath,
+  isPathInWorkspace,
   parseWinPath,
   readFile,
   sanitizeFileName,
@@ -33,6 +34,7 @@ import {
   Action,
   Step,
   SlideParser,
+  getDemosFromConfig,
 } from '@demotime/common';
 
 export class Slides {
@@ -137,12 +139,13 @@ layout: ${layout.toLowerCase()}
   }
 
   public static async getTotalSlides(): Promise<number> {
-    // Get all demo files and count all slides
+    // Get all act files and count all slides
     const demoFiles = await DemoFileProvider.getFiles();
     let totalSlides = 0;
     if (demoFiles) {
       for (const demoFile of Object.values(demoFiles)) {
-        for (const demo of demoFile.demos) {
+        const demos = getDemosFromConfig(demoFile as any);
+        for (const demo of demos) {
           for (const step of demo.steps) {
             if (step.action === 'openSlide' && step.path) {
               try {
@@ -151,6 +154,12 @@ layout: ${layout.toLowerCase()}
                 const wsFolder = Extension.getInstance().workspaceFolder;
                 if (wsFolder) {
                   fileUri = Uri.joinPath(wsFolder.uri, step.path);
+
+                  // Verify the resolved path is contained within the workspace
+                  if (!isPathInWorkspace(fileUri, wsFolder)) {
+                    totalSlides++; // Count as 1 slide fallback for invalid paths
+                    continue;
+                  }
                 } else {
                   fileUri = Uri.file(step.path);
                 }
@@ -188,13 +197,24 @@ layout: ${layout.toLowerCase()}
     let globalIdx = 0;
     if (demoFiles) {
       for (const demoFile of Object.values(demoFiles)) {
-        for (const demo of demoFile.demos) {
+        const demos = getDemosFromConfig(demoFile as any);
+        for (const demo of demos) {
           for (const step of demo.steps) {
             if (step.action === 'openSlide' && step.path) {
               let fileUri;
               const wsFolder = Extension.getInstance().workspaceFolder;
               if (wsFolder) {
                 fileUri = Uri.joinPath(wsFolder.uri, step.path);
+
+                // Verify the resolved path is contained within the workspace
+                if (!isPathInWorkspace(fileUri, wsFolder)) {
+                  // Fallback: treat as one slide for invalid paths
+                  if (step.path === filePath && localSlideIdx === 0) {
+                    return globalIdx + 1;
+                  }
+                  globalIdx++;
+                  continue;
+                }
               } else {
                 fileUri = Uri.file(step.path);
               }
@@ -235,7 +255,7 @@ layout: ${layout.toLowerCase()}
       return;
     }
 
-    const executingDemos = demoFiles[item.demoFilePath].demos;
+    const executingDemos = getDemosFromConfig(demoFiles[item.demoFilePath] as any);
     const crntDemo = executingDemos.find((_, idx) => idx === item.stepIndex);
     if (!crntDemo) {
       return;

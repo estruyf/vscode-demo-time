@@ -20,10 +20,10 @@ import {
   Logger,
   Notifications,
 } from '../services';
-import { General } from '../constants';
 import {
   checkSnippetArgs,
   getDemoApiData,
+  getFileUri,
   getRelPath,
   getThemes,
   getWebviewHtml,
@@ -33,7 +33,7 @@ import {
 } from '../utils';
 import { ActionTreeItem } from './ActionTreeviewProvider';
 import { SettingsView } from '../settingsView/SettingsView';
-import { COMMAND, Config, WebViewMessages } from '@demotime/common';
+import { COMMAND, Config, WebViewMessages, demoConfigToActConfig } from '@demotime/common';
 
 export class ConfigEditorProvider implements CustomTextEditorProvider {
   private static readonly viewType = 'demoTime.configEditor';
@@ -185,7 +185,7 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
         } else if (command === WebViewMessages.toVscode.configEditor.openSettings) {
           SettingsView.show();
         } else if (command === WebViewMessages.toVscode.openFile && payload) {
-          openFile(payload);
+          openFile(payload, document.uri);
         } else if (command === WebViewMessages.toVscode.configEditor.checkSnippetArgs && payload) {
           await handleCheckSnippetArgs(payload, webviewPanel, command, requestId);
         } else if (command === WebViewMessages.toVscode.configEditor.getDemoIds) {
@@ -261,10 +261,21 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           return;
         }
 
-        const fileUri = Uri.joinPath(wsFolder.uri, General.demoFolder, payload.path);
+        const version = await DemoRunner.getCurrentVersion(document.uri);
+        const fileUri = getFileUri(payload.path, wsFolder, version);
+        if (!fileUri) {
+          webviewPanel.webview.postMessage({
+            command,
+            requestId,
+            payload: undefined,
+          });
+          Notifications.error('Failed to create notes: Invalid file URI.');
+          return;
+        }
+
         await writeFile(fileUri, payload.content);
         const relPath = getRelPath(fileUri.fsPath);
-        await openFile(relPath);
+        await openFile(relPath, document.uri);
         webviewPanel.webview.postMessage({
           command,
           requestId,
@@ -293,7 +304,7 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           payload: apiData,
         });
       } catch (error) {
-        console.error('Failed to get demo IDs:', error);
+        console.error('Failed to get scene IDs:', error);
         webviewPanel.webview.postMessage({
           command,
           requestId,
@@ -303,7 +314,7 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     }
 
     /**
-     * Handles running a demo step from the config editor webview.
+     * Handles running a demo step from the act editor webview.
      */
     async function handleRunDemoStep(
       payload: any,
@@ -313,14 +324,14 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     ) {
       // Example: payload could be { step: { ... } }
       if (!payload?.step) {
-        window.showErrorMessage('No demo step provided to run.');
+        window.showErrorMessage('No move provided to run.');
         return;
       }
       try {
-        Logger.info(`Running demo step from config editor: ${JSON.stringify(payload.step)}`);
+        Logger.info(`Running move from act editor: ${JSON.stringify(payload.step)}`);
         const crntFilePath = document.uri.fsPath;
         await DemoRunner.runSteps([payload.step], false, crntFilePath);
-        window.showInformationMessage('Demo step triggered from config editor.');
+        window.showInformationMessage('Move triggered from act editor.');
         // Optionally, send a response back to the webview
         webviewPanel.webview.postMessage({
           command: WebViewMessages.toVscode.configEditor.runDemoStep,
@@ -328,7 +339,7 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           payload: { success: true },
         });
       } catch (err) {
-        window.showErrorMessage('Failed to run demo step.');
+        window.showErrorMessage('Failed to run move.');
         webviewPanel.webview.postMessage({
           command: WebViewMessages.toVscode.configEditor.runDemoStep,
           requestId,
@@ -366,8 +377,13 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
         return;
       }
 
+      // Convert to ActConfig (version 3) if version is 3, otherwise keep as DemoConfig
+      // Reason: the config is downgraded to the DemoConfig to keep supporting the older schema in the editor,
+      // but we want to save in the latest ActConfig format if the config is already in that format (version 3)
+      const configToSave = config.version === 3 ? demoConfigToActConfig(config) : config;
+
       const edit = new WorkspaceEdit();
-      const demo = DemoFileProvider.formatFileContent(config, document.uri);
+      const demo = DemoFileProvider.formatFileContent(configToSave, document.uri);
       if (!demo) {
         window.showErrorMessage('Failed to parse the demo configuration.');
         return;
@@ -390,7 +406,11 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       if (!config) {
         return;
       }
-      const demo = DemoFileProvider.formatFileContent(config, document.uri);
+
+      // If version is 3, it's already an ActConfig; otherwise convert from DemoConfig
+      const configToSave = config.version === 3 ? config : demoConfigToActConfig(config);
+
+      const demo = DemoFileProvider.formatFileContent(configToSave, document.uri);
       if (!demo) {
         window.showErrorMessage('Failed to parse the demo configuration.');
       }

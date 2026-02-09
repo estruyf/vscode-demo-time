@@ -1,7 +1,7 @@
 ---
 title: Visual Studio Code actions
 description: Perform Visual Studio Code actions in your demos like executing commands or showing an information message.
-lastmod: 2025-12-19T00:00:00.000Z
+lastmod: 2026-02-04T00:00:00.000Z
 ---
 
 import { Image } from 'astro:assets';
@@ -48,7 +48,7 @@ path: <relative path to the file> # optional, when defined, the args property is
 </Tabs>
 
 <Aside type="tip">
-  When editing the `executeVSCodeCommand` action in the config editor, a **Command Picker** appears
+  When editing the `executeVSCodeCommand` action in the act editor, a **Command Picker** appears
   to help you search and select commands visually—no need to manually type command IDs!
 </Aside>
 
@@ -94,7 +94,7 @@ message: <message>
 
 ## Set state
 
-The `setState` action allows you to set a key/value pair in the extension state which can be accessed by other actions. You can use the state value in your demo steps by using the following `{STATE_<key>}` syntax.
+The `setState` action allows you to set a key/value pair in the extension state which can be accessed by other actions. You can use the state value in your moves by using the following `{STATE_<key>}` syntax.
 
 <Tabs syncKey="vscode-set-state">
 <TabItem label="JSON">
@@ -291,6 +291,56 @@ Open a website in your browser or in the editor using the `openWebsite` action.
 action: openWebsite
 url: <URL>
 openInVSCode: <true/false>
+```
+
+</TabItem>
+</Tabs>
+
+## Zen Mode actions
+
+Control Zen Mode during your Scene.
+
+### Enable Zen Mode
+
+Enable Zen Mode using the `enableZenMode` action in a Move.
+
+<Tabs syncKey="vscode-zen-enable">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "enableZenMode"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: enableZenMode
+```
+
+</TabItem>
+</Tabs>
+
+### Disable Zen Mode
+
+Disable Zen Mode using the `disableZenMode` action in a Move.
+
+<Tabs syncKey="vscode-zen-disable">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "disableZenMode"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: disableZenMode
 ```
 
 </TabItem>

@@ -178,7 +178,7 @@ action: unsetTheme
 
 ## Set the presentation view
 
-Set the presentation view in Visual Studio Code using the `setPresentationView` action. This action turns on settings to hide the status bar, tabs, and activity bar.
+Set the presentation view in Visual Studio Code using the `setPresentationView` action. This action hides the UI areas defined by `demoTime.presentationViewToggles` (defaults: status bar, tabs, activity bar, side bar, and panel).
 
 <Tabs syncKey="set-presentation-view-action">
 <TabItem label="JSON">
@@ -205,7 +205,7 @@ action: setPresentationView
 
 ## Unset the presentation view
 
-Unset the presentation view in Visual Studio Code using the `unsetPresentationView` action. This action turns off settings to show the status bar, tabs, and activity bar.
+Unset the presentation view in Visual Studio Code using the `unsetPresentationView` action. This restores any UI areas you configured in `demoTime.presentationViewToggles` (defaults: status bar, tabs, activity bar, side bar, and panel).
 
 <Tabs syncKey="unset-presentation-view-action">
 <TabItem label="JSON">

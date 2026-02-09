@@ -11,7 +11,7 @@ export class DemoTimeService {
    * Run a command on the server
    *
    * @param serverUrl - The server URL
-   * @param demoId - The Demo ID to run
+   * @param demoId - The Scene ID to run
    * @returns Promise with the response
    */
   static async runCommand(serverUrl: string, demoId: string): Promise<void> {
@@ -59,7 +59,7 @@ export class DemoTimeService {
    * Save settings to localStorage
    *
    * @param serverUrl - The server URL to save
-   * @param demoId - The demo ID to save
+   * @param demoId - The Scene ID to save
    */
   static saveSettings(serverUrl: string, demoId: string, slideId: number): void {
     this.setSetting('dtServerUrl', serverUrl);

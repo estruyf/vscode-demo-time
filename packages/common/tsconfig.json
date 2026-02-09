@@ -10,7 +10,9 @@
     "rootDir": "src",
     "strict": true,
     "esModuleInterop": true,
-    "jsx": "react"
+    "jsx": "react-jsx",
+    "skipLibCheck": true,
+    "types": ["react"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "out", "tests"]

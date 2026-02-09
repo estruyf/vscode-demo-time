@@ -44,11 +44,16 @@ export enum Action {
   ZoomIn = 'zoomIn',
   ZoomOut = 'zoomOut',
   ZoomReset = 'zoomReset',
+  EnableZenMode = 'enableZenMode',
+  DisableZenMode = 'disableZenMode',
   // Terminal
   OpenTerminal = 'openTerminal',
+  FocusTerminal = 'focusTerminal',
   ExecuteTerminalCommand = 'executeTerminalCommand',
   CloseTerminal = 'closeTerminal',
   ExecuteScript = 'executeScript',
+  // Keyboard
+  SendKeybinding = 'sendKeybinding',
   // Extensibility
   Snippet = 'snippet',
   // External applications
@@ -84,6 +89,12 @@ export enum Action {
   DisableFocusMode = 'macos.disableFocusMode',
   HideMenubar = 'macos.hideMenubar',
   ShowMenubar = 'macos.showMenubar',
+  MuteVolume = 'macos.muteVolume',
+  UnmuteVolume = 'macos.unmuteVolume',
+  EnableCaffeine = 'macos.enableCaffeine',
+  DisableCaffeine = 'macos.disableCaffeine',
+  HideDock = 'macos.hideDock',
+  ShowDock = 'macos.showDock',
   // EngageTime
   StartEngageTimeSession = 'startEngageTimeSession',
   StartEngageTimePoll = 'startEngageTimePoll',

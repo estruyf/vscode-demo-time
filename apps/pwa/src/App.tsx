@@ -96,7 +96,7 @@ function App() {
                 </div>
 
                 {
-                  splitView && (
+                  splitView && apiData.settings && (
                     <div className='w-2/3 flex flex-col'>
                       {apiData.settings.showScreenshot && (
                         <NextSlide {...apiData.slides} />

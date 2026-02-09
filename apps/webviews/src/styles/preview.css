@@ -73,6 +73,24 @@ table td {
     @apply relative h-full w-full z-20;
     box-sizing: border-box;
   }
+
+  /* Ensure custom layouts properly isolate content */
+  .slide__content__custom {
+    /* Create a new stacking context for custom layouts */
+    isolation: isolate;
+
+    /* Ensure videos in custom layouts are properly positioned */
+    video {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    /* Clean up any absolute positioning conflicts */
+    > * {
+      position: relative;
+    }
+  }
 }
 
 .slide__image_left,

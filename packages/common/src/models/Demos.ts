@@ -1,9 +1,26 @@
 import { Action, InsertTypingMode, Version } from '.';
 
 export interface DemoFiles {
-  [filePath: string]: DemoConfig;
+  [filePath: string]: DemoConfig | ActConfig;
 }
 
+// Version 3: Play structure (entire project)
+export interface PlayConfig {
+  acts: ActConfig[];
+}
+
+// Version 3: Act structure (act file with product icon)
+export interface ActConfig {
+  $schema?: 'https://demotime.show/demo-time.schema.json';
+  title: string;
+  description?: string;
+  version: 3;
+  timer?: number;
+  engageTime?: EngageTimeConfig;
+  scenes: Scene[];
+}
+
+// Version 1 & 2: Legacy DemoConfig structure
 export interface DemoConfig {
   $schema?: 'https://demotime.show/demo-time.schema.json';
   title: string;
@@ -14,10 +31,27 @@ export interface DemoConfig {
   demos: Demo[];
 }
 
+// Type guard to check if config is version 3
+export function isActConfig(config: DemoConfig | ActConfig): config is ActConfig {
+  return (config as ActConfig).version === 3;
+}
+
 export interface EngageTimeConfig {
   sessionId?: string;
 }
 
+// Version 3: Scene (replaces Demo for version 3)
+export interface Scene {
+  id?: string;
+  title: string;
+  description?: string;
+  moves: Move[];
+  icons?: Icons;
+  notes?: Notes;
+  disabled?: boolean;
+}
+
+// Version 1 & 2: Legacy Demo structure
 export interface Demo {
   id?: string;
   title: string;
@@ -38,6 +72,10 @@ export interface Icons {
   end: string;
 }
 
+// Version 3: Move (replaces Step for version 3) - Same structure as Step
+export type Move = Step;
+
+// Version 1 & 2: Legacy Step structure
 export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
   action: Action;
   disabled?: boolean;
@@ -53,10 +91,13 @@ export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
 
   zoom?: number;
   highlightWholeLine?: boolean;
+  highlightBlur?: number;
+  highlightOpacity?: number;
 
   id?: string;
   timeout?: number;
   command?: string;
+  keybinding?: string;
   message?: string;
   /**
    * Arguments to pass to scripts or snippets.
@@ -77,6 +118,9 @@ export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
   slide?: number;
   focusTop?: boolean;
 
+  // macOS caffeine
+  duration?: number;
+
   // Chats
   mode?: string;
 
@@ -84,6 +128,7 @@ export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
   sessionId?: string;
   pollId?: string;
   startOnOpen?: boolean;
+  closeOnOpen?: boolean;
   title?: string;
   type?: EngageTimeMessageType;
 }

@@ -34,7 +34,7 @@ export default function GeneralSettings({ settings, updateSetting }: GeneralSett
               </EnhancedSelectContent>
             </EnhancedSelect>
             <p className="text-sm text-gray-600 dark:text-gray-300">
-              Default format for new demo files - this is the most important setting
+              Default format for new act files - this is the most important setting
             </p>
           </div>
         </div>

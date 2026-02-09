@@ -17,7 +17,7 @@
 
 ## Key Patterns & Conventions
 
-- **Demo File Format:**
+- **Act file Format:**
   - JSON or YAML, with a schema at the top-level (`$schema`).
   - `demos` is an array; each demo has `title`, `description`, `steps`, and optional `icons`.
   - Steps use a defined set of actions (see `src/utils/getActionOptions.ts`).
@@ -46,7 +46,7 @@
 
 ## Integration & Data Flow
 
-- **Demo execution** flows from the demo file → parsed by services → actions dispatched to VS
+- **Demo execution** flows from the act file → parsed by services → actions dispatched to VS
   Code/editor APIs.
 - **Panels** (webviews) communicate with the extension via message passing (see `WebViewMessages` in
   `constants`).
@@ -54,10 +54,10 @@
 
 ## Examples
 
-- See `README.md` for a full demo file example.
+- See `README.md` for a full act file example.
 - See `snippets/README.md` for snippet usage and configuration.
 
 ---
 
 For more, see [https://demotime.show](https://demotime.show) and the in-repo documentation. If you
-add new actions or demo file features, update the schema and documentation accordingly.
+add new actions or act file features, update the schema and documentation accordingly.

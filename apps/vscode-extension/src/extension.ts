@@ -29,6 +29,7 @@ import { SettingsView } from './settingsView/SettingsView';
 import { Config } from '@demotime/common';
 import { InputService } from './services/InputService';
 import { Overview } from './overview/Overview';
+import { ProFeaturesView } from './proFeatures/ProFeaturesView';
 
 export async function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);
@@ -43,6 +44,7 @@ export async function activate(context: vscode.ExtensionContext) {
   PresenterView.register();
   Preview.register();
   Overview.register();
+  ProFeaturesView.register();
   ConfigEditorProvider.register();
 
   // Services

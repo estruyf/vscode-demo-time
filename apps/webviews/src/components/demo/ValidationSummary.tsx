@@ -57,7 +57,7 @@ export const ValidationSummary: React.FC<ValidationSummaryProps> = ({
                           onClick={() => onNavigateToStep(error.demoIndex!, error.stepIndex!)}
                           className="font-medium text-red-800 dark:text-red-200 hover:text-red-900 dark:hover:text-red-100 hover:underline transition-colors cursor-pointer"
                         >
-                          Step {error.stepIndex! + 1}
+                          Move {error.stepIndex! + 1}
                         </button>
                       </>
                     )}

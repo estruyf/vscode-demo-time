@@ -75,8 +75,8 @@ export class Preview extends BaseWebview {
       Preview.currentSlideIndex = 0;
     }
 
-    if (slide && typeof slide === 'number') {
-      Preview.currentSlideIndex = slide;
+    if (slide !== undefined && typeof slide === 'number') {
+      Preview.currentSlideIndex = slide > 0 ? slide - 1 : 0;
     }
 
     Preview.crntFile = fileUri ?? null;

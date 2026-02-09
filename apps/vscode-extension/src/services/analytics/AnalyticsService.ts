@@ -2,14 +2,12 @@ import {
   PresentationSession,
   SegmentAnalytics,
   FileActivityRecord,
-  TerminalCommandRecord,
   ErrorRecord,
   NavigationEvent,
   AnalyticsSummary,
   AnalyticsConfig,
   DEFAULT_ANALYTICS_CONFIG,
   Demo,
-  Step,
   Config,
   ActionTime,
   ActTimingInfo,
@@ -35,6 +33,8 @@ export class AnalyticsService {
   private static currentSegment: SegmentAnalytics | null = null;
   private static fileActivityMap: Map<string, FileActivityRecord> = new Map();
   private static lastEventTime: number = Date.now();
+  private static isEnabled = true;
+
   /** Track per-act timing and timers */
   private static actFileTimers: Map<
     string,
@@ -46,25 +46,17 @@ export class AnalyticsService {
    */
   public static loadConfigFromSettings(): void {
     const ext = Extension.getInstance();
+    const enabled = ext.getSetting<boolean>(Config.analytics.enabled);
     AnalyticsService.config = {
-      enabled:
-        ext.getSetting<boolean>(Config.analytics.enabled) ?? DEFAULT_ANALYTICS_CONFIG.enabled,
-      narrativeThreshold:
-        ext.getSetting<number>(Config.analytics.narrativeThreshold) ??
-        DEFAULT_ANALYTICS_CONFIG.narrativeThreshold,
-      trackCursorMovements:
-        ext.getSetting<boolean>(Config.analytics.trackCursorMovements) ??
-        DEFAULT_ANALYTICS_CONFIG.trackCursorMovements,
-      trackScrollEvents:
-        ext.getSetting<boolean>(Config.analytics.trackScrollEvents) ??
-        DEFAULT_ANALYTICS_CONFIG.trackScrollEvents,
-      trackTerminalCommands:
-        ext.getSetting<boolean>(Config.analytics.trackTerminalCommands) ??
-        DEFAULT_ANALYTICS_CONFIG.trackTerminalCommands,
-      autoSaveInterval:
-        ext.getSetting<number>(Config.analytics.autoSaveInterval) ??
-        DEFAULT_ANALYTICS_CONFIG.autoSaveInterval,
+      enabled: enabled ?? DEFAULT_ANALYTICS_CONFIG.enabled,
+      narrativeThreshold: DEFAULT_ANALYTICS_CONFIG.narrativeThreshold,
+      trackTerminalCommands: DEFAULT_ANALYTICS_CONFIG.trackTerminalCommands,
+      autoSaveInterval: DEFAULT_ANALYTICS_CONFIG.autoSaveInterval,
     };
+  }
+
+  public static setIsEnabled(isEnabled: boolean): void {
+    AnalyticsService.isEnabled = isEnabled;
   }
 
   /**
@@ -94,7 +86,7 @@ export class AnalyticsService {
   public static getConfig(): AnalyticsConfig {
     // Load from settings first
     AnalyticsService.loadConfigFromSettings();
-    return { ...AnalyticsService.config };
+    return { ...AnalyticsService.config, enabled: AnalyticsService.isEnabled };
   }
 
   /**
@@ -214,8 +206,8 @@ export class AnalyticsService {
 
   /**
    * Starts tracking a new segment (Move - a step execution).
-   * @param actFilePath - Path to the Act (demo file)
-   * @param actTitle - Title of the Act (demo file)
+   * @param actFilePath - Path to the Act (act file)
+   * @param actTitle - Title of the Act (act file)
    * @param scene - The Scene (demo) being executed
    * @param sceneIndex - Index of the Scene in the Act
    */
@@ -225,7 +217,7 @@ export class AnalyticsService {
     scene: Demo,
     sceneIndex: number,
   ): Promise<string> {
-    if (!AnalyticsService.currentSession) {
+    if (!AnalyticsService.isEnabled || !AnalyticsService.currentSession) {
       return '';
     }
 
@@ -314,7 +306,7 @@ export class AnalyticsService {
    * Records a file open event.
    */
   public static recordFileOpen(filePath: string): void {
-    if (!AnalyticsService.currentSession) {
+    if (!AnalyticsService.isEnabled || !AnalyticsService.currentSession) {
       return;
     }
 
@@ -351,7 +343,7 @@ export class AnalyticsService {
    * Records a file close event.
    */
   public static recordFileClose(filePath: string): void {
-    if (!AnalyticsService.currentSession) {
+    if (!AnalyticsService.isEnabled || !AnalyticsService.currentSession) {
       return;
     }
 
@@ -382,7 +374,7 @@ export class AnalyticsService {
     endLine: number,
     zoomLevel?: number,
   ): void {
-    if (!AnalyticsService.currentSession) {
+    if (!AnalyticsService.isEnabled || !AnalyticsService.currentSession) {
       return;
     }
 
@@ -432,56 +424,6 @@ export class AnalyticsService {
   }
 
   /**
-   * Records a scroll event.
-   */
-  public static recordScroll(
-    filePath: string,
-    direction: 'up' | 'down',
-    linesScrolled: number,
-    visibleStart?: number,
-    visibleEnd?: number,
-  ): void {
-    if (!AnalyticsService.currentSession || !AnalyticsService.config.trackScrollEvents) {
-      return;
-    }
-
-    const now = new Date().toISOString();
-    const normalizedPath = AnalyticsService.normalizePath(filePath);
-
-    const activity = AnalyticsService.fileActivityMap.get(normalizedPath);
-    if (activity) {
-      // Calculate dwell time from last event
-      const dwellTime = Date.now() - AnalyticsService.lastEventTime;
-
-      activity.scrollEvents.push({
-        timestamp: now,
-        direction,
-        linesScrolled,
-        dwellTime,
-        visibleRange:
-          visibleStart !== undefined && visibleEnd !== undefined
-            ? { start: visibleStart, end: visibleEnd }
-            : undefined,
-      });
-
-      // Record navigation event
-      AnalyticsService.recordNavigationEvent({
-        timestamp: now,
-        type: 'scroll',
-        toFile: normalizedPath,
-        details: {
-          lineRange:
-            visibleStart !== undefined && visibleEnd !== undefined
-              ? { start: visibleStart, end: visibleEnd }
-              : undefined,
-        },
-      });
-    }
-
-    AnalyticsService.lastEventTime = Date.now();
-  }
-
-  /**
    * Records a terminal command execution.
    */
   public static recordTerminalCommand(
@@ -517,7 +459,7 @@ export class AnalyticsService {
    * Records an error event.
    */
   public static recordError(type: ErrorRecord['type'], message: string, context?: string): void {
-    if (!AnalyticsService.currentSession) {
+    if (!AnalyticsService.isEnabled || !AnalyticsService.currentSession) {
       return;
     }
 
@@ -536,7 +478,7 @@ export class AnalyticsService {
    * Marks the last error as recovered.
    */
   public static markErrorRecovered(recoveryTime: number): void {
-    if (!AnalyticsService.currentSession) {
+    if (!AnalyticsService.isEnabled || !AnalyticsService.currentSession) {
       return;
     }
 
@@ -603,7 +545,7 @@ export class AnalyticsService {
    * Records a navigation event.
    */
   private static recordNavigationEvent(event: NavigationEvent): void {
-    if (!AnalyticsService.currentSession) {
+    if (!AnalyticsService.isEnabled || !AnalyticsService.currentSession) {
       return;
     }
 
@@ -628,7 +570,7 @@ export class AnalyticsService {
    * Auto-saves the current session.
    */
   private static async autoSave(): Promise<void> {
-    if (!AnalyticsService.currentSession) {
+    if (!AnalyticsService.isEnabled || !AnalyticsService.currentSession) {
       return;
     }
 
@@ -654,17 +596,17 @@ export class AnalyticsService {
   }
 
   /**
-   * Tracks timing for an act (demo file) when a segment starts.
+   * Tracks timing for an act (act file) when a segment starts.
    */
   private static async trackActTiming(actFilePath: string): Promise<void> {
     if (!AnalyticsService.actFileTimers.has(actFilePath)) {
-      // Load the demo file to get its timer configuration
+      // Load the act file to get its timer configuration
       let configuredTimer: number | undefined;
       try {
         const demoFile = await DemoFileProvider.getFile(Uri.file(actFilePath));
         configuredTimer = demoFile?.timer;
       } catch (error) {
-        Logger.error(`Failed to load demo file for timer: ${actFilePath} - ${error}`);
+        Logger.error(`Failed to load act file for timer: ${actFilePath} - ${error}`);
       }
 
       AnalyticsService.actFileTimers.set(actFilePath, {

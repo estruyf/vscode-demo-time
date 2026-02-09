@@ -1,5 +1,5 @@
 import React from 'react';
-import { FolderOpen, Eye } from 'lucide-react';
+import { Eye } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { FileBreakdownItem } from '@demotime/common';
 

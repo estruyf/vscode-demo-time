@@ -44,12 +44,12 @@ export const DemoBuilder: React.FC = () => {
     handleSave,
   } = useFileOperations();
 
-  // Function to generate unique demo ID
+  // Function to generate unique scene ID
   const generateUniqueDemoId = React.useCallback(() => {
     const generateDemoId = () => {
       const timestamp = Date.now().toString(36);
       const random = Math.random().toString(36).substring(2, 6);
-      return `demo-${timestamp}-${random}`;
+      return `scene-${timestamp}-${random}`;
     };
 
     let newId = generateDemoId();
@@ -330,8 +330,8 @@ export const DemoBuilder: React.FC = () => {
   return (
     <div className="h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       <AppHeader
-        title="Config Editor"
-        subtitle="Manage your demo configuration"
+        title={"Act Editor"}
+        subtitle={"Manage your act configuration"}
         validation={validation}
         showValidation={showValidation}
         onToggleValidation={() => setShowValidation(!showValidation)}
@@ -355,19 +355,19 @@ export const DemoBuilder: React.FC = () => {
           color: autoSaveStatusColor,
           isActive: isAutoSaving || isManuallySaving
         }}
-      />
-
-      <div className="flex-1 max-w-7xl mx-auto px-6 py-8 w-full overflow-y-auto lg:overflow-hidden">
-        {showValidation && (
-          <div className="mb-8">
+        validationDetails={
+          showValidation ? (
             <ValidationSummary
               validationResult={validation}
               config={config}
               onNavigateToDemo={handleNavigateToDemo}
               onNavigateToStep={handleNavigateToStep}
             />
-          </div>
-        )}
+          ) : undefined
+        }
+      />
+
+      <div className="flex-1 max-w-7xl mx-auto px-6 py-8 w-full overflow-y-auto lg:overflow-hidden">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full min-h-0">
           <Sidebar className="lg:sticky lg:top-0 lg:self-start h-full lg:overflow-y-auto">
@@ -381,7 +381,7 @@ export const DemoBuilder: React.FC = () => {
                   <div className="flex items-center space-x-2">
                     {collapsed ? <ChevronDown /> : <ChevronUp />}
 
-                    <h2 className="text-xl font-semibold">Demo File Settings</h2>
+                    <h2 className="text-xl font-semibold">Act Settings</h2>
                   </div>
                 </button>
               </div>
@@ -403,6 +403,7 @@ export const DemoBuilder: React.FC = () => {
                 const updatedDemo = { ...config.demos[index], disabled };
                 handleDemoChange(index, updatedDemo);
               }}
+              version={config.version}
             />
           </Sidebar>
 
@@ -437,8 +438,8 @@ export const DemoBuilder: React.FC = () => {
             {selectedDemo === null && (
               <Card className="p-12 text-center">
                 <FileText className="h-12 w-12 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No Demo Selected</h3>
-                <p className="text-gray-600 dark:text-gray-300">Select a demo from the left panel to view and edit its steps</p>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No Scene Selected</h3>
+                <p className="text-gray-600 dark:text-gray-300">Select a scene from the left panel to view and edit its moves</p>
               </Card>
             )}
           </MainContent>

@@ -4,6 +4,8 @@ import { Extension } from './Extension';
 import { Logger } from './Logger';
 import { COMMAND } from '@demotime/common';
 import { Notifications } from './Notifications';
+import { ResourcesPanel } from '../panels/ResourcesPanel';
+import { ProFeaturesView } from '../proFeatures/ProFeaturesView';
 
 // GitHub scopes required for sponsor verification
 const GITHUB_AUTH_SCOPES = ['read:user', 'read:org'];
@@ -29,6 +31,8 @@ export class SponsorService {
             Notifications.warning('GitHub authentication failed or was cancelled.');
           }
           await SponsorService.checkSponsor();
+          // Update the resources tree view to reflect sponsor status changes
+          ResourcesPanel.update();
         } catch (err) {
           Notifications.error(`GitHub authentication error: ${(err as Error).message}`);
         }
@@ -81,6 +85,10 @@ export class SponsorService {
 
           // Log status change
           if (prevState !== isSponsor) {
+            // Update the resources tree view when sponsor status changes
+            ResourcesPanel.update();
+            // Notify the Pro Features webview if it's open
+            ProFeaturesView.notifySponsorStatusChange(isSponsor);
             if (isSponsor) {
               Logger.info('GitHub Sponsor status verified. Pro features unlocked! 🎉');
               return true;

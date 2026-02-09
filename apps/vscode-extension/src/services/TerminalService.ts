@@ -110,6 +110,13 @@ export class TerminalService {
   }
 
   /**
+   * Focuses (or opens) the target terminal without sending any text.
+   */
+  public static async focusTerminal(): Promise<void> {
+    await commands.executeCommand('terminal.focus');
+  }
+
+  /**
    * Gets the terminal instance for a given ID.
    * @param terminalId - The ID of the terminal to retrieve (optional).
    * @returns The terminal instance or null if not found.

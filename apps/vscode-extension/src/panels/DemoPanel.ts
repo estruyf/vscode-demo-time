@@ -57,7 +57,7 @@ export class DemoPanel {
   }
 
   /**
-   * Retrieves a list of demo commands organized by demo files.
+   * Retrieves a list of demo commands organized by act files.
    *
    * @returns {ActionTreeItem[]} An array of `ActionTreeItem` objects representing the demo commands.
    */
@@ -183,7 +183,7 @@ export class DemoPanel {
           'demo-time.file',
           demoSteps.length > 0
             ? demoSteps
-            : [new ActionTreeItem('No demo steps defined', '', undefined, undefined, undefined)],
+            : [new ActionTreeItem('No moves defined', '', undefined, undefined, undefined)],
           parseWinPath(path),
         ),
       );
@@ -214,8 +214,8 @@ export class DemoPanel {
   }
 
   /**
-   * Retrieves the demo files
-   * @returns {Promise<boolean>} True if demo files are available, false otherwise
+   * Retrieves the act files
+   * @returns {Promise<boolean>} True if act files are available, false otherwise
    */
   private static async setDemoFiles(): Promise<boolean> {
     const demoFiles = await DemoFileProvider.getFiles();
@@ -224,7 +224,7 @@ export class DemoPanel {
   }
 
   /**
-   * Retrieves the executing demo file
+   * Retrieves the executing act file
    */
   private static async setExecutingDemoFile() {
     DemoPanel.executingDemoFile = await DemoRunner.getExecutedDemoFile();

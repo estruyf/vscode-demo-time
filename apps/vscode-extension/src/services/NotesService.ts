@@ -1,13 +1,12 @@
-import { commands, Uri } from 'vscode';
-import { Subscription, Demo } from '../models';
+import { commands } from 'vscode';
+import { Subscription } from '../models';
+import { Demo, getDemosFromConfig, COMMAND } from '@demotime/common';
 import { Extension } from './Extension';
-import { General } from '../constants';
 import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
 import { Notifications } from './Notifications';
-import { fileExists } from '../utils';
+import { fileExists, getFileUri, isPathInWorkspace } from '../utils';
 import { DemoFileProvider } from './DemoFileProvider';
 import { DemoRunner } from './DemoRunner';
-import { COMMAND } from '@demotime/common';
 
 export class NotesService {
   public static registerCommands() {
@@ -24,13 +23,16 @@ export class NotesService {
 
   public static async openNotes(filePath: string) {
     const workspaceFolder = Extension.getInstance().workspaceFolder;
-    const version = DemoRunner.getCurrentVersion();
-    const notesPath = workspaceFolder
-      ? version === 2
-        ? Uri.joinPath(workspaceFolder.uri, filePath)
-        : Uri.joinPath(workspaceFolder.uri, General.demoFolder, filePath)
-      : undefined;
-    const notesFile = notesPath ? await fileExists(notesPath) : false;
+    const version = await DemoRunner.getCurrentVersion();
+    const notesPath = getFileUri(filePath, workspaceFolder, version);
+
+    // Verify the resolved path is contained within the workspace
+    if (!notesPath || !isPathInWorkspace(notesPath, workspaceFolder)) {
+      Notifications.error('Notes file is not accessible or outside workspace.');
+      return;
+    }
+
+    const notesFile = await fileExists(notesPath);
     if (!notesFile) {
       Notifications.error('No notes available for this step.');
       return;
@@ -45,16 +47,36 @@ export class NotesService {
       const executingFile = await DemoRunner.getExecutedDemoFile();
 
       if (demoFiles && executingFile.filePath) {
-        let executingDemos = demoFiles[executingFile.filePath].demos;
-        const lastDemo = executingFile.demo[executingFile.demo.length - 1];
+        const demoFileEntry = demoFiles[executingFile.filePath];
+        const executingDemos = getDemosFromConfig(demoFileEntry);
 
-        let crntDemoIdx = executingDemos.findIndex((d, idx) =>
+        if (!executingDemos || executingDemos.length === 0) {
+          Notifications.error('No notes available for this step.');
+          return;
+        }
+
+        const lastDemo =
+          executingFile.demo && executingFile.demo.length > 0
+            ? executingFile.demo[executingFile.demo.length - 1]
+            : undefined;
+
+        if (!lastDemo) {
+          Notifications.error('No notes available for this step.');
+          return;
+        }
+
+        const crntDemoIdx = executingDemos.findIndex((d, idx) =>
           d.id ? d.id === lastDemo.id : idx === lastDemo.idx,
         );
 
+        if (crntDemoIdx === -1) {
+          Notifications.error('No notes available for this step.');
+          return;
+        }
+
         // Show the notes action
         const crntDemo = executingDemos[crntDemoIdx];
-        if (crntDemo.notes && crntDemo.notes.path) {
+        if (crntDemo?.notes?.path) {
           NotesService.openNotes(crntDemo.notes.path);
           return;
         }

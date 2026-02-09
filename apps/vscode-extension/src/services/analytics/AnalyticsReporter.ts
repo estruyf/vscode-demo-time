@@ -7,7 +7,6 @@ import {
   ErrorSummary,
   Recommendation,
   TimerStatus,
-  ActTimingInfo,
 } from '@demotime/common';
 
 /**

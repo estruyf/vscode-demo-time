@@ -1,9 +1,9 @@
 import React from 'react';
 import { Plus, Info } from 'lucide-react';
-import { Demo } from '../../types/demo';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { DemoListItem } from './DemoListItem';
+import { Demo } from '@demotime/common';
 
 interface DemoSectionProps {
   demos: Demo[];
@@ -15,6 +15,7 @@ interface DemoSectionProps {
   onPlayDemo: (index: number) => void;
   onDuplicateDemo: (index: number) => void;
   onToggleDemoDisabled?: (index: number, disabled: boolean) => void;
+  version?: number;
 }
 
 export const DemoSection: React.FC<DemoSectionProps> = ({
@@ -56,7 +57,7 @@ export const DemoSection: React.FC<DemoSectionProps> = ({
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-3">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-            Demos ({(demos || []).length})
+            Scenes ({(demos || []).length})
           </h2>
           <button
             onClick={() => setShowInfo(!showInfo)}
@@ -73,7 +74,7 @@ export const DemoSection: React.FC<DemoSectionProps> = ({
             icon={Plus}
             size="sm"
           >
-            Add Demo
+            Add Scene
           </Button>
         </div>
       </div>
@@ -81,7 +82,7 @@ export const DemoSection: React.FC<DemoSectionProps> = ({
       {showInfo && (
         <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
           <p className="text-xs text-blue-800 dark:text-blue-200">
-            <span className="font-medium text-blue-900 dark:text-blue-100">About Demos:</span> Each demo can consist of multiple steps that will be running in sequence right after each other.
+            <span className="font-medium text-blue-900 dark:text-blue-100">About Scenes:</span> Each scene can consist of multiple moves that will be running in sequence right after each other.
             Create organized demonstrations by grouping related actions together.
           </p>
         </div>

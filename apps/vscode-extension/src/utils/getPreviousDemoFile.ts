@@ -16,7 +16,7 @@ export const getPreviousDemoFile = async (demoFile?: {
     return;
   }
 
-  // Get the next demo file
+  // Get the next act file
   const demoFiles: DemoFiles = (await DemoFileProvider.getFiles()) || {};
   const files = sortFiles(demoFiles);
   const fileIdx = files.findIndex((file) => file === demoFile.filePath);

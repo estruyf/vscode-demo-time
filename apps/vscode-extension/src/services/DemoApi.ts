@@ -6,7 +6,7 @@ import https from 'https';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { Logger } from './Logger';
-import { bringToFront, readFile, getDemoApiData } from '../utils';
+import { bringToFront, readFile, getDemoApiData, isPathInWorkspace } from '../utils';
 import { COMMAND } from '@demotime/common';
 import { DemoRunner } from './DemoRunner';
 import { ScreenshotService } from './ScreenshotService';
@@ -119,7 +119,7 @@ export class DemoApi {
     Logger.info('Received request for demos');
     const apiData = await getDemoApiData();
     if (!apiData) {
-      res.status(404).send('No demos found');
+      res.status(404).send('No scenes found');
       return;
     }
 
@@ -194,7 +194,7 @@ export class DemoApi {
     }
 
     if (!id) {
-      res.status(400).send('Missing demo ID');
+      res.status(400).send('Missing scene ID');
       return;
     }
 
@@ -232,16 +232,23 @@ export class DemoApi {
       return;
     }
 
-    const baseFsPath = path.resolve(workspaceFolder.uri.fsPath);
-    const notesFsPath = path.resolve(baseFsPath, path);
+    const notesUri = Uri.joinPath(workspaceFolder.uri, path);
 
-    if (!notesFsPath.startsWith(baseFsPath)) {
+    // Verify the resolved path is contained within the workspace
+    // This prevents path-traversal attacks by checking the resolved path
+    // doesn't escape the workspace directory
+    if (!isPathInWorkspace(notesUri, workspaceFolder)) {
       res.status(403).send('Invalid notes path');
       return;
     }
 
-    const notes = await readFile(Uri.file(notesFsPath));
-    res.status(200).send(notes);
+    try {
+      // Path has been validated - safe to read
+      const notes = await readFile(notesUri);
+      res.status(200).send(notes);
+    } catch (err) {
+      res.status(404).send('Notes not found');
+    }
   }
 
   private static async screenshot(req: Request, res: Response) {

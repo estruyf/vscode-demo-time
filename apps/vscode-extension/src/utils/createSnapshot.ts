@@ -85,7 +85,7 @@ export const createSnapshot = async () => {
   const version = demoFile.demo.version || 1;
 
   const contentPath =
-    version === 2
+    version >= 2
       ? newFilePath.path.replace(wsFolder.uri.path, '')
       : newFilePath.path.replace(Uri.joinPath(wsFolder.uri, General.demoFolder).path, '');
 

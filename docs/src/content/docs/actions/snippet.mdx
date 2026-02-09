@@ -7,7 +7,9 @@ lastmod: 2025-08-02T16:00:27.344Z
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 import GitHubFileOpener from '../../../components/GitHubFileOpener.astro';
 
-Snippets can be used when you have steps that you want to reuse in multiple demos. You can define a snippet in the `.demo` folder and reference it in your demo files.
+Snippets can be used when you have moves that you want to reuse in multiple demos. You can define a snippet in the `.demo` folder and reference it in your act files.
+
+Snippets support both **JSON** and **YAML** formats. The extension automatically detects the format based on the file extension (`.json`, `.jsonc`, `.yaml`, or `.yml`).
 
 <Aside type="note" title='Samples'>
   You can find snippet actions samples on GitHub: 
@@ -16,7 +18,7 @@ Snippets can be used when you have steps that you want to reuse in multiple demo
 
 ## Using a snippet
 
-Use the `snippet` action to reference a snippet in your demo.
+Use the `snippet` action to reference a snippet in your scene.
 
 <Tabs syncKey="snippet-action">
 <TabItem label="JSON">
@@ -46,9 +48,9 @@ args:
 </TabItem>
 </Tabs>
 
-Start by creating a snippet folder/file in the `.demo` folder. For example, you can create a `snippets` folder and a `insert_and_highlight.json` file.
+Start by creating a snippet folder/file in the `.demo` folder. For example, you can create a `snippets` folder and a snippet file in either JSON or YAML format.
 
-The contents of this file could look like this:
+The contents of the snippet file could look like this:
 
 <Tabs syncKey="snippet-file-example">
 <TabItem label="JSON">
@@ -83,7 +85,7 @@ The contents of this file could look like this:
   position: "{CONTENT_POSITION}"
 - action: highlight
   path: "{MAIN_FILE}"
-  # ...
+  position: "{HIGHLIGHT_POSITION}"
 ```
 
 </TabItem>
@@ -93,7 +95,7 @@ The contents of this file could look like this:
 You can make use of variables/placeholders in the snippet file by using curly braces `{argument name}`. These variables are defined in the `args` property of the snippet action.
 </Aside>
 
-In your demo file, you can reference the snippet like this:
+In your act file, you can reference the snippet like this:
 
 <Tabs syncKey="snippet-action-example">
 <TabItem label="JSON">
@@ -101,7 +103,7 @@ In your demo file, you can reference the snippet like this:
 ```json
 {
   "action": "snippet",
-  "contentPath": "./snippets/insert_and_highlight.json",
+  "contentPath": "./snippets/insert_and_highlight.json",  // or .yaml
   "args": {
     "MAIN_FILE": "sample.json",
     "CONTENT_PATH": "content.txt",
@@ -116,7 +118,7 @@ In your demo file, you can reference the snippet like this:
 
 ```yaml
 action: snippet
-contentPath: ./snippets/insert_and_highlight.json
+contentPath: ./snippets/insert_and_highlight.json  # or .yaml
 args:
   MAIN_FILE: sample.json
   CONTENT_PATH: content.txt

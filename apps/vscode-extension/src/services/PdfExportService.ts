@@ -29,6 +29,7 @@ import {
   Step,
   transformMarkdown,
   twoColumnFormatting,
+  getDemosFromConfig,
 } from '@demotime/common';
 import { ScreenshotService } from './ScreenshotService';
 
@@ -51,7 +52,7 @@ export class PdfExportService {
   }
 
   /**
-   * Export all slides from demo files to a PDF
+   * Export all slides from act files to a PDF
    */
   public static async exportToPdf(): Promise<void> {
     if (!PdfExportService.workspaceFolder) {
@@ -74,14 +75,14 @@ export class PdfExportService {
           const context = await browser.newContext();
           const page = await context.newPage();
 
-          // Get all demo files
+          // Get all act files
           let demoFiles = await DemoFileProvider.getFiles();
           if (!demoFiles) {
-            Notifications.error('No demo files found.');
+            Notifications.error('No act files found.');
             return;
           }
 
-          // Sort the demo files by their paths
+          // Sort the act files by their paths
           demoFiles = sortFiles(demoFiles).reduce(
             (sortedFiles, key) => {
               if (demoFiles) {
@@ -95,7 +96,8 @@ export class PdfExportService {
           // Get all slide actions
           const slideActions: Step[] = [];
           for (const demoFile of Object.values(demoFiles)) {
-            for (const demo of demoFile.demos) {
+            const demos = getDemosFromConfig(demoFile as any);
+            for (const demo of demos) {
               for (const step of demo.steps) {
                 if (step.action === Action.OpenSlide && step.path) {
                   slideActions.push(step);
@@ -329,6 +331,7 @@ export class PdfExportService {
     let unnamedTheme = await ScreenshotService.getThemeCss(SlideTheme.unnamed);
     let quantumTheme = await ScreenshotService.getThemeCss(SlideTheme.quantum);
     let frostTheme = await ScreenshotService.getThemeCss(SlideTheme.frost);
+    let pixelsTheme = await ScreenshotService.getThemeCss(SlideTheme.pixels);
 
     const webcomponentsUrl = Uri.joinPath(
       Uri.parse(extensionPath),
@@ -418,6 +421,7 @@ export class PdfExportService {
       [SlideTheme.unnamed]: [],
       [SlideTheme.quantum]: [],
       [SlideTheme.frost]: [],
+      [SlideTheme.pixels]: [],
     };
 
     for (const slide of allSlides) {
@@ -442,6 +446,8 @@ export class PdfExportService {
           slideThemes.quantum.push(index + 1);
         } else if (slide.theme === SlideTheme.frost) {
           slideThemes.frost.push(index + 1);
+        } else if (slide.theme === SlideTheme.pixels) {
+          slideThemes.pixels.push(index + 1);
         }
 
         html += `
@@ -498,6 +504,8 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
           html += `<style type="text/tailwindcss">${slideIds} { ${quantumTheme} }</style>`;
         } else if (theme === SlideTheme.frost) {
           html += `<style type="text/tailwindcss">${slideIds} { ${frostTheme} }</style>`;
+        } else if (theme === SlideTheme.pixels) {
+          html += `<style type="text/tailwindcss">${slideIds} { ${pixelsTheme} }</style>`;
         }
       }
     }

@@ -6,7 +6,7 @@ lastmod: 2025-01-22T11:25:57.794Z
 
 import { Code } from '@astrojs/starlight/components';
 
-The extension has built-in variables which you can use in your demo steps. These variables are placeholders that get replaced with the actual value when the demo gets executed.
+The extension has built-in variables which you can use in your moves. These variables are placeholders that get replaced with the actual value when the demo gets executed.
 
 - `{DT_INPUT}`: The extension will ask you to provide a value for this variable when the demo gets executed.
 - `{DT_CLIPBOARD}`: The value in your clipboard will be used for this variable.
@@ -16,7 +16,7 @@ The extension has built-in variables which you can use in your demo steps. These
 
 ### Request user input
 
-You can use the `{DT_INPUT}` variable in your demo steps to request user input. When the demo gets executed, the extension will ask you to provide a value for this variable.
+You can use the `{DT_INPUT}` variable in your moves to request user input. When the demo gets executed, the extension will ask you to provide a value for this variable.
 
 <Code code={`
 {
@@ -29,7 +29,7 @@ You can use the `{DT_INPUT}` variable in your demo steps to request user input. 
 
 ### Use clipboard content
 
-Similar to the `{DT_INPUT}` variable, you can use the `{DT_CLIPBOARD}` variable in your demo steps to use the value in your clipboard.
+Similar to the `{DT_INPUT}` variable, you can use the `{DT_CLIPBOARD}` variable in your moves to use the value in your clipboard.
 
 <Code code={`
 {
@@ -42,7 +42,7 @@ Similar to the `{DT_INPUT}` variable, you can use the `{DT_CLIPBOARD}` variable 
 
 ### Use state value
 
-You can use the `{STATE_<key>}` variable in your demo steps to use the value of the state key which you set via the `setState` action.
+You can use the `{STATE_<key>}` variable in your moves to use the value of the state key which you set via the `setState` action.
 
 <Code code={`
 [
@@ -64,7 +64,7 @@ You can use the `{STATE_<key>}` variable in your demo steps to use the value of 
 
 ## Define custom variables
 
-You can define variables in a `variables.json` file in the `.demo` folder. Once you created the `variables.json` file and added variables/constants to it, you can use these variables in your demo steps by using curly braces `{variable_name}`.
+You can define variables in a `variables.json` file in the `.demo` folder. Once you created the `variables.json` file and added variables/constants to it, you can use these variables in your demo moves by using curly braces `{variable_name}`.
 
 ### Example variables file
 
@@ -74,7 +74,7 @@ You can define variables in a `variables.json` file in the `.demo` folder. Once 
   lang="json" 
   title={`.demo/variables.json`} />
 
-### Example usage in demo steps
+### Example usage in moves
 
 <Code code={`
 {

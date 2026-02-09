@@ -1,5 +1,5 @@
 import { parse as jsonParse } from 'jsonc-parser';
-import { env, UIKind, Uri, workspace, WorkspaceFolder } from 'vscode';
+import { env, UIKind, Uri, window, workspace, WorkspaceFolder } from 'vscode';
 import { General, StateKeys } from '../constants';
 import { Extension } from '../services/Extension';
 import { Logger } from '../services/Logger';
@@ -14,8 +14,11 @@ export const getVariables = async (
 
     if (ext.getSetting<boolean>(Config.api.enabled) && env.uiKind === UIKind.Web) {
       // otherwise clipboard is not readable in the browser
-      // if request is triggered from another window
-      window.focus();
+      // if request is triggered from another window - restore editor focus explicitly
+      const activeEditor = window.activeTextEditor;
+      if (activeEditor) {
+        await window.showTextDocument(activeEditor.document, activeEditor.viewColumn);
+      }
     }
     const clipboard = await env.clipboard.readText();
     // Set the default variables

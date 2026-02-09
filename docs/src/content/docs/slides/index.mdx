@@ -11,7 +11,7 @@ import slidesImg from "../../../assets/docs/slides.webp";
 import slideControlsImg from "../../../assets/docs/slide-controls-1.6.0.webp";
 import slidePreviewImg from "../../../assets/docs/slide-preview.webp";
 
-Demo Time is more than just a tool for live demos—it also lets you present slides seamlessly within your editor. With Markdown-based slides, you can deliver presentations without switching between different applications, ensuring a smooth transition between your slides and demos.
+Demo Time is more than just a tool for live demos, it also lets you present slides seamlessly within your editor. With Markdown-based slides, you can deliver presentations without switching between different applications, ensuring a smooth transition between your slides and demos.
 
 <Image class="mx-auto" src={slidesImg} alt="Slides in Demo Time" />
 
@@ -66,6 +66,7 @@ You can customize your slides using the following properties in the front matter
 - `layout` - Choose a layout for the slide.
 - `transition` - Set the transition effect for the slide.
 - `image` - Set a background image for the slide.
+- `video` - Set a video for the slide (works with video layout or custom layouts).
 - `customTheme` - Provide a custom CSS file for the slide.
 - `customLayout` - Specify a custom layout for the slide.
 - `autoAdvanceAfter` - Automatically advance to the next slide or demo after a specified number of seconds.
@@ -126,7 +127,7 @@ When you create a slide, you can preview it by running the `Demo Time: Open slid
 
 ## Presenting slides
 
-To incorporate slides into your demo workflow, add them as demo steps in your demo script or configuration files. This ensures you can control when and where your slides appear during the presentation.
+To incorporate slides into your workflow, add them as moves in your scene script or configuration files. This ensures you can control when and where your slides appear during the presentation.
 
 Use the `openSlide` action to open a slide in the slide view.
 
@@ -175,8 +176,8 @@ When presenting slides, you have the following control available:
 
 ### Middle section
 
-- **Previous step**: Triggers the previous demo step (only if the `demo-time.previousEnabled` setting is enabled or when using grouped slides).
-- **Next step**: Triggers the next demo step.
+- **Previous move**: Triggers the previous move (only if the `demo-time.previousEnabled` setting is enabled or when using grouped slides).
+- **Next move**: Triggers the next move.
 
 ### Right section
 

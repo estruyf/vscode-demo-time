@@ -1,4 +1,4 @@
-import { commands, window } from 'vscode';
+import { commands, window, workspace } from 'vscode';
 import { COMMAND } from '@demotime/common';
 import { AnalyticsService } from './AnalyticsService';
 import { AnalyticsStorage } from './AnalyticsStorage';
@@ -7,11 +7,11 @@ import { Extension } from '../Extension';
 import { Notifications } from '../Notifications';
 import { Logger } from '../Logger';
 import { Subscription } from '../../models';
-import { DemoRunner } from '../DemoRunner';
 import { DemoFileProvider } from '../DemoFileProvider';
 import { SponsorService } from '../SponsorService';
 import { AnalyticsDashboard } from './AnalyticsDashboard';
 import { formatSessionFilename } from '../../utils';
+import { DemoRunner } from '../DemoRunner';
 
 /**
  * Handles registration and execution of analytics-related commands.
@@ -70,8 +70,13 @@ export class AnalyticsCommands {
     // Ask if this is a dry run or live presentation
     const sessionType = await window.showQuickPick(
       [
-        { label: 'Dry Run / Practice', description: 'Record a practice session', isDryRun: true },
-        { label: 'Live Presentation', description: 'Record a live presentation', isDryRun: false },
+        { label: 'Dry Run / Practice', detail: 'Record a practice session', isDryRun: true },
+        { label: 'Live Presentation', detail: 'Record a live presentation', isDryRun: false },
+        {
+          label: '$(circle-slash) No analytics',
+          detail: 'Start presentation without recording your actions',
+          dontRecord: true,
+        },
       ],
       {
         title: 'Start Analytics Recording',
@@ -80,10 +85,20 @@ export class AnalyticsCommands {
     );
 
     if (!sessionType) {
+      AnalyticsService.setIsEnabled(false);
       return;
     }
 
-    // Get current demo file info
+    // If user chose to not record, disable analytics and return
+    if ((sessionType as any).dontRecord) {
+      AnalyticsService.setIsEnabled(false);
+      Notifications.info('Presentation started without analytics recording');
+      return;
+    } else {
+      AnalyticsService.setIsEnabled(true);
+    }
+
+    // Get current act file info
     const executingFile = await DemoRunner.getExecutedDemoFile();
     let demoFilePath = executingFile.filePath;
     let demoTitle = 'Untitled';
@@ -94,7 +109,7 @@ export class AnalyticsCommands {
         demoTitle = demoFiles[demoFilePath].title || 'Untitled';
       }
     } else {
-      // Try to get the first demo file
+      // Try to get the first act file
       const demoFiles = await DemoFileProvider.getFiles();
       if (demoFiles) {
         const firstPath = Object.keys(demoFiles)[0];
@@ -106,12 +121,9 @@ export class AnalyticsCommands {
     }
 
     if (!demoFilePath) {
-      Notifications.error('No demo file found. Please initialize a demo first.');
+      Notifications.error('No act file found. Please initialize a demo first.');
       return;
     }
-
-    // Enable analytics config
-    AnalyticsService.setConfig({ enabled: true });
 
     // Start the session with presentation title
     const sessionId = await AnalyticsService.startSession(demoTitle, sessionType.isDryRun);
@@ -148,9 +160,7 @@ export class AnalyticsCommands {
         // Show a quick summary
         const textSummary = AnalyticsReporter.generateTextSummary(summary);
         await window.showTextDocument(
-          await (
-            await import('vscode')
-          ).workspace.openTextDocument({
+          await workspace.openTextDocument({
             content: textSummary,
             language: 'markdown',
           }),
@@ -258,9 +268,7 @@ export class AnalyticsCommands {
     }
 
     await window.showTextDocument(
-      await (
-        await import('vscode')
-      ).workspace.openTextDocument({
+      await workspace.openTextDocument({
         content,
         language,
       }),

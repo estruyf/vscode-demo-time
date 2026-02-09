@@ -2,7 +2,10 @@
   <img alt="Demo Time" src="./assets/logo/demotime.png">
 </h1>
 
-<h2 align="center">Demo Time empowers you to script flawless coding demonstrations and present slides seamlessly within Visual Studio Code. Eliminate typos and missteps, ensuring engaging and stress-free presentations.</h2>
+<h2 align="center">Demo Time empowers you to script flawless coding
+demonstrations and present slides seamlessly within Visual Studio Code.
+Eliminate typos and missteps, ensuring engaging and stress-free
+presentations.</h2>
 
 <p align="center">
   <a href="https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-demo-time" title="Check it out on the Visual Studio Marketplace">
@@ -28,44 +31,64 @@
 
 ## Features
 
-- **Scripted Demos**: Automate your coding demonstrations to maintain a perfect flow.​
-- **Code Highlighting**: Emphasize specific code segments to draw audience attention.​
-- **Integrated Slides**: Present slides directly within VS Code for a cohesive experience.​
-- **Customizable Actions**: Execute various VS Code commands and tasks as part of your demo.
+- **Scripted Demos**: Automate your coding demonstrations to maintain a perfect
+  flow.​
+- **Code Highlighting**: Emphasize specific code segments to draw audience
+  attention.​
+- **Integrated Slides**: Present slides directly within VS Code for a cohesive
+  experience.​
+- **Customizable Actions**: Execute various VS Code commands and tasks as part
+  of your demo.
 - **PowerPoint Integration**: Seamlessly move from slides to code using the
   [PowerPoint integration](https://demotime.show/integrations/powerpoint/).
 
 ## Getting Started
 
 1. **Installation**: Install the extension.​
-2. **Initialization**: After installation, initialize the extension in your project by opening the
-   Explorer panel in VS Code. Locate the **Demo Time** view and click on the "**Initialize**"
-   button. This action creates a `.demo` folder in your workspace containing either a `demo.json` or
-   `demo.yaml` file, depending on your chosen format.​
-3. **Creating Demos**: Populate the demo file with your actions, defining each step and action as
-   required.​ More information about the available actions can be found in the
-   [supported actions](https://demotime.show/actions/) documentation section.
+2. **Initialization**: After installation, initialize the extension in your
+   project by opening the Explorer panel in VS Code. Locate the **Demo Time**
+   view and click on the "**Initialize**" button. This action creates a `.demo`
+   folder in your workspace containing either a `demo.json` or `demo.yaml` file,
+   depending on your chosen format.​
+3. **Creating Demos**: Populate the act file with your actions, defining each
+   step and action as required.​ More information about the available actions
+   can be found in the [supported actions](https://demotime.show/actions/)
+   documentation section.
 
 ## Documentation
 
-For detailed instructions, advanced configurations, and best practices, please refer to the
-comprehensive documentation available at [https://demotime.show](https://demotime.show). This
-resource offers in-depth guides and examples to help you maximize the extension's capabilities.
+For detailed instructions, advanced configurations, and best practices, please
+refer to the comprehensive documentation available at
+[https://demotime.show](https://demotime.show). This resource offers in-depth
+guides and examples to help you maximize the extension's capabilities.
 
-## Example demo file
+## Demo Time Terminology
 
-Here is an example demo:
+Demo Time follows a theatrical hierarchy to keep your demos organized and easy
+to follow: Play → Act → Scene → Move.
+
+- **Play**: Your full demo project (`.demo` folder) containing all acts and
+  assets.
+- **Act**: A single demo file (`*.yml` or `*.json`) focused on one topic.
+- **Scene**: A section within an act that groups related moves.
+- **Moves**: The individual steps in a scene that run in order (for example:
+  create a file, open it, highlight a block).
+
+## Example act file
+
+Here is an example act file in JSON format:
 
 ```json
 {
   "$schema": "https://demotime.show/demo-time.schema.json",
   "title": "Sample demo",
   "description": "This is a sample demo configuration to show the capabilities of the extension.",
-  "demos": [
+  "version": 3,
+  "scenes": [
     {
       "title": "Step 1",
       "description": "This is step 1",
-      "steps": [
+      "moves": [
         {
           "action": "create",
           "path": "sample.json",
@@ -85,7 +108,7 @@ Here is an example demo:
     {
       "title": "Step 2",
       "description": "This is step 2",
-      "steps": [
+      "moves": [
         {
           "action": "snippet",
           "contentPath": "./snippets/insert_and_highlight.json",
@@ -102,11 +125,15 @@ Here is an example demo:
 }
 ```
 
-You can also explore a comprehensive example in the following GitHub Repositories:
+You can also explore a comprehensive example in the following GitHub
+Repositories:
 
 - [Introduction presentation about Demo Time](https://github.com/estruyf/demo-time-presentation)
+- [Demo Time - Demo Presentation](https://github.com/marcduiker/demotime-demotime)
 - [presentation-github-actions](https://github.com/estruyf/presentation-github-actions)
 - [presentation-m365-playwright-github-actions](https://github.com/estruyf/presentation-m365-playwright-github-actions)
+- [presentation-web-quality-playwright](https://github.com/estruyf/presentation-web-quality-playwright)
+- [presentation-testing-smarter-ai-playwright](https://github.com/estruyf/presentation-testing-smarter-ai-playwright)
 
 ## Testing
 
@@ -117,18 +144,21 @@ npm run lint
 npm test
 ```
 
-Tests use [Jest](https://jestjs.io/) with built-in coverage. New tests are located in the `tests/`
-directory.
+Tests use [Jest](https://jestjs.io/) with built-in coverage. New tests are
+located in the `tests/` directory.
 
 ## Support
 
-If you enjoy my work and find them useful, consider sponsor me and the ecosystem to help Open Source
-sustainable. Thank you!
+If you enjoy my work and find them useful, consider sponsor me and the ecosystem
+to help Open Source sustainable. Thank you!
+
+You can also show your support by getting
+[Demo Time merch](https://demo-time.myspreadshop.be/)!
 
 ## License
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](./LICENSE) file for
-details.
+This project is licensed under the Apache License 2.0 - see the
+[LICENSE](./LICENSE) file for details.
 
 <p align="center">
   <a href="https://github.com/sponsors/estruyf" title="Sponsor Elio Struyf" target="_blank">

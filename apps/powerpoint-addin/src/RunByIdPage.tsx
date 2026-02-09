@@ -31,7 +31,7 @@ export const RunByIdPage: React.FC = () => {
           </a>
         </>
       ) : (
-        <p style={{ color: "#fc5130" }}>No demo id provided in the URL.</p>
+        <p style={{ color: "#fc5130" }}>No scene id provided in the URL.</p>
       )}
       <style>{`
         .centered-container {

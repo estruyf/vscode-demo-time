@@ -2,7 +2,7 @@
   "name": "vscode-demo-time",
   "displayName": "Demo Time — Presentations & Demos in VS Code",
   "description": "Script your coding demos and presentations to perfection and present slides — all within VS Code! No typos, no missteps—just flawless, stress-free presentations. Seamlessly execute each demo step and advance through slides like a pro, keeping your audience engaged without ever leaving your coding environment.",
-  "version": "1.12.0",
+  "version": "2.0.0",
   "publisher": "eliostruyf",
   "keywords": [
     "demo",
@@ -168,6 +168,27 @@
           "default": false,
           "description": "Enable the previous command when in presentation mode"
         },
+        "demoTime.presentationViewToggles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "statusBar",
+              "tabs",
+              "activityBar",
+              "sideBar",
+              "panel"
+            ]
+          },
+          "default": [
+            "statusBar",
+            "tabs",
+            "activityBar",
+            "sideBar",
+            "panel"
+          ],
+          "description": "Choose which UI areas to hide when toggling presentation view (status bar, tabs, activity bar, side bar, or panel)."
+        },
         "demoTime.highlightBorderColor": {
           "type": "string",
           "default": "rgba(255,0,0,0.5)",
@@ -292,7 +313,7 @@
             "yaml"
           ],
           "default": "json",
-          "description": "Default file type for new demo files. Choose between JSON and YAML formats."
+          "description": "Default file type for new act files. Choose between JSON and YAML formats."
         },
         "demoTime.debug": {
           "type": "boolean",
@@ -302,7 +323,7 @@
         "demoTime.openInConfigEditor": {
           "type": "boolean",
           "default": true,
-          "description": "Open the config file in the custom config editor."
+          "description": "Open the config file in the custom act editor."
         },
         "demoTime.remote.showScreenshot": {
           "type": "boolean",
@@ -316,33 +337,8 @@
         },
         "demoTime.analytics.enabled": {
           "type": "boolean",
-          "default": false,
+          "default": true,
           "description": "Enable presentation analytics to track timing, navigation, and performance during demos."
-        },
-        "demoTime.analytics.narrativeThreshold": {
-          "type": "number",
-          "default": 3000,
-          "description": "Minimum narrative/speaking duration in milliseconds to detect and track (default: 3000ms)."
-        },
-        "demoTime.analytics.trackCursorMovements": {
-          "type": "boolean",
-          "default": false,
-          "description": "Track cursor movements during the presentation. Can be verbose and impact performance (default: false)."
-        },
-        "demoTime.analytics.trackScrollEvents": {
-          "type": "boolean",
-          "default": true,
-          "description": "Track scroll events in files during the presentation (default: true)."
-        },
-        "demoTime.analytics.trackTerminalCommands": {
-          "type": "boolean",
-          "default": true,
-          "description": "Track terminal commands executed during the presentation (default: true)."
-        },
-        "demoTime.analytics.autoSaveInterval": {
-          "type": "number",
-          "default": 30000,
-          "description": "Auto-save interval for analytics data in milliseconds. Set to 0 to only save at session end (default: 30000ms)."
         }
       }
     },
@@ -355,7 +351,7 @@
       },
       {
         "command": "demo-time.addStepToDemo",
-        "title": "Add new action to demo step",
+        "title": "Add new move to scene",
         "category": "Demo Time",
         "icon": "$(add)"
       },
@@ -372,17 +368,17 @@
       },
       {
         "command": "demo-time.runStep",
-        "title": "Start a demo",
+        "title": "Start a scene",
         "category": "Demo Time"
       },
       {
         "command": "demo-time.runById",
-        "title": "Run by ID",
+        "title": "Run scene by ID",
         "category": "Demo Time"
       },
       {
         "command": "demo-time.addToStep",
-        "title": "Add demo step",
+        "title": "Add move",
         "category": "Demo Time",
         "icon": "$(add)"
       },
@@ -393,13 +389,13 @@
       },
       {
         "command": "demo-time.openDemoFile",
-        "title": "Open demo file",
+        "title": "Open act file",
         "category": "Demo Time",
         "icon": "$(eye)"
       },
       {
         "command": "demo-time.viewStep",
-        "title": "View demo step in editor",
+        "title": "View scene in editor",
         "category": "Demo Time",
         "icon": "$(eye)"
       },
@@ -426,8 +422,8 @@
         "category": "Demo Time"
       },
       {
-        "command": "demoTime.fixDuplicateIds",
-        "title": "Fix duplicate demo IDs",
+        "command": "demo-time.fixDuplicateIds",
+        "title": "Fix duplicate scene IDs",
         "category": "Demo Time",
         "icon": "$(warning)"
       },
@@ -504,7 +500,7 @@
       },
       {
         "command": "demo-time.createDemoFile",
-        "title": "Create a new demo file",
+        "title": "Create a new act file",
         "category": "Demo Time"
       },
       {
@@ -550,7 +546,7 @@
       },
       {
         "command": "demo-time.openConfigEditor",
-        "title": "Open config editor",
+        "title": "Open act editor",
         "category": "Demo Time",
         "icon": "$(settings-gear)"
       },
@@ -568,6 +564,12 @@
         "command": "demo-time.showOverview",
         "title": "Overview",
         "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.showProFeatures",
+        "title": "Pro Features",
+        "category": "Demo Time",
+        "icon": "$(star)"
       },
       {
         "command": "demo-time.continueDemo",
@@ -745,6 +747,10 @@
           "when": "view == demo-time-scenes"
         },
         {
+          "command": "demo-time.showProFeatures",
+          "when": "view == demo-time-scenes"
+        },
+        {
           "command": "demo-time.openSupportTheProject",
           "when": "view == demo-time-scenes"
         }
@@ -847,7 +853,7 @@
       "demo-time-container": [
         {
           "id": "demo-time-scenes",
-          "name": "Scenes",
+          "name": "Acts & Scenes",
           "contextualTitle": "Demo Time",
           "icon": "$(dt-play)"
         },
@@ -899,7 +905,7 @@
     "viewsWelcome": [
       {
         "view": "demo-time-scenes",
-        "contents": "Welcome to Demo Time! Start by creating a demo file in JSON or YAML format, or click the initialize button.\n\n[Initialize](command:demo-time.initialize)\n\n[Learn More](https://demotime.show)"
+        "contents": "Welcome to Demo Time! Start by creating an act file in JSON or YAML format, or click the initialize button.\n\n[Initialize](command:demo-time.initialize)\n\n[Learn More](https://demotime.show)"
       },
       {
         "view": "demo-time-resources",
@@ -925,8 +931,8 @@
           },
           {
             "id": "demo-time.welcome.createDemo",
-            "title": "Create a Demo File",
-            "description": "Use the [Demo Time: Create a new demo file](command:demo-time.createDemoFile) command to create a new demo file.",
+            "title": "Create an act file",
+            "description": "Use the [Demo Time: Create a new act file](command:demo-time.createDemoFile) command to create a new act file.",
             "media": {
               "markdown": "walkthrough/create-demo.md"
             }
@@ -946,7 +952,7 @@
     "customEditors": [
       {
         "viewType": "demoTime.configEditor",
-        "displayName": "Demo Time Config Editor",
+        "displayName": "Demo Time Act Editor",
         "selector": [
           {
             "filenamePattern": "**/.demo/*.json"

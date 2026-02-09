@@ -239,6 +239,13 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  if (action === Action.FocusTerminal) {
+    return {
+      action: Action.FocusTerminal,
+      terminalId: '',
+    };
+  }
+
   if (action === Action.OpenTerminal) {
     return {
       action: Action.OpenTerminal,
@@ -252,6 +259,13 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
       id: '',
       path: '',
       command: 'node',
+    };
+  }
+
+  if (action === Action.SendKeybinding) {
+    return {
+      action: Action.SendKeybinding,
+      keybinding: 'ctrl+shift+p',
     };
   }
 
@@ -335,6 +349,18 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
   if (action === Action.ZoomReset) {
     return {
       action: Action.ZoomReset,
+    };
+  }
+
+  if (action === Action.EnableZenMode) {
+    return {
+      action: Action.EnableZenMode,
+    };
+  }
+
+  if (action === Action.DisableZenMode) {
+    return {
+      action: Action.DisableZenMode,
     };
   }
 
@@ -527,6 +553,42 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  if (action === Action.MuteVolume) {
+    return {
+      action: Action.MuteVolume,
+    };
+  }
+
+  if (action === Action.UnmuteVolume) {
+    return {
+      action: Action.UnmuteVolume,
+    };
+  }
+
+  if (action === Action.EnableCaffeine) {
+    return {
+      action: Action.EnableCaffeine,
+    };
+  }
+
+  if (action === Action.DisableCaffeine) {
+    return {
+      action: Action.DisableCaffeine,
+    };
+  }
+
+  if (action === Action.HideDock) {
+    return {
+      action: Action.HideDock,
+    };
+  }
+
+  if (action === Action.ShowDock) {
+    return {
+      action: Action.ShowDock,
+    };
+  }
+
   // EngageTime actions
   if (action === Action.StartEngageTimeSession) {
     return {
@@ -558,6 +620,8 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     return {
       action: Action.ShowEngageTimePoll,
       pollId: '',
+      startOnOpen: false,
+      closeOnOpen: false,
     };
   }
 

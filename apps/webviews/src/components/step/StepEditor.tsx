@@ -17,6 +17,7 @@ import { InsertTypingModePicker } from '../ui/InsertTypingModePicker';
 import { SettingField } from './SettingField';
 import { StateField } from './StateField';
 import { NoteBox } from '../ui/NoteBox';
+import { KeybindingPicker } from './KeybindingPicker';
 
 interface StepEditorProps {
   step: Step;
@@ -230,6 +231,18 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
     handleChange('state', { key: k, value: v ?? '' });
   };
 
+  // Keep EngageTime poll toggles mutually exclusive in a single update
+  const handleExclusivePollToggle = (field: 'startOnOpen' | 'closeOnOpen', checked: boolean) => {
+    const opposite = field === 'startOnOpen' ? 'closeOnOpen' : 'startOnOpen';
+    const updatedStep: Step = { ...step, [field]: checked } as Step;
+
+    if (checked) {
+      updatedStep[opposite] = false;
+    }
+
+    onChange(updatedStep);
+  };
+
   // Handle position field changes
   const handlePositionChange = (field: 'startLine' | 'startChar' | 'endLine' | 'endChar', value: string) => {
     const currentPos = parsePosition(step.position);
@@ -252,14 +265,20 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       label = "Zoom Level (times to use VS Code zoom)";
     } else if (field === 'insertTypingSpeed') {
       label = "Insert Typing Speed (ms)";
+    } else if (field === 'highlightBlur') {
+      label = "Highlight Blur (0-10px)";
+    } else if (field === 'highlightOpacity') {
+      label = "Highlight Opacity (0-1)";
     } else if (step.action === Action.RunDemoById) {
-      label = "Demo ID";
+      label = "Scene ID";
     } else if (step.action === Action.ExecuteScript && field === 'id') {
       label = "Script ID";
     } else if (field === 'openInVSCode') {
       label = 'Open in VS Code';
     } else if (field === 'startOnOpen') {
       label = 'Start the poll when opening it';
+    } else if (field === 'closeOnOpen') {
+      label = 'Close the poll when opening it';
     }
 
     switch (field) {
@@ -418,7 +437,24 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
               <input
                 type="checkbox"
                 checked={typeof step[field] === 'undefined' ? false : step[field]}
-                onChange={(e) => handleChange(field, e.target.checked)}
+                onChange={(e) => handleExclusivePollToggle('startOnOpen', e.target.checked)}
+                className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                {label} {isRequired && <span className="text-red-500">*</span>}
+              </span>
+            </label>
+          </div>
+        );
+
+      case 'closeOnOpen':
+        return (
+          <div key={field}>
+            <label className="h-full flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={typeof step[field] === 'undefined' ? false : step[field]}
+                onChange={(e) => handleExclusivePollToggle('closeOnOpen', e.target.checked)}
                 className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500"
               />
               <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
@@ -445,6 +481,52 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                 }`}
               placeholder={`Enter ${label.toLowerCase()}`}
               min={0}
+            />
+            {fieldErrors.map((error, index) => (
+              <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
+            ))}
+          </div>
+        );
+
+      case 'highlightBlur':
+        return (
+          <div key={field}>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              {label} {isRequired && <span className="text-red-500">*</span>}
+            </label>
+            <input
+              type="number"
+              value={typeof step[field] !== 'undefined' ? step[field] : ''}
+              onChange={(e) => handleChange(field, e.target.value ? parseFloat(e.target.value) : undefined)}
+              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
+                }`}
+              placeholder="Enter blur value (0-10)"
+              min={0}
+              max={10}
+              step={1}
+            />
+            {fieldErrors.map((error, index) => (
+              <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
+            ))}
+          </div>
+        );
+
+      case 'highlightOpacity':
+        return (
+          <div key={field}>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              {label} {isRequired && <span className="text-red-500">*</span>}
+            </label>
+            <input
+              type="number"
+              value={typeof step[field] !== 'undefined' ? step[field] : ''}
+              onChange={(e) => handleChange(field, e.target.value ? parseFloat(e.target.value) : undefined)}
+              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
+                }`}
+              placeholder="Enter opacity value (0-1)"
+              min={0}
+              max={1}
+              step={0.05}
             />
             {fieldErrors.map((error, index) => (
               <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
@@ -493,6 +575,18 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
               onChange={handleStateChange}
               fieldErrors={fieldErrors}
               isRequired={isRequired}
+            />
+          </div>
+        );
+
+      case 'keybinding':
+        return (
+          <div key={field}>
+            <KeybindingPicker
+              value={step.keybinding || ''}
+              onChange={(value) => handleChange('keybinding', value || undefined)}
+              required={isRequired}
+              error={fieldErrors.length > 0 ? fieldErrors[0].message : undefined}
             />
           </div>
         );
@@ -787,7 +881,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
   return (
     <div className="space-y-4 h-full">
       <div className="flex items-center justify-between bg-white dark:bg-gray-800 z-10 pb-2">
-        <h4 className="text-lg font-semibold text-gray-900 dark:text-white">Step Configuration</h4>
+        <h4 className="text-lg font-semibold text-gray-900 dark:text-white">Move Configuration</h4>
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-700 dark:text-gray-300">{step.disabled ? 'Disabled' : 'Enabled'}</span>
           <Switch

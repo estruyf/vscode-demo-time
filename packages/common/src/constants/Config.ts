@@ -9,6 +9,7 @@ export const Config = {
   },
   presentationMode: {
     previousEnabled: 'previousEnabled',
+    viewToggles: 'presentationViewToggles',
   },
   zoom: 'zoomLevel',
   highlight: {
@@ -56,10 +57,5 @@ export const Config = {
   },
   analytics: {
     enabled: 'analytics.enabled',
-    narrativeThreshold: 'analytics.narrativeThreshold',
-    trackCursorMovements: 'analytics.trackCursorMovements',
-    trackScrollEvents: 'analytics.trackScrollEvents',
-    trackTerminalCommands: 'analytics.trackTerminalCommands',
-    autoSaveInterval: 'analytics.autoSaveInterval',
   },
 };

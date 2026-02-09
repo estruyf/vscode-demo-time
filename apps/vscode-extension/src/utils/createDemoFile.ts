@@ -15,17 +15,17 @@ export const createDemoFile = async () => {
 
   const options = [
     {
-      label: 'Create empty demo file',
-      detail: 'Blank demo file',
+      label: 'Create empty act file',
+      detail: 'Blank act file',
     },
     ...Templates.map((sample) => ({
       label: sample.id,
-      detail: sample.description || 'Use this sample to create a demo file',
+      detail: sample.description || 'Use this sample to create an act file',
     })),
   ];
 
   const option = await window.showQuickPick(options, {
-    title: 'Select how to create the demo file',
+    title: 'Select how to create the act file',
     placeHolder: 'Choose an option',
   });
 
@@ -33,7 +33,7 @@ export const createDemoFile = async () => {
     return;
   }
 
-  if (option.label !== 'Create empty demo file') {
+  if (option.label !== 'Create empty act file') {
     const sampleName = option.label;
     const sample = Templates.find((s) => s.id === sampleName);
     if (!sample) {
@@ -47,7 +47,7 @@ export const createDemoFile = async () => {
 
   const demoName = await window.showInputBox({
     title: Config.title,
-    placeHolder: 'Enter the name of the demo file',
+    placeHolder: 'Enter the name of the act file',
     validateInput: async (value) => {
       value = sanitizeFileName(value);
       if (!value) {
@@ -66,7 +66,7 @@ export const createDemoFile = async () => {
 
       const newFilePath = Uri.joinPath(wsFolder.uri, General.demoFolder, value);
       if (await fileExists(newFilePath)) {
-        return `Demo file with name "${value}" already exists`;
+        return `Act file with name "${value}" already exists`;
       }
       return null;
     },

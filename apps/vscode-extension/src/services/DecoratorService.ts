@@ -68,12 +68,22 @@ export class DecoratorService {
     zoomLevel?: number,
     isWholeLine?: boolean,
     preserveZoom = false,
+    stepBlur?: number,
+    stepOpacity?: number,
   ) {
     const zoomEnabled = Extension.getInstance().getSetting<boolean | number>(Config.highlight.zoom);
 
     // Remove the previous highlight
     // When preserveZoom is true, don't reset the zoom (resetZoom = false)
     DecoratorService.unselect(textEditor, !preserveZoom);
+
+    // Create blur decorator with step-specific or global blur/opacity values
+    const blur = DecoratorService.getBlurValue(stepBlur);
+    const opacity = DecoratorService.getOpacityValue(stepOpacity);
+    if (DecoratorService.blurDecorator) {
+      DecoratorService.blurDecorator.dispose();
+    }
+    DecoratorService.blurDecorator = DecoratorService.createBlurDecorator(blur, opacity);
 
     // Reset the decorators
     DecoratorService.setLineDecorator();
@@ -85,7 +95,7 @@ export class DecoratorService {
     const hasZoomConfig = typeof zoomLevel !== 'undefined' || zoomEnabled;
     const isPreservingZoomAndAlreadyZoomed = preserveZoom && DecoratorService.isZoomed;
     const shouldApplyZoom = hasZoomConfig && !isPreservingZoomAndAlreadyZoomed;
-    
+
     if (shouldApplyZoom) {
       DecoratorService.isZoomed = true;
       let level = zoomEnabled;
@@ -199,7 +209,7 @@ export class DecoratorService {
     textEditor.setDecorations(DecoratorService.startBlockDecorator, []);
     textEditor.setDecorations(DecoratorService.betweenBlockDecorator, []);
     textEditor.setDecorations(DecoratorService.endBlockDecorator, []);
-    
+
     // Conditionally skip zoom reset when resetZoom is false
     if (resetZoom && DecoratorService.isZoomed) {
       DecoratorService.isZoomed = false;
@@ -209,6 +219,29 @@ export class DecoratorService {
     if (SelectionService.getSelection()) {
       SelectionService.unselect(textEditor);
     }
+  }
+
+  private static createBlurDecorator(blur: number, opacity: number): TextEditorDecorationType {
+    const opacityAndBlur = `${opacity}; filter: blur(${blur}px);`;
+    return window.createTextEditorDecorationType({
+      opacity: opacityAndBlur,
+    });
+  }
+
+  private static getBlurValue(stepBlur?: number): number {
+    if (typeof stepBlur === 'number') {
+      return Math.max(0, Math.min(10, stepBlur));
+    }
+    let blur = Extension.getInstance().getSetting<number>(Config.highlight.blur) || 0;
+    return Math.max(0, Math.min(10, blur));
+  }
+
+  private static getOpacityValue(stepOpacity?: number): number {
+    if (typeof stepOpacity === 'number') {
+      return Math.max(0, Math.min(1, stepOpacity));
+    }
+    let opacity = Extension.getInstance().getSetting<number>(Config.highlight.opacity) || 1;
+    return Math.max(0, Math.min(1, opacity));
   }
 
   private static getGenericStyles(): DecorationRenderOptions {

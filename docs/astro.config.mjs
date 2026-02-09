@@ -8,6 +8,9 @@ import react from '@astrojs/react';
 export default defineConfig({
   site: 'https://demotime.show',
   trailingSlash: 'ignore',
+  redirects: {
+    '/adding-demos': '/adding-moves'
+  },
   integrations: [
     starlight({
       logo: {
@@ -77,7 +80,7 @@ export default defineConfig({
           label: 'It starts here',
           items: [
             { label: 'Getting started', slug: 'getting-started' },
-            { label: 'Adding demos', slug: 'adding-demos' },
+            { label: 'Adding moves', slug: 'adding-moves' },
             { label: 'Start presenting', slug: 'presentation-mode' },
           ],
         },
@@ -142,6 +145,7 @@ export default defineConfig({
                 { label: 'Unnamed theme', slug: 'slides/themes/unnamed' },
                 { label: 'Quantum theme', slug: 'slides/themes/quantum' },
                 { label: 'Frost theme', slug: 'slides/themes/frost' },
+                { label: 'Pixels theme', slug: 'slides/themes/pixels' },
                 { label: 'Custom theme', slug: 'slides/themes/custom' },
               ],
             },
@@ -175,6 +179,7 @@ export default defineConfig({
           label: 'References',
           collapsed: true,
           items: [
+            { label: 'Terminology', slug: 'references/terminology' },
             { label: 'Commands', slug: 'references/commands' },
             { label: 'Settings', slug: 'references/settings' },
             { label: 'API', slug: 'references/api' },

@@ -1,13 +1,13 @@
 ---
 title: Interaction actions
-description: Perform interaction actions in your demos like copying to clipboard, pasting content, typing text, and pressing keys.
+description: Perform interaction actions in your scenes like copying to clipboard, pasting content, typing text, and pressing keys.
 lastmod: 2025-07-04T15:03:54.800Z
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 import GitHubFileOpener from '../../../components/GitHubFileOpener.astro';
 
-Interaction actions allow you to simulate user interactions in your demos. You can copy content to clipboard, paste from clipboard, type text, and press keys to create realistic demo scenarios.
+Interaction actions allow you to simulate user interactions in your scenes. You can copy content to clipboard, paste from clipboard, type text, and press keys to create realistic demo scenarios.
 
 <Aside type="note" title='Samples'>
   You can find interaction actions samples on GitHub: 
@@ -294,6 +294,68 @@ insertTypingSpeed: 250
   timeout: 1000
 - action: typeText
   content: welcome
+```
+
+</TabItem>
+</Tabs>
+
+## Send a keyboard shortcut
+
+Trigger a keyboard shortcut (for example `ctrl+shift+p` or `cmd+.`) at the OS level. Pair this with `focusTerminal` when you need to target the integrated terminal.
+
+<Aside type="caution" title="macOS Security Requirement">
+  On macOS, you need to enable Security & Privacy accessibility settings for Visual Studio Code to allow it to perform key presses. The first time you use this action, you'll see a system message prompting you to grant these permissions. Go to System Preferences > Security & Privacy > Privacy > Accessibility and ensure Visual Studio Code is checked.
+</Aside>
+
+<Aside type="caution" title="Linux Requirement">
+  On Linux, you need to have <code>xdotool</code> installed to allow Visual Studio Code to perform key presses. Install it using your package manager (for example, <code>sudo apt install xdotool</code> on Ubuntu). Without <code>xdotool</code>, key press actions will not work.
+</Aside>
+
+<Tabs syncKey="send-keybinding">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "sendKeybinding",
+  "keybinding": "ctrl+shift+p"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: sendKeybinding
+keybinding: ctrl+shift+p
+```
+
+</TabItem>
+</Tabs>
+
+### Properties
+
+- **keybinding**: The keyboard shortcut to send. Use `+` between modifiers and the key (for example: `ctrl+c`, `cmd+.`).
+
+### Examples
+
+#### Open the Command Palette
+
+<Tabs syncKey="send-keybinding-example">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "sendKeybinding",
+  "keybinding": "ctrl+shift+p"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: sendKeybinding
+keybinding: ctrl+shift+p
 ```
 
 </TabItem>

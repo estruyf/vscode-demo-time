@@ -39,6 +39,29 @@ terminalId: <terminal id (optional)>
 </TabItem>
 </Tabs>
 
+## Focus the terminal view
+
+Focus the terminal view in the editor.
+
+<Tabs syncKey="focus-terminal">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "focusTerminal",
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: focusTerminal
+```
+
+</TabItem>
+</Tabs>
+
 ## Execute a terminal command
 
 Execute a terminal command in the terminal.
@@ -185,6 +208,37 @@ terminalId: demo-terminal
 </TabItem>
 </Tabs>
 
+## Send a keyboard shortcut to the terminal
+
+Use the `sendKeybinding` action for keyboard shortcuts. If you want the shortcut to land in the terminal, focus the terminal first and then send the keybinding.
+
+<Tabs syncKey="terminal-keybinding-example">
+<TabItem label="JSON">
+
+```json
+[
+  {
+    "action": "focusTerminal"
+  },
+  {
+    "action": "sendKeybinding",
+    "keybinding": "ctrl+c"
+  }
+]
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+- action: focusTerminal
+- action: sendKeybinding
+  keybinding: ctrl+c
+```
+
+</TabItem>
+</Tabs>
+
 ## Execute a script in the background
 
 Execute a script in the background of which you can use the output in the next steps.
@@ -288,7 +342,7 @@ echo "First: $first_arg, Second: $second_arg"
 {
   "title": "Script with arguments example",
   "description": "Passing arguments to a script",
-  "steps": [
+  "moves": [
     {
       "action": "executeScript",
       "id": "greeting",
@@ -311,7 +365,7 @@ echo "First: $first_arg, Second: $second_arg"
 ```yaml title="demo.yaml"
 title: Script with arguments example
 description: Passing arguments to a script
-steps:
+moves:
   - action: executeScript
     id: greeting
     path: greet.mjs
@@ -343,7 +397,7 @@ This will execute: `node greet.mjs "Alice" "25"` and output: `Hello Alice, you a
 {
     "title": "Script example",
     "description": "",
-    "steps": [
+    "moves": [
         {
             "action": "executeScript",
             "id": "firstName",
@@ -369,7 +423,7 @@ This will execute: `node greet.mjs "Alice" "25"` and output: `Hello Alice, you a
 ```yaml title="demo.yaml"
 title: Script example
 description: ""
-steps:
+moves:
   - action: executeScript
     id: firstName
     path: writeFirstName.mjs

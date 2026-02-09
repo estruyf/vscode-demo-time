@@ -209,6 +209,11 @@ export const getActionOptions = (): QuickPickItem[] => {
   } as QuickPickItem);
 
   actions.push({
+    label: Action.FocusTerminal,
+    description: 'Focus (or open) a terminal',
+  } as QuickPickItem);
+
+  actions.push({
     label: Action.OpenTerminal,
     description: 'Open a new terminal',
   } as QuickPickItem);
@@ -221,6 +226,11 @@ export const getActionOptions = (): QuickPickItem[] => {
   actions.push({
     label: Action.CloseTerminal,
     description: 'Close the terminal',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.SendKeybinding,
+    description: 'Send a keyboard shortcut (global)',
   } as QuickPickItem);
 
   /**
@@ -289,6 +299,16 @@ export const getActionOptions = (): QuickPickItem[] => {
   actions.push({
     label: Action.ZoomReset,
     description: 'Reset the editor zoom level',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.EnableZenMode,
+    description: 'Enable Zen Mode',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.DisableZenMode,
+    description: 'Disable Zen Mode',
   } as QuickPickItem);
 
   /**
@@ -480,6 +500,36 @@ export const getActionOptions = (): QuickPickItem[] => {
   actions.push({
     label: Action.ShowMenubar,
     description: 'Show the menu bar on macOS',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.MuteVolume,
+    description: 'Mute the system volume on macOS',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.UnmuteVolume,
+    description: 'Unmute the system volume on macOS',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.EnableCaffeine,
+    description: 'Enable Caffeine (prevent system sleep) on macOS',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.DisableCaffeine,
+    description: 'Disable Caffeine (allow system sleep) on macOS',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.HideDock,
+    description: 'Hide the dock on macOS',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.ShowDock,
+    description: 'Show the dock on macOS',
   } as QuickPickItem);
 
   // EngageTime actions

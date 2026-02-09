@@ -60,6 +60,11 @@
 
 - [Start Presenting with Demo Time | Demo Time](https://demotime.show/presentation-mode/): Learn how to use Demo Time to present your demos like a pro.
 
+## Pro-features
+
+- [Pro Features | Demo Time](https://demotime.show/pro-features/): Unlock advanced features with Demo Time Pro through GitHub Sponsors
+- [Presentation Analytics | Demo Time](https://demotime.show/pro-features/analytics/): Track and analyze your presentation performance with detailed metrics and insights
+
 ## References
 
 - [API | Demo Time](https://demotime.show/references/api/): Demo Time provides an API to control the extension programmatically.

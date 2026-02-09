@@ -16,7 +16,7 @@ function mapDemos(demos: any[]): { id: string; title: string }[] {
 }
 
 /**
- * Retrieves formatted demo data including demo files, next demo, and current demo file.
+ * Retrieves formatted demo data including act files, next demo, and current act file.
  *
  * @returns An object containing demoFiles, nextDemo, and currentDemoFile, or null if no demos found.
  */

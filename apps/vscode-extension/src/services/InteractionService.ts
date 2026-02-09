@@ -254,6 +254,104 @@ export class InteractionService {
   }
 
   /**
+   * Sends an arbitrary keybinding (modifiers + key) at the OS level.
+   */
+  public static async pressKeybinding(keybinding?: string): Promise<void> {
+    const parsed = InteractionService.parseKeybinding(keybinding);
+    if (!parsed) {
+      Notifications.error('Invalid keybinding specified');
+      return;
+    }
+
+    // Resolve platform-specific modifiers for cmdOrCtrl token
+    if (parsed.modifiers.cmdOrCtrl) {
+      const osPlatform = platform();
+      if (osPlatform === 'darwin') {
+        // On macOS, cmdOrCtrl maps to Command (meta)
+        parsed.modifiers.meta = true;
+      } else {
+        // On Windows and Linux, cmdOrCtrl maps to Ctrl
+        parsed.modifiers.ctrl = true;
+      }
+      // Clear the temporary flag
+      parsed.modifiers.cmdOrCtrl = false;
+    }
+
+    const osPlatform = platform();
+    let command = '';
+
+    if (osPlatform === 'darwin') {
+      const using: string[] = [];
+      if (parsed.modifiers.meta) {
+        using.push('command down');
+      }
+      if (parsed.modifiers.ctrl) {
+        using.push('control down');
+      }
+      if (parsed.modifiers.alt) {
+        using.push('option down');
+      }
+      if (parsed.modifiers.shift || parsed.forceShift) {
+        using.push('shift down');
+      }
+
+      if (parsed.keyCode !== undefined) {
+        const suffix = using.length > 0 ? ` using {${using.join(', ')}}` : '';
+        command = `osascript -e 'tell application "System Events" to key code ${parsed.keyCode}${suffix}'`;
+      } else {
+        const escapedChar = InteractionService.escapeMacKeystroke(parsed.key);
+        if (!escapedChar) {
+          Notifications.error('Unsupported character in keybinding');
+          return;
+        }
+        const suffix = using.length > 0 ? ` using {${using.join(', ')}}` : '';
+        command = `osascript -e 'tell application "System Events" to keystroke "${escapedChar}"${suffix}'`;
+      }
+    } else if (osPlatform === 'win32') {
+      if (parsed.modifiers.meta) {
+        Notifications.error('Meta/Win modifier is not supported on Windows keybindings');
+        return;
+      }
+
+      const prefix = `${parsed.modifiers.ctrl ? '^' : ''}${parsed.modifiers.alt ? '%' : ''}${
+        parsed.modifiers.shift || parsed.forceShift ? '+' : ''
+      }`;
+      const sendKey = parsed.windowsKey;
+      if (!sendKey) {
+        Notifications.error('Unsupported keybinding on Windows');
+        return;
+      }
+
+      command = `powershell -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('${prefix}${sendKey}')"`;
+    } else {
+      const parts: string[] = [];
+      if (parsed.modifiers.meta) {
+        parts.push('super');
+      }
+      if (parsed.modifiers.ctrl) {
+        parts.push('ctrl');
+      }
+      if (parsed.modifiers.alt) {
+        parts.push('alt');
+      }
+      if (parsed.modifiers.shift || parsed.forceShift) {
+        parts.push('shift');
+      }
+
+      const linuxKey = parsed.linuxKey;
+      if (!linuxKey) {
+        Notifications.error('Unsupported keybinding on Linux');
+        return;
+      }
+
+      const combo = [...parts, linuxKey].join('+');
+      command = `xdotool key ${combo}`;
+    }
+
+    await ScriptExecutor.executeScriptAsync(command, homedir());
+  }
+
+  /**
    * Copies content to the clipboard, optionally reading from a file and replacing variables.
    * @param content The content to copy (optional if contentPath is provided)
    * @param contentPath Optional file path to read content from
@@ -304,5 +402,136 @@ export class InteractionService {
 
   public static async pasteFromClipboard(): Promise<void> {
     await commands.executeCommand('editor.action.clipboardPasteAction');
+  }
+
+  private static parseKeybinding(keybinding?: string): {
+    key: string;
+    keyCode?: number;
+    linuxKey?: string;
+    windowsKey?: string;
+    modifiers: { meta: boolean; ctrl: boolean; alt: boolean; shift: boolean; cmdOrCtrl?: boolean };
+    forceShift?: boolean;
+  } | null {
+    if (!keybinding) {
+      return null;
+    }
+
+    const trimmed = keybinding.replace(/\s+/g, '');
+    if (!trimmed) {
+      return null;
+    }
+
+    const parts = trimmed.split('+').filter(Boolean);
+    const modifiers = { meta: false, ctrl: false, alt: false, shift: false, cmdOrCtrl: false };
+    let keyToken: string | undefined;
+
+    for (const partRaw of parts) {
+      const part = partRaw.toLowerCase();
+      if (['cmd', 'command', 'meta', 'win', 'super'].includes(part)) {
+        modifiers.meta = true;
+        continue;
+      }
+      if (part === 'cmdorctrl') {
+        // Mark as cmdOrCtrl instead of setting ctrl directly
+        // This will be resolved to the proper platform-specific modifier in pressKeybinding
+        modifiers.cmdOrCtrl = true;
+        continue;
+      }
+      if (['ctrl', 'control'].includes(part)) {
+        modifiers.ctrl = true;
+        continue;
+      }
+      if (['alt', 'option'].includes(part)) {
+        modifiers.alt = true;
+        continue;
+      }
+      if (part === 'shift') {
+        modifiers.shift = true;
+        continue;
+      }
+
+      if (keyToken) {
+        return null;
+      }
+      keyToken = partRaw;
+    }
+
+    if (!keyToken) {
+      return null;
+    }
+
+    const namedKeys: Record<string, { keyCode: number; linuxKey: string; windowsKey: string }> = {
+      enter: { keyCode: 36, linuxKey: 'Return', windowsKey: '{ENTER}' },
+      return: { keyCode: 36, linuxKey: 'Return', windowsKey: '{ENTER}' },
+      tab: { keyCode: 48, linuxKey: 'Tab', windowsKey: '{TAB}' },
+      escape: { keyCode: 53, linuxKey: 'Escape', windowsKey: '{ESC}' },
+      esc: { keyCode: 53, linuxKey: 'Escape', windowsKey: '{ESC}' },
+      backspace: { keyCode: 51, linuxKey: 'BackSpace', windowsKey: '{BACKSPACE}' },
+      delete: { keyCode: 117, linuxKey: 'Delete', windowsKey: '{DELETE}' },
+      del: { keyCode: 117, linuxKey: 'Delete', windowsKey: '{DELETE}' },
+      left: { keyCode: 123, linuxKey: 'Left', windowsKey: '{LEFT}' },
+      right: { keyCode: 124, linuxKey: 'Right', windowsKey: '{RIGHT}' },
+      up: { keyCode: 126, linuxKey: 'Up', windowsKey: '{UP}' },
+      down: { keyCode: 125, linuxKey: 'Down', windowsKey: '{DOWN}' },
+      home: { keyCode: 115, linuxKey: 'Home', windowsKey: '{HOME}' },
+      end: { keyCode: 119, linuxKey: 'End', windowsKey: '{END}' },
+      pageup: { keyCode: 116, linuxKey: 'Page_Up', windowsKey: '{PGUP}' },
+      pagedown: { keyCode: 121, linuxKey: 'Page_Down', windowsKey: '{PGDN}' },
+    };
+
+    const normalizedKey = keyToken.toLowerCase();
+    if (namedKeys[normalizedKey]) {
+      const { keyCode, linuxKey, windowsKey } = namedKeys[normalizedKey];
+      return {
+        key: normalizedKey,
+        keyCode,
+        linuxKey,
+        windowsKey,
+        modifiers,
+      };
+    }
+
+    // Single printable character (exclude quotes/backslashes to avoid injection)
+    if (keyToken.length === 1 && /[ -~]/.test(keyToken) && !/["\\]/.test(keyToken)) {
+      const isUpper = keyToken !== keyToken.toLowerCase();
+      const char = keyToken;
+
+      // Characters that conflict with SendKeys syntax are not supported
+      if (/[+%^~(){}\[\]]/.test(char)) {
+        return null;
+      }
+
+      const windowsKey = char.length === 1 ? char : undefined;
+      return {
+        key: char,
+        linuxKey: char.toLowerCase(),
+        windowsKey,
+        modifiers,
+        forceShift: isUpper && !modifiers.shift,
+      };
+    }
+
+    if (normalizedKey === 'space') {
+      return {
+        key: ' ',
+        linuxKey: 'space',
+        windowsKey: ' ',
+        modifiers,
+      };
+    }
+
+    return null;
+  }
+
+  private static escapeMacKeystroke(char: string): string | null {
+    if (char.length !== 1) {
+      return null;
+    }
+
+    if (/["\\]/.test(char)) {
+      return null;
+    }
+
+    return char;
   }
 }

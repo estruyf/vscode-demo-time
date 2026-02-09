@@ -42,7 +42,7 @@ export const MainConfigForm: React.FC<MainConfigFormProps> = ({ config, onChange
           onChange={(e) => onChange({ title: e.target.value })}
           className={`w-full px-3 py-2 border rounded-md focus:outline-hidden  focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${titleError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
             }`}
-          placeholder="Enter demo title"
+          placeholder="Enter act title"
         />
         {titleError && (
           <p className="text-sm text-red-600 mt-1">{titleError.message}</p>
@@ -54,7 +54,7 @@ export const MainConfigForm: React.FC<MainConfigFormProps> = ({ config, onChange
           label="Description"
           value={config.description || ""}
           onChange={(value) => onChange({ description: value || undefined })}
-          placeholder="Enter demo description"
+          placeholder="Enter act description"
         />
       </div>
 
@@ -70,7 +70,7 @@ export const MainConfigForm: React.FC<MainConfigFormProps> = ({ config, onChange
           placeholder="Enter timer in minutes"
           min="1"
         />
-        <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">Optional. Use this to show a timer during the presentation for this demo section.</p>
+        <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">Optional. Use this to show a timer during the presentation for this act.</p>
       </div>
 
       <div>

@@ -8,8 +8,8 @@ export const writeFile = async (filePath: Uri, text: string, shouldWait = true) 
   await workspace.fs.writeFile(filePath, new TextEncoder().encode(text.replace(/\\n/g, '\n')));
   // Added some sleep to ensure the file is written before proceeding
   // This is a workaround for the issue where the file is not written immediately
-  // and the next operation fails.
+  // and the next operation fails. Increased delay when file watchers might be busy.
   if (shouldWait) {
-    await sleep(500);
+    await sleep(750); // Increased from 500ms to allow file watchers to settle
   }
 };

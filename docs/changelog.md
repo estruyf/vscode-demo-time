@@ -7,6 +7,11 @@
 - [#341](https://github.com/estruyf/vscode-demo-time/issues/341): Added the
   `args` property to the `executeScript` action to allow passing command-line
   arguments to the script being executed
+- [#343](https://github.com/estruyf/vscode-demo-time/issues/343): added the zoom
+  actions: `zoomIn`, `zoomOut`, and `zoomReset` to control the editor zoom level
+  during your demo
+- [#348](https://github.com/estruyf/vscode-demo-time/issues/348): Added the
+  analytics PRO feature
 
 ## [1.12.0] - 2025-12-16
 
@@ -34,7 +39,7 @@
 - [#319](https://github.com/estruyf/vscode-demo-time/issues/319): Added preview
   next slide support on the presenter view
 - [#321](https://github.com/estruyf/vscode-demo-time/issues/321): Fix the file
-  formatting when moving steps in the demo file
+  formatting when moving steps in the act file
 - [#326](https://github.com/estruyf/vscode-demo-time/issues/326): Move the Demo
   Time to the activity bar
 - [#330](https://github.com/estruyf/vscode-demo-time/issues/330): Added new
@@ -44,7 +49,7 @@
 ## [1.11.0] - 2025-11-04
 
 - [#262](https://github.com/estruyf/vscode-demo-time/issues/262): Added a recent
-  files dropdown to the path input component in the config editor
+  files dropdown to the path input component in the act editor
 - [#265](https://github.com/estruyf/vscode-demo-time/issues/265): Verify the
   demo IDs when in source mode so that there are no duplicate IDs across
   multiple files in the workspace
@@ -83,7 +88,7 @@
 - [#291](https://github.com/estruyf/vscode-demo-time/issues/291): Added VS Code
   Command Picker to select commands when using the `executeVSCodeCommand` action
 - [#292](https://github.com/estruyf/vscode-demo-time/issues/292): Dark mode
-  fixes for the config editor
+  fixes for the act editor
 - [#293](https://github.com/estruyf/vscode-demo-time/issues/293): Add the
   command name to step when using the `executeVSCodeCommand` action
 - [#294](https://github.com/estruyf/vscode-demo-time/issues/294): When adding a
@@ -103,7 +108,7 @@
   `pause` action to pause the demo and wait until the `Demo Time: Continue Demo`
   command is triggered
 - [#236](https://github.com/estruyf/vscode-demo-time/issues/236): Visual
-  improvements for the Config Editor
+  improvements for the Act Editor
 - [#239](https://github.com/estruyf/vscode-demo-time/issues/239): New overview
   dashboard which can be opened by using the `Demo Time: Overview` command
 - [#240](https://github.com/estruyf/vscode-demo-time/issues/240): Every GitHub
@@ -112,7 +117,7 @@
   content path in the `Demo Time: Create patch for current file` command
   execution
 - [#244](https://github.com/estruyf/vscode-demo-time/issues/244): Moved the
-  EngageTime session ID to the demo file level
+  EngageTime session ID to the act file level
 - [#245](https://github.com/estruyf/vscode-demo-time/issues/245): Fix right
   panel height
 - [#246](https://github.com/estruyf/vscode-demo-time/issues/246): Added support
@@ -128,7 +133,7 @@
   `{{crntSlideIdx}}` and `{{totalSlides}}` variables to the slide header and
   footer templates
 - [#260](https://github.com/estruyf/vscode-demo-time/issues/260): Added dark
-  mode support for the config editor, settings editor, and overview dashboard
+  mode support for the act editor, settings editor, and overview dashboard
 - [#261](https://github.com/estruyf/vscode-demo-time/issues/261): Added a
   message for the PowerPoint addin that it can be shown outside of the visible
   slide container
@@ -147,7 +152,7 @@
 ## [1.9.0] - 2025-08-25
 
 - [#219](https://github.com/estruyf/vscode-demo-time/issues/219): Added a GUI
-  for editing your demo files
+  for editing your act files
 - [#220](https://github.com/estruyf/vscode-demo-time/issues/220): Allow to set a
   title for the `waitForInput` action
 - [#221](https://github.com/estruyf/vscode-demo-time/issues/221): Added support
@@ -194,7 +199,7 @@
 - [#169](https://github.com/estruyf/vscode-demo-time/issues/169): Refocus the
   editor after executing a terminal command
 - [#173](https://github.com/estruyf/vscode-demo-time/issues/173): Allow to set
-  the timer on the demo file level
+  the timer on the act file level
 - [#175](https://github.com/estruyf/vscode-demo-time/issues/175): Add some
   sample demos to the extension initialization to help users get started
 - [#176](https://github.com/estruyf/vscode-demo-time/issues/176): Add support
@@ -220,11 +225,11 @@
 - [#188](https://github.com/estruyf/vscode-demo-time/issues/188): Added the
   `pressEnter` action to simulate pressing the Enter key in the editor
 - [#189](https://github.com/estruyf/vscode-demo-time/issues/189): Added `YAML`
-  demo file support with configurable file type by using the
+  act file support with configurable file type by using the
   `demoTime.defaultFileType` setting
 - [#193](https://github.com/estruyf/vscode-demo-time/issues/193): Ask the user
-  which demo file type they want to use when initializing the extension. The
-  user can choose between `JSON` and `YAML`.
+  which act file type they want to use when initializing the extension. The user
+  can choose between `JSON` and `YAML`.
 - [#196](https://github.com/estruyf/vscode-demo-time/issues/196): Added an API
   documentation page that can be viewed within Visual Studio Code or your
   browser.
@@ -297,7 +302,7 @@
     presentation notes view
 - [#102](https://github.com/estruyf/vscode-demo-time/issues/102): Start all
   paths from the project folder instead of `.demo` folder by setting the
-  `version` property in the demo file to `2`
+  `version` property in the act file to `2`
 - [#106](https://github.com/estruyf/vscode-demo-time/issues/106): Fix issue
   where file creating is slower than the async/await
 - [#110](https://github.com/estruyf/vscode-demo-time/issues/110): Be able to
@@ -329,7 +334,7 @@
 - [#92](https://github.com/estruyf/vscode-demo-time/issues/92): Added new
   `demoTime.customTheme` setting for global custom themes
 - [#96](https://github.com/estruyf/vscode-demo-time/issues/96): Correctly
-  sorting the demo files in the tree view
+  sorting the act files in the tree view
 
 ## [1.1.0] - 2025-04-09
 
@@ -498,14 +503,14 @@
   configuration
 - Added actions to the Demo Time panel menu
 - [#49](https://github.com/estruyf/vscode-demo-time/issues/49): New command to
-  create a new demo file
+  create a new act file
 - [#47](https://github.com/estruyf/vscode-demo-time/issues/47): Added the
   `setTheme` and `unsetTheme` actions
 
 ## [0.0.69] - 2025-02-12
 
 - [#45](https://github.com/estruyf/vscode-demo-time/issues/45): Ability to
-  create a new demo file when adding a step or creating a snapshot
+  create a new act file when adding a step or creating a snapshot
 - [#45](https://github.com/estruyf/vscode-demo-time/issues/45): Ability to
   create a snapshot of the current file
 - [#45](https://github.com/estruyf/vscode-demo-time/issues/45): Ability to
@@ -681,7 +686,7 @@
 ## [0.0.41] - 2024-12-11
 
 - Fix for blur and opacity when only one line is highlighted
-- Fix issue when using the same demo titles in the same demo file
+- Fix issue when using the same scene titles in the same act file
 
 ## [0.0.40] - 2024-12-11
 
@@ -706,7 +711,7 @@
 
 ## [0.0.38] - 2024-12-09
 
-- Continue with the first demo step in the next demo file if the current demo
+- Continue with the first demo step in the next act file if the current demo
   file is completed
 
 ## [0.0.37] - 2024-12-09
@@ -736,7 +741,7 @@
 ## [0.0.32] - 2024-11-20
 
 - Improved line by line insertion
-- Added an action to show the demo step in the demo file
+- Added an action to show the demo step in the act file
 
 ## [0.0.31] - 2024-11-20
 
@@ -789,7 +794,7 @@
 
 ## [0.0.21] - 2024-10-14
 
-- Add JSONC parser to support comments in the demo files
+- Add JSONC parser to support comments in the act files
 
 ## [0.0.20] - 2024-06-07
 
@@ -807,7 +812,7 @@
 
 ## [0.0.17] - 2024-02-01
 
-- Sort demo files by name
+- Sort act files by name
 - Fix issue where demos with the same name were all check when executed
 
 ## [0.0.16] - 2024-02-01
@@ -857,7 +862,7 @@
 ## [0.0.7] - 2023-12-14
 
 - Keep state of the demo steps for the workspace
-- Added a `start` action on the demo file in the panel
+- Added a `start` action on the act file in the panel
 - The `demo-time.start` command now runs the next step
 - Added `reset` command
 - Added `reset` action to the view title
@@ -870,7 +875,7 @@
 
 ## [0.0.5] - 2023-12-12
 
-- Added listener for demo file changes
+- Added listener for act file changes
 - Added `unselect` action
 - Added `waitForTimeout` action
 - Added `waitForInput` action
@@ -886,7 +891,7 @@
 
 - Added small logo for the activity bar
 - Added welcome text with initialize command
-- Added a view demo file command and action in the panel
+- Added a view act file command and action in the panel
 - Added a `No demo steps defined` message when no demo steps are defined
 
 ## [0.0.2] - 2023-12-08

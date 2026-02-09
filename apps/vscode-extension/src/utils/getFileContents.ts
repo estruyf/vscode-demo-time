@@ -1,19 +1,22 @@
-import { Uri, WorkspaceFolder, workspace } from "vscode";
-import { General } from "../constants";
-import { DemoRunner } from "../services";
+import { WorkspaceFolder, workspace } from 'vscode';
+import { DemoRunner } from '../services';
+import { getFileUri } from './getFileUri';
+import { isPathInWorkspace } from './isPathInWorkspace';
 
 export const getFileContents = async (workspaceFolder: WorkspaceFolder, contentPath?: string) => {
   if (!contentPath) {
     return;
   }
 
-  const version = DemoRunner.getCurrentVersion();
+  const version = await DemoRunner.getCurrentVersion();
+  const contentUri = getFileUri(contentPath, workspaceFolder, version);
 
-  const contentUri =
-    version === 2
-      ? Uri.joinPath(workspaceFolder.uri, contentPath)
-      : Uri.joinPath(workspaceFolder.uri, General.demoFolder, contentPath);
   if (!contentUri) {
+    return;
+  }
+
+  // Verify the resolved path is contained within the workspace
+  if (!isPathInWorkspace(contentUri, workspaceFolder)) {
     return;
   }
 

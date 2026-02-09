@@ -8,7 +8,7 @@ import { load as yamlLoad, dump as yamlDump } from 'js-yaml';
 import { createDemoFile, readFile, sanitizeFileName, sortFiles, writeFile } from '../utils';
 import { Preview } from '../preview/Preview';
 import { Logger } from './Logger';
-import { Config, DemoConfig, DemoFiles } from '@demotime/common';
+import { Config, DemoConfig, DemoFiles, ActConfig, normalizeDemoConfig } from '@demotime/common';
 
 export class DemoFileProvider {
   public static register() {
@@ -24,7 +24,7 @@ export class DemoFileProvider {
   }
 
   /**
-   * Gets the configured default file type for demo files
+   * Gets the configured default file type for act files
    * @returns The default file type ('json' or 'yaml')
    */
   public static getDefaultFileType(): DemoFileType {
@@ -42,10 +42,10 @@ export class DemoFileProvider {
   }
 
   /**
-   * Parses the content of a demo file based on its extension
+   * Parses the content of an act file based on its extension
    * @param content The file content as string
    * @param filePath The file path to determine the format
-   * @returns The parsed content as DemoConfig object
+   * @returns The parsed content as DemoConfig (normalized from v3 if needed)
    */
   public static parseFileContent(content: string, filePath: Uri): DemoConfig | undefined {
     const path = filePath.fsPath.toLowerCase();
@@ -54,33 +54,44 @@ export class DemoFileProvider {
       content = JSON.stringify(DemoFileProvider.generateFileContent(''));
     }
 
+    let parsed: DemoConfig | ActConfig | undefined;
+
     if (path.endsWith('.yaml') || path.endsWith('.yml')) {
       try {
-        const parsed = yamlLoad(content) as DemoConfig;
-        return parsed;
+        parsed = yamlLoad(content) as DemoConfig | ActConfig;
       } catch (error) {
-        console.error('Error parsing YAML demo file:', error);
+        console.error('Error parsing YAML act file:', error);
         return undefined;
       }
-    } else {
+    } else if (path.endsWith('.json') || path.endsWith('.jsonc')) {
       // Default to JSON parsing (supports both .json and .jsonc)
-      const parsed = jsonParse(content);
-      return parsed;
+      parsed = jsonParse(content);
+    }
+
+    if (!parsed) {
+      return undefined;
+    }
+
+    // Normalize version 3 configs to legacy format for compatibility
+    try {
+      return normalizeDemoConfig(parsed);
+    } catch {
+      return undefined;
     }
   }
 
   /**
-   * Generates demo file content based on the file type
-   * @param title The demo title
+   * Generates act file content based on the file type
+   * @param title The scene title
    * @returns The formatted content string
    */
-  private static generateFileContent(title: string): DemoConfig {
-    const demoContent: DemoConfig = {
+  private static generateFileContent(title: string): ActConfig {
+    const demoContent: ActConfig = {
       $schema: 'https://demotime.show/demo-time.schema.json',
       title: title,
       description: '',
-      version: 2,
-      demos: [],
+      version: 3,
+      scenes: [],
     };
 
     return demoContent;
@@ -96,7 +107,7 @@ export class DemoFileProvider {
   /**
    * Formats the provided demo content based on the specified file type.
    *
-   * @param fileType - The type of file to format the content for ('yaml' or other).
+   * @param fileType - The type of file to format the content for ('yaml' or 'json').
    * @param demoContent - The content to be formatted.
    * @returns The formatted content as a string.
    */
@@ -129,8 +140,8 @@ export class DemoFileProvider {
   }
 
   /**
-   * Retrieves the demo files from the workspace.
-   * @returns A promise that resolves to an object containing the demo files, or null if no files are found.
+   * Retrieves the act files from the workspace.
+   * @returns A promise that resolves to an object containing the act files, or null if no files are found.
    */
   public static async getFiles(): Promise<DemoFiles | null> {
     let jsonFiles = await workspace.findFiles(`${General.demoFolder}/*.json`, `**/node_modules/**`);
@@ -157,7 +168,7 @@ export class DemoFileProvider {
 
         demoFiles[parseWinPath(file.fsPath)] = content;
       } catch (error) {
-        Logger.error(`Error reading demo file ${file.path}: ${(error as Error).message}`);
+        Logger.error(`Error reading act file ${file.path}: ${(error as Error).message}`);
         continue;
       }
     }
@@ -166,8 +177,8 @@ export class DemoFileProvider {
   }
 
   /**
-   * Retrieves a demo file using a quick pick dialog.
-   * @returns The selected demo file, or undefined if no file was selected.
+   * Retrieves an act file using a quick pick dialog.
+   * @returns The selected act file, or undefined if no file was selected.
    */
   public static async demoQuickPick(): Promise<{ filePath: string; demo: DemoConfig } | undefined> {
     let demoFiles = await DemoFileProvider.getFiles();
@@ -187,7 +198,7 @@ export class DemoFileProvider {
 
     const demoFilePick = await window.showQuickPick(demoFileOptions, {
       title: Config.title,
-      placeHolder: 'Select a demo file',
+      placeHolder: 'Select an act file',
     });
 
     if (!demoFilePick) {
@@ -218,12 +229,12 @@ export class DemoFileProvider {
     const demo = (demoFiles as DemoFiles)[demoFilePath];
     return {
       filePath: demoFilePath,
-      demo: demo,
+      demo: normalizeDemoConfig(demo),
     };
   }
 
   /**
-   * Creates a demo file if it doesn't exist in the workspace.
+   * Creates an act file if it doesn't exist in the workspace.
    * The file is created at `.demo/demo.json` or `.demo/demo.yaml` based on configuration.
    * @returns A promise that resolves when the file is created.
    */

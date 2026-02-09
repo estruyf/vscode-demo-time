@@ -1,5 +1,5 @@
 import { PresenterView } from '../presenterView/PresenterView';
-import { ContextKeys, StateKeys } from '../constants';
+import { ContextKeys, General, StateKeys } from '../constants';
 import { Subscription } from '../models';
 import {
   Position,
@@ -33,6 +33,7 @@ import {
   togglePresentationView,
   removeDemosForCurrentPosition,
   saveFiles,
+  parseSnippetContent,
 } from '../utils';
 import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
 import {
@@ -73,6 +74,8 @@ import {
   ISlidePreview,
   Step,
   Version,
+  getDemosFromConfig,
+  normalizeDemoConfig,
 } from '@demotime/common';
 import { InputService } from './InputService';
 import { backupVSCodeSettings } from '../utils/backupVSCodeSettings';
@@ -153,8 +156,8 @@ export class DemoRunner {
   }
 
   /**
-   * Retrieves the executed demo file.
-   * @returns {Promise<DemoFileCache>} The executed demo file.
+   * Retrieves the executed act file.
+   * @returns {Promise<DemoFileCache>} The executed act file.
    */
   public static async getExecutedDemoFile(): Promise<DemoFileCache> {
     const ext = Extension.getInstance();
@@ -179,8 +182,8 @@ export class DemoRunner {
   }
 
   /**
-   * Sets the executed demo file in the extension state.
-   * @param demoFile - The demo file to be set as executed.
+   * Sets the executed act file in the extension state.
+   * @param demoFile - The act file to be set as executed.
    */
   private static async setExecutedDemoFile(demoFile: DemoFileCache) {
     const ext = Extension.getInstance();
@@ -198,24 +201,46 @@ export class DemoRunner {
   }
 
   /**
-   * Retrieves the current version of the executing demo file.
+   * Retrieves the current version of the executing act file.
    *
-   * @returns {Version} The detected version of the current demo file.
+   * @param filePathOrUri - Optional file path or URI to check for version (useful for custom editors)
+   * @returns {Version} The detected version of the current act file.
    */
-  public static getCurrentVersion(): Version {
+  public static async getCurrentVersion(filePathOrUri?: string | Uri): Promise<Version> {
+    // First, try to get version from the provided file path/URI
+    if (filePathOrUri) {
+      const uri = typeof filePathOrUri === 'string' ? Uri.file(filePathOrUri) : filePathOrUri;
+      if (uri.fsPath && uri.fsPath.includes(`/${General.demoFolder}/`)) {
+        const demoFile = await DemoFileProvider.getFile(uri);
+        if (demoFile && demoFile.version) {
+          return demoFile.version;
+        }
+      }
+    }
+
+    // Fall back to active text editor
+    const editor = window.activeTextEditor;
+    const crntOpenFileUri = editor?.document.uri;
+    if (crntOpenFileUri?.fsPath && crntOpenFileUri.fsPath.includes(`/${General.demoFolder}/`)) {
+      const demoFile = await DemoFileProvider.getFile(crntOpenFileUri);
+      if (demoFile && demoFile.version) {
+        return demoFile.version;
+      }
+    }
+
     const executingFile = Extension.getInstance().getState<DemoFileCache>(
       StateKeys.executingDemoFile,
     );
     if (!executingFile) {
-      return 2;
+      return 3;
     }
 
     const lastDemo = executingFile.demo[executingFile.demo.length - 1];
     if (!lastDemo) {
-      return 2;
+      return 3;
     }
 
-    // Only old demo files without a version property should be version 1
+    // Only old act file without a version property should be version 1
     return typeof executingFile.version === 'number' ? (executingFile.version as Version) : 1;
   }
 
@@ -251,7 +276,7 @@ export class DemoRunner {
   }
 
   /**
-   * Resets the DemoRunner state by clearing the executing demo file path and demo array.
+   * Resets the DemoRunner state by clearing the executing act file path and demo array.
    */
   private static async reset(): Promise<void> {
     // End any active analytics session
@@ -282,6 +307,11 @@ export class DemoRunner {
   private static async start(
     item: ActionTreeItem | { demoFilePath: string; description: string },
   ): Promise<void> {
+    if (TextTypingService.IsTyping) {
+      Logger.info('DemoRunner.start called while typing. Ignoring.');
+      return;
+    }
+
     if (Preview.isListening()) {
       return;
     }
@@ -294,7 +324,9 @@ export class DemoRunner {
     const executingFile = await DemoRunner.getExecutedDemoFile();
 
     const demoFile = await DemoRunner.getDemoFile(item);
-    let demos: Demo[] = demoFile?.demo.demos || [];
+    // Normalize ActConfig or DemoConfig -> Demo[] shape for backward compatibility
+    const fileDemo = demoFile?.demo;
+    const demos: Demo[] = getDemosFromConfig(fileDemo);
 
     // Filter out disabled demos for presentation mode
     // if (DemoRunner.isPresentationMode) {
@@ -302,7 +334,7 @@ export class DemoRunner {
     // }
 
     if (demos.length <= 0) {
-      Notifications.error('No demo steps found');
+      Notifications.error('No moves found');
       return;
     }
 
@@ -323,11 +355,11 @@ export class DemoRunner {
     }
 
     if (!nextDemo) {
-      // Check if there is a next demo file
+      // Check if there is a next act file
       const nextFile = await getNextDemoFile(demoFile);
       if (!nextFile) {
         const yesOrNo = await Notifications.info(
-          'No next demo steps found. Do you want to reset?',
+          'No next moves found. Do you want to reset?',
           'Yes',
           'No',
         );
@@ -344,7 +376,7 @@ export class DemoRunner {
       executingFile.version = nextFile.version;
 
       await DemoRunner.setExecutedDemoFile(executingFile);
-      // Start the next demo file
+      // Start the next act file
       DemoRunner.start({
         demoFilePath: nextFile.filePath,
         description: nextFile.filePath.split('/').pop(),
@@ -406,6 +438,11 @@ export class DemoRunner {
    * @returns {Promise<void>} A promise that resolves when the previous demo step has been executed.
    */
   private static async previous(): Promise<void> {
+    if (TextTypingService.IsTyping) {
+      Logger.info('DemoRunner.previous called while typing. Ignoring.');
+      return;
+    }
+
     if (Preview.checkIfHasPreviousSlide()) {
       await Preview.postMessage(WebViewMessages.toWebview.previousSlide);
       return;
@@ -418,10 +455,10 @@ export class DemoRunner {
     }
 
     const demoFile = await DemoFileProvider.getFile(Uri.file(filePath));
-    const demos = demoFile?.demos || [];
+    const demos = getDemosFromConfig(demoFile);
 
     if (demos.length <= 0) {
-      Notifications.error('No demo steps found');
+      Notifications.error('No moves found');
       return;
     }
 
@@ -444,7 +481,7 @@ export class DemoRunner {
         filePath,
       });
       if (!previousFile) {
-        Notifications.infoWithProgress('No previous demo steps found');
+        Notifications.infoWithProgress('No previous moves found');
         return;
       }
 
@@ -453,8 +490,9 @@ export class DemoRunner {
       executingFile.version = previousFile.version;
 
       // Get the last demo step of the previous file
-      const lastDemo = previousFile.demo.demos[previousFile.demo.demos.length - 1];
-      const crntIdx = previousFile.demo.demos.length - 1;
+      const prevDemos = getDemosFromConfig(previousFile.demo as any);
+      const lastDemo = prevDemos[prevDemos.length - 1];
+      const crntIdx = prevDemos.length - 1;
       executingFile.demo.push({
         idx: crntIdx,
         title: lastDemo.title,
@@ -502,6 +540,11 @@ export class DemoRunner {
     idx: number;
     demo: Demo;
   }): Promise<void> {
+    if (TextTypingService.IsTyping) {
+      Logger.info('DemoRunner.startDemo called while typing. Ignoring.');
+      return;
+    }
+
     if (!demoToRun) {
       return;
     }
@@ -542,16 +585,16 @@ export class DemoRunner {
     const id = args[0];
     Logger.info(`Running demo with id: ${id}`);
 
-    // Get all the demo files
+    // Get all the act files
     const demoFiles = await DemoFileProvider.getFiles();
     if (!demoFiles) {
       return;
     }
 
-    // Find the demo file that contains the specified id
+    // Find the act file that contains the specified id
     let filePath = null;
     for (const crntFilePath in demoFiles) {
-      const demos = demoFiles[crntFilePath].demos;
+      const demos = getDemosFromConfig(demoFiles[crntFilePath] as any);
       const crntDemo = demos.find((demo) => demo.id === id);
       if (crntDemo) {
         filePath = crntFilePath;
@@ -560,7 +603,7 @@ export class DemoRunner {
     }
 
     if (!filePath) {
-      Notifications.error('No demo found with the specified id');
+      Notifications.error('No scene found with the specified id');
       return;
     }
 
@@ -570,13 +613,16 @@ export class DemoRunner {
       executingFile.demo = [];
     }
 
-    // Get the demo idx
-    const demoIdx = demoFiles[filePath].demos.findIndex((demo) => demo.id === id);
+    // Get the scene idx (normalize ActConfig or DemoConfig -> Demo[])
+    const targetFile = demoFiles[filePath];
+    const targetDemos: Demo[] = getDemosFromConfig(targetFile as any);
+
+    const demoIdx = targetDemos.findIndex((demo) => demo.id === id);
     if (demoIdx < 0) {
-      Notifications.error('No demo found with the specified id');
+      Notifications.error('No scene found with the specified id');
       return;
     }
-    const demoToRun = demoFiles[filePath].demos[demoIdx];
+    const demoToRun = targetDemos[demoIdx];
     DemoRunner.currentDemo = demoToRun;
 
     // If in the same file and the demo appears before the last performed action, remove all actions after this demo
@@ -606,7 +652,7 @@ export class DemoRunner {
   }
 
   /**
-   * Runs the given demo steps.
+   * Runs the given move.
    * @param demoSteps An array of Step objects representing the steps to be executed.
    */
   public static async runSteps(
@@ -614,6 +660,11 @@ export class DemoRunner {
     needsUpdate: boolean = true,
     crntFilePath: string | undefined = undefined,
   ): Promise<void> {
+    if (TextTypingService.IsTyping) {
+      Logger.info('DemoRunner.runSteps called while typing. Ignoring.');
+      return;
+    }
+
     // End the segment successfully
     if (AnalyticsService.isRecording()) {
       AnalyticsService.endSegment();
@@ -638,7 +689,7 @@ export class DemoRunner {
       demoSteps = jsonParse(tempSteps);
     }
 
-    // Replace the snippets in the demo steps
+    // Replace the snippets in the moves
     const stepsToExecute: Step[] = [];
     if (demoSteps.some((step) => step.action === Action.Snippet)) {
       for (const step of demoSteps) {
@@ -657,7 +708,7 @@ export class DemoRunner {
             snippet = await insertVariables(snippet, variables);
           }
 
-          const newSteps = jsonParse(snippet);
+          const newSteps = parseSnippetContent(snippet, step.contentPath || '');
           stepsToExecute.push(...newSteps);
         } else {
           stepsToExecute.push(step);
@@ -667,7 +718,7 @@ export class DemoRunner {
       stepsToExecute.push(...demoSteps);
     }
 
-    // Loop over all the demo steps and execute them.
+    // Loop over all the moves and execute them.
     for (let currentIndex = 0; currentIndex < stepsToExecute.length; currentIndex++) {
       const step = stepsToExecute[currentIndex];
       DemoRunner.currentStepIndex = currentIndex;
@@ -681,8 +732,6 @@ export class DemoRunner {
           demoFile?.title || 'Untitled Act', // Act title
           DemoRunner.currentDemo, // Scene (demo)
           DemoRunner.currentDemoIndex, // Scene index
-          step, // Move (step)
-          currentIndex, // Move index
         );
       }
 
@@ -713,6 +762,11 @@ export class DemoRunner {
     workspaceFolder: WorkspaceFolder,
     crntFilePath: string | undefined,
   ): Promise<void> {
+    if (TextTypingService.IsTyping) {
+      Logger.info('DemoRunner.runStep called while typing. Ignoring.');
+      return;
+    }
+
     if (!step.action) {
       return;
     }
@@ -768,7 +822,7 @@ export class DemoRunner {
     // Demo Time actions
     if (step.action === Action.RunDemoById) {
       if (!step.id) {
-        Notifications.error('No demo id specified');
+        Notifications.error('No scene id specified');
         return;
       }
       await DemoRunner.runById(step.id);
@@ -787,6 +841,24 @@ export class DemoRunner {
       return;
     } else if (step.action === Action.ShowMenubar) {
       await MacOSActionsService.showMenubar();
+      return;
+    } else if (step.action === Action.MuteVolume) {
+      await MacOSActionsService.muteVolume();
+      return;
+    } else if (step.action === Action.UnmuteVolume) {
+      await MacOSActionsService.unmuteVolume();
+      return;
+    } else if (step.action === Action.EnableCaffeine) {
+      await MacOSActionsService.enableCaffeine(step.duration as number | undefined);
+      return;
+    } else if (step.action === Action.DisableCaffeine) {
+      await MacOSActionsService.disableCaffeine();
+      return;
+    } else if (step.action === Action.HideDock) {
+      await MacOSActionsService.hideDock();
+      return;
+    } else if (step.action === Action.ShowDock) {
+      await MacOSActionsService.showDock();
       return;
     }
 
@@ -938,9 +1010,25 @@ export class DemoRunner {
       return;
     }
 
+    if (step.action === Action.EnableZenMode) {
+      await commands.executeCommand('workbench.action.exitZenMode');
+      await commands.executeCommand('workbench.action.toggleZenMode');
+      return;
+    }
+
+    if (step.action === Action.DisableZenMode) {
+      await commands.executeCommand('workbench.action.exitZenMode');
+      return;
+    }
+
     // Open a new terminal
     if (step.action === Action.OpenTerminal) {
       await TerminalService.openTerminal(step.terminalId);
+      return;
+    }
+
+    if (step.action === Action.FocusTerminal) {
+      await TerminalService.focusTerminal();
       return;
     }
 
@@ -1008,6 +1096,11 @@ export class DemoRunner {
 
     if (step.action === Action.PressEnter) {
       await InteractionService.pressEnter();
+      return;
+    }
+
+    if (step.action === Action.SendKeybinding) {
+      await InteractionService.pressKeybinding(step.keybinding);
       return;
     }
 
@@ -1108,7 +1201,7 @@ export class DemoRunner {
       }
 
       if (step.action === Action.ShowEngageTimePoll) {
-        await EngageTimeService.showPoll(step.pollId, step.startOnOpen);
+        await EngageTimeService.showPoll(step.pollId, step.startOnOpen, step.closeOnOpen);
         return;
       }
 
@@ -1215,6 +1308,8 @@ export class DemoRunner {
         highlightWholeLine,
         true,
         DemoRunner.nextStepIsHighlight,
+        step.highlightBlur,
+        step.highlightOpacity,
       );
       return;
     }
@@ -1351,6 +1446,8 @@ export class DemoRunner {
    * @param highlightWholeLine - Whether to highlight the whole line.
    * @param keepInMemory - Whether to keep the highlight in memory.
    * @param preserveZoom - Whether to preserve the current zoom level when moving to the next highlight.
+   * @param highlightBlur - Optional blur effect for non-highlighted text (overrides global setting).
+   * @param highlightOpacity - Optional opacity for non-highlighted text (overrides global setting).
    */
   public static async highlight(
     textEditor: TextEditor,
@@ -1360,6 +1457,8 @@ export class DemoRunner {
     highlightWholeLine?: boolean,
     keepInMemory = true,
     preserveZoom = false,
+    highlightBlur?: number,
+    highlightOpacity?: number,
   ): Promise<void> {
     if (!range && !position) {
       return;
@@ -1404,6 +1503,8 @@ export class DemoRunner {
         zoomLevel,
         highlightWholeLine,
         preserveZoom,
+        highlightBlur,
+        highlightOpacity,
       );
       textEditor.revealRange(range, TextEditorRevealType.InCenter);
     }
@@ -1418,10 +1519,10 @@ export class DemoRunner {
   }
 
   /**
-   * Retrieves the demo file associated with the given ActionTreeItem.
-   * @param item The ActionTreeItem representing the demo file.
+   * Retrieves the act file associated with the given ActionTreeItem.
+   * @param item The ActionTreeItem representing the act file.
    * @param triggerFirstDemo A boolean indicating whether to trigger the first demo.
-   * @returns A Promise that resolves to an object containing the filePath and demo, or undefined if no demo file is found.
+   * @returns A Promise that resolves to an object containing the filePath and demo, or undefined if no act file is found.
    */
   private static async getDemoFile(
     item?: ActionTreeItem | Uri,
@@ -1441,14 +1542,14 @@ export class DemoRunner {
 
     if (item && itemPath) {
       if (!demoFiles) {
-        Notifications.warning('No demo files found');
+        Notifications.warning('No act files found');
         return;
       }
 
       const demoFile = await DemoFileProvider.getFile(Uri.file(itemPath));
       if (!demoFile) {
         const demoFileName = itemPath.split('/').pop();
-        Notifications.warning(`No demo file found with the name ${demoFileName}`);
+        Notifications.warning(`No act file found with the name ${demoFileName}`);
         return;
       }
 
@@ -1484,18 +1585,18 @@ export class DemoRunner {
 
       return {
         filePath: demoFilePath,
-        demo: demoFiles[demoFilePath],
+        demo: normalizeDemoConfig(demoFiles[demoFilePath]) || demoFiles[demoFilePath],
       };
     } else if (executingFile.filePath && !item && demoFiles) {
       const demoFile = demoFiles[executingFile.filePath];
       if (!demoFile) {
-        Notifications.warning('No demo file found');
+        Notifications.warning('No act file found');
         return;
       }
 
       return {
         filePath: executingFile.filePath,
-        demo: demoFile,
+        demo: normalizeDemoConfig(demoFile) || demoFile,
       };
     }
 

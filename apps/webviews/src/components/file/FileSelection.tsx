@@ -25,7 +25,7 @@ export const FileSelection: React.FC<FileSelectionProps> = ({
         value={selectedFile}
         onChange={onFileSelect}
         options={availableFiles.map(file => ({ value: file, label: file }))}
-        placeholder="Select demo file..."
+        placeholder="Select act file..."
         className="text-sm"
       />
     </div>

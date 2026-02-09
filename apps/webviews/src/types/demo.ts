@@ -70,6 +70,7 @@ export const CATEGORIZED_ACTIONS: {
     category: 'Terminal actions',
     options: [
       Action.OpenTerminal,
+      Action.FocusTerminal,
       Action.ExecuteTerminalCommand,
       Action.ExecuteScript,
       Action.CloseTerminal,
@@ -87,6 +88,8 @@ export const CATEGORIZED_ACTIONS: {
       Action.ZoomIn,
       Action.ZoomOut,
       Action.ZoomReset,
+      Action.EnableZenMode,
+      Action.DisableZenMode,
     ],
   },
   {
@@ -124,6 +127,7 @@ export const CATEGORIZED_ACTIONS: {
       Action.CopyToClipboard,
       Action.CopyFromSelection,
       Action.PasteFromClipboard,
+      Action.SendKeybinding,
       Action.PressEnter,
       Action.PressTab,
       Action.PressArrowLeft,
@@ -146,6 +150,12 @@ export const CATEGORIZED_ACTIONS: {
       Action.DisableFocusMode,
       Action.HideMenubar,
       Action.ShowMenubar,
+      Action.MuteVolume,
+      Action.UnmuteVolume,
+      Action.EnableCaffeine,
+      Action.DisableCaffeine,
+      Action.HideDock,
+      Action.ShowDock,
     ],
   },
   {

@@ -10,7 +10,7 @@ import { Image } from 'astro:assets';
 import engageTimeSessionIdImg from "../../../assets/docs/engagetime-sessionid.webp";
 import timelineMessagesImg from "../../../assets/docs/timeline-messages.webp";
 
-The EngageTime actions allow you to control the behavior of the EngageTime integration during your demos. You can use these actions to start/close an EngageTime session or poll for responses.
+The EngageTime actions allow you to control the behavior of the EngageTime integration during your presentation. You can use these actions to start/close an EngageTime session or poll for responses.
 
 ## What is EngageTime?
 
@@ -37,30 +37,30 @@ The following EngageTime actions are available:
 - `showEngageTimePoll` — Show poll results. Requires `pollId`.
 - `sendEngageTimeMessage` — Send a message to the EngageTime session timeline. Requires `type`, and `title`.
 
-All these actions require you to define the `sessionId` of the EngageTime session you want to control. You define the `sessionId` at the root of your demo file:
+All these actions require you to define the `sessionId` of the EngageTime session you want to control. You define the `sessionId` at the root of your act file:
 
 <Tabs>
-<TabItem label="Config Editor">
+<TabItem label="Act Editor">
 
-You can set the `sessionId` in the demo configuration under the `Demo File Settings` section:
+You can set the `sessionId` in the demo configuration under the `Act file Settings` section:
 
 <Image class="mx-auto" src={engageTimeSessionIdImg} alt="EngageTime Session ID configuration" width="400" />
 
 </TabItem>
 <TabItem label="Code Approach">
 
-You can set the `sessionId` at the root of your demo file:
+You can set the `sessionId` at the root of your act file:
 
 ```yaml
 title: EngageTime
 description: Test out the EngageTime interaction
-version: 2
+version: 3
 engageTime:
   sessionId: 4fn3gy
-demos:
+scenes:
   - id: demo-mevoasl4-rp3l
     title: Start a session
-    steps:
+    moves:
       - action: startEngageTimeSession
 ```
 
@@ -169,7 +169,7 @@ pollId: poll-1
 
 ### Show poll results or UI
 
-Use `showEngageTimePoll` to display poll results in the presenter view. Optionally, you can set `startOnOpen` to `true` to start the poll when it is shown.
+Use `showEngageTimePoll` to display poll results in the presenter view. You can set **either** `startOnOpen` to start the poll when shown, **or** `closeOnOpen` to close it immediately when shown (for quizzes or timed questions). These options are mutually exclusive.
 
 <Tabs syncKey="show-engagetime-poll">
 <TabItem label="JSON">
@@ -178,7 +178,8 @@ Use `showEngageTimePoll` to display poll results in the presenter view. Optional
 {
   "action": "showEngageTimePoll",
   "pollId": "poll-1",
-  "startOnOpen": false
+  "startOnOpen": false,
+  "closeOnOpen": true
 }
 ```
 
@@ -189,6 +190,7 @@ Use `showEngageTimePoll` to display poll results in the presenter view. Optional
 action: showEngageTimePoll
 pollId: poll-1
 startOnOpen: false
+closeOnOpen: true
 ```
 
 </TabItem>
