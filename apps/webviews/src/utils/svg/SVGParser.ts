@@ -211,8 +211,8 @@ export class SVGParser {
 
     // Calculate path length
     let pathLength: number | undefined;
-    if (element instanceof SVGPathElement) {
-      pathLength = PathLengthCalculator.calculate(element);
+    if (type === 'path') {
+      pathLength = PathLengthCalculator.calculate(element as SVGPathElement);
     } else if (hasStroke) {
       pathLength = PathLengthCalculator.approximateShapeLength(element);
     }

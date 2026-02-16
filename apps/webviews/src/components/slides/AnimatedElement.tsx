@@ -38,8 +38,16 @@ export const AnimatedElement: React.FC<AnimatedElementProps> = React.memo(({
       return;
     }
 
-    // Apply stroke-dasharray animation
-    const pathLength = node.pathLength;
+    // Use getTotalLength() on the rendered DOM element for pixel-perfect values,
+    // falling back to the pre-calculated pathLength from the parser
+    let pathLength = node.pathLength;
+    try {
+      if (typeof (element as any).getTotalLength === 'function') {
+        pathLength = (element as any).getTotalLength();
+      }
+    } catch {
+      // keep fallback
+    }
     const dashOffset = pathLength * (1 - progress);
 
     element.style.strokeDasharray = `${pathLength}`;
@@ -182,19 +190,18 @@ export const AnimatedElement: React.FC<AnimatedElementProps> = React.memo(({
       (style as any).strokeOpacity = originalStrokeOpacity;
     }
 
-    // Text typewriter handling: when this is a text element and text content is a simple string,
-    // render a substring based on progress to produce typewriter effect
-    if ((tagName === 'text' || tagName === 'tspan') && typeof attributes.children === 'string') {
-      const fullText = attributes.children as string;
-      let displayedText = fullText;
-
-      // If progress is provided between 0 and 1, show proportional substring
-      if (typeof progress === 'number' && progress >= 0 && progress < 1) {
+    // Text typewriter handling: progressively reveal text for the current element
+    if ((tagName === 'text' || tagName === 'tspan') && isCurrent && typeof progress === 'number' && progress >= 0 && progress < 1) {
+      if (typeof attributes.children === 'string') {
+        // Simple text: substring-based typewriter
+        const fullText = attributes.children as string;
         const chars = Math.max(0, Math.floor(progress * fullText.length));
-        displayedText = fullText.slice(0, chars);
+        attributes.children = fullText.slice(0, chars);
+      } else {
+        // Text with child elements (e.g. tspan): use CSS clipPath to reveal left-to-right
+        const clipPercent = (1 - progress) * 100;
+        style.clipPath = `inset(0 ${clipPercent}% 0 0)`;
       }
-
-      attributes.children = displayedText;
     }
     
     return {

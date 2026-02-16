@@ -26,10 +26,11 @@ export function invertLightness(color: string): string {
       return color; // fallback to original
     }
 
-    // Invert lightness (0-1 scale)
+    // Invert lightness (0-1 scale), clamping minimum so very light colors
+    // don't become invisible against a dark background
     const inverted = {
       ...oklch,
-      l: 1 - oklch.l,
+      l: Math.max(0.25, 1 - oklch.l),
     };
     
     // Convert back to hex

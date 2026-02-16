@@ -29,7 +29,7 @@ export interface AnimatedSVGSlideProps {
 export const AnimatedSVGSlide: React.FC<AnimatedSVGSlideProps> = ({
   svgContent,
   animationSpeed = 100,
-  textTypeWriterEffect = false,
+  textTypeWriterEffect = true,
   textTypewriterSpeed = 20,
   autoplay = true,
   showCompleteDiagram = false,
