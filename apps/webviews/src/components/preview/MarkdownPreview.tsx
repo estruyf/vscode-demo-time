@@ -8,6 +8,7 @@ import DOMPurify from 'dompurify';
 import { Config, convertTemplateToHtml, Slide, SlideLayout, SlideParser, SlideTheme, SlideTransition, WebViewMessages } from '@demotime/common';
 import { useFileContents, useCursor, useScale, useMousePosition, useTheme } from '../../hooks';
 import { extractFirstH1 } from '../../utils';
+import { AnimatedSVGSlide } from '../slides/AnimatedSVGSlide';
 
 export interface IMarkdownPreviewProps {
   fileUri: string;
@@ -35,6 +36,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const [isZoomed, setIsZoomed] = React.useState(false);
   const [zoomLevel,] = React.useState(2.0); // 2x zoom by default
   const [panOffset, setPanOffset] = React.useState({ x: 0, y: 0 });
+  const [svgContent, setSvgContent] = React.useState<string | null>(null);
+  const isAnimationBlockingRef = React.useRef(false);
 
   const { content, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();
   const ref = React.useRef<HTMLDivElement>(null);
@@ -195,7 +198,12 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       return;
     }
 
+
     if (command === WebViewMessages.toWebview.nextSlide) {
+      // Don't advance if animated SVG is blocking navigation (using ref for immediate sync access)
+      if (isAnimationBlockingRef.current) {
+        return;
+      }
       const nextSlide = crntSlide ? crntSlide.index + 1 : 1;
       updateSlideIdx(nextSlide);
       messageHandler.send(WebViewMessages.toVscode.updateSlideIndex, nextSlide);
@@ -269,6 +277,25 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       setFooter(DOMPurify.sanitize(html, { USE_PROFILES: { html: true } }));
     } else {
       fetchFooter();
+    }
+
+    // Load SVG content for animated-svg layout
+    if (crntSlide?.frontmatter.layout === SlideLayout.AnimatedSVG && crntSlide.frontmatter.svgFile) {
+      setSvgContent(null); // Reset while loading
+      messageHandler
+        .request<string>(WebViewMessages.toVscode.getFileContents, crntSlide.frontmatter.svgFile)
+        .then((content) => {
+          if (content) {
+            setSvgContent(content);
+          } else {
+            console.error('Failed to load SVG file:', crntSlide.frontmatter.svgFile);
+          }
+        })
+        .catch((error) => {
+          console.error('Error loading SVG file:', error);
+        });
+    } else {
+      setSvgContent(null);
     }
   }, [crntSlide, webviewUrl, fetchHeader, fetchFooter]);
 
@@ -400,21 +427,39 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
 
             {
               crntSlide && vsCodeTheme ? (
-                <div className='slide__content'>
-                  {
-                    <Markdown
-                      key={`${crntSlide.index}-${crntSlide?.frontmatter?.customLayout || 'standard'}`}
-                      filePath={crntFilePath}
-                      content={crntSlide.content}
-                      matter={crntSlide.frontmatter}
-                      vsCodeTheme={vsCodeTheme as never}
-                      isDarkTheme={isDarkTheme}
-                      webviewUrl={webviewUrl}
-                      videoUrl={videoUrl}
-                      updateBgStyles={setBgStyles}
-                    />
-                  }
-                </div>
+                layout === SlideLayout.AnimatedSVG && svgContent ? (
+                  <AnimatedSVGSlide
+                    svgContent={svgContent}
+                    animationSpeed={crntSlide.frontmatter.animationSpeed}
+                    textTypeWriterEffect={crntSlide.frontmatter.textTypeWriterEffect}
+                    textTypewriterSpeed={crntSlide.frontmatter.textTypewriterSpeed}
+                    autoplay={crntSlide.frontmatter.autoplay}
+                    showCompleteDiagram={crntSlide.frontmatter.showCompleteDiagram}
+                    invertLightAndDarkColours={crntSlide.frontmatter.invertLightAndDarkColours}
+                    transportControlsPosition={crntSlide.frontmatter.transportControlsPosition}
+                    slideIndex={crntSlide.index}
+                    isActive={true}
+                    onNavigationBlock={(isBlocking) => {
+                      isAnimationBlockingRef.current = isBlocking;
+                    }}
+                  />
+                ) : (
+                  <div className='slide__content'>
+                    {
+                      <Markdown
+                        key={`${crntSlide.index}-${crntSlide?.frontmatter?.customLayout || 'standard'}`}
+                        filePath={crntFilePath}
+                        content={crntSlide.content}
+                        matter={crntSlide.frontmatter}
+                        vsCodeTheme={vsCodeTheme as never}
+                        isDarkTheme={isDarkTheme}
+                        webviewUrl={webviewUrl}
+                        videoUrl={videoUrl}
+                        updateBgStyles={setBgStyles}
+                      />
+                    }
+                  </div>
+                )
               ) : null
             }
 
@@ -467,3 +512,4 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     </>
   );
 };
+
