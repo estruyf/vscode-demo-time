@@ -37,6 +37,7 @@ export class AnimationEngine {
   private animationFrameId: number | null = null;
   private lastFrameTime: number = 0;
   private pausedAtTime: number = 0;
+  private consumedWaitPoints = new Set<number>();
 
   constructor(config: AnimationEngineConfig) {
     this.config = config;
@@ -150,6 +151,7 @@ export class AnimationEngine {
     };
 
     this.pausedAtTime = 0;
+    this.consumedWaitPoints.clear();
     this.notifyStateChange();
   }
 
@@ -266,13 +268,43 @@ export class AnimationEngine {
    * Update state for current elapsed time
    */
   private updateStateForTime(elapsedTime: number): void {
-    // Find which element should be animating
+    // Check for unconsumed waitForPlay points BEFORE advancing the element index.
+    // waitForPlay is set on the element that finishes just before the pause.
+    // Once elapsed time passes that element's end, we must pause.
+    for (const timing of this.timings) {
+      if (!timing.waitForPlay) continue;
+      if (this.consumedWaitPoints.has(timing.elementIndex)) continue;
+
+      const elementEnd = timing.startTime + timing.duration;
+      if (elapsedTime >= elementEnd) {
+        // Mark consumed so it won't re-trigger after resume
+        this.consumedWaitPoints.add(timing.elementIndex);
+
+        // Clamp elapsed time to the end of this element
+        this.state.elapsedTime = elementEnd;
+        this.state.currentElementIndex = timing.elementIndex;
+        this.state.currentProgress = 1.0;
+
+        // Make all elements up to and including this one visible
+        this.state.visibleElements.clear();
+        for (let i = 0; i <= timing.elementIndex; i++) {
+          this.state.visibleElements.add(i);
+        }
+
+        // Enter waiting state (the animation loop will stop on seeing this)
+        this.state.status = 'waiting';
+        this.state.isPaused = true;
+        return;
+      }
+    }
+
+    // No wait point hit - normal time-based update
     const current = TimingCalculator.getElementAtTime(this.timings, elapsedTime);
 
     if (current) {
       this.state.currentElementIndex = current.elementIndex;
       this.state.currentProgress = current.progress;
-      
+
       // Update visible elements (all elements up to and including current)
       this.state.visibleElements.clear();
       for (let i = 0; i <= current.elementIndex; i++) {
@@ -281,7 +313,6 @@ export class AnimationEngine {
     } else {
       // No element is currently animating - we're in a gap or completed
       // Keep all elements visible up to the last completed element
-      // Find the last element that should have completed by now
       let lastCompletedIndex = -1;
       for (let i = 0; i < this.timings.length; i++) {
         const timing = this.timings[i];
@@ -292,30 +323,15 @@ export class AnimationEngine {
           break; // Stop at first incomplete element
         }
       }
-      
+
       if (lastCompletedIndex >= 0) {
         this.state.currentElementIndex = lastCompletedIndex;
         this.state.currentProgress = 1.0;
-        
+
         // Make all completed elements visible
         this.state.visibleElements.clear();
         for (let i = 0; i <= lastCompletedIndex; i++) {
           this.state.visibleElements.add(i);
-        }
-      }
-    }
-
-    // Check for pause directives
-    const currentTiming = this.timings[this.state.currentElementIndex];
-    if (currentTiming) {
-      const elementEnd = currentTiming.startTime + currentTiming.duration;
-      
-      // Check if we've reached a pauseUntilPlay directive
-      if (currentTiming.waitForPlay && elapsedTime >= elementEnd) {
-        if (this.state.status !== 'waiting' && this.state.status !== 'paused') {
-          this.pause();
-          this.state.status = 'waiting'; // Override to 'waiting' to show waiting state in UI
-          this.notifyStateChange();
         }
       }
     }
