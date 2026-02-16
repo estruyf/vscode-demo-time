@@ -190,6 +190,15 @@ export const AnimatedElement: React.FC<AnimatedElementProps> = React.memo(({
       (style as any).strokeOpacity = originalStrokeOpacity;
     }
 
+    // Set initial stroke-dash values during render to prevent a one-frame flash
+    // where the stroke appears fully drawn before the useEffect sets the dash pattern.
+    // The useEffect will override with getTotalLength() for pixel-perfect values.
+    if (isCurrent && node.hasStroke && node.pathLength) {
+      const dashOffset = node.pathLength * (1 - progress);
+      style.strokeDasharray = `${node.pathLength}`;
+      style.strokeDashoffset = `${dashOffset}`;
+    }
+
     // Text typewriter handling: progressively reveal text for the current element
     if ((tagName === 'text' || tagName === 'tspan') && isCurrent && typeof progress === 'number' && progress >= 0 && progress < 1) {
       if (typeof attributes.children === 'string') {
@@ -203,7 +212,7 @@ export const AnimatedElement: React.FC<AnimatedElementProps> = React.memo(({
         style.clipPath = `inset(0 ${clipPercent}% 0 0)`;
       }
     }
-    
+
     return {
       tagName,
       attributes: {
@@ -211,7 +220,7 @@ export const AnimatedElement: React.FC<AnimatedElementProps> = React.memo(({
         style,
       },
     };
-  }, [node.element, isVisible, fillVisible, isCurrent, node.hasFill, progress]);
+  }, [node.element, isVisible, fillVisible, isCurrent, node.hasFill, node.hasStroke, node.pathLength, progress]);
 
   return React.createElement(elementProps.tagName, {
     ref: elementRef,

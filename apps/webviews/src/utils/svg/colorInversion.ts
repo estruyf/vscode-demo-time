@@ -27,10 +27,11 @@ export function invertLightness(color: string): string {
     }
 
     // Invert lightness (0-1 scale), clamping minimum so very light colors
-    // don't become invisible against a dark background
+    // (e.g. lightyellow L=0.98 → inverted 0.02) don't vanish against the
+    // dark background.  0.40 is clearly distinguishable from black.
     const inverted = {
       ...oklch,
-      l: Math.max(0.25, 1 - oklch.l),
+      l: Math.max(0.55, 1 - oklch.l),
     };
     
     // Convert back to hex

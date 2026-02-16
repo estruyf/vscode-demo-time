@@ -45,11 +45,10 @@ export const SVGRenderer = React.forwardRef<SVGSVGElement, SVGRendererProps>(
 
     const viewBoxValue = `${scaledViewBox.x} ${scaledViewBox.y} ${scaledViewBox.width} ${scaledViewBox.height}`;
 
-    // Apply background color inversion if needed
-    const svgStyle: React.CSSProperties = {};
-    if (invertColors) {
-      svgStyle.background = '#000000'; // Dark background for inverted diagrams
-    }
+    // Set canvas background: white by default (SVGs assume white), black when inverted
+    const svgStyle: React.CSSProperties = {
+      background: invertColors ? '#000000' : '#FFFFFF',
+    };
 
     return (
       <div 

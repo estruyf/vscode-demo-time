@@ -206,8 +206,16 @@ export class SVGParser {
     const stroke = element.getAttribute('stroke');
     const fill = element.getAttribute('fill');
 
-    const hasStroke = stroke !== null && stroke !== 'none';
-    const hasFill = fill !== 'none' && (fill !== null || type !== 'path'); // paths default to no fill
+    // Also check inline style for stroke/fill (common in tool-generated SVGs)
+    const styleAttr = element.getAttribute('style') || '';
+    const styleStroke = styleAttr.match(/(?:^|;)\s*stroke\s*:\s*([^;]+)/)?.[1]?.trim();
+    const styleFill = styleAttr.match(/(?:^|;)\s*fill\s*:\s*([^;]+)/)?.[1]?.trim();
+
+    const effectiveStroke = stroke || styleStroke || null;
+    const effectiveFill = fill || styleFill || null;
+
+    const hasStroke = effectiveStroke !== null && effectiveStroke !== 'none';
+    const hasFill = effectiveFill !== 'none' && (effectiveFill !== null || type !== 'path'); // paths default to no fill
 
     // Calculate path length
     let pathLength: number | undefined;
