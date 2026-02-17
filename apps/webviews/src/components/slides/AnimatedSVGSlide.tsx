@@ -3,7 +3,7 @@
  * Main component for rendering animated SVG slides
  */
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { SVGParser } from '../../utils/svg/SVGParser';
 import { ParsedSVG } from '../../utils/svg/types';
 import { AnimationEngine, AnimationState, AnimationCommand } from '../../utils/svg/AnimationEngine';
@@ -114,11 +114,13 @@ export const AnimatedSVGSlide: React.FC<AnimatedSVGSlideProps> = ({
     };
   }, [parsedSVG, animationSpeed, textTypeWriterEffect, textTypewriterSpeed, autoplay, showCompleteDiagram, isActive]);
 
-  // Handle control commands
+  // Handle control commands. Return the underlying result so callers
+  // can handle potential Promise rejections (e.g. media play AbortError).
   const handleCommand = useCallback((command: AnimationCommand) => {
     if (animationEngine) {
-      animationEngine.handleCommand(command);
+      return animationEngine.handleCommand(command);
     }
+    return undefined;
   }, [animationEngine]);
 
   // Notify parent when animation is waiting (blocking navigation)
@@ -129,9 +131,78 @@ export const AnimatedSVGSlide: React.FC<AnimatedSVGSlideProps> = ({
     }
   }, [animationState?.status, onNavigationBlock]);
 
+  // Track transitions from 'waiting' -> 'playing' so we can notify the
+  // preview that we consumed a next action even if the consumption
+  // happened slightly after the preview dispatched its syncCheck.
+  const prevStatusRef = useRef<AnimationStatus | undefined>(undefined);
+  const recentlyResumedRef = useRef(false);
+  const consumedAtIndexRef = useRef<number | null>(null);
+  useEffect(() => {
+    const prev = prevStatusRef.current;
+    const curr = animationState?.status;
+    if (prev === 'waiting' && curr === 'playing') {
+      try { window.dispatchEvent(new CustomEvent('demotime.preview.nextConsumed', { detail: { slideIndex } })); } catch {}
+      // mark that this slide consumed a next action and has resumed
+      consumedAtIndexRef.current = slideIndex;
+      recentlyResumedRef.current = true;
+      const t = setTimeout(() => { recentlyResumedRef.current = false; }, 300);
+      return () => clearTimeout(t);
+    }
+    // Clear consumed flag when animation finishes
+    if (curr === 'complete' && consumedAtIndexRef.current === slideIndex) {
+      try { window.dispatchEvent(new CustomEvent('demotime.preview.animationComplete', { detail: { slideIndex } })); } catch {}
+      consumedAtIndexRef.current = null;
+    }
+    prevStatusRef.current = curr;
+    return undefined;
+  }, [animationState?.status, slideIndex]);
+
+  // Listen for in-webview 'checkNext' handshake so paused animations
+  // can consume next-slide requests from the preview. If we are
+  // currently waiting (pauseUntilPlay) we resume and notify consumption.
+  useEffect(() => {
+    const onCheckNext = (ev: any) => {
+      try {
+        console.debug('[AnimatedSVGSlide] received demotime.preview.checkNext', { slideIndex, status: animationState?.status });
+        if (animationState?.status === 'waiting') {
+          // Resume animation
+          consumedAtIndexRef.current = slideIndex;
+          const res = handleCommand('play');
+          // Mark the syncCheck as consumed if this was a sync check
+          try {
+            if (ev && ev.detail) {
+              ev.detail.consumed = true;
+            }
+          } catch {}
+          // Notify preview this slide consumed the next action
+          try { window.dispatchEvent(new CustomEvent('demotime.preview.nextConsumed', { detail: { slideIndex } })); } catch {}
+          if (res && typeof (res as any).catch === 'function') {
+            (res as any).catch((err: any) => {
+              if (err && err.name === 'AbortError') { return; }
+              console.error('Error while resuming animation from checkNext', err);
+            });
+          }
+        }
+      } catch (err) {
+        // swallow errors; handshake is best-effort
+        console.error('Error handling demotime.preview.checkNext', err);
+      }
+    };
+
+    window.addEventListener('demotime.preview.checkNext', onCheckNext as EventListener);
+    // Also listen for synchronous checks where listeners can mutate the
+    // event detail before dispatch returns.
+    window.addEventListener('demotime.preview.syncCheck', onCheckNext as EventListener);
+    return () => {
+      window.removeEventListener('demotime.preview.checkNext', onCheckNext as EventListener);
+      window.removeEventListener('demotime.preview.syncCheck', onCheckNext as EventListener);
+    };
+  }, [animationState?.status, handleCommand, slideIndex]);
+
   // Listen for DemoTime navigation events to resume from pauseUntilPlay
   const slidesListener = useCallback((message: MessageEvent<EventData<any>>) => {
     const { command } = message.data;
+    console.debug('[AnimatedSVGSlide] Messenger message received', { command, slideIndex, status: animationState?.status });
     if (!command || !isActive || !animationState) {
       return;
     }
@@ -141,7 +212,19 @@ export const AnimatedSVGSlide: React.FC<AnimatedSVGSlideProps> = ({
     if (animationState.status === 'waiting') {
       if (command === WebViewMessages.toWebview.nextSlide) {
         // Resume animation - parent will block navigation via onNavigationBlock
-        handleCommand('play');
+        consumedAtIndexRef.current = slideIndex;
+        const res = handleCommand('play');
+        // Notify preview that we consumed the next action so it doesn't advance
+        try { window.dispatchEvent(new CustomEvent('demotime.preview.nextConsumed', { detail: { slideIndex } })); } catch {}
+        if (res && typeof (res as any).catch === 'function') {
+          (res as any).catch((err: any) => {
+            if (err && err.name === 'AbortError') {
+              // Ignore media play aborted by a concurrent load
+              return;
+            }
+            console.error('Error while resuming animation on nextSlide', err);
+          });
+        }
       }
     }
   }, [isActive, animationState, handleCommand]);
@@ -170,7 +253,16 @@ export const AnimatedSVGSlide: React.FC<AnimatedSVGSlideProps> = ({
       if (event.key === 'ArrowRight' || event.key === ' ') {
         event.preventDefault();
         event.stopPropagation();
-        handleCommand('play');
+        consumedAtIndexRef.current = slideIndex;
+        const res = handleCommand('play');
+        // Inform preview that we consumed the next action (resume)
+        try { window.dispatchEvent(new CustomEvent('demotime.preview.nextConsumed', { detail: { slideIndex } })); } catch {}
+        if (res && typeof (res as any).catch === 'function') {
+          (res as any).catch((err: any) => {
+            if (err && err.name === 'AbortError') { return; }
+            console.error('Error while resuming animation via keyboard', err);
+          });
+        }
       }
     };
 

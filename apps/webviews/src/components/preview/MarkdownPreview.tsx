@@ -37,7 +37,6 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const [zoomLevel,] = React.useState(2.0); // 2x zoom by default
   const [panOffset, setPanOffset] = React.useState({ x: 0, y: 0 });
   const [svgContent, setSvgContent] = React.useState<string | null>(null);
-  const isAnimationBlockingRef = React.useRef(false);
 
   const { content, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();
   const ref = React.useRef<HTMLDivElement>(null);
@@ -192,18 +191,72 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   }, []);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const slidesListener = React.useCallback((message: MessageEvent<EventData<any>>) => {
+  const slidesListener = React.useCallback(async (message: MessageEvent<EventData<any>>) => {
     const { command } = message.data;
     if (!command) {
       return;
     }
 
-
+    // When the extension requests a next slide, give in-webview components
+    // a chance to consume the event (e.g. paused AnimatedSVGSlide). First
+    // do a synchronous check so consumers that already resumed can mark
+    // the event as consumed before we advance. If not consumed, fall back
+    // to the async checkNext handshake.
     if (command === WebViewMessages.toWebview.nextSlide) {
-      // Don't advance if animated SVG is blocking navigation (using ref for immediate sync access)
-      if (isAnimationBlockingRef.current) {
+      // If a slide previously consumed a next and hasn't yet signalled completion,
+      // ignore further next requests for that slide (they should be pressed again after completion).
+      if (consumedSlideIndexRef.current !== null && consumedSlideIndexRef.current === crntSlide?.index) {
         return;
       }
+      // Synchronous check: dispatch an event that listeners may mutate
+      // (set `detail.consumed = true`) to indicate they handled the next.
+      const syncEv = new CustomEvent('demotime.preview.syncCheck', { detail: { slideIndex: crntSlide?.index, consumed: false } }) as CustomEvent<{
+        slideIndex?: number;
+        consumed: boolean;
+      }>;
+      window.dispatchEvent(syncEv);
+      if (syncEv.detail && syncEv.detail.consumed) {
+        console.debug('[MarkdownPreview] syncCheck consumed by slide', { slideIndex: crntSlide?.index });
+        return; // consumed synchronously
+      }
+
+      // Ask in-webview components if they want to consume the next event
+      const consumed = await new Promise<boolean>((resolve) => {
+        let done = false;
+        const onConsumed = () => {
+          if (done) { return; }
+          done = true;
+          cleanup();
+          resolve(true);
+        };
+
+        const cleanup = () => {
+          window.removeEventListener('demotime.preview.nextConsumed', onConsumed);
+          clearTimeout(timer);
+        };
+
+        const timer = setTimeout(() => {
+          if (done) { return; }
+          done = true;
+          cleanup();
+          resolve(false);
+        }, 250);
+
+        window.addEventListener('demotime.preview.nextConsumed', onConsumed);
+
+        // Dispatch the async check; include current slide index for debugging/context
+        console.debug('[MarkdownPreview] dispatching demotime.preview.checkNext', { slideIndex: crntSlide?.index });
+        window.dispatchEvent(new CustomEvent('demotime.preview.checkNext', { detail: { slideIndex: crntSlide?.index } }));
+      });
+
+      if (consumed) {
+        // A component handled the 'next' by resuming animation — do not advance.
+        // Remember which slide consumed the next so we can ignore additional nexts until completion
+        // onConsumed will already set this, but ensure it's recorded here too
+        consumedSlideIndexRef.current = crntSlide?.index ?? null;
+        return;
+      }
+
       const nextSlide = crntSlide ? crntSlide.index + 1 : 1;
       updateSlideIdx(nextSlide);
       messageHandler.send(WebViewMessages.toVscode.updateSlideIndex, nextSlide);
@@ -221,6 +274,33 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
 
     return bgStyles;
   }, [bgStyles, layout]);
+
+  // Track which slide (if any) consumed a 'next' request and is waiting to complete
+  const consumedSlideIndexRef = React.useRef<number | null>(null);
+
+  // Listen for slide-level events indicating they consumed a next, or that their animation completed
+  React.useEffect(() => {
+    const onConsumed = (ev: Event) => {
+      const ce = ev as CustomEvent<{ slideIndex?: number }>; 
+      const idx = ce && ce.detail && typeof ce.detail.slideIndex === 'number' ? ce.detail.slideIndex : null;
+      consumedSlideIndexRef.current = idx;
+    };
+
+    const onComplete = (ev: Event) => {
+      const ce = ev as CustomEvent<{ slideIndex?: number }>;
+      const idx = ce && ce.detail && typeof ce.detail.slideIndex === 'number' ? ce.detail.slideIndex : null;
+      if (consumedSlideIndexRef.current === idx) {
+        consumedSlideIndexRef.current = null;
+      }
+    };
+
+    window.addEventListener('demotime.preview.nextConsumed', onConsumed as EventListener);
+    window.addEventListener('demotime.preview.animationComplete', onComplete as EventListener);
+    return () => {
+      window.removeEventListener('demotime.preview.nextConsumed', onConsumed as EventListener);
+      window.removeEventListener('demotime.preview.animationComplete', onComplete as EventListener);
+    };
+  }, []);
 
   const relativePath = React.useMemo(() => {
     return crntFilePath ? crntFilePath.replace(webviewUrl || "", "") : undefined;
@@ -439,9 +519,6 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
                     transportControlsPosition={crntSlide.frontmatter.transportControlsPosition}
                     slideIndex={crntSlide.index}
                     isActive={true}
-                    onNavigationBlock={(isBlocking) => {
-                      isAnimationBlockingRef.current = isBlocking;
-                    }}
                   />
                 ) : (
                   <div className='slide__content'>

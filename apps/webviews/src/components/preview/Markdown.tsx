@@ -108,7 +108,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     } else {
       setIsReady(true);
     }
-  }, [content, textContent, webviewUrl]);
+  }, [content, textContent, webviewUrl, currentLayoutPath, processMarkdown]);
 
   const updateCustomThemePath = React.useCallback((customThemePath?: string) => {
     if (!customThemePath) {
@@ -159,14 +159,14 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     } else {
       updateBgStyles(undefined);
     }
-  }, [isReady, prevContent, matter, updateCustomThemePath, updateBgStyles, webviewUrl]);
+  }, [isReady, prevContent, prevMatter, matter, updateCustomThemePath, updateBgStyles, webviewUrl, updateCustomLayout]);
 
   React.useEffect(() => {
     if (content && content !== prevContent) {
       // Passing the theme here as it could be that the theme has been updated
       setMarkdown(twoColumnFormatting(content), [[rehypePrettyCode, { theme: vsCodeTheme ? vsCodeTheme : {} }]], isDarkTheme);
     }
-  }, [content, vsCodeTheme, isDarkTheme]);
+  }, [content, vsCodeTheme, isDarkTheme, prevContent, setMarkdown]);
 
   // Set playback rate when video is ready
   React.useEffect(() => {
@@ -177,12 +177,16 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
 
   // Cleanup effect for video elements when component unmounts or slide changes
   React.useEffect(() => {
+    const v = videoRef.current;
     return () => {
-      const v = videoRef.current;
       if (v) {
         v.pause();
         v.src = '';
-        v.load(); // Reset the video element
+        try {
+          v.load(); // Reset the video element
+        } catch (e) {
+          console.debug('video.load cleanup error', e);
+        }
       }
     };
   }, [filePath, matter?.customLayout]);
