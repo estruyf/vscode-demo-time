@@ -240,7 +240,8 @@ export class AnimationEngine {
       // Only notify if something meaningful changed
       const elementChanged = this.state.currentElementIndex !== previousElementIndex;
       const visibilityChanged = this.state.visibleElements.size !== previousVisibleCount;
-      const progressChanged = Math.abs(this.state.currentProgress - previousProgress) > 0.005; // 0.5% threshold
+      // Lower threshold so short text animations emit enough frames for per-character updates.
+      const progressChanged = Math.abs(this.state.currentProgress - previousProgress) > 0.0005; // 0.05%
       
       // Always notify on element transitions, otherwise check progress threshold
       if (elementChanged || visibilityChanged || (this.state.currentElementIndex >= 0 && progressChanged)) {

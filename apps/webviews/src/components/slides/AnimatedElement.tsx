@@ -151,6 +151,24 @@ export const AnimatedElement: React.FC<AnimatedElementProps> = React.memo(({
   const elementProps = useMemo(() => {
     const tagName = node.element.tagName.toLowerCase();
     const attributes = getElementAttributes(node.element);
+
+    // Detect simple <tspan>-only text so we can strip text content from React render and let
+    // the DOM effect drive per-character updates without React re-inserting full text each render.
+    let simpleTspans = false;
+    if ((tagName === 'text' || tagName === 'tspan') && node.element.children && node.element.children.length > 0) {
+      simpleTspans = Array.from(node.element.children).every((c) => c.tagName.toLowerCase() === 'tspan' && c.children.length === 0);
+      if (simpleTspans) {
+        const children: React.ReactNode[] = [];
+        for (let i = 0; i < node.element.children.length; i++) {
+          const child = node.element.children[i] as SVGElement;
+          const childAttrs = getElementAttributes(child);
+          // Strip text content so React doesn't write full text; DOM effect will manage textContent.
+          const { children: _removed, ...rest } = childAttrs as any;
+          children.push(React.createElement(child.tagName.toLowerCase(), { ...rest, key: i }));
+        }
+        attributes.children = children;
+      }
+    }
     
     // Calculate visibility
     // Images and non-animatable elements show immediately when visible
@@ -206,8 +224,10 @@ export const AnimatedElement: React.FC<AnimatedElementProps> = React.memo(({
         const fullText = attributes.children as string;
         const chars = Math.max(0, Math.floor(progress * fullText.length));
         attributes.children = fullText.slice(0, chars);
+      } else if (simpleTspans) {
+        // Simple tspans will be handled by the DOM-side effect; avoid clipPath/text replacement here.
       } else {
-        // Text with child elements (e.g. tspan): use CSS clipPath to reveal left-to-right
+        // Text with complex children: use CSS clipPath to reveal left-to-right
         const clipPercent = (1 - progress) * 100;
         style.clipPath = `inset(0 ${clipPercent}% 0 0)`;
       }
@@ -221,6 +241,52 @@ export const AnimatedElement: React.FC<AnimatedElementProps> = React.memo(({
       },
     };
   }, [node.element, isVisible, fillVisible, isCurrent, node.hasFill, node.hasStroke, node.pathLength, progress]);
+
+  // DOM-driven typewriter for simple <tspan> children to ensure per-character updates.
+  const origTspansRef = useRef<string[] | null>(null);
+  useEffect(() => {
+    const el = elementRef.current as HTMLElement | null;
+    if (!el) return;
+
+    const tag = (node.element && (node.element.tagName || '')).toLowerCase();
+    if (!(tag === 'text' || tag === 'tspan')) return;
+
+    const children = Array.from(el.children) as HTMLElement[];
+    const simpleTspans = children.length > 0 && children.every(c => c.tagName.toLowerCase() === 'tspan' && c.children.length === 0);
+    if (!simpleTspans) return;
+
+    if (origTspansRef.current === null) {
+      // Prefer the original parsed node's tspan text (not the rendered DOM, which we stripped).
+      const sourceChildren = Array.from((node.element.children || []) as any as SVGElement[]);
+      const fromSource = sourceChildren.map(c => c.textContent || '');
+      const fromDom = children.map(c => c.textContent || '');
+      origTspansRef.current = fromSource.every(t => t.length === 0) ? fromDom : fromSource;
+    }
+
+    const orig = origTspansRef.current;
+    const fullText = orig.join('');
+    const charsToShow = Math.max(0, Math.floor(progress * fullText.length));
+
+    let remaining = charsToShow;
+    for (let i = 0; i < children.length; i++) {
+      const part = orig[i];
+      const take = Math.min(part.length, remaining);
+      try {
+        children[i].textContent = part.slice(0, take);
+      } catch {
+        // ignore DOM write errors
+      }
+      remaining -= take;
+    }
+
+    // Restore originals when no longer current or when finished
+    if (!isCurrent || progress >= 1) {
+      for (let i = 0; i < children.length; i++) {
+        try { children[i].textContent = orig[i]; } catch {}
+      }
+      origTspansRef.current = null;
+    }
+  }, [isCurrent, progress, node.element]);
 
   return React.createElement(elementProps.tagName, {
     ref: elementRef,
