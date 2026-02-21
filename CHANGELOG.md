@@ -1,6 +1,6 @@
 # Change Log
 
-## [1.13.0] - unreleased
+## [2.0.0] - 2026-02-09
 
 - [#257](https://github.com/estruyf/vscode-demo-time/issues/257): Have a new
   `demoTime.presentationViewToggles` setting to control the UI areas that get
@@ -8,6 +8,9 @@
 - [#322](https://github.com/estruyf/vscode-demo-time/issues/322): Added support
   for YAML snippets - snippets can now be created in both JSON and YAML formats
   (`.json`, `.jsonc`, `.yaml`, `.yml`)
+- [#327](https://github.com/estruyf/vscode-demo-time/issues/327): Added the new
+  terminology - Play, Act, Scene, and Move - to replace the previous Demo, Step,
+  and Action terminology
 - [#339](https://github.com/estruyf/vscode-demo-time/issues/339): Prevent
   unnecessary zoom when consecutive highlights are performed
 - [#340](https://github.com/estruyf/vscode-demo-time/issues/340): Fix an issue

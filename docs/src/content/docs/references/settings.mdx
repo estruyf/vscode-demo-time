@@ -67,11 +67,11 @@ Demo Time supports both JSON and YAML formats for act files. You can configure t
   "$schema": "https://demotime.show/demo-time.schema.json",
   "title": "My Demo",
   "description": "A sample demo",
-  "version": 2,
-  "demos": [
+  "version": 3,
+  "scenes": [
     {
       "title": "Step 1",
-      "steps": [
+      "moves": [
         {
           "action": "create",
           "path": "test.txt",
@@ -89,10 +89,10 @@ Demo Time supports both JSON and YAML formats for act files. You can configure t
 ```yaml
 title: My Demo
 description: A sample demo
-version: 2
-demos:
+version: 3
+scenes:
   - title: Step 1
-    steps:
+    moves:
       - action: create
         path: test.txt
         content: Hello World

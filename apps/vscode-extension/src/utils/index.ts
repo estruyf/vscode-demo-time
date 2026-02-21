@@ -39,6 +39,7 @@ export * from './getWebviewExtensionUrl';
 export * from './getWebviewHtml';
 export * from './getWebviewWorkspaceUrl';
 export * from './insertVariables';
+export * from './isPathInWorkspace';
 export * from './isProjectInitialized';
 export * from './lowercaseFirstLetter';
 export * from './openFile';

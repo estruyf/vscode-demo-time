@@ -63,7 +63,7 @@ export class DemoFileProvider {
         console.error('Error parsing YAML act file:', error);
         return undefined;
       }
-    } else {
+    } else if (path.endsWith('.json') || path.endsWith('.jsonc')) {
       // Default to JSON parsing (supports both .json and .jsonc)
       parsed = jsonParse(content);
     }

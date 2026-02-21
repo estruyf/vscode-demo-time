@@ -37,6 +37,7 @@ export const KeybindingPicker: React.FC<KeybindingPickerProps> = ({
   const [alt, setAlt] = useState(false);
   const [shift, setShift] = useState(false);
   const [meta, setMeta] = useState(false);
+  const [isCmdOrCtrl, setIsCmdOrCtrl] = useState(false);
   const [key, setKey] = useState('');
   const [customKey, setCustomKey] = useState('');
   const [useCustomKey, setUseCustomKey] = useState(false);
@@ -48,6 +49,7 @@ export const KeybindingPicker: React.FC<KeybindingPickerProps> = ({
       setAlt(false);
       setShift(false);
       setMeta(false);
+      setIsCmdOrCtrl(false);
       setKey('');
       setCustomKey('');
       setUseCustomKey(false);
@@ -63,9 +65,14 @@ export const KeybindingPicker: React.FC<KeybindingPickerProps> = ({
     };
 
     let keyPart = '';
+    let foundCmdOrCtrl = false;
 
     for (const part of parts) {
-      if (['ctrl', 'control', 'cmdorctrl'].includes(part)) {
+      if (part === 'cmdorctrl') {
+        modifiers.ctrl = true;
+        modifiers.meta = true;
+        foundCmdOrCtrl = true;
+      } else if (['ctrl', 'control'].includes(part)) {
         modifiers.ctrl = true;
       } else if (['alt', 'option'].includes(part)) {
         modifiers.alt = true;
@@ -82,6 +89,7 @@ export const KeybindingPicker: React.FC<KeybindingPickerProps> = ({
     setAlt(modifiers.alt);
     setShift(modifiers.shift);
     setMeta(modifiers.meta);
+    setIsCmdOrCtrl(foundCmdOrCtrl);
 
     // Check if it's a special key
     const isSpecial = SPECIAL_KEYS.some(sk => sk.value === keyPart);
@@ -104,12 +112,18 @@ export const KeybindingPicker: React.FC<KeybindingPickerProps> = ({
     metaMod: boolean,
     keyVal: string,
     customKeyVal: string,
-    isCustom: boolean
+    isCustom: boolean,
+    useCmdOrCtrl: boolean
   ): string => {
     const parts: string[] = [];
 
-    if (metaMod) { parts.push('cmd'); }
-    if (ctrlMod) { parts.push('ctrl'); }
+    // If both ctrl and meta are set AND we have the cmdOrCtrl flag, emit cmdorctrl
+    if (useCmdOrCtrl && ctrlMod && metaMod) {
+      parts.push('cmdorctrl');
+    } else {
+      if (metaMod) { parts.push('cmd'); }
+      if (ctrlMod) { parts.push('ctrl'); }
+    }
     if (altMod) { parts.push('alt'); }
     if (shiftMod) { parts.push('shift'); }
 
@@ -121,14 +135,34 @@ export const KeybindingPicker: React.FC<KeybindingPickerProps> = ({
     return parts.join('+');
   };
 
-  const handleModifierChange = (modifier: 'ctrl' | 'alt' | 'shift' | 'meta', checked: boolean) => {
+  const handleModifierChange = (modifier: 'ctrl' | 'alt' | 'shift' | 'meta' | 'cmdOrCtrl', checked: boolean) => {
     const newModifiers = { ctrl, alt, shift, meta };
-    newModifiers[modifier] = checked;
 
+    // Handle cmdOrCtrl specially
+    if (modifier === 'cmdOrCtrl') {
+      if (checked) {
+        // Enable both ctrl and meta, set cmdOrCtrl flag
+        setCtrl(true);
+        setMeta(true);
+        setIsCmdOrCtrl(true);
+        const newValue = buildKeybinding(true, alt, shift, true, key, customKey, useCustomKey, true);
+        onChange(newValue);
+      } else {
+        // Disable cmdOrCtrl flag
+        setIsCmdOrCtrl(false);
+        const newValue = buildKeybinding(false, alt, shift, false, key, customKey, useCustomKey, false);
+        onChange(newValue);
+      }
+      return;
+    }
+
+    // For other modifiers, clear cmdOrCtrl flag
+    newModifiers[modifier] = checked;
     if (modifier === 'ctrl') { setCtrl(checked); }
     if (modifier === 'alt') { setAlt(checked); }
     if (modifier === 'shift') { setShift(checked); }
     if (modifier === 'meta') { setMeta(checked); }
+    setIsCmdOrCtrl(false);
 
     const newValue = buildKeybinding(
       newModifiers.ctrl,
@@ -137,7 +171,8 @@ export const KeybindingPicker: React.FC<KeybindingPickerProps> = ({
       newModifiers.meta,
       key,
       customKey,
-      useCustomKey
+      useCustomKey,
+      false
     );
     onChange(newValue);
   };
@@ -147,7 +182,7 @@ export const KeybindingPicker: React.FC<KeybindingPickerProps> = ({
     setUseCustomKey(false);
     setCustomKey('');
 
-    const newValue = buildKeybinding(ctrl, alt, shift, meta, newKey, '', false);
+    const newValue = buildKeybinding(ctrl, alt, shift, meta, newKey, '', false, isCmdOrCtrl);
     onChange(newValue);
   };
 
@@ -156,7 +191,7 @@ export const KeybindingPicker: React.FC<KeybindingPickerProps> = ({
     setUseCustomKey(true);
     setKey('');
 
-    const newValue = buildKeybinding(ctrl, alt, shift, meta, '', newCustomKey, true);
+    const newValue = buildKeybinding(ctrl, alt, shift, meta, '', newCustomKey, true, isCmdOrCtrl);
     onChange(newValue);
   };
 
@@ -164,16 +199,16 @@ export const KeybindingPicker: React.FC<KeybindingPickerProps> = ({
     setUseCustomKey(isCustom);
     if (isCustom) {
       setKey('');
-      const newValue = buildKeybinding(ctrl, alt, shift, meta, '', customKey, true);
+      const newValue = buildKeybinding(ctrl, alt, shift, meta, '', customKey, true, isCmdOrCtrl);
       onChange(newValue);
     } else {
       setCustomKey('');
-      const newValue = buildKeybinding(ctrl, alt, shift, meta, key, '', false);
+      const newValue = buildKeybinding(ctrl, alt, shift, meta, key, '', false, isCmdOrCtrl);
       onChange(newValue);
     }
   };
 
-  const displayValue = buildKeybinding(ctrl, alt, shift, meta, key, customKey, useCustomKey);
+  const displayValue = buildKeybinding(ctrl, alt, shift, meta, key, customKey, useCustomKey, isCmdOrCtrl);
 
   return (
     <div className="space-y-3">
@@ -188,11 +223,13 @@ export const KeybindingPicker: React.FC<KeybindingPickerProps> = ({
           <label className="flex items-center space-x-2 cursor-pointer">
             <input
               type="checkbox"
-              checked={ctrl}
+              checked={ctrl && !isCmdOrCtrl}
               onChange={(e) => handleModifierChange('ctrl', e.target.checked)}
-              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              disabled={isCmdOrCtrl}
+              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             />
-            <span className="text-sm text-gray-700 dark:text-gray-300">Ctrl</span>
+            <span className={`text-sm ${isCmdOrCtrl ? 'text-gray-400 dark:text-gray-600' : 'text-gray-700 dark:text-gray-300'
+              }`}>Ctrl</span>
           </label>
 
           <label className="flex items-center space-x-2 cursor-pointer">
@@ -214,15 +251,29 @@ export const KeybindingPicker: React.FC<KeybindingPickerProps> = ({
             />
             <span className="text-sm text-gray-700 dark:text-gray-300">Shift</span>
           </label>
+        </div>
+
+        <div className="grid gap-3">
+          <label className="flex items-center space-x-2 cursor-pointer col-span-2">
+            <input
+              type="checkbox"
+              checked={meta && !isCmdOrCtrl}
+              onChange={(e) => handleModifierChange('meta', e.target.checked)}
+              disabled={isCmdOrCtrl}
+              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            />
+            <span className={`text-sm ${isCmdOrCtrl ? 'text-gray-400 dark:text-gray-600' : 'text-gray-700 dark:text-gray-300'
+              }`}>Cmd/Meta (platform-specific)</span>
+          </label>
 
           <label className="flex items-center space-x-2 cursor-pointer">
             <input
               type="checkbox"
-              checked={meta}
-              onChange={(e) => handleModifierChange('meta', e.target.checked)}
+              checked={isCmdOrCtrl}
+              onChange={(e) => handleModifierChange('cmdOrCtrl', e.target.checked)}
               className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
-            <span className="text-sm text-gray-700 dark:text-gray-300">Cmd/Meta</span>
+            <span className="text-sm text-gray-700 dark:text-gray-300">Cmd/Ctrl<span className="text-xs text-gray-500 dark:text-gray-400 ml-1">(cross-platform)</span></span>
           </label>
         </div>
 

@@ -1,5 +1,5 @@
 import { PresenterView } from '../presenterView/PresenterView';
-import { ContextKeys, StateKeys } from '../constants';
+import { ContextKeys, General, StateKeys } from '../constants';
 import { Subscription } from '../models';
 import {
   Position,
@@ -203,9 +203,31 @@ export class DemoRunner {
   /**
    * Retrieves the current version of the executing act file.
    *
+   * @param filePathOrUri - Optional file path or URI to check for version (useful for custom editors)
    * @returns {Version} The detected version of the current act file.
    */
-  public static getCurrentVersion(): Version {
+  public static async getCurrentVersion(filePathOrUri?: string | Uri): Promise<Version> {
+    // First, try to get version from the provided file path/URI
+    if (filePathOrUri) {
+      const uri = typeof filePathOrUri === 'string' ? Uri.file(filePathOrUri) : filePathOrUri;
+      if (uri.fsPath && uri.fsPath.includes(`/${General.demoFolder}/`)) {
+        const demoFile = await DemoFileProvider.getFile(uri);
+        if (demoFile && demoFile.version) {
+          return demoFile.version;
+        }
+      }
+    }
+
+    // Fall back to active text editor
+    const editor = window.activeTextEditor;
+    const crntOpenFileUri = editor?.document.uri;
+    if (crntOpenFileUri?.fsPath && crntOpenFileUri.fsPath.includes(`/${General.demoFolder}/`)) {
+      const demoFile = await DemoFileProvider.getFile(crntOpenFileUri);
+      if (demoFile && demoFile.version) {
+        return demoFile.version;
+      }
+    }
+
     const executingFile = Extension.getInstance().getState<DemoFileCache>(
       StateKeys.executingDemoFile,
     );

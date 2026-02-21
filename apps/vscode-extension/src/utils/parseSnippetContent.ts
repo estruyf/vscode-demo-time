@@ -14,11 +14,16 @@ export const parseSnippetContent = (content: string, filePath: string): Step[] =
   const path = filePath.toLowerCase();
 
   if (path.endsWith('.yaml') || path.endsWith('.yml')) {
+    let result: unknown;
     try {
-      return yamlLoad(content) as Step[];
+      result = yamlLoad(content);
     } catch (error) {
       throw new Error(`Error parsing YAML snippet file "${filePath}": ${error}`);
     }
+    if (!Array.isArray(result)) {
+      throw new Error(`Error parsing YAML snippet file "${filePath}": Invalid snippet format`);
+    }
+    return result as Step[];
   } else {
     // Default to JSON parsing (supports both .json and .jsonc)
     const errors: any[] = [];

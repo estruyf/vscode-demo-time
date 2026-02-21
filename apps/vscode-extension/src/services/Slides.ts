@@ -15,6 +15,7 @@ import {
   chooseDemoFile,
   fileExists,
   getRelPath,
+  isPathInWorkspace,
   parseWinPath,
   readFile,
   sanitizeFileName,
@@ -153,6 +154,12 @@ layout: ${layout.toLowerCase()}
                 const wsFolder = Extension.getInstance().workspaceFolder;
                 if (wsFolder) {
                   fileUri = Uri.joinPath(wsFolder.uri, step.path);
+
+                  // Verify the resolved path is contained within the workspace
+                  if (!isPathInWorkspace(fileUri, wsFolder)) {
+                    totalSlides++; // Count as 1 slide fallback for invalid paths
+                    continue;
+                  }
                 } else {
                   fileUri = Uri.file(step.path);
                 }
@@ -198,6 +205,16 @@ layout: ${layout.toLowerCase()}
               const wsFolder = Extension.getInstance().workspaceFolder;
               if (wsFolder) {
                 fileUri = Uri.joinPath(wsFolder.uri, step.path);
+
+                // Verify the resolved path is contained within the workspace
+                if (!isPathInWorkspace(fileUri, wsFolder)) {
+                  // Fallback: treat as one slide for invalid paths
+                  if (step.path === filePath && localSlideIdx === 0) {
+                    return globalIdx + 1;
+                  }
+                  globalIdx++;
+                  continue;
+                }
               } else {
                 fileUri = Uri.file(step.path);
               }

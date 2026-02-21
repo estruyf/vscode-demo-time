@@ -263,6 +263,20 @@ export class InteractionService {
       return;
     }
 
+    // Resolve platform-specific modifiers for cmdOrCtrl token
+    if (parsed.modifiers.cmdOrCtrl) {
+      const osPlatform = platform();
+      if (osPlatform === 'darwin') {
+        // On macOS, cmdOrCtrl maps to Command (meta)
+        parsed.modifiers.meta = true;
+      } else {
+        // On Windows and Linux, cmdOrCtrl maps to Ctrl
+        parsed.modifiers.ctrl = true;
+      }
+      // Clear the temporary flag
+      parsed.modifiers.cmdOrCtrl = false;
+    }
+
     const osPlatform = platform();
     let command = '';
 
@@ -395,7 +409,7 @@ export class InteractionService {
     keyCode?: number;
     linuxKey?: string;
     windowsKey?: string;
-    modifiers: { meta: boolean; ctrl: boolean; alt: boolean; shift: boolean };
+    modifiers: { meta: boolean; ctrl: boolean; alt: boolean; shift: boolean; cmdOrCtrl?: boolean };
     forceShift?: boolean;
   } | null {
     if (!keybinding) {
@@ -408,7 +422,7 @@ export class InteractionService {
     }
 
     const parts = trimmed.split('+').filter(Boolean);
-    const modifiers = { meta: false, ctrl: false, alt: false, shift: false };
+    const modifiers = { meta: false, ctrl: false, alt: false, shift: false, cmdOrCtrl: false };
     let keyToken: string | undefined;
 
     for (const partRaw of parts) {
@@ -417,7 +431,13 @@ export class InteractionService {
         modifiers.meta = true;
         continue;
       }
-      if (['ctrl', 'control', 'cmdorctrl'].includes(part)) {
+      if (part === 'cmdorctrl') {
+        // Mark as cmdOrCtrl instead of setting ctrl directly
+        // This will be resolved to the proper platform-specific modifier in pressKeybinding
+        modifiers.cmdOrCtrl = true;
+        continue;
+      }
+      if (['ctrl', 'control'].includes(part)) {
         modifiers.ctrl = true;
         continue;
       }

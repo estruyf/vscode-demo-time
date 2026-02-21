@@ -313,7 +313,7 @@ Here's a comprehensive example of how to set up your Mac for presentation mode a
 ```yaml
 title: Start Presentation Mode
 description: Set up Mac for presenting
-steps:
+moves:
   - action: macos.enableCaffeine
     duration: 90
   - action: macos.muteVolume
@@ -335,7 +335,7 @@ And to restore your Mac after the presentation:
 {
   "title": "End Presentation Mode",
   "description": "Restore Mac settings",
-  "steps": [
+  "moves": [
     {
       "action": "macos.disableFocusMode"
     },
@@ -364,7 +364,7 @@ And to restore your Mac after the presentation:
 ```yaml
 title: End Presentation Mode
 description: Restore Mac settings
-steps:
+moves:
   - action: macos.disableFocusMode
   - action: macos.showMenubar
   - action: macos.showDock
