@@ -259,6 +259,11 @@
           "default": 3,
           "description": "Number of characters to insert per 'keystroke' in hacker-typer mode"
         },
+        "demoTime.terminalCommandBoundaryDelay": {
+          "type": "number",
+          "default": 200,
+          "markdownDescription": "Delay (in milliseconds) between sequential terminal commands to prevent character bleed. Increase this if commands overlap or if you use custom shell prompts (Oh My Posh, Starship, Powerlevel10k) which can cause VS Code shell integration (633 sequences) to be unreliable. See [VS Code issue #242897](https://github.com/microsoft/vscode/issues/242897)."
+        },
         "demoTime.api.enabled": {
           "type": "boolean",
           "default": false,
