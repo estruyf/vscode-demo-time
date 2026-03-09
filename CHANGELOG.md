@@ -1,8 +1,9 @@
 # Change Log
 
-## [2.0.1] - 2026-xx-xx
+## [2.1.0] - 2026-xx-xx
 
 - [#388](https://github.com/estruyf/vscode-demo-time/issues/388): Fix terminal command character bleed in sequential executeTerminalCommand calls
+- [#389](https://github.com/estruyf/vscode-demo-time/issues/389): Support the integrated Visual Studio Code browser
 
 ## [2.0.0] - 2026-02-09
 
