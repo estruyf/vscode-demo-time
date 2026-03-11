@@ -1,6 +1,6 @@
 ---
 theme: default
-layout: animated-svg
+layout: animated
 svgFile: .demo/animations/animated-diagram.svg
 controlsPosition: topRight
 ---
