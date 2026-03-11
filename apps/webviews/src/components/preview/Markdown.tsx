@@ -108,7 +108,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     } else {
       setIsReady(true);
     }
-  }, [content, textContent, webviewUrl, currentLayoutPath, processMarkdown]);
+  }, [content, textContent, webviewUrl]);
 
   const updateCustomThemePath = React.useCallback((customThemePath?: string) => {
     if (!customThemePath) {
