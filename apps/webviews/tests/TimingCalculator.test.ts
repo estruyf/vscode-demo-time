@@ -16,7 +16,7 @@ describe('TimingCalculator', () => {
       };
 
       const duration = TimingCalculator.calculateDuration(500, config);
-      
+
       // 500px / 100px/s * 1000 = 5000ms
       expect(duration).toBe(5000);
     });
@@ -28,7 +28,7 @@ describe('TimingCalculator', () => {
       };
 
       const duration = TimingCalculator.calculateDuration(1000, config);
-      
+
       // 1000px / (100px/s * 2.0) * 1000 = 5000ms
       expect(duration).toBe(5000);
     });
@@ -40,7 +40,7 @@ describe('TimingCalculator', () => {
       };
 
       const duration = TimingCalculator.calculateDuration(500, config);
-      
+
       // 500px / (100px/s * 0.5) * 1000 = 10000ms
       expect(duration).toBe(10000);
     });
@@ -62,7 +62,7 @@ describe('TimingCalculator', () => {
       };
 
       const duration = TimingCalculator.calculateDuration(100000, config);
-      
+
       // 100000px / 100px/s * 1000 = 1000000ms (1000s)
       expect(duration).toBe(1000000);
     });
@@ -74,7 +74,7 @@ describe('TimingCalculator', () => {
       };
 
       const duration = TimingCalculator.calculateDuration(1000, config);
-      
+
       // Should use fallback: 100 px/s
       expect(duration).toBe(10000);
     });
@@ -85,20 +85,20 @@ describe('TimingCalculator', () => {
       const config: TimingConfig = {
         baseSpeed: 100,
         speedModifier: 1.0,
-        textTypewriterSpeed: 20, // 20 chars/s
+        textTypeWriterSpeed: 20, // 20 chars/s
       };
 
       const duration = TimingCalculator.calculateTextDuration('Hello World', config);
-      
+
       // 11 chars / 20 chars/s * 1000 = 550ms
       expect(duration).toBe(550);
     });
 
-    it('should return 0 when textTypewriterSpeed is undefined', () => {
+    it('should return 0 when textTypeWriterSpeed is undefined', () => {
       const config: TimingConfig = {
         baseSpeed: 100,
         speedModifier: 1.0,
-        // textTypewriterSpeed not set
+        // textTypeWriterSpeed not set
       };
 
       const duration = TimingCalculator.calculateTextDuration('Hello World', config);
@@ -109,7 +109,7 @@ describe('TimingCalculator', () => {
       const config: TimingConfig = {
         baseSpeed: 100,
         speedModifier: 1.0,
-        textTypewriterSpeed: 20,
+        textTypeWriterSpeed: 20,
       };
 
       const duration = TimingCalculator.calculateTextDuration('', config);
@@ -133,15 +133,15 @@ describe('TimingCalculator', () => {
       const timings = TimingCalculator.calculateSequence(elements, config);
 
       expect(timings).toHaveLength(3);
-      
+
       // First element: starts at 0, duration 1000ms
       expect(timings[0].startTime).toBe(0);
       expect(timings[0].duration).toBe(1000);
-      
+
       // Second element: starts at 1000, duration 2000ms
       expect(timings[1].startTime).toBe(1000);
       expect(timings[1].duration).toBe(2000);
-      
+
       // Third element: starts at 3000, duration 3000ms
       expect(timings[2].startTime).toBe(3000);
       expect(timings[2].duration).toBe(3000);
@@ -166,7 +166,7 @@ describe('TimingCalculator', () => {
 
       // First element: normal speed (100px / 100px/s = 1s)
       expect(timings[0].duration).toBe(1000);
-      
+
       // Second element: 2x faster (100px / 200px/s = 0.5s)
       expect(timings[1].duration).toBe(500);
       expect(timings[1].startTime).toBe(1000);
@@ -190,7 +190,7 @@ describe('TimingCalculator', () => {
       const timings = TimingCalculator.calculateSequence(elements, config, directives);
 
       expect(timings[0].pauseAfter).toBe(500);
-      
+
       // Second element should start after first element duration + pause
       expect(timings[1].startTime).toBe(1000 + 500);
     });
@@ -201,9 +201,7 @@ describe('TimingCalculator', () => {
         createMockElement('path', 100),
       ];
 
-      const directives = [
-        { type: 'pauseUntilPlay', position: 1 },
-      ];
+      const directives = [{ type: 'pauseUntilPlay', position: 1 }];
 
       const config: TimingConfig = {
         baseSpeed: 100,
@@ -225,7 +223,7 @@ describe('TimingCalculator', () => {
       ];
 
       const total = TimingCalculator.getTotalDuration(timings);
-      
+
       // Last element: 3000 + 1500 = 4500
       expect(total).toBe(4500);
     });
@@ -237,7 +235,7 @@ describe('TimingCalculator', () => {
       ];
 
       const total = TimingCalculator.getTotalDuration(timings);
-      
+
       // Last element: 1000 + 2000 + 500 = 3500
       expect(total).toBe(3500);
     });
@@ -257,7 +255,7 @@ describe('TimingCalculator', () => {
 
     it('should find element at beginning', () => {
       const result = TimingCalculator.getElementAtTime(timings, 0);
-      
+
       expect(result).not.toBeNull();
       expect(result?.elementIndex).toBe(0);
       expect(result?.progress).toBe(0);
@@ -265,7 +263,7 @@ describe('TimingCalculator', () => {
 
     it('should find element in middle of animation', () => {
       const result = TimingCalculator.getElementAtTime(timings, 500);
-      
+
       expect(result).not.toBeNull();
       expect(result?.elementIndex).toBe(0);
       expect(result?.progress).toBe(0.5); // 500ms / 1000ms
@@ -273,7 +271,7 @@ describe('TimingCalculator', () => {
 
     it('should find second element', () => {
       const result = TimingCalculator.getElementAtTime(timings, 2000);
-      
+
       expect(result).not.toBeNull();
       expect(result?.elementIndex).toBe(1);
       expect(result?.progress).toBe(0.5); // (2000 - 1000) / 2000

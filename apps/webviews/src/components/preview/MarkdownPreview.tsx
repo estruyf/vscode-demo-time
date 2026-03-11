@@ -281,7 +281,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   // Listen for slide-level events indicating they consumed a next, or that their animation completed
   React.useEffect(() => {
     const onConsumed = (ev: Event) => {
-      const ce = ev as CustomEvent<{ slideIndex?: number }>; 
+      const ce = ev as CustomEvent<{ slideIndex?: number }>;
       const idx = ce && ce.detail && typeof ce.detail.slideIndex === 'number' ? ce.detail.slideIndex : null;
       consumedSlideIndexRef.current = idx;
     };
@@ -512,7 +512,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
                     svgContent={svgContent}
                     animationSpeed={crntSlide.frontmatter.animationSpeed}
                     textTypeWriterEffect={crntSlide.frontmatter.textTypeWriterEffect}
-                    textTypewriterSpeed={crntSlide.frontmatter.textTypewriterSpeed}
+                    textTypeWriterSpeed={crntSlide.frontmatter.textTypeWriterSpeed}
                     autoplay={crntSlide.frontmatter.autoplay}
                     showCompleteDiagram={crntSlide.frontmatter.showCompleteDiagram}
                     invertLightAndDarkColours={crntSlide.frontmatter.invertLightAndDarkColours}

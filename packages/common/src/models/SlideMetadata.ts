@@ -19,7 +19,7 @@ export interface SlideMetadata {
   svgFile?: string;
   animationSpeed?: number | string;
   textTypeWriterEffect?: boolean;
-  textTypewriterSpeed?: number | string;
+  textTypeWriterSpeed?: number | string;
   autoplay?: boolean;
   showCompleteDiagram?: boolean;
   invertLightAndDarkColours?: boolean;
