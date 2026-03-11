@@ -24,7 +24,7 @@ export interface AnimationEngineConfig {
   elements: SVGElementNode[];
   directives: AnimationDirective[];
   baseSpeed: number; // pixels per second
-  textTypeWriterSpeed?: number; // characters per second
+  textTypeWriterSpeed?: number; // milliseconds per character
   autoplay: boolean;
   onStateChange: (state: AnimationState) => void;
   onComplete?: () => void;

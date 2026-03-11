@@ -17,7 +17,7 @@ export interface AnimatedSVGSlideProps {
   svgContent: string;
   animationSpeed?: number | string; // pixels per second
   textTypeWriterEffect?: boolean;
-  textTypeWriterSpeed?: number | string; // characters per second
+  textTypeWriterSpeed?: number | string; // milliseconds per character
   autoplay?: boolean;
   showCompleteDiagram?: boolean;
   invertLightAndDarkColours?: boolean;
@@ -86,7 +86,7 @@ export const AnimatedSVGSlide: React.FC<AnimatedSVGSlideProps> = ({
       ? (isNaN(parseFloat(animationSpeed)) ? 100 : parseFloat(animationSpeed))
       : animationSpeed;
 
-    const DEFAULT_TEXT_SPEED = 20; // chars per second
+    const DEFAULT_TEXT_SPEED = 20; // ms per character
     const textSpeed = textTypeWriterEffect
       ? (typeof textTypeWriterSpeed === 'string'
         ? (isNaN(parseFloat(textTypeWriterSpeed)) ? DEFAULT_TEXT_SPEED : parseFloat(textTypeWriterSpeed))

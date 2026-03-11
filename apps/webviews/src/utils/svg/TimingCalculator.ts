@@ -8,7 +8,7 @@ import { SVGElementNode } from '../../types/svg';
 export interface TimingConfig {
   baseSpeed: number; // pixels per second
   speedModifier: number; // multiplier for current speed
-  textTypeWriterSpeed?: number; // characters per second
+  textTypeWriterSpeed?: number; // milliseconds per character
 }
 
 export interface ElementTiming {
@@ -41,7 +41,7 @@ export class TimingCalculator {
 
   /**
    * Calculate text typewriter duration
-   * Formula: duration = (characterCount / charactersPerSecond) * 1000
+   * Formula: duration = characterCount * millisecondsPerCharacter
    */
   public static calculateTextDuration(text: string, config: TimingConfig): number {
     if (!text || !config.textTypeWriterSpeed) {
@@ -49,15 +49,15 @@ export class TimingCalculator {
     }
 
     const charCount = text.length;
-    // Tie text typing rate to the current speed modifier so directives like speed:0.5 affect typewriter
-    const effectiveCharsPerSecond = (config.textTypeWriterSpeed || 0) * (config.speedModifier || 1);
-    if (effectiveCharsPerSecond <= 0) {
-      // fallback to default 20 cps if invalid
-      const fallback = 20;
-      return Math.max(0, (charCount / fallback) * 1000);
+    // Tie text typing to the current speed modifier so directives like speed:0.5 slow it down.
+    const effectiveMsPerChar = (config.textTypeWriterSpeed || 0) / (config.speedModifier || 1);
+    if (effectiveMsPerChar <= 0) {
+      // Fallback to 50ms/char (equivalent to 20 chars/s) if invalid.
+      const fallback = 50;
+      return Math.max(0, charCount * fallback);
     }
 
-    const duration = (charCount / effectiveCharsPerSecond) * 1000;
+    const duration = charCount * effectiveMsPerChar;
     return Math.max(0, duration);
   }
 

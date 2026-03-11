@@ -85,13 +85,13 @@ describe('TimingCalculator', () => {
       const config: TimingConfig = {
         baseSpeed: 100,
         speedModifier: 1.0,
-        textTypeWriterSpeed: 20, // 20 chars/s
+        textTypeWriterSpeed: 20, // 20ms per character
       };
 
       const duration = TimingCalculator.calculateTextDuration('Hello World', config);
 
-      // 11 chars / 20 chars/s * 1000 = 550ms
-      expect(duration).toBe(550);
+      // 11 chars * 20ms = 220ms
+      expect(duration).toBe(220);
     });
 
     it('should return 0 when textTypeWriterSpeed is undefined', () => {

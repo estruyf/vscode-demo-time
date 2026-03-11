@@ -7,7 +7,7 @@ import { AnimationDirective } from '../../types/svg';
 
 export class DirectiveParser {
   private static SPEED_PATTERN = /^\s*speed:\s*([\d.]+)\s*$/i;
-  private static PAUSE_PATTERN = /^\s*pause:\s*(\d+(?:ms|s)?)\s*$/i;
+  private static PAUSE_PATTERN = /^\s*pause:\s*([\d.]+(?:ms|s)?)\s*$/i;
   private static PAUSE_UNTIL_PLAY = /^\s*pause:\s*untilPlay\s*$/i;
 
   /**

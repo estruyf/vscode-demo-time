@@ -66,7 +66,7 @@ export interface ParsedSVG {
 
 export interface AnimationConfig {
   baseSpeed: number; // pixels per second
-  textTypewriterEffect: boolean;
+  textTypeWriterEffect: boolean;
   textTypeWriterSpeed: number; // ms per character
   autoplay: boolean;
   showCompleteDiagram: boolean;

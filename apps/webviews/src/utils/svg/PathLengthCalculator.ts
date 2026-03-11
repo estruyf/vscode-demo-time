@@ -37,8 +37,11 @@ export class PathLengthCalculator {
     if (tag === 'ellipse') {
       const rx = parseFloat(element.getAttribute('rx') || '0');
       const ry = parseFloat(element.getAttribute('ry') || '0');
+      if (rx === 0 && ry === 0) {
+        return 0;
+      }
       // Ramanujan's approximation for ellipse perimeter
-      const h = Math.pow((rx - ry), 2) / Math.pow((rx + ry), 2);
+      const h = Math.pow(rx - ry, 2) / Math.pow(rx + ry, 2);
       return Math.PI * (rx + ry) * (1 + (3 * h) / (10 + Math.sqrt(4 - 3 * h)));
     }
 
@@ -77,7 +80,10 @@ export class PathLengthCalculator {
  * Handles both comma-separated and space-separated formats.
  */
 function parsePointsAttribute(pointsStr: string): { x: number; y: number }[] {
-  const numbers = pointsStr.trim().split(/[\s,]+/).map(Number);
+  const numbers = pointsStr
+    .trim()
+    .split(/[\s,]+/)
+    .map(Number);
   const points: { x: number; y: number }[] = [];
   for (let i = 0; i + 1 < numbers.length; i += 2) {
     points.push({ x: numbers[i], y: numbers[i + 1] });

@@ -16,6 +16,12 @@ export function calculateScaling(
   boundingBox: BoundingBox,
   targetSize: { width: number; height: number },
 ): ScaledViewBox {
+  if (boundingBox.width === 0 || boundingBox.height === 0) {
+    throw new Error(
+      `Cannot scale zero-size bounding box: ${boundingBox.width}x${boundingBox.height}`,
+    );
+  }
+
   const sourceAspect = boundingBox.width / boundingBox.height;
   const targetAspect = targetSize.width / targetSize.height;
 
