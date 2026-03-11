@@ -112,8 +112,7 @@ export const AnimatedSVGSlide: React.FC<AnimatedSVGSlideProps> = ({
     };
   }, [parsedSVG, animationSpeed, textTypeWriterEffect, textTypeWriterSpeed, autoplay, showCompleteDiagram, isActive]);
 
-  // Handle control commands. Return the underlying result so callers
-  // can handle potential Promise rejections (e.g. media play AbortError).
+  // Handle control commands.
   const handleCommand = useCallback((command: AnimationCommand) => {
     return animationEngineRef.current?.handleCommand(command);
   }, []);
@@ -121,14 +120,8 @@ export const AnimatedSVGSlide: React.FC<AnimatedSVGSlideProps> = ({
   // Centralized helper to resume a paused animation and notify the preview
   const resumeAnimation = useCallback(() => {
     consumedAtIndexRef.current = slideIndex;
-    const res = handleCommand('play');
+    handleCommand('play');
     window.dispatchEvent(new CustomEvent('demotime.preview.nextConsumed', { detail: { slideIndex } }));
-    if (res) {
-      (res as Promise<void>).catch((err: Error) => {
-        if (err?.name === 'AbortError') { return; }
-        console.error('Error while resuming animation', err);
-      });
-    }
   }, [handleCommand, slideIndex]);
 
   // Notify parent when animation is waiting (blocking navigation)
