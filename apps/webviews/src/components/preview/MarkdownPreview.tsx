@@ -359,7 +359,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       fetchFooter();
     }
 
-    // Load SVG content for animated-svg layout
+    // Load SVG content for animated layout
     if (crntSlide?.frontmatter.layout === SlideLayout.AnimatedSVG && crntSlide.frontmatter.svgFile) {
       setSvgContent(null); // Reset while loading
       messageHandler

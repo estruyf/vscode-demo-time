@@ -259,7 +259,7 @@ export const AnimatedSVGSlide: React.FC<AnimatedSVGSlideProps> = ({
   }
 
   return (
-    <div className="animated-svg-slide w-full h-full flex items-center justify-center relative">
+    <div className="animated-slide w-full h-full flex items-center justify-center relative">
       <SVGRenderer
         parsedSVG={parsedSVG}
         animationState={showCompleteDiagram ? null : animationState}
