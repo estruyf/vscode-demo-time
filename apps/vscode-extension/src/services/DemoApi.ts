@@ -89,7 +89,7 @@ export class DemoApi {
 
       DemoApi.statusBarItem.command = {
         title: 'Open API in VS Code',
-        command: 'simpleBrowser.show',
+        command: 'workbench.action.browser.open',
         arguments: [apiUrl],
       };
 

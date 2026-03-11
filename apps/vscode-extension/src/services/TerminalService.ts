@@ -2,8 +2,9 @@ import { commands, Terminal, window, Disposable, TerminalShellExecution } from '
 import { Notifications } from './Notifications';
 import { sleep } from '../utils';
 import { DemoRunner } from './DemoRunner';
-import { Step } from '@demotime/common';
+import { Step, Config } from '@demotime/common';
 import { AnalyticsService } from './analytics';
+import { Extension } from './Extension';
 
 /**
  * Service to manage terminal operations for demo execution.
@@ -13,7 +14,23 @@ export class TerminalService {
   private static onTerminalCompleted: { [id: string]: Disposable } = {};
   private static lastExecution: { [id: string]: string } = {};
   private static readonly terminalName = 'DemoTime';
+  // Command boundary delays to prevent character bleed between sequential commands.
+  // See VS Code issue #242897: Shell integration executeCommand reliability issues
+  // since v1.98+ due to 633;A/B/C/D/E sequence ordering with custom prompts.
+  private static readonly defaultCommandBoundaryDelayMs = 200;
+  private static readonly minSafetyDelayMs = 100; // Applied even with shell integration
   private static closeTerminalDisposable: Disposable | undefined;
+
+  /**
+   * Gets the configured command boundary delay from settings.
+   * @returns The delay in milliseconds.
+   */
+  private static getCommandBoundaryDelay(): number {
+    return (
+      Extension.getInstance().getSetting<number>(Config.terminal.commandBoundaryDelay) ??
+      TerminalService.defaultCommandBoundaryDelayMs
+    );
+  }
 
   /**
    * Registers an event listener that tracks the closing of VS Code terminals.
@@ -43,43 +60,56 @@ export class TerminalService {
     }
 
     autoExecute = typeof autoExecute !== 'undefined' ? autoExecute : true;
-    const terminal = await TerminalService.openTerminal(terminalId);
+    const resolvedTerminalId = terminalId ?? TerminalService.terminalName;
+    const terminal = await TerminalService.openTerminal(resolvedTerminalId);
 
     const typeMode = insertTypingMode ?? 'instant';
     const typeSpeed = insertTypingSpeed || 50;
 
     let execution: TerminalShellExecution | undefined;
     if (typeMode === 'character-by-character') {
-      terminal.sendText('', false);
       for (const char of command) {
         terminal.sendText(char, false);
         await sleep(typeSpeed);
       }
       if (autoExecute) {
         terminal.sendText('', true);
+
+        // Dual-layer waiting: shell integration event + minimum safety delay
+        // to handle unreliable 633 sequence ordering (VS Code 1.98+)
+        if (terminal.shellIntegration) {
+          await Promise.all([
+            TerminalService.waitForTerminalExecuted(command, resolvedTerminalId),
+            sleep(TerminalService.minSafetyDelayMs),
+          ]);
+        } else {
+          await sleep(TerminalService.getCommandBoundaryDelay());
+        }
       }
     } else if (autoExecute) {
       if (terminal.shellIntegration) {
         execution = terminal.shellIntegration.executeCommand(command);
       } else {
         terminal.sendText(command, autoExecute);
+        await sleep(TerminalService.getCommandBoundaryDelay());
       }
     } else {
       terminal.sendText(command, false);
     }
 
     if (execution && typeMode === 'instant') {
-      await TerminalService.waitForTerminalExecuted(
-        command,
-        terminalId ?? TerminalService.terminalName,
-      );
+      // Dual-layer waiting for shell integration reliability
+      await Promise.all([
+        TerminalService.waitForTerminalExecuted(command, resolvedTerminalId),
+        sleep(TerminalService.minSafetyDelayMs),
+      ]);
     }
 
     // Track terminal command in analytics
     if (AnalyticsService.isRecording()) {
       AnalyticsService.recordTerminalCommand(
         command,
-        terminalId ?? TerminalService.terminalName,
+        resolvedTerminalId,
         typeMode === 'instant' ? false : undefined,
       );
     }
@@ -203,6 +233,9 @@ export class TerminalService {
   /**
    * Waits for a specific command to be observed as the last executed command for a given terminal.
    *
+   * Note: Shell integration (633 sequences) may be unreliable with custom prompts (Oh My Posh,
+   * Starship, Powerlevel10k) since VS Code 1.98+. See issue #242897.
+   *
    * @param command - The exact command string to wait for.
    * @param terminalId - The identifier of the terminal whose last executed command will be observed.
    * @returns A Promise that resolves when the command is observed or when the 5 second timeout elapses.
@@ -227,6 +260,7 @@ export class TerminalService {
         // Check again in a short interval
         setTimeout(checkExecution, 100);
       };
+
       checkExecution();
     });
   }

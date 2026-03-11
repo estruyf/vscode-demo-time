@@ -32,6 +32,9 @@ export const Config = {
     typingSpeed: 'insertTypingSpeed',
     hackerTyperChunkSize: 'hackerTyperChunkSize',
   },
+  terminal: {
+    commandBoundaryDelay: 'terminalCommandBoundaryDelay',
+  },
   api: {
     enabled: 'api.enabled',
     port: 'api.port',
