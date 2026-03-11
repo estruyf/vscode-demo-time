@@ -23,7 +23,7 @@ export interface SlideMetadata {
   autoplay?: boolean;
   showCompleteDiagram?: boolean;
   invertLightAndDarkColours?: boolean;
-  transportControlsPosition?: ControlPosition;
+  controlsPosition?: ControlPosition;
 
   [key: string]: any;
 }

@@ -21,7 +21,7 @@ export interface AnimatedSVGSlideProps {
   autoplay?: boolean;
   showCompleteDiagram?: boolean;
   invertLightAndDarkColours?: boolean;
-  transportControlsPosition?: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight' | 'none';
+  controlsPosition?: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight' | 'none';
   slideIndex: number;
   isActive: boolean;
   onNavigationBlock?: (isBlocking: boolean) => void;
@@ -35,7 +35,7 @@ export const AnimatedSVGSlide: React.FC<AnimatedSVGSlideProps> = ({
   autoplay = true,
   showCompleteDiagram = false,
   invertLightAndDarkColours = false,
-  transportControlsPosition = 'bottomRight',
+  controlsPosition = 'bottomRight',
   slideIndex,
   isActive,
   onNavigationBlock
@@ -269,7 +269,7 @@ export const AnimatedSVGSlide: React.FC<AnimatedSVGSlideProps> = ({
 
       {!showCompleteDiagram && (
         <TransportControls
-          position={transportControlsPosition}
+          position={controlsPosition}
           state={animationState}
           onCommand={handleCommand}
         />

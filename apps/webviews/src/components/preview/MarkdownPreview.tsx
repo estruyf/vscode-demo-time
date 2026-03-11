@@ -516,7 +516,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
                     autoplay={crntSlide.frontmatter.autoplay}
                     showCompleteDiagram={crntSlide.frontmatter.showCompleteDiagram}
                     invertLightAndDarkColours={crntSlide.frontmatter.invertLightAndDarkColours}
-                    transportControlsPosition={crntSlide.frontmatter.transportControlsPosition}
+                    controlsPosition={crntSlide.frontmatter.controlsPosition}
                     slideIndex={crntSlide.index}
                     isActive={true}
                   />
