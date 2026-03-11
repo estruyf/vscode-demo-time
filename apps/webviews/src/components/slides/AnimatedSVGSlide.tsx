@@ -83,7 +83,7 @@ export const AnimatedSVGSlide: React.FC<AnimatedSVGSlideProps> = ({
 
     // Parse speed values
     const baseSpeed = typeof animationSpeed === 'string'
-      ? parseFloat(animationSpeed)
+      ? (isNaN(parseFloat(animationSpeed)) ? 100 : parseFloat(animationSpeed))
       : animationSpeed;
 
     const DEFAULT_TEXT_SPEED = 20; // chars per second

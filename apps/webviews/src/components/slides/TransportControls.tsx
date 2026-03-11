@@ -86,11 +86,11 @@ export const TransportControls: React.FC<TransportControlsProps> = ({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="flex items-center gap-2 bg-black bg-opacity-70 rounded-lg p-2 shadow-lg">
+      <div className="flex items-center gap-2 bg-black/70 rounded-lg p-2 shadow-lg">
         {/* Play/Pause button */}
         <button
           onClick={() => onCommand(isPlaying ? 'pause' : 'play')}
-          className="w-8 h-8 flex items-center justify-center text-white hover:bg-white hover:bg-opacity-20 rounded transition-colors"
+          className="w-8 h-8 flex items-center justify-center text-white hover:bg-white/20 rounded transition-colors"
           title={isPlaying ? 'Pause (Space)' : 'Play (Space)'}
           aria-label={isPlaying ? 'Pause' : 'Play'}
         >
@@ -108,7 +108,7 @@ export const TransportControls: React.FC<TransportControlsProps> = ({
         {/* Reset button */}
         <button
           onClick={() => onCommand('reset')}
-          className="w-8 h-8 flex items-center justify-center text-white hover:bg-white hover:bg-opacity-20 rounded transition-colors"
+          className="w-8 h-8 flex items-center justify-center text-white hover:bg-white/20 rounded transition-colors"
           title="Reset (R)"
           aria-label="Reset"
           disabled={isIdle}
@@ -123,7 +123,7 @@ export const TransportControls: React.FC<TransportControlsProps> = ({
           !isComplete && (
             <button
               onClick={() => onCommand('skip')}
-              className="w-8 h-8 flex items-center justify-center text-white hover:bg-white hover:bg-opacity-20 rounded transition-colors"
+              className="w-8 h-8 flex items-center justify-center text-white hover:bg-white/20 rounded transition-colors"
               title="Skip to end (E)"
               aria-label="Skip to end"
               disabled={isComplete}
