@@ -3,12 +3,12 @@
  * Calculates animation durations based on line speed model
  */
 
-import { SVGElementNode } from './types';
+import { SVGElementNode } from '../../types/svg';
 
 export interface TimingConfig {
   baseSpeed: number; // pixels per second
   speedModifier: number; // multiplier for current speed
-  textTypewriterSpeed?: number; // characters per second
+  textTypeWriterSpeed?: number; // characters per second
 }
 
 export interface ElementTiming {
@@ -24,10 +24,7 @@ export class TimingCalculator {
    * Calculate animation duration for an element
    * Formula: duration = (pathLength / (baseSpeed * speedModifier)) * 1000
    */
-  public static calculateDuration(
-    pathLength: number,
-    config: TimingConfig
-  ): number {
+  public static calculateDuration(pathLength: number, config: TimingConfig): number {
     if (pathLength <= 0) {
       return 0;
     }
@@ -46,17 +43,14 @@ export class TimingCalculator {
    * Calculate text typewriter duration
    * Formula: duration = (characterCount / charactersPerSecond) * 1000
    */
-  public static calculateTextDuration(
-    text: string,
-    config: TimingConfig
-  ): number {
-    if (!text || !config.textTypewriterSpeed) {
+  public static calculateTextDuration(text: string, config: TimingConfig): number {
+    if (!text || !config.textTypeWriterSpeed) {
       return 0;
     }
 
     const charCount = text.length;
     // Tie text typing rate to the current speed modifier so directives like speed:0.5 affect typewriter
-    const effectiveCharsPerSecond = (config.textTypewriterSpeed || 0) * (config.speedModifier || 1);
+    const effectiveCharsPerSecond = (config.textTypeWriterSpeed || 0) * (config.speedModifier || 1);
     if (effectiveCharsPerSecond <= 0) {
       // fallback to default 20 cps if invalid
       const fallback = 20;
@@ -74,9 +68,8 @@ export class TimingCalculator {
   public static calculateSequence(
     elements: SVGElementNode[],
     baseConfig: TimingConfig,
-    directives?: Array<{ type: string; value?: number; position: number }>
+    directives?: Array<{ type: string; value?: number; position: number }>,
   ): ElementTiming[] {
-    
     const timings: ElementTiming[] = [];
     let currentTime = 0;
     let currentSpeedModifier = 1.0;
@@ -84,7 +77,7 @@ export class TimingCalculator {
     // Group directives by position for easy lookup
     const directivesByPosition = new Map<number, Array<{ type: string; value?: number }>>();
     if (directives) {
-      directives.forEach(dir => {
+      directives.forEach((dir) => {
         const existing = directivesByPosition.get(dir.position) || [];
         existing.push({ type: dir.type, value: dir.value });
         directivesByPosition.set(dir.position, existing);
@@ -124,7 +117,7 @@ export class TimingCalculator {
       let duration = 0;
 
       if (element.type === 'text' && element.textContent) {
-        if (baseConfig.textTypewriterSpeed) {
+        if (baseConfig.textTypeWriterSpeed) {
           duration = this.calculateTextDuration(element.textContent, config);
         }
       } else if (element.pathLength && element.pathLength > 0) {
@@ -153,7 +146,7 @@ export class TimingCalculator {
 
     const lastTiming = timings[timings.length - 1];
     let total = lastTiming.startTime + lastTiming.duration;
-    
+
     if (lastTiming.pauseAfter !== undefined) {
       total += lastTiming.pauseAfter;
     }
@@ -166,11 +159,11 @@ export class TimingCalculator {
    */
   public static getElementAtTime(
     timings: ElementTiming[],
-    currentTime: number
+    currentTime: number,
   ): { elementIndex: number; progress: number } | null {
     for (const timing of timings) {
       const elementEnd = timing.startTime + timing.duration;
-      
+
       // For zero-duration elements, they are "current" at exactly their start time
       if (timing.duration === 0) {
         if (currentTime >= timing.startTime && currentTime < timing.startTime + 16.67) {
@@ -183,7 +176,7 @@ export class TimingCalculator {
       } else if (currentTime >= timing.startTime && currentTime < elementEnd) {
         // Currently animating this element
         const progress = (currentTime - timing.startTime) / timing.duration;
-        
+
         return {
           elementIndex: timing.elementIndex,
           progress: Math.min(1.0, Math.max(0, progress)),
@@ -195,4 +188,3 @@ export class TimingCalculator {
     return null;
   }
 }
-

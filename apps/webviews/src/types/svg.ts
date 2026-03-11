@@ -25,6 +25,10 @@ export interface SVGElementNode {
   attributes: Record<string, string | null>;
 }
 
+export interface SVGExtendedElement extends SVGElement {
+  getTotalLength?: () => number; // For path elements
+}
+
 export interface AnimationDirective {
   type: 'speed' | 'pause' | 'pauseUntilPlay';
   position: number; // element index to apply before
@@ -76,3 +80,13 @@ export interface AnimationState {
   visibleElements: Set<number>;
   waitingForUser: boolean;
 }
+
+export type SvgPropValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | Record<string, string>
+  | React.ReactNode
+  | React.ReactNode[];

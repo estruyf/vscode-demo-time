@@ -5,7 +5,7 @@
 
 import { describe, it, expect } from '@jest/globals';
 import { TimingCalculator, TimingConfig } from '../src/utils/svg/TimingCalculator';
-import { SVGElementNode } from '../src/utils/svg/types';
+import { SVGElementNode, SVGElementType } from '../src/types/svg';
 
 describe('TimingCalculator', () => {
   describe('calculateDuration', () => {
@@ -295,7 +295,7 @@ describe('TimingCalculator', () => {
 });
 
 // Helper function to create mock SVG elements
-function createMockElement(type: string, pathLength: number): SVGElementNode {
+function createMockElement(type: SVGElementType, pathLength: number): SVGElementNode {
   const mockElement = {
     tagName: type,
     getAttribute: () => null,
@@ -310,7 +310,7 @@ function createMockElement(type: string, pathLength: number): SVGElementNode {
     hasStroke: type === 'path',
     hasFill: false,
     pathLength,
-    textContent: null,
+    textContent: undefined,
     attributes: {},
   };
 }

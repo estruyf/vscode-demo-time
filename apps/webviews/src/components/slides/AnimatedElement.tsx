@@ -4,7 +4,7 @@
  */
 
 import React, { useEffect, useRef, useMemo, useState } from 'react';
-import { SVGElementNode } from '../../utils/svg/types';
+import { SVGElementNode, SVGExtendedElement, SvgPropValue } from '../../types/svg';
 
 export interface AnimatedElementProps {
   node: SVGElementNode;
@@ -21,7 +21,7 @@ export const AnimatedElement: React.FC<AnimatedElementProps> = React.memo(({
   progress,
   colorMap,
 }) => {
-  const elementRef = useRef<SVGElement>(null);
+  const elementRef = useRef<SVGExtendedElement>(null);
   const [fillVisible, setFillVisible] = useState(false);
 
   // Reset fill visibility when element stops being visible
@@ -42,8 +42,8 @@ export const AnimatedElement: React.FC<AnimatedElementProps> = React.memo(({
     // falling back to the pre-calculated pathLength from the parser
     let pathLength = node.pathLength;
     try {
-      if (typeof (element as any).getTotalLength === 'function') {
-        pathLength = (element as any).getTotalLength();
+      if (typeof element.getTotalLength === 'function') {
+        pathLength = element.getTotalLength();
       }
     } catch {
       // keep fallback
@@ -52,7 +52,7 @@ export const AnimatedElement: React.FC<AnimatedElementProps> = React.memo(({
 
     element.style.strokeDasharray = `${pathLength}`;
     element.style.strokeDashoffset = `${dashOffset}`;
-    
+
     // When stroke animation completes, show fill
     if (progress >= 0.99 && node.hasFill) {
       setFillVisible(true);
@@ -73,7 +73,7 @@ export const AnimatedElement: React.FC<AnimatedElementProps> = React.memo(({
         element.style.strokeDasharray = '';
         element.style.strokeDashoffset = '';
       }
-      
+
       // Ensure fill is visible for completed elements (stroke or no stroke)
       if (node.hasFill) {
         setFillVisible(true);
@@ -99,13 +99,13 @@ export const AnimatedElement: React.FC<AnimatedElementProps> = React.memo(({
     // Helper to extract color from node attributes or inline style
     const extractColor = (attrName: 'fill' | 'stroke'): string | null => {
       // 1. Check parsed node attributes (from SVGParser)
-      const raw = (node.attributes && (node.attributes as any)[attrName]) as string | undefined;
+      const raw = (node.attributes && node.attributes[attrName]) as string | undefined;
       if (raw && raw !== 'none') {
         return raw;
       }
 
       // 2. Check style attribute on the original node (string)
-      const rawStyle = (node.attributes && (node.attributes as any)['style']) as string | undefined;
+      const rawStyle = (node.attributes && node.attributes['style']) as string | undefined;
       if (rawStyle) {
         const parsed = parseInlineStyle(rawStyle);
         if (parsed && parsed[attrName]) {
@@ -114,7 +114,7 @@ export const AnimatedElement: React.FC<AnimatedElementProps> = React.memo(({
       }
 
       // 3. Check the rendered element's inline style
-      const inline = element.style && (element.style as any)[attrName];
+      const inline = element.style && element.style[attrName];
       if (inline && inline !== 'none') {
         return inline;
       }
@@ -130,14 +130,14 @@ export const AnimatedElement: React.FC<AnimatedElementProps> = React.memo(({
 
     const applyColor = (attrName: 'fill' | 'stroke') => {
       const color = extractColor(attrName);
-      if (!color) return;
+      if (!color) { return; }
       const mapped = colorMap.get(color);
       if (mapped) {
         try {
           element.setAttribute(attrName, mapped);
           // also set inline style to ensure visibility when originally set via style
-          (element.style as any)[attrName] = mapped;
-        } catch (e) {
+          element.style[attrName] = mapped;
+        } catch {
           // ignore if attribute can't be set on this element
         }
       }
@@ -163,49 +163,56 @@ export const AnimatedElement: React.FC<AnimatedElementProps> = React.memo(({
           const child = node.element.children[i] as SVGElement;
           const childAttrs = getElementAttributes(child);
           // Strip text content so React doesn't write full text; DOM effect will manage textContent.
-          const { children: _removed, ...rest } = childAttrs as any;
+          const { children: _children, ...rest } = childAttrs as Record<string, unknown>;
+          void _children;
           children.push(React.createElement(child.tagName.toLowerCase(), { ...rest, key: i }));
         }
         attributes.children = children;
       }
     }
-    
+
     // Calculate visibility
     // Images and non-animatable elements show immediately when visible
-    const isImageOrNonAnimatable = node.type === 'image' || node.type === 'text' || 
-                                    (!node.hasStroke && !node.hasFill);
-    
+    const isImageOrNonAnimatable = node.type === 'image' || node.type === 'text' ||
+      (!node.hasStroke && !node.hasFill);
+
+    const attributeStyle = (
+      attributes.style && typeof attributes.style === 'object' && !Array.isArray(attributes.style)
+        ? attributes.style as React.CSSProperties
+        : undefined
+    );
+
     // Use visibility instead of opacity to preserve stroke-opacity and fill-opacity attributes
     const style: React.CSSProperties = {
-      ...attributes.style,
+      ...(attributeStyle ?? {}),
       visibility: isVisible ? 'visible' : 'hidden',
     };
 
     // Preserve original fill/stroke opacity if present so toggling fill visibility doesn't lose intended opacity
     const originalFillOpacity = (() => {
-      const v = (attributes as any).fillOpacity ?? (attributes.style && (attributes.style as any).fillOpacity);
+      const v = attributes.fillOpacity ?? attributeStyle?.fillOpacity;
       const n = v !== undefined && v !== null ? parseFloat(String(v)) : NaN;
       return !isNaN(n) ? n : undefined;
     })();
 
     const originalStrokeOpacity = (() => {
-      const v = (attributes as any).strokeOpacity ?? (attributes.style && (attributes.style as any).strokeOpacity);
+      const v = attributes.strokeOpacity ?? attributeStyle?.strokeOpacity;
       const n = v !== undefined && v !== null ? parseFloat(String(v)) : NaN;
       return !isNaN(n) ? n : undefined;
     })();
-    
+
     // For fill animation, control fill-opacity separately (but not for images/text)
     if (node.hasFill && !isImageOrNonAnimatable) {
       style.fillOpacity = fillVisible ? (originalFillOpacity !== undefined ? originalFillOpacity : 1) : 0;
       style.transition = fillVisible && !isCurrent ? 'fill-opacity 0.3s ease-in' : 'none';
-    } else if ((attributes as any).style && (attributes as any).style.fillOpacity !== undefined) {
+    } else if (attributeStyle?.fillOpacity !== undefined) {
       // Ensure existing declared fill-opacity is preserved for non-animated cases
-      style.fillOpacity = (attributes as any).style.fillOpacity;
+      style.fillOpacity = attributeStyle.fillOpacity;
     }
 
     // Preserve stroke opacity if present
     if (originalStrokeOpacity !== undefined) {
-      (style as any).strokeOpacity = originalStrokeOpacity;
+      style.strokeOpacity = originalStrokeOpacity;
     }
 
     // Set initial stroke-dash values during render to prevent a one-frame flash
@@ -246,18 +253,17 @@ export const AnimatedElement: React.FC<AnimatedElementProps> = React.memo(({
   const origTspansRef = useRef<string[] | null>(null);
   useEffect(() => {
     const el = elementRef.current as HTMLElement | null;
-    if (!el) return;
-
+    if (!el) { return; }
     const tag = (node.element && (node.element.tagName || '')).toLowerCase();
-    if (!(tag === 'text' || tag === 'tspan')) return;
+    if (!(tag === 'text' || tag === 'tspan')) { return; }
 
     const children = Array.from(el.children) as HTMLElement[];
     const simpleTspans = children.length > 0 && children.every(c => c.tagName.toLowerCase() === 'tspan' && c.children.length === 0);
-    if (!simpleTspans) return;
+    if (!simpleTspans) { return; }
 
     if (origTspansRef.current === null) {
       // Prefer the original parsed node's tspan text (not the rendered DOM, which we stripped).
-      const sourceChildren = Array.from((node.element.children || []) as any as SVGElement[]);
+      const sourceChildren = Array.from(node.element.children || []);
       const fromSource = sourceChildren.map(c => c.textContent || '');
       const fromDom = children.map(c => c.textContent || '');
       origTspansRef.current = fromSource.every(t => t.length === 0) ? fromDom : fromSource;
@@ -282,7 +288,11 @@ export const AnimatedElement: React.FC<AnimatedElementProps> = React.memo(({
     // Restore originals when no longer current or when finished
     if (!isCurrent || progress >= 1) {
       for (let i = 0; i < children.length; i++) {
-        try { children[i].textContent = orig[i]; } catch {}
+        try {
+          children[i].textContent = orig[i];
+        } catch {
+          // ignore DOM write errors
+        }
       }
       origTspansRef.current = null;
     }
@@ -308,14 +318,14 @@ AnimatedElement.displayName = 'AnimatedElement';
 /**
  * Extract attributes from SVG element as React props
  */
-function getElementAttributes(element: SVGElement): Record<string, any> {
-  const attributes: Record<string, any> = {};
+function getElementAttributes(element: SVGElement): Record<string, SvgPropValue> {
+  const attributes: Record<string, SvgPropValue> = {};
   const attrs = element.attributes;
 
   for (let i = 0; i < attrs.length; i++) {
     const attr = attrs[i];
     let name = attr.name;
-    let value: any = attr.value;
+    let value: SvgPropValue = attr.value;
 
     // Convert attribute names to React-friendly format
     if (name === 'class') {

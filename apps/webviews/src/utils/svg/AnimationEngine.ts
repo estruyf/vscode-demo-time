@@ -3,7 +3,7 @@
  * State machine for managing SVG animation playback
  */
 
-import { SVGElementNode, AnimationDirective } from './types';
+import { SVGElementNode, AnimationDirective } from '../../types/svg';
 import { TimingCalculator, ElementTiming, TimingConfig } from './TimingCalculator';
 
 export type AnimationStatus = 'idle' | 'playing' | 'paused' | 'waiting' | 'complete';
@@ -24,7 +24,7 @@ export interface AnimationEngineConfig {
   elements: SVGElementNode[];
   directives: AnimationDirective[];
   baseSpeed: number; // pixels per second
-  textTypewriterSpeed?: number; // characters per second
+  textTypeWriterSpeed?: number; // characters per second
   autoplay: boolean;
   onStateChange: (state: AnimationState) => void;
   onComplete?: () => void;
@@ -36,8 +36,8 @@ export class AnimationEngine {
   private timings: ElementTiming[];
   private animationFrameId: number | null = null;
   private lastFrameTime: number = 0;
-  private pausedAtTime: number = 0;
   private consumedWaitPoints = new Set<number>();
+  public pausedAtTime: number = 0;
 
   constructor(config: AnimationEngineConfig) {
     this.config = config;
@@ -46,20 +46,14 @@ export class AnimationEngine {
     const timingConfig: TimingConfig = {
       baseSpeed: config.baseSpeed,
       speedModifier: 1.0,
-      textTypewriterSpeed: config.textTypewriterSpeed,
+      textTypeWriterSpeed: config.textTypeWriterSpeed,
     };
 
     this.timings = TimingCalculator.calculateSequence(
       config.elements,
       timingConfig,
-      config.directives
+      config.directives,
     );
-
-    // Log timings for elements affected by speed directives for debugging
-    const affected = this.timings
-      .map(t => ({ index: t.elementIndex, duration: t.duration, waitForPlay: t.waitForPlay }))
-      .filter(t => t.duration > 0)
-      .slice(0, 20); // limit output
 
     // Initialize state - always start as idle, let play() change to playing
     this.state = {
@@ -139,7 +133,7 @@ export class AnimationEngine {
    */
   private reset(): void {
     this.stopAnimationLoop();
-    
+
     this.state = {
       status: 'idle',
       currentElementIndex: -1,
@@ -162,7 +156,7 @@ export class AnimationEngine {
     this.stopAnimationLoop();
 
     const allIndices = new Set(this.config.elements.map((_, i) => i));
-    
+
     this.state = {
       status: 'complete',
       currentElementIndex: this.config.elements.length - 1,
@@ -174,7 +168,7 @@ export class AnimationEngine {
     };
 
     this.notifyStateChange();
-    
+
     if (this.config.onComplete) {
       this.config.onComplete();
     }
@@ -207,11 +201,11 @@ export class AnimationEngine {
       const previousProgress = this.state.currentProgress;
 
       // Update animation state based on current time
-      this.updateStateForTime(this.state.elapsedTime);
+      const enteredWaiting = this.updateStateForTime(this.state.elapsedTime);
 
       // If we hit a pauseUntilPlay, the updateStateForTime will have set status to 'waiting'
       // Stop the loop here and don't check for completion
-      if (this.state.status === 'waiting') {
+      if (enteredWaiting) {
         this.notifyStateChange();
         this.stopAnimationLoop();
         return;
@@ -227,10 +221,10 @@ export class AnimationEngine {
         this.state.currentElementIndex = this.config.elements.length - 1;
         this.state.currentProgress = 1.0;
         this.state.visibleElements = allIndices;
-        
+
         this.notifyStateChange();
         this.stopAnimationLoop();
-        
+
         if (this.config.onComplete) {
           this.config.onComplete();
         }
@@ -242,9 +236,13 @@ export class AnimationEngine {
       const visibilityChanged = this.state.visibleElements.size !== previousVisibleCount;
       // Lower threshold so short text animations emit enough frames for per-character updates.
       const progressChanged = Math.abs(this.state.currentProgress - previousProgress) > 0.0005; // 0.05%
-      
+
       // Always notify on element transitions, otherwise check progress threshold
-      if (elementChanged || visibilityChanged || (this.state.currentElementIndex >= 0 && progressChanged)) {
+      if (
+        elementChanged ||
+        visibilityChanged ||
+        (this.state.currentElementIndex >= 0 && progressChanged)
+      ) {
         this.notifyStateChange();
       }
 
@@ -268,13 +266,17 @@ export class AnimationEngine {
   /**
    * Update state for current elapsed time
    */
-  private updateStateForTime(elapsedTime: number): void {
+  private updateStateForTime(elapsedTime: number): boolean {
     // Check for unconsumed waitForPlay points BEFORE advancing the element index.
     // waitForPlay is set on the element that finishes just before the pause.
     // Once elapsed time passes that element's end, we must pause.
     for (const timing of this.timings) {
-      if (!timing.waitForPlay) continue;
-      if (this.consumedWaitPoints.has(timing.elementIndex)) continue;
+      if (!timing.waitForPlay) {
+        continue;
+      }
+      if (this.consumedWaitPoints.has(timing.elementIndex)) {
+        continue;
+      }
 
       const elementEnd = timing.startTime + timing.duration;
       if (elapsedTime >= elementEnd) {
@@ -295,7 +297,7 @@ export class AnimationEngine {
         // Enter waiting state (the animation loop will stop on seeing this)
         this.state.status = 'waiting';
         this.state.isPaused = true;
-        return;
+        return true;
       }
     }
 
@@ -336,6 +338,8 @@ export class AnimationEngine {
         }
       }
     }
+
+    return false;
   }
 
   /**
@@ -368,4 +372,3 @@ export class AnimationEngine {
     this.stopAnimationLoop();
   }
 }
-

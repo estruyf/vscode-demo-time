@@ -3,7 +3,7 @@
  * Parses XML comments in SVG for animation control
  */
 
-import { AnimationDirective } from './types';
+import { AnimationDirective } from '../../types/svg';
 
 export class DirectiveParser {
   private static SPEED_PATTERN = /^\s*speed:\s*([\d.]+)\s*$/i;

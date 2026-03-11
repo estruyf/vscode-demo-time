@@ -4,7 +4,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { ParsedSVG } from '../../utils/svg/types';
+import { ParsedSVG } from '../../types/svg';
 import { AnimationState } from '../../utils/svg/AnimationEngine';
 import { calculateScaling, ScaledViewBox } from '../../utils/svg/scaling';
 import { buildColorMap } from '../../utils/svg/colorInversion';
@@ -51,10 +51,10 @@ export const SVGRenderer = React.forwardRef<SVGSVGElement, SVGRendererProps>(
     };
 
     return (
-      <div 
+      <div
         className={`flex items-center justify-center w-full h-full ${className}`}
-        style={{ 
-          width: '960px', 
+        style={{
+          width: '960px',
           height: '540px',
         }}
       >

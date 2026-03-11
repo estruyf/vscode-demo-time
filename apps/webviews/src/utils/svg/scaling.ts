@@ -3,7 +3,7 @@
  * Calculate scaling and letterboxing for SVG to fit 960x540 slide dimensions
  */
 
-import { BoundingBox, ViewBox } from './types';
+import { BoundingBox, ViewBox } from '../../types/svg';
 
 export interface ScaledViewBox extends ViewBox {
   scale: number;
@@ -14,7 +14,7 @@ export interface ScaledViewBox extends ViewBox {
  */
 export function calculateScaling(
   boundingBox: BoundingBox,
-  targetSize: { width: number; height: number }
+  targetSize: { width: number; height: number },
 ): ScaledViewBox {
   const sourceAspect = boundingBox.width / boundingBox.height;
   const targetAspect = targetSize.width / targetSize.height;

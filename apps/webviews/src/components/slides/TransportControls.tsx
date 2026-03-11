@@ -3,10 +3,30 @@
  * Playback controls for animated SVG slides
  */
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AnimationState, AnimationCommand } from '../../utils/svg/AnimationEngine';
 
 type ControlPosition = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight' | 'none';
+type VisibleControlPosition = Exclude<ControlPosition, 'none'>;
+
+const positionClasses: Record<VisibleControlPosition, string> = {
+  topLeft: 'top-4 left-4',
+  topRight: 'top-4 right-4',
+  bottomLeft: 'bottom-4 left-4',
+  bottomRight: 'bottom-4 right-4',
+};
+
+function normalizeControlPosition(position: string): ControlPosition {
+  if (position === 'none') {
+    return 'none';
+  }
+
+  if (position in positionClasses) {
+    return position as VisibleControlPosition;
+  }
+
+  return 'bottomRight';
+}
 
 export interface TransportControlsProps {
   position: ControlPosition;
@@ -19,6 +39,7 @@ export const TransportControls: React.FC<TransportControlsProps> = ({
   state,
   onCommand,
 }) => {
+  const normalizedPosition = normalizeControlPosition(position);
   const [isHovered, setIsHovered] = useState(false);
 
   // Handle keyboard shortcuts
@@ -49,29 +70,19 @@ export const TransportControls: React.FC<TransportControlsProps> = ({
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [state?.status, onCommand]);
 
-  if (position === 'none') {
+  if (normalizedPosition === 'none') {
     return null;
   }
 
-  // Position classes
-  const positionClasses = {
-    topLeft: 'top-4 left-4',
-    topRight: 'top-4 right-4',
-    bottomLeft: 'bottom-4 left-4',
-    bottomRight: 'bottom-4 right-4',
-  };
-
   const isPlaying = state?.status === 'playing';
-  const isPaused = state?.status === 'paused';
   const isWaiting = state?.status === 'waiting';
   const isComplete = state?.status === 'complete';
   const isIdle = state?.status === 'idle';
 
   return (
     <div
-      className={`absolute ${positionClasses[position]} transition-opacity duration-200 ${
-        isHovered ? 'opacity-100' : 'opacity-30'
-      }`}
+      className={`absolute ${positionClasses[normalizedPosition]} transition-opacity duration-200 ${isHovered ? 'opacity-100' : 'opacity-30'
+        }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -108,17 +119,21 @@ export const TransportControls: React.FC<TransportControlsProps> = ({
         </button>
 
         {/* Skip to end button */}
-        <button
-          onClick={() => onCommand('skip')}
-          className="w-8 h-8 flex items-center justify-center text-white hover:bg-white hover:bg-opacity-20 rounded transition-colors"
-          title="Skip to end (E)"
-          aria-label="Skip to end"
-          disabled={isComplete}
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M5 3l6 5-6 5V3zm6 0h2v10h-2V3z" />
-          </svg>
-        </button>
+        {
+          !isComplete && (
+            <button
+              onClick={() => onCommand('skip')}
+              className="w-8 h-8 flex items-center justify-center text-white hover:bg-white hover:bg-opacity-20 rounded transition-colors"
+              title="Skip to end (E)"
+              aria-label="Skip to end"
+              disabled={isComplete}
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M5 3l6 5-6 5V3zm6 0h2v10h-2V3z" />
+              </svg>
+            </button>
+          )
+        }
 
         {/* Status indicator */}
         {isWaiting && (

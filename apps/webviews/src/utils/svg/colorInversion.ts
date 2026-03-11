@@ -4,7 +4,7 @@
  */
 
 import { converter, formatHex } from 'culori';
-import { SVGElementNode } from './types';
+import { SVGElementNode } from '../../types/svg';
 
 const oklchConverter = converter('oklch');
 
@@ -20,7 +20,7 @@ export function invertLightness(color: string): string {
   try {
     // Convert to OKLCH
     const oklch = oklchConverter(color);
-    
+
     if (!oklch) {
       console.warn(`[ColorInversion] Failed to parse color: ${color}`);
       return color; // fallback to original
@@ -33,7 +33,7 @@ export function invertLightness(color: string): string {
       ...oklch,
       l: Math.max(0.55, 1 - oklch.l),
     };
-    
+
     // Convert back to hex
     const hexColor = formatHex(inverted);
     return hexColor || color;
@@ -49,22 +49,22 @@ export function invertLightness(color: string): string {
  */
 export function buildColorMap(elements: SVGElementNode[]): Map<string, string> {
   const colorMap = new Map<string, string>();
-  
+
   for (const node of elements) {
     const element = node.element;
-    
+
     // Extract fill color
     const fillColor = element.getAttribute('fill');
     if (fillColor && !colorMap.has(fillColor) && !fillColor.startsWith('url(')) {
       colorMap.set(fillColor, invertLightness(fillColor));
     }
-    
+
     // Extract stroke color
     const strokeColor = element.getAttribute('stroke');
     if (strokeColor && !colorMap.has(strokeColor) && !strokeColor.startsWith('url(')) {
       colorMap.set(strokeColor, invertLightness(strokeColor));
     }
-    
+
     // Extract stop-color for gradients (check style attribute)
     const style = element.getAttribute('style');
     if (style) {
@@ -76,7 +76,7 @@ export function buildColorMap(elements: SVGElementNode[]): Map<string, string> {
         }
       }
     }
-    
+
     // Check for stop elements in gradients
     if (element.tagName === 'stop') {
       const stopColor = element.getAttribute('stop-color');
@@ -85,7 +85,7 @@ export function buildColorMap(elements: SVGElementNode[]): Map<string, string> {
       }
     }
   }
-  
+
   return colorMap;
 }
 
@@ -93,22 +93,19 @@ export function buildColorMap(elements: SVGElementNode[]): Map<string, string> {
  * Apply color inversion to an SVG element
  * Modifies the element's fill and stroke attributes with inverted colors
  */
-export function applyColorInversion(
-  element: SVGElement,
-  colorMap: Map<string, string>
-): void {
+export function applyColorInversion(element: SVGElement, colorMap: Map<string, string>): void {
   // Invert fill
   const fill = element.getAttribute('fill');
   if (fill && colorMap.has(fill)) {
     element.setAttribute('fill', colorMap.get(fill)!);
   }
-  
+
   // Invert stroke
   const stroke = element.getAttribute('stroke');
   if (stroke && colorMap.has(stroke)) {
     element.setAttribute('stroke', colorMap.get(stroke)!);
   }
-  
+
   // Invert stop-color in style attribute
   const style = element.getAttribute('style');
   if (style) {
@@ -116,14 +113,14 @@ export function applyColorInversion(
     colorMap.forEach((inverted, original) => {
       newStyle = newStyle.replace(
         new RegExp(`stop-color:\\s*${escapeRegExp(original)}`, 'g'),
-        `stop-color: ${inverted}`
+        `stop-color: ${inverted}`,
       );
     });
     if (newStyle !== style) {
       element.setAttribute('style', newStyle);
     }
   }
-  
+
   // Invert stop-color attribute
   if (element.tagName === 'stop') {
     const stopColor = element.getAttribute('stop-color');

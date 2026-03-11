@@ -13,7 +13,7 @@ import {
   BoundingBox,
   ViewBox,
   ParseError,
-} from './types';
+} from '../../types/svg';
 
 export class SVGParser {
   private static MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -29,7 +29,7 @@ export class SVGParser {
     // Check file size
     if (svgContent.length > this.MAX_FILE_SIZE) {
       throw new Error(
-        `SVG file too large (${(svgContent.length / 1024 / 1024).toFixed(1)}MB). Maximum size is 5MB.`
+        `SVG file too large (${(svgContent.length / 1024 / 1024).toFixed(1)}MB). Maximum size is 5MB.`,
       );
     }
 
@@ -94,14 +94,19 @@ export class SVGParser {
   /**
    * Extract drawable elements and directives from SVG
    */
-  private static extractElementsAndDirectives(
-    svgRoot: SVGSVGElement
-  ): { elements: SVGElementNode[]; directives: AnimationDirective[] } {
+  private static extractElementsAndDirectives(svgRoot: SVGSVGElement): {
+    elements: SVGElementNode[];
+    directives: AnimationDirective[];
+  } {
     const elements: SVGElementNode[] = [];
     const directives: AnimationDirective[] = [];
 
     // Traverse the SVG tree and extract elements in document order
-    const traverse = (node: Node, depth: number = 0, inheritedAttrs: Map<string, string> = new Map()): void => {
+    const traverse = (
+      node: Node,
+      depth: number = 0,
+      inheritedAttrs: Map<string, string> = new Map(),
+    ): void => {
       if (depth > this.MAX_NESTING_DEPTH) {
         console.warn(`Max nesting depth exceeded at ${depth}, skipping deeper elements`);
         return;
@@ -125,12 +130,21 @@ export class SVGParser {
         if (tagName === 'g' || tagName === 'svg') {
           // Inherit attributes from parent and add group's own attributes
           const groupAttrs = new Map(inheritedAttrs);
-          
+
           // Collect inheritable attributes from this group
-          const inheritableAttrs = ['transform', 'opacity', 'fill', 'stroke', 'stroke-width', 
-                                     'stroke-opacity', 'fill-opacity', 'stroke-linecap', 
-                                     'stroke-linejoin', 'stroke-dasharray'];
-          
+          const inheritableAttrs = [
+            'transform',
+            'opacity',
+            'fill',
+            'stroke',
+            'stroke-width',
+            'stroke-opacity',
+            'fill-opacity',
+            'stroke-linecap',
+            'stroke-linejoin',
+            'stroke-dasharray',
+          ];
+
           for (const attrName of inheritableAttrs) {
             const value = element.getAttribute(attrName);
             if (value !== null) {
@@ -142,7 +156,7 @@ export class SVGParser {
               }
             }
           }
-          
+
           for (const child of Array.from(element.childNodes)) {
             traverse(child, depth + 1, groupAttrs);
           }
@@ -190,12 +204,12 @@ export class SVGParser {
    * Create element node from SVG element
    */
   private static createElementNode(
-    element: SVGElement, 
-    order: number, 
-    inheritedAttrs: Map<string, string> = new Map()
+    element: SVGElement,
+    order: number,
+    inheritedAttrs: Map<string, string> = new Map(),
   ): SVGElementNode {
     const type = element.tagName.toLowerCase() as SVGElementType;
-    
+
     // Apply inherited attributes to element if not already present
     for (const [attrName, attrValue] of inheritedAttrs) {
       if (!element.hasAttribute(attrName)) {
