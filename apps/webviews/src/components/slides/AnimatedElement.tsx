@@ -344,7 +344,7 @@ function getElementAttributes(element: SVGElement): Record<string, SvgPropValue>
   }
 
   // Handle text content for text elements
-  if (element.tagName === 'text' || element.tagName === 'tspan') {
+  if (element.tagName.toLowerCase() === 'text' || element.tagName.toLowerCase() === 'tspan') {
     attributes.children = element.textContent;
   }
 
