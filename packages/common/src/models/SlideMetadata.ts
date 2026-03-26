@@ -21,7 +21,7 @@ export interface SlideMetadata {
   textTypeWriterEffect?: boolean;
   textTypeWriterSpeed?: number | string;
   autoplay?: boolean;
-  showCompleteDiagram?: boolean;
+  skipAnimation?: boolean;
   invertLightAndDarkColours?: boolean;
   controlsPosition?: ControlPosition;
 

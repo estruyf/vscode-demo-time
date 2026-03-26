@@ -19,7 +19,7 @@ export interface AnimatedSVGSlideProps {
   textTypeWriterEffect?: boolean;
   textTypeWriterSpeed?: number | string; // milliseconds per character
   autoplay?: boolean;
-  showCompleteDiagram?: boolean;
+  skipAnimation?: boolean;
   invertLightAndDarkColours?: boolean;
   controlsPosition?: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight' | 'none';
   slideIndex: number;
@@ -33,7 +33,7 @@ export const AnimatedSVGSlide: React.FC<AnimatedSVGSlideProps> = ({
   textTypeWriterEffect = true,
   textTypeWriterSpeed = 20,
   autoplay = true,
-  showCompleteDiagram = false,
+  skipAnimation = false,
   invertLightAndDarkColours = false,
   controlsPosition = 'bottomRight',
   slideIndex,
@@ -77,7 +77,7 @@ export const AnimatedSVGSlide: React.FC<AnimatedSVGSlideProps> = ({
     animationEngineRef.current?.destroy();
     animationEngineRef.current = null;
 
-    if (!parsedSVG || showCompleteDiagram || !isActive) {
+    if (!parsedSVG || skipAnimation || !isActive) {
       return;
     }
 
@@ -110,7 +110,7 @@ export const AnimatedSVGSlide: React.FC<AnimatedSVGSlideProps> = ({
       engine.destroy();
       animationEngineRef.current = null;
     };
-  }, [parsedSVG, animationSpeed, textTypeWriterEffect, textTypeWriterSpeed, autoplay, showCompleteDiagram, isActive]);
+  }, [parsedSVG, animationSpeed, textTypeWriterEffect, textTypeWriterSpeed, autoplay, skipAnimation, isActive]);
 
   // Handle control commands.
   const handleCommand = useCallback((command: AnimationCommand) => {
@@ -255,12 +255,12 @@ export const AnimatedSVGSlide: React.FC<AnimatedSVGSlideProps> = ({
     <div className="animated-slide w-full h-full flex items-center justify-center relative">
       <SVGRenderer
         parsedSVG={parsedSVG}
-        animationState={showCompleteDiagram ? null : animationState}
-        showComplete={showCompleteDiagram}
+        animationState={skipAnimation ? null : animationState}
+        showComplete={skipAnimation}
         invertColors={invertLightAndDarkColours}
       />
 
-      {!showCompleteDiagram && (
+      {!skipAnimation && (
         <TransportControls
           position={controlsPosition}
           state={animationState}

@@ -69,7 +69,7 @@ export interface AnimationConfig {
   textTypeWriterEffect: boolean;
   textTypeWriterSpeed: number; // ms per character
   autoplay: boolean;
-  showCompleteDiagram: boolean;
+  skipAnimation: boolean;
 }
 
 export interface AnimationState {
