@@ -1,3 +1,4 @@
+export * from './analytics';
 export * from './demo';
 export * from './demoOverview';
-export * from './IDemoTimeSettings';
+export * from './svg';

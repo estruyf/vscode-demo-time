@@ -1,0 +1,163 @@
+---
+title: Animated SVG Slide Layout
+description: Learn how to create animated SVG slides in Demo Time with stroke-draw effects, typewriter text, and playback controls.
+lastmod: 2026-03-26T00:00:00.000Z
+---
+
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+
+The `animated` layout displays an SVG file and progressively draws its paths and shapes using a stroke animation effect. Text elements can be animated with a typewriter effect, and interactive playback controls let you control the animation during your presentation.
+
+This layout is ideal for revealing diagrams, architecture charts, or hand-drawn illustrations step-by-step.
+
+## Basic Usage
+
+```md
+---
+layout: animated
+svgFile: .demo/assets/my-diagram.svg
+---
+```
+
+The `svgFile` path is resolved relative to your workspace root.
+
+## Front Matter Properties
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `svgFile` | `string` | — | **Required.** Path to the SVG file, relative to the workspace root. |
+| `animationSpeed` | `number` | `100` | Drawing speed in pixels per second. Higher values draw faster. |
+| `textTypeWriterEffect` | `boolean` | `true` | Animate text elements with a typewriter (character-by-character) effect. |
+| `textTypeWriterSpeed` | `number` | `20` | Typing speed in milliseconds per character. Lower values type faster. |
+| `autoplay` | `boolean` | `true` | Start the animation automatically when the slide becomes active. |
+| `skipAnimation` | `boolean` | `false` | Show the complete SVG immediately without any animation. |
+| `invertLightAndDarkColours` | `boolean` | `false` | Invert light and dark colours in the SVG for better contrast on dark backgrounds. |
+| `controlsPosition` | `string` | `'bottomRight'` | Position of the transport controls overlay. One of `topLeft`, `topRight`, `bottomLeft`, `bottomRight`, or `none`. |
+
+## Transport Controls
+
+When the animation is running, a set of floating transport controls appears on the slide (in the position specified by `controlsPosition`). The controls are semi-transparent by default and become fully visible on hover.
+
+| Button | Keyboard Shortcut | Action |
+|---|---|---|
+| ▶ / ⏸ | `Space` | Play or pause the animation |
+| ↺ | `R` | Reset the animation to the beginning |
+| ⏭ | `E` | Skip to the end and show the complete SVG |
+
+To hide the controls entirely, set `controlsPosition: none`.
+
+## SVG Directives
+
+You can embed XML comments inside your SVG file to control the animation playback at specific points in the drawing sequence. Directives are placed between the SVG elements they should affect.
+
+### Speed Modifier
+
+Changes the animation speed from that point onwards in the drawing. The value is a multiplier relative to `animationSpeed`.
+
+```xml
+<!-- speed: 2.0 -->
+```
+
+A value of `2.0` doubles the speed; `0.5` halves it.
+
+### Timed Pause
+
+Pauses the animation for a fixed duration before continuing.
+
+```xml
+<!-- pause: 1.5 -->
+<!-- pause: 1500ms -->
+<!-- pause: 2s -->
+```
+
+The default unit is seconds. You can also specify milliseconds using the `ms` suffix or seconds using the `s` suffix.
+
+### Interactive Pause
+
+Pauses the animation and waits for the presenter to resume manually. This is useful when you want to talk through a diagram before revealing the next part.
+
+```xml
+<!-- pause: untilPlay -->
+```
+
+When the animation reaches a `pause: untilPlay` directive, it enters a **Waiting** state (indicated in the transport controls). The animation resumes when the presenter:
+
+- Presses `Space` or the right arrow key
+- Clicks the **Play** button in the transport controls
+- Advances to the next slide using the standard Demo Time navigation
+
+<Aside type="tip">
+Using `pause: untilPlay` directives lets you navigate through the stages of a diagram one click at a time, exactly like advancing through bullet points on a regular slide.
+</Aside>
+
+## Examples
+
+### Basic animated diagram
+
+```md
+---
+layout: animated
+svgFile: .demo/assets/architecture.svg
+---
+```
+
+### Fast animation without controls
+
+```md
+---
+layout: animated
+svgFile: .demo/assets/architecture.svg
+animationSpeed: 500
+controlsPosition: none
+---
+```
+
+### Manual playback (no autoplay)
+
+```md
+---
+layout: animated
+svgFile: .demo/assets/architecture.svg
+autoplay: false
+---
+```
+
+### Colour-inverted SVG for dark themes
+
+```md
+---
+layout: animated
+svgFile: .demo/assets/architecture.svg
+invertLightAndDarkColours: true
+---
+```
+
+### Static diagram (no animation)
+
+```md
+---
+layout: animated
+svgFile: .demo/assets/architecture.svg
+skipAnimation: true
+---
+```
+
+Use `skipAnimation: true` when you want to display the finished diagram on a slide without the drawing effect.
+
+### Controls in the top-right corner
+
+```md
+---
+layout: animated
+svgFile: .demo/assets/architecture.svg
+controlsPosition: topRight
+---
+```
+
+## SVG File Tips
+
+- SVG files created with vector tools such as [Inkscape](https://inkscape.org/) or [Concepts](https://concepts.app/) work well.
+- Paths are animated in the order they appear in the SVG document.
+- Only `path`, `line`, `polyline`, `polygon`, `rect`, `circle`, and `ellipse` elements are drawn with the stroke animation. Other elements are revealed instantly.
+- Text elements are animated with the typewriter effect when `textTypeWriterEffect` is enabled.
+- Place `<!-- speed: N -->` and `<!-- pause: ... -->` comments directly before the element where the behaviour should change.
