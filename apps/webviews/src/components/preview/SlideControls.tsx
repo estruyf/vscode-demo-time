@@ -65,11 +65,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
 
     const prevSlide = currentSlide - 1;
     if (prevSlide >= 0) {
-      // Post a message to the window so the preview's Messenger.listen
-      // handlers receive it and perform the checkNext handshake.
-      try {
-        window.postMessage({ command: WebViewMessages.toWebview.previousSlide, payload: { source: 'controls' } }, '*');
-      } catch {}
+      messageHandler.send(WebViewMessages.toWebview.previousSlide, { source: 'controls' });
     } else if (previousEnabled) {
       messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.previous);
     }
@@ -83,11 +79,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
 
     const nextSlide = currentSlide + 1;
     if (nextSlide < slides) {
-      // Post a message to the window so the preview's Messenger.listen
-      // handlers receive it and perform the checkNext handshake.
-      try {
-        window.postMessage({ command: WebViewMessages.toWebview.nextSlide, payload: { source: 'controls' } }, '*');
-      } catch {}
+      messageHandler.send(WebViewMessages.toWebview.nextSlide, { source: 'controls' });
     } else {
       messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.start);
     }
