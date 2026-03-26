@@ -29,15 +29,15 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Enable Corepack
         run: corepack enable
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: 24
 
       - name: Install dependencies
         run: npm i
@@ -47,7 +47,7 @@ jobs:
         working-directory: ${{ env.APP_PATH }}
 
       - name: Upload PowerPoint Add-in artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: powerpoint-addin
           path: ${{ env.OUTPUT_DIR }}
