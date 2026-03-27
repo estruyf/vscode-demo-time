@@ -30,15 +30,15 @@ const SettingsView = () => {
       setSettings(undefined);
       setOriginalSettings(undefined);
     });
-  }
+  };
 
   const updateSetting = (key: keyof IDemoTimeSettings, value: IDemoTimeSettings[keyof IDemoTimeSettings] | undefined) => {
     setSettings((prev) => prev ? { ...prev, [key]: value } : prev);
-  }
+  };
 
   const resetToDefaults = () => {
     getSettings();
-  }
+  };
 
   const saveSettings = () => {
     if (!settings || !originalSettings) return;
@@ -53,6 +53,7 @@ const SettingsView = () => {
         }
       }
     }
+
     messageHandler.request(WebViewMessages.toVscode.settingsView.saveSettings, changed).then((value: unknown) => {
       setSaveLoading(false);
       if (typeof value === "boolean" && value) {
@@ -66,7 +67,7 @@ const SettingsView = () => {
       setSaveStatus({ type: "error", text: "Something went wrong" });
       console.error("Error saving settings:", error.message);
     });
-  }
+  };
 
   const isDirty = useMemo(() => {
     if (!settings || !originalSettings) { return false; }
