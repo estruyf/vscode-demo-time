@@ -23,6 +23,8 @@ const defaultDemoTimeSettings: IDemoTimeSettings = {
   nextActionBehaviour: 'lastExecuted',
   openInConfigEditor: false,
   engageTimeApiKey: '',
+  'redaction.enabled': false,
+  'redaction.customPatterns': [],
 };
 // In a real VS Code webview, `acquireVsCodeApi` is provided by VS Code.
 // In a standard browser environment, we need to provide a mock implementation

@@ -5,6 +5,7 @@ import { General } from '../constants';
 import { DecoratorService } from './DecoratorService';
 import { DemoRunner } from './DemoRunner';
 import { DemoStatusBar } from './DemoStatusBar';
+import { RedactionService } from './RedactionService';
 import { Config } from '@demotime/common';
 import { Overview } from '../overview/Overview';
 import { DemoValidationService } from './DemoValidationService';
@@ -23,6 +24,12 @@ export class DemoListeners {
         DecoratorService.register();
         DemoRunner.allowPrevious();
         DemoStatusBar.showTimer();
+
+        // Re-apply redaction if active and redaction settings changed
+        if (RedactionService.isEnabled()) {
+          RedactionService.disable();
+          RedactionService.enable();
+        }
       }
     });
 

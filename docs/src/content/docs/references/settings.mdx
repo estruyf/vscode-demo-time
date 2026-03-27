@@ -49,6 +49,8 @@ Here is a list of all the settings available in Demo Time.
 | `demoTime.openInConfigEditor` | Open the act file in the act editor GUI. | `true` |
 | `demoTime.remote.showScreenshot` | Enable remote screenshot functionality. | `true` |
 | `demoTime.remote.showNotes` | Enable remote notes functionality. | `true` |
+| `demoTime.redaction.enabled` | Enable redaction mode to automatically mask sensitive data (API keys, tokens, passwords, emails) during presentation mode. | `false` |
+| `demoTime.redaction.customPatterns` | Additional regex patterns to redact sensitive data. Each pattern should be a valid JavaScript regular expression string. | `[]` |
 
 <Aside>
 The `demoTime.previousEnabled` is by default disabled to avoid conflicts when the previous action inserted content into a file.

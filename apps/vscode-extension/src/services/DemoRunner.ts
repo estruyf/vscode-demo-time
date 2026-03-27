@@ -59,6 +59,7 @@ import {
   AnalyticsService,
   AnalyticsCommands,
   SponsorService,
+  RedactionService,
 } from './';
 import { Preview } from '../preview/Preview';
 import { parse as jsonParse } from 'jsonc-parser';
@@ -263,11 +264,13 @@ export class DemoRunner {
 
     if (DemoRunner.isPresentationMode) {
       await AnalyticsCommands.startRecording();
+      RedactionService.enable();
       DemoPanel.updateMessage('Presentation mode enabled');
       await DemoRunner.getDemoFile(undefined, true);
       Preview.postMessage(WebViewMessages.toWebview.updateIsInPresentationMode, true);
     } else {
       await AnalyticsCommands.stopRecording();
+      RedactionService.disable();
       DemoPanel.updateMessage();
       Preview.postMessage(WebViewMessages.toWebview.updateIsInPresentationMode, false);
       await commands.executeCommand(COMMAND.resetCountdown);

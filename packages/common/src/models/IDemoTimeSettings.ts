@@ -21,4 +21,6 @@ export interface IDemoTimeSettings {
   nextActionBehaviour: string;
   openInConfigEditor: boolean;
   engageTimeApiKey: string;
+  'redaction.enabled': boolean;
+  'redaction.customPatterns': string[];
 }

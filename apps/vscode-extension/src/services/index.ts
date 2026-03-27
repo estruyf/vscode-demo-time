@@ -20,6 +20,7 @@ export * from './MacOSActionsService';
 export * from './NotesService';
 export * from './Notifications';
 export * from './PdfExportService';
+export * from './RedactionService';
 export * from './ResourceService';
 export * from './ScreenshotService';
 export * from './ScriptExecutor';

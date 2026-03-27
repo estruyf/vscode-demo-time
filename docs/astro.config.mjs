@@ -174,6 +174,7 @@ export default defineConfig({
             { label: 'URI handler', slug: 'features/uri-handler' },
             { label: 'Timer and clock', slug: 'features/timer-clock' },
             { label: 'MCP server support', slug: 'features/mcp-server' },
+            { label: 'Redaction mode', slug: 'features/redaction-mode' },
           ],
         },
         {

@@ -61,4 +61,8 @@ export const Config = {
   analytics: {
     enabled: 'analytics.enabled',
   },
+  redaction: {
+    enabled: 'redaction.enabled',
+    customPatterns: 'redaction.customPatterns',
+  },
 };

@@ -1,5 +1,6 @@
 {
   "extensionInstaller.apiUrls": ["https://specflow-vscode-aahghgc6gnb6g3e7.westeurope-01.azurewebsites.net/extension.json"],
+  "demoTime.redaction.enabled": true,
   "demoTime.showClock": true,
   "demoTime.timer": 45,
   "demoTime.highlightBorderColor": "#ffd43b",

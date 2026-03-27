@@ -112,6 +112,8 @@ export class SettingsView extends BaseWebview {
       nextActionBehaviour: ext.getSetting(Config.demoRunner.nextActionBehaviour),
       openInConfigEditor: ext.getSetting(Config.configEditor.openInConfigEditor),
       engageTimeApiKey: await EngageTimeService.getApiKey(),
+      'redaction.enabled': ext.getSetting(Config.redaction.enabled),
+      'redaction.customPatterns': ext.getSetting(Config.redaction.customPatterns),
     } as IDemoTimeSettings;
 
     SettingsView.postRequestMessage(command, requestId, settingsObject);
