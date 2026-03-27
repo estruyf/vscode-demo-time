@@ -1,16 +1,16 @@
-import { useEffect, useState, useMemo } from "react"
-import { Button } from "../ui/Button"
-import { Save, RotateCcw } from "lucide-react"
+import { useEffect, useState, useMemo } from "react";
+import { Button } from "../ui/Button";
+import { Save, RotateCcw } from "lucide-react";
 import { Loader as Spinner } from "vscrui";
-import { messageHandler } from "@estruyf/vscode/dist/client"
-import GeneralSettings from "../settings/GeneralSettings"
-import PresentationControls from "../settings/PresentationControls"
-import HighlightingSettings from "../settings/HighlightingSettings"
-import TypingAnimationSettings from "../settings/TypingAnimationSettings"
-import APISettings from "../settings/APISettings"
-import UICustomizationSettings from "../settings/UICustomizationSettings"
-import BehaviorSettings from "../settings/BehaviorSettings"
-import TemplatesSettings from "../settings/TemplatesSettings"
+import { messageHandler } from "@estruyf/vscode/dist/client";
+import GeneralSettings from "../settings/GeneralSettings";
+import PresentationControls from "../settings/PresentationControls";
+import HighlightingSettings from "../settings/HighlightingSettings";
+import TypingAnimationSettings from "../settings/TypingAnimationSettings";
+import APISettings from "../settings/APISettings";
+import UICustomizationSettings from "../settings/UICustomizationSettings";
+import BehaviorSettings from "../settings/BehaviorSettings";
+import TemplatesSettings from "../settings/TemplatesSettings";
 import { IDemoTimeSettings, WebViewMessages } from "@demotime/common";
 import '../../styles/config.css';
 import { AppHeader } from "../layout";
