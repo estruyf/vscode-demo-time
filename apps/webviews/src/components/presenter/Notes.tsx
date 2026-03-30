@@ -4,6 +4,12 @@ import { messageHandler } from '@estruyf/vscode/dist/client/webview';
 import { WebViewMessages } from '@demotime/common';
 import { useRemark } from '../../hooks';
 
+const FONT_SIZE_KEY = 'presenter-notes-font-size';
+const MIN_FONT_SIZE = 0.75;
+const MAX_FONT_SIZE = 2.0;
+const FONT_SIZE_STEP = 0.125;
+const DEFAULT_FONT_SIZE = 1;
+
 export interface INotesProps {
   content?: string;
   path?: string;
@@ -18,9 +24,30 @@ export const Notes: React.FunctionComponent<INotesProps> = ({
     setMarkdown
   } = useRemark();
 
+  const [fontSize, setFontSize] = React.useState<number>(() => {
+    const stored = localStorage.getItem(FONT_SIZE_KEY);
+    return stored ? parseFloat(stored) : DEFAULT_FONT_SIZE;
+  });
+
   const onEdit = React.useCallback(() => {
     messageHandler.send(WebViewMessages.toVscode.openFile, path);
   }, [path]);
+
+  const increaseFontSize = React.useCallback(() => {
+    setFontSize(prev => {
+      const next = Math.min(MAX_FONT_SIZE, parseFloat((prev + FONT_SIZE_STEP).toFixed(3)));
+      localStorage.setItem(FONT_SIZE_KEY, String(next));
+      return next;
+    });
+  }, []);
+
+  const decreaseFontSize = React.useCallback(() => {
+    setFontSize(prev => {
+      const next = Math.max(MIN_FONT_SIZE, parseFloat((prev - FONT_SIZE_STEP).toFixed(3)));
+      localStorage.setItem(FONT_SIZE_KEY, String(next));
+      return next;
+    });
+  }, []);
 
   React.useEffect(() => {
     setMarkdown(content || "");
@@ -38,15 +65,33 @@ export const Notes: React.FunctionComponent<INotesProps> = ({
           </h3>
         </div>
 
-        {path && (
-          <Button title='Edit notes' appearance='icon' onClick={onEdit}>
-            <Icon name='edit' className="text-(--vscode-descriptionForeground)!" />
+        <div className="flex items-center gap-1">
+          <Button
+            title='Decrease font size'
+            appearance='icon'
+            onClick={decreaseFontSize}
+            disabled={fontSize <= MIN_FONT_SIZE}
+          >
+            <span className="text-(--vscode-descriptionForeground) text-xs font-bold leading-none select-none">A−</span>
           </Button>
-        )}
+          <Button
+            title='Increase font size'
+            appearance='icon'
+            onClick={increaseFontSize}
+            disabled={fontSize >= MAX_FONT_SIZE}
+          >
+            <span className="text-(--vscode-descriptionForeground) text-xs font-bold leading-none select-none">A+</span>
+          </Button>
+          {path && (
+            <Button title='Edit notes' appearance='icon' onClick={onEdit}>
+              <Icon name='edit' className="text-(--vscode-descriptionForeground)!" />
+            </Button>
+          )}
+        </div>
       </div>
 
       {markdown ? (
-        <div className="notes-container grow overflow-y-auto">
+        <div className="notes-container grow overflow-y-auto" style={{ fontSize: `${fontSize}rem` }}>
           {markdown}
         </div>
       ) : (

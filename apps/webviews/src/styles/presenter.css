@@ -37,27 +37,33 @@
   @apply p-5 bg-(--vscode-sideBar-background);
 
   h1 {
-    @apply text-xl font-bold mb-4 text-(--vscode-foreground) border-b border-(--vscode-panel-border)/30 pb-2;
+    font-size: 1.25em;
+    @apply font-bold mb-4 text-(--vscode-foreground) border-b border-(--vscode-panel-border)/30 pb-2;
   }
 
   h2 {
-    @apply text-lg font-semibold mb-3 text-(--vscode-foreground);
+    font-size: 1.125em;
+    @apply font-semibold mb-3 text-(--vscode-foreground);
   }
 
   h3 {
-    @apply text-base font-semibold mb-2 text-(--vscode-foreground);
+    font-size: 1em;
+    @apply font-semibold mb-2 text-(--vscode-foreground);
   }
 
   h4 {
-    @apply text-sm font-semibold mb-2 text-(--vscode-foreground);
+    font-size: 0.875em;
+    @apply font-semibold mb-2 text-(--vscode-foreground);
   }
 
   h5 {
-    @apply text-xs font-semibold mb-2 text-(--vscode-foreground);
+    font-size: 0.75em;
+    @apply font-semibold mb-2 text-(--vscode-foreground);
   }
 
   h6 {
-    @apply text-xs font-semibold mb-2 text-(--vscode-descriptionForeground);
+    font-size: 0.75em;
+    @apply font-semibold mb-2 text-(--vscode-descriptionForeground);
   }
 
   p {
@@ -81,7 +87,8 @@
   }
 
   code {
-    @apply px-1.5 py-0.5 rounded text-sm;
+    font-size: 0.875em;
+    @apply px-1.5 py-0.5 rounded;
     background-color: var(--vscode-textPreformat-background);
     color: var(--vscode-textPreformat-foreground);
   }
