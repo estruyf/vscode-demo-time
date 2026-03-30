@@ -108,7 +108,7 @@ export default defineConfig({
             { label: 'External Apps actions', slug: 'actions/external' },
             { label: "GitHub Copilot actions", slug: 'actions/copilot' },
             { label: 'Interaction actions', slug: 'actions/interactions' },
-            { label: 'macOS actions', slug: 'actions/macos' },
+            { label: 'OS and desktop actions', slug: 'actions/os-and-desktop' },
             { label: 'Demo Time actions', slug: 'actions/demotime' },
             { label: 'EngageTime actions', slug: 'actions/engagetime' },
           ],

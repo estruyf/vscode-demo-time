@@ -2,6 +2,7 @@
 
 ## [2.1.0] - 2026-xx-xx
 
+- [#360](https://github.com/estruyf/vscode-demo-time/issues/360): Added `hideDesktopIcons` and `showDesktopIcons` actions to control the visibility of desktop icons during a demo
 - [#368](https://github.com/estruyf/vscode-demo-time/issues/368): Added new slide type called `animated` to displays an SVG file and progressively draws its paths and shapes using a stroke animation effect
 - [#381](https://github.com/estruyf/vscode-demo-time/issues/381): Add redaction mode for masking sensitive values during demos
 - [#388](https://github.com/estruyf/vscode-demo-time/issues/388): Fix terminal command character bleed in sequential executeTerminalCommand calls

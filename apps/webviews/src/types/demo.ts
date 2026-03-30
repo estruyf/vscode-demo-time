@@ -159,6 +159,10 @@ export const CATEGORIZED_ACTIONS: {
     ],
   },
   {
+    category: 'Desktop actions',
+    options: [Action.HideDesktopIcons, Action.ShowDesktopIcons],
+  },
+  {
     category: 'EngageTime actions',
     options: [
       Action.ShowEngageTimePoll,

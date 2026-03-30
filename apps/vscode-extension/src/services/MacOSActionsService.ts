@@ -5,11 +5,26 @@ import { platform } from 'os';
 import { Extension } from './Extension';
 
 export class MacOSActionsService {
+  private static readonly enableFocusModeShortcut = 'Enable Do Not Disturb';
+  private static readonly disableFocusModeShortcut = 'Disable Do Not Disturb';
+
   /**
    * Check if the current platform is macOS
    */
   private static isMacOS(): boolean {
     return platform() === 'darwin';
+  }
+
+  private static getFocusModeConfigurationMessage(shortcutName: string): string {
+    return `Verify the "${shortcutName}" shortcut uses a Set Focus action with "Do Not Disturb" explicitly selected.`;
+  }
+
+  private static isFocusModeShortcutMisconfigured(error: Error): boolean {
+    return (
+      error.message.includes('Focus named') ||
+      error.message.includes('does not exist on this device') ||
+      error.message.includes('(-1753)')
+    );
   }
 
   /**
@@ -70,12 +85,23 @@ export class MacOSActionsService {
 
     try {
       const script = `tell application "Shortcuts Events"
-    run the shortcut named "Enable Do Not Disturb"
+    run the shortcut named "${MacOSActionsService.enableFocusModeShortcut}"
 end tell`;
       await MacOSActionsService.executeAppleScript(script);
       Logger.info('Focus Mode enabled');
     } catch (error) {
-      Notifications.error(`Failed to enable Focus Mode: ${(error as Error).message}`);
+      const err = error as Error;
+
+      if (MacOSActionsService.isFocusModeShortcutMisconfigured(err)) {
+        Notifications.error(
+          `Failed to enable Focus Mode. ${MacOSActionsService.getFocusModeConfigurationMessage(
+            MacOSActionsService.enableFocusModeShortcut,
+          )}`,
+        );
+        return;
+      }
+
+      Notifications.error(`Failed to enable Focus Mode: ${err.message}`);
     }
   }
 
@@ -91,12 +117,23 @@ end tell`;
 
     try {
       const script = `tell application "Shortcuts Events"
-    run the shortcut named "Disable Do Not Disturb"
+    run the shortcut named "${MacOSActionsService.disableFocusModeShortcut}"
 end tell`;
       await MacOSActionsService.executeAppleScript(script);
       Logger.info('Focus Mode disabled');
     } catch (error) {
-      Notifications.error(`Failed to disable Focus Mode: ${(error as Error).message}`);
+      const err = error as Error;
+
+      if (MacOSActionsService.isFocusModeShortcutMisconfigured(err)) {
+        Notifications.error(
+          `Failed to disable Focus Mode. ${MacOSActionsService.getFocusModeConfigurationMessage(
+            MacOSActionsService.disableFocusModeShortcut,
+          )}`,
+        );
+        return;
+      }
+
+      Notifications.error(`Failed to disable Focus Mode: ${err.message}`);
     }
   }
 
@@ -191,21 +228,21 @@ end tell`;
     }
 
     const wsPath = Extension.getInstance().workspaceFolder?.uri.fsPath || process.cwd();
-    
+
     // Use caffeinate command (built-in on macOS)
     // -d: prevent display from sleeping
     // -i: prevent system from idle sleeping
     // -t: specify timeout in seconds
     let command = 'caffeinate -d -i';
-    
+
     if (duration !== undefined) {
       const seconds = duration * 60;
       command += ` -t ${seconds}`;
     }
-    
+
     // Run in background using nohup and redirect output
     command = `nohup ${command} > /dev/null 2>&1 & echo $!`;
-    
+
     try {
       const pid = await ScriptExecutor.executeScriptAsync(command, wsPath);
       const durationMsg = duration !== undefined ? `for ${duration} minutes` : 'indefinitely';
@@ -227,14 +264,14 @@ end tell`;
     }
 
     const wsPath = Extension.getInstance().workspaceFolder?.uri.fsPath || process.cwd();
-    
+
     // Use a more specific pattern to avoid killing unintended processes
     // First check if our caffeinate processes exist
     const checkCommand = 'pgrep -f "^caffeinate -d -i"';
-    
+
     try {
       const pids = await ScriptExecutor.executeScriptAsync(checkCommand, wsPath);
-      
+
       if (pids && pids.trim()) {
         // Kill only the specific caffeinate processes we started
         const killCommand = 'pkill -f "^caffeinate -d -i"';

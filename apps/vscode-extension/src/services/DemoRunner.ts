@@ -55,6 +55,7 @@ import {
   EngageTimeService,
   SelectionService,
   MacOSActionsService,
+  DesktopActionsService,
   ZoomService,
   AnalyticsService,
   AnalyticsCommands,
@@ -862,6 +863,15 @@ export class DemoRunner {
       return;
     } else if (step.action === Action.ShowDock) {
       await MacOSActionsService.showDock();
+      return;
+    }
+
+    // Desktop icon actions
+    if (step.action === Action.HideDesktopIcons) {
+      await DesktopActionsService.hideDesktopIcons();
+      return;
+    } else if (step.action === Action.ShowDesktopIcons) {
+      await DesktopActionsService.showDesktopIcons();
       return;
     }
 

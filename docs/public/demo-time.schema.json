@@ -155,6 +155,8 @@
                     "macos.disableCaffeine",
                     "macos.hideDock",
                     "macos.showDock",
+                    "hideDesktopIcons",
+                    "showDesktopIcons",
                     "startEngageTimeSession",
                     "startEngageTimePoll",
                     "closeEngageTimeSession",
