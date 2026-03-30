@@ -80,7 +80,7 @@ export const Notes: React.FunctionComponent<INotesProps> = ({
             onClick={increaseFontSize}
             disabled={fontSize >= MAX_FONT_SIZE}
           >
-            <span className="text-(--vscode-descriptionForeground) font-bold leading-none select-none">A+</span>
+            <span className="text-(--vscode-descriptionForeground) text-xs font-bold leading-none select-none">A+</span>
           </Button>
           {path && (
             <Button title='Edit notes' appearance='icon' onClick={onEdit}>
