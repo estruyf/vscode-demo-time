@@ -1,0 +1,88 @@
+---
+title: Redaction mode
+description: Automatically mask sensitive data like API keys, tokens, passwords, and emails in the editor during live presentations.
+lastmod: 2026-03-27T00:00:00.000Z
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Live demos, recordings, and pair programming sessions often risk exposing sensitive information — API keys, tokens, passwords, email addresses, or connection strings — that might appear in configuration files or source code open in the editor.
+
+**Redaction mode** automatically detects and visually masks sensitive data across your open editors when you enter presentation mode, so you can present with confidence.
+
+<Aside type="tip">
+Redaction mode is purely visual — it never modifies your actual file contents. The original text remains unchanged; only the display is affected.
+</Aside>
+
+## Enabling redaction mode
+
+To enable redaction mode, add the following setting to your `.vscode/settings.json`:
+
+```json title=".vscode/settings.json"
+{
+  "demoTime.redaction.enabled": true
+}
+```
+
+Once enabled, sensitive data will be automatically masked with `••••••••` whenever you enter presentation mode. When you exit presentation mode, the redactions are removed and your editor returns to normal.
+
+## Manual toggle
+
+You can also toggle redaction mode on or off at any time using the command palette:
+
+- **Command:** `Demo Time: Toggle Redaction Mode`
+
+This works independently of the `demoTime.redaction.enabled` setting, allowing you to quickly enable or disable redaction during a session.
+
+## What gets redacted
+
+Redaction mode includes built-in patterns that detect common types of sensitive data:
+
+| Pattern | Example |
+| --- | --- |
+| Environment variable values for sensitive keys | `API_KEY=sk-abc123...` → `API_KEY=••••••••` |
+| JWT tokens | `eyJhbGciOi...` → `••••••••` |
+| Bearer / Basic auth tokens | `Bearer abc123...` → `Bearer ••••••••` |
+| Email addresses | `user@example.com` → `••••••••` |
+| Connection strings | `postgres://user:pass@host/db` → `••••••••` |
+| Sensitive keys in JSON files | `"password": "secret"` → `"password": "••••••••"` |
+| Sensitive keys in YAML files | `api_key: secret` → `api_key: ••••••••` |
+| Sensitive keys in properties/INI files | `db.password = secret` → `db.password = ••••••••` |
+
+Sensitive key names include variations of: `password`, `secret`, `token`, `api_key`, `access_key`, `auth`, `credential`, `private_key`, `client_secret`, `connection_string`, and `database_url`.
+
+## Custom patterns
+
+You can define additional regex patterns to redact data specific to your project:
+
+```json title=".vscode/settings.json"
+{
+  "demoTime.redaction.enabled": true,
+  "demoTime.redaction.customPatterns": [
+    "CUSTOM_SECRET_[A-Za-z0-9]+",
+    "my-project-key-\\w+"
+  ]
+}
+```
+
+Each entry should be a valid JavaScript regular expression string. Custom patterns are applied in addition to the built-in patterns.
+
+<Aside type="caution">
+Make sure your regex patterns are valid. Invalid patterns will be skipped with a warning in the output channel.
+</Aside>
+
+## Supported file types
+
+Redaction mode works across a wide range of file types commonly encountered during demos:
+
+- **Configuration files:** `.env`, `.json`, `.yaml`, `.yml`, `.toml`, `.properties`, `.ini`, `.conf`
+- **Source code:** TypeScript, JavaScript, Python, Java, C#, Go, Rust, PHP, Ruby
+- **Documents:** Markdown, HTML, XML, plain text
+- **Shell scripts:** Bash, PowerShell, Batch
+
+## Settings reference
+
+| Setting | Description | Default |
+| --- | --- | --- |
+| `demoTime.redaction.enabled` | Enable redaction mode to automatically mask sensitive data during presentation mode. | `false` |
+| `demoTime.redaction.customPatterns` | Additional regex patterns to redact. Each pattern should be a valid JavaScript regular expression string. | `[]` |

@@ -1,6 +1,7 @@
 import { Card } from "../ui/Card";
 import { Label } from "../ui/Label";
 import { EnhancedSelect, EnhancedSelectContent, EnhancedSelectItem, EnhancedSelectTrigger, EnhancedSelectValue } from "../ui/EnhancedSelect";
+import { Switch } from "../ui/Switch";
 import { IDemoTimeSettings } from "@demotime/common";
 import { useState } from "react";
 import { Icon } from "vscrui";
@@ -36,6 +37,18 @@ export default function GeneralSettings({ settings, updateSetting }: GeneralSett
             <p className="text-sm text-gray-600 dark:text-gray-300">
               Default format for new act files - this is the most important setting
             </p>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label>Enable Redaction</Label>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Mask sensitive values while running demos and presenting.
+              </p>
+            </div>
+            <Switch
+              checked={settings['redaction.enabled']}
+              onCheckedChange={(checked) => updateSetting('redaction.enabled', checked)}
+            />
           </div>
         </div>
 

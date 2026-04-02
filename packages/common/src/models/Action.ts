@@ -95,6 +95,9 @@ export enum Action {
   DisableCaffeine = 'macos.disableCaffeine',
   HideDock = 'macos.hideDock',
   ShowDock = 'macos.showDock',
+  // Desktop
+  HideDesktopIcons = 'hideDesktopIcons',
+  ShowDesktopIcons = 'showDesktopIcons',
   // EngageTime
   StartEngageTimeSession = 'startEngageTimeSession',
   StartEngageTimePoll = 'startEngageTimePoll',

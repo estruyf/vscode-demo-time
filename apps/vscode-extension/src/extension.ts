@@ -19,6 +19,7 @@ import {
   TextTypingService,
   TerminalService,
   ResourceService,
+  RedactionService,
 } from './services';
 import { DemoPanel } from './panels/DemoPanel';
 import { ResourcesPanel } from './panels/ResourcesPanel';
@@ -66,6 +67,7 @@ export async function activate(context: vscode.ExtensionContext) {
   TerminalService.register();
   InputService.registerCommands();
   AnalyticsCommands.registerCommands();
+  RedactionService.register();
   SponsorService.init(context);
 
   console.log(`${Config.title} is active!`);

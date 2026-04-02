@@ -1,20 +1,22 @@
 ---
-title: macOS actions
-description: Actions for controlling macOS-specific features in Demo Time
+title: OS and desktop actions
+description: Actions for controlling desktop visibility and operating system presentation features in Demo Time
 lastmod: 2026-01-02T12:21:00.000Z
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-macOS actions allow you to control macOS-specific features during your presentations. These actions are only available on macOS and include Focus Mode (Do Not Disturb) controls, menu bar visibility, dock visibility, volume control, screen resolution switching, and system sleep prevention (Caffeine).
+This section groups actions related to desktop presentation setup and operating system controls. Most actions on this page are macOS-only, while desktop icon visibility is available on both macOS and Windows.
 
-<Aside type="caution" title="macOS Only">
-  These actions are only available on macOS. On other platforms, they will show a warning and have no effect.
+<Aside type="note" title="Platform Support">
+  Each action below lists its supported operating systems. On unsupported platforms, Demo Time will show a warning and skip the action.
 </Aside>
 
 ## Enable Focus Mode
 
 Enable Focus Mode (Do Not Disturb) on macOS. This action requires a Shortcuts automation named "Enable Do Not Disturb" to be set up on your Mac.
+
+**Supported on:** macOS
 
 <Tabs syncKey="macos-focus-on">
 <TabItem label="JSON">
@@ -39,9 +41,20 @@ action: macos.enableFocusMode
   You need to create a Shortcut automation named "Enable Do Not Disturb" in the Shortcuts app on your Mac. This shortcut should toggle Focus Mode on.
 </Aside>
 
+Create the shortcut like this:
+
+1. Open the Shortcuts app on macOS.
+2. Create a new shortcut named `Enable Do Not Disturb`.
+3. Add the `Set Focus` action.
+4. Click the Focus field in that action and explicitly choose `Do Not Disturb` from the dropdown.
+5. Configure it to set `Do Not Disturb` to `On`.
+6. Save the shortcut.
+
 ## Disable Focus Mode
 
 Disable Focus Mode (Do Not Disturb) on macOS. This action requires a Shortcuts automation named "Disable Do Not Disturb" to be set up on your Mac.
+
+**Supported on:** macOS
 
 <Tabs syncKey="macos-focus-off">
 <TabItem label="JSON">
@@ -62,9 +75,24 @@ action: macos.disableFocusMode
 </TabItem>
 </Tabs>
 
+<Aside type="tip" title="Setting up Shortcuts">
+  Create a second shortcut named "Disable Do Not Disturb" so Demo Time can restore your previous presentation setup.
+</Aside>
+
+Create the shortcut like this:
+
+1. Open the Shortcuts app on macOS.
+2. Create a new shortcut named `Disable Do Not Disturb`.
+3. Add the `Set Focus` action.
+4. Click the Focus field in that action and explicitly choose `Do Not Disturb` from the dropdown.
+5. Configure it to set `Do Not Disturb` to `Off`.
+6. Save the shortcut.
+
 ## Hide Menu Bar
 
 Hide the macOS menu bar by enabling auto-hide.
+
+**Supported on:** macOS
 
 <Tabs syncKey="macos-hide-menubar">
 <TabItem label="JSON">
@@ -89,6 +117,8 @@ action: macos.hideMenubar
 
 Show the macOS menu bar by disabling auto-hide.
 
+**Supported on:** macOS
+
 <Tabs syncKey="macos-show-menubar">
 <TabItem label="JSON">
 
@@ -111,6 +141,8 @@ action: macos.showMenubar
 ## Mute Volume
 
 Mute the system volume on macOS. This is useful for presentations where you want to ensure no unexpected sounds interrupt your demo.
+
+**Supported on:** macOS
 
 <Tabs syncKey="macos-mute-volume">
 <TabItem label="JSON">
@@ -135,6 +167,8 @@ action: macos.muteVolume
 
 Unmute the system volume on macOS.
 
+**Supported on:** macOS
+
 <Tabs syncKey="macos-unmute-volume">
 <TabItem label="JSON">
 
@@ -157,6 +191,8 @@ action: macos.unmuteVolume
 ## Enable Caffeine
 
 Prevent the system from sleeping during presentations. You can enable it indefinitely or for a specific duration in minutes.
+
+**Supported on:** macOS
 
 <Tabs syncKey="macos-enable-caffeine">
 <TabItem label="JSON - Indefinite">
@@ -207,6 +243,8 @@ duration: 60
 
 Re-enable system sleep after a presentation. This stops all running `caffeinate` processes.
 
+**Supported on:** macOS
+
 <Tabs syncKey="macos-disable-caffeine">
 <TabItem label="JSON">
 
@@ -229,6 +267,8 @@ action: macos.disableCaffeine
 ## Hide Dock
 
 Hide the macOS dock by enabling auto-hide. This provides a cleaner workspace during presentations by automatically hiding the dock until you move your cursor to the bottom of the screen.
+
+**Supported on:** macOS
 
 <Tabs syncKey="macos-hide-dock">
 <TabItem label="JSON">
@@ -253,6 +293,8 @@ action: macos.hideDock
 
 Show the macOS dock by disabling auto-hide. This restores the dock to always be visible.
 
+**Supported on:** macOS
+
 <Tabs syncKey="macos-show-dock">
 <TabItem label="JSON">
 
@@ -267,6 +309,56 @@ Show the macOS dock by disabling auto-hide. This restores the dock to always be 
 
 ```yaml
 action: macos.showDock
+```
+
+</TabItem>
+</Tabs>
+
+## Hide Desktop Icons
+
+Hide all desktop icons for a distraction-free presentation.
+
+**Supported on:** macOS, Windows
+
+<Tabs syncKey="hide-desktop-icons">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "hideDesktopIcons"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: hideDesktopIcons
+```
+
+</TabItem>
+</Tabs>
+
+## Show Desktop Icons
+
+Restore desktop icons after a presentation.
+
+**Supported on:** macOS, Windows
+
+<Tabs syncKey="show-desktop-icons">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "showDesktopIcons"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: showDesktopIcons
 ```
 
 </TabItem>

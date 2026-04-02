@@ -36,6 +36,7 @@ Here is a list of all the settings available in Demo Time.
 | `demoTime.insertTypingMode` | The typing mode for inserting text. Options are: `instant`, `line-by-line`, `character-by-character`, or `hacker-typer` | `instant` |
 | `demoTime.insertTypingSpeed` | The speed in milliseconds for inserting text. | `50` |
 | `demoTime.hackerTyperChunkSize` | Number of characters to insert per 'keystroke' in hacker-typer mode | `3` |
+| `demoTime.terminalCommandBoundaryDelay` | Delay (in milliseconds) between sequential terminal commands to prevent character bleed. Increase this if commands overlap or if you use custom shell prompts (Oh My Posh, Starship, Powerlevel10k) which can cause VS Code shell integration to be unreliable. See [VS Code issue #242897](https://github.com/microsoft/vscode/issues/242897). | `200` |
 | `demoTime.api.enabled` | Enable the API to control the extension. | `false` |
 | `demoTime.api.port` | The port on which the API should run. | `3710` |
 | `demoTime.hideEditorActions` | Hide the editor actions (add new demo and toggle highlight). | `false` |
@@ -48,11 +49,26 @@ Here is a list of all the settings available in Demo Time.
 | `demoTime.openInConfigEditor` | Open the act file in the act editor GUI. | `true` |
 | `demoTime.remote.showScreenshot` | Enable remote screenshot functionality. | `true` |
 | `demoTime.remote.showNotes` | Enable remote notes functionality. | `true` |
+| `demoTime.redaction.enabled` | Enable redaction mode to automatically mask sensitive data (API keys, tokens, passwords, emails) during presentation mode. | `false` |
+| `demoTime.redaction.customPatterns` | Additional regex patterns to redact sensitive data. Each pattern should be a valid JavaScript regular expression string. | `[]` |
 
 <Aside>
 The `demoTime.previousEnabled` is by default disabled to avoid conflicts when the previous action inserted content into a file.
 
 When you enable this setting, you can use the `Demo Time: Previous` command to go back to the previous step or use the left clicker button.
+</Aside>
+
+<Aside type="caution" title="Terminal Command Boundary Delay">
+The `demoTime.terminalCommandBoundaryDelay` setting controls the delay between sequential terminal commands. The default value of 200ms works for most shells, but you may need to increase it if you experience command overlap or character bleed when running multiple commands in sequence.
+
+**When to increase this setting:**
+- You use a custom shell prompt (Oh My Posh, Starship, Powerlevel10k)
+- You're running VS Code 1.98+ (shell integration sequencing became less reliable)
+- Commands appear to overlap in the terminal (e.g., `commandAc` instead of `commandA` followed by `commandB`)
+
+**Recommended values:**
+- **300-500ms**: For custom shell prompts or unreliable shell integration
+- **1000ms+**: For PowerShell on Windows or other complex shell setups
 </Aside>
 
 ## Act file Format Examples

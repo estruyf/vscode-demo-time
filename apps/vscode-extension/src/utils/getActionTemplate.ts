@@ -589,6 +589,19 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  // Desktop actions
+  if (action === Action.HideDesktopIcons) {
+    return {
+      action: Action.HideDesktopIcons,
+    };
+  }
+
+  if (action === Action.ShowDesktopIcons) {
+    return {
+      action: Action.ShowDesktopIcons,
+    };
+  }
+
   // EngageTime actions
   if (action === Action.StartEngageTimeSession) {
     return {

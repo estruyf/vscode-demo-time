@@ -42,3 +42,11 @@ demos:
     title: Show dock
     steps:
       - action: macos.showDock
+  - id: scene-mndbov1w-2n03
+    title: Hide desktop icons
+    steps:
+      - action: hideDesktopIcons
+  - id: demo-mndbp6cq-wu2b
+    title: Show desktop icons
+    steps:
+      - action: showDesktopIcons

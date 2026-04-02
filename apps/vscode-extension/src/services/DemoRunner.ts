@@ -55,10 +55,12 @@ import {
   EngageTimeService,
   SelectionService,
   MacOSActionsService,
+  DesktopActionsService,
   ZoomService,
   AnalyticsService,
   AnalyticsCommands,
   SponsorService,
+  RedactionService,
 } from './';
 import { Preview } from '../preview/Preview';
 import { parse as jsonParse } from 'jsonc-parser';
@@ -263,11 +265,13 @@ export class DemoRunner {
 
     if (DemoRunner.isPresentationMode) {
       await AnalyticsCommands.startRecording();
+      RedactionService.enable();
       DemoPanel.updateMessage('Presentation mode enabled');
       await DemoRunner.getDemoFile(undefined, true);
       Preview.postMessage(WebViewMessages.toWebview.updateIsInPresentationMode, true);
     } else {
       await AnalyticsCommands.stopRecording();
+      RedactionService.disable();
       DemoPanel.updateMessage();
       Preview.postMessage(WebViewMessages.toWebview.updateIsInPresentationMode, false);
       await commands.executeCommand(COMMAND.resetCountdown);
@@ -862,6 +866,15 @@ export class DemoRunner {
       return;
     }
 
+    // Desktop icon actions
+    if (step.action === Action.HideDesktopIcons) {
+      await DesktopActionsService.hideDesktopIcons();
+      return;
+    } else if (step.action === Action.ShowDesktopIcons) {
+      await DesktopActionsService.showDesktopIcons();
+      return;
+    }
+
     // Wait for the specified timeout
     if (step.action === Action.WaitForTimeout) {
       await sleep(step.timeout || 1000);
@@ -985,9 +998,10 @@ export class DemoRunner {
         return;
       }
 
-      // By default open in the Simple Browser, unless specified otherwise
-      if (typeof step.openInVSCode === 'undefined' || step.openInVSCode) {
-        await commands.executeCommand('simpleBrowser.show', Uri.parse(step.url));
+      // By default open in external browser, unless openInVSCode is true
+      if (typeof step.openInVSCode !== 'undefined' && step.openInVSCode) {
+        await commands.executeCommand('workbench.action.browser.open', step.url);
+        return;
       } else {
         await commands.executeCommand('vscode.open', Uri.parse(step.url));
         return;

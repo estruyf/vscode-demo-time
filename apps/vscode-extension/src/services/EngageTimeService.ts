@@ -26,8 +26,8 @@ export class EngageTimeService {
     }
 
     await vscode.commands.executeCommand(
-      'simpleBrowser.show',
-      vscode.Uri.parse(`https://engagetime.live/session-details/${sessionId}`),
+      'workbench.action.browser.open',
+      `https://engagetime.live/session-details/${sessionId}`,
     );
   }
 
@@ -55,8 +55,8 @@ export class EngageTimeService {
     }
 
     await vscode.commands.executeCommand(
-      'simpleBrowser.show',
-      vscode.Uri.parse(`https://engagetime.live/poll/${pollId}`),
+      'workbench.action.browser.open',
+      `https://engagetime.live/poll/${pollId}`,
     );
   }
 

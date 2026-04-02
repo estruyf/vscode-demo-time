@@ -71,4 +71,6 @@ export const COMMAND = {
   analyticsDashboard: `${EXTENSION_NAME}.analytics.dashboard`,
   analyticsExport: `${EXTENSION_NAME}.analytics.export`,
   analyticsToggle: `${EXTENSION_NAME}.analytics.toggle`,
+  // Redaction
+  toggleRedaction: `${EXTENSION_NAME}.toggleRedaction`,
 };

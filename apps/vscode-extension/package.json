@@ -259,6 +259,11 @@
           "default": 3,
           "description": "Number of characters to insert per 'keystroke' in hacker-typer mode"
         },
+        "demoTime.terminalCommandBoundaryDelay": {
+          "type": "number",
+          "default": 200,
+          "markdownDescription": "Delay (in milliseconds) between sequential terminal commands to prevent character bleed. Increase this if commands overlap or if you use custom shell prompts (Oh My Posh, Starship, Powerlevel10k) which can cause VS Code shell integration (633 sequences) to be unreliable. See [VS Code issue #242897](https://github.com/microsoft/vscode/issues/242897)."
+        },
         "demoTime.api.enabled": {
           "type": "boolean",
           "default": false,
@@ -339,6 +344,19 @@
           "type": "boolean",
           "default": true,
           "description": "Enable presentation analytics to track timing, navigation, and performance during demos."
+        },
+        "demoTime.redaction.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable redaction mode to automatically mask sensitive data (API keys, tokens, passwords, emails) in the editor during presentation mode."
+        },
+        "demoTime.redaction.customPatterns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "markdownDescription": "Additional regex patterns to redact sensitive data. Each pattern should be a valid JavaScript regular expression string. Example: `[\"CUSTOM_SECRET_[A-Za-z0-9]+\", \"my-api-key-\\\\w+\"]`"
         }
       }
     },
@@ -626,6 +644,12 @@
         "title": "Export Analytics Session",
         "category": "Demo Time Analytics",
         "icon": "$(export)"
+      },
+      {
+        "command": "demo-time.toggleRedaction",
+        "title": "Toggle Redaction Mode",
+        "category": "Demo Time",
+        "icon": "$(eye-closed)"
       }
     ],
     "menus": {

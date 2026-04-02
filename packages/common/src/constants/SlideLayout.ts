@@ -8,4 +8,5 @@ export enum SlideLayout {
   ImageRight = 'image-right',
   ImageLeft = 'image-left',
   TwoColumns = 'two-columns',
+  AnimatedSVG = 'animated',
 }

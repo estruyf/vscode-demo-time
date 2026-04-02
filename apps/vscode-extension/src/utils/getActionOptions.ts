@@ -532,6 +532,23 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: 'Show the dock on macOS',
   } as QuickPickItem);
 
+  // Desktop actions
+  actions.push({
+    label: 'Desktop',
+    description: 'Desktop actions (cross-platform)',
+    kind: QuickPickItemKind.Separator,
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.HideDesktopIcons,
+    description: 'Hide all desktop icons',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.ShowDesktopIcons,
+    description: 'Show all desktop icons',
+  } as QuickPickItem);
+
   // EngageTime actions
   actions.push({
     label: 'EngageTime',
