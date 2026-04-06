@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DemoTime - Home</title>
+  <link rel="stylesheet" href="../styles/main.css">
+  <script type="module" src="../scripts/theme.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="../assets/demotime.png" alt="DemoTime Logo" class="logo">
+      <nav class="navbar">
+        <a href="home.html" class="nav-icon active" title="Home" aria-label="Home">
+          <img src="../assets/icon-house.svg" alt="Home" width="16" height="16">
+        </a>
+        <a href="scenes.html" class="nav-icon" title="See all scenes" aria-label="See all scenes">
+          <img src="../assets/icon-layout-grid.svg" alt="All scenes" width="16" height="16">
+        </a>
+        <a href="settings.html" class="nav-icon" title="Settings" aria-label="Settings">
+          <img src="../assets/icon-settings.svg" alt="Settings" width="16" height="16">
+        </a>
+      </nav>
+    </div>
+    
+    <div class="content">
+      <div class="text-label">
+        Ready to return to your DemoTime presentation
+      </div>
+      <div class="button-group">
+        <button id="previousBtn" class="nav-btn btn-secondary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m12 19-7-7 7-7"/>
+            <path d="M19 12H5"/>
+          </svg>
+          <span>Previous</span>
+        </button>
+        <button id="nextBtn" class="nav-btn btn-primary">
+          <span>Next</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14"/>
+            <path d="m12 5 7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <script type="module" src="../scripts/home.js"></script>
+</body>
+</html>
