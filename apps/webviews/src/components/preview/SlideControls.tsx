@@ -58,31 +58,11 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   };
 
   const previous = React.useCallback(() => {
-    if (slides === 1 && previousEnabled) {
-      messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.previous);
-      return;
-    }
-
-    const prevSlide = currentSlide - 1;
-    if (prevSlide >= 0) {
-      messageHandler.send(WebViewMessages.toWebview.previousSlide, { source: 'controls' });
-    } else if (previousEnabled) {
-      messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.previous);
-    }
+    messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.previous);
   }, [slides, currentSlide, updateSlideIdx, previousEnabled]);
 
   const next = React.useCallback(() => {
-    if (slides === 1) {
-      messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.start);
-      return;
-    }
-
-    const nextSlide = currentSlide + 1;
-    if (nextSlide < slides) {
-      messageHandler.send(WebViewMessages.toWebview.nextSlide, { source: 'controls' });
-    } else {
-      messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.start);
-    }
+    messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.start);
   }, [slides, currentSlide, updateSlideIdx]);
 
   const toggleFullscreen = React.useCallback(() => {

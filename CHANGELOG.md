@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.1.1] - 2026-04-16
+
+- Fix on next and previous slide controls
+
 ## [2.1.0] - 2026-04-02
 
 - [#360](https://github.com/estruyf/vscode-demo-time/issues/360): Added `hideDesktopIcons` and `showDesktopIcons` actions to control the visibility of desktop icons during a demo
