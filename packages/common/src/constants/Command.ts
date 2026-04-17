@@ -13,6 +13,7 @@ export const COMMAND = {
   previous: `${EXTENSION_NAME}.previous`,
   runStep: `${EXTENSION_NAME}.runStep`,
   runById: `${EXTENSION_NAME}.runById`,
+  runSingleMove: `${EXTENSION_NAME}.runSingleMove`,
   togglePresentationMode: `${EXTENSION_NAME}.togglePresentationMode`,
   reset: `${EXTENSION_NAME}.reset`,
   toggleHighlight: `${EXTENSION_NAME}.toggleHighlight`,

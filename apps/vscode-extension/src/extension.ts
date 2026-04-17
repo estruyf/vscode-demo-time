@@ -26,6 +26,7 @@ import { ResourcesPanel } from './panels/ResourcesPanel';
 import { Preview } from './preview/Preview';
 import { PresenterView } from './presenterView/PresenterView';
 import { ConfigEditorProvider } from './providers/ConfigEditorProvider';
+import { DemoCodeLensProvider } from './providers/DemoCodeLensProvider';
 import { SettingsView } from './settingsView/SettingsView';
 import { Config } from '@demotime/common';
 import { InputService } from './services/InputService';
@@ -47,6 +48,7 @@ export async function activate(context: vscode.ExtensionContext) {
   Overview.register();
   ProFeaturesView.register();
   ConfigEditorProvider.register();
+  DemoCodeLensProvider.register();
 
   // Services
   DecoratorService.register();

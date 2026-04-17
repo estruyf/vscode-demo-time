@@ -114,6 +114,7 @@ export class DemoRunner {
     );
     subscriptions.push(commands.registerCommand(COMMAND.runStep, DemoRunner.startDemo));
     subscriptions.push(commands.registerCommand(COMMAND.runById, DemoRunner.runById));
+    subscriptions.push(commands.registerCommand(COMMAND.runSingleMove, DemoRunner.runSingleMove));
     subscriptions.push(commands.registerCommand(COMMAND.reset, DemoRunner.reset));
     subscriptions.push(
       commands.registerCommand(COMMAND.toggleHighlight, DemoRunner.toggleHighlight),
@@ -653,6 +654,26 @@ export class DemoRunner {
     DemoRunner.currentDemo = demoToRun;
     await DemoRunner.runSteps(demoToRun.steps);
     NotesService.showNotes(demoToRun);
+  }
+
+  /**
+   * Runs a single move from CodeLens.
+   */
+  private static async runSingleMove(args: {
+    filePath: string;
+    sceneIdx: number;
+    step: Step;
+  }): Promise<void> {
+    if (TextTypingService.IsTyping) {
+      Logger.info('DemoRunner.runSingleMove called while typing. Ignoring.');
+      return;
+    }
+
+    if (!args?.step) {
+      return;
+    }
+
+    await DemoRunner.runSteps([args.step], false);
   }
 
   /**

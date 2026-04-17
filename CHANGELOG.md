@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.2.0] - 2026-xx-xx
+
+- [#397](https://github.com/estruyf/vscode-demo-time/issues/397): Enable running scenes and moves from source file
+
 ## [2.1.1] - 2026-04-16
 
 - Fix on next and previous slide controls
