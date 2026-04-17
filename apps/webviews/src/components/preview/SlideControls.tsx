@@ -1,6 +1,6 @@
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import * as React from 'react';
-import { COMMAND, SlideMetadata } from '@demotime/common';
+import { COMMAND, Slide, SlideMetadata } from '@demotime/common';
 import { SlideControl } from './SlideControl';
 import { WhiteboardIcon } from './WhiteboardIcon';
 import { Icon } from 'vscrui';
@@ -15,6 +15,12 @@ export interface ISlideControlsProps {
   slides: number;
   currentSlide?: number;
   slideOptions?: SlideOption[];
+  slideData?: Slide[];
+  vsCodeTheme?: never;
+  isDarkTheme?: boolean;
+  webviewUrl?: string | null;
+  filePath?: string;
+  slideTheme?: string;
   updateSlideIdx: (index: number) => void;
   onNavigateToSlide?: (index: number) => void;
   triggerMouseMove: (value: boolean) => void;
@@ -34,6 +40,12 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   slides,
   currentSlide = 0,
   slideOptions,
+  slideData,
+  vsCodeTheme,
+  isDarkTheme,
+  webviewUrl,
+  filePath,
+  slideTheme,
   updateSlideIdx,
   onNavigateToSlide,
   triggerMouseMove,
@@ -173,6 +185,12 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
               slides={slides}
               currentSlide={currentSlide}
               slideOptions={slideOptions}
+              slideData={slideData || []}
+              vsCodeTheme={vsCodeTheme as never}
+              isDarkTheme={isDarkTheme || false}
+              webviewUrl={webviewUrl || null}
+              filePath={filePath}
+              theme={slideTheme}
               onNavigate={onNavigateToSlide || updateSlideIdx}
               onOpenChange={setIsNavigatorOpen}
             />

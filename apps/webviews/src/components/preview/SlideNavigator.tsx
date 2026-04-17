@@ -1,5 +1,7 @@
 import * as React from 'react';
+import { Slide } from '@demotime/common';
 import { Icon } from 'vscrui';
+import { SlideThumbnail } from './SlideThumbnail';
 
 export interface SlideOption {
   index: number;
@@ -10,6 +12,12 @@ export interface ISlideNavigatorProps {
   slides: number;
   currentSlide: number;
   slideOptions: SlideOption[];
+  slideData: Slide[];
+  vsCodeTheme: never;
+  isDarkTheme: boolean;
+  webviewUrl: string | null;
+  filePath?: string;
+  theme?: string;
   onNavigate: (index: number) => void;
   onOpenChange?: (isOpen: boolean) => void;
 }
@@ -18,11 +26,19 @@ export const SlideNavigator: React.FunctionComponent<ISlideNavigatorProps> = ({
   slides,
   currentSlide,
   slideOptions,
+  slideData,
+  vsCodeTheme,
+  isDarkTheme,
+  webviewUrl,
+  filePath,
+  theme,
   onNavigate,
   onOpenChange,
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const gridRef = React.useRef<HTMLDivElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const [thumbnailScale, setThumbnailScale] = React.useState(0.25);
 
   const toggleOpen = React.useCallback(() => {
     setIsOpen((prev) => !prev);
@@ -31,6 +47,25 @@ export const SlideNavigator: React.FunctionComponent<ISlideNavigatorProps> = ({
   React.useEffect(() => {
     onOpenChange?.(isOpen);
   }, [isOpen, onOpenChange]);
+
+  // Compute thumbnail scale based on container width
+  React.useEffect(() => {
+    if (!isOpen || !containerRef.current) return;
+
+    const updateScale = () => {
+      if (!containerRef.current) return;
+      const containerWidth = containerRef.current.clientWidth;
+      // 3 columns with gap (3 * 12px gap = 36px) and padding (2 * 16px = 32px)
+      const cardWidth = (containerWidth - 36 - 32) / 3;
+      setThumbnailScale(cardWidth / 960);
+    };
+
+    updateScale();
+
+    const observer = new ResizeObserver(updateScale);
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, [isOpen]);
 
   // Scroll current slide into view when opened
   React.useEffect(() => {
@@ -95,11 +130,15 @@ export const SlideNavigator: React.FunctionComponent<ISlideNavigatorProps> = ({
           onClick={handleBackdropClick}
         >
           <div
-            className="w-[90%] max-w-[800px] max-h-[80vh] rounded-md overflow-hidden flex flex-col"
+            ref={containerRef}
+            className="w-[90%] max-w-[900px] max-h-[80vh] rounded-md overflow-hidden flex flex-col"
             style={{
               backgroundColor: 'var(--vscode-editorWidget-background)',
               border: '1px solid var(--vscode-editorWidget-border, var(--vscode-widget-border))',
               boxShadow: '0 8px 32px var(--vscode-widget-shadow)',
+              // Pass scale to thumbnails via CSS variable
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              ['--thumbnail-scale' as any]: thumbnailScale,
             }}
           >
             {/* Header */}
@@ -126,6 +165,7 @@ export const SlideNavigator: React.FunctionComponent<ISlideNavigatorProps> = ({
               <div className="grid grid-cols-3 gap-3">
                 {slideOptions.map((option) => {
                   const isActive = option.index === currentSlide;
+                  const slide = slideData[option.index];
                   return (
                     <button
                       key={option.index}
@@ -136,34 +176,46 @@ export const SlideNavigator: React.FunctionComponent<ISlideNavigatorProps> = ({
                         : 'hover:ring-1 hover:ring-(--vscode-focusBorder)'
                         }`}
                       style={{
-                        backgroundColor: isActive
-                          ? 'var(--vscode-list-activeSelectionBackground)'
-                          : 'var(--vscode-editor-background)',
                         border: '1px solid var(--vscode-editorWidget-border, var(--vscode-widget-border))',
                       }}
                     >
-                      {/* Slide number badge */}
+                      {/* Slide thumbnail */}
+                      {slide ? (
+                        <SlideThumbnail
+                          slide={slide}
+                          vsCodeTheme={vsCodeTheme}
+                          isDarkTheme={isDarkTheme}
+                          webviewUrl={webviewUrl}
+                          filePath={filePath}
+                          theme={theme}
+                        />
+                      ) : (
+                        <div
+                          className="aspect-video flex items-center justify-center"
+                          style={{ backgroundColor: 'var(--vscode-editor-background)' }}
+                        >
+                          <span
+                            className="text-3xl font-light"
+                            style={{
+                              color: 'var(--vscode-editorWidget-foreground)',
+                              opacity: 0.3,
+                            }}
+                          >
+                            {option.index + 1}
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Title bar */}
                       <div
-                        className="aspect-video flex items-center justify-center"
+                        className="px-2.5 py-1.5"
                         style={{
-                          borderBottom: '1px solid var(--vscode-editorWidget-border, var(--vscode-widget-border))',
+                          backgroundColor: isActive
+                            ? 'var(--vscode-list-activeSelectionBackground)'
+                            : 'var(--vscode-editorWidget-background)',
+                          borderTop: '1px solid var(--vscode-editorWidget-border, var(--vscode-widget-border))',
                         }}
                       >
-                        <span
-                          className="text-3xl font-light"
-                          style={{
-                            color: isActive
-                              ? 'var(--vscode-list-activeSelectionForeground)'
-                              : 'var(--vscode-editorWidget-foreground)',
-                            opacity: isActive ? 1 : 0.3,
-                          }}
-                        >
-                          {option.index + 1}
-                        </span>
-                      </div>
-
-                      {/* Title */}
-                      <div className="px-2.5 py-2">
                         <p
                           className="text-xs truncate"
                           style={{
