@@ -3,6 +3,7 @@
 ## [2.2.0] - 2026-xx-xx
 
 - [#397](https://github.com/estruyf/vscode-demo-time/issues/397): Enable running scenes and moves from source file
+- [#398](https://github.com/estruyf/vscode-demo-time/issues/398): Add slide navigator in the preview webview when using a slide group
 
 ## [2.1.1] - 2026-04-16
 

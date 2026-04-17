@@ -7,13 +7,16 @@ import { Icon } from 'vscrui';
 import { ProjectorIcon } from './ProjectorIcon';
 import { EventData } from '@estruyf/vscode';
 import { WebViewMessages } from '@demotime/common';
+import { SlideNavigator, SlideOption } from './SlideNavigator';
 
 export interface ISlideControlsProps {
   show: boolean;
   path?: string;
   slides: number;
   currentSlide?: number;
+  slideOptions?: SlideOption[];
   updateSlideIdx: (index: number) => void;
+  onNavigateToSlide?: (index: number) => void;
   triggerMouseMove: (value: boolean) => void;
   hideControls: () => void;
   laserPointerEnabled?: boolean;
@@ -30,7 +33,9 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   children,
   slides,
   currentSlide = 0,
+  slideOptions,
   updateSlideIdx,
+  onNavigateToSlide,
   triggerMouseMove,
   hideControls,
   laserPointerEnabled = false,
@@ -43,6 +48,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   const [previousEnabled, setPreviousEnabled] = React.useState(false);
   const [isPresentationMode, setIsPresentationMode] = React.useState(false);
   const [showPosition, setShowPosition] = React.useState(false);
+  const [isNavigatorOpen, setIsNavigatorOpen] = React.useState(false);
 
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -126,7 +132,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
 
   return (
     <div
-      className={`absolute bottom-0 w-full transition-opacity duration-300 ${show ? 'opacity-90' : 'opacity-0 pointer-events-none'
+      className={`absolute bottom-0 w-full transition-opacity duration-300 ${isNavigatorOpen ? 'opacity-100' : show ? 'opacity-90' : 'opacity-0 pointer-events-none'
         }`}
       style={style}
     >
@@ -162,11 +168,19 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
           <SlideControl title="Next" iconName="arrow-right" action={next} isSlideControl />
         </div>
         <div className="flex items-center justify-end">
-          {slides > 1 && (
+          {slides > 1 && slideOptions && slideOptions.length > 0 ? (
+            <SlideNavigator
+              slides={slides}
+              currentSlide={currentSlide}
+              slideOptions={slideOptions}
+              onNavigate={onNavigateToSlide || updateSlideIdx}
+              onOpenChange={setIsNavigatorOpen}
+            />
+          ) : slides > 1 ? (
             <div className="slide-info text-sm px-2 py-1 text-(--vscode-editorWidget-foreground)">
               Slide {currentSlide + 1} of {slides}
             </div>
-          )}
+          ) : null}
           <SlideControl
             title="Toggle laser pointer"
             className={`hover:bg-(--vscode-toolbar-hoverBackground) ${laserPointerEnabled ? 'bg-(--vscode-statusBarItem-errorBackground)' : ''}`}
