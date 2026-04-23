@@ -1,7 +1,7 @@
 import * as React from 'react';
 import rehypePrettyCode from 'rehype-pretty-code';
 import { messageHandler } from '@estruyf/vscode/dist/client/webview';
-import { convertTemplateToHtml, SlideMetadata, twoColumnFormatting, WebViewMessages } from '@demotime/common';
+import { convertTemplateToHtml, placeholderFormatting, SlideMetadata, WebViewMessages } from '@demotime/common';
 import { renderToString } from 'react-dom/server';
 import { usePrevious, useRemark } from '../../hooks';
 import { transformImageUrl } from '../../utils';
@@ -164,7 +164,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   React.useEffect(() => {
     if (content && content !== prevContent) {
       // Passing the theme here as it could be that the theme has been updated
-      setMarkdown(twoColumnFormatting(content), [[rehypePrettyCode, { theme: vsCodeTheme ? vsCodeTheme : {} }]], isDarkTheme);
+      setMarkdown(placeholderFormatting(content), [[rehypePrettyCode, { theme: vsCodeTheme ? vsCodeTheme : {} }]], isDarkTheme);
     }
   }, [content, vsCodeTheme, isDarkTheme, prevContent, setMarkdown]);
 

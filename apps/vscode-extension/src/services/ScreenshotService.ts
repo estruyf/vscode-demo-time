@@ -10,8 +10,8 @@ import {
   SlideParser,
   SlideTheme,
   convertTemplateToHtml,
+  placeholderFormatting,
   transformMarkdown,
-  twoColumnFormatting,
 } from '@demotime/common';
 import { renderToString } from 'react-dom/server';
 import rehypePrettyCode from 'rehype-pretty-code';
@@ -292,7 +292,7 @@ export class ScreenshotService {
 
     // Transform markdown to HTML
     const vfile = await transformMarkdown(
-      twoColumnFormatting(slide.content),
+      placeholderFormatting(slide.content),
       undefined,
       undefined,
       undefined,

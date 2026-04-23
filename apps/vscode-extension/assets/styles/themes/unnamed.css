@@ -308,7 +308,12 @@
     color: var(--demotime-two-columns-color);
 
     .slide__content__inner {
-      @apply w-full grid grid-cols-2 gap-4 space-y-0;
+      @apply w-full space-y-4;
+    }
+
+    .slide__content__inner:has(> .slide__left),
+    .slide__section:has(> .slide__left) {
+      @apply grid grid-cols-2 gap-4 space-y-0;
     }
 
     .slide__left,
