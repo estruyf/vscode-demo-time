@@ -28,34 +28,14 @@ export const getWebviewHtml = async (
       ? file
       : webview.asWebviewUri(file as Uri).toString(),
   );
-  const styles = [];
-  for (const file of cssFiles || []) {
-    let contents = await readFile(file as Uri);
-    if (!contents) {
-      Notifications.error(`Failed to read CSS file: ${file}`);
-      continue;
-    }
-
-    // Update the URLs in the CSS files to use the webview URIs where https is not used
-    const workspaceUri = extension.workspaceFolder?.uri;
-    if (!workspaceUri) {
-      continue;
-    }
-
-    contents = contents.replace(/url\((?!['"]?(?:https?:)?\/\/)([^)]+)\)/g, (match, p1) => {
-      const trimmedPath = p1.trim().replace(/^['"]|['"]$/g, '');
-      const absolutePath = Uri.joinPath(workspaceUri, trimmedPath);
-      const webviewUri = webview.asWebviewUri(absolutePath);
-      return `url(${webviewUri})`;
-    });
-
-    styles.push(contents);
-  }
-
-  const allStyles = await Promise.all(styles);
+  const styleUrls = (cssFiles || []).map((file) =>
+    typeof file === 'string' && file.startsWith(`http`)
+      ? file
+      : webview.asWebviewUri(file as Uri).toString(),
+  );
 
   const htmlToInclude = [
-    ...allStyles.map((style) => `<style>${style}</style>`),
+    ...styleUrls.map((href) => `<link rel="stylesheet" href="${href}" />`),
     ...moduleUrls.map((src) => `<script type="module" src="${src}"></script>`),
     ...scriptUrls.map((src) => `<script src="${src}"></script>`),
     '</body>',
