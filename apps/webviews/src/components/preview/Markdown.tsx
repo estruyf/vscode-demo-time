@@ -31,9 +31,8 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const [isReady, setIsReady] = React.useState(false);
   const [customTheme, setCustomTheme] = React.useState<string | undefined>(undefined);
-  const [customLayout, setCustomLayout] = React.useState<string | undefined>(undefined);
   const [template, setTemplate] = React.useState<string | undefined>(undefined);
-  const [currentLayoutPath, setCurrentLayoutPath] = React.useState<string | undefined>(undefined);
+  const currentLayoutPathRef = React.useRef<string | undefined>(undefined);
 
   const resolvedVideoUrl = React.useMemo(() => {
     // Prefer explicit prop `videoUrl`, fall back to `matter.video`.
@@ -78,18 +77,20 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
 
   const updateCustomLayout = React.useCallback((metadata: SlideMetadata, layout?: string) => {
     // Clear previous template if layout path changed
-    if (layout !== currentLayoutPath) {
+    if (layout !== currentLayoutPathRef.current) {
       setTemplate(undefined);
-      setCurrentLayoutPath(layout);
+      currentLayoutPathRef.current = layout;
     }
 
     if (layout) {
       messageHandler.request<string>(WebViewMessages.toVscode.getFileContents, layout).then(async (templateHtml) => {
         if (templateHtml) {
-          let crntSlideContent = textContent;
-          if (!textContent && content) {
+          let crntSlideContent: string;
+          if (content) {
             const processedContent = await processMarkdown(content);
             crntSlideContent = renderToString(processedContent.reactContent);
+          } else {
+            crntSlideContent = textContent;
           }
 
           const metadataWithUrl = { ...metadata, webViewUrl: webviewUrl || undefined };
@@ -108,7 +109,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     } else {
       setIsReady(true);
     }
-  }, [content, textContent, webviewUrl]);
+  }, [content, textContent, webviewUrl, processMarkdown]);
 
   const updateCustomThemePath = React.useCallback((customThemePath?: string) => {
     if (!customThemePath) {
@@ -138,7 +139,6 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     }
 
     setIsReady(false);
-    setCustomLayout(undefined);
     setCustomTheme(undefined);
     setTemplate(undefined);
 
@@ -159,14 +159,25 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     } else {
       updateBgStyles(undefined);
     }
-  }, [isReady, prevContent, prevMatter, matter, updateCustomThemePath, updateBgStyles, webviewUrl, updateCustomLayout]);
+  }, [prevMatter, matter, updateCustomThemePath, updateBgStyles, webviewUrl, updateCustomLayout]);
 
   React.useEffect(() => {
-    if (content && content !== prevContent) {
-      // Passing the theme here as it could be that the theme has been updated
+    if (!matter || !content || content === prevContent) {
+      return;
+    }
+
+    if (matter.customLayout) {
+      // For custom layouts: only call updateCustomLayout if matter didn't change this render.
+      // If matter changed, the matter effect already called it — avoid a double async fetch.
+      if (prevMatter === JSON.stringify(matter)) {
+        updateCustomLayout(matter, matter.customLayout);
+      }
+    } else {
+      // Standard slides: process markdown (rehype). Skip for custom layouts since
+      // the `markdown` output is never rendered when a `template` is active.
       setMarkdown(placeholderFormatting(content), [[rehypePrettyCode, { theme: vsCodeTheme ? vsCodeTheme : {} }]], isDarkTheme);
     }
-  }, [content, vsCodeTheme, isDarkTheme, prevContent, setMarkdown]);
+  }, [content, vsCodeTheme, isDarkTheme, prevContent, prevMatter, setMarkdown, matter, updateCustomLayout]);
 
   // Set playback rate when video is ready
   React.useEffect(() => {
@@ -251,12 +262,8 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     return null;
   }
 
-  if (customLayout && !template) {
-    return null;
-  }
-
   return (
-    <>
+    <React.Fragment>
       {customTheme && <link href={customTheme} rel="stylesheet" />}
 
       {
@@ -293,6 +300,6 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
           </div>
         )
       }
-    </>
+    </React.Fragment>
   );
 };
