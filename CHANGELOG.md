@@ -2,6 +2,7 @@
 
 ## [2.2.0] - 2026-xx-xx
 
+- Fix preview taking focus when saving a markdown file and only update the preview when editing the current slide
 - [#397](https://github.com/estruyf/vscode-demo-time/issues/397): Enable running scenes and moves from source file
 - [#398](https://github.com/estruyf/vscode-demo-time/issues/398): Add slide navigator in the preview webview when using a slide group
 

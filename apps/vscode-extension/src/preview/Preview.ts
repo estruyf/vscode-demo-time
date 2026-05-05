@@ -48,6 +48,13 @@ export class Preview extends BaseWebview {
     Preview.currentSlideIndex = Math.max(index, -1);
   }
 
+  public static isCurrentFile(fileUri: string): boolean {
+    if (!Preview.crntFile) {
+      return false;
+    }
+    return Preview.crntFile === fileUri;
+  }
+
   public static isListening(): boolean {
     if (!Preview.isOpen) {
       return false;
@@ -217,7 +224,7 @@ export class Preview extends BaseWebview {
     } else if (command === WebViewMessages.toVscode.updateSlideIndex) {
       Preview.currentSlideIndex = payload;
     } else if (command === WebViewMessages.toVscode.slideReady) {
-      Preview.reveal();
+      Preview.reveal(true);
     } else if (command === WebViewMessages.toVscode.preview.recordOpenSlide) {
       // Record slide change in analytics if recording
       if (
