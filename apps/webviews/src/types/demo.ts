@@ -51,7 +51,14 @@ export const CATEGORIZED_ACTIONS: {
   },
   {
     category: 'Preview actions',
-    options: [Action.MarkdownPreview, Action.ImagePreview, Action.OpenSlide],
+    options: [
+      Action.MarkdownPreview,
+      Action.ImagePreview,
+      Action.OpenSlide,
+      Action.ShowQR,
+      Action.HideQR,
+      Action.ClosePreview,
+    ],
   },
   {
     category: 'Setting actions',

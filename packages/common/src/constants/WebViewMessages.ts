@@ -313,5 +313,10 @@ export const WebViewMessages = {
     presenter: {
       nextSlide: 'presenterNextSlide',
     },
+    // QR Code
+    /**
+     * showQR
+     */
+    showQR: 'showQR',
   },
 };

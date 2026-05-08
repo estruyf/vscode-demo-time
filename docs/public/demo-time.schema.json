@@ -163,7 +163,10 @@
                     "closeEngageTimePoll",
                     "showEngageTimeSession",
                     "showEngageTimePoll",
-                    "sendEngageTimeMessage"
+                    "sendEngageTimeMessage",
+                    "showQR",
+                    "hideQR",
+                    "closePreview"
                   ]
                 },
                 "disabled": {
@@ -960,6 +963,39 @@
                       },
                       "description": {
                         "$ref": "#/definitions/description"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "showQR"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["url"],
+                    "properties": {
+                      "url": {
+                        "$ref": "#/definitions/url"
+                      },
+                      "topText": {
+                        "type": "string",
+                        "title": "The top text shown above the QR code"
+                      },
+                      "title": {
+                        "type": "string",
+                        "title": "The title shown with the QR code"
+                      },
+                      "description": {
+                        "type": "string",
+                        "title": "The description shown with the QR code"
+                      },
+                      "logo": {
+                        "type": "string",
+                        "title": "A URL to the logo image shown next to the QR code"
                       }
                     }
                   }

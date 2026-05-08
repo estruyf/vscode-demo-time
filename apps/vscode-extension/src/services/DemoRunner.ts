@@ -1029,6 +1029,41 @@ export class DemoRunner {
       }
     }
 
+    // QR code preview actions
+    if (step.action === Action.ShowQR) {
+      if (!step.url) {
+        Notifications.error('No URL specified for showQR action');
+        return;
+      }
+
+      const qrTitle = step.title || step.label;
+      const qrDescription = step.description;
+      const qrTopText = step.topText;
+      const qrLogo = step.logo;
+
+      // Ensure the preview is open (without showing a specific file)
+      if (!Preview.isOpen) {
+        const separator = step.url.includes('?') ? '&' : '?';
+        await Preview.show(
+          `${step.url}${separator}qrTopText=${encodeURIComponent(qrTopText || '')}&qrTitle=${encodeURIComponent(qrTitle || '')}&qrDescription=${encodeURIComponent(qrDescription || '')}&qrLogo=${encodeURIComponent(qrLogo || '')}`,
+        );
+      } else {
+        Preview.postMessage(WebViewMessages.toWebview.showQR, {
+          url: step.url,
+          topText: qrTopText,
+          title: qrTitle,
+          description: qrDescription,
+          logo: qrLogo,
+        });
+      }
+      return;
+    }
+
+    if (step.action === Action.ClosePreview || step.action === Action.HideQR) {
+      Preview.close();
+      return;
+    }
+
     // Zoom actions
     if (step.action === Action.ZoomIn) {
       await ZoomService.zoomIn(step.zoom);

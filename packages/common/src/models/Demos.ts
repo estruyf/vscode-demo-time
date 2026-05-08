@@ -130,7 +130,13 @@ export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
   startOnOpen?: boolean;
   closeOnOpen?: boolean;
   title?: string;
+  description?: string;
   type?: EngageTimeMessageType;
+
+  // QR Code
+  topText?: string;
+  label?: string;
+  logo?: string;
 }
 
 export interface ITerminal {
