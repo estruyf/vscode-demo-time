@@ -1,5 +1,6 @@
 export enum SlideLayout {
   Default = 'default',
+  Center = 'center',
   Intro = 'intro',
   Section = 'section',
   Quote = 'quote',
