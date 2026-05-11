@@ -57,11 +57,10 @@ const PreviewView = () => {
         setSlideIdx(undefined);
         messageHandler.send(WebViewMessages.toVscode.updateTitle, 'QR Code');
       }
-    } else if (command === WebViewMessages.toWebview.hideQR) {
-      setQrData(null);
     } else if (command === WebViewMessages.toWebview.updateFileUri) {
       setFileUri(payload as string);
     } else if (command === WebViewMessages.toWebview.triggerUpdate) {
+      setQrData(null); // Clear QR data on update trigger to allow switching back to file previews
       type UpdatePayload = { fileUriString: string; slideIndex: number };
       const updatePayload = payload as UpdatePayload;
       if (
