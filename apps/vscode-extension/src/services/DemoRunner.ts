@@ -1036,27 +1036,18 @@ export class DemoRunner {
         return;
       }
 
-      const qrTitle = step.title || step.label;
+      const qrTitle = step.title;
       const qrDescription = step.description;
       const qrTopText = step.topText;
       const qrLogo = step.logo;
 
-      // Ensure the preview is open (without showing a specific file)
-      if (!Preview.isOpen) {
-        const separator = step.url.includes('?') ? '&' : '?';
-        await Preview.show(
-          `${step.url}${separator}qrTopText=${encodeURIComponent(qrTopText || '')}&qrTitle=${encodeURIComponent(qrTitle || '')}&qrDescription=${encodeURIComponent(qrDescription || '')}&qrLogo=${encodeURIComponent(qrLogo || '')}`,
-        );
-      } else {
-        Preview.postMessage(WebViewMessages.toWebview.showQR, {
-          url: step.url,
-          topText: qrTopText,
-          title: qrTitle,
-          description: qrDescription,
-          logo: qrLogo,
-        });
-      }
-      return;
+      await Preview.showQr({
+        url: step.url,
+        topText: qrTopText,
+        title: qrTitle,
+        description: qrDescription,
+        logo: qrLogo,
+      });
     }
 
     if (step.action === Action.ClosePreview || step.action === Action.HideQR) {

@@ -115,6 +115,38 @@ export class Preview extends BaseWebview {
     }
   }
 
+  public static async showQr({
+    url,
+    topText,
+    title,
+    description,
+    logo,
+  }: {
+    url: string;
+    topText?: string;
+    title?: string;
+    description?: string;
+    logo?: string;
+  }) {
+    // Ensure the preview is open (without showing a specific file)
+    if (!Preview.isOpen) {
+      const separator = url.includes('?') ? '&' : '?';
+      await Preview.show(
+        `${url}${separator}qrTopText=${encodeURIComponent(topText || '')}&qrTitle=${encodeURIComponent(title || '')}&qrDescription=${encodeURIComponent(description || '')}&qrLogo=${encodeURIComponent(logo || '')}`,
+      );
+    } else {
+      Preview.postMessage(WebViewMessages.toWebview.showQR, {
+        url: url,
+        topText: topText,
+        title: title,
+        description: description,
+        logo: logo,
+      });
+      Preview.reveal();
+    }
+    return;
+  }
+
   public static triggerUpdate(fileUri?: Uri | string, slide?: number, reset: boolean = false) {
     if (!fileUri || !Preview.webview?.webview) {
       return;
