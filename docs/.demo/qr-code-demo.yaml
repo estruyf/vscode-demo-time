@@ -8,6 +8,7 @@ scenes:
     moves:
       - action: showQR
         url: https://demotime.show
+        qrLayout: default
   - id: demo-mowwsbuf-qqst
     title: Show QR, title, top text
     moves:
@@ -16,8 +17,7 @@ scenes:
         label: Get started with Demo Time
         topText: Scan to open
         title: Get started with Demo Time
-  - id: demo-mowwslyo-59wj
-    title: Show QR + all
+  - title: Show QR + default
     moves:
       - action: showQR
         url: https://demotime.show
@@ -26,6 +26,57 @@ scenes:
         title: Get started with Demo Time
         topText: Scan to open
         description: Never stress about live coding again. Present straight from Visual Studio Code.
+        qrLayout: default
+  - title: Show QR + reversed
+    moves:
+      - action: showQR
+        url: https://demotime.show
+        label: Get started with Demo Time
+        logo: https://demotime.show/_astro/demotime-bg.Cj2R9BCN_Z1HYzg2.svg
+        title: Get started with Demo Time
+        topText: Scan to open
+        description: Never stress about live coding again. Present straight from Visual Studio Code.
+        qrLayout: reversed
+  - title: Show QR + minimal
+    moves:
+      - action: showQR
+        url: https://demotime.show
+        label: Get started with Demo Time
+        logo: https://demotime.show/_astro/demotime-bg.Cj2R9BCN_Z1HYzg2.svg
+        title: Get started with Demo Time
+        topText: Scan to open
+        description: Never stress about live coding again. Present straight from Visual Studio Code.
+        qrLayout: minimal
+  - title: Show QR + stacked
+    moves:
+      - action: showQR
+        url: https://demotime.show
+        label: Get started with Demo Time
+        logo: https://demotime.show/_astro/demotime-bg.Cj2R9BCN_Z1HYzg2.svg
+        title: Get started with Demo Time
+        topText: Scan to open
+        description: Never stress about live coding again. Present straight from Visual Studio Code.
+        qrLayout: stacked
+  - title: Show QR + text-left
+    moves:
+      - action: showQR
+        url: https://demotime.show
+        label: Get started with Demo Time
+        logo: https://demotime.show/_astro/demotime-bg.Cj2R9BCN_Z1HYzg2.svg
+        title: Get started with Demo Time
+        topText: Scan to open
+        description: Never stress about live coding again. Present straight from Visual Studio Code.
+        qrLayout: text-left
+  - title: Show QR + text-right
+    moves:
+      - action: showQR
+        url: https://demotime.show
+        label: Get started with Demo Time
+        logo: https://demotime.show/_astro/demotime-bg.Cj2R9BCN_Z1HYzg2.svg
+        title: Get started with Demo Time
+        topText: Scan to open
+        description: Never stress about live coding again. Present straight from Visual Studio Code.
+        qrLayout: text-right
   - id: scene-mowzb4o4-9kq7
     title: Close preview
     moves:

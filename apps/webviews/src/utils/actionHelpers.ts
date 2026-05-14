@@ -385,7 +385,7 @@ export const getFieldsForAction = (action: Action): string[] => {
     [Action.ZoomReset]: [],
     [Action.EnableZenMode]: [],
     [Action.DisableZenMode]: [],
-    [Action.ShowQR]: ['url', 'topText', 'title', 'description', 'logo'],
+    [Action.ShowQR]: ['qrLayout', 'url', 'topText', 'title', 'description', 'logo'],
     [Action.HideQR]: [],
     [Action.ClosePreview]: [],
   };

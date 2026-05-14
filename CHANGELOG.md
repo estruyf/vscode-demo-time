@@ -6,6 +6,7 @@
 - Custom themes are now loaded from the workspace URL instead of retrieving the file contents
 - Fix slide content not updating when navigating between slides that share the same custom layout template
 - Add QR preview support with `showQR`, `hideQR`, and `closePreview` actions
+- Add `qrLayout` option to `showQR` with constrained `left`/`right` layout choices
 - [#397](https://github.com/estruyf/vscode-demo-time/issues/397): Enable running scenes and moves from source file
 - [#398](https://github.com/estruyf/vscode-demo-time/issues/398): Add slide navigator in the preview webview when using a slide group
 - [#401](https://github.com/estruyf/vscode-demo-time/issues/401): Add a new `center` slide layout that centers all content both vertically and horizontally

@@ -26,6 +26,7 @@ const PreviewView = () => {
     title?: string;
     description?: string;
     logo?: string;
+    qrLayout?: 'default' | 'reversed' | 'minimal' | 'stacked' | 'text-left' | 'text-right';
   } | null>(null);
 
   const handleKeyDown = (event: KeyboardEvent) => {
@@ -49,6 +50,7 @@ const PreviewView = () => {
         title?: string;
         description?: string;
         logo?: string;
+        qrLayout?: 'default' | 'reversed' | 'minimal' | 'stacked' | 'text-left' | 'text-right';
       };
       if (qrPayload?.url) {
         // Replace current preview with QR preview
@@ -104,12 +106,16 @@ const PreviewView = () => {
       const title = url.searchParams.get('qrTitle') || url.searchParams.get('qrLabel') || undefined;
       const description = url.searchParams.get('qrDescription') || undefined;
       const logo = url.searchParams.get('qrLogo') || undefined;
+      const qrLayoutParam = url.searchParams.get('qrLayout');
+      const validLayouts = ['default', 'reversed', 'minimal', 'stacked', 'text-left', 'text-right'] as const;
+      const qrLayout = validLayouts.includes(qrLayoutParam as typeof validLayouts[number]) ? qrLayoutParam as typeof validLayouts[number] : undefined;
       url.searchParams.delete('qrTopText');
       url.searchParams.delete('qrTitle');
       url.searchParams.delete('qrDescription');
       url.searchParams.delete('qrLabel');
       url.searchParams.delete('qrLogo');
-      setQrData({ url: url.href, topText, title, description, logo });
+      url.searchParams.delete('qrLayout');
+      setQrData({ url: url.href, topText, title, description, logo, qrLayout });
       return 'qr';
     }
 
@@ -165,6 +171,7 @@ const PreviewView = () => {
           title={qrData.title}
           description={qrData.description}
           logo={qrData.logo}
+          qrLayout={qrData.qrLayout}
         />
       )}
       {type === 'markdown' && fileUri && typeof slideIdx !== 'undefined' && <MarkdownPreview fileUri={fileUri} slideIdx={slideIdx} webviewUrl={webviewUrl} />}

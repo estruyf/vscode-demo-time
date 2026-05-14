@@ -121,18 +121,20 @@ export class Preview extends BaseWebview {
     title,
     description,
     logo,
+    qrLayout,
   }: {
     url: string;
     topText?: string;
     title?: string;
     description?: string;
     logo?: string;
+    qrLayout?: 'default' | 'reversed' | 'minimal' | 'stacked' | 'text-left' | 'text-right';
   }) {
     // Ensure the preview is open (without showing a specific file)
     if (!Preview.isOpen) {
       const separator = url.includes('?') ? '&' : '?';
       await Preview.show(
-        `${url}${separator}qrTopText=${encodeURIComponent(topText || '')}&qrTitle=${encodeURIComponent(title || '')}&qrDescription=${encodeURIComponent(description || '')}&qrLogo=${encodeURIComponent(logo || '')}`,
+        `${url}${separator}qrTopText=${encodeURIComponent(topText || '')}&qrTitle=${encodeURIComponent(title || '')}&qrDescription=${encodeURIComponent(description || '')}&qrLogo=${encodeURIComponent(logo || '')}&qrLayout=${encodeURIComponent(qrLayout || 'default')}`,
       );
     } else {
       Preview.postMessage(WebViewMessages.toWebview.showQR, {
@@ -141,6 +143,7 @@ export class Preview extends BaseWebview {
         title: title,
         description: description,
         logo: logo,
+        qrLayout: qrLayout,
       });
       Preview.reveal();
     }

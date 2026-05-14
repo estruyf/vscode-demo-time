@@ -1040,6 +1040,7 @@ export class DemoRunner {
       const qrDescription = step.description;
       const qrTopText = step.topText;
       const qrLogo = step.logo;
+      const qrLayout = step.qrLayout;
 
       await Preview.showQr({
         url: step.url,
@@ -1047,6 +1048,7 @@ export class DemoRunner {
         title: qrTitle,
         description: qrDescription,
         logo: qrLogo,
+        qrLayout,
       });
     }
 

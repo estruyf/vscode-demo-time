@@ -996,6 +996,11 @@
                       "logo": {
                         "type": "string",
                         "title": "A URL to the logo image shown next to the QR code"
+                      },
+                      "qrLayout": {
+                        "type": "string",
+                        "enum": ["default", "reversed", "minimal", "stacked", "text-left", "text-right"],
+                        "title": "The QR slide layout: default (QR right, logo left), reversed (QR left, logo right), minimal (QR only), stacked (QR top, text below), text-left (text left, QR right), text-right (text right, QR left)"
                       }
                     }
                   }

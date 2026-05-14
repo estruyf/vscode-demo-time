@@ -72,6 +72,8 @@ export interface Icons {
   end: string;
 }
 
+export type QRLayout = 'default' | 'reversed' | 'minimal' | 'stacked' | 'text-left' | 'text-right';
+
 // Version 3: Move (replaces Step for version 3) - Same structure as Step
 export type Move = Step;
 
@@ -137,6 +139,7 @@ export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
   topText?: string;
   label?: string;
   logo?: string;
+  qrLayout?: QRLayout;
 }
 
 export interface ITerminal {

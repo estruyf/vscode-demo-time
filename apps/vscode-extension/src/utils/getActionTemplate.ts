@@ -109,6 +109,7 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
       title: '',
       description: '',
       logo: '',
+      qrLayout: 'default',
     };
   }
 

@@ -120,10 +120,24 @@ To display a QR code in the preview window, use the `showQR` action.
 
 The `showQR` action requires a `url` and supports optional metadata fields to customize the screen:
 
+- `qrLayout`: controls the slide layout (see below)
 - `topText`: small text above the QR code
 - `title`: large title text
 - `description`: explanatory text below the link
-- `logo`: URL to a logo image shown next to the QR code
+- `logo`: URL to a logo image shown next to the QR code (only used by `default` and `reversed` layouts)
+
+### Layouts
+
+The `qrLayout` field accepts one of six values:
+
+| Value | Description |
+|---|---|
+| `default` | QR code on the right, logo on the left (side-by-side) |
+| `reversed` | QR code on the left, logo on the right (side-by-side) |
+| `stacked` | QR code centered at top, title/description below |
+| `minimal` | QR code and URL only |
+| `text-left` | Title and description on the left, QR code on the right |
+| `text-right` | QR code on the left, title and description on the right |
 
 <Image class="mx-auto" src={qrCodeImage} alt="Show a QR code" />
 
@@ -133,6 +147,7 @@ The `showQR` action requires a `url` and supports optional metadata fields to cu
 ```json
 {
   "action": "showQR",
+  "qrLayout": "default",
   "url": "https://demotime.show",
   "topText": "Scan to open",
   "title": "Get started with Demo Time",
@@ -146,6 +161,7 @@ The `showQR` action requires a `url` and supports optional metadata fields to cu
 
 ```yaml
 action: showQR
+qrLayout: default
 url: https://demotime.show
 topText: Scan to open
 title: Get started with Demo Time
