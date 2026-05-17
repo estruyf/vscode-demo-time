@@ -52,6 +52,7 @@ export * from './removeDemosForCurrentPosition';
 export * from './restoreVSCodeSettings';
 export * from './sanitizeFileName';
 export * from './saveFiles';
+export * from './resolveOpenWebsiteUrl';
 export * from './setContext';
 export * from './sleep';
 export * from './sortFiles';
