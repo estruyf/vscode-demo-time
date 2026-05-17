@@ -93,6 +93,9 @@ export const getActionIcon = (action: Action): string => {
     [Action.ZoomReset]: 'refresh-cw',
     [Action.EnableZenMode]: 'maximize',
     [Action.DisableZenMode]: 'minimize',
+    [Action.ShowQR]: 'qr-code',
+    [Action.HideQR]: 'qr-code',
+    [Action.ClosePreview]: 'panel-right-close',
   };
   return iconMap[action] || 'circle';
 };
@@ -249,6 +252,9 @@ export const getRequiredFields = (action: Action): string[] => {
     [Action.ZoomReset]: [],
     [Action.EnableZenMode]: [],
     [Action.DisableZenMode]: [],
+    [Action.ShowQR]: ['url'],
+    [Action.HideQR]: [],
+    [Action.ClosePreview]: [],
   };
   return requiredMap[action] || [];
 };
@@ -379,6 +385,9 @@ export const getFieldsForAction = (action: Action): string[] => {
     [Action.ZoomReset]: [],
     [Action.EnableZenMode]: [],
     [Action.DisableZenMode]: [],
+    [Action.ShowQR]: ['qrLayout', 'url', 'topText', 'title', 'description', 'logo'],
+    [Action.HideQR]: [],
+    [Action.ClosePreview]: [],
   };
 
   return fieldMap[action] || [];

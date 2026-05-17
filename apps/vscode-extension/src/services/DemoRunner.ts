@@ -1032,6 +1032,34 @@ export class DemoRunner {
       }
     }
 
+    // QR code preview actions
+    if (step.action === Action.ShowQR) {
+      if (!step.url) {
+        Notifications.error('No URL specified for showQR action');
+        return;
+      }
+
+      const qrTitle = step.title;
+      const qrDescription = step.description;
+      const qrTopText = step.topText;
+      const qrLogo = step.logo;
+      const qrLayout = step.qrLayout;
+
+      await Preview.showQr({
+        url: step.url,
+        topText: qrTopText,
+        title: qrTitle,
+        description: qrDescription,
+        logo: qrLogo,
+        qrLayout,
+      });
+    }
+
+    if (step.action === Action.ClosePreview || step.action === Action.HideQR) {
+      Preview.close();
+      return;
+    }
+
     // Zoom actions
     if (step.action === Action.ZoomIn) {
       await ZoomService.zoomIn(step.zoom);

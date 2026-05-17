@@ -163,7 +163,10 @@
                     "closeEngageTimePoll",
                     "showEngageTimeSession",
                     "showEngageTimePoll",
-                    "sendEngageTimeMessage"
+                    "sendEngageTimeMessage",
+                    "showQR",
+                    "hideQR",
+                    "closePreview"
                   ]
                 },
                 "disabled": {
@@ -960,6 +963,44 @@
                       },
                       "description": {
                         "$ref": "#/definitions/description"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "showQR"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["url"],
+                    "properties": {
+                      "url": {
+                        "$ref": "#/definitions/url"
+                      },
+                      "topText": {
+                        "type": "string",
+                        "title": "The top text shown above the QR code"
+                      },
+                      "title": {
+                        "type": "string",
+                        "title": "The title shown with the QR code"
+                      },
+                      "description": {
+                        "type": "string",
+                        "title": "The description shown with the QR code"
+                      },
+                      "logo": {
+                        "type": "string",
+                        "title": "A URL to the logo image shown next to the QR code"
+                      },
+                      "qrLayout": {
+                        "type": "string",
+                        "enum": ["default", "reversed", "minimal", "stacked", "text-left", "text-right"],
+                        "title": "The QR slide layout: default (QR right, logo left), reversed (QR left, logo right), minimal (QR only), stacked (QR top, text below), text-left (text left, QR right), text-right (text right, QR left)"
                       }
                     }
                   }

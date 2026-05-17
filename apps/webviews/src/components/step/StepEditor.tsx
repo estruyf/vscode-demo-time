@@ -251,7 +251,24 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
     handleChange('position', combinedPosition);
   };
 
+  const getQrFieldsForLayout = (layout: Step['qrLayout']): string[] => {
+    switch (layout) {
+      case 'minimal': return ['qrLayout', 'url'];
+      case 'stacked':
+      case 'text-left':
+      case 'text-right': return ['qrLayout', 'url', 'topText', 'title', 'description'];
+      default: return ['qrLayout', 'url', 'topText', 'title', 'description', 'logo'];
+    }
+  };
+
   const renderField = (field: string) => {
+    if (step.action === Action.ShowQR && field !== 'action') {
+      const allowedQrFields = getQrFieldsForLayout(step.qrLayout);
+      if (!allowedQrFields.includes(field)) {
+        return null;
+      }
+    }
+
     const isRequired = requiredFields.includes(field);
     const fieldErrors = stepValidation.errors.filter(error => error.field === field || error[`field:${field}`] !== undefined);
     const hasError = fieldErrors.length > 0;
@@ -369,6 +386,21 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
               options={["demo", "slide", "custom"] as EngageTimeMessageType[]}
               onChange={(value) => handleChange(field, value as typeof step.type)}
               placeholder="Select type..."
+            />
+          </div>
+        );
+
+      case 'qrLayout':
+        return (
+          <div key={field}>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              QR Layout {isRequired && <span className="text-red-500">*</span>}
+            </label>
+            <SearchableDropdown
+              value={step.qrLayout || 'default'}
+              options={['default', 'reversed', 'minimal', 'stacked', 'text-left', 'text-right']}
+              onChange={(value) => handleChange('qrLayout', value as Step['qrLayout'])}
+              placeholder="Select QR layout..."
             />
           </div>
         );

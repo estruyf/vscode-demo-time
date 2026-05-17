@@ -320,6 +320,10 @@ const getFieldLabel = (field: string): string => {
     id: 'ID',
     args: 'Arguments',
     dest: 'Destination',
+    topText: 'Top text',
+    logo: 'Logo',
+    title: 'Title',
+    description: 'Description',
   };
 
   return labelMap[field] || field.charAt(0).toUpperCase() + field.slice(1);

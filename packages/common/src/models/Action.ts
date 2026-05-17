@@ -106,4 +106,8 @@ export enum Action {
   ShowEngageTimeSession = 'showEngageTimeSession',
   ShowEngageTimePoll = 'showEngageTimePoll',
   SendEngageTimeMessage = 'sendEngageTimeMessage',
+  // QR Code
+  ShowQR = 'showQR',
+  HideQR = 'hideQR',
+  ClosePreview = 'closePreview',
 }
