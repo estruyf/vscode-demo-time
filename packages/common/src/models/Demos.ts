@@ -179,6 +179,7 @@ export interface SnippetField {
   description?: string;
   type: 'string' | 'number' | 'boolean';
   required?: boolean;
+  default?: string | number | boolean;
 }
 
 export interface SnippetFileFormat {
@@ -190,6 +191,17 @@ export interface SnippetFileFormat {
   tags?: string[];
   fields?: SnippetField[];
   steps: Step[];
+}
+
+export interface GallerySnippetIndexEntry {
+  id: string;
+  name: string;
+  description?: string;
+  author?: string;
+  version?: string;
+  tags?: string[];
+  fields?: SnippetField[];
+  path: string;
 }
 
 /**

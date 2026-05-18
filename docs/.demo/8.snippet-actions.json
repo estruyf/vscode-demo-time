@@ -49,6 +49,19 @@
           }
         }
       ]
+    },
+    {
+      "id": "scene-mpb1z8et-7y7f",
+      "title": "Test with downloaded snippet",
+      "steps": [
+        {
+          "action": "snippet",
+          "contentPath": ".demo/snippets/setup/presentation-mode-macos.json",
+          "args": {
+            "THEME": "Demo Time Dark"
+          }
+        }
+      ]
     }
   ]
 }

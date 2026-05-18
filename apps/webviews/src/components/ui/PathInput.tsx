@@ -23,6 +23,7 @@ interface PathInputProps {
   fileTypes?: string[];
   showOpenButton?: boolean;
   suggestions?: PathSuggestion[];
+  loadingSuggestions?: boolean;
 }
 
 export const PathInput: React.FC<PathInputProps> = ({
@@ -38,6 +39,7 @@ export const PathInput: React.FC<PathInputProps> = ({
   fileTypes = [],
   showOpenButton = true,
   suggestions = [],
+  loadingSuggestions = false,
 }) => {
   const [showRecentFiles, setShowRecentFiles] = useState(false);
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
@@ -78,10 +80,10 @@ export const PathInput: React.FC<PathInputProps> = ({
   }, [onChange, fileTypes, addRecentFile]);
 
   const handleInputFocus = useCallback(() => {
-    if (recentFiles.length > 0 || suggestions.length > 0) {
+    if (loadingSuggestions || recentFiles.length > 0 || suggestions.length > 0) {
       setShowRecentFiles(true);
     }
-  }, [recentFiles.length, suggestions.length]);
+  }, [loadingSuggestions, recentFiles.length, suggestions.length]);
 
   const handleInputBlur = useCallback(() => {
     // Delay hiding the dropdown to allow for clicks on dropdown items
@@ -133,12 +135,18 @@ export const PathInput: React.FC<PathInputProps> = ({
           />
 
           {/* Recent files dropdown */}
-          {showRecentFiles && (suggestions.length > 0 || recentFiles.length > 0) && (
+          {showRecentFiles && (loadingSuggestions || suggestions.length > 0 || recentFiles.length > 0) && (
             <div
               ref={dropdownRef}
               className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-xl z-50 max-h-72 overflow-y-auto"
               style={{ zIndex: 1000 }}
             >
+              {loadingSuggestions && (
+                <div className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 animate-pulse">
+                  Loading snippets...
+                </div>
+              )}
+
               {/* Available suggestions section */}
               {suggestions.length > 0 && (
                 <>

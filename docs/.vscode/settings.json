@@ -25,7 +25,7 @@
   // "demoTime.customTheme": ".demo/custom/theme.css",
   "workbench.statusBar.visible": true,
   "workbench.editor.showTabs": "multiple",
-  "workbench.activityBar.location": "default",
+  "workbench.activityBar.location": "hidden",
   "editor.fontSize": 18,
   // "editor.cursorStyle": "block",
   // "editor.cursorBlinking": "expand",
@@ -39,5 +39,5 @@
   "chat.tools.autoApprove": true,
   "chat.agent.maxRequests": 100,
   "demoTime.insertTypingMode": "character-by-character",
-  "workbench.colorTheme": "GitHub Light"
+  "workbench.colorTheme": "Demo Time Light"
 }

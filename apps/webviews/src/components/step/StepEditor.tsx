@@ -9,7 +9,7 @@ import { messageHandler } from '@estruyf/vscode/dist/client';
 import { Switch } from '../ui/Switch';
 import { SnippetArguments } from './SnippetArguments';
 import { DemoIdPicker } from '../ui/DemoIdPicker';
-import { Action, EngageTimeMessageType, Step, WebViewMessages } from '@demotime/common';
+import { Action, COMMAND, EngageTimeMessageType, Step, WebViewMessages } from '@demotime/common';
 import { PollIdPicker } from './PollIdPicker';
 import { useDemoConfigContext } from '../../hooks';
 import { VSCodeCommandPicker } from './VSCodeCommandPicker';
@@ -48,8 +48,10 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
   // State for available snippet files (used in contentPath suggestions)
   const [snippetSuggestions, setSnippetSuggestions] = useState<{ label: string; path: string; description?: string }[]>([]);
+  const [loadingSnippetSuggestions, setLoadingSnippetSuggestions] = useState(false);
 
   useEffect(() => {
+    setLoadingSnippetSuggestions(true);
     messageHandler
       .request<{ label: string; path: string; description?: string }[]>(
         WebViewMessages.toVscode.configEditor.listSnippets,
@@ -57,7 +59,8 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       .then((data) => {
         setSnippetSuggestions(Array.isArray(data) ? data : []);
       })
-      .catch(() => setSnippetSuggestions([]));
+      .catch(() => setSnippetSuggestions([]))
+      .finally(() => setLoadingSnippetSuggestions(false));
   }, []);
 
   useEffect(() => {
@@ -905,7 +908,19 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                 type={field === 'contentPath' ? 'file' : 'file'}
                 fileTypes={fileTypes}
                 suggestions={isSnippetContentPath ? snippetSuggestions : undefined}
+                loadingSuggestions={isSnippetContentPath ? loadingSnippetSuggestions : false}
               />
+              {isSnippetContentPath && (
+                <div className="mt-2 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => messageHandler.send(WebViewMessages.toVscode.runCommand, { command: COMMAND.showGallery })}
+                    className="text-xs text-demo-time-accent hover:underline"
+                  >
+                    Open Snippet Gallery
+                  </button>
+                </div>
+              )}
             </div>
           );
         }

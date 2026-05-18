@@ -20,6 +20,7 @@ export const SnippetArguments: React.FunctionComponent<ISnippetArgumentsProps> =
   const [fields, setFields] = React.useState<SnippetField[]>([]);
   const [customKeys, setCustomKeys] = React.useState<string[]>([]);
   const [refreshing, setRefreshing] = React.useState(false);
+  const defaultsSeededByPathRef = React.useRef<Set<string>>(new Set());
 
   const fetchFields = React.useCallback(() => {
     if (!path) {
@@ -63,8 +64,33 @@ export const SnippetArguments: React.FunctionComponent<ISnippetArgumentsProps> =
     });
   }, [fields, args]);
 
-  const currentArgs: Record<string, unknown> =
-    typeof args === 'object' && args !== null ? args : {};
+  const currentArgs: Record<string, unknown> = React.useMemo(
+    () => (typeof args === 'object' && args !== null ? args : {}),
+    [args],
+  );
+
+  // Seed missing args from snippet defaults only once per snippet path.
+  React.useEffect(() => {
+    if (!path || !fields.length || defaultsSeededByPathRef.current.has(path)) {
+      return;
+    }
+
+    const defaultsToApply: Record<string, unknown> = {};
+    let hasDefaultsToApply = false;
+
+    for (const field of fields) {
+      if (field.default !== undefined && currentArgs[field.name] === undefined) {
+        defaultsToApply[field.name] = field.default;
+        hasDefaultsToApply = true;
+      }
+    }
+
+    if (hasDefaultsToApply) {
+      onChange({ ...defaultsToApply, ...currentArgs });
+    }
+
+    defaultsSeededByPathRef.current.add(path);
+  }, [fields, currentArgs, onChange, path]);
 
   const setArg = (name: string, value: string | number | boolean | undefined) => {
     if (value === undefined || value === '') {
@@ -72,6 +98,15 @@ export const SnippetArguments: React.FunctionComponent<ISnippetArgumentsProps> =
     } else {
       onChange({ ...currentArgs, [name]: value });
     }
+  };
+
+  const resetArgToDefault = (field: SnippetField) => {
+    if (field.default === undefined) {
+      onChange(omit(currentArgs, field.name));
+      return;
+    }
+
+    onChange({ ...currentArgs, [field.name]: field.default });
   };
 
   const renameCustomKey = (oldKey: string, newKey: string) => {
@@ -128,29 +163,53 @@ export const SnippetArguments: React.FunctionComponent<ISnippetArgumentsProps> =
                 )}
               </label>
               {field.type === 'boolean' ? (
-                <input
-                  type="checkbox"
-                  checked={!!currentArgs[field.name]}
-                  onChange={(e) => setArg(field.name, e.target.checked)}
-                  className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={!!currentArgs[field.name]}
+                    onChange={(e) => setArg(field.name, e.target.checked)}
+                    className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500"
+                  />
+                  {field.default !== undefined && (
+                    <button
+                      type="button"
+                      onClick={() => resetArgToDefault(field)}
+                      className="text-xs text-gray-500 hover:text-demo-time-accent"
+                      title={`Reset to default (${String(field.default)})`}
+                    >
+                      Reset to default
+                    </button>
+                  )}
+                </div>
               ) : (
-                <input
-                  type={field.type === 'number' ? 'number' : 'text'}
-                  value={(currentArgs[field.name] as string | number) ?? ''}
-                  onChange={(e) =>
-                    setArg(
-                      field.name,
-                      field.type === 'number'
-                        ? e.target.value === ''
-                          ? undefined
-                          : Number(e.target.value)
-                        : e.target.value || undefined,
-                    )
-                  }
-                  className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                  placeholder={`Enter ${field.name}`}
-                />
+                <div className="flex items-center gap-2">
+                  <input
+                    type={field.type === 'number' ? 'number' : 'text'}
+                    value={(currentArgs[field.name] as string | number) ?? ''}
+                    onChange={(e) =>
+                      setArg(
+                        field.name,
+                        field.type === 'number'
+                          ? e.target.value === ''
+                            ? undefined
+                            : Number(e.target.value)
+                          : e.target.value || undefined,
+                      )
+                    }
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                    placeholder={`Enter ${field.name}`}
+                  />
+                  {field.default !== undefined && (
+                    <button
+                      type="button"
+                      onClick={() => resetArgToDefault(field)}
+                      className="shrink-0 text-xs text-gray-500 hover:text-demo-time-accent"
+                      title={`Reset to default (${String(field.default)})`}
+                    >
+                      Reset
+                    </button>
+                  )}
+                </div>
               )}
             </div>
           ))}
