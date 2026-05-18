@@ -1,5 +1,35 @@
 [
   {
+    "$schema": "https://beta.demotime.show/gallery/snippet.schema.json",
+    "id": "setup/presentation-clean-up-macos",
+    "name": "Presentation clean-up",
+    "description": "Restores VS Code to its original state after a presentation: disables Caffeine, shows the menubar, switches back to the original theme, exits full screen, and shows the activity bar and title bar.",
+    "author": "Elio Struyf",
+    "version": "1.0.0",
+    "tags": [
+      "setup",
+      "macos",
+      "presentation"
+    ],
+    "fields": [
+      {
+        "name": "THEME",
+        "description": "The VS Code theme to switch to after the presentation",
+        "type": "string",
+        "required": false,
+        "default": "Demo Time Light"
+      }
+    ],
+    "path": "gallery/setup/presentation-clean-up-macos.json",
+    "actions": [
+      "macos.disableCaffeine",
+      "macos.showMenubar",
+      "setTheme",
+      "executeVSCodeCommand"
+    ]
+  },
+  {
+    "$schema": "https://beta.demotime.show/gallery/snippet.schema.json",
     "id": "setup/presentation-mode-macos",
     "name": "Presentation mode setup",
     "description": "Prepares VS Code for presenting: enables Caffeine (no sleep), hides the menubar, switches to a theme, enters full screen, and hides the activity bar and title bar for a clean, distraction-free setup.",
@@ -19,6 +49,12 @@
         "default": "Demo Time Dark"
       }
     ],
-    "path": "gallery/setup/presentation-mode-macos.json"
+    "path": "gallery/setup/presentation-mode-macos.json",
+    "actions": [
+      "macos.enableCaffeine",
+      "macos.hideMenubar",
+      "setTheme",
+      "executeVSCodeCommand"
+    ]
   }
 ]

@@ -216,6 +216,7 @@ export default defineConfig({
             { label: 'Snippets', slug: 'snippets' },
           ],
         },
+        { label: 'Snippet Gallery', slug: 'snippets/gallery' },
         { label: 'Remote Control', slug: 'remote-control' },
         { label: 'Projects', slug: 'examples' },
         { label: 'Showcases', slug: 'showcases' },

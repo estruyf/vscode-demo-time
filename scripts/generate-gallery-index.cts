@@ -23,6 +23,7 @@ interface GallerySnippet {
   tags: string[];
   fields: SnippetField[];
   path: string;
+  actions: string[];
 }
 
 interface GallerySnippetFull extends GallerySnippet {
@@ -92,6 +93,26 @@ function extractPlaceholders(steps: unknown[]): Set<string> {
   }
 
   return placeholders;
+}
+
+/**
+ * Extract and deduplicate action names from steps
+ */
+function extractActions(steps: unknown[]): string[] {
+  return Array.from(
+    new Set(
+      steps
+        .map((step) => {
+          if (typeof step !== 'object' || step === null || !('action' in step)) {
+            return '';
+          }
+
+          const action = (step as { action?: unknown }).action;
+          return typeof action === 'string' ? action : '';
+        })
+        .filter(Boolean),
+    ),
+  );
 }
 
 /**
@@ -215,11 +236,13 @@ async function main() {
       continue;
     }
 
-    // Strip steps — index only contains metadata + fields
+    // Strip steps — index only contains metadata + fields + actions
     const { steps: _steps, ...metadata } = snippet;
+    const actions = extractActions(snippet.steps);
     index.push({
       ...metadata,
       path: repoRelativePath,
+      actions,
     });
 
     console.log(`  ✅ ${expectedId} (v${snippet.version})`);
