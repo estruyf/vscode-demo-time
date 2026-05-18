@@ -1,7 +1,7 @@
 ---
 title: Working with Variables
 description: Learn how to work with variables in Demo Time to reuse them across your demos.
-lastmod: 2025-01-22T11:25:57.794Z
+lastmod: 2026-05-17T00:00:00.000Z
 ---
 
 import { Code } from '@astrojs/starlight/components';
@@ -10,6 +10,7 @@ The extension has built-in variables which you can use in your moves. These vari
 
 - `{DT_INPUT}`: The extension will ask you to provide a value for this variable when the demo gets executed.
 - `{DT_CLIPBOARD}`: The value in your clipboard will be used for this variable.
+- `{DT_WORKSPACE_PATH}`: The filesystem path to the current workspace folder.
 - `{STATE_<key>}`: The value of the state key which you set via the `setState` action, will be used for this variable.
 
 ## Examples of using the built-in variables
@@ -37,6 +38,20 @@ Similar to the `{DT_INPUT}` variable, you can use the `{DT_CLIPBOARD}` variable 
     "path": "sample.json",
     "content": "{\\n  \\"firstName\\": \\"{DT_CLIPBOARD}\\"\\n}"
 }`} 
+  lang="json" 
+  title={`.demo/demo.json`} />
+
+### Use the workspace path
+
+You can use `{DT_WORKSPACE_PATH}` when you want to build a local URL from the current workspace folder.
+
+<Code code={`
+{
+    "action": "openWebsite",
+    "url": "{DT_WORKSPACE_PATH}/Reports/index.html",
+    "openInVSCode": true
+}
+`} 
   lang="json" 
   title={`.demo/demo.json`} />
 

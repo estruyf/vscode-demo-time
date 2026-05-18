@@ -5,6 +5,7 @@
 - Fix preview taking focus when saving a markdown file and only update the preview when editing the current slide
 - Custom themes are now loaded from the workspace URL instead of retrieving the file contents
 - Fix slide content not updating when navigating between slides that share the same custom layout template
+- [#394](https://github.com/estruyf/vscode-demo-time/issues/394): Allow relative paths for `openWebsite` when opening content in the VS Code browser and expose workspace path variables
 - Add QR preview support with `showQR`, `hideQR`, and `closePreview` actions
 - Add `qrLayout` option to `showQR` with constrained `left`/`right` layout choices
 - [#397](https://github.com/estruyf/vscode-demo-time/issues/397): Enable running scenes and moves from source file

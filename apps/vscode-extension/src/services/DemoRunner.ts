@@ -34,6 +34,7 @@ import {
   removeDemosForCurrentPosition,
   saveFiles,
   parseSnippetContent,
+  resolveOpenWebsiteUrl,
 } from '../utils';
 import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
 import {
@@ -1019,12 +1020,14 @@ export class DemoRunner {
         return;
       }
 
+      const resolvedUrl = resolveOpenWebsiteUrl(step.url, workspaceFolder);
+
       // By default open in external browser, unless openInVSCode is true
       if (typeof step.openInVSCode !== 'undefined' && step.openInVSCode) {
-        await commands.executeCommand('workbench.action.browser.open', step.url);
+        await commands.executeCommand('workbench.action.browser.open', resolvedUrl);
         return;
       } else {
-        await commands.executeCommand('vscode.open', Uri.parse(step.url));
+        await commands.executeCommand('vscode.open', Uri.parse(resolvedUrl));
         return;
       }
     }
