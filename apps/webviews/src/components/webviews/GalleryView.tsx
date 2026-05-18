@@ -1,6 +1,6 @@
 import { GallerySnippetIndexEntry, WebViewMessages } from '@demotime/common';
 import { messageHandler } from '@estruyf/vscode/dist/client';
-import { ArrowDownToLine, Check, Download, RefreshCw, Search } from 'lucide-react';
+import { ArrowDownToLine, Check, Download, ExternalLink, RefreshCw, Search } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { AppHeader } from '../layout';
 import { Button } from '../ui/Button';
@@ -17,9 +17,13 @@ interface DownloadResponse {
   message?: string;
 }
 
+type GallerySnippetEntry = GallerySnippetIndexEntry & {
+  actions?: string[];
+};
+
 const GalleryView = () => {
   const [config, setConfig] = useState<GalleryConfig | null>(null);
-  const [snippets, setSnippets] = useState<GallerySnippetIndexEntry[]>([]);
+  const [snippets, setSnippets] = useState<GallerySnippetEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -57,7 +61,7 @@ const GalleryView = () => {
         throw new Error(`Failed to fetch gallery index: ${response.status} ${response.statusText}`);
       }
 
-      const data = (await response.json()) as GallerySnippetIndexEntry[];
+      const data = (await response.json()) as GallerySnippetEntry[];
       setSnippets(Array.isArray(data) ? data : []);
     } catch (fetchError) {
       setError((fetchError as Error).message);
@@ -91,7 +95,7 @@ const GalleryView = () => {
     });
   }, [snippets, search]);
 
-  const downloadSnippet = async (snippet: GallerySnippetIndexEntry) => {
+  const downloadSnippet = async (snippet: GallerySnippetEntry) => {
     if (!config) {
       return;
     }
@@ -131,6 +135,18 @@ const GalleryView = () => {
     } finally {
       setDownloadingId(null);
     }
+  };
+
+  const previewSnippet = (snippet: GallerySnippetEntry) => {
+    if (!config) {
+      return;
+    }
+
+    const previewUrl = `${config.rawBaseUrl}/${snippet.path}`;
+    messageHandler.send(WebViewMessages.toVscode.runCommand, {
+      command: 'workbench.action.browser.open',
+      args: previewUrl,
+    });
   };
 
   return (
@@ -225,6 +241,24 @@ const GalleryView = () => {
                     <p className="text-sm text-gray-700 dark:text-gray-300">{snippet.description}</p>
                   )}
 
+                  {snippet.actions && snippet.actions.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                        Actions ({snippet.actions.length})
+                      </p>
+                      <div className="flex flex-wrap gap-2 text-xs">
+                        {snippet.actions.map((action) => (
+                          <span
+                            key={`${snippet.id}-${action}`}
+                            className="px-2 py-1 rounded bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300"
+                          >
+                            {action}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   <div className="flex flex-wrap gap-2 text-xs">
                     {(snippet.tags || []).map((tag) => (
                       <span
@@ -240,6 +274,14 @@ const GalleryView = () => {
                     <p>Author: {snippet.author || 'Unknown'}</p>
                     <p>Version: {snippet.version || 'Unknown'}</p>
                     <p>Fields: {snippet.fields?.length || 0}</p>
+                    <button
+                      type="button"
+                      className="mt-2 inline-flex items-center gap-1 text-demo-time-accent hover:underline"
+                      onClick={() => previewSnippet(snippet)}
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" />
+                      Preview source
+                    </button>
                   </div>
                 </div>
               );

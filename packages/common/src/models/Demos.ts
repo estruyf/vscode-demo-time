@@ -202,6 +202,7 @@ export interface GallerySnippetIndexEntry {
   tags?: string[];
   fields?: SnippetField[];
   path: string;
+  actions?: string[];
 }
 
 /**

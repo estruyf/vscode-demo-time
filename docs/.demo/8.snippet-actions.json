@@ -62,6 +62,19 @@
           }
         }
       ]
+    },
+    {
+      "id": "scene-mpbayhwh-j7gp",
+      "title": "Test another snippet",
+      "steps": [
+        {
+          "action": "snippet",
+          "contentPath": ".demo/snippets/setup/presentation-clean-up-macos.json",
+          "args": {
+            "THEME": "Demo Time Light"
+          }
+        }
+      ]
     }
   ]
 }
