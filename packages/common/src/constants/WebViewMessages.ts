@@ -157,6 +157,10 @@ export const WebViewMessages = {
        */
       checkSnippetArgs: 'checkSnippetArgs',
       /**
+       * listSnippets
+       */
+      listSnippets: 'listSnippets',
+      /**
        * getConfigEditorDemoIds
        */
       getDemoIds: 'getConfigEditorDemoIds',

@@ -32,6 +32,23 @@
         }
       ],
       "id": "demo-mkld6hkj-0awy"
+    },
+    {
+      "id": "scene-mpazekt6-pigw",
+      "title": "Using fields snippet",
+      "steps": [
+        {
+          "action": "snippet",
+          "contentPath": ".demo/snippet/insert-and-highlight.json",
+          "args": {
+            "TEST_BOOLEAN": true,
+            "HIGHLIGHT_POSITION": 3,
+            "CONTENT_POSITION": 1,
+            "CONTENT_PATH": "test",
+            "MAIN_FILE": "test"
+          }
+        }
+      ]
     }
   ]
 }
