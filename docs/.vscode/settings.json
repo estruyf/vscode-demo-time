@@ -25,7 +25,7 @@
   // "demoTime.customTheme": ".demo/custom/theme.css",
   "workbench.statusBar.visible": true,
   "workbench.editor.showTabs": "multiple",
-  "workbench.activityBar.location": "hidden",
+  "workbench.activityBar.location": "default",
   "editor.fontSize": 18,
   // "editor.cursorStyle": "block",
   // "editor.cursorBlinking": "expand",
