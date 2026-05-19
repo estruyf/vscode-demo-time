@@ -650,6 +650,24 @@
         "title": "Toggle Redaction Mode",
         "category": "Demo Time",
         "icon": "$(eye-closed)"
+      },
+      {
+        "command": "demo-time.toggleAutoProceed",
+        "title": "Toggle Auto-Proceed (Pause/Resume)",
+        "category": "Demo Time",
+        "icon": "$(debug-pause)"
+      },
+      {
+        "command": "demo-time.pauseAutoProceed",
+        "title": "Pause Auto-Proceed",
+        "category": "Demo Time",
+        "icon": "$(debug-pause)"
+      },
+      {
+        "command": "demo-time.resumeAutoProceed",
+        "title": "Resume Auto-Proceed",
+        "category": "Demo Time",
+        "icon": "$(play-circle)"
       }
     ],
     "menus": {
@@ -721,64 +739,21 @@
         {
           "command": "demo-time.continueDemo",
           "when": "demo-time.isWaitingForNext == true"
+        },
+        {
+          "command": "demo-time.toggleAutoProceed",
+          "when": "demo-time.autoProceedActive == true"
+        },
+        {
+          "command": "demo-time.pauseAutoProceed",
+          "when": "demo-time.autoProceedActive == true && demo-time.autoProceedPaused != true"
+        },
+        {
+          "command": "demo-time.resumeAutoProceed",
+          "when": "demo-time.autoProceedActive == true && demo-time.autoProceedPaused == true"
         }
       ],
-      "view/title": [
-        {
-          "command": "demo-time.togglePresentationMode",
-          "when": "view == demo-time-scenes && !demo-time.presentation",
-          "group": "navigation@-1"
-        },
-        {
-          "command": "demo-time.startCountdown",
-          "when": "view == demo-time-scenes && !demo-time.countdown && demo-time.showTimer",
-          "group": "navigation@0"
-        },
-        {
-          "command": "demo-time.showPresenterView",
-          "when": "view == demo-time-scenes",
-          "group": "navigation@1"
-        },
-        {
-          "command": "demo-time.reset",
-          "when": "view == demo-time-scenes",
-          "group": "navigation@2"
-        },
-        {
-          "command": "demo-time.exportToPdf",
-          "when": "view == demo-time-scenes",
-          "group": "navigation@3"
-        },
-        {
-          "command": "demo-time.treeviewFind",
-          "when": "view == demo-time-scenes",
-          "group": "navigation@4"
-        },
-        {
-          "command": "demo-time.createDemoFile",
-          "when": "view == demo-time-scenes"
-        },
-        {
-          "command": "demo-time.docs",
-          "when": "view == demo-time-scenes"
-        },
-        {
-          "command": "demo-time.showOverview",
-          "when": "view == demo-time-scenes"
-        },
-        {
-          "command": "demo-time.showSettings",
-          "when": "view == demo-time-scenes"
-        },
-        {
-          "command": "demo-time.showProFeatures",
-          "when": "view == demo-time-scenes"
-        },
-        {
-          "command": "demo-time.openSupportTheProject",
-          "when": "view == demo-time-scenes"
-        }
-      ],
+      "view/title": [],
       "view/item/context": [
         {
           "command": "demo-time.start",
@@ -876,6 +851,12 @@
     "views": {
       "demo-time-container": [
         {
+          "id": "demo-time-quick-actions",
+          "name": "Quick Actions",
+          "contextualTitle": "Demo Time Quick Actions",
+          "icon": "$(zap)"
+        },
+        {
           "id": "demo-time-scenes",
           "name": "Acts & Scenes",
           "contextualTitle": "Demo Time",
@@ -924,6 +905,11 @@
         "command": "demo-time.hackerTyperNextChunk",
         "key": "down",
         "when": "demo-time.isHackerTyper == true"
+      },
+      {
+        "command": "demo-time.toggleAutoProceed",
+        "key": "space",
+        "when": "demo-time.presentation && demo-time.autoProceedActive == true"
       }
     ],
     "viewsWelcome": [
