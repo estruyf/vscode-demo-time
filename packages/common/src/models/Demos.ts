@@ -101,6 +101,8 @@ export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
   command?: string;
   keybinding?: string;
   message?: string;
+  waitForMessage?: string;
+  showProgress?: boolean;
   /**
    * Arguments to pass to scripts or snippets.
    * For executeScript actions: Array of strings passed as positional command-line arguments to the script.
