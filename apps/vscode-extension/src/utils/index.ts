@@ -3,6 +3,7 @@ export * from './addStepsToDemo';
 export * from './backupVSCodeSettings';
 export * from './bringToFront';
 export * from './checkSnippetArgs';
+export * from './listSnippetFiles';
 export * from './chooseDemoFile';
 export * from './clearVariablesState';
 export * from './createDemoFile';

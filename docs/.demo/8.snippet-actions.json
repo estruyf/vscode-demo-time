@@ -32,6 +32,49 @@
         }
       ],
       "id": "demo-mkld6hkj-0awy"
+    },
+    {
+      "id": "scene-mpazekt6-pigw",
+      "title": "Using fields snippet",
+      "steps": [
+        {
+          "action": "snippet",
+          "contentPath": ".demo/snippet/insert-and-highlight.json",
+          "args": {
+            "TEST_BOOLEAN": true,
+            "HIGHLIGHT_POSITION": 3,
+            "CONTENT_POSITION": 1,
+            "CONTENT_PATH": "test",
+            "MAIN_FILE": "test"
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-mpb1z8et-7y7f",
+      "title": "Test with downloaded snippet",
+      "steps": [
+        {
+          "action": "snippet",
+          "contentPath": ".demo/snippets/setup/presentation-mode-macos.json",
+          "args": {
+            "THEME": "Demo Time Dark"
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-mpbayhwh-j7gp",
+      "title": "Test another snippet",
+      "steps": [
+        {
+          "action": "snippet",
+          "contentPath": ".demo/snippets/setup/presentation-clean-up-macos.json",
+          "args": {
+            "THEME": "Demo Time Light"
+          }
+        }
+      ]
     }
   ]
 }

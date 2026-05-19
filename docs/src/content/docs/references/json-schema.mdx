@@ -1,7 +1,7 @@
 ---
 title: JSON schema
 description: JSON schema for the Demo Time configuration.
-lastmod: 2025-07-04T17:59:09.515Z
+lastmod: 2026-05-18T12:00:00.000Z
 tableOfContents: false
 ---
 
@@ -44,3 +44,25 @@ scenes: []
 
 </TabItem>
 </Tabs>
+
+## Gallery snippet schema
+
+If you are creating or contributing community snippets for the Snippet Gallery, use the dedicated gallery schema URL:
+
+`https://demotime.show/gallery/snippet.schema.json`
+
+Example:
+
+```json
+{
+  "$schema": "https://demotime.show/gallery/snippet.schema.json",
+  "id": "setup/presentation-mode-macos",
+  "name": "Presentation mode setup",
+  "description": "Prepares VS Code for presenting.",
+  "author": "estruyf",
+  "version": "1.0.0",
+  "tags": ["setup", "macos"],
+  "fields": [],
+  "steps": [{ "action": "unselect" }]
+}
+```

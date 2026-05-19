@@ -43,7 +43,8 @@
     "test": "npx nx run-many -t test",
     "lint": "npx nx run-many -t lint",
     "sync:version:extension": "node ./scripts/sync-version-to-extension.js",
-    "postversion": "node ./scripts/sync-version-to-extension.js"
+    "postversion": "node ./scripts/sync-version-to-extension.js",
+    "generate:gallery": "npx ts-node scripts/generate-gallery-index.cts"
   },
   "homepage": "https://demotime.show/",
   "directories": {

@@ -5,4 +5,5 @@ export type WebviewType =
   | 'config-editor'
   | 'overview'
   | 'analytics-dashboard'
-  | 'pro-features';
+  | 'pro-features'
+  | 'gallery';
