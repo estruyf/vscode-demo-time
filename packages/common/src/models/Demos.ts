@@ -135,6 +135,12 @@ export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
 
 export interface ITerminal {
   autoExecute?: boolean;
+  /**
+   * Maximum time in milliseconds to wait for shell integration to confirm
+   * command completion. Overrides the default 5000ms cap. Useful for
+   * long-running commands such as builds or test suites.
+   */
+  waitTimeout?: number;
 }
 
 export interface IOpenWebsite {

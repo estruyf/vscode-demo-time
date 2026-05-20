@@ -52,7 +52,7 @@ export class TerminalService {
    * @returns A promise that resolves when the command execution is complete.
    */
   public static async executeCommand(step: Step): Promise<void> {
-    let { command, terminalId, autoExecute, insertTypingMode, insertTypingSpeed } = step;
+    let { command, terminalId, autoExecute, insertTypingMode, insertTypingSpeed, waitTimeout } = step;
 
     if (!command) {
       Notifications.error('No command specified');
@@ -79,7 +79,7 @@ export class TerminalService {
         // to handle unreliable 633 sequence ordering (VS Code 1.98+)
         if (terminal.shellIntegration) {
           await Promise.all([
-            TerminalService.waitForTerminalExecuted(command, resolvedTerminalId),
+            TerminalService.waitForTerminalExecuted(command, resolvedTerminalId, waitTimeout),
             sleep(TerminalService.minSafetyDelayMs),
           ]);
         } else {
@@ -100,7 +100,7 @@ export class TerminalService {
     if (execution && typeMode === 'instant') {
       // Dual-layer waiting for shell integration reliability
       await Promise.all([
-        TerminalService.waitForTerminalExecuted(command, resolvedTerminalId),
+        TerminalService.waitForTerminalExecuted(command, resolvedTerminalId, waitTimeout),
         sleep(TerminalService.minSafetyDelayMs),
       ]);
     }
@@ -238,12 +238,13 @@ export class TerminalService {
    *
    * @param command - The exact command string to wait for.
    * @param terminalId - The identifier of the terminal whose last executed command will be observed.
-   * @returns A Promise that resolves when the command is observed or when the 5 second timeout elapses.
+   * @param maxWaitTimeMs - Maximum milliseconds to wait before resolving. Defaults to 5000ms.
+   * @returns A Promise that resolves when the command is observed or when the timeout elapses.
    */
-  private static async waitForTerminalExecuted(command: string, terminalId: string): Promise<void> {
+  private static async waitForTerminalExecuted(command: string, terminalId: string, maxWaitTimeMs?: number): Promise<void> {
     return new Promise<void>((resolve) => {
       const startTime = Date.now();
-      const maxWaitTime = 5000; // 5 seconds
+      const maxWaitTime = maxWaitTimeMs ?? 5000; // Default: 5 seconds
 
       const checkExecution = () => {
         if (TerminalService.lastExecution[terminalId] === command) {
