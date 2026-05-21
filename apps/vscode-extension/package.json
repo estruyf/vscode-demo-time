@@ -656,6 +656,24 @@
         "title": "Toggle Redaction Mode",
         "category": "Demo Time",
         "icon": "$(eye-closed)"
+      },
+      {
+        "command": "demo-time.toggleAutoProceed",
+        "title": "Toggle Auto-Proceed (Pause/Resume)",
+        "category": "Demo Time",
+        "icon": "$(debug-pause)"
+      },
+      {
+        "command": "demo-time.pauseAutoProceed",
+        "title": "Pause Auto-Proceed",
+        "category": "Demo Time",
+        "icon": "$(debug-pause)"
+      },
+      {
+        "command": "demo-time.resumeAutoProceed",
+        "title": "Resume Auto-Proceed",
+        "category": "Demo Time",
+        "icon": "$(play-circle)"
       }
     ],
     "menus": {
@@ -727,6 +745,18 @@
         {
           "command": "demo-time.continueDemo",
           "when": "demo-time.isWaitingForNext == true"
+        },
+        {
+          "command": "demo-time.toggleAutoProceed",
+          "when": "demo-time.autoProceedActive == true"
+        },
+        {
+          "command": "demo-time.pauseAutoProceed",
+          "when": "demo-time.autoProceedActive == true && demo-time.autoProceedPaused != true"
+        },
+        {
+          "command": "demo-time.resumeAutoProceed",
+          "when": "demo-time.autoProceedActive == true && demo-time.autoProceedPaused == true"
         }
       ],
       "view/title": [
@@ -934,6 +964,11 @@
         "command": "demo-time.hackerTyperNextChunk",
         "key": "down",
         "when": "demo-time.isHackerTyper == true"
+      },
+      {
+        "command": "demo-time.toggleAutoProceed",
+        "key": "space",
+        "when": "demo-time.presentation && demo-time.autoProceedActive == true"
       }
     ],
     "viewsWelcome": [

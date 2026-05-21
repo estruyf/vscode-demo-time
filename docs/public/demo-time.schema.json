@@ -3,7 +3,7 @@
   "$id": "https://demotime.show/demo-time.schema.json",
   "title": "Demo Time - Schema",
   "description": "The schema for the Demo Time - VSCode extension",
-  "lastModified": "2025-12-06",
+  "lastModified": "2026-05-21",
   "type": "object",
   "properties": {
     "title": {
@@ -21,6 +21,9 @@
     "timer": {
       "type": "number",
       "description": "The timer in minutes for the demo."
+    },
+    "loop": {
+      "$ref": "#/definitions/loop"
     },
     "demos": {
       "type": "array",
@@ -50,6 +53,9 @@
             "type": "boolean",
             "default": false,
             "description": "If true, the demo will not be shown in the UI."
+          },
+          "autoAdvanceAfter": {
+            "$ref": "#/definitions/autoAdvanceAfter"
           },
           "icons": {
             "type": "object",
@@ -1005,7 +1011,14 @@
                       },
                       "qrLayout": {
                         "type": "string",
-                        "enum": ["default", "reversed", "minimal", "stacked", "text-left", "text-right"],
+                        "enum": [
+                          "default",
+                          "reversed",
+                          "minimal",
+                          "stacked",
+                          "text-left",
+                          "text-right"
+                        ],
                         "title": "The QR slide layout: default (QR right, logo left), reversed (QR left, logo right), minimal (QR only), stacked (QR top, text below), text-left (text left, QR right), text-right (text right, QR left)"
                       }
                     }
@@ -1136,6 +1149,9 @@
             "default": false,
             "description": "If true, the scene will not be shown in the UI."
           },
+          "autoAdvanceAfter": {
+            "$ref": "#/definitions/autoAdvanceAfter"
+          },
           "icons": {
             "type": "object",
             "properties": {
@@ -1197,6 +1213,12 @@
       "default": true,
       "title": "Automatically execute the command. Default is true."
     },
+    "autoAdvanceAfter": {
+      "type": "number",
+      "minimum": 1,
+      "title": "Auto advance after (seconds)",
+      "description": "Automatically advance to the next scene after this many seconds."
+    },
     "content": {
       "type": "string",
       "title": "Content to insert"
@@ -1239,6 +1261,11 @@
     "insertTypingSpeed": {
       "type": "number",
       "title": "Speed in milliseconds between each character when typing text. Used with the typeText action."
+    },
+    "loop": {
+      "type": "boolean",
+      "title": "Loop scenes",
+      "description": "When enabled, the act restarts from the first scene after the last scene."
     },
     "notificationMessage": {
       "type": "string",

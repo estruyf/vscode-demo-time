@@ -17,6 +17,7 @@ export interface ActConfig {
   version: 3;
   timer?: number;
   engageTime?: EngageTimeConfig;
+  loop?: boolean;
   scenes: Scene[];
 }
 
@@ -28,6 +29,7 @@ export interface DemoConfig {
   version?: Version;
   timer?: number;
   engageTime?: EngageTimeConfig;
+  loop?: boolean;
   demos: Demo[];
 }
 
@@ -49,6 +51,7 @@ export interface Scene {
   icons?: Icons;
   notes?: Notes;
   disabled?: boolean;
+  autoAdvanceAfter?: number;
 }
 
 // Version 1 & 2: Legacy Demo structure
@@ -60,6 +63,7 @@ export interface Demo {
   icons?: Icons;
   notes?: Notes;
   disabled?: boolean;
+  autoAdvanceAfter?: number;
 }
 
 export interface Notes {

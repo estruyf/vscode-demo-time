@@ -48,6 +48,14 @@ export class Preview extends BaseWebview {
     Preview.currentSlideIndex = Math.max(index, -1);
   }
 
+  public static updateAutoProceedState(payload: { managedByExtension: boolean }): void {
+    if (!Preview.isOpen) {
+      return;
+    }
+
+    Preview.postMessage(WebViewMessages.toWebview.updateAutoProceedState, payload);
+  }
+
   public static isCurrentFile(fileUri: string): boolean {
     if (!Preview.crntFile) {
       return false;
@@ -258,6 +266,7 @@ export class Preview extends BaseWebview {
       await window.showTextDocument(fileUri, { preview: false });
     } else if (command === WebViewMessages.toVscode.updateSlideIndex) {
       Preview.currentSlideIndex = payload;
+      await DemoRunner.onSlideIndexUpdated(payload);
     } else if (command === WebViewMessages.toVscode.slideReady) {
       Preview.reveal(true);
     } else if (command === WebViewMessages.toVscode.preview.recordOpenSlide) {

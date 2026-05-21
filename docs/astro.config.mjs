@@ -173,6 +173,7 @@ export default defineConfig({
             { label: 'Using notes', slug: 'features/using-notes' },
             { label: 'URI handler', slug: 'features/uri-handler' },
             { label: 'Timer and clock', slug: 'features/timer-clock' },
+            { label: 'Auto-proceed and loop', slug: 'features/auto-proceed-looping' },
             { label: 'MCP server support', slug: 'features/mcp-server' },
             { label: 'Redaction mode', slug: 'features/redaction-mode' },
           ],

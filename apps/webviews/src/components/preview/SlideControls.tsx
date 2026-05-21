@@ -61,6 +61,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   const [isPresentationMode, setIsPresentationMode] = React.useState(false);
   const [showPosition, setShowPosition] = React.useState(false);
   const [isNavigatorOpen, setIsNavigatorOpen] = React.useState(false);
+  const [extensionAutoProceedManaged, setExtensionAutoProceedManaged] = React.useState(false);
 
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -72,6 +73,8 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
 
     if (command === WebViewMessages.toWebview.updateIsInPresentationMode) {
       setIsPresentationMode(payload);
+    } else if (command === WebViewMessages.toWebview.updateAutoProceedState) {
+      setExtensionAutoProceedManaged(!!payload?.managedByExtension);
     }
   };
 
@@ -110,7 +113,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   React.useEffect(() => {
     // Always clear previous timer on effect run
     let timer: NodeJS.Timeout | undefined;
-    if (matter?.autoAdvanceAfter && matter.autoAdvanceAfter > 0) {
+    if (!extensionAutoProceedManaged && matter?.autoAdvanceAfter && matter.autoAdvanceAfter > 0) {
       timer = setTimeout(() => {
         next();
       }, matter.autoAdvanceAfter * 1000);
@@ -120,7 +123,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
         clearTimeout(timer);
       }
     };
-  }, [matter?.autoAdvanceAfter, currentSlide]);
+  }, [extensionAutoProceedManaged, matter?.autoAdvanceAfter, currentSlide]);
 
   React.useEffect(() => {
     if (show) {

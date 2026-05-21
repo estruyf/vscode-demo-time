@@ -384,6 +384,10 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       // Reason: the config is downgraded to the DemoConfig to keep supporting the older schema in the editor,
       // but we want to save in the latest ActConfig format if the config is already in that format (version 3)
       const configToSave = config.version === 3 ? demoConfigToActConfig(config) : config;
+      if (config.version === 3) {
+        // Keep act-level loop stable even if conversion helpers are out of date in a running build.
+        configToSave.loop = config.loop;
+      }
 
       const edit = new WorkspaceEdit();
       const demo = DemoFileProvider.formatFileContent(configToSave, document.uri);
@@ -412,6 +416,9 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
 
       // If version is 3, it's already an ActConfig; otherwise convert from DemoConfig
       const configToSave = config.version === 3 ? config : demoConfigToActConfig(config);
+      if (config.version === 3) {
+        configToSave.loop = config.loop;
+      }
 
       const demo = DemoFileProvider.formatFileContent(configToSave, document.uri);
       if (!demo) {

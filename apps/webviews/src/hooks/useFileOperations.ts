@@ -13,6 +13,9 @@ export const useFileOperations = () => {
 
     // Convert to ActConfig (version 3) if version is 3, otherwise keep as DemoConfig
     const configToSave = config.version === 3 ? demoConfigToActConfig(config) : config;
+    if (config.version === 3) {
+      configToSave.loop = config.loop;
+    }
 
     await messageHandler.request(WebViewMessages.toVscode.configEditor.saveFile, {
       config: configToSave,

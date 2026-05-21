@@ -280,6 +280,10 @@ export const WebViewMessages = {
      */
     updateStyles: 'updateStyles',
     /**
+     * updateAutoProceedState
+     */
+    updateAutoProceedState: 'updateAutoProceedState',
+    /**
      * updateIsInPresentationMode
      */
     updateIsInPresentationMode: 'updateIsInPresentationMode',

@@ -44,7 +44,6 @@ import {
   NotesService,
   ScriptExecutor,
   StateManager,
-  DemoStatusBar,
   ExternalAppsService,
   TerminalService,
   ChatActionsService,
@@ -63,6 +62,7 @@ import {
   SponsorService,
   RedactionService,
 } from './';
+import { DemoStatusBar } from './DemoStatusBar';
 import { Preview } from '../preview/Preview';
 import { parse as jsonParse } from 'jsonc-parser';
 import {
@@ -76,6 +76,7 @@ import {
   IImagePreview,
   ISlidePreview,
   Step,
+  SlideParser,
   Version,
   getDemosFromConfig,
   normalizeDemoConfig,
@@ -102,6 +103,15 @@ export class DemoRunner {
   private static currentDemoIndex: number = 0;
   private static currentStepIndex: number = 0;
 
+  // Auto-proceed state
+  private static autoProceedTimer: NodeJS.Timeout | undefined;
+  private static autoProceedCountdownInterval: NodeJS.Timeout | undefined;
+  private static isAutoProceedPaused = false;
+  private static isAutoProceedActive = false;
+  private static isLoopEnabled = false;
+  private static autoProceedCountdown: number = 0;
+  private static autoProceedSource: 'scene' | 'slide' | undefined;
+
   /**
    * Registers the commands for the demo runner.
    */
@@ -124,6 +134,19 @@ export class DemoRunner {
       commands.registerCommand(
         COMMAND.toggleSelectionHighlight,
         DemoRunner.toggleSelectionHighlight,
+      ),
+    );
+    subscriptions.push(
+      commands.registerCommand(COMMAND.toggleAutoProceed, DemoRunner.toggleAutoProceed),
+    );
+    subscriptions.push(
+      commands.registerCommand(COMMAND.pauseAutoProceed, () =>
+        DemoRunner.setAutoProceedPaused(true),
+      ),
+    );
+    subscriptions.push(
+      commands.registerCommand(COMMAND.resumeAutoProceed, () =>
+        DemoRunner.setAutoProceedPaused(false),
       ),
     );
 
@@ -202,6 +225,192 @@ export class DemoRunner {
    */
   public static getIsPresentationMode(): boolean {
     return DemoRunner.isPresentationMode;
+  }
+
+  public static getIsAutoProceedPaused(): boolean {
+    return DemoRunner.isAutoProceedPaused;
+  }
+
+  public static getIsAutoProceedActive(): boolean {
+    return DemoRunner.isAutoProceedActive;
+  }
+
+  public static getIsLoopEnabled(): boolean {
+    return DemoRunner.isLoopEnabled;
+  }
+
+  public static getAutoProceedCountdown(): number {
+    return DemoRunner.autoProceedCountdown;
+  }
+
+  public static async onSlideIndexUpdated(_slideIndex: number): Promise<void> {
+    if (!DemoRunner.currentDemo || DemoRunner.autoProceedSource !== 'slide') {
+      return;
+    }
+
+    await DemoRunner.syncAutoProceedForCurrentDemo();
+  }
+
+  private static clearAutoProceedTimers(): void {
+    if (DemoRunner.autoProceedTimer) {
+      clearTimeout(DemoRunner.autoProceedTimer);
+      DemoRunner.autoProceedTimer = undefined;
+    }
+    if (DemoRunner.autoProceedCountdownInterval) {
+      clearInterval(DemoRunner.autoProceedCountdownInterval);
+      DemoRunner.autoProceedCountdownInterval = undefined;
+    }
+    DemoRunner.autoProceedCountdown = 0;
+  }
+
+  private static setPreviewAutoProceedManagedState(): void {
+    Preview.updateAutoProceedState({
+      managedByExtension:
+        DemoRunner.autoProceedSource === 'slide' && DemoRunner.isAutoProceedActive,
+    });
+  }
+
+  private static startAutoProceedTimer(delaySeconds: number): void {
+    DemoRunner.clearAutoProceedTimers();
+    DemoRunner.autoProceedCountdown = delaySeconds;
+
+    DemoRunner.autoProceedCountdownInterval = setInterval(() => {
+      DemoRunner.autoProceedCountdown = Math.max(0, DemoRunner.autoProceedCountdown - 1);
+    }, 1000);
+
+    DemoRunner.autoProceedTimer = setTimeout(async () => {
+      DemoRunner.clearAutoProceedTimers();
+      await commands.executeCommand(COMMAND.start);
+    }, delaySeconds * 1000);
+  }
+
+  private static async hasSceneAutoLoopTiming(demo: Demo): Promise<boolean> {
+    if (demo.autoAdvanceAfter && demo.autoAdvanceAfter > 0) {
+      return true;
+    }
+
+    const slideStep = demo.steps?.find((step) => step.action === Action.OpenSlide && step.path);
+    if (!slideStep?.path) {
+      return false;
+    }
+
+    const workspaceFolder = Extension.getInstance().workspaceFolder;
+    if (!workspaceFolder) {
+      return false;
+    }
+
+    const slideContent = await getFileContents(workspaceFolder, slideStep.path);
+    if (!slideContent) {
+      return false;
+    }
+
+    const parser = new SlideParser();
+    const slides = parser.parseSlides(slideContent);
+    if (slides.length <= 0) {
+      return false;
+    }
+
+    const startSlideIndex =
+      typeof slideStep.slide === 'number' && slideStep.slide >= 0 ? slideStep.slide : 0;
+    const slidesToValidate = slides.slice(startSlideIndex);
+
+    return (
+      slidesToValidate.length > 0 &&
+      slidesToValidate.every(
+        (slide) =>
+          typeof slide.frontmatter?.autoAdvanceAfter === 'number' &&
+          slide.frontmatter.autoAdvanceAfter > 0,
+      )
+    );
+  }
+
+  private static async getCurrentSlideAutoAdvanceAfter(demo: Demo): Promise<number | undefined> {
+    const slideStep = demo.steps?.find((step) => step.action === Action.OpenSlide && step.path);
+    if (!slideStep?.path) {
+      return undefined;
+    }
+
+    const workspaceFolder = Extension.getInstance().workspaceFolder;
+    if (!workspaceFolder) {
+      return undefined;
+    }
+
+    const slideContent = await getFileContents(workspaceFolder, slideStep.path);
+    if (!slideContent) {
+      return undefined;
+    }
+
+    const parser = new SlideParser();
+    const slides = parser.parseSlides(slideContent);
+    if (slides.length <= 0) {
+      return undefined;
+    }
+
+    const startSlideIndex =
+      typeof slideStep.slide === 'number' && slideStep.slide >= 0 ? slideStep.slide : 0;
+    const currentSlideIndex = Math.max(Preview.getCurrentSlideIndex(), 0);
+    const targetSlide = slides[currentSlideIndex] || slides[startSlideIndex];
+    const delay = targetSlide?.frontmatter?.autoAdvanceAfter;
+
+    return typeof delay === 'number' && delay > 0 ? delay : undefined;
+  }
+
+  private static async syncAutoProceedForCurrentDemo(): Promise<void> {
+    const demo = DemoRunner.currentDemo;
+    if (!demo) {
+      return;
+    }
+
+    let delaySeconds: number | undefined;
+    let source: 'scene' | 'slide' | undefined;
+
+    if (typeof demo.autoAdvanceAfter === 'number' && demo.autoAdvanceAfter > 0) {
+      delaySeconds = demo.autoAdvanceAfter;
+      source = 'scene';
+    } else {
+      delaySeconds = await DemoRunner.getCurrentSlideAutoAdvanceAfter(demo);
+      if (typeof delaySeconds === 'number' && delaySeconds > 0) {
+        source = 'slide';
+      }
+    }
+
+    DemoRunner.autoProceedSource = source;
+    DemoRunner.isAutoProceedActive = !!delaySeconds;
+    await setContext(ContextKeys.autoProceedActive, DemoRunner.isAutoProceedActive);
+    DemoRunner.setPreviewAutoProceedManagedState();
+
+    if (!delaySeconds) {
+      DemoRunner.clearAutoProceedTimers();
+      DemoStatusBar.updateAutomationIndicator();
+      return;
+    }
+
+    if (!DemoRunner.isAutoProceedPaused) {
+      DemoRunner.startAutoProceedTimer(delaySeconds);
+    }
+
+    DemoStatusBar.updateAutomationIndicator();
+  }
+
+  private static async setAutoProceedPaused(paused: boolean): Promise<void> {
+    DemoRunner.isAutoProceedPaused = paused;
+    await setContext(ContextKeys.autoProceedPaused, paused);
+
+    if (paused) {
+      DemoRunner.clearAutoProceedTimers();
+      DemoPanel.updateMessage('Auto-proceed paused');
+    } else {
+      await DemoRunner.syncAutoProceedForCurrentDemo();
+      DemoPanel.updateMessage('Presentation mode enabled');
+    }
+
+    DemoRunner.setPreviewAutoProceedManagedState();
+
+    DemoStatusBar.updateAutomationIndicator();
+  }
+
+  private static async toggleAutoProceed(): Promise<void> {
+    await DemoRunner.setAutoProceedPaused(!DemoRunner.isAutoProceedPaused);
   }
 
   /**
@@ -290,6 +499,16 @@ export class DemoRunner {
       await AnalyticsService.endSession();
     }
 
+    DemoRunner.clearAutoProceedTimers();
+    DemoRunner.isAutoProceedPaused = false;
+    DemoRunner.isAutoProceedActive = false;
+    DemoRunner.isLoopEnabled = false;
+    DemoRunner.autoProceedSource = undefined;
+    await setContext(ContextKeys.autoProceedPaused, false);
+    await setContext(ContextKeys.autoProceedActive, false);
+    DemoRunner.setPreviewAutoProceedManagedState();
+    DemoStatusBar.updateAutomationIndicator();
+
     const ext = Extension.getInstance();
     const resetContent = Object.assign({}, DEFAULT_START_VALUE);
     await ext.setState(StateKeys.executingDemoFile, resetContent);
@@ -323,15 +542,22 @@ export class DemoRunner {
     }
 
     if (Preview.checkIfHasNextSlide()) {
+      if (DemoRunner.autoProceedSource === 'slide') {
+        DemoRunner.clearAutoProceedTimers();
+      }
       await Preview.postMessage(WebViewMessages.toWebview.nextSlide);
       return;
     }
+
+    // Cancel any running auto-proceed timer (manual advance or new scene)
+    DemoRunner.clearAutoProceedTimers();
 
     const executingFile = await DemoRunner.getExecutedDemoFile();
 
     const demoFile = await DemoRunner.getDemoFile(item);
     // Normalize ActConfig or DemoConfig -> Demo[] shape for backward compatibility
     const fileDemo = demoFile?.demo;
+    DemoRunner.isLoopEnabled = !!fileDemo?.loop;
     const demos: Demo[] = getDemosFromConfig(fileDemo);
 
     // Filter out disabled demos for presentation mode
@@ -340,6 +566,10 @@ export class DemoRunner {
     // }
 
     if (demos.length <= 0) {
+      DemoRunner.isAutoProceedActive = false;
+      DemoRunner.autoProceedSource = undefined;
+      DemoRunner.setPreviewAutoProceedManagedState();
+      DemoStatusBar.updateAutomationIndicator();
       Notifications.error('No moves found');
       return;
     }
@@ -361,6 +591,32 @@ export class DemoRunner {
     }
 
     if (!nextDemo) {
+      // Auto-loop: restart from the first scene if configured
+      if (fileDemo?.loop) {
+        const enabledDemos = demos.filter((d) => !d.disabled);
+        const missingTimings: Demo[] = [];
+        for (const demo of enabledDemos) {
+          if (!(await DemoRunner.hasSceneAutoLoopTiming(demo))) {
+            missingTimings.push(demo);
+          }
+        }
+        if (missingTimings.length > 0) {
+          Notifications.error(
+            `Auto-loop blocked: ${missingTimings.length} scene(s) missing 'autoAdvanceAfter': ${missingTimings.map((d) => `"${d.title}"`).join(', ')}`,
+          );
+          return;
+        }
+        executingFile.demo = [];
+        await DemoRunner.setExecutedDemoFile(executingFile);
+        DemoRunner.start(item);
+        return;
+      }
+
+      DemoRunner.isAutoProceedActive = false;
+      DemoRunner.autoProceedSource = undefined;
+      DemoRunner.setPreviewAutoProceedManagedState();
+      DemoStatusBar.updateAutomationIndicator();
+
       // Check if there is a next act file
       const nextFile = await getNextDemoFile(demoFile);
       if (!nextFile) {
@@ -436,6 +692,8 @@ export class DemoRunner {
       !!demos[followingDemoIdx].steps?.some((s: Step) => s.action === Action.Highlight);
 
     NotesService.showNotes(nextDemo);
+
+    await DemoRunner.syncAutoProceedForCurrentDemo();
   }
 
   /**
@@ -453,6 +711,14 @@ export class DemoRunner {
       await Preview.postMessage(WebViewMessages.toWebview.previousSlide);
       return;
     }
+
+    // Cancel any running auto-proceed timer when going back
+    DemoRunner.clearAutoProceedTimers();
+    DemoRunner.isAutoProceedActive = false;
+    DemoRunner.autoProceedSource = undefined;
+    await setContext(ContextKeys.autoProceedActive, false);
+    DemoRunner.setPreviewAutoProceedManagedState();
+    DemoStatusBar.updateAutomationIndicator();
 
     const executingFile = await DemoRunner.getExecutedDemoFile();
     const filePath = executingFile.filePath;
