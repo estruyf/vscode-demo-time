@@ -10,31 +10,20 @@ import {
   Uri,
   WorkspaceFolder,
   commands,
-  env,
   window,
-  workspace,
 } from 'vscode';
 import { DemoPanel } from '../panels/DemoPanel';
 import {
   getVariables,
   getFileContents,
-  getPositionAndRange,
   insertVariables,
-  sleep,
   getNextDemoFile,
   getPreviousDemoFile,
   removeDemoDuplicates,
-  writeText,
-  getUserInput,
   clearVariablesState,
   setContext,
-  writeFile,
-  updateConfig,
-  togglePresentationView,
   removeDemosForCurrentPosition,
-  saveFiles,
   parseSnippetContent,
-  resolveOpenWebsiteUrl,
 } from '../utils';
 import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
 import {
@@ -42,25 +31,15 @@ import {
   Notifications,
   Logger,
   NotesService,
-  ScriptExecutor,
-  StateManager,
-  ExternalAppsService,
-  TerminalService,
-  ChatActionsService,
   TextTypingService,
-  FileActionService,
-  InteractionService,
   DemoFileProvider,
   Extension,
-  EngageTimeService,
-  SelectionService,
-  MacOSActionsService,
-  DesktopActionsService,
-  ZoomService,
   AnalyticsService,
   AnalyticsCommands,
   SponsorService,
   RedactionService,
+  DemoActionDispatcher,
+  DemoAutoProceedService,
 } from './';
 import { DemoStatusBar } from './DemoStatusBar';
 import { Preview } from '../preview/Preview';
@@ -73,17 +52,11 @@ import {
   Demo,
   DemoFileCache,
   DemoConfig,
-  IImagePreview,
-  ISlidePreview,
   Step,
-  SlideParser,
   Version,
   getDemosFromConfig,
   normalizeDemoConfig,
 } from '@demotime/common';
-import { InputService } from './InputService';
-import { backupVSCodeSettings } from '../utils/backupVSCodeSettings';
-import { restoreVSCodeSettings } from '../utils/restoreVSCodeSettings';
 import { ScreenshotService } from './ScreenshotService';
 
 const DEFAULT_START_VALUE = {
@@ -102,15 +75,6 @@ export class DemoRunner {
   private static nextStepIsHighlight = false;
   private static currentDemoIndex: number = 0;
   private static currentStepIndex: number = 0;
-
-  // Auto-proceed state
-  private static autoProceedTimer: NodeJS.Timeout | undefined;
-  private static autoProceedCountdownInterval: NodeJS.Timeout | undefined;
-  private static isAutoProceedPaused = false;
-  private static isAutoProceedActive = false;
-  private static isLoopEnabled = false;
-  private static autoProceedCountdown: number = 0;
-  private static autoProceedSource: 'scene' | 'slide' | undefined;
 
   /**
    * Registers the commands for the demo runner.
@@ -228,189 +192,35 @@ export class DemoRunner {
   }
 
   public static getIsAutoProceedPaused(): boolean {
-    return DemoRunner.isAutoProceedPaused;
+    return DemoAutoProceedService.getIsAutoProceedPaused();
   }
 
   public static getIsAutoProceedActive(): boolean {
-    return DemoRunner.isAutoProceedActive;
+    return DemoAutoProceedService.getIsAutoProceedActive();
   }
 
   public static getIsLoopEnabled(): boolean {
-    return DemoRunner.isLoopEnabled;
+    return DemoAutoProceedService.getIsLoopEnabled();
   }
 
   public static getAutoProceedCountdown(): number {
-    return DemoRunner.autoProceedCountdown;
+    return DemoAutoProceedService.getAutoProceedCountdown();
   }
 
   public static async onSlideIndexUpdated(_slideIndex: number): Promise<void> {
-    if (!DemoRunner.currentDemo || DemoRunner.autoProceedSource !== 'slide') {
-      return;
-    }
-
-    await DemoRunner.syncAutoProceedForCurrentDemo();
-  }
-
-  private static clearAutoProceedTimers(): void {
-    if (DemoRunner.autoProceedTimer) {
-      clearTimeout(DemoRunner.autoProceedTimer);
-      DemoRunner.autoProceedTimer = undefined;
-    }
-    if (DemoRunner.autoProceedCountdownInterval) {
-      clearInterval(DemoRunner.autoProceedCountdownInterval);
-      DemoRunner.autoProceedCountdownInterval = undefined;
-    }
-    DemoRunner.autoProceedCountdown = 0;
-  }
-
-  private static setPreviewAutoProceedManagedState(): void {
-    Preview.updateAutoProceedState({
-      managedByExtension:
-        DemoRunner.autoProceedSource === 'slide' && DemoRunner.isAutoProceedActive,
-    });
-  }
-
-  private static startAutoProceedTimer(delaySeconds: number): void {
-    DemoRunner.clearAutoProceedTimers();
-    DemoRunner.autoProceedCountdown = delaySeconds;
-
-    DemoRunner.autoProceedCountdownInterval = setInterval(() => {
-      DemoRunner.autoProceedCountdown = Math.max(0, DemoRunner.autoProceedCountdown - 1);
-    }, 1000);
-
-    DemoRunner.autoProceedTimer = setTimeout(async () => {
-      DemoRunner.clearAutoProceedTimers();
-      await commands.executeCommand(COMMAND.start);
-    }, delaySeconds * 1000);
-  }
-
-  private static async hasSceneAutoLoopTiming(demo: Demo): Promise<boolean> {
-    if (demo.autoAdvanceAfter && demo.autoAdvanceAfter > 0) {
-      return true;
-    }
-
-    const slideStep = demo.steps?.find((step) => step.action === Action.OpenSlide && step.path);
-    if (!slideStep?.path) {
-      return false;
-    }
-
-    const workspaceFolder = Extension.getInstance().workspaceFolder;
-    if (!workspaceFolder) {
-      return false;
-    }
-
-    const slideContent = await getFileContents(workspaceFolder, slideStep.path);
-    if (!slideContent) {
-      return false;
-    }
-
-    const parser = new SlideParser();
-    const slides = parser.parseSlides(slideContent);
-    if (slides.length <= 0) {
-      return false;
-    }
-
-    const startSlideIndex =
-      typeof slideStep.slide === 'number' && slideStep.slide >= 0 ? slideStep.slide : 0;
-    const slidesToValidate = slides.slice(startSlideIndex);
-
-    return (
-      slidesToValidate.length > 0 &&
-      slidesToValidate.every(
-        (slide) =>
-          typeof slide.frontmatter?.autoAdvanceAfter === 'number' &&
-          slide.frontmatter.autoAdvanceAfter > 0,
-      )
-    );
-  }
-
-  private static async getCurrentSlideAutoAdvanceAfter(demo: Demo): Promise<number | undefined> {
-    const slideStep = demo.steps?.find((step) => step.action === Action.OpenSlide && step.path);
-    if (!slideStep?.path) {
-      return undefined;
-    }
-
-    const workspaceFolder = Extension.getInstance().workspaceFolder;
-    if (!workspaceFolder) {
-      return undefined;
-    }
-
-    const slideContent = await getFileContents(workspaceFolder, slideStep.path);
-    if (!slideContent) {
-      return undefined;
-    }
-
-    const parser = new SlideParser();
-    const slides = parser.parseSlides(slideContent);
-    if (slides.length <= 0) {
-      return undefined;
-    }
-
-    const startSlideIndex =
-      typeof slideStep.slide === 'number' && slideStep.slide >= 0 ? slideStep.slide : 0;
-    const currentSlideIndex = Math.max(Preview.getCurrentSlideIndex(), 0);
-    const targetSlide = slides[currentSlideIndex] || slides[startSlideIndex];
-    const delay = targetSlide?.frontmatter?.autoAdvanceAfter;
-
-    return typeof delay === 'number' && delay > 0 ? delay : undefined;
+    await DemoAutoProceedService.onSlideIndexUpdated(DemoRunner.currentDemo);
   }
 
   private static async syncAutoProceedForCurrentDemo(): Promise<void> {
-    const demo = DemoRunner.currentDemo;
-    if (!demo) {
-      return;
-    }
-
-    let delaySeconds: number | undefined;
-    let source: 'scene' | 'slide' | undefined;
-
-    if (typeof demo.autoAdvanceAfter === 'number' && demo.autoAdvanceAfter > 0) {
-      delaySeconds = demo.autoAdvanceAfter;
-      source = 'scene';
-    } else {
-      delaySeconds = await DemoRunner.getCurrentSlideAutoAdvanceAfter(demo);
-      if (typeof delaySeconds === 'number' && delaySeconds > 0) {
-        source = 'slide';
-      }
-    }
-
-    DemoRunner.autoProceedSource = source;
-    DemoRunner.isAutoProceedActive = !!delaySeconds;
-    await setContext(ContextKeys.autoProceedActive, DemoRunner.isAutoProceedActive);
-    DemoRunner.setPreviewAutoProceedManagedState();
-
-    if (!delaySeconds) {
-      DemoRunner.clearAutoProceedTimers();
-      DemoStatusBar.updateAutomationIndicator();
-      return;
-    }
-
-    if (!DemoRunner.isAutoProceedPaused) {
-      DemoRunner.startAutoProceedTimer(delaySeconds);
-    }
-
-    DemoStatusBar.updateAutomationIndicator();
+    await DemoAutoProceedService.syncAutoProceedForDemo(DemoRunner.currentDemo);
   }
 
   private static async setAutoProceedPaused(paused: boolean): Promise<void> {
-    DemoRunner.isAutoProceedPaused = paused;
-    await setContext(ContextKeys.autoProceedPaused, paused);
-
-    if (paused) {
-      DemoRunner.clearAutoProceedTimers();
-      DemoPanel.updateMessage('Auto-proceed paused');
-    } else {
-      await DemoRunner.syncAutoProceedForCurrentDemo();
-      DemoPanel.updateMessage('Presentation mode enabled');
-    }
-
-    DemoRunner.setPreviewAutoProceedManagedState();
-
-    DemoStatusBar.updateAutomationIndicator();
+    await DemoAutoProceedService.setAutoProceedPaused(paused, DemoRunner.currentDemo);
   }
 
   private static async toggleAutoProceed(): Promise<void> {
-    await DemoRunner.setAutoProceedPaused(!DemoRunner.isAutoProceedPaused);
+    await DemoAutoProceedService.toggleAutoProceed(DemoRunner.currentDemo);
   }
 
   /**
@@ -499,15 +309,7 @@ export class DemoRunner {
       await AnalyticsService.endSession();
     }
 
-    DemoRunner.clearAutoProceedTimers();
-    DemoRunner.isAutoProceedPaused = false;
-    DemoRunner.isAutoProceedActive = false;
-    DemoRunner.isLoopEnabled = false;
-    DemoRunner.autoProceedSource = undefined;
-    await setContext(ContextKeys.autoProceedPaused, false);
-    await setContext(ContextKeys.autoProceedActive, false);
-    DemoRunner.setPreviewAutoProceedManagedState();
-    DemoStatusBar.updateAutomationIndicator();
+    await DemoAutoProceedService.resetState();
 
     const ext = Extension.getInstance();
     const resetContent = Object.assign({}, DEFAULT_START_VALUE);
@@ -542,22 +344,22 @@ export class DemoRunner {
     }
 
     if (Preview.checkIfHasNextSlide()) {
-      if (DemoRunner.autoProceedSource === 'slide') {
-        DemoRunner.clearAutoProceedTimers();
+      if (DemoAutoProceedService.getAutoProceedSource() === 'slide') {
+        DemoAutoProceedService.clearAutoProceedTimers();
       }
       await Preview.postMessage(WebViewMessages.toWebview.nextSlide);
       return;
     }
 
     // Cancel any running auto-proceed timer (manual advance or new scene)
-    DemoRunner.clearAutoProceedTimers();
+    DemoAutoProceedService.clearAutoProceedTimers();
 
     const executingFile = await DemoRunner.getExecutedDemoFile();
 
     const demoFile = await DemoRunner.getDemoFile(item);
     // Normalize ActConfig or DemoConfig -> Demo[] shape for backward compatibility
     const fileDemo = demoFile?.demo;
-    DemoRunner.isLoopEnabled = !!fileDemo?.loop;
+    DemoAutoProceedService.setLoopEnabled(!!fileDemo?.loop);
     const demos: Demo[] = getDemosFromConfig(fileDemo);
 
     // Filter out disabled demos for presentation mode
@@ -566,10 +368,7 @@ export class DemoRunner {
     // }
 
     if (demos.length <= 0) {
-      DemoRunner.isAutoProceedActive = false;
-      DemoRunner.autoProceedSource = undefined;
-      DemoRunner.setPreviewAutoProceedManagedState();
-      DemoStatusBar.updateAutomationIndicator();
+      await DemoAutoProceedService.deactivate();
       Notifications.error('No moves found');
       return;
     }
@@ -596,7 +395,7 @@ export class DemoRunner {
         const enabledDemos = demos.filter((d) => !d.disabled);
         const missingTimings: Demo[] = [];
         for (const demo of enabledDemos) {
-          if (!(await DemoRunner.hasSceneAutoLoopTiming(demo))) {
+          if (!(await DemoAutoProceedService.hasSceneAutoLoopTiming(demo))) {
             missingTimings.push(demo);
           }
         }
@@ -612,10 +411,7 @@ export class DemoRunner {
         return;
       }
 
-      DemoRunner.isAutoProceedActive = false;
-      DemoRunner.autoProceedSource = undefined;
-      DemoRunner.setPreviewAutoProceedManagedState();
-      DemoStatusBar.updateAutomationIndicator();
+      await DemoAutoProceedService.deactivate();
 
       // Check if there is a next act file
       const nextFile = await getNextDemoFile(demoFile);
@@ -713,12 +509,7 @@ export class DemoRunner {
     }
 
     // Cancel any running auto-proceed timer when going back
-    DemoRunner.clearAutoProceedTimers();
-    DemoRunner.isAutoProceedActive = false;
-    DemoRunner.autoProceedSource = undefined;
-    await setContext(ContextKeys.autoProceedActive, false);
-    DemoRunner.setPreviewAutoProceedManagedState();
-    DemoStatusBar.updateAutomationIndicator();
+    await DemoAutoProceedService.deactivate();
 
     const executingFile = await DemoRunner.getExecutedDemoFile();
     const filePath = executingFile.filePath;
@@ -1059,647 +850,16 @@ export class DemoRunner {
       return;
     }
 
-    if (!step.action) {
-      return;
-    }
-
-    // Verify if the current step has a `STATE_`, `SCRIPT_`, or `DT_` variable which needs to be updated
-    // This can happen when the `setState` action is used during the current demo execution (previous step)
-    let stepJson = JSON.stringify(step);
-    if (
-      (stepJson.includes(StateKeys.prefix.state) ||
-        stepJson.includes(StateKeys.prefix.script) ||
-        stepJson.includes(StateKeys.prefix.clipboard)) &&
-      variables
-    ) {
-      if (stepJson.includes(StateKeys.prefix.clipboard)) {
-        variables[StateKeys.prefix.clipboard] = await env.clipboard.readText();
-      }
-      stepJson = await insertVariables(stepJson, variables, false);
-      step = jsonParse(stepJson);
-    }
-
-    // Check if the step is disabled
-    if (step.disabled) {
-      return;
-    }
-
-    // GitHub Copilot actions
-    if (step.action === Action.OpenChat) {
-      await ChatActionsService.openChat();
-      return;
-    } else if (step.action === Action.NewChat) {
-      await ChatActionsService.newChat();
-      return;
-    } else if (step.action === Action.AskChat) {
-      await ChatActionsService.askChat(step);
-      return;
-    } else if (step.action === Action.EditChat) {
-      await ChatActionsService.editChat(step);
-      return;
-    } else if (step.action === Action.AgentChat) {
-      await ChatActionsService.agentChat(step);
-      return;
-    } else if (step.action === Action.CustomChat) {
-      await ChatActionsService.customChat(step);
-      return;
-    } else if (step.action === Action.CloseChat) {
-      await ChatActionsService.closeChat();
-      return;
-    } else if (step.action === Action.CancelChat) {
-      await ChatActionsService.cancelChat();
-      return;
-    }
-
-    // Demo Time actions
-    if (step.action === Action.RunDemoById) {
-      if (!step.id) {
-        Notifications.error('No scene id specified');
-        return;
-      }
-      await DemoRunner.runById(step.id);
-      return;
-    }
-
-    // macOS specific actions
-    if (step.action === Action.EnableFocusMode) {
-      await MacOSActionsService.enableFocusMode();
-      return;
-    } else if (step.action === Action.DisableFocusMode) {
-      await MacOSActionsService.disableFocusMode();
-      return;
-    } else if (step.action === Action.HideMenubar) {
-      await MacOSActionsService.hideMenubar();
-      return;
-    } else if (step.action === Action.ShowMenubar) {
-      await MacOSActionsService.showMenubar();
-      return;
-    } else if (step.action === Action.MuteVolume) {
-      await MacOSActionsService.muteVolume();
-      return;
-    } else if (step.action === Action.UnmuteVolume) {
-      await MacOSActionsService.unmuteVolume();
-      return;
-    } else if (step.action === Action.EnableCaffeine) {
-      await MacOSActionsService.enableCaffeine(step.duration as number | undefined);
-      return;
-    } else if (step.action === Action.DisableCaffeine) {
-      await MacOSActionsService.disableCaffeine();
-      return;
-    } else if (step.action === Action.HideDock) {
-      await MacOSActionsService.hideDock();
-      return;
-    } else if (step.action === Action.ShowDock) {
-      await MacOSActionsService.showDock();
-      return;
-    }
-
-    // Desktop icon actions
-    if (step.action === Action.HideDesktopIcons) {
-      await DesktopActionsService.hideDesktopIcons();
-      return;
-    } else if (step.action === Action.ShowDesktopIcons) {
-      await DesktopActionsService.showDesktopIcons();
-      return;
-    }
-
-    // Wait for the specified timeout
-    if (step.action === Action.WaitForTimeout) {
-      await sleep(step.timeout || 1000);
-      return;
-    } else if (step.action === Action.WaitForInput) {
-      const answer = await getUserInput('Press any key to continue', step.message);
-      if (answer === undefined) {
-        return;
-      }
-      return;
-    } else if (step.action === Action.Pause) {
-      await InputService.pause();
-    }
-
-    // Open external applications
-    if (step.action === Action.OpenPowerPoint) {
-      try {
-        await ExternalAppsService.openPowerPoint();
-      } catch (error) {
-        Notifications.error(`Failed to open PowerPoint: ${(error as Error).message}`);
-      }
-      return;
-    } else if (step.action === Action.OpenKeynote) {
-      try {
-        await ExternalAppsService.openKeynote();
-      } catch (error) {
-        Notifications.error(`Failed to open Keynote: ${(error as Error).message}`);
-      }
-      return;
-    }
-
-    // Update settings
-    if (step.action === Action.BackupSettings) {
-      await backupVSCodeSettings();
-      return;
-    }
-
-    if (step.action === Action.RestoreSettings) {
-      await restoreVSCodeSettings();
-      return;
-    }
-
-    if (step.action === Action.SetSetting) {
-      if (!step.setting || !step.setting.key) {
-        Notifications.error('No setting key or value specified');
-        return;
-      }
-
-      const { key, value } = step.setting;
-      await updateConfig(key, value === null ? undefined : value);
-      return;
-    }
-
-    if (step.action === Action.SetTheme) {
-      if (!step.theme) {
-        Notifications.error('No theme specified');
-        return;
-      }
-
-      await updateConfig('workbench.colorTheme', step.theme);
-      return;
-    }
-
-    if (step.action === Action.UnsetTheme) {
-      await updateConfig('workbench.colorTheme', null);
-      return;
-    }
-
-    if (step.action === Action.SetPresentationView) {
-      await togglePresentationView(true);
-      return;
-    }
-
-    if (step.action === Action.UnsetPresentationView) {
-      await togglePresentationView(false);
-      return;
-    }
-
-    // Set state
-    if (step.action === Action.SetState) {
-      if (!step.state || !step.state.key || !step.state.value) {
-        Notifications.error('No state key or value specified');
-        return;
-      }
-
-      await StateManager.update(`${StateKeys.prefix.state}${step.state.key}`, step.state.value);
-      return;
-    }
-
-    const fileUri = step.path ? Uri.joinPath(workspaceFolder.uri, step.path) : undefined;
-
-    // Execute the specified VSCode command
-    if (step.action === Action.ExecuteVSCodeCommand) {
-      if (!step.command) {
-        Notifications.error('No command specified');
-        return;
-      }
-
-      if (fileUri) {
-        await commands.executeCommand(step.command, fileUri);
-        return;
-      }
-
-      await commands.executeCommand(step.command, step.args);
-      return;
-    }
-
-    if (step.action === Action.ShowInfoMessage) {
-      if (!step.message) {
-        Notifications.error('No message specified');
-        return;
-      }
-
-      window.showInformationMessage(step.message);
-      return;
-    }
-
-    if (step.action === Action.OpenWebsite) {
-      if (!step.url) {
-        Notifications.error('No URL specified');
-        return;
-      }
-
-      const resolvedUrl = resolveOpenWebsiteUrl(step.url, workspaceFolder);
-
-      // By default open in external browser, unless openInVSCode is true
-      if (typeof step.openInVSCode !== 'undefined' && step.openInVSCode) {
-        await commands.executeCommand('workbench.action.browser.open', resolvedUrl);
-        return;
-      } else {
-        await commands.executeCommand('vscode.open', Uri.parse(resolvedUrl));
-        return;
-      }
-    }
-
-    // QR code preview actions
-    if (step.action === Action.ShowQR) {
-      if (!step.url) {
-        Notifications.error('No URL specified for showQR action');
-        return;
-      }
-
-      const qrTitle = step.title;
-      const qrDescription = step.description;
-      const qrTopText = step.topText;
-      const qrLogo = step.logo;
-      const qrLayout = step.qrLayout;
-
-      await Preview.showQr({
-        url: step.url,
-        topText: qrTopText,
-        title: qrTitle,
-        description: qrDescription,
-        logo: qrLogo,
-        qrLayout,
-      });
-    }
-
-    if (step.action === Action.ClosePreview || step.action === Action.HideQR) {
-      Preview.close();
-      return;
-    }
-
-    // Zoom actions
-    if (step.action === Action.ZoomIn) {
-      await ZoomService.zoomIn(step.zoom);
-      return;
-    }
-
-    if (step.action === Action.ZoomOut) {
-      await ZoomService.zoomOut(step.zoom);
-      return;
-    }
-
-    if (step.action === Action.ZoomReset) {
-      await ZoomService.zoomReset();
-      return;
-    }
-
-    if (step.action === Action.EnableZenMode) {
-      await commands.executeCommand('workbench.action.exitZenMode');
-      await commands.executeCommand('workbench.action.toggleZenMode');
-      return;
-    }
-
-    if (step.action === Action.DisableZenMode) {
-      await commands.executeCommand('workbench.action.exitZenMode');
-      return;
-    }
-
-    // Open a new terminal
-    if (step.action === Action.OpenTerminal) {
-      await TerminalService.openTerminal(step.terminalId);
-      return;
-    }
-
-    if (step.action === Action.FocusTerminal) {
-      await TerminalService.focusTerminal();
-      return;
-    }
-
-    // Run the specified terminal command
-    if (step.action === Action.ExecuteTerminalCommand) {
-      await TerminalService.executeCommand(step);
-      return;
-    }
-
-    // Run the specified terminal command
-    if (step.action === Action.CloseTerminal) {
-      await TerminalService.closeTerminal(step.terminalId);
-      return;
-    }
-
-    if (step.action === Action.ExecuteScript) {
-      await ScriptExecutor.run(step);
-      return;
-    }
-
-    if (step.action === Action.Write && !step.path) {
-      // Write the content at the current position
-      const editor = window.activeTextEditor;
-      if (!editor) {
-        Notifications.error('No active text editor found');
-        return;
-      }
-
-      const position = editor.selection.active;
-      const content = step.content || '';
-
-      if (!content) {
-        Notifications.error('No content to write');
-        return;
-      }
-
-      await writeText(editor, content, position, step.lineInsertionDelay);
-      return;
-    }
-
-    if (step.action === Action.Format) {
-      await commands.executeCommand('editor.action.formatDocument');
-      return;
-    }
-
-    if (step.action === Action.Save) {
-      await saveFiles();
-      return;
-    }
-
-    if (step.action === Action.Close) {
-      await commands.executeCommand('workbench.action.closeActiveEditor');
-      return;
-    }
-
-    if (step.action === Action.CloseAll) {
-      await commands.executeCommand('workbench.action.closeAllEditors');
-      return;
-    }
-
-    if (step.action === Action.TypeText) {
-      await InteractionService.typeText(step.content, step.insertTypingSpeed);
-      return;
-    }
-
-    if (step.action === Action.PressEnter) {
-      await InteractionService.pressEnter();
-      return;
-    }
-
-    if (step.action === Action.SendKeybinding) {
-      await InteractionService.pressKeybinding(step.keybinding);
-      return;
-    }
-
-    if (step.action === Action.PressTab) {
-      await InteractionService.pressTab();
-      return;
-    }
-
-    if (step.action === Action.PressArrowLeft) {
-      await InteractionService.pressArrowLeft();
-      return;
-    }
-
-    if (step.action === Action.PressArrowRight) {
-      await InteractionService.pressArrowRight();
-      return;
-    }
-
-    if (step.action === Action.PressArrowUp) {
-      await InteractionService.pressArrowUp();
-      return;
-    }
-
-    if (step.action === Action.PressArrowDown) {
-      await InteractionService.pressArrowDown();
-      return;
-    }
-
-    if (step.action === Action.PressEscape) {
-      await InteractionService.pressEscape();
-      return;
-    }
-
-    if (step.action === Action.PressBackspace) {
-      await InteractionService.pressBackspace();
-      return;
-    }
-
-    if (step.action === Action.PressDelete) {
-      await InteractionService.pressDelete();
-      return;
-    }
-
-    if (step.action === Action.CopyToClipboard) {
-      await InteractionService.copyToClipboard({
-        content: step.content,
-        contentPath: step.contentPath,
-        variables,
-        workspaceFolder,
-      });
-      return;
-    }
-
-    if (step.action === Action.CopyFromSelection) {
-      await InteractionService.copyFromSelection();
-      return;
-    }
-
-    if (step.action === Action.PasteFromClipboard) {
-      await InteractionService.pasteFromClipboard();
-      return;
-    }
-
-    if (step.action === Action.Unselect) {
-      await DemoRunner.unselect();
-      return;
-    }
-
-    /**
-     * EngageTime actions
-     */
-    if (step.action.includes('EngageTime')) {
-      const crntDemoConfig = crntFilePath || (await DemoRunner.getExecutedDemoFile()).filePath;
-      const crntDemoFile = await DemoFileProvider.getFile(Uri.file(crntDemoConfig));
-      if (step.action === Action.StartEngageTimeSession) {
-        await EngageTimeService.startSession(crntDemoFile?.engageTime?.sessionId);
-        return;
-      }
-
-      if (step.action === Action.CloseEngageTimeSession) {
-        await EngageTimeService.stopSession(crntDemoFile?.engageTime?.sessionId);
-        return;
-      }
-
-      if (step.action === Action.StartEngageTimePoll) {
-        await EngageTimeService.startPoll(step.pollId);
-        return;
-      }
-
-      if (step.action === Action.CloseEngageTimePoll) {
-        await EngageTimeService.stopPoll(step.pollId);
-        return;
-      }
-
-      if (step.action === Action.ShowEngageTimeSession) {
-        await EngageTimeService.showSession(crntDemoFile?.engageTime?.sessionId);
-        return;
-      }
-
-      if (step.action === Action.ShowEngageTimePoll) {
-        await EngageTimeService.showPoll(step.pollId, step.startOnOpen, step.closeOnOpen);
-        return;
-      }
-
-      if (step.action === Action.SendEngageTimeMessage) {
-        await EngageTimeService.sendMessage(
-          crntDemoFile?.engageTime?.sessionId,
-          step.type,
-          step.title,
-          step.message,
-        );
-        return;
-      }
-    }
-
-    /**
-     * All the following actions require a file path.
-     */
-    if (!fileUri) {
-      return;
-    }
-
-    if (step.action === Action.ImagePreview) {
-      const { path, theme } = step as IImagePreview;
-      Preview.show(path as string, theme);
-      return;
-    }
-
-    if (step.action === Action.OpenSlide) {
-      const { path } = step as ISlidePreview;
-      Preview.setCurrentSlideIndex(0); // Reset the slide index
-      Preview.show(path as string, undefined, step.slide);
-      return;
-    }
-
-    if (step.action === Action.Open) {
-      FileActionService.open(fileUri, typeof step.focusTop === 'undefined' || step.focusTop);
-      return;
-    }
-
-    if (step.action === Action.MarkdownPreview) {
-      await commands.executeCommand('markdown.showPreview', fileUri);
-      return;
-    }
-
-    if (step.action === Action.Copy) {
-      FileActionService.copy(workspaceFolder, fileUri, step);
-      return;
-    }
-
-    if (step.action === Action.Move || step.action === Action.Rename) {
-      FileActionService.rename(workspaceFolder, fileUri, step);
-      return;
-    }
-
-    if (step.action === Action.DeleteFile) {
-      await FileActionService.delete(fileUri);
-      return;
-    }
-
-    let content = step.content || '';
-    if (step.contentPath) {
-      const fileContent = await getFileContents(workspaceFolder, step.contentPath);
-      if (typeof fileContent !== 'string') {
-        return;
-      }
-      content = fileContent;
-    }
-
-    if (step.action === Action.Create) {
-      await writeFile(fileUri, content);
-      return;
-    }
-
-    if (step.action === Action.ApplyPatch) {
-      await TextTypingService.applyPatch(fileUri, content, step);
-      return;
-    }
-
-    const editor = await workspace.openTextDocument(fileUri);
-    const textEditor = await window.showTextDocument(editor);
-
-    const { crntPosition, crntRange, usesPlaceholders } = await getPositionAndRange(editor, step);
-
-    if (step.action === Action.Highlight && (crntRange || crntPosition)) {
-      let highlightWholeLine = step.highlightWholeLine;
-      if (usesPlaceholders) {
-        highlightWholeLine =
-          typeof step.highlightWholeLine === 'undefined' ? true : step.highlightWholeLine;
-      } else if (crntRange && step.position) {
-        // If the position is "0,0:0,0" format, turn off highlightWholeLine
-        if (
-          typeof step.position === 'string' &&
-          /^\d+,\d+:\d+,\d+$/.test(step.position.replace(/\s/g, ''))
-        ) {
-          highlightWholeLine = false;
-        }
-      }
-
-      await DemoRunner.highlight(
-        textEditor,
-        crntRange,
-        crntPosition,
-        step.zoom,
-        highlightWholeLine,
-        true,
-        DemoRunner.nextStepIsHighlight,
-        step.highlightBlur,
-        step.highlightOpacity,
-      );
-      return;
-    }
-
-    if (step.action === Action.Selection && (crntRange || crntPosition)) {
-      await SelectionService.select(textEditor, crntRange, crntPosition, step.zoom);
-      return;
-    }
-
-    // Code actions
-    if (step.action === Action.Insert) {
-      await TextTypingService.insert(textEditor, editor, fileUri, content, crntPosition, step);
-      return;
-    }
-
-    if (step.action === Action.Write) {
-      if (!content) {
-        Notifications.error('No content to write');
-        return;
-      }
-
-      if (!crntPosition) {
-        Notifications.error('No position specified where to write the content');
-        return;
-      }
-
-      await writeText(textEditor, content, crntPosition, step.lineInsertionDelay);
-      return;
-    }
-
-    if (step.action === Action.Replace) {
-      await TextTypingService.replace(
-        textEditor,
-        editor,
-        fileUri,
-        content,
-        crntRange,
-        crntPosition,
-        step,
-      );
-      return;
-    }
-
-    if (step.action === Action.PositionCursor) {
-      if (crntPosition) {
-        textEditor.revealRange(
-          new Range(crntPosition, crntPosition),
-          TextEditorRevealType.InCenter,
-        );
-        textEditor.selection = new Selection(crntPosition, crntPosition);
-      }
-      return;
-    }
-
-    if (step.action === Action.Delete) {
-      await TextTypingService.delete(editor, fileUri, crntRange, crntPosition);
-      return;
-    }
+    await DemoActionDispatcher.runStep(step, {
+      variables,
+      workspaceFolder,
+      currentFilePath: crntFilePath,
+      nextStepIsHighlight: DemoRunner.nextStepIsHighlight,
+      runById: DemoRunner.runById,
+      highlight: DemoRunner.highlight,
+      unselect: DemoRunner.unselect,
+      getExecutedDemoFile: DemoRunner.getExecutedDemoFile,
+    });
   }
 
   /**
