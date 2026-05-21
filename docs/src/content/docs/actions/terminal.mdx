@@ -252,7 +252,9 @@ Execute a script in the background of which you can use the output in the next s
   "id": "<script id>",
   "path": "<script to execute>",
   "command": "node", // Can be powershell, bash, shell, python, etc.
-  "args": ["arg1", "arg2"] // Optional
+  "args": ["arg1", "arg2"], // Optional
+  "waitForMessage": "done", // Optional
+  "showProgress": true // Optional - default is true
 }
 ```
 
@@ -267,6 +269,8 @@ command: node # Can be powershell, bash, shell, python, etc.
 args: # Optional
   - arg1
   - arg2
+waitForMessage: done # Optional
+showProgress: true # Optional - default is true
 ```
 
 </TabItem>
@@ -277,6 +281,15 @@ If you want, you can use the output of the script in the next steps with `STATE_
 
 Make sure you defined the `id` property and that your script only writes a single line of output.
 </Aside>
+
+### Properties
+
+- **id**: The ID of the script, used to reference its output in later steps
+- **path**: Path to the script file to execute
+- **command**: The command/runtime to use (e.g., `node`, `bash`, `python`, `powershell`)
+- **args**: Optional. Array of strings passed as positional command-line arguments to the script
+- **waitForMessage**: Optional. When set, the step waits until the script outputs this string before advancing, rather than waiting for the process to exit. Useful for long-running scripts that signal readiness (e.g., `"done"` or `"Server ready"`)
+- **showProgress**: Optional. Whether to show the progress notification while the script is executing. Default is `true`
 
 ### Passing arguments to scripts
 

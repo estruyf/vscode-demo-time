@@ -2,6 +2,8 @@
 
 ## [2.2.0] - 2026-xx-xx
 
+- Added `waitForMessage` property to the `executeScript` action to wait until the script outputs a specific string before advancing to the next step, instead of waiting for the process to exit
+- Added `showProgress` property to the `executeScript` action to control whether the progress notification is shown while the script is executing (default: `true`)
 - Fix preview taking focus when saving a markdown file and only update the preview when editing the current slide
 - Custom themes are now loaded from the workspace URL instead of retrieving the file contents
 - Fix slide content not updating when navigating between slides that share the same custom layout template
