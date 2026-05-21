@@ -23,6 +23,7 @@ import {
 } from './services';
 import { DemoPanel } from './panels/DemoPanel';
 import { ResourcesPanel } from './panels/ResourcesPanel';
+import { QuickActionsPanel } from './panels/QuickActionsPanel';
 import { Preview } from './preview/Preview';
 import { PresenterView } from './presenterView/PresenterView';
 import { ConfigEditorProvider } from './providers/ConfigEditorProvider';
@@ -55,6 +56,7 @@ export async function activate(context: vscode.ExtensionContext) {
   // Services
   DecoratorService.register();
   DemoPanel.register();
+  QuickActionsPanel.register();
   ResourcesPanel.register();
   DemoRunner.registerCommands();
   DemoCreator.registerCommands();

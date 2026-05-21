@@ -12,6 +12,7 @@ export function normalizeActConfig(config: ActConfig): DemoConfig {
     version: config.version,
     timer: config.timer,
     engageTime: config.engageTime,
+    autoLoop: config.autoLoop,
     demos: (config.scenes || []).map((scene) => sceneToDemo(scene)),
   };
 }
@@ -28,6 +29,7 @@ function sceneToDemo(scene: Scene): Demo {
     icons: scene.icons,
     notes: scene.notes,
     disabled: scene.disabled,
+    autoAdvanceAfter: scene.autoAdvanceAfter,
   };
 }
 
@@ -88,5 +90,6 @@ function demoToScene(demo: Demo): Scene {
     icons: demo.icons,
     notes: demo.notes,
     disabled: demo.disabled,
+    autoAdvanceAfter: demo.autoAdvanceAfter,
   };
 }

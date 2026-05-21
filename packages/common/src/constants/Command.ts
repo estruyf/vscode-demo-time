@@ -76,4 +76,8 @@ export const COMMAND = {
   analyticsToggle: `${EXTENSION_NAME}.analytics.toggle`,
   // Redaction
   toggleRedaction: `${EXTENSION_NAME}.toggleRedaction`,
+  // Auto-proceed
+  toggleAutoProceed: `${EXTENSION_NAME}.toggleAutoProceed`,
+  pauseAutoProceed: `${EXTENSION_NAME}.pauseAutoProceed`,
+  resumeAutoProceed: `${EXTENSION_NAME}.resumeAutoProceed`,
 };

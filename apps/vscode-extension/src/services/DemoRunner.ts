@@ -15,6 +15,7 @@ import {
   workspace,
 } from 'vscode';
 import { DemoPanel } from '../panels/DemoPanel';
+import { QuickActionsPanel } from '../panels/QuickActionsPanel';
 import {
   getVariables,
   getFileContents,
@@ -102,6 +103,12 @@ export class DemoRunner {
   private static currentDemoIndex: number = 0;
   private static currentStepIndex: number = 0;
 
+  // Auto-proceed state
+  private static autoProceedTimer: NodeJS.Timeout | undefined;
+  private static autoProceedCountdownInterval: NodeJS.Timeout | undefined;
+  private static isAutoProceedPaused = false;
+  private static autoProceedCountdown: number = 0;
+
   /**
    * Registers the commands for the demo runner.
    */
@@ -124,6 +131,19 @@ export class DemoRunner {
       commands.registerCommand(
         COMMAND.toggleSelectionHighlight,
         DemoRunner.toggleSelectionHighlight,
+      ),
+    );
+    subscriptions.push(
+      commands.registerCommand(COMMAND.toggleAutoProceed, DemoRunner.toggleAutoProceed),
+    );
+    subscriptions.push(
+      commands.registerCommand(COMMAND.pauseAutoProceed, () =>
+        DemoRunner.setAutoProceedPaused(true),
+      ),
+    );
+    subscriptions.push(
+      commands.registerCommand(COMMAND.resumeAutoProceed, () =>
+        DemoRunner.setAutoProceedPaused(false),
       ),
     );
 
@@ -204,6 +224,65 @@ export class DemoRunner {
     return DemoRunner.isPresentationMode;
   }
 
+  public static getIsAutoProceedPaused(): boolean {
+    return DemoRunner.isAutoProceedPaused;
+  }
+
+  public static getAutoProceedCountdown(): number {
+    return DemoRunner.autoProceedCountdown;
+  }
+
+  private static clearAutoProceedTimers(): void {
+    if (DemoRunner.autoProceedTimer) {
+      clearTimeout(DemoRunner.autoProceedTimer);
+      DemoRunner.autoProceedTimer = undefined;
+    }
+    if (DemoRunner.autoProceedCountdownInterval) {
+      clearInterval(DemoRunner.autoProceedCountdownInterval);
+      DemoRunner.autoProceedCountdownInterval = undefined;
+    }
+    DemoRunner.autoProceedCountdown = 0;
+  }
+
+  private static startAutoProceedTimer(delaySeconds: number): void {
+    DemoRunner.clearAutoProceedTimers();
+    DemoRunner.autoProceedCountdown = delaySeconds;
+
+    DemoRunner.autoProceedCountdownInterval = setInterval(() => {
+      DemoRunner.autoProceedCountdown = Math.max(0, DemoRunner.autoProceedCountdown - 1);
+      QuickActionsPanel.updateAutoProceed(true, DemoRunner.isAutoProceedPaused, DemoRunner.autoProceedCountdown);
+    }, 1000);
+
+    DemoRunner.autoProceedTimer = setTimeout(async () => {
+      DemoRunner.clearAutoProceedTimers();
+      QuickActionsPanel.updateAutoProceed(false, false, 0);
+      await commands.executeCommand(COMMAND.start);
+    }, delaySeconds * 1000);
+  }
+
+  private static async setAutoProceedPaused(paused: boolean): Promise<void> {
+    DemoRunner.isAutoProceedPaused = paused;
+    await setContext(ContextKeys.autoProceedPaused, paused);
+
+    if (paused) {
+      DemoRunner.clearAutoProceedTimers();
+      QuickActionsPanel.updateAutoProceed(true, true, 0);
+      DemoPanel.updateMessage('Auto-proceed paused');
+    } else {
+      // Resume with the full duration of the current scene
+      const demo = DemoRunner.currentDemo;
+      if (demo?.autoAdvanceAfter) {
+        DemoRunner.startAutoProceedTimer(demo.autoAdvanceAfter);
+        QuickActionsPanel.updateAutoProceed(true, false, demo.autoAdvanceAfter);
+        DemoPanel.updateMessage('Presentation mode enabled');
+      }
+    }
+  }
+
+  private static async toggleAutoProceed(): Promise<void> {
+    await DemoRunner.setAutoProceedPaused(!DemoRunner.isAutoProceedPaused);
+  }
+
   /**
    * Retrieves the current version of the executing act file.
    *
@@ -260,6 +339,7 @@ export class DemoRunner {
       typeof enable !== 'undefined' ? enable : !DemoRunner.isPresentationMode;
     DemoStatusBar.setPresenting(DemoRunner.isPresentationMode);
     await setContext(ContextKeys.presentation, DemoRunner.isPresentationMode);
+    QuickActionsPanel.updatePresentationMode(DemoRunner.isPresentationMode);
     PresenterView.postMessage(
       WebViewMessages.toWebview.updatePresentationStarted,
       DemoRunner.isPresentationMode,
@@ -289,6 +369,12 @@ export class DemoRunner {
     if (AnalyticsService.isRecording()) {
       await AnalyticsService.endSession();
     }
+
+    DemoRunner.clearAutoProceedTimers();
+    DemoRunner.isAutoProceedPaused = false;
+    await setContext(ContextKeys.autoProceedPaused, false);
+    await setContext(ContextKeys.autoProceedActive, false);
+    QuickActionsPanel.updateAutoProceed(false, false, 0);
 
     const ext = Extension.getInstance();
     const resetContent = Object.assign({}, DEFAULT_START_VALUE);
@@ -327,6 +413,9 @@ export class DemoRunner {
       return;
     }
 
+    // Cancel any running auto-proceed timer (manual advance or new scene)
+    DemoRunner.clearAutoProceedTimers();
+
     const executingFile = await DemoRunner.getExecutedDemoFile();
 
     const demoFile = await DemoRunner.getDemoFile(item);
@@ -361,6 +450,22 @@ export class DemoRunner {
     }
 
     if (!nextDemo) {
+      // Auto-loop: restart from the first scene if configured
+      if (fileDemo?.autoLoop) {
+        const enabledDemos = demos.filter((d) => !d.disabled);
+        const missingTimings = enabledDemos.filter((d) => !d.autoAdvanceAfter);
+        if (missingTimings.length > 0) {
+          Notifications.error(
+            `Auto-loop blocked: ${missingTimings.length} scene(s) missing 'autoAdvanceAfter': ${missingTimings.map((d) => `"${d.title}"`).join(', ')}`,
+          );
+          return;
+        }
+        executingFile.demo = [];
+        await DemoRunner.setExecutedDemoFile(executingFile);
+        DemoRunner.start(item);
+        return;
+      }
+
       // Check if there is a next act file
       const nextFile = await getNextDemoFile(demoFile);
       if (!nextFile) {
@@ -436,6 +541,20 @@ export class DemoRunner {
       !!demos[followingDemoIdx].steps?.some((s: Step) => s.action === Action.Highlight);
 
     NotesService.showNotes(nextDemo);
+
+    // Start auto-proceed countdown if configured for this scene
+    if (nextDemo.autoAdvanceAfter && nextDemo.autoAdvanceAfter > 0) {
+      await setContext(ContextKeys.autoProceedActive, true);
+      if (!DemoRunner.isAutoProceedPaused) {
+        DemoRunner.startAutoProceedTimer(nextDemo.autoAdvanceAfter);
+        QuickActionsPanel.updateAutoProceed(true, false, nextDemo.autoAdvanceAfter);
+      } else {
+        QuickActionsPanel.updateAutoProceed(true, true, 0);
+      }
+    } else {
+      await setContext(ContextKeys.autoProceedActive, false);
+      QuickActionsPanel.updateAutoProceed(false, false, 0);
+    }
   }
 
   /**
@@ -453,6 +572,11 @@ export class DemoRunner {
       await Preview.postMessage(WebViewMessages.toWebview.previousSlide);
       return;
     }
+
+    // Cancel any running auto-proceed timer when going back
+    DemoRunner.clearAutoProceedTimers();
+    await setContext(ContextKeys.autoProceedActive, false);
+    QuickActionsPanel.updateAutoProceed(false, false, 0);
 
     const executingFile = await DemoRunner.getExecutedDemoFile();
     const filePath = executingFile.filePath;
