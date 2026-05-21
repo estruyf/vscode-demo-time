@@ -590,6 +590,12 @@
         "icon": "$(star)"
       },
       {
+        "command": "demo-time.showGallery",
+        "title": "Snippet Gallery",
+        "category": "Demo Time",
+        "icon": "$(library)"
+      },
+      {
         "command": "demo-time.continueDemo",
         "title": "Continue Demo",
         "category": "Demo Time"

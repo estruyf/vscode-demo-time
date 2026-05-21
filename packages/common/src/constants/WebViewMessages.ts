@@ -157,6 +157,10 @@ export const WebViewMessages = {
        */
       checkSnippetArgs: 'checkSnippetArgs',
       /**
+       * listSnippets
+       */
+      listSnippets: 'listSnippets',
+      /**
        * getConfigEditorDemoIds
        */
       getDemoIds: 'getConfigEditorDemoIds',
@@ -207,6 +211,11 @@ export const WebViewMessages = {
     },
     proFeatures: {
       getSponsorStatus: 'getProFeaturesSponsorStatus',
+    },
+    gallery: {
+      getConfig: 'getGalleryConfig',
+      getDownloadedSnippets: 'getGalleryDownloadedSnippets',
+      downloadSnippet: 'downloadGallerySnippet',
     },
     presenter: {
       checkNextDemo: 'checkPresenterNextDemo',

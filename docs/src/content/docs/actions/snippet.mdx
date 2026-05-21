@@ -1,7 +1,7 @@
 ---
 title: Snippet actions
 description: Snippets can be used when you have steps that you want to reuse in multiple demos.
-lastmod: 2025-08-02T16:00:27.344Z
+lastmod: 2026-05-18T12:00:00.000Z
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
@@ -14,6 +14,21 @@ Snippets support both **JSON** and **YAML** formats. The extension automatically
 <Aside type="note" title='Samples'>
   You can find snippet actions samples on GitHub: 
   <GitHubFileOpener filePath=".demo/8.snippet-actions.json" />
+</Aside>
+
+## Snippet Gallery
+
+Demo Time includes a **Snippet Gallery** so you can browse and download community snippets directly from VS Code.
+
+- Open it from the Demo Time resources section via **Snippet Gallery**.
+- Browse snippets by name, tags, description, author, version, and available fields.
+- Download snippets with one click into your workspace under `.demo/snippets/...`.
+- Already downloaded snippets are shown with a **Downloaded** status and can be **Re-download**ed when needed.
+
+Once a snippet is downloaded, use it exactly like any local snippet via the `snippet` action and `contentPath`.
+
+<Aside type="tip" title="Contributing gallery snippets">
+  Community gallery snippets can be validated with the gallery snippet schema: `https://demotime.show/gallery/snippet.schema.json`. You can find the full contribution flow in the [Snippet Gallery](../../snippets/gallery) docs.
 </Aside>
 
 ## Using a snippet

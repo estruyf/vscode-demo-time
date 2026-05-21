@@ -667,6 +667,12 @@
                         "items": {
                           "type": "string"
                         }
+                      },
+                      "waitForMessage": {
+                        "$ref": "#/definitions/waitForMessage"
+                      },
+                      "showProgress": {
+                        "$ref": "#/definitions/showProgress"
                       }
                     }
                   }
@@ -1418,6 +1424,15 @@
     "duration": {
       "type": "number",
       "title": "Duration in minutes (for macos.enableCaffeine). If not specified, prevents sleep indefinitely."
+    },
+    "waitForMessage": {
+      "type": "string",
+      "title": "Wait until this string appears in stdout before advancing to the next step. If not set, waits for the script process to exit."
+    },
+    "showProgress": {
+      "type": "boolean",
+      "title": "Show the progress notification while the script is executing. Default is true.",
+      "default": true
     }
   }
 }

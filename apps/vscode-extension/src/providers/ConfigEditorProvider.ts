@@ -22,6 +22,7 @@ import {
 } from '../services';
 import {
   checkSnippetArgs,
+  listSnippetFiles,
   getDemoApiData,
   getFileUri,
   getRelPath,
@@ -188,6 +189,8 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           openFile(payload, document.uri);
         } else if (command === WebViewMessages.toVscode.configEditor.checkSnippetArgs && payload) {
           await handleCheckSnippetArgs(payload, webviewPanel, command, requestId);
+        } else if (command === WebViewMessages.toVscode.configEditor.listSnippets) {
+          await handleListSnippets(webviewPanel, command, requestId);
         } else if (command === WebViewMessages.toVscode.configEditor.getDemoIds) {
           await handleGetDemoIds(webviewPanel, command, requestId);
         } else if (command === WebViewMessages.toVscode.configEditor.createNotes) {
@@ -490,6 +493,28 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           command,
           requestId: requestId,
           payload: undefined,
+        });
+      }
+    }
+
+    async function handleListSnippets(
+      webviewPanel: WebviewPanel,
+      command: string,
+      requestId: string | undefined,
+    ) {
+      try {
+        const snippets = await listSnippetFiles();
+        webviewPanel.webview.postMessage({
+          command,
+          requestId: requestId,
+          payload: snippets,
+        });
+      } catch (error) {
+        console.error('Failed to list snippet files:', error);
+        webviewPanel.webview.postMessage({
+          command,
+          requestId: requestId,
+          payload: [],
         });
       }
     }

@@ -105,6 +105,8 @@ export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
   command?: string;
   keybinding?: string;
   message?: string;
+  waitForMessage?: string;
+  showProgress?: boolean;
   /**
    * Arguments to pass to scripts or snippets.
    * For executeScript actions: Array of strings passed as positional command-line arguments to the script.
@@ -176,3 +178,48 @@ export interface State {
 }
 
 export type EngageTimeMessageType = 'demo' | 'slide' | 'custom';
+
+// New snippet file format (gallery/community snippets)
+export interface SnippetField {
+  name: string;
+  description?: string;
+  type: 'string' | 'number' | 'boolean';
+  required?: boolean;
+  default?: string | number | boolean;
+}
+
+export interface SnippetFileFormat {
+  id: string;
+  name: string;
+  description?: string;
+  author?: string;
+  version?: string;
+  tags?: string[];
+  fields?: SnippetField[];
+  steps: Step[];
+}
+
+export interface GallerySnippetIndexEntry {
+  id: string;
+  name: string;
+  description?: string;
+  author?: string;
+  version?: string;
+  tags?: string[];
+  fields?: SnippetField[];
+  path: string;
+  actions?: string[];
+}
+
+/**
+ * Type guard to check if a parsed snippet is in the new SnippetFileFormat.
+ */
+export function isSnippetFileFormat(value: unknown): value is SnippetFileFormat {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    'steps' in value &&
+    Array.isArray((value as SnippetFileFormat).steps)
+  );
+}

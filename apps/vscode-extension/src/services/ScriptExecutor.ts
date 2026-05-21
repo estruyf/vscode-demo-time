@@ -26,52 +26,60 @@ export class ScriptExecutor {
       return;
     }
 
-    await window.withProgress(
-      {
-        location: ProgressLocation.Notification,
-        title: `${Config.title}: Executing script`,
-        cancellable: false,
-      },
-      async () => {
-        let command = step.command as string;
-        const path = step.path as string;
-        const id = step.id as string;
+    const execute = async () => {
+      let command = step.command as string;
+      const path = step.path as string;
+      const id = step.id as string;
 
-        const platform = getPlatform();
-        if (step.command === CommandType.Node && platform !== 'windows') {
-          step.command = await evaluateCommand(CommandType.Node);
-        }
+      const platform = getPlatform();
+      if (step.command === CommandType.Node && platform !== 'windows') {
+        step.command = await evaluateCommand(CommandType.Node);
+      }
 
-        const wsPath = Extension.getInstance().workspaceFolder;
-        if (!wsPath) {
-          Notifications.error('Workspace folder not found.');
-          return;
-        }
+      const wsPath = Extension.getInstance().workspaceFolder;
+      if (!wsPath) {
+        Notifications.error('Workspace folder not found.');
+        return;
+      }
 
-        let scriptPath = Uri.joinPath(wsPath.uri, path as string);
-        if (!(await fileExists(scriptPath))) {
-          Notifications.error(`Script file not found at path: ${scriptPath.fsPath}`);
-          return;
-        }
+      let scriptPath = Uri.joinPath(wsPath.uri, path as string);
+      if (!(await fileExists(scriptPath))) {
+        Notifications.error(`Script file not found at path: ${scriptPath.fsPath}`);
+        return;
+      }
 
-        if (platform === 'windows' && command.toLowerCase() === 'powershell') {
-          command = `${command} -File`;
-        }
+      if (platform === 'windows' && command.toLowerCase() === 'powershell') {
+        command = `${command} -File`;
+      }
 
-        const args = step.args as string[] | undefined;
-        const output = await ScriptExecutor.spawnScriptAsync(
-          command,
-          scriptPath.fsPath,
-          wsPath.uri.fsPath,
-          args,
-        );
-        Logger.info(`Step ID: ${id} - Output: ${output}`);
+      const args = step.args as string[] | undefined;
+      const output = await ScriptExecutor.spawnScriptAsync(
+        command,
+        scriptPath.fsPath,
+        wsPath.uri.fsPath,
+        args,
+        step.waitForMessage,
+      );
+      Logger.info(`Step ID: ${id} - Output: ${output}`);
 
-        if (output) {
-          await StateManager.update(`${StateKeys.prefix.script}${id}`, output);
-        }
-      },
-    );
+      if (output) {
+        await StateManager.update(`${StateKeys.prefix.script}${id}`, output);
+      }
+    };
+
+    const showProgress = step.showProgress !== false;
+    if (showProgress) {
+      await window.withProgress(
+        {
+          location: ProgressLocation.Notification,
+          title: `${Config.title}: Executing script`,
+          cancellable: false,
+        },
+        execute,
+      );
+    } else {
+      await execute();
+    }
   }
 
   /**
@@ -125,6 +133,7 @@ export class ScriptExecutor {
     scriptPath: string,
     wsPath: string,
     args?: string[],
+    waitForMessage?: string,
   ): Promise<string> {
     return new Promise((resolve, reject) => {
       const argsArray = ScriptExecutor.formatArgsArray(args);
@@ -132,9 +141,15 @@ export class ScriptExecutor {
 
       let stdout = '';
       let stderr = '';
+      let settled = false;
 
       childProcess.stdout.on('data', (data) => {
         stdout += data.toString();
+
+        if (waitForMessage && !settled && stdout.includes(waitForMessage)) {
+          settled = true;
+          resolve(stdout);
+        }
       });
 
       childProcess.stderr.on('data', (data) => {
@@ -142,6 +157,10 @@ export class ScriptExecutor {
       });
 
       childProcess.on('close', (code) => {
+        if (settled) {
+          return;
+        }
+
         if (code !== 0) {
           const errorMsg = stderr || `Script exited with code ${code}`;
           Logger.error(errorMsg);
@@ -158,8 +177,10 @@ export class ScriptExecutor {
       });
 
       childProcess.on('error', (error) => {
-        Logger.error(error.message);
-        reject(error.message);
+        if (!settled) {
+          Logger.error(error.message);
+          reject(error.message);
+        }
       });
     });
   }
