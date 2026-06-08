@@ -11,6 +11,7 @@ import { generateCss, sanitizeName } from '../src/lib/generateCss';
 import { parseCss } from '../src/lib/parseCss';
 import { PRESETS } from '../src/lib/presets';
 import { LAYOUT_KEYS } from '../src/types/theme';
+import { formatColor, parseColor } from '../src/lib/color';
 
 let failures = 0;
 const ok = (cond: boolean, msg: string) => {
@@ -180,6 +181,24 @@ console.log('12. normalizeModel backfills partial snapshots (review fix #3)');
   }
   ok(!threw, 'generateCss(normalized partial) does not throw');
   ok(normalizeModel(null) === null && normalizeModel(42) === null, 'rejects non-object input');
+}
+
+console.log('13. color opacity parse/format');
+{
+  ok(JSON.stringify(parseColor('#ff0000')) === JSON.stringify({ r: 255, g: 0, b: 0, a: 1 }), 'parses #rrggbb');
+  ok(JSON.stringify(parseColor('#f00')) === JSON.stringify({ r: 255, g: 0, b: 0, a: 1 }), 'parses #rgb');
+  const hex8 = parseColor('#ff000080');
+  ok(!!hex8 && hex8.r === 255 && Math.abs(hex8.a - 0.5) < 0.01, 'parses #rrggbbaa alpha');
+  const rgba = parseColor('rgba(10, 20, 30, 0.4)');
+  ok(!!rgba && rgba.r === 10 && rgba.b === 30 && Math.abs(rgba.a - 0.4) < 0.001, 'parses rgba()');
+  ok(parseColor('transparent') === null, 'transparent → null (free-text only)');
+  ok(parseColor('linear-gradient(#000,#fff)') === null, 'gradient → null');
+  ok(parseColor('var(--x)') === null, 'var() → null');
+  ok(formatColor({ r: 255, g: 0, b: 0, a: 1 }) === '#ff0000', 'opaque → hex');
+  ok(formatColor({ r: 255, g: 0, b: 0, a: 0.5 }) === 'rgba(255, 0, 0, 0.5)', 'translucent → rgba');
+  // round-trips through the editor's pick→alpha flow
+  const v = formatColor({ ...parseColor('#3366cc')!, a: 0.25 });
+  ok(v === 'rgba(51, 102, 204, 0.25)', `pick + opacity composes ("${v}")`);
 }
 
 console.log(failures === 0 ? '\nALL PASSED' : `\n${failures} FAILURE(S)`);

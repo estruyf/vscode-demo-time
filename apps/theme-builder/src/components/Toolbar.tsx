@@ -1,16 +1,27 @@
 import * as React from 'react';
-import { Download, FilePlus2, Upload, ChevronDown, Sparkles } from 'lucide-react';
+import { Download, FilePlus2, Upload, ChevronDown, Sparkles, Undo2, Redo2 } from 'lucide-react';
 import { PRESETS } from '../lib/presets';
 import { btnGhost, btnPrimary, btnSecondary } from './controls';
+
+const iconBtn =
+  'flex h-8 w-8 items-center justify-center rounded-md text-gray-300 hover:bg-[var(--color-surface-3)] hover:text-white disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent';
 
 export function Toolbar({
   onApplyPreset,
   onImport,
   onExport,
+  onUndo,
+  onRedo,
+  canUndo,
+  canRedo,
 }: {
   onApplyPreset: (presetId: string) => void;
   onImport: () => void;
   onExport: () => void;
+  onUndo: () => void;
+  onRedo: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
 }) {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const menuRef = React.useRef<HTMLDivElement>(null);
@@ -38,6 +49,29 @@ export function Toolbar({
           <p className="text-sm font-semibold text-gray-100">Demo Time</p>
           <p className="-mt-0.5 text-[11px] text-gray-400">Theme Builder</p>
         </div>
+      </div>
+
+      <div className="ml-2 flex items-center gap-1">
+        <button
+          type="button"
+          className={iconBtn}
+          onClick={onUndo}
+          disabled={!canUndo}
+          title="Undo (Ctrl/Cmd+Z)"
+          aria-label="Undo"
+        >
+          <Undo2 size={16} />
+        </button>
+        <button
+          type="button"
+          className={iconBtn}
+          onClick={onRedo}
+          disabled={!canRedo}
+          title="Redo (Ctrl/Cmd+Shift+Z)"
+          aria-label="Redo"
+        >
+          <Redo2 size={16} />
+        </button>
       </div>
 
       <div className="flex-1" />

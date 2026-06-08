@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ChevronDown } from 'lucide-react';
 import clsx from 'clsx';
+import { formatColor, parseColor, rgbToHex } from '../lib/color';
 
 /* Shared button styles. */
 export const btnBase =
@@ -240,7 +241,8 @@ export function Toggle({
 
 /* ------------------------------------------------------------ ColorField */
 
-const HEX = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
+const CHECKER =
+  'linear-gradient(45deg,#555 25%,transparent 25%),linear-gradient(-45deg,#555 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#555 75%),linear-gradient(-45deg,transparent 75%,#555 75%)';
 
 export function ColorField({
   label,
@@ -251,28 +253,43 @@ export function ColorField({
   value: string;
   onChange: (value: string) => void;
 }) {
-  const hex = HEX.test(value) ? value : '#000000';
+  const rgba = parseColor(value);
   const isTransparent = !value || value === 'transparent';
+  const pickerHex = rgba ? rgbToHex(rgba.r, rgba.g, rgba.b) : '#000000';
+
+  // Changing the picker keeps the current alpha; changing the slider keeps the
+  // current colour. Both only apply when the value is a parseable solid colour
+  // (gradients / var() stay free-text only).
+  const onPick = (hex: string) => {
+    const next = parseColor(hex);
+    if (next) {
+      onChange(formatColor({ ...next, a: rgba ? rgba.a : 1 }));
+    }
+  };
+  const onAlpha = (pct: number) => {
+    if (rgba) {
+      onChange(formatColor({ ...rgba, a: pct / 100 }));
+    }
+  };
+
   return (
     <Field label={label}>
       <div className="flex items-center gap-2">
         <span
           className="relative h-8 w-8 shrink-0 overflow-hidden rounded border border-[var(--color-line)]"
-          style={
-            isTransparent
-              ? {
-                  backgroundImage:
-                    'linear-gradient(45deg,#555 25%,transparent 25%),linear-gradient(-45deg,#555 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#555 75%),linear-gradient(-45deg,transparent 75%,#555 75%)',
-                  backgroundSize: '10px 10px',
-                  backgroundPosition: '0 0,0 5px,5px -5px,-5px 0',
-                }
-              : { background: value }
-          }
+          style={{
+            backgroundImage: CHECKER,
+            backgroundSize: '10px 10px',
+            backgroundPosition: '0 0,0 5px,5px -5px,-5px 0',
+          }}
         >
+          {!isTransparent && (
+            <span className="absolute inset-0" style={{ background: value }} />
+          )}
           <input
             type="color"
-            value={hex}
-            onChange={(e) => onChange(e.target.value)}
+            value={pickerHex}
+            onChange={(e) => onPick(e.target.value)}
             className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
             aria-label={label ? `${label} color picker` : 'color picker'}
           />
@@ -286,6 +303,24 @@ export function ColorField({
           onChange={(e) => onChange(e.target.value)}
         />
       </div>
+      {rgba && (
+        <div className="mt-2 flex items-center gap-3">
+          <span className="text-[11px] text-gray-500">Opacity</span>
+          <input
+            type="range"
+            aria-label={label ? `${label} opacity` : 'opacity'}
+            className="h-1.5 flex-1 cursor-pointer appearance-none rounded-full bg-[var(--color-line)] accent-[var(--color-brand)]"
+            min={0}
+            max={100}
+            step={1}
+            value={Math.round(rgba.a * 100)}
+            onChange={(e) => onAlpha(Number(e.target.value))}
+          />
+          <span className="w-9 text-right text-[11px] tabular-nums text-gray-400">
+            {Math.round(rgba.a * 100)}%
+          </span>
+        </div>
+      )}
     </Field>
   );
 }

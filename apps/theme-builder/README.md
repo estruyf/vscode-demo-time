@@ -15,7 +15,10 @@ themes — so what you preview is what you get on your slides.
   Time DOM, switchable across every layout (default, intro, section, quote,
   image, video, image-left, image-right, two-columns) and an optional light
   variant.
-- **Colors** — background, text, headings, links, accent, blockquote and code.
+- **Colors** — background, text, headings, links, accent, blockquote and code,
+  each with an **opacity** slider (alpha) on top of the hex picker.
+- **Undo / redo** — full history with toolbar buttons and `Ctrl/Cmd+Z` /
+  `Ctrl/Cmd+Shift+Z` (rapid edits like dragging a slider collapse into one step).
 - **Background images** — slide-wide or per-layout, with fit/position/repeat and
   a darken overlay; upload a file or point at a URL.
 - **Typography** — font family, base size, per-heading size/weight, paragraph,

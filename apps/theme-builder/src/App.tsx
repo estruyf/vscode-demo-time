@@ -33,12 +33,37 @@ export default function App() {
     setDialog(null);
   };
 
+  // Keyboard undo/redo. Skip when typing in a textarea (the import paste box),
+  // where native text undo is expected.
+  const { undo, redo } = api;
+  React.useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (!(e.metaKey || e.ctrlKey) || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+      const key = e.key.toLowerCase();
+      if (key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+      } else if (key === 'y' || (key === 'z' && e.shiftKey)) {
+        e.preventDefault();
+        redo();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [undo, redo]);
+
   return (
     <div className="flex h-screen flex-col">
       <Toolbar
         onApplyPreset={applyPreset}
         onImport={() => setDialog('import')}
         onExport={() => setDialog('export')}
+        onUndo={api.undo}
+        onRedo={api.redo}
+        canUndo={api.canUndo}
+        canRedo={api.canRedo}
       />
 
       <div className="flex min-h-0 flex-1">
