@@ -8,6 +8,7 @@ import type {
 } from '../types/theme';
 import { LAYOUT_KEYS } from '../types/theme';
 import { encodeModel, MODEL_MARKER } from './serialize';
+import { PRESET_CSS } from './presetCss.generated';
 
 /* ------------------------------------------------------------------ helpers */
 
@@ -106,6 +107,13 @@ export function generateCss(model: ThemeModel, options: GenerateOptions = {}): s
   const { embedModel = true } = options;
   const name = sanitizeName(model.name);
   const root = `.slide.${name}`;
+
+  // Themes based on a real built-in design emit that full design, with the
+  // editor's colours/fonts/background layered on top via CSS variables.
+  if (model.basedOn && PRESET_CSS[model.basedOn]) {
+    return generateOverlay(model, name, root, embedModel);
+  }
+
   const rs = new RuleSet();
   const { colors, typography: t } = model;
 
@@ -241,6 +249,62 @@ function googleFontImport(name: string): string {
   }
   const encoded = family.replace(/\s+/g, '+');
   return `@import url('https://fonts.googleapis.com/css2?family=${encoded}:wght@300;400;500;600;700;800;900&display=swap');\n\n`;
+}
+
+/**
+ * Emit a real built-in design verbatim (renamed to the user's class) followed by
+ * a small override block. Because the built-in themes are CSS-variable driven,
+ * re-declaring `--demotime-*` is enough for the editor's colour/per-layout-colour
+ * controls to recolour the whole design; fonts and a background image layer on
+ * top too.
+ */
+function generateOverlay(
+  model: ThemeModel,
+  name: string,
+  root: string,
+  embedModel: boolean
+): string {
+  const base = PRESET_CSS[model.basedOn!];
+  // Rename `.slide.<basedOn>` (and `.slide.<basedOn>.light` etc) to the user's class.
+  const token = model.basedOn!.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const design = base.replace(new RegExp(`\\.slide\\.${token}(?![\\w-])`, 'g'), `.slide.${name}`);
+
+  const { colors, typography: t } = model;
+  const rs = new RuleSet();
+
+  rs.many(root, {
+    '--demotime-color': colors.text,
+    '--demotime-background': colors.background,
+    '--demotime-heading-color': colors.heading,
+    '--demotime-heading-background': colors.headingBackground,
+    '--demotime-link-color': colors.link,
+    '--demotime-link-active-color': colors.linkHover,
+    '--demotime-blockquote-border': colors.blockquoteBorder,
+    '--demotime-blockquote-background': colors.blockquoteBackground,
+    '--demotime-accent': colors.accent,
+  });
+
+  // Per-layout colour overrides map to the design's `--demotime-<layout>-*` vars
+  // (only emitted when the user actually set one).
+  for (const key of LAYOUT_KEYS) {
+    const layout = model.layouts[key];
+    rs.set(root, `--demotime-${key}-background`, layout.background);
+    rs.set(root, `--demotime-${key}-color`, layout.color);
+    rs.set(root, `--demotime-${key}-heading-color`, layout.headingColor);
+    rs.set(root, `--demotime-${key}-heading-background`, layout.headingBackground);
+  }
+
+  // A chosen Google Font overrides the design's font family.
+  if (t.googleFont && t.googleFont.trim()) {
+    rs.set(root, 'font-family', t.fontFamily);
+  }
+
+  // An added background image layers onto the slide.
+  applyBackgroundImage(rs, `${root} .slide__layout`, model.backgroundImage);
+
+  const overrides = rs.toString();
+  const overrideBlock = overrides ? `\n\n/* Theme Builder overrides */\n${overrides}` : '';
+  return banner(model, embedModel) + googleFontImport(t.googleFont) + design + overrideBlock + '\n';
 }
 
 function generateLayout(

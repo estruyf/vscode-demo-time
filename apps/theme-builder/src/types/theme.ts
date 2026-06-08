@@ -128,6 +128,13 @@ export interface LightVariant {
 export interface ThemeModel {
   /** Model schema version, for forward-compatible imports. */
   version: 1;
+  /**
+   * When set, this theme is built on one of the real built-in theme designs
+   * (the key into PRESET_CSS, e.g. "frost"). The full design is emitted and the
+   * editor's colours/fonts/background layer on top via CSS variables. Unset =
+   * a fully structured, from-scratch theme.
+   */
+  basedOn?: string;
   /** CSS-safe theme class name, e.g. "espc25". Used as `.slide.<name>`. */
   name: string;
   /** Human friendly label shown in the UI and CSS banner. */

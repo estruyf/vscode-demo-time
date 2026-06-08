@@ -60,11 +60,33 @@ console.log('3. presets produce sensible CSS');
     ok(css.length > 500 && !css.includes('undefined'), `${p.label}: generates clean CSS`);
   }
   // Pixels uses a mono font; quantum uses a gradient background.
-  ok(generateCss(PRESETS.find((p) => p.id === 'pixels')!.create()).includes('monospace'), 'pixels uses a mono font');
+  ok(generateCss(PRESETS.find((p) => p.id === 'pixels')!.create()).includes('#00d9ff'), 'pixels keeps its cyan design');
   ok(
     generateCss(PRESETS.find((p) => p.id === 'quantum')!.create()).includes('linear-gradient'),
     'quantum keeps its gradient background'
   );
+}
+
+console.log('16. presets reproduce the real design + recolour via overrides');
+{
+  const frost = PRESETS.find((p) => p.id === 'frost')!.create();
+  ok(frost.basedOn === 'frost', 'frost preset is marked basedOn=frost');
+  // colours must resolve to concrete values, not self-referencing var()s
+  ok(!String(frost.colors.background).startsWith('var('), 'frost background resolved (not a var ref)');
+  ok(frost.colors.text === '#343a40', `frost text colour resolved (${frost.colors.text})`);
+  ok(frost.colors.heading === '#4c6ef5', `frost heading colour resolved (${frost.colors.heading})`);
+  // rename and recolour
+  frost.name = 'my-frost';
+  frost.colors.heading = '#ff0000';
+  const css = generateCss(frost);
+  ok((css.match(/::(before|after)/g) || []).length >= 4, 'includes the bespoke design (pseudo-elements)');
+  ok(css.includes('.slide.my-frost'), 'design renamed to the user class');
+  ok(!/\.slide\.frost(?![\w-])/.test(css), 'no stale .slide.frost selector remains');
+  ok(/Theme Builder overrides[\s\S]*--demotime-heading-color: #ff0000/.test(css), 'recolour emitted as a variable override');
+  // blank stays fully structured (no design)
+  const blank = PRESETS.find((p) => p.id === 'blank')!.create();
+  ok(!blank.basedOn, 'blank has no design');
+  ok(!generateCss(blank).includes('::before'), 'blank is plain structured CSS');
 }
 
 console.log('4. best-effort import of external CSS (espc25 style)');

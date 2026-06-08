@@ -49,10 +49,13 @@ export function parseCss(css: string): ParseResult {
   assign(model.colors, 'blockquoteBackground', resolveVar(vars, 'demotime-blockquote-background'));
   assign(model.colors, 'accent', resolveVar(vars, 'demotime-accent'));
 
-  // Direct root declarations (espc25 / hand-written style) take precedence.
-  assign(model.colors, 'background', rootDecls['background'] ?? rootDecls['background-color']);
-  assign(model.colors, 'text', rootDecls['color']);
-  if (rootDecls['font-family']) {
+  // Direct *concrete* root declarations (espc25 / hand-written style) take
+  // precedence. Skip values that are themselves `var(...)` references — the
+  // variable-driven built-in designs set `color: var(--demotime-color)` on the
+  // root, which must not clobber the value we just resolved from that variable.
+  assign(model.colors, 'background', concrete(rootDecls['background'] ?? rootDecls['background-color']));
+  assign(model.colors, 'text', concrete(rootDecls['color']));
+  if (concrete(rootDecls['font-family'])) {
     model.typography.fontFamily = rootDecls['font-family'];
   }
   const fontSize = parsePx(rootDecls['font-size']);
@@ -77,12 +80,12 @@ export function parseCss(css: string): ParseResult {
     };
   }
 
-  // Heading colour from an `h1` rule (flat or nested).
+  // Heading colour from an `h1` rule (flat or nested), concrete values only.
   const h1Decls = firstNonEmpty(
     leadingDeclarations(scan, escapeForRegex(`.slide.${name} h1`)),
     leadingDeclarations(scan, '(?:^|\\s)h1')
   );
-  assign(model.colors, 'heading', h1Decls['color']);
+  assign(model.colors, 'heading', concrete(h1Decls['color']));
 
   return { model, lossless: false, warnings };
 }
@@ -286,6 +289,12 @@ function assign<T extends object, K extends keyof T>(target: T, key: K, value: s
 
 function firstNonEmpty(...records: Record<string, string>[]): Record<string, string> {
   return records.find((r) => Object.keys(r).length > 0) ?? {};
+}
+
+/** A concrete value (not a `var(...)` reference, not empty), else undefined. */
+function concrete(value?: string): string | undefined {
+  const v = value?.trim();
+  return v && !v.startsWith('var(') ? v : undefined;
 }
 
 function escapeForRegex(value: string): string {

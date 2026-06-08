@@ -9,8 +9,11 @@ themes — so what you preview is what you get on your slides.
 
 ## Features
 
-- **Create** — start blank or from any of the seven built-in theme presets
-  (default, minimal, monomi, unnamed, quantum, frost, pixels).
+- **Create** — start blank (fully structured, from scratch) or from any of the
+  seven built-in themes (default, minimal, monomi, unnamed, quantum, frost,
+  pixels). Built-in presets reproduce the **real** theme design 1:1 (gradients,
+  badges, quote marks, pixel borders, …) and let you recolour them — globally or
+  per layout — via their CSS variables; fonts and a background image layer on top.
 - **Live preview** — a pixel-accurate 960×540 slide rendered with the real Demo
   Time DOM, switchable across every layout (default, intro, section, quote,
   image, video, image-left, image-right, two-columns) and an optional light
@@ -67,3 +70,12 @@ slide.
   created here, best-effort otherwise).
 - `src/lib/previewBase.ts` — a plain-CSS port of the webview's `preview.css`
   structural rules, used so the iframe preview matches real slides.
+- `src/lib/presetCss.generated.ts` — the real built-in themes compiled to
+  standalone plain CSS (the source of the built-in presets). Regenerate it from
+  `apps/vscode-extension/assets/styles/themes/*.css` after those change:
+
+  ```bash
+  node apps/theme-builder/scripts/compile-themes.mjs
+  ```
+
+  (resolves `@apply` via Tailwind and swaps `var(--vscode-*)` for concrete colours).

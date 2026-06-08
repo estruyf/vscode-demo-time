@@ -43,6 +43,15 @@ export function Editor({
 
   return (
     <div className="flex flex-col">
+      {model.basedOn && (
+        <p className="border-b border-[var(--color-line)] bg-[var(--color-brand)]/10 px-4 py-2.5 text-[11px] leading-snug text-amber-200/90">
+          Based on the <strong className="font-semibold">{model.displayName}</strong> design — its
+          layout, spacing and special effects are kept exactly as the built-in theme. Edit the
+          colours (globally here, or per layout below), fonts and background image to make it yours.
+          Start from <strong className="font-semibold">Blank</strong> for full structural control.
+        </p>
+      )}
+
       {/* ---------------------------------------------------------- Theme */}
       <Section title="Theme" icon={<Settings2 size={16} />}>
         <TextField
