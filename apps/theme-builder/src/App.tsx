@@ -8,11 +8,56 @@ import { Preview } from './components/Preview';
 import { ImportPanel } from './components/ImportPanel';
 import { ExportPanel } from './components/ExportPanel';
 
+const SIDEBAR_KEY = 'demotime.theme-builder.sidebar-width';
+const SIDEBAR_MIN = 280;
+const SIDEBAR_MAX = 640;
+const SIDEBAR_DEFAULT = 360;
+
 export default function App() {
   const api = useThemeModel();
   const [selectedLayout, setSelectedLayout] = React.useState<LayoutKey>('default');
   const [isLight, setIsLight] = React.useState(false);
   const [dialog, setDialog] = React.useState<'import' | 'export' | null>(null);
+
+  const [sidebarWidth, setSidebarWidth] = React.useState<number>(() => {
+    const saved = Number(localStorage.getItem(SIDEBAR_KEY));
+    return saved >= SIDEBAR_MIN && saved <= SIDEBAR_MAX ? saved : SIDEBAR_DEFAULT;
+  });
+
+  React.useEffect(() => {
+    try {
+      localStorage.setItem(SIDEBAR_KEY, String(sidebarWidth));
+    } catch {
+      // ignore storage failures (private mode)
+    }
+  }, [sidebarWidth]);
+
+  const startResize = React.useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    const onMove = (ev: MouseEvent) => {
+      setSidebarWidth(Math.min(SIDEBAR_MAX, Math.max(SIDEBAR_MIN, ev.clientX)));
+    };
+    const onUp = () => {
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  }, []);
+
+  const resizeByKey = React.useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      setSidebarWidth((w) => Math.max(SIDEBAR_MIN, w - 16));
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      setSidebarWidth((w) => Math.min(SIDEBAR_MAX, w + 16));
+    }
+  }, []);
 
   const applyPreset = (presetId: string) => {
     const preset = getPreset(presetId);
@@ -67,9 +112,25 @@ export default function App() {
       />
 
       <div className="flex min-h-0 flex-1">
-        <aside className="w-[360px] shrink-0 overflow-y-auto border-r border-[var(--color-line)] bg-[var(--color-surface-2)]">
+        <aside
+          style={{ width: sidebarWidth }}
+          className="shrink-0 overflow-y-auto bg-[var(--color-surface-2)]"
+        >
           <Editor api={api} selectedLayout={selectedLayout} />
         </aside>
+
+        <div
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="Resize sidebar"
+          tabIndex={0}
+          onMouseDown={startResize}
+          onKeyDown={resizeByKey}
+          className="group relative w-px shrink-0 cursor-col-resize bg-[var(--color-line)] outline-none"
+        >
+          {/* wider invisible hit area + hover/focus highlight */}
+          <span className="absolute inset-y-0 -left-1 -right-1 z-10 transition-colors group-hover:bg-[var(--color-brand)]/40 group-focus-visible:bg-[var(--color-brand)]/60" />
+        </div>
 
         <main className="min-w-0 flex-1">
           <Preview

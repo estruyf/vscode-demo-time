@@ -169,7 +169,7 @@ export function NumberField({
         <input
           type="range"
           aria-label={label ? `${label} slider` : undefined}
-          className="h-1.5 flex-1 cursor-pointer appearance-none rounded-full bg-[var(--color-line)] accent-[var(--color-brand)]"
+          className="h-1.5 min-w-0 flex-1 cursor-pointer appearance-none rounded-full bg-[var(--color-line)] accent-[var(--color-brand)]"
           min={min}
           max={max}
           step={step}
@@ -304,19 +304,19 @@ export function ColorField({
         />
       </div>
       {rgba && (
-        <div className="mt-2 flex items-center gap-3">
-          <span className="text-[11px] text-gray-500">Opacity</span>
+        <div className="mt-2 flex items-center gap-2">
           <input
             type="range"
             aria-label={label ? `${label} opacity` : 'opacity'}
-            className="h-1.5 flex-1 cursor-pointer appearance-none rounded-full bg-[var(--color-line)] accent-[var(--color-brand)]"
+            title="Opacity"
+            className="h-1.5 min-w-0 flex-1 cursor-pointer appearance-none rounded-full bg-[var(--color-line)] accent-[var(--color-brand)]"
             min={0}
             max={100}
             step={1}
             value={Math.round(rgba.a * 100)}
             onChange={(e) => onAlpha(Number(e.target.value))}
           />
-          <span className="w-9 text-right text-[11px] tabular-nums text-gray-400">
+          <span className="w-9 shrink-0 text-right text-[11px] tabular-nums text-gray-400">
             {Math.round(rgba.a * 100)}%
           </span>
         </div>
