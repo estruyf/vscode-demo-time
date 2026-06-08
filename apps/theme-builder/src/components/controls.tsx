@@ -78,6 +78,7 @@ export function TextField({
   onChange,
   placeholder,
   mono,
+  list,
 }: {
   label?: string;
   hint?: string;
@@ -85,7 +86,10 @@ export function TextField({
   onChange: (value: string) => void;
   placeholder?: string;
   mono?: boolean;
+  /** Optional autocomplete suggestions rendered via a <datalist>. */
+  list?: string[];
 }) {
+  const listId = React.useId();
   return (
     <Field label={label} hint={hint}>
       <input
@@ -94,7 +98,15 @@ export function TextField({
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
+        list={list ? listId : undefined}
       />
+      {list && (
+        <datalist id={listId}>
+          {list.map((item) => (
+            <option key={item} value={item} />
+          ))}
+        </datalist>
+      )}
     </Field>
   );
 }

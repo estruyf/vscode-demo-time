@@ -201,5 +201,33 @@ console.log('13. color opacity parse/format');
   ok(v === 'rgba(51, 102, 204, 0.25)', `pick + opacity composes ("${v}")`);
 }
 
+console.log('14. base font size scales text (em-relative to .slide__content)');
+{
+  const m = createDefaultTheme('fs');
+  m.typography.baseFontSize = 30;
+  const css = generateCss(m);
+  ok(/\.slide\.fs \.slide__content \{[^}]*font-size: 30px/.test(css), 'sets base size on .slide__content');
+  ok(/\.slide\.fs h1 \{[^}]*font-size: [\d.]+em/.test(css), 'headings use em so they scale with base');
+  ok(/\.slide\.fs p \{[^}]*font-size: [\d.]+em/.test(css), 'paragraph uses em');
+  ok(!/font-size: [\d.]+rem/.test(css), 'no rem-based font sizes remain (would ignore base)');
+}
+
+console.log('15. Google Fonts @import');
+{
+  const m = createDefaultTheme('gf');
+  m.typography.googleFont = 'Roboto Slab';
+  m.typography.fontFamily = '"Roboto Slab", sans-serif';
+  const css = generateCss(m);
+  ok(
+    css.includes(
+      "@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;500;600;700;800;900&display=swap')"
+    ),
+    'emits @import with the family (spaces → +) and weight range'
+  );
+  ok(css.indexOf('@import') < css.indexOf('.slide.gf {'), '@import precedes the style rules');
+  ok(css.includes('font-family: "Roboto Slab", sans-serif'), 'applies the chosen font family');
+  ok(!generateCss(createDefaultTheme('nogf')).includes('@import'), 'no @import when no Google Font set');
+}
+
 console.log(failures === 0 ? '\nALL PASSED' : `\n${failures} FAILURE(S)`);
 process.exit(failures === 0 ? 0 : 1);

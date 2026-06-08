@@ -7,7 +7,7 @@ import type {
   Typography,
 } from '../types/theme';
 import type { ThemeModelApi } from '../hooks/useThemeModel';
-import { FONT_OPTIONS, LAYOUTS } from '../lib/constants';
+import { FONT_OPTIONS, LAYOUTS, POPULAR_GOOGLE_FONTS } from '../lib/constants';
 import {
   ColorField,
   Field,
@@ -75,6 +75,20 @@ export function Editor({
               ? []
               : [{ label: 'Custom', value: '__custom' }]),
           ]}
+        />
+        <TextField
+          label="Google Font"
+          hint="Type a family from fonts.google.com — it's loaded automatically and applied."
+          value={model.typography.googleFont}
+          placeholder="e.g. Inter"
+          list={POPULAR_GOOGLE_FONTS}
+          onChange={(googleFont) =>
+            api.updateTypography(
+              googleFont.trim()
+                ? { googleFont, fontFamily: `"${googleFont.trim()}", sans-serif` }
+                : { googleFont }
+            )
+          }
         />
         <TextField
           label="Custom font stack"

@@ -50,7 +50,12 @@ export interface HeadingStyle {
 
 export interface Typography {
   fontFamily: string;
-  /** Base font size in px (applied to the slide root). */
+  /**
+   * Optional Google Font family name (e.g. "Inter"). When set, an @import for
+   * the font is emitted and it is woven into `fontFamily`.
+   */
+  googleFont: string;
+  /** Base font size in px. All element sizes are em-relative to this. */
   baseFontSize: number;
   h1: HeadingStyle;
   h2: HeadingStyle;

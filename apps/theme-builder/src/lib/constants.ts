@@ -39,4 +39,33 @@ export const FONT_OPTIONS: { label: string; value: string }[] = [
   { label: 'Verdana', value: 'Verdana, Geneva, sans-serif' },
 ];
 
+/** Popular Google Fonts offered as suggestions (the user can type any family). */
+export const POPULAR_GOOGLE_FONTS: string[] = [
+  'Inter',
+  'Roboto',
+  'Open Sans',
+  'Lato',
+  'Montserrat',
+  'Poppins',
+  'Raleway',
+  'Nunito',
+  'Work Sans',
+  'Source Sans 3',
+  'Oswald',
+  'Bebas Neue',
+  'Space Grotesk',
+  'Figtree',
+  'Outfit',
+  'Merriweather',
+  'Playfair Display',
+  'Lora',
+  'PT Serif',
+  'Roboto Slab',
+  'Roboto Mono',
+  'JetBrains Mono',
+  'Fira Code',
+  'IBM Plex Mono',
+  'Caveat',
+];
+
 export const STORAGE_KEY = 'demotime.theme-builder.v1';

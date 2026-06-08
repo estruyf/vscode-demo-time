@@ -127,6 +127,11 @@ export function generateCss(model: ThemeModel, options: GenerateOptions = {}): s
     'font-size': `${t.baseFontSize}px`,
   });
 
+  // The shared preview.css resets `.slide__content` to 1rem, which would stop
+  // the base font size from reaching the text. Re-assert it here so every
+  // em-based element size below scales with the base font size.
+  rs.set(`${root} .slide__content`, 'font-size', `${t.baseFontSize}px`);
+
   /* ---- slide-wide background image (on the layout box) ---- */
   applyBackgroundImage(rs, `${root} .slide__layout`, model.backgroundImage);
 
@@ -141,7 +146,7 @@ export function generateCss(model: ThemeModel, options: GenerateOptions = {}): s
   const globalBadge = isBadge(colors.headingBackground);
   for (const [tag, h] of headings) {
     rs.many(`${root} ${tag}`, {
-      'font-size': `${h.size}rem`,
+      'font-size': `${h.size}em`,
       'font-weight': h.weight,
       color: 'var(--demotime-heading-color)',
       background: 'var(--demotime-heading-background)',
@@ -151,7 +156,7 @@ export function generateCss(model: ThemeModel, options: GenerateOptions = {}): s
   }
 
   rs.many(`${root} p`, {
-    'font-size': `${t.paragraph.size}rem`,
+    'font-size': `${t.paragraph.size}em`,
     'line-height': t.paragraph.lineHeight,
     opacity: t.paragraph.opacity,
   });
@@ -166,8 +171,8 @@ export function generateCss(model: ThemeModel, options: GenerateOptions = {}): s
   rs.set(`${root} a:hover`, 'color', 'var(--demotime-link-active-color)');
 
   rs.many(`${root} ul, ${root} ol`, {
-    'font-size': `${t.list.size}rem`,
-    'margin-left': '1.5rem',
+    'font-size': `${t.list.size}em`,
+    'margin-left': '1.5em',
   });
   rs.set(`${root} ul`, 'list-style-type', 'disc');
   rs.set(`${root} ol`, 'list-style-type', 'decimal');
@@ -222,7 +227,20 @@ export function generateCss(model: ThemeModel, options: GenerateOptions = {}): s
     rs.set(`${lightRoot} a`, 'color', model.light.link);
   }
 
-  return banner(model, embedModel) + rs.toString() + '\n';
+  return banner(model, embedModel) + googleFontImport(t.googleFont) + rs.toString() + '\n';
+}
+
+/**
+ * An @import for a Google Font. Must appear before any style rules (only the
+ * banner comment precedes it), so it is emitted right after the banner.
+ */
+function googleFontImport(name: string): string {
+  const family = (name || '').trim();
+  if (!family) {
+    return '';
+  }
+  const encoded = family.replace(/\s+/g, '+');
+  return `@import url('https://fonts.googleapis.com/css2?family=${encoded}:wght@300;400;500;600;700;800;900&display=swap');\n\n`;
 }
 
 function generateLayout(
@@ -242,7 +260,7 @@ function generateLayout(
   rs.many(`${box} h1`, {
     color: layout.headingColor,
     background: layout.headingBackground,
-    'font-size': layout.headingSize > 0 ? `${layout.headingSize}rem` : undefined,
+    'font-size': layout.headingSize > 0 ? `${layout.headingSize}em` : undefined,
   });
   // Keep the "badge" treatment consistent for per-layout heading backgrounds:
   // give a new badge its padding, or clear an inherited global badge when the

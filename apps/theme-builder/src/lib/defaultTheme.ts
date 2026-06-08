@@ -116,6 +116,7 @@ export function createDefaultTheme(name = 'my-theme'): ThemeModel {
     backgroundImage: null,
     typography: {
       fontFamily: "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+      googleFont: '',
       baseFontSize: 24,
       h1: { size: 2.25, weight: 700 },
       h2: { size: 1.875, weight: 700 },
