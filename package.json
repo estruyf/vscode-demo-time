@@ -40,6 +40,8 @@
     "webviews:dev": "npx nx run webviews:dev",
     "vscode:dev": "npx nx run-many --target=dev --projects=vscode-demo-time,webviews,common --parallel",
     "vscode:build": "npx nx build vscode-demo-time",
+    "theme:dev": "npx nx run theme-builder:dev",
+    "theme:build": "npx nx build theme-builder",
     "test": "npx nx run-many -t test",
     "lint": "npx nx run-many -t lint",
     "sync:version:extension": "node ./scripts/sync-version-to-extension.js",
