@@ -27,7 +27,6 @@ export type LayoutKey = (typeof LAYOUT_KEYS)[number];
 
 export type AlignItems = 'start' | 'center' | 'end' | 'stretch';
 export type JustifyContent = 'start' | 'center' | 'end';
-export type TextAlign = 'left' | 'center' | 'right';
 export type BackgroundSize = 'cover' | 'contain' | 'auto';
 export type BackgroundRepeat = 'no-repeat' | 'repeat' | 'repeat-x' | 'repeat-y';
 
@@ -66,8 +65,6 @@ export interface Typography {
     /** rem */
     size: number;
     lineHeight: number;
-    /** 0-1 */
-    opacity: number;
   };
   list: {
     /** rem */
@@ -89,6 +86,8 @@ export interface ThemeColors {
   linkHover: string;
   blockquoteBorder: string;
   blockquoteBackground: string;
+  /** Quote (blockquote) text colour. */
+  blockquoteText: string;
   codeColor: string;
   codeBackground: string;
   /** Accent color used for small flourishes (underlines, markers). */
@@ -108,7 +107,6 @@ export interface LayoutSettings {
   justify: JustifyContent;
   /** Horizontal placement of the content block. */
   align: AlignItems;
-  textAlign: TextAlign;
   /** Content padding in rem. */
   padding: number;
   /** Optional heading size override (rem). 0 / undefined = use typography.h1. */
@@ -145,4 +143,9 @@ export interface ThemeModel {
   typography: Typography;
   layouts: Record<LayoutKey, LayoutSettings>;
   light: LightVariant;
+  /**
+   * Optional hand-written CSS appended verbatim after the generated rules.
+   * Allows fine-grained overrides that the visual editor cannot express.
+   */
+  customCss?: string;
 }

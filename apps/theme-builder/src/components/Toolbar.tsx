@@ -1,7 +1,16 @@
 import * as React from 'react';
-import { Download, FilePlus2, Upload, ChevronDown, Sparkles, Undo2, Redo2 } from 'lucide-react';
+import {
+  Download,
+  FilePlus2,
+  Upload,
+  ChevronDown,
+  RotateCcw,
+  Undo2,
+  Redo2,
+} from 'lucide-react';
 import { PRESETS } from '../lib/presets';
 import { btnGhost, btnPrimary, btnSecondary } from './controls';
+import { DemoTimeLogo } from './DemoTimeLogo';
 
 const iconBtn =
   'flex h-8 w-8 items-center justify-center rounded-md text-gray-300 hover:bg-[var(--color-surface-3)] hover:text-white disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent';
@@ -9,6 +18,7 @@ const iconBtn =
 export function Toolbar({
   onApplyPreset,
   onImport,
+  onReset,
   onExport,
   onUndo,
   onRedo,
@@ -17,6 +27,10 @@ export function Toolbar({
 }: {
   onApplyPreset: (presetId: string) => void;
   onImport: () => void;
+  /** Only available inside VS Code: copy colors from the active editor theme. */
+  onImportVscodeTheme?: () => void;
+  /** Reset the working theme back to the blank default. */
+  onReset: () => void;
   onExport: () => void;
   onUndo: () => void;
   onRedo: () => void;
@@ -40,14 +54,13 @@ export function Toolbar({
   }, [menuOpen]);
 
   return (
-    <header className="flex items-center gap-3 border-b border-[var(--color-line)] bg-[var(--color-surface-2)] px-4 py-2.5">
+    <header className="flex items-center gap-3 border-b border-line bg-surface-2 px-4 py-2.5">
       <div className="flex items-center gap-2">
-        <span className="flex h-7 w-7 items-center justify-center rounded-md bg-[var(--color-brand)] text-black">
-          <Sparkles size={16} />
+        <span className="flex h-7 w-7 items-center justify-center rounded-md text-white">
+          <DemoTimeLogo />
         </span>
         <div className="leading-tight">
-          <p className="text-sm font-semibold text-gray-100">Demo Time</p>
-          <p className="-mt-0.5 text-[11px] text-gray-400">Theme Builder</p>
+          <p className="text-sm font-semibold text-gray-100">Theme Builder</p>
         </div>
       </div>
 
@@ -102,6 +115,14 @@ export function Toolbar({
         )}
       </div>
 
+      <button
+        type="button"
+        className={btnSecondary}
+        onClick={onReset}
+        title="Reset to a blank default theme"
+      >
+        <RotateCcw size={15} /> Reset
+      </button>
       <button type="button" className={btnSecondary} onClick={onImport}>
         <Upload size={15} /> Import
       </button>

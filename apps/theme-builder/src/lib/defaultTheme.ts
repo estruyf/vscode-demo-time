@@ -1,16 +1,11 @@
-import {
-  LAYOUT_KEYS,
-  type LayoutKey,
-  type LayoutSettings,
-  type ThemeModel,
-} from '../types/theme';
+import { LAYOUT_KEYS, type LayoutKey, type LayoutSettings, type ThemeModel } from '../types/theme';
+import { vscodeThemeColors } from './importVscodeTheme';
 
 /** Sensible per-layout defaults that mirror the Demo Time `default` theme. */
 export function defaultLayoutSettings(key: LayoutKey): LayoutSettings {
   const centered: Partial<LayoutSettings> = {
     justify: 'center',
     align: 'center',
-    textAlign: 'center',
   };
 
   const base: LayoutSettings = {
@@ -20,7 +15,6 @@ export function defaultLayoutSettings(key: LayoutKey): LayoutSettings {
     headingBackground: '',
     justify: 'start',
     align: 'stretch',
-    textAlign: 'left',
     padding: 2,
     headingSize: 0,
     backgroundImage: null,
@@ -32,7 +26,7 @@ export function defaultLayoutSettings(key: LayoutKey): LayoutSettings {
     case 'section':
       return { ...base, ...centered, headingSize: 3.75 };
     case 'quote':
-      return { ...base, justify: 'center', align: 'start', textAlign: 'center', headingSize: 3 };
+      return { ...base, justify: 'center', align: 'start', headingSize: 3 };
     case 'image':
       return { ...base, ...centered };
     case 'video':
@@ -54,7 +48,7 @@ function buildLayouts(): Record<LayoutKey, LayoutSettings> {
       acc[key] = defaultLayoutSettings(key);
       return acc;
     },
-    {} as Record<LayoutKey, LayoutSettings>
+    {} as Record<LayoutKey, LayoutSettings>,
   );
 }
 
@@ -92,38 +86,27 @@ export function normalizeModel(raw: unknown): ThemeModel | null {
 }
 
 /**
- * A clean, neutral dark starting point. Looks good on its own and is an easy
- * canvas to recolor.
+ * A clean starting point that follows the active VS Code theme by default
+ * (colors are `var(--vscode-…)` references with neutral-dark fallbacks). Picking
+ * a concrete color in the editor overrides the reference for that color only.
  */
 export function createDefaultTheme(name = 'my-theme'): ThemeModel {
   return {
     version: 1,
     name,
     displayName: 'My Theme',
-    colors: {
-      background: '#1e1e1e',
-      text: '#e6e6e6',
-      heading: '#ffffff',
-      headingBackground: 'transparent',
-      link: '#4daafc',
-      linkHover: '#82c5ff',
-      blockquoteBorder: '#4daafc',
-      blockquoteBackground: 'rgba(77, 170, 252, 0.08)',
-      codeColor: '#e6e6e6',
-      codeBackground: 'rgba(255, 255, 255, 0.08)',
-      accent: '#4daafc',
-    },
+    colors: vscodeThemeColors(),
     backgroundImage: null,
     typography: {
-      fontFamily: "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+      fontFamily: '',
       googleFont: '',
-      baseFontSize: 24,
+      baseFontSize: 12,
       h1: { size: 2.25, weight: 700 },
       h2: { size: 1.875, weight: 700 },
       h3: { size: 1.5, weight: 600 },
       h4: { size: 1.25, weight: 600 },
       h5: { size: 1.125, weight: 600 },
-      paragraph: { size: 1, lineHeight: 1.6, opacity: 0.9 },
+      paragraph: { size: 1, lineHeight: 1.6 },
       list: { size: 1, markerColor: '' },
       link: { underline: true },
     },
@@ -135,5 +118,6 @@ export function createDefaultTheme(name = 'my-theme'): ThemeModel {
       heading: '#000000',
       link: '#0a66c2',
     },
+    customCss: '',
   };
 }

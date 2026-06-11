@@ -1790,7 +1790,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@demotime/theme-builder@workspace:apps/theme-builder":
+"@demotime/theme-builder@npm:*, @demotime/theme-builder@workspace:apps/theme-builder":
   version: 0.0.0-use.local
   resolution: "@demotime/theme-builder@workspace:apps/theme-builder"
   dependencies:
@@ -1813,6 +1813,7 @@ __metadata:
   resolution: "@demotime/webviews@workspace:apps/webviews"
   dependencies:
     "@demotime/common": "npm:*"
+    "@demotime/theme-builder": "npm:*"
     "@eslint/js": "npm:^9.9.1"
     "@estruyf/vscode": "npm:^1.1.0"
     "@tailwindcss/postcss": "npm:^4.1.12"

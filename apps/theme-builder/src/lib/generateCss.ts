@@ -4,6 +4,7 @@ import type {
   JustifyContent,
   LayoutKey,
   LayoutSettings,
+  ThemeColors,
   ThemeModel,
 } from '../types/theme';
 import { LAYOUT_KEYS } from '../types/theme';
@@ -87,7 +88,55 @@ function applyBackgroundImage(rs: RuleSet, selector: string, img: BackgroundImag
   });
 }
 
+/** Inline `code` + `pre` code-block colours. Emitted by both code paths so the
+ * editor's "Code color" / "Code bg" controls take effect, even on a design that
+ * otherwise leaves code styling to the shared preview.css. */
+function applyCodeStyles(rs: RuleSet, root: string, colors: ThemeColors) {
+  rs.many(`${root} code`, {
+    color: colors.codeColor,
+    'background-color': colors.codeBackground,
+    padding: '1px 5px',
+    'border-radius': '4px',
+  });
+  rs.many(`${root} pre`, {
+    padding: '1rem',
+    'border-radius': '6px',
+    'background-color': colors.codeBackground,
+    overflow: 'auto',
+  });
+  rs.many(`${root} pre code`, { 'background-color': 'transparent', padding: '0' });
+}
+
 const CENTERED_LAYOUTS: LayoutKey[] = ['intro', 'section', 'quote', 'image', 'video'];
+
+/**
+ * Emit just a per-layout background image (no structural CSS), placed exactly
+ * where `generateLayout` puts it. Used by the design-overlay path, which must
+ * leave the built-in design's layout/spacing untouched.
+ */
+function applyLayoutBackgroundImage(
+  rs: RuleSet,
+  root: string,
+  key: LayoutKey,
+  layout: LayoutSettings,
+) {
+  const img = layout.backgroundImage;
+  if (!img || !img.url) {
+    return;
+  }
+  if (key === 'image-left' || key === 'image-right') {
+    const imageSel =
+      key === 'image-left'
+        ? `${root} .${key} .slide__image_left`
+        : `${root} .${key} .slide__image_right`;
+    rs.set(imageSel, 'background-image', backgroundImageValue(img));
+    rs.set(imageSel, 'background-size', `${img.size} !important`);
+    rs.set(imageSel, 'background-position', `${img.position} !important`);
+    rs.set(imageSel, 'background-repeat', `${img.repeat} !important`);
+    return;
+  }
+  applyBackgroundImage(rs, `${root} .${key}`, img);
+}
 
 const BADGE_PADDING = '0.1em 0.35em';
 
@@ -127,11 +176,12 @@ export function generateCss(model: ThemeModel, options: GenerateOptions = {}): s
     '--demotime-link-active-color': colors.linkHover,
     '--demotime-blockquote-border': colors.blockquoteBorder,
     '--demotime-blockquote-background': colors.blockquoteBackground,
+    '--demotime-blockquote-color': colors.blockquoteText,
     '--demotime-accent': colors.accent,
     /* root appearance */
     background: colors.background,
     color: colors.text,
-    'font-family': t.fontFamily,
+    'font-family': t.fontFamily || 'var(--vscode-font-family)',
     'font-size': `${t.baseFontSize}px`,
   });
 
@@ -144,17 +194,18 @@ export function generateCss(model: ThemeModel, options: GenerateOptions = {}): s
   applyBackgroundImage(rs, `${root} .slide__layout`, model.backgroundImage);
 
   /* ---- typography / base elements ---- */
-  const headings: [string, { size: number; weight: number }][] = [
-    ['h1', t.h1],
-    ['h2', t.h2],
-    ['h3', t.h3],
-    ['h4', t.h4],
-    ['h5', t.h5],
+  const headings: [string, number, { size: number; weight: number }][] = [
+    ['h1', 1, t.h1],
+    ['h2', 2, t.h2],
+    ['h3', 3, t.h3],
+    ['h4', 4, t.h4],
+    ['h5', 5, t.h5],
   ];
   const globalBadge = isBadge(colors.headingBackground);
-  for (const [tag, h] of headings) {
+  for (const [tag, n, h] of headings) {
+    rs.set(root, `--demotime-heading-${n}`, `${h.size}em`);
     rs.many(`${root} ${tag}`, {
-      'font-size': `${h.size}em`,
+      'font-size': `var(--demotime-heading-${n})`,
       'font-weight': h.weight,
       color: 'var(--demotime-heading-color)',
       background: 'var(--demotime-heading-background)',
@@ -166,11 +217,8 @@ export function generateCss(model: ThemeModel, options: GenerateOptions = {}): s
   rs.many(`${root} p`, {
     'font-size': `${t.paragraph.size}em`,
     'line-height': t.paragraph.lineHeight,
-    opacity: t.paragraph.opacity,
+    opacity: 1,
   });
-  // Images and links inside paragraphs should stay fully opaque.
-  rs.set(`${root} p:has(> img)`, 'opacity', '1');
-  rs.set(`${root} p:has(> a)`, 'opacity', '1');
 
   rs.many(`${root} a`, {
     color: 'var(--demotime-link-color)',
@@ -195,22 +243,11 @@ export function generateCss(model: ThemeModel, options: GenerateOptions = {}): s
   rs.many(`${root} blockquote`, {
     'border-left': '4px solid var(--demotime-blockquote-border)',
     background: 'var(--demotime-blockquote-background)',
+    color: 'var(--demotime-blockquote-color)',
     padding: '0.5rem 1rem',
   });
 
-  rs.many(`${root} code`, {
-    color: colors.codeColor,
-    'background-color': colors.codeBackground,
-    padding: '1px 5px',
-    'border-radius': '4px',
-  });
-  rs.many(`${root} pre`, {
-    padding: '1rem',
-    'border-radius': '6px',
-    'background-color': colors.codeBackground,
-    overflow: 'auto',
-  });
-  rs.many(`${root} pre code`, { 'background-color': 'transparent', padding: '0' });
+  applyCodeStyles(rs, root, colors);
 
   rs.many(`${root} img`, { 'max-width': '100%', height: 'auto' });
 
@@ -231,11 +268,15 @@ export function generateCss(model: ThemeModel, options: GenerateOptions = {}): s
       background: model.light.background,
       color: model.light.text,
     });
-    rs.set(`${lightRoot} h1, ${lightRoot} h2, ${lightRoot} h3, ${lightRoot} h4, ${lightRoot} h5`, 'color', model.light.heading);
+    rs.set(
+      `${lightRoot} h1, ${lightRoot} h2, ${lightRoot} h3, ${lightRoot} h4, ${lightRoot} h5`,
+      'color',
+      model.light.heading,
+    );
     rs.set(`${lightRoot} a`, 'color', model.light.link);
   }
 
-  return banner(model, embedModel) + googleFontImport(t.googleFont) + rs.toString() + '\n';
+  return banner(model, embedModel) + googleFontImport(t.googleFont) + rs.toString() + customCssBlock(model) + '\n';
 }
 
 /**
@@ -247,7 +288,7 @@ function googleFontImport(name: string): string {
   if (!family) {
     return '';
   }
-  const encoded = family.replace(/\s+/g, '+');
+  const encoded = family.replace(/\s+/g, '+').replace(/'/g, '%27');
   return `@import url('https://fonts.googleapis.com/css2?family=${encoded}:wght@300;400;500;600;700;800;900&display=swap');\n\n`;
 }
 
@@ -262,14 +303,18 @@ function generateOverlay(
   model: ThemeModel,
   name: string,
   root: string,
-  embedModel: boolean
+  embedModel: boolean,
 ): string {
   const base = PRESET_CSS[model.basedOn!];
-  // Rename `.slide.<basedOn>` (and `.slide.<basedOn>.light` etc) to the user's class.
+  // Rename `.slide.<basedOn>` (and `.slide.<basedOn>.light` etc) to the user's class,
+  // and patch --demotime-font-size in-place so the value is authoritative in the first block.
   const token = model.basedOn!.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const design = base.replace(new RegExp(`\\.slide\\.${token}(?![\\w-])`, 'g'), `.slide.${name}`);
+  const { typography: t } = model;
+  const design = base
+    .replace(new RegExp(`\\.slide\\.${token}(?![\\w-])`, 'g'), `.slide.${name}`)
+    .replace(/--demotime-font-size:\s*[^;]+;/, `--demotime-font-size: ${t.baseFontSize}px;`);
 
-  const { colors, typography: t } = model;
+  const { colors } = model;
   const rs = new RuleSet();
 
   rs.many(root, {
@@ -281,7 +326,13 @@ function generateOverlay(
     '--demotime-link-active-color': colors.linkHover,
     '--demotime-blockquote-border': colors.blockquoteBorder,
     '--demotime-blockquote-background': colors.blockquoteBackground,
+    '--demotime-blockquote-color': colors.blockquoteText,
     '--demotime-accent': colors.accent,
+    '--demotime-heading-1': `${t.h1.size}em`,
+    '--demotime-heading-2': `${t.h2.size}em`,
+    '--demotime-heading-3': `${t.h3.size}em`,
+    '--demotime-heading-4': `${t.h4.size}em`,
+    '--demotime-heading-5': `${t.h5.size}em`,
   });
 
   // Per-layout colour overrides map to the design's `--demotime-<layout>-*` vars
@@ -294,6 +345,35 @@ function generateOverlay(
     rs.set(root, `--demotime-${key}-heading-background`, layout.headingBackground);
   }
 
+  // Re-assert font-size on .slide__content to beat preview.css's reset to 1rem.
+  rs.set(`${root} .slide__content`, 'font-size', `${t.baseFontSize}px`);
+
+  // Override h1–h5 font sizes using the heading variables so the typography
+  // sliders work and sizes scale with the base font size.
+  for (let n = 1; n <= 5; n++) {
+    rs.set(`${root} h${n}`, 'font-size', `var(--demotime-heading-${n})`);
+  }
+
+  // Prevent the right column in two-columns layouts from being pushed down.
+  const twoColCell = `${root} .two-columns .slide__left, ${root} .two-columns .slide__right`;
+  rs.set(twoColCell, 'margin-top', '0 !important');
+
+  // Paragraph typography.
+  rs.many(`${root} p`, {
+    'font-size': `${t.paragraph.size}em`,
+    'line-height': t.paragraph.lineHeight,
+    opacity: 1,
+  });
+
+  // Link appearance.
+  rs.set(`${root} a`, 'text-decoration', t.link.underline ? 'underline' : 'none');
+
+  // List typography.
+  rs.set(`${root} ul, ${root} ol`, 'font-size', `${t.list.size}em`);
+  if (t.list.markerColor) {
+    rs.set(`${root} li::marker`, 'color', t.list.markerColor);
+  }
+
   // A chosen Google Font overrides the design's font family.
   if (t.googleFont && t.googleFont.trim()) {
     rs.set(root, 'font-family', t.fontFamily);
@@ -302,9 +382,25 @@ function generateOverlay(
   // An added background image layers onto the slide.
   applyBackgroundImage(rs, `${root} .slide__layout`, model.backgroundImage);
 
+  // The built-in design owns every layout's structure and spacing, so we do NOT
+  // re-impose our own flex / padding / inter-block spacing here. Doing so fights
+  // the design and — because a flex container disables margin-collapsing — makes
+  // the design's spacing and ours stack, doubling the gaps between blocks. The
+  // editor's colour controls already flow through the `--demotime-*` variables
+  // above; here we only layer on any per-layout background image the user added.
+  for (const key of LAYOUT_KEYS) {
+    applyLayoutBackgroundImage(rs, root, key, model.layouts[key]);
+  }
+
+  // Quote text + inline code / code-block colours. The built-in designs leave
+  // these to the shared preview.css, so emit them here for the editor's "Quote
+  // text", "Code color" and "Code bg" controls to take effect.
+  rs.set(`${root} blockquote`, 'color', 'var(--demotime-blockquote-color)');
+  applyCodeStyles(rs, root, colors);
+
   const overrides = rs.toString();
   const overrideBlock = overrides ? `\n\n/* Theme Builder overrides */\n${overrides}` : '';
-  return banner(model, embedModel) + googleFontImport(t.googleFont) + design + overrideBlock + '\n';
+  return banner(model, embedModel) + googleFontImport(t.googleFont) + design + overrideBlock + customCssBlock(model) + '\n';
 }
 
 function generateLayout(
@@ -312,7 +408,7 @@ function generateLayout(
   root: string,
   key: LayoutKey,
   layout: LayoutSettings,
-  globalBadge: boolean
+  globalBadge: boolean,
 ) {
   const box = `${root} .${key}`;
   const inner = `${box} .slide__content__inner`;
@@ -352,13 +448,17 @@ function generateLayout(
       gap: '2rem',
     });
     rs.set(`${inner}:has(> .slide__left) > :not([hidden]) ~ :not([hidden])`, 'margin-top', '0');
-    rs.many(`${box} .slide__left, ${box} .slide__right`, { width: '100%' });
-    rs.set(`${box} .slide__left > * ~ *, ${box} .slide__right > * ~ *`, 'margin-top', '0.75rem');
+    rs.many(`${box} .slide__left, ${box} .slide__right`, {
+      width: '100%',
+      'margin-top': '0 !important',
+    });
+    rs.set(`${box} .slide__left > * ~ *, ${box} .slide__right > * ~ *`, 'margin-top', '1rem');
     return;
   }
 
   if (key === 'image-left' || key === 'image-right') {
-    const imageSel = key === 'image-left' ? `${box} .slide__image_left` : `${box} .slide__image_right`;
+    const imageSel =
+      key === 'image-left' ? `${box} .slide__image_left` : `${box} .slide__image_right`;
     // The actual image usually comes from the slide's `image` front matter (set
     // as an inline style at runtime). The theme controls how it is displayed, so
     // fit/position/repeat use !important to win over that inline style — exactly
@@ -387,7 +487,6 @@ function generateLayout(
     'flex-direction': 'column',
     'justify-content': JUSTIFY[layout.justify],
     'align-items': ALIGN[layout.align],
-    'text-align': layout.textAlign,
     padding: `${layout.padding}rem`,
   });
   spacing(rs, inner);
@@ -449,6 +548,14 @@ function banner(model: ThemeModel, embedModel: boolean): string {
     out += `/* ${MODEL_MARKER} ${encodeModel(model)} */\n`;
   }
   return out + '\n';
+}
+
+function customCssBlock(model: ThemeModel): string {
+  const css = (model.customCss || '').trim();
+  if (!css) {
+    return '';
+  }
+  return `\n\n/* Custom CSS */\n${css}\n`;
 }
 
 /** Make a user-provided name safe to use as a CSS class. */

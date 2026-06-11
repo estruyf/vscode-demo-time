@@ -47,6 +47,7 @@ export function parseCss(css: string): ParseResult {
   assign(model.colors, 'linkHover', resolveVar(vars, 'demotime-link-active-color'));
   assign(model.colors, 'blockquoteBorder', resolveVar(vars, 'demotime-blockquote-border'));
   assign(model.colors, 'blockquoteBackground', resolveVar(vars, 'demotime-blockquote-background'));
+  assign(model.colors, 'blockquoteText', resolveVar(vars, 'demotime-blockquote-color'));
   assign(model.colors, 'accent', resolveVar(vars, 'demotime-accent'));
 
   // Direct *concrete* root declarations (espc25 / hand-written style) take
@@ -160,20 +161,33 @@ function readValue(s: string, start: number): { value: string; end: number } {
 }
 
 /**
- * Resolve a variable to a concrete value, following one level of
- * `var(--other)` indirection (common in the built-in themes).
+ * Resolve a `--demotime-*` variable to the value the editor should store.
+ *
+ * Internal indirection between theme variables (e.g.
+ * `--demotime-default-background: var(--demotime-background)`) is followed to a
+ * concrete value. A reference to an *external* variable — the `--vscode-*`
+ * editor-theme variables the built-in designs lean on — is preserved verbatim
+ * (with its fallback), so an imported/preset theme keeps following the active
+ * VS Code theme instead of being flattened to the fallback colour.
  */
 function resolveVar(vars: Record<string, string>, name: string, depth = 0): string | undefined {
   const value = vars[name];
   if (!value || depth > 5) {
     return undefined;
   }
-  const varRef = value.match(/^var\(\s*--([\w-]+)\s*(?:,\s*([^)]+))?\)$/);
+  const varRef = value.match(/^var\(\s*--([\w-]+)\s*(?:,\s*([\s\S]+))?\)$/);
   if (varRef) {
-    const resolved = resolveVar(vars, varRef[1], depth + 1);
-    return resolved ?? varRef[2]?.trim();
+    const inner = varRef[1];
+    // Another theme variable we know about → follow it to a concrete value.
+    if (inner in vars) {
+      return resolveVar(vars, inner, depth + 1) ?? varRef[2]?.trim();
+    }
+    // External variable (e.g. --vscode-editor-background): keep the dynamic
+    // reference so the colour tracks the editor theme.
+    return value;
   }
-  // Skip values we can't render as a swatch (e.g. var() pointing at vscode vars).
+  // A compound value we can't cleanly read as a single colour (e.g. two var()s
+  // or a shorthand) → leave the default in place.
   if (value.startsWith('var(')) {
     return undefined;
   }

@@ -1,5 +1,15 @@
 import type { LayoutKey } from '../types/theme';
 
+/** Platform-appropriate font family mirroring VS Code's DEFAULT_FONT_FAMILY. */
+const _ua = navigator.userAgent;
+const _isWindows = _ua.includes('Windows');
+const _isMacintosh = _ua.includes('Macintosh');
+export const DEFAULT_FONT_FAMILY = _isWindows
+  ? '"Segoe WPC", "Segoe UI", sans-serif'
+  : _isMacintosh
+    ? '-apple-system, BlinkMacSystemFont, sans-serif'
+    : 'system-ui, "Ubuntu", "Droid Sans", sans-serif';
+
 /** Demo Time slide canvas size (16:9). Matches MarkdownPreview's slide__container. */
 export const SLIDE_WIDTH = 960;
 export const SLIDE_HEIGHT = 540;
@@ -28,6 +38,7 @@ export const LAYOUTS: LayoutMeta[] = [
 
 /** A curated list of web-safe / common presentation font stacks. */
 export const FONT_OPTIONS: { label: string; value: string }[] = [
+  { label: 'VS Code default', value: '' },
   { label: 'System sans-serif', value: "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" },
   { label: 'Arial', value: "'Arial', sans-serif" },
   { label: 'Helvetica', value: "'Helvetica Neue', Helvetica, Arial, sans-serif" },

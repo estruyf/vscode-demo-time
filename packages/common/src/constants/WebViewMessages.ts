@@ -217,6 +217,9 @@ export const WebViewMessages = {
       getDownloadedSnippets: 'getGalleryDownloadedSnippets',
       downloadSnippet: 'downloadGallerySnippet',
     },
+    themeBuilder: {
+      exportTheme: 'themeBuilderExportTheme',
+    },
     presenter: {
       checkNextDemo: 'checkPresenterNextDemo',
     },

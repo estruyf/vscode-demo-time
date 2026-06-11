@@ -6,6 +6,7 @@ import { LAYOUTS, SLIDE_HEIGHT, SLIDE_WIDTH } from '../lib/constants';
 import { generateCss, sanitizeName } from '../lib/generateCss';
 import { getSlideInner, placeholderImage } from '../lib/sampleContent';
 import { buildPreviewDocument } from '../lib/previewBase';
+import { collectVscodeVariables } from '../lib/importVscodeTheme';
 
 // A fallback image for the image-left/right columns; the theme can override it.
 const PREVIEW_CSS = `.slide__image_left,.slide__image_right{background-image:url('${placeholderImage()}');background-size:cover;background-position:center;background-repeat:no-repeat;}`;
@@ -36,6 +37,21 @@ export function Preview({
   const themeCssRef = React.useRef(themeCss);
   themeCssRef.current = themeCss;
 
+  // The VS Code editor-theme variables, forwarded into the sandboxed iframe so
+  // the theme's `var(--vscode-…)` references resolve. Re-read when the active
+  // VS Code theme changes (it rewrites the inline vars on the host <html>).
+  const [rootVars, setRootVars] = React.useState(collectVscodeVariables);
+  const rootVarsRef = React.useRef(rootVars);
+  rootVarsRef.current = rootVars;
+  React.useEffect(() => {
+    const observer = new MutationObserver(() => setRootVars(collectVscodeVariables()));
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['style', 'class'],
+    });
+    return () => observer.disconnect();
+  }, []);
+
   const slideInner = React.useMemo(() => getSlideInner(selectedLayout), [selectedLayout]);
 
   // Rebuild the document only when the *structure* changes (layout, variant,
@@ -50,6 +66,7 @@ export function Preview({
         slideInner,
         isLight: effectiveLight,
         previewCss: PREVIEW_CSS,
+        rootVars: rootVarsRef.current,
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [themeName, selectedLayout, slideInner, effectiveLight]
@@ -62,6 +79,15 @@ export function Preview({
       styleEl.textContent = themeCss;
     }
   }, [themeCss]);
+
+  // Keep the forwarded VS Code variables live too (e.g. on a theme switch),
+  // without rebuilding the whole document.
+  React.useEffect(() => {
+    const styleEl = iframeRef.current?.contentDocument?.getElementById('vscode-vars');
+    if (styleEl) {
+      styleEl.textContent = `:root{${rootVars}}`;
+    }
+  }, [rootVars]);
 
   // Fit the 960×540 slide into the available stage area.
   React.useEffect(() => {
@@ -147,11 +173,16 @@ export function Preview({
             srcDoc={doc}
             sandbox="allow-same-origin"
             onLoad={() => {
-              // Re-apply the latest CSS after every (re)load so an edit made
-              // during a structure rebuild can't be lost.
-              const el = iframeRef.current?.contentDocument?.getElementById('theme');
-              if (el) {
-                el.textContent = themeCssRef.current;
+              // Re-apply the latest CSS + forwarded variables after every
+              // (re)load so an edit made during a structure rebuild can't be lost.
+              const frameDoc = iframeRef.current?.contentDocument;
+              const themeEl = frameDoc?.getElementById('theme');
+              if (themeEl) {
+                themeEl.textContent = themeCssRef.current;
+              }
+              const varsEl = frameDoc?.getElementById('vscode-vars');
+              if (varsEl) {
+                varsEl.textContent = `:root{${rootVarsRef.current}}`;
               }
             }}
             style={{ width: SLIDE_WIDTH, height: SLIDE_HEIGHT, border: 0, display: 'block' }}

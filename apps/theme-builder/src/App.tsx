@@ -2,18 +2,28 @@ import * as React from 'react';
 import type { LayoutKey, ThemeModel } from './types/theme';
 import { useThemeModel } from './hooks/useThemeModel';
 import { getPreset } from './lib/presets';
+import { createDefaultTheme } from './lib/defaultTheme';
+import { isVsCode, vscodeThemeColors } from './lib/importVscodeTheme';
 import { Toolbar } from './components/Toolbar';
 import { Editor } from './components/Editor';
 import { Preview } from './components/Preview';
 import { ImportPanel } from './components/ImportPanel';
-import { ExportPanel } from './components/ExportPanel';
+import { ExportPanel, type ExportResult } from './components/ExportPanel';
 
 const SIDEBAR_KEY = 'demotime.theme-builder.sidebar-width';
 const SIDEBAR_MIN = 280;
 const SIDEBAR_MAX = 640;
 const SIDEBAR_DEFAULT = 360;
 
-export default function App() {
+interface AppProps {
+  /**
+   * When provided (inside VS Code), exporting saves the theme into the
+   * workspace instead of downloading it as a file.
+   */
+  onExportTheme?: (filename: string, css: string, setAsDefault: boolean) => Promise<ExportResult>;
+}
+
+export default function App({ onExportTheme }: AppProps) {
   const api = useThemeModel();
   const [selectedLayout, setSelectedLayout] = React.useState<LayoutKey>('default');
   const [isLight, setIsLight] = React.useState(false);
@@ -64,11 +74,17 @@ export default function App() {
     if (!preset) {
       return;
     }
-    if (window.confirm('Start a new theme from this preset? Your current theme will be replaced.')) {
-      api.setModel(preset.create());
-      setSelectedLayout('default');
-      setIsLight(false);
+    // window.confirm is blocked in VS Code webviews (it silently returns a
+    // falsy value), so apply directly there — undo restores the previous theme.
+    if (
+      !isVsCode &&
+      !window.confirm('Start a new theme from this preset? Your current theme will be replaced.')
+    ) {
+      return;
     }
+    api.setModel(preset.create());
+    setSelectedLayout('default');
+    setIsLight(false);
   };
 
   const importModel = (model: ThemeModel) => {
@@ -76,6 +92,20 @@ export default function App() {
     setSelectedLayout('default');
     setIsLight(false);
     setDialog(null);
+  };
+
+  const resetToDefault = () => {
+    // window.confirm is blocked in VS Code webviews — apply directly there;
+    // undo restores the previous theme either way.
+    if (
+      !isVsCode &&
+      !window.confirm('Reset to a blank default theme? Your current theme will be replaced.')
+    ) {
+      return;
+    }
+    api.setModel(createDefaultTheme());
+    setSelectedLayout('default');
+    setIsLight(false);
   };
 
   // Keyboard undo/redo. Skip when typing in a textarea (the import paste box),
@@ -104,6 +134,10 @@ export default function App() {
       <Toolbar
         onApplyPreset={applyPreset}
         onImport={() => setDialog('import')}
+        onImportVscodeTheme={
+          isVsCode ? () => api.updateColors(vscodeThemeColors()) : undefined
+        }
+        onReset={resetToDefault}
         onExport={() => setDialog('export')}
         onUndo={api.undo}
         onRedo={api.redo}
@@ -147,7 +181,7 @@ export default function App() {
         <ImportPanel onImport={importModel} onClose={() => setDialog(null)} />
       )}
       {dialog === 'export' && (
-        <ExportPanel model={api.model} onClose={() => setDialog(null)} />
+        <ExportPanel model={api.model} onClose={() => setDialog(null)} onExport={onExportTheme} />
       )}
     </div>
   );

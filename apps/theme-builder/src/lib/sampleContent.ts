@@ -90,11 +90,11 @@ export function getSlideInner(layout: LayoutKey): string {
     case 'two-columns':
       return contentInner(`
         <div class="slide__left">
-          <h3>Left column</h3>
+          <h1>Left column</h1>
           <ul><li>Item A</li><li>Item B</li></ul>
         </div>
         <div class="slide__right">
-          <h3>Right column</h3>
+          <h1>Right column</h1>
           <ul><li>Item C</li><li>Item D</li></ul>
         </div>
       `);

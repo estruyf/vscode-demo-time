@@ -188,11 +188,11 @@ export function NumberField({
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
         />
-        <div className="flex w-20 items-center gap-1">
+        <div className="flex w-24 items-center gap-1">
           <input
             type="number"
             aria-label={label ? `${label} value` : undefined}
-            className={clsx(inputClass, 'px-1.5 py-1 text-right')}
+            className={clsx(inputClass, 'px-1.5 py-1 text-right [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none')}
             min={min}
             max={max}
             step={step}

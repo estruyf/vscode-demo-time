@@ -31,8 +31,8 @@ function fromDesign(id: string, label: string, description: string): Preset {
       // editor shows real values; we then mark it as based on that design.
       const model = parseCss(PRESET_CSS[id]).model;
       model.basedOn = id;
-      model.name = id;
-      model.displayName = label;
+      model.name = `custom-${id}`;
+      model.displayName = `Custom ${label}`;
       return model;
     },
   };

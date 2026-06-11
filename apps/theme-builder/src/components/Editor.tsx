@@ -1,9 +1,8 @@
-import { Palette, Type, Image as ImageIcon, LayoutTemplate, Settings2 } from 'lucide-react';
+import { Palette, Type, Image as ImageIcon, LayoutTemplate, Settings2, Code2 } from 'lucide-react';
 import type {
   AlignItems,
   JustifyContent,
   LayoutKey,
-  TextAlign,
   Typography,
 } from '../types/theme';
 import type { ThemeModelApi } from '../hooks/useThemeModel';
@@ -114,7 +113,7 @@ export function Editor({
           unit="px"
         />
 
-        <div className="rounded-md border border-[var(--color-line)] p-3">
+        <div className="hidden rounded-md border border-[var(--color-line)] p-3">
           <Toggle
             label="Add light variant (.light)"
             checked={model.light.enabled}
@@ -157,6 +156,7 @@ export function Editor({
           <ColorField label="Accent" value={model.colors.accent} onChange={(v) => api.updateColors({ accent: v })} />
           <ColorField label="Link" value={model.colors.link} onChange={(v) => api.updateColors({ link: v })} />
           <ColorField label="Link hover" value={model.colors.linkHover} onChange={(v) => api.updateColors({ linkHover: v })} />
+          <ColorField label="Quote text" value={model.colors.blockquoteText} onChange={(v) => api.updateColors({ blockquoteText: v })} />
           <ColorField label="Quote border" value={model.colors.blockquoteBorder} onChange={(v) => api.updateColors({ blockquoteBorder: v })} />
           <ColorField label="Quote bg" value={model.colors.blockquoteBackground} onChange={(v) => api.updateColors({ blockquoteBackground: v })} />
           <ColorField label="Code color" value={model.colors.codeColor} onChange={(v) => api.updateColors({ codeColor: v })} />
@@ -215,15 +215,6 @@ export function Editor({
             step={0.05}
           />
         </div>
-        <NumberField
-          label="Paragraph opacity"
-          value={model.typography.paragraph.opacity}
-          onChange={(opacity) => updateParagraph(api, model.typography, { opacity })}
-          min={0.3}
-          max={1}
-          step={0.05}
-        />
-
         <div className="grid grid-cols-2 gap-3">
           <NumberField
             label="List size"
@@ -301,26 +292,17 @@ export function Editor({
               { label: 'Stretch', value: 'stretch' },
             ]}
           />
-          <SelectField<TextAlign>
-            label="Text align"
-            value={layout.textAlign}
-            onChange={(textAlign) => api.updateLayout(selectedLayout, { textAlign })}
-            options={[
-              { label: 'Left', value: 'left' },
-              { label: 'Center', value: 'center' },
-              { label: 'Right', value: 'right' },
-            ]}
-          />
-          <NumberField
-            label="Padding"
-            value={layout.padding}
-            onChange={(padding) => api.updateLayout(selectedLayout, { padding })}
-            min={0}
-            max={8}
-            step={0.25}
-            unit="rem"
-          />
         </div>
+
+        <NumberField
+          label="Padding"
+          value={layout.padding}
+          onChange={(padding) => api.updateLayout(selectedLayout, { padding })}
+          min={0}
+          max={8}
+          step={0.25}
+          unit="rem"
+        />
 
         <NumberField
           label="Heading size override (0 = use typography)"
@@ -340,7 +322,7 @@ export function Editor({
           }
           hint={
             selectedLayout === 'image-left' || selectedLayout === 'image-right'
-              ? 'In a real slide the image comes from the slide’s "image" front matter. Set a placeholder here to preview the fit/position your theme applies.'
+              ? `In a real slide the image comes from the slide's "image" front matter. Set a placeholder here to preview the fit/position your theme applies.`
               : undefined
           }
         >
@@ -352,6 +334,22 @@ export function Editor({
             />
           </div>
         </Field>
+      </Section>
+
+      {/* --------------------------------------------------------- Advanced */}
+      <Section title="Advanced CSS" icon={<Code2 size={16} />} defaultOpen={false}>
+        <p className="-mt-1 text-[11px] leading-snug text-gray-500">
+          Written verbatim after the generated rules. Use this for overrides the visual editor can't express.
+        </p>
+        <textarea
+          aria-label="Custom CSS"
+          className="w-full resize-y rounded-md border border-line bg-surface px-2.5 py-2 font-mono text-xs text-gray-100 outline-none focus:border-brand focus:ring-1 focus:ring-brand"
+          rows={10}
+          spellCheck={false}
+          placeholder={`.slide.${sanitizeName(model.name)} {\n  /* your custom rules here */\n}`}
+          value={model.customCss ?? ''}
+          onChange={(e) => api.update({ customCss: e.target.value })}
+        />
       </Section>
     </div>
   );

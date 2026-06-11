@@ -106,6 +106,10 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
     messageHandler.send(WebViewMessages.toVscode.runCommand, "demo-time.togglePresentationMode");
   }, []);
 
+  const reloadWebview = React.useCallback(() => {
+    messageHandler.send(WebViewMessages.toVscode.runCommand, "workbench.action.webview.reloadWebviewAction");
+  }, []);
+
   const openSlideSource = React.useCallback(() => {
     messageHandler.send(WebViewMessages.toVscode.openFile, path);
   }, [path]);
@@ -169,6 +173,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
           )} action={closeSidebar} />
           <SlideControl title="Show demos" iconName='list-unordered' action={focusPanel} />
           <SlideControl title="Hide controls" iconName='eye-closed' action={hideControls} />
+          <SlideControl title="Reload" iconName='refresh' action={reloadWebview} />
         </div>
 
         <div className="flex items-center justify-center gap-4">
