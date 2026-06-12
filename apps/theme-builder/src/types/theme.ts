@@ -50,10 +50,21 @@ export interface HeadingStyle {
 export interface Typography {
   fontFamily: string;
   /**
-   * Optional Google Font family name (e.g. "Inter"). When set, an @import for
-   * the font is emitted and it is woven into `fontFamily`.
+   * Optional Google Font family name (e.g. "Inter") for the body / paragraph
+   * text. When set, an @import for the font is emitted and it is woven into
+   * `fontFamily`.
    */
   googleFont: string;
+  /**
+   * Optional separate heading font stack (applied to h1–h5). Empty = headings
+   * inherit the body `fontFamily`.
+   */
+  headingFontFamily: string;
+  /**
+   * Optional Google Font family name for the headings. When set, an @import is
+   * emitted and it is woven into `headingFontFamily`.
+   */
+  headingGoogleFont: string;
   /** Base font size in px. All element sizes are em-relative to this. */
   baseFontSize: number;
   h1: HeadingStyle;
@@ -95,24 +106,56 @@ export interface ThemeColors {
 }
 
 /**
- * Per-layout overrides. Empty strings mean "inherit the global value", which
- * keeps the generated CSS small and predictable.
+ * Per-layout colour overrides. Each empty string means "inherit the matching
+ * global colour", which keeps the generated CSS small and predictable.
+ */
+export interface LayoutColors {
+  background: string;
+  text: string;
+  paragraph: string;
+  heading: string;
+  headingBackground: string;
+  accent: string;
+  link: string;
+  linkHover: string;
+  blockquoteText: string;
+  blockquoteBorder: string;
+  blockquoteBackground: string;
+  codeColor: string;
+  codeBackground: string;
+}
+
+/**
+ * Per-layout typography overrides. `0` means "inherit the matching global
+ * typography value".
+ */
+export interface LayoutTypography {
+  h1: HeadingStyle;
+  h2: HeadingStyle;
+  h3: HeadingStyle;
+  h4: HeadingStyle;
+  h5: HeadingStyle;
+  paragraph: { size: number; lineHeight: number };
+  list: { size: number };
+}
+
+/**
+ * Per-layout overrides. Structural fields are always layout-specific; the
+ * `colors` and `typography` override the global values for this layout only.
  */
 export interface LayoutSettings {
-  background: string;
-  color: string;
-  headingColor: string;
-  headingBackground: string;
   /** Vertical placement of the content block. */
   justify: JustifyContent;
   /** Horizontal placement of the content block. */
   align: AlignItems;
   /** Content padding in rem. */
   padding: number;
-  /** Optional heading size override (rem). 0 / undefined = use typography.h1. */
-  headingSize: number;
   /** Optional background image for this specific layout. */
   backgroundImage: BackgroundImage | null;
+  /** Per-layout colour overrides; empty = inherit the global colour. */
+  colors: LayoutColors;
+  /** Per-layout typography overrides; 0 = inherit the global value. */
+  typography: LayoutTypography;
 }
 
 export interface LightVariant {

@@ -54,7 +54,7 @@ export function Toolbar({
   }, [menuOpen]);
 
   return (
-    <header className="flex items-center gap-3 border-b border-line bg-surface-2 px-4 py-2.5">
+    <header className="flex items-center gap-3 border-b border-[var(--color-line)] bg-[var(--color-surface-2)] px-4 py-2.5">
       <div className="flex items-center gap-2">
         <span className="flex h-7 w-7 items-center justify-center rounded-md text-white">
           <DemoTimeLogo />

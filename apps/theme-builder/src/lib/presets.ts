@@ -1,5 +1,5 @@
-import type { ThemeModel } from '../types/theme';
-import { createDefaultTheme } from './defaultTheme';
+import { LAYOUT_KEYS, type ThemeModel } from '../types/theme';
+import { createDefaultTheme, emptyLayoutTypography } from './defaultTheme';
 import { parseCss } from './parseCss';
 import { PRESET_CSS } from './presetCss.generated';
 
@@ -33,6 +33,11 @@ function fromDesign(id: string, label: string, description: string): Preset {
       model.basedOn = id;
       model.name = `custom-${id}`;
       model.displayName = `Custom ${label}`;
+      // The design owns each layout's type scale — start with no per-layout
+      // typography overrides so the built-in sizes show through until edited.
+      for (const key of LAYOUT_KEYS) {
+        model.layouts[key].typography = emptyLayoutTypography();
+      }
       return model;
     },
   };

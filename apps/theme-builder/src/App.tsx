@@ -9,6 +9,8 @@ import { Editor } from './components/Editor';
 import { Preview } from './components/Preview';
 import { ImportPanel } from './components/ImportPanel';
 import { ExportPanel, type ExportResult } from './components/ExportPanel';
+import { Modal } from './components/Modal';
+import { btnPrimary, btnSecondary } from './components/controls';
 
 const SIDEBAR_KEY = 'demotime.theme-builder.sidebar-width';
 const SIDEBAR_MIN = 280;
@@ -27,7 +29,7 @@ export default function App({ onExportTheme }: AppProps) {
   const api = useThemeModel();
   const [selectedLayout, setSelectedLayout] = React.useState<LayoutKey>('default');
   const [isLight, setIsLight] = React.useState(false);
-  const [dialog, setDialog] = React.useState<'import' | 'export' | null>(null);
+  const [dialog, setDialog] = React.useState<'import' | 'export' | 'reset' | null>(null);
 
   const [sidebarWidth, setSidebarWidth] = React.useState<number>(() => {
     const saved = Number(localStorage.getItem(SIDEBAR_KEY));
@@ -95,17 +97,14 @@ export default function App({ onExportTheme }: AppProps) {
   };
 
   const resetToDefault = () => {
-    // window.confirm is blocked in VS Code webviews — apply directly there;
-    // undo restores the previous theme either way.
-    if (
-      !isVsCode &&
-      !window.confirm('Reset to a blank default theme? Your current theme will be replaced.')
-    ) {
-      return;
-    }
+    setDialog('reset');
+  };
+
+  const confirmReset = () => {
     api.setModel(createDefaultTheme());
     setSelectedLayout('default');
     setIsLight(false);
+    setDialog(null);
   };
 
   // Keyboard undo/redo. Skip when typing in a textarea (the import paste box),
@@ -150,7 +149,7 @@ export default function App({ onExportTheme }: AppProps) {
           style={{ width: sidebarWidth }}
           className="shrink-0 overflow-y-auto bg-[var(--color-surface-2)]"
         >
-          <Editor api={api} selectedLayout={selectedLayout} />
+          <Editor api={api} selectedLayout={selectedLayout} onSelectLayout={setSelectedLayout} />
         </aside>
 
         <div
@@ -182,6 +181,29 @@ export default function App({ onExportTheme }: AppProps) {
       )}
       {dialog === 'export' && (
         <ExportPanel model={api.model} onClose={() => setDialog(null)} onExport={onExportTheme} />
+      )}
+      {dialog === 'reset' && (
+        <Modal
+          title="Reset theme"
+          onClose={() => setDialog(null)}
+          footer={
+            <>
+              <button type="button" className={btnSecondary} onClick={() => setDialog(null)}>
+                Cancel
+              </button>
+              <button type="button" className={btnPrimary} onClick={confirmReset}>
+                Reset to blank theme
+              </button>
+            </>
+          }
+        >
+          <p className="text-sm leading-relaxed text-gray-300">
+            This will reset your theme to a blank default. Your current theme will be replaced.
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-gray-400">
+            You can undo this action with Ctrl/Cmd+Z.
+          </p>
+        </Modal>
       )}
     </div>
   );

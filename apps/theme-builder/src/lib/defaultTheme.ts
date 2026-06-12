@@ -1,5 +1,49 @@
-import { LAYOUT_KEYS, type LayoutKey, type LayoutSettings, type ThemeModel } from '../types/theme';
+import {
+  LAYOUT_KEYS,
+  type LayoutColors,
+  type LayoutKey,
+  type LayoutSettings,
+  type LayoutTypography,
+  type ThemeModel,
+} from '../types/theme';
 import { vscodeThemeColors } from './importVscodeTheme';
+
+/** All per-layout colours empty = inherit the global colour. */
+export function emptyLayoutColors(): LayoutColors {
+  return {
+    background: '',
+    text: '',
+    paragraph: '',
+    heading: '',
+    headingBackground: '',
+    accent: '',
+    link: '',
+    linkHover: '',
+    blockquoteText: '',
+    blockquoteBorder: '',
+    blockquoteBackground: '',
+    codeColor: '',
+    codeBackground: '',
+  };
+}
+
+/** All per-layout typography 0 = inherit the global value. */
+export function emptyLayoutTypography(): LayoutTypography {
+  return {
+    h1: { size: 0, weight: 0 },
+    h2: { size: 0, weight: 0 },
+    h3: { size: 0, weight: 0 },
+    h4: { size: 0, weight: 0 },
+    h5: { size: 0, weight: 0 },
+    paragraph: { size: 0, lineHeight: 0 },
+    list: { size: 0 },
+  };
+}
+
+/** A per-layout typography override that only sets the H1 size. */
+function h1SizeOnly(size: number): LayoutTypography {
+  return { ...emptyLayoutTypography(), h1: { size, weight: 0 } };
+}
 
 /** Sensible per-layout defaults that mirror the Demo Time `default` theme. */
 export function defaultLayoutSettings(key: LayoutKey): LayoutSettings {
@@ -9,24 +53,21 @@ export function defaultLayoutSettings(key: LayoutKey): LayoutSettings {
   };
 
   const base: LayoutSettings = {
-    background: '',
-    color: '',
-    headingColor: '',
-    headingBackground: '',
     justify: 'start',
     align: 'stretch',
     padding: 2,
-    headingSize: 0,
     backgroundImage: null,
+    colors: emptyLayoutColors(),
+    typography: emptyLayoutTypography(),
   };
 
   switch (key) {
     case 'intro':
-      return { ...base, ...centered, headingSize: 3.75 };
+      return { ...base, ...centered, typography: h1SizeOnly(3.75) };
     case 'section':
-      return { ...base, ...centered, headingSize: 3.75 };
+      return { ...base, ...centered, typography: h1SizeOnly(3.75) };
     case 'quote':
-      return { ...base, justify: 'center', align: 'start', headingSize: 3 };
+      return { ...base, justify: 'center', align: 'start', typography: h1SizeOnly(3) };
     case 'image':
       return { ...base, ...centered };
     case 'video':
@@ -82,7 +123,45 @@ export function normalizeModel(raw: unknown): ThemeModel | null {
   const name = typeof raw.name === 'string' && raw.name ? raw.name : undefined;
   const merged = deepMerge(createDefaultTheme(name), raw);
   merged.version = 1;
+  migrateLayouts(merged, raw);
   return merged;
+}
+
+/**
+ * Migrate the older flat per-layout shape (`background`, `color`,
+ * `paragraphColor`, `headingColor`, `headingBackground`, `headingSize`) into the
+ * nested `colors` / `typography` overrides, and strip the stale flat props that
+ * deepMerge copied over. Keeps previously-saved themes intact.
+ */
+function migrateLayouts(model: ThemeModel, raw: Record<string, unknown>): void {
+  if (!isPlainObject(raw.layouts)) {
+    return;
+  }
+  for (const key of LAYOUT_KEYS) {
+    const old = (raw.layouts as Record<string, unknown>)[key];
+    if (!isPlainObject(old)) {
+      continue;
+    }
+    const layout = model.layouts[key];
+    const c = layout.colors;
+    const str = (v: unknown) => (typeof v === 'string' ? v : undefined);
+    if (str(old.background) && !c.background) c.background = old.background as string;
+    if (str(old.color) && !c.text) c.text = old.color as string;
+    if (str(old.paragraphColor) && !c.paragraph) c.paragraph = old.paragraphColor as string;
+    if (str(old.headingColor) && !c.heading) c.heading = old.headingColor as string;
+    if (str(old.headingBackground) && !c.headingBackground)
+      c.headingBackground = old.headingBackground as string;
+    if (typeof old.headingSize === 'number' && old.headingSize > 0 && !layout.typography.h1.size) {
+      layout.typography.h1.size = old.headingSize;
+    }
+    const stale = layout as unknown as Record<string, unknown>;
+    delete stale.background;
+    delete stale.color;
+    delete stale.paragraphColor;
+    delete stale.headingColor;
+    delete stale.headingBackground;
+    delete stale.headingSize;
+  }
 }
 
 /**
@@ -100,6 +179,8 @@ export function createDefaultTheme(name = 'my-theme'): ThemeModel {
     typography: {
       fontFamily: '',
       googleFont: '',
+      headingFontFamily: '',
+      headingGoogleFont: '',
       baseFontSize: 12,
       h1: { size: 2.25, weight: 700 },
       h2: { size: 1.875, weight: 700 },

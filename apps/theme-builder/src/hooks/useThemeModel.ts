@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import type {
   BackgroundImage,
+  LayoutColors,
   LayoutKey,
   LayoutSettings,
+  LayoutTypography,
   LightVariant,
   ThemeColors,
   ThemeModel,
@@ -27,6 +29,8 @@ export interface ThemeModelApi {
   updateTypography: (changes: Partial<Typography>) => void;
   updateHeading: (tag: HeadingTag, changes: Partial<Typography['h1']>) => void;
   updateLayout: (key: LayoutKey, changes: Partial<LayoutSettings>) => void;
+  updateLayoutColors: (key: LayoutKey, changes: Partial<LayoutColors>) => void;
+  updateLayoutTypography: (key: LayoutKey, changes: Partial<LayoutTypography>) => void;
   setBackgroundImage: (image: BackgroundImage | null) => void;
   updateLight: (changes: Partial<LightVariant>) => void;
   undo: () => void;
@@ -165,6 +169,30 @@ export function useThemeModel(): ThemeModelApi {
     [mutate]
   );
 
+  const updateLayoutColors = useCallback(
+    (key: LayoutKey, changes: Partial<LayoutColors>) =>
+      mutate((m) => ({
+        ...m,
+        layouts: {
+          ...m.layouts,
+          [key]: { ...m.layouts[key], colors: { ...m.layouts[key].colors, ...changes } },
+        },
+      })),
+    [mutate]
+  );
+
+  const updateLayoutTypography = useCallback(
+    (key: LayoutKey, changes: Partial<LayoutTypography>) =>
+      mutate((m) => ({
+        ...m,
+        layouts: {
+          ...m.layouts,
+          [key]: { ...m.layouts[key], typography: { ...m.layouts[key].typography, ...changes } },
+        },
+      })),
+    [mutate]
+  );
+
   const setBackgroundImage = useCallback(
     (image: BackgroundImage | null) => mutate((m) => ({ ...m, backgroundImage: image })),
     [mutate]
@@ -183,6 +211,8 @@ export function useThemeModel(): ThemeModelApi {
     updateTypography,
     updateHeading,
     updateLayout,
+    updateLayoutColors,
+    updateLayoutTypography,
     setBackgroundImage,
     updateLight,
     undo,

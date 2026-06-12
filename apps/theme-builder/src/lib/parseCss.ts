@@ -87,6 +87,9 @@ export function parseCss(css: string): ParseResult {
     leadingDeclarations(scan, '(?:^|\\s)h1')
   );
   assign(model.colors, 'heading', concrete(h1Decls['color']));
+  if (concrete(h1Decls['font-family'])) {
+    model.typography.headingFontFamily = h1Decls['font-family'];
+  }
 
   return { model, lossless: false, warnings };
 }

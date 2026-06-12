@@ -107,6 +107,68 @@ function applyCodeStyles(rs: RuleSet, root: string, colors: ThemeColors) {
   rs.many(`${root} pre code`, { 'background-color': 'transparent', padding: '0' });
 }
 
+const HEADING_TAGS = ['h1', 'h2', 'h3', 'h4', 'h5'] as const;
+
+/**
+ * Per-layout colour + typography overrides, emitted as scoped rules. They win
+ * over both the blank base and a built-in design because they are written into
+ * the override block (after it) at higher specificity. Empty colours / 0 sizes
+ * are skipped, so an untouched layout contributes nothing.
+ */
+function applyLayoutStyleOverrides(
+  rs: RuleSet,
+  root: string,
+  key: LayoutKey,
+  layout: LayoutSettings,
+) {
+  const box = `${root} .${key}`;
+  const c = layout.colors;
+  const ty = layout.typography;
+  const headings = HEADING_TAGS.map((tag) => `${box} ${tag}`).join(', ');
+
+  // Colours (empty = inherit the global colour).
+  rs.set(box, 'background', c.background);
+  rs.set(box, 'color', c.text);
+  rs.set(box, '--demotime-accent', c.accent);
+  rs.set(`${box} p`, 'color', c.paragraph);
+  rs.set(headings, 'color', c.heading);
+  rs.set(headings, 'background', c.headingBackground);
+  // Match the global "badge" treatment for a per-layout heading background.
+  if (isBadge(c.headingBackground)) {
+    rs.many(headings, { display: 'inline-block', padding: BADGE_PADDING });
+  } else if (c.headingBackground === 'transparent') {
+    rs.many(headings, { display: 'block', padding: '0' });
+  }
+  rs.set(`${box} a`, 'color', c.link);
+  rs.set(`${box} a:hover`, 'color', c.linkHover);
+  rs.set(`${box} blockquote`, 'color', c.blockquoteText);
+  rs.set(`${box} blockquote`, 'border-left-color', c.blockquoteBorder);
+  rs.set(`${box} blockquote`, 'background', c.blockquoteBackground);
+  rs.set(`${box} code`, 'color', c.codeColor);
+  rs.set(`${box} code`, 'background-color', c.codeBackground);
+  rs.set(`${box} pre`, 'background-color', c.codeBackground);
+
+  // Typography (0 = inherit the global value).
+  HEADING_TAGS.forEach((tag) => {
+    const h = ty[tag];
+    if (h.size) {
+      rs.set(`${box} ${tag}`, 'font-size', `${h.size}em`);
+    }
+    if (h.weight) {
+      rs.set(`${box} ${tag}`, 'font-weight', String(h.weight));
+    }
+  });
+  if (ty.paragraph.size) {
+    rs.set(`${box} p`, 'font-size', `${ty.paragraph.size}em`);
+  }
+  if (ty.paragraph.lineHeight) {
+    rs.set(`${box} p`, 'line-height', String(ty.paragraph.lineHeight));
+  }
+  if (ty.list.size) {
+    rs.set(`${box} ul, ${box} ol`, 'font-size', `${ty.list.size}em`);
+  }
+}
+
 const CENTERED_LAYOUTS: LayoutKey[] = ['intro', 'section', 'quote', 'image', 'video'];
 
 /**
@@ -214,6 +276,9 @@ export function generateCss(model: ThemeModel, options: GenerateOptions = {}): s
     });
   }
 
+  // Optional separate heading font.
+  applyHeadingFont(rs, root, t.headingFontFamily);
+
   rs.many(`${root} p`, {
     'font-size': `${t.paragraph.size}em`,
     'line-height': t.paragraph.lineHeight,
@@ -253,7 +318,7 @@ export function generateCss(model: ThemeModel, options: GenerateOptions = {}): s
 
   /* ---- per layout ---- */
   for (const key of LAYOUT_KEYS) {
-    generateLayout(rs, root, key, model.layouts[key], globalBadge);
+    generateLayout(rs, root, key, model.layouts[key]);
   }
 
   /* ---- optional light variant ----
@@ -276,20 +341,33 @@ export function generateCss(model: ThemeModel, options: GenerateOptions = {}): s
     rs.set(`${lightRoot} a`, 'color', model.light.link);
   }
 
-  return banner(model, embedModel) + googleFontImport(t.googleFont) + rs.toString() + customCssBlock(model) + '\n';
+  return banner(model, embedModel) + googleFontImport(t.googleFont, t.headingGoogleFont) + rs.toString() + customCssBlock(model) + '\n';
 }
 
 /**
- * An @import for a Google Font. Must appear before any style rules (only the
- * banner comment precedes it), so it is emitted right after the banner.
+ * A single @import that loads every requested Google Font family (e.g. a body
+ * font and a separate heading font). Must appear before any style rules (only
+ * the banner comment precedes it), so it is emitted right after the banner.
+ * Duplicate / empty names are ignored.
  */
-function googleFontImport(name: string): string {
-  const family = (name || '').trim();
-  if (!family) {
+function googleFontImport(...names: string[]): string {
+  const families = [...new Set(names.map((n) => (n || '').trim()).filter(Boolean))];
+  if (families.length === 0) {
     return '';
   }
-  const encoded = family.replace(/\s+/g, '+').replace(/'/g, '%27');
-  return `@import url('https://fonts.googleapis.com/css2?family=${encoded}:wght@300;400;500;600;700;800;900&display=swap');\n\n`;
+  const params = families
+    .map((f) => `family=${f.replace(/\s+/g, '+').replace(/'/g, '%27')}:wght@300;400;500;600;700;800;900`)
+    .join('&');
+  return `@import url('https://fonts.googleapis.com/css2?${params}&display=swap');\n\n`;
+}
+
+/** Apply a separate heading font (h1–h5) when the theme sets one. */
+function applyHeadingFont(rs: RuleSet, root: string, headingFontFamily: string) {
+  const family = (headingFontFamily || '').trim();
+  if (!family) {
+    return;
+  }
+  rs.set(HEADING_TAGS.map((tag) => `${root} ${tag}`).join(', '), 'font-family', family);
 }
 
 /**
@@ -335,16 +413,6 @@ function generateOverlay(
     '--demotime-heading-5': `${t.h5.size}em`,
   });
 
-  // Per-layout colour overrides map to the design's `--demotime-<layout>-*` vars
-  // (only emitted when the user actually set one).
-  for (const key of LAYOUT_KEYS) {
-    const layout = model.layouts[key];
-    rs.set(root, `--demotime-${key}-background`, layout.background);
-    rs.set(root, `--demotime-${key}-color`, layout.color);
-    rs.set(root, `--demotime-${key}-heading-color`, layout.headingColor);
-    rs.set(root, `--demotime-${key}-heading-background`, layout.headingBackground);
-  }
-
   // Re-assert font-size on .slide__content to beat preview.css's reset to 1rem.
   rs.set(`${root} .slide__content`, 'font-size', `${t.baseFontSize}px`);
 
@@ -374,10 +442,12 @@ function generateOverlay(
     rs.set(`${root} li::marker`, 'color', t.list.markerColor);
   }
 
-  // A chosen Google Font overrides the design's font family.
+  // A chosen Google Font overrides the design's body font family.
   if (t.googleFont && t.googleFont.trim()) {
     rs.set(root, 'font-family', t.fontFamily);
   }
+  // A separate heading font overrides the design's headings.
+  applyHeadingFont(rs, root, t.headingFontFamily);
 
   // An added background image layers onto the slide.
   applyBackgroundImage(rs, `${root} .slide__layout`, model.backgroundImage);
@@ -390,6 +460,9 @@ function generateOverlay(
   // above; here we only layer on any per-layout background image the user added.
   for (const key of LAYOUT_KEYS) {
     applyLayoutBackgroundImage(rs, root, key, model.layouts[key]);
+    // Per-layout colour + typography overrides (the design exposes only a few
+    // whole-layout vars, so emit scoped rules directly for the full set).
+    applyLayoutStyleOverrides(rs, root, key, model.layouts[key]);
   }
 
   // Quote text + inline code / code-block colours. The built-in designs leave
@@ -400,36 +473,15 @@ function generateOverlay(
 
   const overrides = rs.toString();
   const overrideBlock = overrides ? `\n\n/* Theme Builder overrides */\n${overrides}` : '';
-  return banner(model, embedModel) + googleFontImport(t.googleFont) + design + overrideBlock + customCssBlock(model) + '\n';
+  return banner(model, embedModel) + googleFontImport(t.googleFont, t.headingGoogleFont) + design + overrideBlock + customCssBlock(model) + '\n';
 }
 
-function generateLayout(
-  rs: RuleSet,
-  root: string,
-  key: LayoutKey,
-  layout: LayoutSettings,
-  globalBadge: boolean,
-) {
+function generateLayout(rs: RuleSet, root: string, key: LayoutKey, layout: LayoutSettings) {
   const box = `${root} .${key}`;
   const inner = `${box} .slide__content__inner`;
 
-  // Layout box appearance.
-  rs.many(box, { background: layout.background, color: layout.color });
-
-  // Per-layout heading color/background + size.
-  rs.many(`${box} h1`, {
-    color: layout.headingColor,
-    background: layout.headingBackground,
-    'font-size': layout.headingSize > 0 ? `${layout.headingSize}em` : undefined,
-  });
-  // Keep the "badge" treatment consistent for per-layout heading backgrounds:
-  // give a new badge its padding, or clear an inherited global badge when the
-  // layout explicitly resets the background to transparent.
-  if (isBadge(layout.headingBackground)) {
-    rs.many(`${box} h1`, { display: 'inline-block', padding: BADGE_PADDING });
-  } else if (layout.headingBackground === 'transparent' && globalBadge) {
-    rs.many(`${box} h1`, { display: 'block', padding: '0' });
-  }
+  // Per-layout colour + typography overrides.
+  applyLayoutStyleOverrides(rs, root, key, layout);
 
   if (key === 'two-columns') {
     // Base: stack content (so a wrapper-less two-columns slide still flows),

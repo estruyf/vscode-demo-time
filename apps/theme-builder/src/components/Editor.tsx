@@ -1,7 +1,10 @@
+import * as React from 'react';
+import clsx from 'clsx';
 import { Palette, Type, Image as ImageIcon, LayoutTemplate, Settings2, Code2 } from 'lucide-react';
 import type {
   AlignItems,
   JustifyContent,
+  LayoutColors,
   LayoutKey,
   Typography,
 } from '../types/theme';
@@ -29,16 +32,44 @@ const WEIGHTS = [
   { label: 'Black (900)', value: '900' },
 ];
 
+/** Per-layout weight options — `0` inherits the global weight. */
+const LAYOUT_WEIGHTS = [{ label: 'Inherit', value: '0' }, ...WEIGHTS];
+
+const HEADING_TAGS = ['h1', 'h2', 'h3', 'h4', 'h5'] as const;
+
+/** The per-layout colour fields, in display order. */
+const LAYOUT_COLOR_FIELDS: { label: string; key: keyof LayoutColors }[] = [
+  { label: 'Background', key: 'background' },
+  { label: 'Text', key: 'text' },
+  { label: 'Paragraph', key: 'paragraph' },
+  { label: 'Heading', key: 'heading' },
+  { label: 'Heading bg', key: 'headingBackground' },
+  { label: 'Accent', key: 'accent' },
+  { label: 'Link', key: 'link' },
+  { label: 'Link hover', key: 'linkHover' },
+  { label: 'Quote text', key: 'blockquoteText' },
+  { label: 'Quote border', key: 'blockquoteBorder' },
+  { label: 'Quote bg', key: 'blockquoteBackground' },
+  { label: 'Code color', key: 'codeColor' },
+  { label: 'Code bg', key: 'codeBackground' },
+];
+
+type Scope = 'global' | 'slide';
+
 export function Editor({
   api,
   selectedLayout,
+  onSelectLayout,
 }: {
   api: ThemeModelApi;
   selectedLayout: LayoutKey;
+  onSelectLayout: (layout: LayoutKey) => void;
 }) {
   const { model } = api;
+  const [scope, setScope] = React.useState<Scope>('global');
   const layoutMeta = LAYOUTS.find((l) => l.key === selectedLayout)!;
   const layout = model.layouts[selectedLayout];
+  const isSideImage = selectedLayout === 'image-left' || selectedLayout === 'image-right';
 
   return (
     <div className="flex flex-col">
@@ -46,8 +77,8 @@ export function Editor({
         <p className="border-b border-[var(--color-line)] bg-[var(--color-brand)]/10 px-4 py-2.5 text-[11px] leading-snug text-amber-200/90">
           Based on the <strong className="font-semibold">{model.displayName}</strong> design — its
           layout, spacing and special effects are kept exactly as the built-in theme. Edit the
-          colours (globally here, or per layout below), fonts and background image to make it yours.
-          Start from <strong className="font-semibold">Blank</strong> for full structural control.
+          colours, fonts and background image to make it yours. Start from{' '}
+          <strong className="font-semibold">Blank</strong> for full structural control.
         </p>
       )}
 
@@ -66,7 +97,7 @@ export function Editor({
           mono
         />
         <SelectField
-          label="Font family"
+          label="Body font family"
           value={
             FONT_OPTIONS.some((f) => f.value === model.typography.fontFamily)
               ? model.typography.fontFamily
@@ -85,8 +116,8 @@ export function Editor({
           ]}
         />
         <TextField
-          label="Google Font"
-          hint="Type a family from fonts.google.com — it's loaded automatically and applied."
+          label="Body Google Font"
+          hint="Used for body text and paragraphs. Type a family from fonts.google.com — it's loaded automatically."
           value={model.typography.googleFont}
           placeholder="e.g. Inter"
           list={POPULAR_GOOGLE_FONTS}
@@ -99,9 +130,33 @@ export function Editor({
           }
         />
         <TextField
-          label="Custom font stack"
+          label="Body font stack"
           value={model.typography.fontFamily}
           onChange={(fontFamily) => api.updateTypography({ fontFamily })}
+          mono
+        />
+        <TextField
+          label="Heading Google Font"
+          hint="Optional separate font for h1–h5. Leave empty to use the body font."
+          value={model.typography.headingGoogleFont}
+          placeholder="e.g. Poppins"
+          list={POPULAR_GOOGLE_FONTS}
+          onChange={(headingGoogleFont) =>
+            api.updateTypography(
+              headingGoogleFont.trim()
+                ? {
+                    headingGoogleFont,
+                    headingFontFamily: `"${headingGoogleFont.trim()}", sans-serif`,
+                  }
+                : { headingGoogleFont: '', headingFontFamily: '' }
+            )
+          }
+        />
+        <TextField
+          label="Heading font stack"
+          hint="Empty = headings inherit the body font."
+          value={model.typography.headingFontFamily}
+          onChange={(headingFontFamily) => api.updateTypography({ headingFontFamily })}
           mono
         />
         <NumberField
@@ -146,195 +201,293 @@ export function Editor({
         </div>
       </Section>
 
+      {/* -------------------------------------------------- Scope toggle */}
+      <div className="border-b border-[var(--color-line)] px-4 py-3">
+        <div className="flex rounded-md border border-[var(--color-line)] bg-[var(--color-surface)] p-0.5 text-sm">
+          {(['global', 'slide'] as const).map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => setScope(s)}
+              aria-pressed={scope === s}
+              className={clsx(
+                'flex-1 rounded px-3 py-1.5 font-medium transition-colors',
+                scope === s
+                  ? 'bg-[var(--color-brand)] text-black'
+                  : 'text-gray-300 hover:text-white'
+              )}
+            >
+              {s === 'global' ? 'Global' : 'Slide'}
+            </button>
+          ))}
+        </div>
+        <p className="mt-2 text-[11px] leading-snug text-gray-500">
+          {scope === 'global'
+            ? 'Editing the theme-wide styling that every slide inherits.'
+            : 'Editing one layout. Its values override the global styling for that layout only.'}
+        </p>
+        {scope === 'slide' && (
+          <div className="mt-2">
+            <SelectField<LayoutKey>
+              label="Layout"
+              value={selectedLayout}
+              onChange={onSelectLayout}
+              options={LAYOUTS.map((l) => ({ label: l.label, value: l.key }))}
+            />
+          </div>
+        )}
+      </div>
+
       {/* --------------------------------------------------------- Colors */}
       <Section title="Colors" icon={<Palette size={16} />}>
-        <div className="grid grid-cols-2 gap-3">
-          <ColorField label="Background" value={model.colors.background} onChange={(v) => api.updateColors({ background: v })} />
-          <ColorField label="Text" value={model.colors.text} onChange={(v) => api.updateColors({ text: v })} />
-          <ColorField label="Heading" value={model.colors.heading} onChange={(v) => api.updateColors({ heading: v })} />
-          <ColorField label="Heading bg" value={model.colors.headingBackground} onChange={(v) => api.updateColors({ headingBackground: v })} />
-          <ColorField label="Accent" value={model.colors.accent} onChange={(v) => api.updateColors({ accent: v })} />
-          <ColorField label="Link" value={model.colors.link} onChange={(v) => api.updateColors({ link: v })} />
-          <ColorField label="Link hover" value={model.colors.linkHover} onChange={(v) => api.updateColors({ linkHover: v })} />
-          <ColorField label="Quote text" value={model.colors.blockquoteText} onChange={(v) => api.updateColors({ blockquoteText: v })} />
-          <ColorField label="Quote border" value={model.colors.blockquoteBorder} onChange={(v) => api.updateColors({ blockquoteBorder: v })} />
-          <ColorField label="Quote bg" value={model.colors.blockquoteBackground} onChange={(v) => api.updateColors({ blockquoteBackground: v })} />
-          <ColorField label="Code color" value={model.colors.codeColor} onChange={(v) => api.updateColors({ codeColor: v })} />
-          <ColorField label="Code bg" value={model.colors.codeBackground} onChange={(v) => api.updateColors({ codeBackground: v })} />
-        </div>
+        {scope === 'global' ? (
+          <div className="grid grid-cols-2 gap-3">
+            <ColorField label="Background" value={model.colors.background} onChange={(v) => api.updateColors({ background: v })} />
+            <ColorField label="Text" value={model.colors.text} onChange={(v) => api.updateColors({ text: v })} />
+            <ColorField label="Heading" value={model.colors.heading} onChange={(v) => api.updateColors({ heading: v })} />
+            <ColorField label="Heading bg" value={model.colors.headingBackground} onChange={(v) => api.updateColors({ headingBackground: v })} />
+            <ColorField label="Accent" value={model.colors.accent} onChange={(v) => api.updateColors({ accent: v })} />
+            <ColorField label="Link" value={model.colors.link} onChange={(v) => api.updateColors({ link: v })} />
+            <ColorField label="Link hover" value={model.colors.linkHover} onChange={(v) => api.updateColors({ linkHover: v })} />
+            <ColorField label="Quote text" value={model.colors.blockquoteText} onChange={(v) => api.updateColors({ blockquoteText: v })} />
+            <ColorField label="Quote border" value={model.colors.blockquoteBorder} onChange={(v) => api.updateColors({ blockquoteBorder: v })} />
+            <ColorField label="Quote bg" value={model.colors.blockquoteBackground} onChange={(v) => api.updateColors({ blockquoteBackground: v })} />
+            <ColorField label="Code color" value={model.colors.codeColor} onChange={(v) => api.updateColors({ codeColor: v })} />
+            <ColorField label="Code bg" value={model.colors.codeBackground} onChange={(v) => api.updateColors({ codeBackground: v })} />
+          </div>
+        ) : (
+          <>
+            <p className="-mt-1 mb-1 text-[11px] leading-snug text-gray-500">
+              Leave a colour empty to inherit the global value.
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              {LAYOUT_COLOR_FIELDS.map(({ label, key }) => (
+                <ColorField
+                  key={key}
+                  label={label}
+                  value={layout.colors[key]}
+                  onChange={(v) => api.updateLayoutColors(selectedLayout, { [key]: v })}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </Section>
 
       {/* ----------------------------------------------------- Background */}
       <Section title="Background image" icon={<ImageIcon size={16} />} defaultOpen={false}>
-        <ImageField
-          label="Slide-wide background"
-          hint="Applied to every slide (the .slide__layout box). Individual layouts can override this below."
-          value={model.backgroundImage}
-          onChange={api.setBackgroundImage}
-        />
+        {scope === 'global' ? (
+          <ImageField
+            label="Slide-wide background"
+            hint="Applied to every slide (the .slide__layout box). Individual layouts can override this in the Slide scope."
+            value={model.backgroundImage}
+            onChange={api.setBackgroundImage}
+          />
+        ) : (
+          <Field
+            label={isSideImage ? 'Side image styling' : 'Background image (this layout only)'}
+            hint={
+              isSideImage
+                ? `In a real slide the image comes from the slide's "image" front matter. Set a placeholder here to preview the fit/position your theme applies.`
+                : undefined
+            }
+          >
+            <div className="pt-1">
+              <ImageField
+                label=""
+                value={layout.backgroundImage}
+                onChange={(backgroundImage) => api.updateLayout(selectedLayout, { backgroundImage })}
+              />
+            </div>
+          </Field>
+        )}
       </Section>
 
       {/* ----------------------------------------------------- Typography */}
       <Section title="Typography" icon={<Type size={16} />} defaultOpen={false}>
-        {(['h1', 'h2', 'h3', 'h4', 'h5'] as const).map((tag) => (
-          <div key={tag} className="grid grid-cols-2 gap-3">
+        {scope === 'global' ? (
+          <>
+            {HEADING_TAGS.map((tag) => (
+              <div key={tag} className="grid grid-cols-2 gap-3">
+                <NumberField
+                  label={`${tag.toUpperCase()} size`}
+                  value={model.typography[tag].size}
+                  onChange={(size) => api.updateHeading(tag, { size })}
+                  min={0.75}
+                  max={6}
+                  step={0.125}
+                  unit="rem"
+                />
+                <SelectField
+                  label="Weight"
+                  value={String(model.typography[tag].weight)}
+                  onChange={(v) => api.updateHeading(tag, { weight: Number(v) })}
+                  options={WEIGHTS}
+                />
+              </div>
+            ))}
+
+            <div className="grid grid-cols-2 gap-3">
+              <NumberField
+                label="Paragraph size"
+                value={model.typography.paragraph.size}
+                onChange={(size) => updateParagraph(api, model.typography, { size })}
+                min={0.75}
+                max={2.5}
+                step={0.0625}
+                unit="rem"
+              />
+              <NumberField
+                label="Line height"
+                value={model.typography.paragraph.lineHeight}
+                onChange={(lineHeight) => updateParagraph(api, model.typography, { lineHeight })}
+                min={1}
+                max={2.4}
+                step={0.05}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <NumberField
+                label="List size"
+                value={model.typography.list.size}
+                onChange={(size) => api.updateTypography({ list: { ...model.typography.list, size } })}
+                min={0.75}
+                max={2}
+                step={0.0625}
+                unit="rem"
+              />
+              <ColorField
+                label="Bullet color"
+                value={model.typography.list.markerColor}
+                onChange={(markerColor) =>
+                  api.updateTypography({ list: { ...model.typography.list, markerColor } })
+                }
+              />
+            </div>
+
+            <Toggle
+              label="Underline links"
+              checked={model.typography.link.underline}
+              onChange={(underline) =>
+                api.updateTypography({ link: { ...model.typography.link, underline } })
+              }
+            />
+          </>
+        ) : (
+          <>
+            <p className="-mt-1 mb-1 text-[11px] leading-snug text-gray-500">
+              Leave a value at 0 to inherit the global typography.
+            </p>
+            {HEADING_TAGS.map((tag) => (
+              <div key={tag} className="grid grid-cols-2 gap-3">
+                <NumberField
+                  label={`${tag.toUpperCase()} size`}
+                  value={layout.typography[tag].size}
+                  onChange={(size) =>
+                    api.updateLayoutTypography(selectedLayout, {
+                      [tag]: { ...layout.typography[tag], size },
+                    })
+                  }
+                  min={0}
+                  max={6}
+                  step={0.125}
+                  unit="rem"
+                />
+                <SelectField
+                  label="Weight"
+                  value={String(layout.typography[tag].weight)}
+                  onChange={(v) =>
+                    api.updateLayoutTypography(selectedLayout, {
+                      [tag]: { ...layout.typography[tag], weight: Number(v) },
+                    })
+                  }
+                  options={LAYOUT_WEIGHTS}
+                />
+              </div>
+            ))}
+
+            <div className="grid grid-cols-2 gap-3">
+              <NumberField
+                label="Paragraph size"
+                value={layout.typography.paragraph.size}
+                onChange={(size) =>
+                  api.updateLayoutTypography(selectedLayout, {
+                    paragraph: { ...layout.typography.paragraph, size },
+                  })
+                }
+                min={0}
+                max={2.5}
+                step={0.0625}
+                unit="rem"
+              />
+              <NumberField
+                label="Line height"
+                value={layout.typography.paragraph.lineHeight}
+                onChange={(lineHeight) =>
+                  api.updateLayoutTypography(selectedLayout, {
+                    paragraph: { ...layout.typography.paragraph, lineHeight },
+                  })
+                }
+                min={0}
+                max={2.4}
+                step={0.05}
+              />
+            </div>
             <NumberField
-              label={`${tag.toUpperCase()} size`}
-              value={model.typography[tag].size}
-              onChange={(size) => api.updateHeading(tag, { size })}
-              min={0.75}
-              max={6}
-              step={0.125}
+              label="List size"
+              value={layout.typography.list.size}
+              onChange={(size) =>
+                api.updateLayoutTypography(selectedLayout, { list: { size } })
+              }
+              min={0}
+              max={2}
+              step={0.0625}
               unit="rem"
             />
-            <SelectField
-              label="Weight"
-              value={String(model.typography[tag].weight)}
-              onChange={(v) => api.updateHeading(tag, { weight: Number(v) })}
-              options={WEIGHTS}
-            />
-          </div>
-        ))}
-
-        <div className="grid grid-cols-2 gap-3">
-          <NumberField
-            label="Paragraph size"
-            value={model.typography.paragraph.size}
-            onChange={(size) => updateParagraph(api, model.typography, { size })}
-            min={0.75}
-            max={2.5}
-            step={0.0625}
-            unit="rem"
-          />
-          <NumberField
-            label="Line height"
-            value={model.typography.paragraph.lineHeight}
-            onChange={(lineHeight) => updateParagraph(api, model.typography, { lineHeight })}
-            min={1}
-            max={2.4}
-            step={0.05}
-          />
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <NumberField
-            label="List size"
-            value={model.typography.list.size}
-            onChange={(size) => api.updateTypography({ list: { ...model.typography.list, size } })}
-            min={0.75}
-            max={2}
-            step={0.0625}
-            unit="rem"
-          />
-          <ColorField
-            label="Bullet color"
-            value={model.typography.list.markerColor}
-            onChange={(markerColor) =>
-              api.updateTypography({ list: { ...model.typography.list, markerColor } })
-            }
-          />
-        </div>
-
-        <Toggle
-          label="Underline links"
-          checked={model.typography.link.underline}
-          onChange={(underline) =>
-            api.updateTypography({ link: { ...model.typography.link, underline } })
-          }
-        />
+          </>
+        )}
       </Section>
 
-      {/* --------------------------------------------------------- Layout */}
-      <Section title={`Layout · ${layoutMeta.label}`} icon={<LayoutTemplate size={16} />}>
-        <p className="-mt-1 text-[11px] leading-snug text-gray-500">{layoutMeta.description}</p>
+      {/* ----------------------------------------------- Layout structure */}
+      {scope === 'slide' && (
+        <Section title={`Layout · ${layoutMeta.label}`} icon={<LayoutTemplate size={16} />}>
+          <p className="-mt-1 text-[11px] leading-snug text-gray-500">{layoutMeta.description}</p>
 
-        <div className="grid grid-cols-2 gap-3">
-          <ColorField
-            label="Background"
-            value={layout.background}
-            onChange={(background) => api.updateLayout(selectedLayout, { background })}
-          />
-          <ColorField
-            label="Text"
-            value={layout.color}
-            onChange={(color) => api.updateLayout(selectedLayout, { color })}
-          />
-          <ColorField
-            label="Heading color"
-            value={layout.headingColor}
-            onChange={(headingColor) => api.updateLayout(selectedLayout, { headingColor })}
-          />
-          <ColorField
-            label="Heading bg"
-            value={layout.headingBackground}
-            onChange={(headingBackground) => api.updateLayout(selectedLayout, { headingBackground })}
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <SelectField<JustifyContent>
-            label="Vertical"
-            value={layout.justify}
-            onChange={(justify) => api.updateLayout(selectedLayout, { justify })}
-            options={[
-              { label: 'Top', value: 'start' },
-              { label: 'Middle', value: 'center' },
-              { label: 'Bottom', value: 'end' },
-            ]}
-          />
-          <SelectField<AlignItems>
-            label="Horizontal"
-            value={layout.align}
-            onChange={(align) => api.updateLayout(selectedLayout, { align })}
-            options={[
-              { label: 'Left', value: 'start' },
-              { label: 'Center', value: 'center' },
-              { label: 'Right', value: 'end' },
-              { label: 'Stretch', value: 'stretch' },
-            ]}
-          />
-        </div>
-
-        <NumberField
-          label="Padding"
-          value={layout.padding}
-          onChange={(padding) => api.updateLayout(selectedLayout, { padding })}
-          min={0}
-          max={8}
-          step={0.25}
-          unit="rem"
-        />
-
-        <NumberField
-          label="Heading size override (0 = use typography)"
-          value={layout.headingSize}
-          onChange={(headingSize) => api.updateLayout(selectedLayout, { headingSize })}
-          min={0}
-          max={6}
-          step={0.25}
-          unit="rem"
-        />
-
-        <Field
-          label={
-            selectedLayout === 'image-left' || selectedLayout === 'image-right'
-              ? 'Side image styling'
-              : 'Background image (this layout only)'
-          }
-          hint={
-            selectedLayout === 'image-left' || selectedLayout === 'image-right'
-              ? `In a real slide the image comes from the slide's "image" front matter. Set a placeholder here to preview the fit/position your theme applies.`
-              : undefined
-          }
-        >
-          <div className="pt-1">
-            <ImageField
-              label=""
-              value={layout.backgroundImage}
-              onChange={(backgroundImage) => api.updateLayout(selectedLayout, { backgroundImage })}
+          <div className="grid grid-cols-2 gap-3">
+            <SelectField<JustifyContent>
+              label="Vertical"
+              value={layout.justify}
+              onChange={(justify) => api.updateLayout(selectedLayout, { justify })}
+              options={[
+                { label: 'Top', value: 'start' },
+                { label: 'Middle', value: 'center' },
+                { label: 'Bottom', value: 'end' },
+              ]}
+            />
+            <SelectField<AlignItems>
+              label="Horizontal"
+              value={layout.align}
+              onChange={(align) => api.updateLayout(selectedLayout, { align })}
+              options={[
+                { label: 'Left', value: 'start' },
+                { label: 'Center', value: 'center' },
+                { label: 'Right', value: 'end' },
+                { label: 'Stretch', value: 'stretch' },
+              ]}
             />
           </div>
-        </Field>
-      </Section>
+
+          <NumberField
+            label="Padding"
+            value={layout.padding}
+            onChange={(padding) => api.updateLayout(selectedLayout, { padding })}
+            min={0}
+            max={8}
+            step={0.25}
+            unit="rem"
+          />
+        </Section>
+      )}
 
       {/* --------------------------------------------------------- Advanced */}
       <Section title="Advanced CSS" icon={<Code2 size={16} />} defaultOpen={false}>
