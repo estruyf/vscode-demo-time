@@ -7,4 +7,5 @@ export * from './ProjectorIcon';
 export * from './QRPreview';
 export * from './SlideControl';
 export * from './SlideControls';
+export * from './SlideControlsMenu';
 export * from './WhiteboardIcon';
