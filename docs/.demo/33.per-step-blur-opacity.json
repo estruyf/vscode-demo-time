@@ -1,0 +1,49 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Per-Step Blur and Opacity Example",
+  "description": "Demonstrates how to override global blur and opacity settings on a per-highlight basis",
+  "demos": [
+    {
+      "title": "Blur and Opacity Overrides",
+      "description": "Shows different blur and opacity settings for different highlights",
+      "steps": [
+        {
+          "action": "open",
+          "path": "package.json"
+        },
+        {
+          "action": "highlight",
+          "path": "package.json",
+          "position": "3:5",
+          "highlightBlur": 0,
+          "highlightOpacity": 1,
+          "highlightWholeLine": true
+        },
+        {
+          "action": "waitForTimeout",
+          "timeout": 2000
+        },
+        {
+          "action": "highlight",
+          "path": "package.json",
+          "position": "6:12",
+          "highlightBlur": 2,
+          "highlightWholeLine": true,
+          "highlightOpacity": 0.8
+        },
+        {
+          "action": "waitForTimeout",
+          "timeout": 2000
+        },
+        {
+          "action": "highlight",
+          "path": "package.json",
+          "position": "14:27",
+          "highlightBlur": 5,
+          "highlightOpacity": 0.3,
+          "highlightWholeLine": true
+        }
+      ]
+    }
+  ]
+}

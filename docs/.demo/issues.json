@@ -1,0 +1,34 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Issues",
+  "description": "",
+  "version": 2,
+  "demos": [
+    {
+      "title": "132 - Highlight after patch",
+      "description": "",
+      "steps": [
+        {
+          "action": "create",
+          "path": "/temp/author.json",
+          "contentPath": ".demo/snapshots/author.snapshot.json"
+        },
+        {
+          "action": "open",
+          "path": "/temp/author.json"
+        },
+        {
+          "action": "applyPatch",
+          "path": "/temp/author.json",
+          "contentPath": ".demo/snapshots/author.snapshot.json",
+          "patch": ".demo/patches/author.socials.patch"
+        },
+        {
+          "action": "highlight",
+          "path": "/temp/author.json",
+          "position": "5:5"
+        }
+      ]
+    }
+  ]
+}

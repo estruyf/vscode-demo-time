@@ -1,0 +1,115 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Patch actions",
+  "description": "",
+  "demos": [
+    {
+      "title": "Apply patch",
+      "description": "",
+      "steps": [
+        {
+          "action": "create",
+          "path": "/temp/author.json",
+          "contentPath": "/snapshots/author.snapshot.json"
+        },
+        {
+          "action": "open",
+          "path": "/temp/author.json"
+        },
+        {
+          "action": "applyPatch",
+          "path": "/temp/author.json",
+          "contentPath": "/snapshots/author.snapshot.json",
+          "patch": "/patches/author.socials.patch",
+          "insertTypingMode": "instant"
+        },
+        {
+          "action": "save"
+        }
+      ]
+    },
+    {
+      "title": "Apply patch (line-by-line)",
+      "description": "",
+      "steps": [
+        {
+          "action": "create",
+          "path": "/temp/author.json",
+          "contentPath": "/snapshots/author.snapshot.json"
+        },
+        {
+          "action": "open",
+          "path": "/temp/author.json"
+        },
+        {
+          "action": "applyPatch",
+          "path": "/temp/author.json",
+          "contentPath": "/snapshots/author.snapshot.json",
+          "patch": "/patches/author.socials.patch",
+          "insertTypingMode": "line-by-line"
+        },
+        {
+          "action": "save"
+        }
+      ]
+    },
+    {
+      "title": "Apply patch (character-by-character)",
+      "description": "",
+      "steps": [
+        {
+          "action": "create",
+          "path": "/temp/author.json",
+          "contentPath": "/snapshots/author.snapshot.json"
+        },
+        {
+          "action": "open",
+          "path": "/temp/author.json"
+        },
+        {
+          "action": "applyPatch",
+          "path": "/temp/author.json",
+          "contentPath": "/snapshots/author.snapshot.json",
+          "patch": "/patches/author.socials.patch",
+          "insertTypingMode": "character-by-character"
+        },
+        {
+          "action": "save"
+        }
+      ]
+    },
+    {
+      "title": "Apply patch (hacker-typer)",
+      "description": "",
+      "steps": [
+        {
+          "action": "create",
+          "path": "/temp/author.json",
+          "contentPath": "/snapshots/author.snapshot.json"
+        },
+        {
+          "action": "open",
+          "path": "/temp/author.json"
+        },
+        {
+          "action": "showInfoMessage",
+          "message": "Hacker-typer mode is enabled."
+        },
+        {
+          "action": "applyPatch",
+          "path": "/temp/author.json",
+          "contentPath": "/snapshots/author.snapshot.json",
+          "patch": "/patches/author.socials.patch",
+          "insertTypingMode": "hacker-typer"
+        },
+        {
+          "action": "showInfoMessage",
+          "message": "Hacker-typer mode is disabled."
+        },
+        {
+          "action": "save"
+        }
+      ]
+    }
+  ]
+}

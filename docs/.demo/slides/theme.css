@@ -1,0 +1,22 @@
+body {
+  background: black;
+  color: white;
+}
+
+.slide {
+  background: black !important;
+  color: white !important;
+}
+
+.intro {
+  h1 {
+    font-size: 2em;
+    font-style: italic;
+    background: #ffd43b !important;
+    color: #000 !important;
+  }
+}
+
+.preview_view {
+  background-color: #000;
+}

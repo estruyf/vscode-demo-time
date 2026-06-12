@@ -1,0 +1,43 @@
+---
+title: Control the next demo shortcut
+description: Learn how you can control the next demo during your presentation in Demo Time.
+tableOfContents: false
+lastmod: 2025-07-04T14:53:50.801Z
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+By default, the `right` arrow key is bound to the `demo-time.start` command when you are in presentation mode. This means that pressing the `right` arrow key will trigger the next slide/demo/step. To gain more control over when to continue to the next demo during a presentation, you can configure your own conditions on when to run the `demo-time.start` command based on the context.
+
+For example: when you are on the slide view, you want to use the `right` arrow key to advance the next step, but when you are in the code view, you want to use `cmd+shift+right` to run the next demo elsewhere.
+
+You can achieve this by defining your own keybinding in the `keybindings.json` file. Here’s how you can configure it:
+
+- Open the command palette (Cmd+Shift+P or Ctrl+Shift+P) and type `Preferences: Open Keyboard Shortcuts (JSON)` (`workbench.action.openGlobalKeybindingsFile`) to open the `keybindings.json` file.
+- Add the following configuration to your `keybindings.json` file:
+
+```json
+[
+  {
+    "key": "right",
+    "command": "demo-time.start",
+    "when": "demo-time.presentation && activeWebviewPanelId == demoTime:preview"
+  },
+  {
+    "key": "cmd+shift+right",
+    "command": "demo-time.start",
+    "when": "demo-time.presentation && activeWebviewPanelId != demoTime:preview"
+  },
+  {
+    "key": "right",
+    "command": "-demo-time.start",
+    "when": "demo-time.presentation"
+  }
+]
+```
+
+### Explanation
+
+1. **First Rule**: The `right` arrow key triggers `demo-time.start` only when you are on the slides (`activeWebviewPanelId == demoTime:preview`).
+2. **Second Rule**: The `cmd+shift+right` keybinding triggers `demo-time.start` when you are outside the slides (`activeWebviewPanelId != demoTime:preview`) and allows you to use the `right` arrow key to navigate through your code or other content.
+3. **Third Rule**: Removes the default `right` arrow keybinding for `demo-time.start` to avoid conflicts.

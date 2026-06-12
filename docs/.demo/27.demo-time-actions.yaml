@@ -1,0 +1,14 @@
+title: Demo Time Actions
+description: ''
+version: 2
+demos:
+  - id: demo-mek5tunq-lpyg
+    title: Demo 1
+    steps:
+      - action: runDemoById
+        id: demo-mek5tym7-yj2i
+  - id: demo-mek5tym7-yj2i
+    title: Demo 2
+    steps:
+      - action: showInfoMessage
+        message: Ran this action by the `runDemoById` action

@@ -1,0 +1,66 @@
+---
+title: External application actions
+description: Perform actions that interact with external applications from your demos.
+lastmod: 2025-07-04T15:01:03.186Z
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+import GitHubFileOpener from '../../../components/GitHubFileOpener.astro';
+
+External application actions allow you to open or interact with applications outside of your editor as part of your demo flow.
+
+<Aside type="note" title='Samples'>
+  You can find VSCode actions samples on GitHub: 
+  <GitHubFileOpener filePath=".demo/23.open-external-applications.json" />
+</Aside>
+
+## Open PowerPoint
+
+Open Microsoft PowerPoint directly from your demo using the `openPowerPoint` action. This is useful when you want to demonstrate or reference a PowerPoint presentation as part of your workflow.
+
+<Tabs syncKey="external-open-powerpoint">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "openPowerPoint"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: openPowerPoint
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="note" title="PowerPoint must be installed">
+  This action requires Microsoft PowerPoint to be installed on your system. The action attempts to open the running PowerPoint instance.
+</Aside>
+
+## Open Keynote
+
+Open Apple Keynote directly from your demo using the `openKeynote` action. This is useful for demonstrating or referencing a Keynote presentation as part of your workflow.
+
+<Tabs syncKey="external-open-keynote">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "openKeynote"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: openKeynote
+```
+
+</TabItem>
+</Tabs>

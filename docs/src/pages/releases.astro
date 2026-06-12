@@ -1,0 +1,131 @@
+---
+import { getCollection } from "astro:content";
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+
+const releases = await getCollection("releases");
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "Releases",
+    description: "All the latest releases of Demo Time",
+    tableOfContents: false,
+  }}
+>
+  <div class="releases-container">
+    <div class="releases-grid">
+      {
+        releases
+          .sort(
+            (a, b) =>
+              new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+          )
+          .map((release) => (
+            <div class="release-card">
+              <a href={`/releases/${release.data.slug}/`} class="release-link">
+                <div class="release-header">
+                  <h3 class="release-title">{release.data.title}</h3>
+                  <span class="release-date">
+                    {new Date(release.data.date).toISOString().slice(0, 10)}
+                  </span>
+                </div>
+                <p class="release-description">{release.data.description}</p>
+                <div class="release-stats">
+                  <span class="release-version">
+                    Version {release.data.version}
+                  </span>
+                  <span class="release-arrow">→</span>
+                </div>
+              </a>
+            </div>
+          ))
+      }
+    </div>
+  </div>
+</StarlightPage>
+
+<style>
+  .releases-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .releases-grid {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+  }
+
+  .release-card {
+    background: var(--sl-color-gray-6);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    border: 1px solid var(--sl-color-gray-5);
+  }
+
+  .release-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    border-color: var(--sl-color-accent);
+  }
+
+  .release-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .release-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .release-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--sl-color-accent);
+    font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo,
+      Consolas, "DejaVu Sans Mono", monospace;
+  }
+
+  .release-date {
+    font-size: 0.875rem;
+    color: var(--sl-color-gray-3);
+    font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo,
+      Consolas, "DejaVu Sans Mono", monospace;
+  }
+
+  .release-description {
+    color: var(--sl-color-gray-2);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .release-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .release-version {
+    font-size: 0.875rem;
+    color: var(--sl-color-gray-3);
+    font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo,
+      Consolas, "DejaVu Sans Mono", monospace;
+  }
+
+  .release-arrow {
+    color: var(--sl-color-accent);
+    font-size: 1.25rem;
+    transition: transform 0.2s ease;
+  }
+
+  .release-card:hover .release-arrow {
+    transform: translateX(4px);
+  }
+</style>

@@ -1,0 +1,23 @@
+---
+title: Image Left Slide Layout
+description: Learn about the image-left slide layout in Demo Time
+lastmod: 2025-07-04T15:10:34.641Z
+---
+
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+import imageLeftImg from "../../../../assets/docs/slide-layouts/image-left.webp";
+
+
+The `image-left` layout is similar to the `image` layout but with the image on the left side, and the content on the right side.
+
+```md
+---
+layout: image-left
+image: "<url to the image>"
+---
+
+# Image left slide
+```
+
+<Image class="mx-auto" src={imageLeftImg} alt="Image left" />

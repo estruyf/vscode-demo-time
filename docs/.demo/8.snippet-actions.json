@@ -1,0 +1,80 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Snippet actions",
+  "description": "",
+  "version": 2,
+  "demos": [
+    {
+      "title": "Using a snippet",
+      "description": "",
+      "steps": [
+        {
+          "action": "snippet",
+          "args": {
+            "MAIN_FILE": "temp/snippet.md",
+            "MAIN_CONTENT": "# Hello from Demo Time!"
+          },
+          "contentPath": ".demo/snippet/create-open.json"
+        }
+      ]
+    },
+    {
+      "title": "Using a snippet (YAML)",
+      "description": "",
+      "steps": [
+        {
+          "action": "snippet",
+          "args": {
+            "MAIN_FILE": "temp/snippet.md",
+            "MAIN_CONTENT": "# Hello from Demo Time! This is created from YAML."
+          },
+          "contentPath": ".demo/snippet/create-open.yml"
+        }
+      ],
+      "id": "demo-mkld6hkj-0awy"
+    },
+    {
+      "id": "scene-mpazekt6-pigw",
+      "title": "Using fields snippet",
+      "steps": [
+        {
+          "action": "snippet",
+          "contentPath": ".demo/snippet/insert-and-highlight.json",
+          "args": {
+            "TEST_BOOLEAN": true,
+            "HIGHLIGHT_POSITION": 3,
+            "CONTENT_POSITION": 1,
+            "CONTENT_PATH": "test",
+            "MAIN_FILE": "test"
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-mpb1z8et-7y7f",
+      "title": "Test with downloaded snippet",
+      "steps": [
+        {
+          "action": "snippet",
+          "contentPath": ".demo/snippets/setup/presentation-mode-macos.json",
+          "args": {
+            "THEME": "Demo Time Dark"
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-mpbayhwh-j7gp",
+      "title": "Test another snippet",
+      "steps": [
+        {
+          "action": "snippet",
+          "contentPath": ".demo/snippets/setup/presentation-clean-up-macos.json",
+          "args": {
+            "THEME": "Demo Time Light"
+          }
+        }
+      ]
+    }
+  ]
+}

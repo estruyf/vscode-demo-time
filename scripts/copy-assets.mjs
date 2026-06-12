@@ -1,8 +1,13 @@
 import { promises as fs } from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-const sourceDir = path.join('src', 'preview', 'themes');
-const destinationDir = path.join('assets', 'styles', 'themes');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const sourceDir = path.resolve(__dirname, '../apps/webviews/src/themes');
+const destinationDir = path.resolve(__dirname, '../apps/vscode-extension/assets/styles/themes');
+console.log(`Copying files from ${sourceDir} to ${destinationDir}`);
 
 async function copyFiles(src, dest) {
   try {
@@ -17,6 +22,12 @@ async function copyFiles(src, dest) {
       if (stat.isFile()) {
         await fs.copyFile(srcFile, destFile);
         console.log(`Copied: ${srcFile} -> ${destFile}`);
+
+        const content = await fs.readFile(destFile, 'utf8');
+        const cleaned = content
+          .replace(/^@import\s+'tailwindcss';\s*\n?/m, '')
+          .replace(/^@config\s+"..\/..\/..\/tailwind\.config\.js";\s*\n?/m, '');
+        await fs.writeFile(destFile, cleaned, 'utf8');
       }
     }
   } catch (error) {

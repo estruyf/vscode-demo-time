@@ -1,0 +1,134 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Terminal actions",
+  "description": "",
+  "demos": [
+    {
+      "title": "Open the terminal",
+      "steps": [
+        {
+          "action": "openTerminal"
+        }
+      ]
+    },
+    {
+      "title": "Execute terminal command",
+      "description": "",
+      "steps": [
+        {
+          "action": "executeTerminalCommand",
+          "command": "echo 'Hello, world!'"
+        }
+      ]
+    },
+    {
+      "title": "Execute terminal command (auto execute - true)",
+      "description": "",
+      "steps": [
+        {
+          "action": "executeTerminalCommand",
+          "command": "echo 'Hello, world!'",
+          "autoExecute": true
+        }
+      ]
+    },
+    {
+      "title": "Execute terminal command (auto execute - false)",
+      "description": "",
+      "steps": [
+        {
+          "action": "executeTerminalCommand",
+          "command": "echo 'Hello, world!'",
+          "autoExecute": false
+        }
+      ]
+    },
+    {
+      "title": "Execute terminal command (insertTypingMode)",
+      "description": "",
+      "steps": [
+        {
+          "action": "executeTerminalCommand",
+          "command": "echo 'Hello, world!'",
+          "insertTypingMode": "character-by-character",
+          "insertTypingSpeed": 50
+        }
+      ]
+    },
+    {
+      "title": "Execute terminal command (insertTypingMode - word-by-word)",
+      "description": "",
+      "steps": [
+        {
+          "action": "executeTerminalCommand",
+          "command": "echo 'Hello, world!'",
+          "insertTypingMode": "word-by-word",
+          "insertTypingSpeed": 100
+        }
+      ]
+    },
+    {
+      "title": "Execute terminal command (insertTypingMode - line-by-line)",
+      "description": "",
+      "steps": [
+        {
+          "action": "executeTerminalCommand",
+          "command": "echo 'Hello, world!'",
+          "insertTypingMode": "line-by-line",
+          "insertTypingSpeed": 200
+        }
+      ]
+    },
+    {
+      "title": "Close terminal",
+      "description": "",
+      "steps": [
+        {
+          "action": "closeTerminal"
+        }
+      ]
+    },
+    {
+      "title": "Execute terminal command (with terminalId)",
+      "description": "",
+      "steps": [
+        {
+          "action": "executeTerminalCommand",
+          "command": "echo 'Hello, world!'",
+          "terminalId": "demo-terminal"
+        }
+      ]
+    },
+    {
+      "title": "Close terminal (with terminalId)",
+      "description": "",
+      "steps": [
+        {
+          "action": "closeTerminal",
+          "terminalId": "demo-terminal"
+        }
+      ]
+    },
+    {
+      "title": "Execute a script",
+      "description": "",
+      "steps": [
+        {
+          "action": "executeScript",
+          "id": "logging",
+          "path": ".demo/scripts/logging.mjs",
+          "command": "node"
+        },
+        {
+            "action": "create",
+            "path": "temp/output.log",
+            "content": "{SCRIPT_logging}"
+        },
+        {
+            "action": "open",
+            "path": "temp/output.log"
+        }
+      ]
+    }
+  ]
+}

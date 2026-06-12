@@ -1,0 +1,29 @@
+title: Animations
+description: ''
+version: 3
+scenes:
+  - id: scene-mmlt2ktv-fhoo
+    title: Show animation
+    moves:
+      - action: openSlide
+        path: .demo/animations/animation-slide.md
+  - title: Animation no autoplay
+    moves:
+      - action: openSlide
+        path: .demo/animations/animation-slide-autoplay.md
+  - title: Color inversion
+    moves:
+      - action: openSlide
+        path: .demo/animations/animation-slide-color-invert.md
+  - title: Diagram
+    moves:
+      - action: openSlide
+        path: .demo/animations/animation-slide-diagram.md
+  - title: Positioning
+    moves:
+      - action: openSlide
+        path: .demo/animations/animation-slide-positioning.md
+  - title: Speed
+    moves:
+      - action: openSlide
+        path: .demo/animations/animation-slide-speed.md

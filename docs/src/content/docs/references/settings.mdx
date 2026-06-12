@@ -1,0 +1,124 @@
+---
+title: Settings
+description: Customize the settings of Demo Time to fit your needs.
+lastmod: 2025-12-19T00:00:00.000Z
+tableOfContents: false
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+
+import settingsGuiImg from "../../../assets/docs/settings-view.webp";
+
+By using the `Demo Time: Settings` command, you can quickly access and modify the settings of the Demo Time extension.
+
+<Image class="mx-auto" src={settingsGuiImg} alt="Settings GUI" />
+
+When you use the Demo Time Settings GUI, they will automatically be configured and stored in the `.vscode/settings.json` file of your workspace.
+
+## Overview
+
+Here is a list of all the settings available in Demo Time.
+
+| Setting | Description | Default |
+| --- | --- | --- |
+| `demoTime.previousEnabled` | Enable the previous command when in presentation mode. | `false` |
+| `demoTime.presentationViewToggles` | Which UI areas to hide when toggling presentation view. Allowed values: `statusBar`, `tabs`, `activityBar`, `sideBar`, `panel`. | `["statusBar", "tabs", "activityBar", "sideBar", "panel"]` |
+| `demoTime.highlightBackground` | The background color of the highlighted code. | `var(--vscode-editor-selectionBackground)` |
+| `demoTime.highlightBorderColor` | The border color of the highlighted code. | `rgba(255,0,0,0.5)` |
+| `demoTime.highlightBlur` | Blur effect on the text which is not highlighted. | `0` |
+| `demoTime.highlightOpacity` | The opacity of the text which is not highlighted. Number between 0 and 1. | `0.5` |
+| `demoTime.zoom` | Zoom level to apply when using the zoomIn and zoomOut actions. | `1` |
+| `demoTime.highlightZoomEnabled` | Enable zooming when highlighting code. | `false` \| `number (zoom level)` |
+| `demoTime.nextActionBehaviour` | Defines how the next action/step behaves. <br /><br />**lastExecuted (default):** The "Next" action always advances from the furthest step you have executed, even if you go back and view previous steps. This is the current behavior.<br /><br />**currentPosition:** The "Next" action advances from your current position, regardless of how far you have previously gone. If you go back and then press "Next", it moves forward from where you are. | `lastExecuted` |
+| `demoTime.showClock` | Show a clock in the status bar. | `true` |
+| `demoTime.timer` | Count down timer for how long the session should last. If not set, it will not count down. The value is the number of minutes. | `null` |
+| `demoTime.insertTypingMode` | The typing mode for inserting text. Options are: `instant`, `line-by-line`, `character-by-character`, or `hacker-typer` | `instant` |
+| `demoTime.insertTypingSpeed` | The speed in milliseconds for inserting text. | `50` |
+| `demoTime.hackerTyperChunkSize` | Number of characters to insert per 'keystroke' in hacker-typer mode | `3` |
+| `demoTime.terminalCommandBoundaryDelay` | Delay (in milliseconds) between sequential terminal commands to prevent character bleed. Increase this if commands overlap or if you use custom shell prompts (Oh My Posh, Starship, Powerlevel10k) which can cause VS Code shell integration to be unreliable. See [VS Code issue #242897](https://github.com/microsoft/vscode/issues/242897). | `200` |
+| `demoTime.api.enabled` | Enable the API to control the extension. | `false` |
+| `demoTime.api.port` | The port on which the API should run. | `3710` |
+| `demoTime.hideEditorActions` | Hide the editor actions (add new demo and toggle highlight). | `false` |
+| `demoTime.customWebComponents` | Custom web components to be used in the slides. Provide the relative paths to the JS file(s). | `[]` |
+| `demoTime.customTheme` | Custom CSS file to be used in the slides. Provide the relative path to the CSS file. | `` |
+| `demoTime.defaultFileType` | The default file type for new act files. Options: `json` (default), `yaml`. | `json` |
+| `demoTime.slideHeaderTemplate` | The template for the slide header. |  |
+| `demoTime.slideFooterTemplate` | The template for the slide footer. |  |
+| `demoTime.debug` | Enable debug mode for Demo Time. | `false` |
+| `demoTime.openInConfigEditor` | Open the act file in the act editor GUI. | `true` |
+| `demoTime.remote.showScreenshot` | Enable remote screenshot functionality. | `true` |
+| `demoTime.remote.showNotes` | Enable remote notes functionality. | `true` |
+| `demoTime.redaction.enabled` | Enable redaction mode to automatically mask sensitive data (API keys, tokens, passwords, emails) during presentation mode. | `false` |
+| `demoTime.redaction.customPatterns` | Additional regex patterns to redact sensitive data. Each pattern should be a valid JavaScript regular expression string. | `[]` |
+
+<Aside>
+The `demoTime.previousEnabled` is by default disabled to avoid conflicts when the previous action inserted content into a file.
+
+When you enable this setting, you can use the `Demo Time: Previous` command to go back to the previous step or use the left clicker button.
+</Aside>
+
+<Aside type="caution" title="Terminal Command Boundary Delay">
+The `demoTime.terminalCommandBoundaryDelay` setting controls the delay between sequential terminal commands. The default value of 200ms works for most shells, but you may need to increase it if you experience command overlap or character bleed when running multiple commands in sequence.
+
+**When to increase this setting:**
+- You use a custom shell prompt (Oh My Posh, Starship, Powerlevel10k)
+- You're running VS Code 1.98+ (shell integration sequencing became less reliable)
+- Commands appear to overlap in the terminal (e.g., `commandAc` instead of `commandA` followed by `commandB`)
+
+**Recommended values:**
+- **300-500ms**: For custom shell prompts or unreliable shell integration
+- **1000ms+**: For PowerShell on Windows or other complex shell setups
+</Aside>
+
+## Act file Format Examples
+
+Demo Time supports both JSON and YAML formats for act files. You can configure the default format with the `demoTime.defaultFileType` setting.
+
+<Tabs syncKey="demo-file-format">
+<TabItem label="JSON">
+
+```json
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "My Demo",
+  "description": "A sample demo",
+  "version": 3,
+  "scenes": [
+    {
+      "title": "Step 1",
+      "moves": [
+        {
+          "action": "create",
+          "path": "test.txt",
+          "content": "Hello World"
+        }
+      ]
+    }
+  ]
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+title: My Demo
+description: A sample demo
+version: 3
+scenes:
+  - title: Step 1
+    moves:
+      - action: create
+        path: test.txt
+        content: Hello World
+```
+
+</TabItem>
+</Tabs>
+
+<style>{`
+table th:nth-child(1) {
+  width: 40%;
+}
+`}</style>

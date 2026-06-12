@@ -1,0 +1,107 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Slide Transitions",
+  "description": "",
+  "demos": [
+    {
+      "title": "None",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/none.md"
+        }
+      ]
+    },
+    {
+      "title": "Fade in",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/fade-in.md"
+        }
+      ]
+    },
+    {
+      "title": "Slide right",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/slide-right.md"
+        }
+      ]
+    },
+    {
+      "title": "Slide left",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/slide-left.md"
+        }
+      ]
+    },
+    {
+      "title": "Slide up",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/slide-up.md"
+        }
+      ]
+    },
+    {
+      "title": "Slide down",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/slide-down.md"
+        }
+      ]
+    },
+    {
+      "title": "Zoom in",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/zoom-in.md"
+        }
+      ]
+    },
+    {
+      "title": "Zoom out",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/zoom-out.md"
+        }
+      ]
+    },
+    {
+      "title": "Rotate in",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/rotate-in.md"
+        }
+      ]
+    },
+    {
+      "title": "Rotate out",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/rotate-out.md"
+        }
+      ]
+    }
+  ]
+}

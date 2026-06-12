@@ -1,0 +1,4 @@
+{
+  "extends": ["../../eslint.config.mjs"],
+  "ignorePatterns": ["!*/", "out-tsc", "node_modules"],
+}

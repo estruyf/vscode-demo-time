@@ -1,0 +1,49 @@
+name: Publish MCP Package
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  MCP_PATH: ./apps/mcp
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '#mcp')
+    defaults:
+      run:
+        working-directory: ${{ env.MCP_PATH }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org/"
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Update package version with build number as patch
+        run: |
+          BUILD_NUMBER=${{ github.run_number }}
+          PATCH_VERSION=$((39 + BUILD_NUMBER))
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. -v p=$PATCH_VERSION '{print $1"."$2"."p}')
+          npm version $NEW_VERSION --no-git-tag-version --allow-same-version
+
+      - name: Build package
+        run: npm run build
+
+      - name: Build search
+        run: npm run search:build
+
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

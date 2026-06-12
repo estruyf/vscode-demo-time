@@ -1,0 +1,17 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Slides - Custom Web Components",
+  "description": "",
+  "demos": [
+    {
+      "title": "Custom highlight text",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/components/text-highlight-component.md"
+        }
+      ]
+    }
+  ]
+}

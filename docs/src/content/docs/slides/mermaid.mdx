@@ -1,0 +1,63 @@
+---
+title: Mermaid Diagrams
+description: Learn how to use Mermaid diagrams in your slides.
+lastmod: 2025-07-04T15:10:34.624Z
+---
+
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+
+import mermaidBasicImg from "../../../assets/docs/mermaid-basic.webp";
+import mermaidMultipleImg from "../../../assets/docs/mermaid-multiple.webp";
+
+
+Demo Time supports [Mermaid diagrams](https://mermaid.js.org/), allowing you to create flowcharts, sequence diagrams, and more directly in your slides.
+
+<Aside type="tip">
+Read the [Mermaid documentation](https://mermaid.js.org/) for more information on how to use it.
+</Aside>
+
+## Basic Usage
+
+To create a Mermaid diagram, use the `mermaid` code block syntax:
+
+````markdown title="Basic Mermaid Diagram"
+```mermaid
+graph TD;
+  A-->B;
+  A-->C;
+  B-->D;
+  C-->D;
+```
+````
+
+<Image class="mx-auto" src={mermaidBasicImg} alt="Basic Mermaid Diagram" />
+
+## Multiple Diagrams
+
+You can display multiple diagrams side by side using flexbox:
+
+````markdown
+<div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+  
+```mermaid
+classDiagram
+    class Animal
+    class Car
+    Animal --> Car
+```
+
+```mermaid
+classDiagram
+class Square~Shape~{
+    int id
+    List~int~ position
+    setPoints(List~int~ points)
+    getPoints() List~int~
+}
+```
+
+</div>
+````
+
+<Image class="mx-auto" src={mermaidMultipleImg} alt="Multiple Mermaid Diagrams loaded on a slide" />

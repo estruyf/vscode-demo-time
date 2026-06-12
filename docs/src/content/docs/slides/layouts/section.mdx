@@ -1,0 +1,24 @@
+---
+title: Section Slide Layout
+description: Learn about the section slide layout in Demo Time
+lastmod: 2025-07-04T15:10:34.643Z
+---
+
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+import sectionImg from "../../../../assets/docs/slide-layouts/section.webp";
+
+
+The `section` layout is used to separate slides into sections. It provides a large title area and a smaller content area.
+
+```md
+---
+layout: section
+---
+
+# Section slides
+
+This is a section slide.
+```
+
+<Image class="mx-auto" src={sectionImg} alt="Section" />

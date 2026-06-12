@@ -1,0 +1,75 @@
+{
+  "$schema": "https://beta.demotime.show/demo-time.schema.json",
+  "title": "Time actions",
+  "description": "",
+  "demos": [
+    {
+      "title": "Wait for timeout",
+      "description": "",
+      "steps": [
+        {
+          "action": "waitForTimeout",
+          "timeout": 2000
+        },
+        {
+          "action": "markdownPreview",
+          "path": ".demo/content/after-timeout.md"
+        }
+      ]
+    },
+    {
+      "title": "Wait for input",
+      "description": "",
+      "steps": [
+        {
+          "action": "waitForInput",
+          "message": "Do you want to continue?"
+        },
+        {
+          "action": "markdownPreview",
+          "path": ".demo/content/after-timeout.md"
+        }
+      ]
+    },
+    {
+      "title": "Wait for next",
+      "description": "",
+      "steps": [
+        {
+          "action": "highlight",
+          "path": "changelog.md",
+          "position": "1",
+          "highlightWholeLine": true
+        },
+        {
+          "action": "pause"
+        },
+        {
+          "action": "highlight",
+          "path": "changelog.md",
+          "position": "3",
+          "highlightWholeLine": true
+        },
+        {
+          "action": "pause"
+        },
+        {
+          "action": "highlight",
+          "path": "changelog.md",
+          "position": "6",
+          "highlightWholeLine": true
+        },
+        {
+          "action": "pause"
+        },
+        {
+          "action": "highlight",
+          "path": "changelog.md",
+          "position": "10",
+          "highlightWholeLine": true
+        }
+      ],
+      "id": "demo-mev59j3e-1tt0"
+    }
+  ]
+}

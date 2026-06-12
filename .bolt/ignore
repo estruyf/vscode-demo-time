@@ -1,0 +1,11 @@
+.demo/*
+.frontmatter/*
+.github/*
+apps/mcp
+apps/powerpoint-addin/*
+apps/vscode-extension/*
+assets/*
+docs/*
+examples/*
+scripts/*
+snippets/*

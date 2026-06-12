@@ -1,0 +1,18 @@
+# Node modules
+node_modules/
+
+# Build output
+src/
+
+# Misc
+.DS_Store
+.env
+.vscode/
+scripts/
+eslint.config.mjs
+
+# Package lock files
+package-lock.json
+
+.mcpregistry_github_token
+.mcpregistry_registry_token

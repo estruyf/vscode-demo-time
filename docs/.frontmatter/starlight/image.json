@@ -1,0 +1,21 @@
+{
+  "$schema": "https://beta.frontmatter.codes/frontmatter.schema.json",
+  "frontMatter.content.snippets": {
+    "Image": {
+      "isMediaSnippet": true,
+      "description": "Insert an image",
+      "body": [
+        "import [[importName]] from \"../../assets[[&mediaUrl]]\";",
+        "<Image class=\"mx-auto\" src={[[importName]]} alt=\"[[caption]]\" width=\"400\" />"
+      ],
+      "fields": [
+        {
+          "name": "importName",
+          "title": "Import name",
+          "type": "string",
+          "default": ""
+        }
+      ]
+    }
+  }
+}

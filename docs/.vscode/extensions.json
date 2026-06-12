@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "astro-build.astro-vscode",
+    "eliostruyf.vscode-demo-time"
+  ],
+  "unwantedRecommendations": []
+}

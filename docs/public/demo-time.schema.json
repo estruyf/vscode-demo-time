@@ -1,0 +1,1465 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://demotime.show/demo-time.schema.json",
+  "title": "Demo Time - Schema",
+  "description": "The schema for the Demo Time - VSCode extension",
+  "lastModified": "2026-05-21",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "version": {
+      "type": "number",
+      "enum": [1, 2, 3],
+      "default": 1,
+      "description": "Version 3 introduces theatrical naming: scenes (replaces demos) and moves (replaces steps)"
+    },
+    "timer": {
+      "type": "number",
+      "description": "The timer in minutes for the demo."
+    },
+    "loop": {
+      "$ref": "#/definitions/loop"
+    },
+    "demos": {
+      "type": "array",
+      "description": "For version 1 & 2: Array of demo objects",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "engageTime": {
+            "type": "object",
+            "properties": {
+              "sessionId": {
+                "type": "string",
+                "description": "The ID of the EngageTime session."
+              }
+            }
+          },
+          "disabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, the demo will not be shown in the UI."
+          },
+          "autoAdvanceAfter": {
+            "$ref": "#/definitions/autoAdvanceAfter"
+          },
+          "icons": {
+            "type": "object",
+            "properties": {
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              }
+            },
+            "required": ["start", "end"],
+            "description": "Provide the icon name of the VS Code codicon for the start and end of the demo"
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "action": {
+                  "title": "Action to perform",
+                  "type": "string",
+                  "enum": [
+                    "applyPatch",
+                    "create",
+                    "open",
+                    "rename",
+                    "deleteFile",
+                    "close",
+                    "closeAll",
+                    "copy",
+                    "move",
+                    "markdownPreview",
+                    "imagePreview",
+                    "openSlide",
+                    "insert",
+                    "highlight",
+                    "selection",
+                    "replace",
+                    "unselect",
+                    "delete",
+                    "positionCursor",
+                    "write",
+                    "save",
+                    "format",
+                    "setSetting",
+                    "setTheme",
+                    "unsetTheme",
+                    "setPresentationView",
+                    "unsetPresentationView",
+                    "backupSettings",
+                    "restoreSettings",
+                    "waitForTimeout",
+                    "waitForInput",
+                    "pause",
+                    "executeVSCodeCommand",
+                    "showInfoMessage",
+                    "setState",
+                    "openWebsite",
+                    "zoomIn",
+                    "zoomOut",
+                    "zoomReset",
+                    "enableZenMode",
+                    "disableZenMode",
+                    "openTerminal",
+                    "focusTerminal",
+                    "executeTerminalCommand",
+                    "sendKeybinding",
+                    "executeScript",
+                    "closeTerminal",
+                    "snippet",
+                    "openPowerPoint",
+                    "openKeynote",
+                    "openCopilotChat",
+                    "newCopilotChat",
+                    "askCopilotChat",
+                    "editCopilotChat",
+                    "agentCopilotChat",
+                    "customCopilotChat",
+                    "closeCopilotChat",
+                    "cancelCopilotChat",
+                    "copyToClipboard",
+                    "copyFromSelection",
+                    "pasteFromClipboard",
+                    "typeText",
+                    "pressEnter",
+                    "pressTab",
+                    "pressArrowLeft",
+                    "pressArrowRight",
+                    "pressArrowUp",
+                    "pressArrowDown",
+                    "pressEscape",
+                    "pressBackspace",
+                    "pressDelete",
+                    "runDemoById",
+                    "macos.enableFocusMode",
+                    "macos.disableFocusMode",
+                    "macos.hideMenubar",
+                    "macos.showMenubar",
+                    "macos.muteVolume",
+                    "macos.unmuteVolume",
+                    "macos.enableCaffeine",
+                    "macos.disableCaffeine",
+                    "macos.hideDock",
+                    "macos.showDock",
+                    "hideDesktopIcons",
+                    "showDesktopIcons",
+                    "startEngageTimeSession",
+                    "startEngageTimePoll",
+                    "closeEngageTimeSession",
+                    "closeEngageTimePoll",
+                    "showEngageTimeSession",
+                    "showEngageTimePoll",
+                    "sendEngageTimeMessage",
+                    "showQR",
+                    "hideQR",
+                    "closePreview"
+                  ]
+                },
+                "disabled": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "If true, the step will not be executed."
+                }
+              },
+              "required": ["action"],
+              "allOf": [
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "enum": ["deleteFile", "markdownPreview"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["path"],
+                    "properties": {
+                      "path": {
+                        "$ref": "#/definitions/path"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "enum": ["open"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["path"],
+                    "properties": {
+                      "path": {
+                        "$ref": "#/definitions/path"
+                      },
+                      "focusTop": {
+                        "$ref": "#/definitions/focusTop"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "enum": ["openSlide"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["path"],
+                    "properties": {
+                      "path": {
+                        "$ref": "#/definitions/path"
+                      },
+                      "position": {
+                        "$ref": "#/definitions/position"
+                      },
+                      "slide": {
+                        "$ref": "#/definitions/slide"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "enum": ["create"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["path"],
+                    "oneOf": [
+                      {
+                        "required": ["content"],
+                        "not": { "required": ["contentPath"] }
+                      },
+                      {
+                        "required": ["contentPath"],
+                        "not": { "required": ["content"] }
+                      },
+                      {
+                        "not": {
+                          "anyOf": [{ "required": ["content"] }, { "required": ["contentPath"] }]
+                        }
+                      }
+                    ],
+                    "properties": {
+                      "path": {
+                        "$ref": "#/definitions/path"
+                      },
+                      "content": {
+                        "$ref": "#/definitions/content"
+                      },
+                      "contentPath": {
+                        "$ref": "#/definitions/contentPath"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "enum": ["rename", "copy", "move"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["path", "dest"],
+                    "properties": {
+                      "path": {
+                        "$ref": "#/definitions/path"
+                      },
+                      "dest": {
+                        "$ref": "#/definitions/dest"
+                      },
+                      "overwrite": {
+                        "$ref": "#/definitions/overwrite"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "enum": ["highlight", "positionCursor"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["path"],
+                    "oneOf": [
+                      { "required": ["position"] },
+                      { "required": ["startPlaceholder", "endPlaceholder"] }
+                    ],
+                    "properties": {
+                      "path": {
+                        "$ref": "#/definitions/path"
+                      },
+                      "position": {
+                        "$ref": "#/definitions/position"
+                      },
+                      "startPlaceholder": {
+                        "$ref": "#/definitions/startPlaceholder"
+                      },
+                      "endPlaceholder": {
+                        "$ref": "#/definitions/endPlaceholder"
+                      },
+                      "highlightWholeLine": {
+                        "$ref": "#/definitions/highlightWholeLine"
+                      },
+                      "zoom": {
+                        "$ref": "#/definitions/zoom"
+                      },
+                      "highlightBlur": {
+                        "$ref": "#/definitions/highlightBlur"
+                      },
+                      "highlightOpacity": {
+                        "$ref": "#/definitions/highlightOpacity"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "enum": ["selection"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["path"],
+                    "oneOf": [
+                      { "required": ["position"] },
+                      { "required": ["startPlaceholder", "endPlaceholder"] }
+                    ],
+                    "properties": {
+                      "path": {
+                        "$ref": "#/definitions/path"
+                      },
+                      "position": {
+                        "$ref": "#/definitions/position"
+                      },
+                      "startPlaceholder": {
+                        "$ref": "#/definitions/startPlaceholder"
+                      },
+                      "endPlaceholder": {
+                        "$ref": "#/definitions/endPlaceholder"
+                      },
+                      "zoom": {
+                        "$ref": "#/definitions/zoom"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "enum": ["positionCursor"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["path"],
+                    "oneOf": [{ "required": ["position"] }, { "required": ["startPlaceholder"] }],
+                    "properties": {
+                      "path": {
+                        "$ref": "#/definitions/path"
+                      },
+                      "position": {
+                        "$ref": "#/definitions/position"
+                      },
+                      "startPlaceholder": {
+                        "$ref": "#/definitions/startPlaceholder"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "enum": ["insert", "replace"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["path"],
+                    "oneOf": [{ "required": ["content"] }, { "required": ["contentPath"] }],
+                    "anyOf": [
+                      { "required": ["position"] },
+                      { "required": ["startPlaceholder", "endPlaceholder"] }
+                    ],
+                    "properties": {
+                      "path": {
+                        "$ref": "#/definitions/path"
+                      },
+                      "content": {
+                        "$ref": "#/definitions/content"
+                      },
+                      "contentPath": {
+                        "$ref": "#/definitions/contentPath"
+                      },
+                      "position": {
+                        "$ref": "#/definitions/position"
+                      },
+                      "startPlaceholder": {
+                        "$ref": "#/definitions/startPlaceholder"
+                      },
+                      "endPlaceholder": {
+                        "$ref": "#/definitions/endPlaceholder"
+                      },
+                      "insertTypingMode": {
+                        "$ref": "#/definitions/insertTypingMode"
+                      },
+                      "insertTypingSpeed": {
+                        "$ref": "#/definitions/insertTypingSpeed"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "delete"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["path"],
+                    "oneOf": [
+                      { "required": ["position"] },
+                      { "required": ["startPlaceholder", "endPlaceholder"] }
+                    ],
+                    "properties": {
+                      "path": {
+                        "$ref": "#/definitions/path"
+                      },
+                      "position": {
+                        "$ref": "#/definitions/position"
+                      },
+                      "startPlaceholder": {
+                        "$ref": "#/definitions/startPlaceholder"
+                      },
+                      "endPlaceholder": {
+                        "$ref": "#/definitions/endPlaceholder"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "write"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["content"],
+                    "properties": {
+                      "content": {
+                        "$ref": "#/definitions/content"
+                      },
+                      "path": {
+                        "$ref": "#/definitions/path"
+                      },
+                      "position": {
+                        "$ref": "#/definitions/position"
+                      },
+                      "startPlaceholder": {
+                        "$ref": "#/definitions/startPlaceholder"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "enum": ["imagePreview"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["path"],
+                    "properties": {
+                      "path": {
+                        "$ref": "#/definitions/path"
+                      },
+                      "theme": {
+                        "$ref": "#/definitions/cssTheme"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "applyPatch"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["path", "contentPath", "patch"],
+                    "properties": {
+                      "path": {
+                        "$ref": "#/definitions/path"
+                      },
+                      "contentPath": {
+                        "$ref": "#/definitions/contentPath"
+                      },
+                      "patch": {
+                        "$ref": "#/definitions/patch"
+                      },
+                      "insertTypingMode": {
+                        "$ref": "#/definitions/insertTypingMode"
+                      },
+                      "insertTypingSpeed": {
+                        "$ref": "#/definitions/insertTypingSpeed"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "setSetting"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["setting"],
+                    "properties": {
+                      "setting": {
+                        "$ref": "#/definitions/setting"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "setTheme"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["theme"],
+                    "properties": {
+                      "theme": {
+                        "$ref": "#/definitions/vscodeTheme"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "executeTerminalCommand"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["command"],
+                    "properties": {
+                      "autoExecute": {
+                        "$ref": "#/definitions/autoExecute"
+                      },
+                      "command": {
+                        "$ref": "#/definitions/terminalCommand"
+                      },
+                      "terminalId": {
+                        "$ref": "#/definitions/terminalId"
+                      },
+                      "insertTypingMode": {
+                        "$ref": "#/definitions/terminalInsertTypingMode"
+                      },
+                      "insertTypingSpeed": {
+                        "$ref": "#/definitions/insertTypingSpeed"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "focusTerminal"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "terminalId": {
+                        "$ref": "#/definitions/terminalId"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "sendKeybinding"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["keybinding"],
+                    "properties": {
+                      "keybinding": {
+                        "$ref": "#/definitions/keybinding"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "executeScript"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["id", "command", "path"],
+                    "properties": {
+                      "id": {
+                        "$ref": "#/definitions/scriptId"
+                      },
+                      "command": {
+                        "$ref": "#/definitions/scriptCommand"
+                      },
+                      "path": {
+                        "$ref": "#/definitions/path"
+                      },
+                      "args": {
+                        "type": "array",
+                        "description": "Arguments to pass to the script as command-line arguments in the order specified. Example: [\"arg1\", \"arg2\"] becomes: command script.js arg1 arg2",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "waitForMessage": {
+                        "$ref": "#/definitions/waitForMessage"
+                      },
+                      "showProgress": {
+                        "$ref": "#/definitions/showProgress"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "enum": ["closeTerminal", "openTerminal"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "terminalId": {
+                        "$ref": "#/definitions/terminalId"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "waitForTimeout"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["timeout"],
+                    "properties": {
+                      "timeout": {
+                        "$ref": "#/definitions/timeout"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "waitForInput"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "message": {
+                        "$ref": "#/definitions/inputTitleMessage"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "executeVSCodeCommand"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["command"],
+                    "properties": {
+                      "command": {
+                        "$ref": "#/definitions/vscodeCommand"
+                      },
+                      "args": {
+                        "$ref": "#/definitions/args"
+                      },
+                      "path": {
+                        "$ref": "#/definitions/path"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "showInfoMessage"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["message"],
+                    "properties": {
+                      "message": {
+                        "$ref": "#/definitions/notificationMessage"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "setState"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["state"],
+                    "properties": {
+                      "state": {
+                        "$ref": "#/definitions/state"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "openWebsite"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["url"],
+                    "properties": {
+                      "url": {
+                        "$ref": "#/definitions/url"
+                      },
+                      "openInVSCode": {
+                        "$ref": "#/definitions/openInVSCode"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "zoomIn"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "zoom": {
+                        "$ref": "#/definitions/zoom"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "zoomOut"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "zoom": {
+                        "$ref": "#/definitions/zoom"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "zoomReset"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {}
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "snippet"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["contentPath"],
+                    "properties": {
+                      "contentPath": {
+                        "$ref": "#/definitions/contentPath"
+                      },
+                      "args": {
+                        "$ref": "#/definitions/args"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "enum": ["askCopilotChat", "editCopilotChat", "agentCopilotChat"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "message": {
+                        "$ref": "#/definitions/copilotMessage"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "enum": ["customCopilotChat"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["mode"],
+                    "properties": {
+                      "mode": {
+                        "$ref": "#/definitions/copilotMode"
+                      },
+                      "message": {
+                        "$ref": "#/definitions/copilotMessage"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "enum": ["startEngageTimePoll", "closeEngageTimePoll"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["pollId"],
+                    "properties": {
+                      "pollId": {
+                        "$ref": "#/definitions/pollId"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "enum": ["showEngageTimePoll"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["pollId"],
+                    "properties": {
+                      "pollId": {
+                        "$ref": "#/definitions/pollId"
+                      },
+                      "startOnOpen": {
+                        "$ref": "#/definitions/startOnOpen"
+                      },
+                      "closeOnOpen": {
+                        "$ref": "#/definitions/closeOnOpen"
+                      }
+                    },
+                    "not": {
+                      "properties": {
+                        "startOnOpen": { "const": true },
+                        "closeOnOpen": { "const": true }
+                      },
+                      "required": ["startOnOpen", "closeOnOpen"]
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "enum": ["sendEngageTimeMessage"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["type", "title"],
+                    "properties": {
+                      "type": {
+                        "$ref": "#/definitions/type"
+                      },
+                      "title": {
+                        "$ref": "#/definitions/title"
+                      },
+                      "description": {
+                        "$ref": "#/definitions/description"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "showQR"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["url"],
+                    "properties": {
+                      "url": {
+                        "$ref": "#/definitions/url"
+                      },
+                      "topText": {
+                        "type": "string",
+                        "title": "The top text shown above the QR code"
+                      },
+                      "title": {
+                        "type": "string",
+                        "title": "The title shown with the QR code"
+                      },
+                      "description": {
+                        "type": "string",
+                        "title": "The description shown with the QR code"
+                      },
+                      "logo": {
+                        "type": "string",
+                        "title": "A URL to the logo image shown next to the QR code"
+                      },
+                      "qrLayout": {
+                        "type": "string",
+                        "enum": [
+                          "default",
+                          "reversed",
+                          "minimal",
+                          "stacked",
+                          "text-left",
+                          "text-right"
+                        ],
+                        "title": "The QR slide layout: default (QR right, logo left), reversed (QR left, logo right), minimal (QR only), stacked (QR top, text below), text-left (text left, QR right), text-right (text right, QR left)"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "copyToClipboard"
+                      }
+                    }
+                  },
+                  "then": {
+                    "oneOf": [{ "required": ["content"] }, { "required": ["contentPath"] }],
+                    "properties": {
+                      "content": {
+                        "$ref": "#/definitions/content"
+                      },
+                      "contentPath": {
+                        "$ref": "#/definitions/contentPath"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "typeText"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["content"],
+                    "properties": {
+                      "content": {
+                        "$ref": "#/definitions/content"
+                      },
+                      "insertTypingSpeed": {
+                        "$ref": "#/definitions/insertTypingSpeed"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "runDemoById"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["id"],
+                    "properties": {
+                      "id": {
+                        "$ref": "#/definitions/runDemoById"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "macos.enableCaffeine"
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "duration": {
+                        "$ref": "#/definitions/duration"
+                      }
+                    }
+                  }
+                }
+              ],
+              "additionalProperties": true
+            }
+          },
+          "notes": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Path to the file to open"
+              },
+              "showOnTrigger": {
+                "type": "boolean",
+                "description": "Show the notes when the trigger is activated. Default is false."
+              }
+            },
+            "required": ["path"]
+          }
+        },
+        "required": ["title", "steps"],
+        "additionalProperties": false
+      }
+    },
+    "scenes": {
+      "type": "array",
+      "description": "For version 3: Array of scene objects (theatrical naming for demos)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "engageTime": {
+            "type": "object",
+            "properties": {
+              "sessionId": {
+                "type": "string",
+                "description": "The ID of the EngageTime session."
+              }
+            }
+          },
+          "disabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, the scene will not be shown in the UI."
+          },
+          "autoAdvanceAfter": {
+            "$ref": "#/definitions/autoAdvanceAfter"
+          },
+          "icons": {
+            "type": "object",
+            "properties": {
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              }
+            },
+            "required": ["start", "end"],
+            "description": "Provide the icon name of the VS Code codicon for the start and end of the scene"
+          },
+          "moves": {
+            "$ref": "#/properties/demos/items/properties/steps"
+          },
+          "notes": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Path to the file to open"
+              },
+              "showOnTrigger": {
+                "type": "boolean",
+                "description": "Show the notes when the trigger is activated. Default is false."
+              }
+            },
+            "required": ["path"]
+          }
+        },
+        "required": ["title", "moves"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "version": { "const": 3 }
+        }
+      },
+      "then": {
+        "required": ["title", "version", "scenes"]
+      },
+      "else": {
+        "required": ["title", "demos"]
+      }
+    }
+  ],
+  "definitions": {
+    "args": {
+      "type": ["object", "array", "string", "number", "boolean"],
+      "title": "Arguments to pass to the VS Code command, or placeholder names for your snippet"
+    },
+    "autoExecute": {
+      "type": "boolean",
+      "default": true,
+      "title": "Automatically execute the command. Default is true."
+    },
+    "autoAdvanceAfter": {
+      "type": "number",
+      "minimum": 1,
+      "title": "Auto advance after (seconds)",
+      "description": "Automatically advance to the next scene after this many seconds."
+    },
+    "content": {
+      "type": "string",
+      "title": "Content to insert"
+    },
+    "contentPath": {
+      "type": "string",
+      "title": "Path to the content to use"
+    },
+    "copilotMessage": {
+      "type": "string",
+      "title": "The message for the GitHub Copilot interaction"
+    },
+    "copilotMode": {
+      "type": "string",
+      "title": "The mode for the GitHub Copilot interaction"
+    },
+    "cssTheme": {
+      "type": "string",
+      "title": "Relative path to a CSS file for custom styling of the image preview"
+    },
+    "dest": {
+      "type": "string",
+      "title": "The destination path for the file"
+    },
+    "endPlaceholder": {
+      "type": "string",
+      "title": "End placeholder value for the end position"
+    },
+    "highlightWholeLine": {
+      "type": "boolean",
+      "default": true,
+      "title": "Highlight the whole line"
+    },
+    "insertTypingMode": {
+      "type": "string",
+      "enum": ["instant", "line-by-line", "character-by-character", "hacker-typer"],
+      "default": "instant",
+      "title": "Typing mode defines how you enter the text. Default is 'instant'."
+    },
+    "insertTypingSpeed": {
+      "type": "number",
+      "title": "Speed in milliseconds between each character when typing text. Used with the typeText action."
+    },
+    "loop": {
+      "type": "boolean",
+      "title": "Loop scenes",
+      "description": "When enabled, the act restarts from the first scene after the last scene."
+    },
+    "notificationMessage": {
+      "type": "string",
+      "title": "The message for the notification"
+    },
+    "inputTitleMessage": {
+      "type": "string",
+      "title": "The message for the input title"
+    },
+    "openInVSCode": {
+      "type": "boolean",
+      "title": "Open the URL in VSCode. Default is false.",
+      "default": false
+    },
+    "overwrite": {
+      "type": "boolean",
+      "title": "Overwrite the destination file if it exists. Default is false.",
+      "default": false
+    },
+    "patch": {
+      "type": "string",
+      "title": "Path to the patch file to use for the snapshot provided in the contentPath"
+    },
+    "path": {
+      "type": "string",
+      "title": "Path to file"
+    },
+    "focusTop": {
+      "type": "boolean",
+      "title": "Focus the editor on the top of the file",
+      "default": true
+    },
+    "position": {
+      "type": ["string", "number"],
+      "title": "Position in the file. Can be line number or \"<start line>,<start character>\" or \"<start line>:<end line>\" or \"<start line>,<start character>:<end line>,<end character>\"."
+    },
+    "runDemoById": {
+      "type": "string",
+      "title": "The ID of the demo to run"
+    },
+    "scriptId": {
+      "type": "string",
+      "title": "The ID of the script"
+    },
+    "scriptCommand": {
+      "type": "string",
+      "title": "Type of script to execute (e.g., node, bash, shell, python, etc.). You can also define a path to a executeable for instance when using nvm."
+    },
+    "setting": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "The setting key"
+        },
+        "value": {
+          "type": ["string", "number", "boolean", "object", "array", "null"],
+          "description": "The setting value"
+        }
+      },
+      "required": ["key", "value"]
+    },
+    "startPlaceholder": {
+      "type": "string",
+      "title": "Start placeholder value for the start position"
+    },
+    "state": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "The state key"
+        },
+        "value": {
+          "type": ["string"],
+          "description": "The state value"
+        }
+      },
+      "required": ["key", "value"]
+    },
+    "terminalCommand": {
+      "type": "string",
+      "title": "Terminal command to execute."
+    },
+    "keybinding": {
+      "type": "string",
+      "title": "Keyboard shortcut to send (e.g. ctrl+shift+p)."
+    },
+    "terminalId": {
+      "type": "string",
+      "title": "Define the name for the terminal. Default is \"DemoTime\"."
+    },
+    "terminalInsertTypingMode": {
+      "type": "string",
+      "enum": ["instant", "character-by-character"],
+      "default": "instant",
+      "title": "Typing mode defines how you enter the text. Default is 'instant'."
+    },
+    "timeout": {
+      "type": "number",
+      "title": "Timeout in milliseconds"
+    },
+    "url": {
+      "type": "string",
+      "title": "The URL to open"
+    },
+    "slide": {
+      "type": "number",
+      "title": "Slide number to open (1-based index)",
+      "default": 1
+    },
+    "vscodeCommand": {
+      "type": "string",
+      "title": "VS Code command ID to execute. Example: 'workbench.action.files.save', 'workbench.action.closeActiveEditor', etc."
+    },
+    "vscodeTheme": {
+      "type": "string",
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": [
+            "Default Dark Modern",
+            "Default Dark+",
+            "Default High Contrast Light",
+            "Default High Contrast",
+            "Default Light Modern",
+            "Default Light+"
+          ]
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "title": "Provide the Visual Studio Code theme name."
+    },
+    "zoom": {
+      "type": "number",
+      "title": "The number of times to zoom in or out",
+      "default": 0
+    },
+    "highlightBlur": {
+      "type": "number",
+      "title": "Blur effect for non-highlighted text (overrides global setting)",
+      "description": "The blur effect in pixels to apply to non-highlighted text. Overrides the global highlightBlur setting for this specific highlight step.",
+      "minimum": 0,
+      "maximum": 50
+    },
+    "highlightOpacity": {
+      "type": "number",
+      "title": "Opacity for non-highlighted text (overrides global setting)",
+      "description": "The opacity value (0-1) for non-highlighted text. Overrides the global highlightOpacity setting for this specific highlight step.",
+      "minimum": 0,
+      "maximum": 1,
+      "multipleOf": 0.05
+    },
+    "pollId": {
+      "type": "string",
+      "title": "The ID of the EngageTime poll"
+    },
+    "startOnOpen": {
+      "type": "boolean",
+      "description": "Start the poll when the demo is started. Default is false.",
+      "default": false
+    },
+    "closeOnOpen": {
+      "type": "boolean",
+      "description": "Close the poll when it is shown. Default is false.",
+      "default": false
+    },
+    "type": {
+      "type": "string",
+      "enum": ["demo", "slide", "custom"],
+      "title": "The type of EngageTime message"
+    },
+    "title": {
+      "type": "string",
+      "title": "The title of the EngageTime message"
+    },
+    "description": {
+      "type": "string",
+      "title": "The description of the EngageTime message"
+    },
+    "duration": {
+      "type": "number",
+      "title": "Duration in minutes (for macos.enableCaffeine). If not specified, prevents sleep indefinitely."
+    },
+    "waitForMessage": {
+      "type": "string",
+      "title": "Wait until this string appears in stdout before advancing to the next step. If not set, waits for the script process to exit."
+    },
+    "showProgress": {
+      "type": "boolean",
+      "title": "Show the progress notification while the script is executing. Default is true.",
+      "default": true
+    }
+  }
+}

@@ -1,0 +1,140 @@
+---
+title: Auto-proceed and looped playback
+description: Automatically advance through scenes with optional act-level looping and status bar controls.
+lastmod: 2026-05-21T00:00:00.000Z
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+You can configure Demo Time to advance scenes automatically after a delay, and optionally loop back to the beginning of the act when it reaches the end.
+
+This is useful when you want a demo that feels like a polished recording, while still running live so interactions, timing, and environment stay real. It is perfect for booth showcases at conferences where your demo needs to keep going without a presenter.
+
+## Scene auto-proceed
+
+Set `autoAdvanceAfter` on a scene to move to the next scene after the configured delay (in seconds).
+
+<Tabs syncKey="auto-proceed-scene">
+<TabItem label="JSON">
+
+```json title="demo.json"
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "version": 3,
+  "scenes": [
+    {
+      "title": "Intro slide",
+      "autoAdvanceAfter": 5,
+      "moves": [
+        {
+          "action": "openSlide",
+          "path": ".demo/slides/slide-1.md"
+        }
+      ]
+    }
+  ]
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml title="demo.yaml"
+version: 3
+scenes:
+  - title: Intro slide
+    autoAdvanceAfter: 5
+    moves:
+      - action: openSlide
+        path: .demo/slides/slide-1.md
+```
+
+</TabItem>
+</Tabs>
+
+## Act-level loop
+
+Set `loop: true` at the root of the act file to restart from the first scene when the act reaches the end.
+
+<Tabs syncKey="auto-proceed-loop">
+<TabItem label="JSON">
+
+```json title="demo.json"
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "version": 3,
+  "loop": true,
+  "scenes": [
+    {
+      "title": "Intro slide",
+      "autoAdvanceAfter": 5,
+      "moves": [
+        {
+          "action": "openSlide",
+          "path": ".demo/slides/slide-1.md"
+        }
+      ]
+    },
+    {
+      "title": "Open file",
+      "autoAdvanceAfter": 5,
+      "moves": [
+        {
+          "action": "open",
+          "path": "showCase.ts"
+        }
+      ]
+    },
+    {
+      "title": "The end",
+      "autoAdvanceAfter": 5,
+      "moves": [
+        {
+          "action": "close"
+        },
+        {
+          "action": "openSlide",
+          "path": ".demo/slides/slide-2.md"
+        }
+      ]
+    }
+  ]
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml title="demo.yaml"
+version: 3
+loop: true
+scenes: 
+  - title: Intro slide
+    autoAdvanceAfter: 5
+    moves:
+      - action: openSlide
+        path: .demo/slides/slide-1.md
+  - title: Open file
+    autoAdvanceAfter: 5
+    moves:
+      - action: open
+        path: showCase.ts
+  - title: The end
+    autoAdvanceAfter: 5
+    moves:
+      - action: close
+      - action: openSlide
+        path: .demo/slides/slide-2.md
+```
+
+</TabItem>
+</Tabs>
+
+## Status bar automation indicator
+
+When auto-proceed is active, Demo Time shows an automation indicator in the status bar.
+
+- It reflects whether automation is running or paused.
+- It shows loop status when act looping is enabled.
+- It shows a countdown while waiting to advance.
+- You can pause and resume auto-proceed directly from the indicator.

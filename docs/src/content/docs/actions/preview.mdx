@@ -1,0 +1,223 @@
+---
+title: Preview actions
+description: Preview actions are used to preview files like Markdown, images, and QR codes in the editor.
+lastmod: 2026-05-08T14:52:00.264Z
+---
+
+import { Code, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+
+import GitHubFileOpener from '../../../components/GitHubFileOpener.astro';
+import qrCodeImage from "../../../assets/docs/qr-code.webp";
+
+Preview actions are used to preview files like Markdown and images in the editor.
+
+You can also use preview actions to show a shareable QR code view and close the preview window when needed.
+
+<Aside type="note" title='Samples'>
+  You can find VSCode actions samples on GitHub: 
+  <GitHubFileOpener filePath=".demo/9.preview.json" />
+</Aside>
+
+## Show slides
+
+To show slides with Demo Time, you can make use of the `openSlide` action.
+
+<Tabs syncKey="preview-slides">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "openSlide",
+  "path": "<relative path to the file>",
+  "slide": "<slide number (1-based) (optional)>"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: openSlide
+path: <relative path to the file>
+slide: <slide number (1-based) (optional)>
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="tip">
+  You can use a custom theme for your slides by providing a relative path or URL to a CSS file to the `customTheme` property in the frontmatter section of your Markdown file.
+</Aside>
+
+Read more about it in the [slides](/slides/) section of the documentation.
+
+## Preview Markdown file
+
+To preview a markdown file in the editor, use the `markdownPreview` action. The `markdownPreview` action takes a file `path` as an argument.
+
+<Tabs syncKey="markdown-preview">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "markdownPreview",
+  "path": "<relative path to the file>"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: markdownPreview
+path: <relative path to the file>
+```
+
+</TabItem>
+</Tabs>
+
+## Preview image
+
+To preview an image in the editor, use the `imagePreview` action. The `imagePreview` action takes a file `path` as an argument.
+
+<Tabs syncKey="image-preview">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "imagePreview",
+  "path": "<relative path to the file>",
+  "theme": "<relative path to CSS file>"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: imagePreview
+path: <relative path to the file>
+theme: <relative path to CSS file>
+```
+
+</TabItem>
+</Tabs>
+
+### Custom theming
+
+Create a CSS file, and adapt the styling with the `.preview_view` class.
+
+```css title=".demo/themes/image.css"
+.preview_view {
+     background-color: #000;
+}
+```
+
+## Show QR code
+
+To display a QR code in the preview window, use the `showQR` action.
+
+The `showQR` action requires a `url` and supports optional metadata fields to customize the screen:
+
+- `qrLayout`: controls the slide layout (see below)
+- `topText`: small text above the QR code
+- `title`: large title text
+- `description`: explanatory text below the link
+- `logo`: URL to a logo image shown next to the QR code (only used by `default` and `reversed` layouts)
+
+### Layouts
+
+The `qrLayout` field accepts one of six values:
+
+| Value | Description |
+|---|---|
+| `default` | QR code on the right, logo on the left (side-by-side) |
+| `reversed` | QR code on the left, logo on the right (side-by-side) |
+| `stacked` | QR code centered at top, title/description below |
+| `minimal` | QR code and URL only |
+| `text-left` | Title and description on the left, QR code on the right |
+| `text-right` | QR code on the left, title and description on the right |
+
+<Image class="mx-auto" src={qrCodeImage} alt="Show a QR code" />
+
+<Tabs syncKey="qr-preview">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "showQR",
+  "qrLayout": "default",
+  "url": "https://demotime.show",
+  "topText": "Scan to open",
+  "title": "Get started with Demo Time",
+  "description": "Never stress about live coding again. Present straight from Visual Studio Code.",
+  "logo": "https://demotime.show/logo.svg"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: showQR
+qrLayout: default
+url: https://demotime.show
+topText: Scan to open
+title: Get started with Demo Time
+description: Never stress about live coding again. Present straight from Visual Studio Code.
+logo: https://demotime.show/logo.svg
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="note">
+  The preview webview now supports HTTP(S) URLs directly, which enables the QR preview flow.
+</Aside>
+
+## Hide QR code
+
+To hide the QR code and close the preview window, use the `hideQR` action.
+
+<Tabs syncKey="qr-hide-preview">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "hideQR"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: hideQR
+```
+
+</TabItem>
+</Tabs>
+
+## Close preview window
+
+To close the preview window explicitly (slides, image preview, or QR preview), use the `closePreview` action.
+
+<Tabs syncKey="close-preview">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "closePreview"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: closePreview
+```
+
+</TabItem>
+</Tabs>

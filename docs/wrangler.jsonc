@@ -1,0 +1,7 @@
+{
+	// Cloudflare Workers configuration for Demo Time documentation site
+	// Migrated from Cloudflare Pages to Workers with static assets support
+	"name": "demo-time-docs",
+	"compatibility_date": "2025-12-22",
+  "pages_build_output_dir": "./dist"
+}

@@ -1,0 +1,21 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+---
+
+<StarlightPage
+  frontmatter={{
+    title: '404 – Page Not Found',
+    description:
+      "The page you're looking for couldn't be found. Try joining or creating a session, or return home.",
+    tableOfContents: false,
+  }}
+>
+  <p>
+    Oops! You’ve wandered off the demo path.<br />
+    Maybe you typed the wrong URL, or the page moved to a new slide.
+  </p>
+  <a href="/">Go back to Demo Time Home</a>
+  <p style="margin-top:2rem;font-size:1rem;opacity:0.7;">
+    <span style="font-size:1.5rem;">✨</span> Keep coding, keep presenting, keep having fun!
+  </p>
+</StarlightPage>

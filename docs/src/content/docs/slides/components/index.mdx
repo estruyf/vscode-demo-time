@@ -1,0 +1,140 @@
+---
+title: Components
+description: Learn how to use animations and components in your slides.
+lastmod: 2025-06-16T11:43:08.541Z
+---
+
+import { Code, Aside } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+
+import arrowCompImg from "../../../../assets/docs/arrow-component.webp";
+import rectangleCompImg from "../../../../assets/docs/rectangle-component.webp";
+import circleCompImg from "../../../../assets/docs/circle-component.webp";
+import mouseCoordinatesImg from "../../../../assets/docs/mouse-coordinates.webp";
+
+Demo Time includes several visual components to enhance your presentations.
+
+## Arrow
+
+The `dt-arrow` component draws an arrow with customizable properties:
+
+```html title="Show an arrow"
+<dt-arrow 
+  x1="0" 
+  y1="100" 
+  x2="480" 
+  y2="100" 
+  line-color="#15181f" 
+  line-width="2" 
+  arrow-head="both">
+</dt-arrow>
+```
+
+<Image class="mx-auto" src={arrowCompImg} alt="Arrow component" width={400} />
+
+### Properties
+
+- `x1` and `y1`: Coordinates for the starting point.
+- `x2` and `y2`: Coordinates for the ending point or dimensions.
+- `line-color`: Color of the line or border.
+- `line-width`: Thickness of the line or border.
+- `arrow-head`: Type of arrow head to use.
+  - `end`: Arrow head at the end (default)
+  - `start`: Arrow head at the start
+  - `both`: Arrow heads at both ends
+
+## Rectangle
+
+The `dt-rectangle` component draws a rectangle with customizable properties:
+
+```html title="Show a rectangle"
+<dt-rectangle 
+  x1="25" 
+  y1="30" 
+  x2="375" 
+  y2="75" 
+  line-color="var(--vscode-editorError-foreground)" 
+  line-width="2" 
+  fill-color="transparent">
+</dt-rectangle>
+```
+
+<Image class="mx-auto" src={rectangleCompImg} alt="Rectangle component" width="400" />
+
+### Properties
+
+- `x1` and `y1`: Coordinates for the starting point.
+- `x2` and `y2`: Coordinates for the ending point or dimensions.
+- `line-color`: Color of the line or border.
+- `line-width`: Thickness of the line or border.
+- `fill-color`: Fill color for the shape (use `transparent` for no fill).
+
+## Circle
+
+The `dt-circle` component draws a circle with customizable properties:
+
+```html title="Show a circle"
+<dt-circle 
+  x1="25" 
+  y1="25" 
+  x2="125" 
+  y2="85" 
+  line-color="#ffd43b" 
+  line-width="4" 
+  fill-color="transparent">
+</dt-circle>
+```
+
+<Image class="mx-auto" src={circleCompImg} alt="Circle component" width="400" />
+
+### Properties
+
+- `x1` and `y1`: Coordinates for the starting point.
+- `x2` and `y2`: Coordinates for the ending point or dimensions.
+- `line-color`: Color of the line or border.
+- `line-width`: Thickness of the line or border.
+- `fill-color`: Fill color for the shape (use `transparent` for no fill).
+
+## List
+
+The `dt-list` component allows you to progressively reveal list items one by one with each click during your presentation. This makes it easier to present step-by-step lists without manually wrapping each item in a `dt-show` component.
+
+### Usage
+
+You can use either Markdown or HTML list syntax inside the `dt-list` component. Each list item will appear one by one as you advance through your slide:
+
+```html title="Unordered list (Markdown syntax)"
+<dt-list>
+- First step - appears on first click
+- Second step - appears on second click
+- Third step - appears on third click
+- Final step - appears on fourth click
+</dt-list>
+```
+
+```html title="Ordered list (HTML syntax)"
+<dt-list type="ol">
+  <li>First step - appears on first click</li>
+  <li>Second step - appears on second click</li>
+  <li>Third step - appears on third click</li>
+  <li>Final step - appears on fourth click</li>
+</dt-list>
+```
+
+### Properties
+
+- `type` (optional): Set to `ol` for an ordered (numbered) list. Defaults to unordered list if omitted.
+
+<Aside type="tip">
+You can mix Markdown and HTML list items, but for best results, use one style per list.
+</Aside>
+
+## Finding the right coordinates
+
+When you open the slide in the preview mode, you can click on the ruler action to see the coordinates of the mouse pointer. This will help you find the right coordinates for your components.
+
+<Image class="mx-auto" src={mouseCoordinatesImg} alt="Mouse coordinates" width="400" />
+
+<Aside type='note'>
+The coordinates are relative to the slide, not the viewport. Each slide is 960x540 pixels.
+</Aside>

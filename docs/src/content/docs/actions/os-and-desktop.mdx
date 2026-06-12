@@ -1,0 +1,469 @@
+---
+title: OS and desktop actions
+description: Actions for controlling desktop visibility and operating system presentation features in Demo Time
+lastmod: 2026-01-02T12:21:00.000Z
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+This section groups actions related to desktop presentation setup and operating system controls. Most actions on this page are macOS-only, while desktop icon visibility is available on both macOS and Windows.
+
+<Aside type="note" title="Platform Support">
+  Each action below lists its supported operating systems. On unsupported platforms, Demo Time will show a warning and skip the action.
+</Aside>
+
+## Enable Focus Mode
+
+Enable Focus Mode (Do Not Disturb) on macOS. This action requires a Shortcuts automation named "Enable Do Not Disturb" to be set up on your Mac.
+
+**Supported on:** macOS
+
+<Tabs syncKey="macos-focus-on">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "macos.enableFocusMode"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: macos.enableFocusMode
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="tip" title="Setting up Shortcuts">
+  You need to create a Shortcut automation named "Enable Do Not Disturb" in the Shortcuts app on your Mac. This shortcut should toggle Focus Mode on.
+</Aside>
+
+Create the shortcut like this:
+
+1. Open the Shortcuts app on macOS.
+2. Create a new shortcut named `Enable Do Not Disturb`.
+3. Add the `Set Focus` action.
+4. Click the Focus field in that action and explicitly choose `Do Not Disturb` from the dropdown.
+5. Configure it to set `Do Not Disturb` to `On`.
+6. Save the shortcut.
+
+## Disable Focus Mode
+
+Disable Focus Mode (Do Not Disturb) on macOS. This action requires a Shortcuts automation named "Disable Do Not Disturb" to be set up on your Mac.
+
+**Supported on:** macOS
+
+<Tabs syncKey="macos-focus-off">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "macos.disableFocusMode"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: macos.disableFocusMode
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="tip" title="Setting up Shortcuts">
+  Create a second shortcut named "Disable Do Not Disturb" so Demo Time can restore your previous presentation setup.
+</Aside>
+
+Create the shortcut like this:
+
+1. Open the Shortcuts app on macOS.
+2. Create a new shortcut named `Disable Do Not Disturb`.
+3. Add the `Set Focus` action.
+4. Click the Focus field in that action and explicitly choose `Do Not Disturb` from the dropdown.
+5. Configure it to set `Do Not Disturb` to `Off`.
+6. Save the shortcut.
+
+## Hide Menu Bar
+
+Hide the macOS menu bar by enabling auto-hide.
+
+**Supported on:** macOS
+
+<Tabs syncKey="macos-hide-menubar">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "macos.hideMenubar"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: macos.hideMenubar
+```
+
+</TabItem>
+</Tabs>
+
+## Show Menu Bar
+
+Show the macOS menu bar by disabling auto-hide.
+
+**Supported on:** macOS
+
+<Tabs syncKey="macos-show-menubar">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "macos.showMenubar"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: macos.showMenubar
+```
+
+</TabItem>
+</Tabs>
+
+## Mute Volume
+
+Mute the system volume on macOS. This is useful for presentations where you want to ensure no unexpected sounds interrupt your demo.
+
+**Supported on:** macOS
+
+<Tabs syncKey="macos-mute-volume">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "macos.muteVolume"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: macos.muteVolume
+```
+
+</TabItem>
+</Tabs>
+
+## Unmute Volume
+
+Unmute the system volume on macOS.
+
+**Supported on:** macOS
+
+<Tabs syncKey="macos-unmute-volume">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "macos.unmuteVolume"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: macos.unmuteVolume
+```
+
+</TabItem>
+</Tabs>
+
+## Enable Caffeine
+
+Prevent the system from sleeping during presentations. You can enable it indefinitely or for a specific duration in minutes.
+
+**Supported on:** macOS
+
+<Tabs syncKey="macos-enable-caffeine">
+<TabItem label="JSON - Indefinite">
+
+```json
+{
+  "action": "macos.enableCaffeine"
+}
+```
+
+</TabItem>
+<TabItem label="JSON - Timed">
+
+```json
+{
+  "action": "macos.enableCaffeine",
+  "duration": 60
+}
+```
+
+</TabItem>
+<TabItem label="YAML - Indefinite">
+
+```yaml
+action: macos.enableCaffeine
+```
+
+</TabItem>
+<TabItem label="YAML - Timed">
+
+```yaml
+action: macos.enableCaffeine
+duration: 60
+```
+
+</TabItem>
+</Tabs>
+
+### Parameters
+
+- `duration` (optional): Duration in minutes to prevent sleep. If not specified, prevents sleep indefinitely.
+
+<Aside type="note" title="Built-in Tool">
+  This action uses the built-in `caffeinate` command on macOS, so no additional installation is required.
+</Aside>
+
+## Disable Caffeine
+
+Re-enable system sleep after a presentation. This stops all running `caffeinate` processes.
+
+**Supported on:** macOS
+
+<Tabs syncKey="macos-disable-caffeine">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "macos.disableCaffeine"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: macos.disableCaffeine
+```
+
+</TabItem>
+</Tabs>
+
+## Hide Dock
+
+Hide the macOS dock by enabling auto-hide. This provides a cleaner workspace during presentations by automatically hiding the dock until you move your cursor to the bottom of the screen.
+
+**Supported on:** macOS
+
+<Tabs syncKey="macos-hide-dock">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "macos.hideDock"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: macos.hideDock
+```
+
+</TabItem>
+</Tabs>
+
+## Show Dock
+
+Show the macOS dock by disabling auto-hide. This restores the dock to always be visible.
+
+**Supported on:** macOS
+
+<Tabs syncKey="macos-show-dock">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "macos.showDock"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: macos.showDock
+```
+
+</TabItem>
+</Tabs>
+
+## Hide Desktop Icons
+
+Hide all desktop icons for a distraction-free presentation.
+
+**Supported on:** macOS, Windows
+
+<Tabs syncKey="hide-desktop-icons">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "hideDesktopIcons"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: hideDesktopIcons
+```
+
+</TabItem>
+</Tabs>
+
+## Show Desktop Icons
+
+Restore desktop icons after a presentation.
+
+**Supported on:** macOS, Windows
+
+<Tabs syncKey="show-desktop-icons">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "showDesktopIcons"
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: showDesktopIcons
+```
+
+</TabItem>
+</Tabs>
+
+## Presentation Mode Example
+
+Here's a comprehensive example of how to set up your Mac for presentation mode at the start of a demo:
+
+<Tabs syncKey="macos-presentation-start">
+<TabItem label="JSON">
+
+```json
+{
+  "title": "Start Presentation Mode",
+  "description": "Set up Mac for presenting",
+  "steps": [
+    {
+      "action": "macos.enableCaffeine",
+      "duration": 90
+    },
+    {
+      "action": "macos.muteVolume"
+    },
+    {
+      "action": "macos.enableFocusMode"
+    },
+    {
+      "action": "macos.hideMenubar"
+    },
+    {
+      "action": "macos.hideDock"
+    },
+    {
+      "action": "setPresentationView"
+    }
+  ]
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+title: Start Presentation Mode
+description: Set up Mac for presenting
+moves:
+  - action: macos.enableCaffeine
+    duration: 90
+  - action: macos.muteVolume
+  - action: macos.enableFocusMode
+  - action: macos.hideMenubar
+  - action: macos.hideDock
+  - action: setPresentationView
+```
+
+</TabItem>
+</Tabs>
+
+And to restore your Mac after the presentation:
+
+<Tabs syncKey="macos-presentation-end">
+<TabItem label="JSON">
+
+```json
+{
+  "title": "End Presentation Mode",
+  "description": "Restore Mac settings",
+  "moves": [
+    {
+      "action": "macos.disableFocusMode"
+    },
+    {
+      "action": "macos.showMenubar"
+    },
+    {
+      "action": "macos.showDock"
+    },
+    {
+      "action": "macos.unmuteVolume"
+    },
+    {
+      "action": "macos.disableCaffeine"
+    },
+    {
+      "action": "unsetPresentationView"
+    }
+  ]
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+title: End Presentation Mode
+description: Restore Mac settings
+moves:
+  - action: macos.disableFocusMode
+  - action: macos.showMenubar
+  - action: macos.showDock
+  - action: macos.unmuteVolume
+  - action: macos.disableCaffeine
+  - action: unsetPresentationView
+```
+
+</TabItem>
+</Tabs>

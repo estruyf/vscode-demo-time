@@ -1,0 +1,21 @@
+title: Keypress
+description: ''
+version: 3
+scenes:
+  - id: scene-mk8cndv2-dj0b
+    title: Start terminal
+    moves:
+      - action: openTerminal
+      - action: waitForTimeout
+        timeout: 2000
+      - action: executeTerminalCommand
+        command: ping demotime.show
+        insertTypingMode: instant
+  - id: demo-mk8d38wb-p0kz
+    title: Abort
+    moves:
+      - action: focusTerminal
+      - action: waitForTimeout
+        timeout: 500
+      - action: sendKeybinding
+        keybinding: ctrl+c

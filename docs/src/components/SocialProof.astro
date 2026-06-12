@@ -1,0 +1,400 @@
+---
+import { Image } from 'astro:assets';
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import { toCodes } from 'astro:i18n';
+
+const response = await fetch(
+  'https://marketplace.visualstudio.com/_apis/public/gallery/publishers/eliostruyf/extensions/vscode-demo-time/reviews?count=5&filterOptions=3',
+);
+const data = await response.json();
+const reviews = data.reviews.filter(
+  (r: { userId: string }) => r.userId !== '911b69c7-f386-63b2-aa0a-8583da5ee40b',
+);
+---
+
+<section>
+  <h2>Real developers, real results</h2>
+  <p class="mb-8 text-lg opacity-90">
+    See how Demo Time is transforming presentations at conferences, workshops, and training sessions
+    worldwide.
+  </p>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 space-y-0">
+    <div class="social-proof-card flex flex-col justify-between h-full">
+      <blockquote class="mb-4">
+        "Demo Time was essential for delivering smooth and reliable demos at Ignite. Our schedule
+        was very tight, with absolutely no room for mistakes. Demo Time gave me the confidence and
+        control I needed to present without stress. I would not want to run a major demo without
+        it."
+      </blockquote>
+      <div class="flex items-center gap-3 mt-auto">
+        <img
+          src={`/testimonials/sebastien-levert.jpeg`}
+          alt={`Sébastien Levert`}
+          class="rounded-full border-2 border-[var(--sl-color-gray-5)] flex-shrink-0"
+          style="height: 40px; width: 40px;"
+        />
+        <div class="flex flex-col min-w-0">
+          <p class="font-semibold text-[var(--sl-color-white)] !m-0 truncate">Sébastien Levert</p>
+          <p class="!m-0 text-sm opacity-75"><em>Microsoft</em></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="social-proof-card flex flex-col justify-between h-full">
+      <blockquote class="mb-4">
+        "I started using Demo Time in my demos when I teach live sessions and create pre-recorded
+        instructor-led demos. It's helped me avoid typos, stay on track without looking at my notes,
+        and focus on the story and experience in a consistent flow. This has made my demos not only
+        more effective, but slashed the time it takes to edit the recorded demos... I love it!"
+      </blockquote>
+      <div class="flex items-center gap-3 mt-auto">
+        <img
+          src={`/testimonials/ac.jpeg`}
+          alt={`Andrew Connell`}
+          class="rounded-full border-2 border-[var(--sl-color-gray-5)] flex-shrink-0"
+          style="height: 40px; width: 40px;"
+        />
+        <div class="flex flex-col min-w-0">
+          <a
+            class="font-semibold !text-[var(--sl-color-white)] !m-0 truncate"
+            href="https://www.andrewconnell.com/"
+            target="_blank"
+            rel="noopener noreferrer">Andrew Connell</a
+          >
+          <p class="!m-0 text-sm opacity-75"><em>Voitanos</em></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quote Cards -->
+    {
+      reviews.map((review: any) => (
+        <div class="social-proof-card flex flex-col justify-between h-full">
+          <blockquote class="mb-4">"{review.text}"</blockquote>
+          <div class="flex items-center gap-3 mt-auto">
+            <img
+              src={`https://marketplace.visualstudio.com/avatar?userid=${review.userId}`}
+              alt={review.userDisplayName}
+              class="rounded-full border-2 border-[var(--sl-color-gray-5)]"
+              style="height: 40px; width: 40px;"
+            />
+            <p class="font-semibold text-[var(--sl-color-white)] !m-0">{review.userDisplayName}</p>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+
+  <!-- Stats Section -->
+  <div class="stats-grid grid grid-cols-2 md:grid-cols-4 gap-6 mb-12 space-y-0">
+    <div class="stat-card">
+      <div class="stat-number">29k+</div>
+      <div class="stat-label">Downloads</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">225+</div>
+      <div class="stat-label">GitHub Stars</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">50+</div>
+      <div class="stat-label">Conference Talks</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">5★</div>
+      <div class="stat-label">VS Code Rating</div>
+    </div>
+  </div>
+
+  <!-- Featured In -->
+  <div class="featured-section">
+    <h3 class="text-center mb-8">Featured in presentations at</h3>
+    <div class="events-grid">
+      <a
+        href="https://ignite.microsoft.com/"
+        target="_blank"
+        rel="noopener"
+        class="event-card microsoft"
+      >
+        <div class="event-name">Microsoft Ignite</div>
+      </a>
+      <a href="https://openai.com/devday/" target="_blank" rel="noopener" class="event-card openai">
+        <div class="event-name">OpenAI DevDay</div>
+      </a>
+      <a
+        href="https://www.cloudbrew.be/"
+        target="_blank"
+        rel="noopener"
+        class="event-card cloudbrew"
+      >
+        <div class="event-name">CloudBrew</div>
+      </a>
+      <a href="https://wasmio.tech/" target="_blank" rel="noopener" class="event-card wasm">
+        <div class="event-name">Wasm I/O</div>
+      </a>
+      <a
+        href="https://www.sharepointeurope.com/"
+        target="_blank"
+        rel="noopener"
+        class="event-card espc"
+      >
+        <div class="event-name">ESPC</div>
+      </a>
+      <a href="https://reactsummit.com/" target="_blank" rel="noopener" class="event-card react">
+        <div class="event-name">React Summit</div>
+      </a>
+      <a href="https://ndcconferences.com/" target="_blank" rel="noopener" class="event-card ndc">
+        <div class="event-name">NDC Conferences</div>
+      </a>
+      <a
+        href="https://www.azurefest.nl/"
+        target="_blank"
+        rel="noopener"
+        class="event-card azurefest"
+      >
+        <div class="event-name">Azure Fest</div>
+      </a>
+      <a
+        href="https://cloudtechtallinn.com/"
+        target="_blank"
+        rel="noopener"
+        class="event-card cttt"
+      >
+        <div class="event-name">Cloud Tech Tallinn</div>
+      </a>
+      <div class="event-card more">
+        <div class="event-name">and many more...</div>
+      </div>
+    </div>
+    <div class="text-center mt-8">
+      <p class="text-sm opacity-80">
+        Want to use Demo Time in your presentation?
+        <a
+          href="mailto:elio@struyfconsulting.be"
+          class="text-blue-400 hover:text-blue-300 underline"
+        >
+          Let us know!
+        </a>
+      </p>
+    </div>
+  </div>
+
+  <div class="mt-8 text-center"></div>
+  <p>
+    Have a story to share? <a
+      href="https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-demo-time&ssr=false#review-details"
+      class="underline"
+      target="_blank"
+      rel="noopener">Add your review on the Visual Studio Code Marketplace</a
+    > and help inspire fellow presenters!
+  </p>
+</section>
+
+<style>
+  .social-proof-card {
+    background: var(--sl-color-gray-6);
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .social-proof-card blockquote {
+    font-style: italic;
+    color: var(--sl-color-gray-2);
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .stat-card {
+    text-align: center;
+    background: var(--sl-color-gray-6);
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 8px;
+    padding: 1.5rem 1rem;
+  }
+
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--sl-color-accent-high);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    color: var(--sl-color-gray-3);
+    font-weight: 500;
+  }
+
+  .featured-section {
+    padding: 3rem 2rem;
+    background: linear-gradient(135deg, var(--sl-color-gray-6) 0%, var(--sl-color-gray-5) 100%);
+    border-radius: 20px;
+    border: 1px solid var(--sl-color-gray-5);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .featured-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  }
+
+  .events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .event-card {
+    display: block;
+    padding: 2rem 1.5rem;
+    background: var(--sl-color-gray-6);
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 16px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+  }
+
+  .event-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .event-card:hover::before {
+    left: 100%;
+  }
+
+  .event-card:focus-visible {
+    outline: 2px solid var(--sl-color-accent);
+    outline-offset: 2px;
+    transform: translateY(-8px) scale(1.02);
+    border-color: var(--sl-color-accent);
+    box-shadow:
+      0 20px 40px rgba(0, 0, 0, 0.2),
+      0 0 0 1px var(--sl-color-accent-low);
+    background: linear-gradient(135deg, var(--sl-color-gray-6) 0%, var(--sl-color-gray-5) 100%);
+  }
+
+  .event-card:focus-visible::before {
+    left: 100%;
+  }
+
+  .event-card.microsoft:focus-visible {
+    border-color: #00bcf2;
+    box-shadow:
+      0 20px 40px rgba(0, 188, 242, 0.2),
+      0 0 0 1px rgba(0, 188, 242, 0.3);
+  }
+  .event-card.openai:focus-visible {
+    border-color: #10a37f;
+    box-shadow:
+      0 20px 40px rgba(16, 163, 127, 0.2),
+      0 0 0 1px rgba(16, 163, 127, 0.3);
+  }
+  .event-card.wasm:focus-visible {
+    border-color: #654ff0;
+    box-shadow:
+      0 20px 40px rgba(101, 79, 240, 0.2),
+      0 0 0 1px rgba(101, 79, 240, 0.3);
+  }
+  .event-card.espc:focus-visible {
+    border-color: #0078d4;
+    box-shadow:
+      0 20px 40px rgba(0, 120, 212, 0.2),
+      0 0 0 1px rgba(0, 120, 212, 0.3);
+  }
+  .event-card.react:focus-visible {
+    border-color: #61dafb;
+    box-shadow:
+      0 20px 40px rgba(97, 218, 251, 0.2),
+      0 0 0 1px rgba(97, 218, 251, 0.3);
+  }
+  .event-card.ndc:focus-visible {
+    border-color: #1ba1e2;
+    box-shadow:
+      0 20px 40px rgba(27, 161, 226, 0.2),
+      0 0 0 1px rgba(27, 161, 226, 0.3);
+  }
+  .event-card.azurefest:focus-visible {
+    border-color: #e74c3c;
+    box-shadow:
+      0 20px 40px rgba(231, 76, 60, 0.2),
+      0 0 0 1px rgba(231, 76, 60, 0.3);
+  }
+  .event-card.cloudbrew:focus-visible {
+    border-color: #091b68;
+    box-shadow:
+      0 20px 40px rgba(9, 27, 104, 0.2),
+      0 0 0 1px rgba(9, 27, 104, 0.3);
+  }
+  .event-card.cttt:focus-visible {
+    border-color: #0072ce;
+    box-shadow:
+      0 20px 40px rgba(0, 114, 206, 0.2),
+      0 0 0 1px rgba(0, 114, 206, 0.3);
+  }
+  .event-card.more:focus-visible {
+    border-color: var(--sl-color-accent);
+    box-shadow:
+      0 20px 40px rgba(168, 85, 247, 0.2),
+      0 0 0 1px rgba(168, 85, 247, 0.3);
+  }
+
+  .event-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  }
+
+  .event-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--sl-color-white);
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  .event-description {
+    font-size: 0.875rem;
+    color: var(--sl-color-gray-3);
+    text-align: center;
+    line-height: 1.4;
+    opacity: 0.8;
+  }
+
+  @media (max-width: 768px) {
+    .events-grid {
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .event-card {
+      padding: 1.5rem 1rem;
+    }
+
+    .featured-section {
+      padding: 2rem 1rem;
+    }
+  }
+</style>

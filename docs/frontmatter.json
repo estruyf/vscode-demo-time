@@ -1,0 +1,18 @@
+{
+  "$schema": "https://frontmatter.codes/frontmatter.schema.json",
+  "frontMatter.framework.id": "astro",
+  "frontMatter.preview.host": "http://localhost:4321",
+  "frontMatter.content.publicFolder": {
+    "path": "src/assets",
+    "relative": true
+  },
+  "frontMatter.content.autoUpdateDate": true,
+  "frontMatter.content.defaultFileType": "mdx",
+  "frontMatter.extends": [
+    ".frontmatter/starlight/contenttypes.json",
+    ".frontmatter/starlight/pagefolders.json",
+    ".frontmatter/starlight/aside.json",
+    ".frontmatter/starlight/image.json",
+    ".frontmatter/config/scripts.json"
+  ]
+}

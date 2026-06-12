@@ -1,0 +1,102 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "macOS Presentation Control Demo",
+  "description": "Demonstrates the new volume, screen resolution, and caffeine controls",
+  "demos": [
+    {
+      "title": "Start Presentation - Full Setup",
+      "description": "Configure Mac for presentation with all new features",
+      "steps": [
+        {
+          "action": "macos.enableCaffeine",
+          "duration": 60
+        },
+        {
+          "action": "macos.muteVolume"
+        },
+        {
+          "action": "macos.enableFocusMode"
+        },
+        {
+          "action": "macos.hideMenubar"
+        },
+        {
+          "action": "showInfoMessage",
+          "message": "Presentation mode activated! Your Mac is now configured for demo."
+        }
+      ]
+    },
+    {
+      "title": "Volume Controls",
+      "description": "Test volume muting and unmuting",
+      "steps": [
+        {
+          "action": "showInfoMessage",
+          "message": "Muting volume..."
+        },
+        {
+          "action": "macos.muteVolume"
+        },
+        {
+          "action": "waitForTimeout",
+          "timeout": 2000
+        },
+        {
+          "action": "showInfoMessage",
+          "message": "Unmuting volume..."
+        },
+        {
+          "action": "macos.unmuteVolume"
+        }
+      ]
+    },
+    {
+      "title": "Caffeine Controls",
+      "description": "Test sleep prevention",
+      "steps": [
+        {
+          "action": "showInfoMessage",
+          "message": "Enabling caffeine for 30 minutes..."
+        },
+        {
+          "action": "macos.enableCaffeine",
+          "duration": 30
+        },
+        {
+          "action": "waitForTimeout",
+          "timeout": 2000
+        },
+        {
+          "action": "showInfoMessage",
+          "message": "Caffeine is now active. System will not sleep."
+        }
+      ]
+    },
+    {
+      "title": "End Presentation - Full Cleanup",
+      "description": "Restore Mac to normal settings",
+      "steps": [
+        {
+          "action": "showInfoMessage",
+          "message": "Restoring Mac to normal settings..."
+        },
+        {
+          "action": "macos.disableFocusMode"
+        },
+        {
+          "action": "macos.showMenubar"
+        },
+        {
+          "action": "macos.unmuteVolume"
+        },
+        {
+          "action": "macos.disableCaffeine"
+        },
+        {
+          "action": "showInfoMessage",
+          "message": "Presentation mode deactivated! Your Mac is restored."
+        }
+      ]
+    }
+  ]
+}

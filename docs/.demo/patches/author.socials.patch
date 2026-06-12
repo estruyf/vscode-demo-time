@@ -1,0 +1,12 @@
+Index: /temp/author.json
+===================================================================
+--- /temp/author.json
++++ /temp/author.json
+@@ -1,4 +1,6 @@
+ {
+   "firstName": "Elio",
+-  "lastName": "Struyf"
++  "lastName": "Struyf",
++  "website": "https://eliostruyf.com",
++  "bluesky": "https://bsky.app/profile/eliostruyf.com"
+ }

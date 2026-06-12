@@ -1,0 +1,38 @@
+---
+title: Exporting your slides
+description: Export your slides to PDF
+lastmod: 2025-03-20T14:06:09.052Z
+---
+
+import { Code, Aside } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+
+import slidesToPdfImg from "../../../assets/docs/export-to-pdf.webp";
+import pdfSampleImg from "../../../assets/docs/pdf-export-sample.webp";
+
+When you are done with your slides, you can export them to PDF. This is useful for sharing your slides with others or for printing them.
+You can export your slides using the `Demo Time: Export slides to PDF` command in Visual Studio Code. This will generates a PDF file in the root of your project with the name `demotime.export.pdf`.
+
+<Aside type="danger">
+The export feature makes use of the `playwright-chromium` package, which you are required to install locally. You can do this by running the following command:
+
+```bash
+npm install playwright-chromium -D
+```
+
+If this package is not installed, the export command will not work and it will show you the instructions to install it.
+</Aside>
+
+## Exporting slides
+
+As mentioned, you can run the `Demo Time: Export slides to PDF` command in Visual Studio Code or you can click on the PDF action in the Demo Time panel.
+
+<Image class="mx-auto" src={slidesToPdfImg} alt="Export slides to PDF" />
+
+<Aside type="note">
+The export command will generate a PDF file in the root of your project with the name `demotime.export.pdf`.
+</Aside>
+
+Here is a sample of the exported PDF file:
+
+<Image class="mx-auto" src={pdfSampleImg} alt="Exported PDF file" />

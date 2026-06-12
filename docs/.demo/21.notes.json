@@ -1,0 +1,43 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Notes",
+  "description": "",
+  "demos": [
+    {
+      "title": "Open front matter",
+      "description": "",
+      "steps": [
+        {
+          "action": "open",
+          "path": "/frontmatter.json"
+        }
+      ],
+      "notes": {
+        "path": "/notes/note1.md"
+      }
+    },
+    {
+      "title": "Open package",
+      "description": "",
+      "steps": [
+        {
+          "action": "open",
+          "path": "/package.json"
+        }
+      ],
+      "notes": {
+        "path": "/notes/note2.md"
+      }
+    },
+    {
+      "title": "No notes",
+      "description": "",
+      "steps": [
+        {
+          "action": "open",
+          "path": "/package.json"
+        }
+      ]
+    }
+  ]
+}

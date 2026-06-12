@@ -1,0 +1,38 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Preview",
+  "description": "",
+  "demos": [
+    {
+      "title": "Preview markdown file",
+      "description": "",
+      "steps": [
+        {
+          "action": "markdownPreview",
+          "path": ".demo/content/file-action.md"
+        }
+      ]
+    },
+    {
+      "title": "Preview image",
+      "description": "",
+      "steps": [
+        {
+          "action": "imagePreview",
+          "path": "/.demo/slides/0.png"
+        }
+      ]
+    },
+    {
+      "title": "Preview image with theme",
+      "description": "",
+      "steps": [
+        {
+          "action": "imagePreview",
+          "path": "/.demo/slides/1.png",
+          "theme": ".demo/slides/theme.css"
+        }
+      ]
+    }
+  ]
+}

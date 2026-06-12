@@ -1,0 +1,24 @@
+---
+title: Intro Slide Layout
+description: Learn about the intro slide layout in Demo Time
+lastmod: 2025-07-04T15:10:34.638Z
+---
+
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+import introImg from "../../../../assets/docs/slide-layouts/intro.webp";
+
+
+The `intro` layout is ideal for opening slides. It provides a large title area and a smaller content area.
+
+```md
+---
+layout: intro
+---
+
+# Intro slides
+
+&mdash; by Elio Struyf
+```
+
+<Image class="mx-auto" src={introImg} alt="Intro" />

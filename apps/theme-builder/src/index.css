@@ -1,0 +1,41 @@
+@import 'tailwindcss';
+
+/* Brand-ish dark theme for the builder UI itself (not the slide themes). */
+@theme {
+  --color-brand: #ffd23f;
+  --color-surface: #15181f;
+  --color-surface-2: #1d212b;
+  --color-surface-3: #272c38;
+  --color-line: #333a48;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-surface);
+  color: #e7eaf0;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Thin, themed scrollbars for the editor panels. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-line);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}

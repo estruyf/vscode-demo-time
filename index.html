@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Time Screenshot API Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+        .container {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        button {
+            background: #007acc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #005aa3;
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        img {
+            max-width: 100%;
+            border-radius: 4px;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .status.loading {
+            background: #333;
+            color: #ffff00;
+        }
+        .status.success {
+            background: #1a4d1a;
+            color: #90ee90;
+        }
+        .status.error {
+            background: #4d1a1a;
+            color: #ff6b6b;
+        }
+        .info {
+            background: #333;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .info h2 {
+            margin-top: 0;
+            color: #007acc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="info">
+            <h2>Demo Time Screenshot API Test</h2>
+            <p>This page tests the <code>http://localhost:3710/api/screenshot</code> API endpoint.</p>
+            <p>The API should return a base64-encoded image of the current Demo Time state.</p>
+        </div>
+
+        <button id="captureBtn" onclick="captureScreenshot()">Capture Screenshot</button>
+
+        <div id="status" class="status" style="display: none;"></div>
+
+        <div id="imageContainer" style="display: none;">
+            <h3>Screenshot Result:</h3>
+            <img id="screenshotImg" alt="Demo Time Screenshot" />
+        </div>
+    </div>
+
+    <script>
+        async function captureScreenshot() {
+            const button = document.getElementById('captureBtn');
+            const status = document.getElementById('status');
+            const imageContainer = document.getElementById('imageContainer');
+            const img = document.getElementById('screenshotImg');
+
+            // Disable button and show loading
+            button.disabled = true;
+            button.textContent = 'Capturing...';
+
+            status.style.display = 'block';
+            status.className = 'status loading';
+            status.textContent = 'Capturing screenshot...';
+
+            imageContainer.style.display = 'none';
+
+            try {
+                const response = await fetch('http://localhost:3710/api/screenshot');
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const base64Data = await response.text();
+
+                // Set the image source with the base64 data
+                img.src = base64Data;
+
+                // Show success status
+                status.className = 'status success';
+                status.textContent = 'Screenshot captured successfully!';
+                imageContainer.style.display = 'block';
+
+            } catch (error) {
+                console.error('Screenshot capture failed:', error);
+                status.className = 'status error';
+                status.textContent = `Error: ${error.message}`;
+            } finally {
+                // Re-enable button
+                button.disabled = false;
+                button.textContent = 'Capture Screenshot';
+            }
+        }
+
+        // Auto-hide status after 5 seconds on success
+        document.addEventListener('click', function(e) {
+            if (e.target.id === 'captureBtn') return;
+
+            const status = document.getElementById('status');
+            if (status.classList.contains('success')) {
+                setTimeout(() => {
+                    status.style.display = 'none';
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+</html>

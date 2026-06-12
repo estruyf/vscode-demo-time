@@ -1,0 +1,225 @@
+import { Action, InsertTypingMode, Version } from '.';
+
+export interface DemoFiles {
+  [filePath: string]: DemoConfig | ActConfig;
+}
+
+// Version 3: Play structure (entire project)
+export interface PlayConfig {
+  acts: ActConfig[];
+}
+
+// Version 3: Act structure (act file with product icon)
+export interface ActConfig {
+  $schema?: 'https://demotime.show/demo-time.schema.json';
+  title: string;
+  description?: string;
+  version: 3;
+  timer?: number;
+  engageTime?: EngageTimeConfig;
+  loop?: boolean;
+  scenes: Scene[];
+}
+
+// Version 1 & 2: Legacy DemoConfig structure
+export interface DemoConfig {
+  $schema?: 'https://demotime.show/demo-time.schema.json';
+  title: string;
+  description?: string;
+  version?: Version;
+  timer?: number;
+  engageTime?: EngageTimeConfig;
+  loop?: boolean;
+  demos: Demo[];
+}
+
+// Type guard to check if config is version 3
+export function isActConfig(config: DemoConfig | ActConfig): config is ActConfig {
+  return (config as ActConfig).version === 3;
+}
+
+export interface EngageTimeConfig {
+  sessionId?: string;
+}
+
+// Version 3: Scene (replaces Demo for version 3)
+export interface Scene {
+  id?: string;
+  title: string;
+  description?: string;
+  moves: Move[];
+  icons?: Icons;
+  notes?: Notes;
+  disabled?: boolean;
+  autoAdvanceAfter?: number;
+}
+
+// Version 1 & 2: Legacy Demo structure
+export interface Demo {
+  id?: string;
+  title: string;
+  description?: string;
+  steps: Step[];
+  icons?: Icons;
+  notes?: Notes;
+  disabled?: boolean;
+  autoAdvanceAfter?: number;
+}
+
+export interface Notes {
+  path: string;
+  showOnTrigger?: boolean;
+}
+
+export interface Icons {
+  start: string;
+  end: string;
+}
+
+export type QRLayout = 'default' | 'reversed' | 'minimal' | 'stacked' | 'text-left' | 'text-right';
+
+// Version 3: Move (replaces Step for version 3) - Same structure as Step
+export type Move = Step;
+
+// Version 1 & 2: Legacy Step structure
+export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
+  action: Action;
+  disabled?: boolean;
+
+  path?: string;
+  content?: string;
+  contentPath?: string;
+  patch?: string;
+
+  position?: string | number;
+  startPlaceholder?: string;
+  endPlaceholder?: string;
+
+  zoom?: number;
+  highlightWholeLine?: boolean;
+  highlightBlur?: number;
+  highlightOpacity?: number;
+
+  id?: string;
+  timeout?: number;
+  command?: string;
+  keybinding?: string;
+  message?: string;
+  waitForMessage?: string;
+  showProgress?: boolean;
+  /**
+   * Arguments to pass to scripts or snippets.
+   * For executeScript actions: Array of strings passed as positional command-line arguments to the script.
+   * For snippet actions: Arguments are substituted into the snippet content.
+   * Example: ["arg1", "arg2"] becomes command: script.js arg1 arg2
+   */
+  args?: any;
+  lineInsertionDelay?: number;
+  insertTypingMode?: InsertTypingMode;
+  insertTypingSpeed?: number;
+  setting?: Setting;
+  state?: State;
+  dest?: string;
+  overwrite?: boolean;
+  terminalId?: string;
+  theme?: string;
+  slide?: number;
+  focusTop?: boolean;
+
+  // macOS caffeine
+  duration?: number;
+
+  // Chats
+  mode?: string;
+
+  // EngageTime
+  sessionId?: string;
+  pollId?: string;
+  startOnOpen?: boolean;
+  closeOnOpen?: boolean;
+  title?: string;
+  description?: string;
+  type?: EngageTimeMessageType;
+
+  // QR Code
+  topText?: string;
+  label?: string;
+  logo?: string;
+  qrLayout?: QRLayout;
+}
+
+export interface ITerminal {
+  autoExecute?: boolean;
+}
+
+export interface IOpenWebsite {
+  action: Action;
+  url?: string;
+  openInVSCode?: boolean;
+}
+
+export interface ISlidePreview {
+  action: Action;
+  path?: string;
+}
+
+export interface IImagePreview extends ISlidePreview {
+  theme?: string;
+}
+
+export interface Setting {
+  key: string;
+  value: string | number | boolean | object | null;
+}
+
+export interface State {
+  key: string;
+  value: string;
+}
+
+export type EngageTimeMessageType = 'demo' | 'slide' | 'custom';
+
+// New snippet file format (gallery/community snippets)
+export interface SnippetField {
+  name: string;
+  description?: string;
+  type: 'string' | 'number' | 'boolean';
+  required?: boolean;
+  default?: string | number | boolean;
+}
+
+export interface SnippetFileFormat {
+  id: string;
+  name: string;
+  description?: string;
+  author?: string;
+  version?: string;
+  tags?: string[];
+  fields?: SnippetField[];
+  steps: Step[];
+}
+
+export interface GallerySnippetIndexEntry {
+  id: string;
+  name: string;
+  description?: string;
+  author?: string;
+  version?: string;
+  tags?: string[];
+  fields?: SnippetField[];
+  path: string;
+  actions?: string[];
+}
+
+/**
+ * Type guard to check if a parsed snippet is in the new SnippetFileFormat.
+ */
+export function isSnippetFileFormat(value: unknown): value is SnippetFileFormat {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    'steps' in value &&
+    Array.isArray((value as SnippetFileFormat).steps)
+  );
+}
