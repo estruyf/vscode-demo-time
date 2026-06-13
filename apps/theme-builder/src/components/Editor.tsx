@@ -145,9 +145,9 @@ export function Editor({
             api.updateTypography(
               headingGoogleFont.trim()
                 ? {
-                    headingGoogleFont,
-                    headingFontFamily: `"${headingGoogleFont.trim()}", sans-serif`,
-                  }
+                  headingGoogleFont,
+                  headingFontFamily: `"${headingGoogleFont.trim()}", sans-serif`,
+                }
                 : { headingGoogleFont: '', headingFontFamily: '' }
             )
           }
@@ -316,7 +316,7 @@ export function Editor({
                   min={0.75}
                   max={6}
                   step={0.125}
-                  unit="rem"
+                  unit="em"
                 />
                 <SelectField
                   label="Weight"
@@ -335,7 +335,7 @@ export function Editor({
                 min={0.75}
                 max={2.5}
                 step={0.0625}
-                unit="rem"
+                unit="em"
               />
               <NumberField
                 label="Line height"
@@ -354,7 +354,7 @@ export function Editor({
                 min={0.75}
                 max={2}
                 step={0.0625}
-                unit="rem"
+                unit="em"
               />
               <ColorField
                 label="Bullet color"
@@ -391,7 +391,7 @@ export function Editor({
                   min={0}
                   max={6}
                   step={0.125}
-                  unit="rem"
+                  unit="em"
                 />
                 <SelectField
                   label="Weight"
@@ -418,7 +418,7 @@ export function Editor({
                 min={0}
                 max={2.5}
                 step={0.0625}
-                unit="rem"
+                unit="em"
               />
               <NumberField
                 label="Line height"
@@ -442,7 +442,7 @@ export function Editor({
               min={0}
               max={2}
               step={0.0625}
-              unit="rem"
+              unit="em"
             />
           </>
         )}

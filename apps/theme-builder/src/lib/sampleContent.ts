@@ -8,6 +8,9 @@ import type { LayoutKey } from '../types/theme';
 
 /** A self-contained SVG placeholder used where a slide would supply an image. */
 export function placeholderImage(label = 'Your image'): string {
+  const escapeXml = (value: string) =>
+    value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 640 640">
     <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#3b4a63"/><stop offset="1" stop-color="#1b2230"/>
@@ -17,7 +20,7 @@ export function placeholderImage(label = 'Your image'): string {
       <circle cx="232" cy="220" r="54"/>
       <path d="M120 470 L268 312 L372 420 L452 336 L536 470 Z"/>
     </g>
-    <text x="320" y="560" font-family="sans-serif" font-size="34" fill="#aebbd2" text-anchor="middle">${label}</text>
+    <text x="320" y="560" font-family="sans-serif" font-size="34" fill="#aebbd2" text-anchor="middle">${escapeXml(label)}</text> 
   </svg>`;
   return `data:image/svg+xml,${encodeURIComponent(svg).replace(/'/g, '%27').replace(/"/g, '%22')}`;
 }

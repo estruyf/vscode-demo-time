@@ -146,7 +146,7 @@ pre {
 
 code {
   font-family:
-    var(--vscode-editor-font-size, ui-sans-serif),
+    var(--vscode-editor-font-family, ui-sans-serif),
     ui-sans-serif,
     system-ui,
     -apple-system,

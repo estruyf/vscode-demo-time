@@ -69,6 +69,9 @@ export function buildPreviewDocument(options: {
     rootVars = '',
   } = options;
   const lightClass = isLight ? ' light' : '';
+  const escapeStyleText = (css: string) => css.replace(/<\/style/gi, '<\\/style');
+  const safePreviewCss = escapeStyleText(previewCss);
+  const safeThemeCss = escapeStyleText(themeCss);
 
   return `<!doctype html>
 <html>
@@ -77,8 +80,8 @@ export function buildPreviewDocument(options: {
     <style>${PREVIEW_BASE_CSS}</style>
     <style>${ENVIRONMENT_CSS}</style>
     <style id="vscode-vars">:root{${rootVars}}</style>
-    <style>${previewCss}</style>
-    <style id="theme">${themeCss}</style>
+    <style>${safePreviewCss}</style>
+    <style id="theme">${safeThemeCss}</style>
     <style>
       html, body { margin: 0; padding: 0; background: #000; }
     </style>

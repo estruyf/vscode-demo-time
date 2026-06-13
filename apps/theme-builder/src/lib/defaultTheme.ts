@@ -98,12 +98,15 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
 }
 
 function deepMerge<T>(base: T, override: unknown): T {
-  if (override === undefined) {
+  if (override === undefined || override === null) {
     return base;
   }
   if (isPlainObject(base) && isPlainObject(override)) {
     const out: Record<string, unknown> = { ...(base as Record<string, unknown>) };
     for (const key of Object.keys(override)) {
+      if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+        continue;
+      }
       out[key] = deepMerge((base as Record<string, unknown>)[key], override[key]);
     }
     return out as T;
@@ -122,6 +125,7 @@ export function normalizeModel(raw: unknown): ThemeModel | null {
   }
   const name = typeof raw.name === 'string' && raw.name ? raw.name : undefined;
   const merged = deepMerge(createDefaultTheme(name), raw);
+  merged.name = name ?? merged.name;
   merged.version = 1;
   migrateLayouts(merged, raw);
   return merged;

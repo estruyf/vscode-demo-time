@@ -45,13 +45,16 @@ export function parseColor(value: string): RGBA | null {
 
   const rgb = v.match(/^rgba?\(([^)]+)\)$/);
   if (rgb) {
-    const parts = rgb[1].split(/[,/]/).map((s) => s.trim()).filter(Boolean);
+    const parts = rgb[1]
+      .split(/[,/]/)
+      .map((s) => s.trim())
+      .filter(Boolean);
     if (parts.length >= 3 && parts.every((p) => !p.includes('%'))) {
       const r = clampByte(parseFloat(parts[0]));
       const g = clampByte(parseFloat(parts[1]));
       const b = clampByte(parseFloat(parts[2]));
       const a = parts[3] !== undefined ? clampUnit(parseFloat(parts[3])) : 1;
-      if ([r, g, b].every((n) => !Number.isNaN(n))) {
+      if ([r, g, b, a].every((n) => !Number.isNaN(n))) {
         return { r, g, b, a };
       }
     }

@@ -51,6 +51,9 @@ export function ImportPanel({
     >
       <div className="space-y-4">
         <div
+          role="button"
+          tabIndex={0}
+          aria-label="Browse for a CSS theme file to import"
           onDragOver={(e) => {
             e.preventDefault();
             setDragging(true);
@@ -65,6 +68,12 @@ export function ImportPanel({
             }
           }}
           onClick={() => fileRef.current?.click()}
+          onKeyDown={(e) => {
+            if (e.key === ' ' || e.key === 'Enter') {
+              e.preventDefault();
+              fileRef.current?.click();
+            }
+          }}
           className={[
             'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed px-4 py-6 text-center transition-colors',
             dragging

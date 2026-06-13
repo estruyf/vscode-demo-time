@@ -62,6 +62,9 @@ export class ThemeBuilderView extends BaseWebview {
 
     // The webview sends a sanitized name, but never trust a path from a message.
     const filename = path.basename(payload.filename);
+    if (!filename || filename === '.' || filename === '..' || !filename.endsWith('.css')) {
+      return { success: false, message: 'Invalid theme filename. Must be a valid .css file.' };
+    }
     const relativePath = `.demo/theme/${filename}`;
     const targetUri = Uri.joinPath(workspaceFolder.uri, '.demo', 'theme', filename);
 

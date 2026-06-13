@@ -112,9 +112,17 @@ export default function App({ onExportTheme }: AppProps) {
   const { undo, redo } = api;
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (!(e.metaKey || e.ctrlKey) || e.target instanceof HTMLTextAreaElement) {
+      const target = e.target as HTMLElement | null;
+      const isTextEditingTarget =
+        target instanceof HTMLTextAreaElement ||
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLSelectElement ||
+        !!target?.closest('[contenteditable="true"]');
+
+      if (!(e.metaKey || e.ctrlKey) || isTextEditingTarget) {
         return;
       }
+
       const key = e.key.toLowerCase();
       if (key === 'z' && !e.shiftKey) {
         e.preventDefault();
@@ -156,6 +164,9 @@ export default function App({ onExportTheme }: AppProps) {
           role="separator"
           aria-orientation="vertical"
           aria-label="Resize sidebar"
+          aria-valuemin={SIDEBAR_MIN}
+          aria-valuemax={SIDEBAR_MAX}
+          aria-valuenow={sidebarWidth}
           tabIndex={0}
           onMouseDown={startResize}
           onKeyDown={resizeByKey}
