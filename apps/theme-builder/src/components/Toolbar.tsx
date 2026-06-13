@@ -27,8 +27,6 @@ export function Toolbar({
 }: {
   onApplyPreset: (presetId: string) => void;
   onImport: () => void;
-  /** Only available inside VS Code: copy colors from the active editor theme. */
-  onImportVscodeTheme?: () => void;
   /** Reset the working theme back to the blank default. */
   onReset: () => void;
   onExport: () => void;

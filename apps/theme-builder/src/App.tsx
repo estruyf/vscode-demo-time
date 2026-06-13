@@ -3,7 +3,7 @@ import type { LayoutKey, ThemeModel } from './types/theme';
 import { useThemeModel } from './hooks/useThemeModel';
 import { getPreset } from './lib/presets';
 import { createDefaultTheme } from './lib/defaultTheme';
-import { isVsCode, vscodeThemeColors } from './lib/importVscodeTheme';
+import { isVsCode } from './lib/importVscodeTheme';
 import { Toolbar } from './components/Toolbar';
 import { Editor } from './components/Editor';
 import { Preview } from './components/Preview';
@@ -141,9 +141,6 @@ export default function App({ onExportTheme }: AppProps) {
       <Toolbar
         onApplyPreset={applyPreset}
         onImport={() => setDialog('import')}
-        onImportVscodeTheme={
-          isVsCode ? () => api.updateColors(vscodeThemeColors()) : undefined
-        }
         onReset={resetToDefault}
         onExport={() => setDialog('export')}
         onUndo={api.undo}
