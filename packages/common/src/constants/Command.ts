@@ -64,6 +64,8 @@ export const COMMAND = {
   showProFeatures: `${EXTENSION_NAME}.showProFeatures`,
   // Gallery
   showGallery: `${EXTENSION_NAME}.showGallery`,
+  // Theme Builder
+  showThemeBuilder: `${EXTENSION_NAME}.showThemeBuilder`,
   // Resources
   openSupportTheProject: `${EXTENSION_NAME}.openSupportTheProject`,
   openRemoteControl: `${EXTENSION_NAME}.openRemoteControl`,

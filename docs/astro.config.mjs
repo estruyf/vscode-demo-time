@@ -148,6 +148,7 @@ export default defineConfig({
                 { label: 'Frost theme', slug: 'slides/themes/frost' },
                 { label: 'Pixels theme', slug: 'slides/themes/pixels' },
                 { label: 'Custom theme', slug: 'slides/themes/custom' },
+                { label: 'Theme Builder', slug: 'slides/themes/theme-builder' },
               ],
             },
             { label: 'Slide transitions', slug: 'slides/transitions' },

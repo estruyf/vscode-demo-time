@@ -1768,11 +1768,30 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@demotime/theme-builder@npm:*, @demotime/theme-builder@workspace:apps/theme-builder":
+  version: 0.0.0-use.local
+  resolution: "@demotime/theme-builder@workspace:apps/theme-builder"
+  dependencies:
+    "@tailwindcss/vite": "npm:^4.1.13"
+    "@types/react": "npm:^18.3.5"
+    "@types/react-dom": "npm:^18.3.0"
+    "@vitejs/plugin-react": "npm:^4.3.1"
+    clsx: "npm:^2.1.1"
+    lucide-react: "npm:^0.562.0"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    tailwindcss: "npm:^4.1.13"
+    typescript: "npm:^5.9.2"
+    vite: "npm:^6.4.1"
+  languageName: unknown
+  linkType: soft
+
 "@demotime/webviews@workspace:apps/webviews":
   version: 0.0.0-use.local
   resolution: "@demotime/webviews@workspace:apps/webviews"
   dependencies:
     "@demotime/common": "npm:*"
+    "@demotime/theme-builder": "npm:*"
     "@eslint/js": "npm:^9.9.1"
     "@estruyf/vscode": "npm:^1.1.0"
     "@tailwindcss/postcss": "npm:^4.1.12"

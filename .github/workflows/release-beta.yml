@@ -76,7 +76,7 @@ jobs:
 
       - name: Package VSIX (alpha branch)
         if: github.ref == 'refs/heads/alpha'
-        run: npx @vscode/vsce package
+        run: npx @vscode/vsce package --no-dependencies
         working-directory: apps/vscode-extension
 
       - name: Upload VSIX artifact (alpha branch)

@@ -115,6 +115,10 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
     messageHandler.send(WebViewMessages.toVscode.runCommand, "demo-time.togglePresentationMode");
   }, []);
 
+  const reloadWebview = React.useCallback(() => {
+    messageHandler.send(WebViewMessages.toVscode.runCommand, "workbench.action.webview.reloadWebviewAction");
+  }, []);
+
   const openSlideSource = React.useCallback(() => {
     messageHandler.send(WebViewMessages.toVscode.openFile, path);
   }, [path]);
@@ -195,6 +199,14 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
         });
       }
     }
+
+    slideItems.push({
+      id: 'reload-webview',
+      label: 'Reload webview',
+      iconName: 'refresh',
+      onSelect: reloadWebview,
+    });
+
     if (slideItems.length > 0) {
       groups.push({ id: 'slide', label: 'Slide', items: slideItems });
     }
