@@ -16,6 +16,7 @@
 - [#401](https://github.com/estruyf/vscode-demo-time/issues/401): Add a new `center` slide layout that centers all content both vertically and horizontally
 - [#402](https://github.com/estruyf/vscode-demo-time/issues/402): Added an auto-proceed mode for acts to automatically advance to the next move after a specified delay, with the ability to loop back to the beginning of the act when reaching the end
 - [#409](https://github.com/estruyf/vscode-demo-time/issues/409): Slide controls redesign to have a more compact layout
+- [#408](https://github.com/estruyf/vscode-demo-time/pull/408): Added a theme builder to create and customize slide themes visually
 
 ## [2.1.1] - 2026-04-16
 
