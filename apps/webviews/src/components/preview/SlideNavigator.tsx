@@ -50,10 +50,10 @@ export const SlideNavigator: React.FunctionComponent<ISlideNavigatorProps> = ({
 
   // Compute thumbnail scale based on container width
   React.useEffect(() => {
-    if (!isOpen || !containerRef.current) return;
+    if (!isOpen || !containerRef.current) {return;}
 
     const updateScale = () => {
-      if (!containerRef.current) return;
+      if (!containerRef.current) {return;}
       const containerWidth = containerRef.current.clientWidth;
       // 3 columns with gap (3 * 12px gap = 36px) and padding (2 * 16px = 32px)
       const cardWidth = (containerWidth - 36 - 32) / 3;
@@ -79,7 +79,7 @@ export const SlideNavigator: React.FunctionComponent<ISlideNavigatorProps> = ({
 
   // ESC to close (capture phase to intercept before presentation close)
   React.useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {return;}
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {

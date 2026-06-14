@@ -149,12 +149,13 @@ function migrateLayouts(model: ThemeModel, raw: Record<string, unknown>): void {
     const layout = model.layouts[key];
     const c = layout.colors;
     const str = (v: unknown) => (typeof v === 'string' ? v : undefined);
-    if (str(old.background) && !c.background) c.background = old.background as string;
-    if (str(old.color) && !c.text) c.text = old.color as string;
-    if (str(old.paragraphColor) && !c.paragraph) c.paragraph = old.paragraphColor as string;
-    if (str(old.headingColor) && !c.heading) c.heading = old.headingColor as string;
-    if (str(old.headingBackground) && !c.headingBackground)
+    if (str(old.background) && !c.background) { c.background = old.background as string; }
+    if (str(old.color) && !c.text) { c.text = old.color as string; }
+    if (str(old.paragraphColor) && !c.paragraph) { c.paragraph = old.paragraphColor as string; }
+    if (str(old.headingColor) && !c.heading) { c.heading = old.headingColor as string; }
+    if (str(old.headingBackground) && !c.headingBackground) {
       c.headingBackground = old.headingBackground as string;
+    }
     if (typeof old.headingSize === 'number' && old.headingSize > 0 && !layout.typography.h1.size) {
       layout.typography.h1.size = old.headingSize;
     }

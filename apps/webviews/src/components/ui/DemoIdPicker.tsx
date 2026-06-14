@@ -57,7 +57,7 @@ export const DemoIdPicker: React.FunctionComponent<IDemoIdPickerProps> = ({
 
   // Transform demo data into SearchableDropdown format
   const dropdownOptions = React.useMemo(() => {
-    if (!demoData?.demoFiles) return [];
+    if (!demoData?.demoFiles) {return [];}
 
     return demoData.demoFiles
       .map(demoFile => ({
@@ -71,7 +71,7 @@ export const DemoIdPicker: React.FunctionComponent<IDemoIdPickerProps> = ({
 
   // Find the selected demo's title
   const selectedDemo = React.useMemo(() => {
-    if (!value || !demoData?.demoFiles) return null;
+    if (!value || !demoData?.demoFiles) {return null;}
 
     for (const demoFile of demoData.demoFiles) {
       const demo = demoFile.demos.find(d => d.id === value);
@@ -83,7 +83,7 @@ export const DemoIdPicker: React.FunctionComponent<IDemoIdPickerProps> = ({
   }, [value, demoData]);
 
   const handleDemoChange = (selectedId: string) => {
-    if (!onDemoSelect) return;
+    if (!onDemoSelect) {return;}
 
     // Check if this is an existing scene ID from our data
     if (demoData?.demoFiles) {
