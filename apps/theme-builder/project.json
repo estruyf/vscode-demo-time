@@ -14,7 +14,7 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsc -b && vite build",
+        "command": "tsc -b && vite build && tsc -p tsconfig.lib.json && vite build -c vite.lib.config.ts",
         "cwd": "apps/theme-builder"
       },
       "outputs": ["{projectRoot}/dist"]
