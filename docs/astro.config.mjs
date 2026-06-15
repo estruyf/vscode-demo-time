@@ -77,20 +77,20 @@ export default defineConfig({
       ],
       sidebar: [
         {
-          label: 'It starts here',
+          label: 'Introduction',
           items: [
             { label: 'Getting started', slug: 'getting-started' },
             { label: 'Adding moves', slug: 'adding-moves' },
             { label: 'Start presenting', slug: 'presentation-mode' },
           ],
         },
-        { 
+        {
           label: 'Pro Features',
           collapsed: true,
           items: [
             { label: 'Overview', slug: 'pro-features' },
             { label: 'Analytics', slug: 'pro-features/analytics' },
-          ] 
+          ]
         },
         {
           label: 'Actions',
@@ -181,29 +181,19 @@ export default defineConfig({
           ]
         },
         {
-          label: 'Other features',
+          label: 'Features',
           collapsed: true,
           items: [
             { label: 'Overview Dashboard', slug: 'features/overview-dashboard' },
             { label: 'Presenter view', slug: 'features/presenter-view' },
             { label: 'Using notes', slug: 'features/using-notes' },
-            { label: 'URI handler', slug: 'features/uri-handler' },
             { label: 'Timer and clock', slug: 'features/timer-clock' },
             { label: 'Auto-proceed and loop', slug: 'features/auto-proceed-looping' },
-            { label: 'MCP server support', slug: 'features/mcp-server' },
+            { label: 'Remote Control', slug: 'remote-control' },
             { label: 'Redaction mode', slug: 'features/redaction-mode' },
+            { label: 'URI handler', slug: 'features/uri-handler' },
+            { label: 'MCP server support', slug: 'features/mcp-server' },
           ],
-        },
-        {
-          label: 'References',
-          collapsed: true,
-          items: [
-            { label: 'Terminology', slug: 'references/terminology' },
-            { label: 'Commands', slug: 'references/commands' },
-            { label: 'Settings', slug: 'references/settings' },
-            { label: 'API', slug: 'references/api' },
-            { label: 'JSON schema', slug: 'references/json-schema' },
-          ]
         },
         {
           label: 'Tips & Tricks',
@@ -218,6 +208,14 @@ export default defineConfig({
           ],
         },
         {
+          label: 'Snippets',
+          collapsed: true,
+          items: [
+            { label: 'Snippets', slug: 'snippets' },
+            { label: 'Snippet Gallery', slug: 'snippets/gallery' },
+          ],
+        },
+        {
           label: 'Integrations',
           collapsed: true,
           items: [
@@ -227,31 +225,33 @@ export default defineConfig({
           ]
         },
         {
-          label: 'Snippets',
+          label: 'References',
           collapsed: true,
           items: [
-            { label: 'Snippets', slug: 'snippets' },
+            { label: 'Terminology', slug: 'references/terminology' },
+            { label: 'Commands', slug: 'references/commands' },
+            { label: 'Settings', slug: 'references/settings' },
+            { label: 'API', slug: 'references/api' },
+            { label: 'JSON schema', slug: 'references/json-schema' },
+          ]
+        },
+        {
+          label: 'Community',
+          collapsed: true,
+          items: [
+            { label: 'Projects', slug: 'examples' },
+            { label: 'Showcases', slug: 'showcases' },
+            { label: 'Articles', link: 'articles' },
           ],
         },
-        { label: 'Snippet Gallery', slug: 'snippets/gallery' },
-        { label: 'Remote Control', slug: 'remote-control' },
-        { label: 'Projects', slug: 'examples' },
-        { label: 'Showcases', slug: 'showcases' },
         {
-          label: 'Community Articles',
-          link: 'articles'
-        },
-        {
-          label: 'Beta version',
-          link: 'beta'
-        },
-        {
-          label: 'Contributing',
-          link: 'contribute'
-        },
-        {
-          label: 'Support the project ❤️',
-          link: 'support'
+          label: 'Get involved',
+          collapsed: true,
+          items: [
+            { label: 'Beta version', link: 'beta' },
+            { label: 'Contributing', link: 'contribute' },
+            { label: 'Support the project ❤️', link: 'support' },
+          ],
         },
       ],
     }), 
