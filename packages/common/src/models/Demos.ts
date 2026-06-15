@@ -137,6 +137,8 @@ export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
   pollId?: string;
   startOnOpen?: boolean;
   closeOnOpen?: boolean;
+  pollDarkTheme?: boolean;
+  pollControls?: boolean;
   title?: string;
   description?: string;
   type?: EngageTimeMessageType;

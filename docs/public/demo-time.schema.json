@@ -945,6 +945,12 @@
                       },
                       "closeOnOpen": {
                         "$ref": "#/definitions/closeOnOpen"
+                      },
+                      "pollDarkTheme": {
+                        "$ref": "#/definitions/pollDarkTheme"
+                      },
+                      "pollControls": {
+                        "$ref": "#/definitions/pollControls"
                       }
                     },
                     "not": {
@@ -1434,6 +1440,16 @@
       "type": "boolean",
       "description": "Close the poll when it is shown. Default is false.",
       "default": false
+    },
+    "pollDarkTheme": {
+      "type": "boolean",
+      "description": "When true, the EngageTime poll embed opens with the dark theme.",
+      "default": false
+    },
+    "pollControls": {
+      "type": "boolean",
+      "description": "Whether to show the poll controls in the embed. Default is true.",
+      "default": true
     },
     "type": {
       "type": "string",

@@ -313,6 +313,10 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       label = 'Start the poll when opening it';
     } else if (field === 'closeOnOpen') {
       label = 'Close the poll when opening it';
+    } else if (field === 'pollDarkTheme') {
+      label = 'Use dark theme';
+    } else if (field === 'pollControls') {
+      label = 'Show poll controls';
     }
 
     switch (field) {
@@ -505,6 +509,40 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                 type="checkbox"
                 checked={typeof step[field] === 'undefined' ? false : step[field]}
                 onChange={(e) => handleExclusivePollToggle('closeOnOpen', e.target.checked)}
+                className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                {label} {isRequired && <span className="text-red-500">*</span>}
+              </span>
+            </label>
+          </div>
+        );
+
+      case 'pollDarkTheme':
+        return (
+          <div key={field}>
+            <label className="h-full flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={typeof step.pollDarkTheme === 'undefined' ? false : step.pollDarkTheme}
+                onChange={(e) => handleChange('pollDarkTheme', e.target.checked)}
+                className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                {label} {isRequired && <span className="text-red-500">*</span>}
+              </span>
+            </label>
+          </div>
+        );
+
+      case 'pollControls':
+        return (
+          <div key={field}>
+            <label className="h-full flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={typeof step.pollControls === 'undefined' ? true : step.pollControls}
+                onChange={(e) => handleChange('pollControls', e.target.checked)}
                 className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500"
               />
               <span className="text-sm font-medium text-gray-600 dark:text-gray-300">

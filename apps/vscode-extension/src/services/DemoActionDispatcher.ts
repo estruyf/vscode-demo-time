@@ -551,7 +551,7 @@ export class DemoActionDispatcher {
       }
 
       if (step.action === Action.ShowEngageTimePoll) {
-        await EngageTimeService.showPoll(step.pollId, step.startOnOpen, step.closeOnOpen);
+        await EngageTimeService.showPoll(step.pollId, step.startOnOpen, step.closeOnOpen, step.pollDarkTheme, step.pollControls);
         return;
       }
 
