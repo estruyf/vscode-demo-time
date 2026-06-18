@@ -48,6 +48,21 @@ export class Preview extends BaseWebview {
     Preview.currentSlideIndex = Math.max(index, -1);
   }
 
+  public static updateAutoProceedState(payload: { managedByExtension: boolean }): void {
+    if (!Preview.isOpen) {
+      return;
+    }
+
+    Preview.postMessage(WebViewMessages.toWebview.updateAutoProceedState, payload);
+  }
+
+  public static isCurrentFile(fileUri: string): boolean {
+    if (!Preview.crntFile) {
+      return false;
+    }
+    return Preview.crntFile === fileUri;
+  }
+
   public static isListening(): boolean {
     if (!Preview.isOpen) {
       return false;
@@ -106,6 +121,41 @@ export class Preview extends BaseWebview {
         Preview.triggerUpdate(fileWebviewPath, slide); // Convert string to Uri
       }
     }
+  }
+
+  public static async showQr({
+    url,
+    topText,
+    title,
+    description,
+    logo,
+    qrLayout,
+  }: {
+    url: string;
+    topText?: string;
+    title?: string;
+    description?: string;
+    logo?: string;
+    qrLayout?: 'default' | 'reversed' | 'minimal' | 'stacked' | 'text-left' | 'text-right';
+  }) {
+    // Ensure the preview is open (without showing a specific file)
+    if (!Preview.isOpen) {
+      const separator = url.includes('?') ? '&' : '?';
+      await Preview.show(
+        `${url}${separator}qrTopText=${encodeURIComponent(topText || '')}&qrTitle=${encodeURIComponent(title || '')}&qrDescription=${encodeURIComponent(description || '')}&qrLogo=${encodeURIComponent(logo || '')}&qrLayout=${encodeURIComponent(qrLayout || 'default')}`,
+      );
+    } else {
+      Preview.postMessage(WebViewMessages.toWebview.showQR, {
+        url: url,
+        topText: topText,
+        title: title,
+        description: description,
+        logo: logo,
+        qrLayout: qrLayout,
+      });
+      Preview.reveal();
+    }
+    return;
   }
 
   public static triggerUpdate(fileUri?: Uri | string, slide?: number, reset: boolean = false) {
@@ -216,8 +266,9 @@ export class Preview extends BaseWebview {
       await window.showTextDocument(fileUri, { preview: false });
     } else if (command === WebViewMessages.toVscode.updateSlideIndex) {
       Preview.currentSlideIndex = payload;
+      await DemoRunner.onSlideIndexUpdated(payload);
     } else if (command === WebViewMessages.toVscode.slideReady) {
-      Preview.reveal();
+      Preview.reveal(true);
     } else if (command === WebViewMessages.toVscode.preview.recordOpenSlide) {
       // Record slide change in analytics if recording
       if (

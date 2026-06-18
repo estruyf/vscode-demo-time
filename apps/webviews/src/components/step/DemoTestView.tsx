@@ -69,18 +69,18 @@ export const DemoTestView: React.FC<DemoTestViewProps> = ({
   };
 
   const getStepStatus = (stepIndex: number) => {
-    if (failedStep !== null && stepIndex === failedStep) return 'failed';
-    if (executedSteps.includes(stepIndex)) return 'completed';
-    if (currentStep === stepIndex) return 'running';
-    if (currentStep > stepIndex) return 'completed';
+    if (failedStep !== null && stepIndex === failedStep) {return 'failed';}
+    if (executedSteps.includes(stepIndex)) {return 'completed';}
+    if (currentStep === stepIndex) {return 'running';}
+    if (currentStep > stepIndex) {return 'completed';}
     return 'pending';
   };
 
   const getStepIcon = (status: string) => {
-    if (status === 'completed') return CheckCircle;
-    if (status === 'running') return Clock;
-    if (status === 'failed') return XCircle;
-    if (status === 'pending') return Play;
+    if (status === 'completed') {return CheckCircle;}
+    if (status === 'running') {return Clock;}
+    if (status === 'failed') {return XCircle;}
+    if (status === 'pending') {return Play;}
     return Play;
   };
 

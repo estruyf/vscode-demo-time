@@ -2,7 +2,7 @@ import React from "react";
 import { useLoadingScreen } from "./hooks/useLoadingScreen";
 
 const getDemoId = () => {
-  if (typeof window === "undefined") return "";
+  if (typeof window === "undefined") {return "";}
   const params = new URLSearchParams(window.location.search);
   return params.get("id") || "";
 };

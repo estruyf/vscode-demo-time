@@ -17,6 +17,7 @@ export interface ActConfig {
   version: 3;
   timer?: number;
   engageTime?: EngageTimeConfig;
+  loop?: boolean;
   scenes: Scene[];
 }
 
@@ -28,6 +29,7 @@ export interface DemoConfig {
   version?: Version;
   timer?: number;
   engageTime?: EngageTimeConfig;
+  loop?: boolean;
   demos: Demo[];
 }
 
@@ -49,6 +51,7 @@ export interface Scene {
   icons?: Icons;
   notes?: Notes;
   disabled?: boolean;
+  autoAdvanceAfter?: number;
 }
 
 // Version 1 & 2: Legacy Demo structure
@@ -60,6 +63,7 @@ export interface Demo {
   icons?: Icons;
   notes?: Notes;
   disabled?: boolean;
+  autoAdvanceAfter?: number;
 }
 
 export interface Notes {
@@ -71,6 +75,8 @@ export interface Icons {
   start: string;
   end: string;
 }
+
+export type QRLayout = 'default' | 'reversed' | 'minimal' | 'stacked' | 'text-left' | 'text-right';
 
 // Version 3: Move (replaces Step for version 3) - Same structure as Step
 export type Move = Step;
@@ -99,6 +105,8 @@ export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
   command?: string;
   keybinding?: string;
   message?: string;
+  waitForMessage?: string;
+  showProgress?: boolean;
   /**
    * Arguments to pass to scripts or snippets.
    * For executeScript actions: Array of strings passed as positional command-line arguments to the script.
@@ -129,8 +137,17 @@ export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
   pollId?: string;
   startOnOpen?: boolean;
   closeOnOpen?: boolean;
+  pollDarkTheme?: boolean;
+  pollControls?: boolean;
   title?: string;
+  description?: string;
   type?: EngageTimeMessageType;
+
+  // QR Code
+  topText?: string;
+  label?: string;
+  logo?: string;
+  qrLayout?: QRLayout;
 }
 
 export interface ITerminal {
@@ -163,3 +180,48 @@ export interface State {
 }
 
 export type EngageTimeMessageType = 'demo' | 'slide' | 'custom';
+
+// New snippet file format (gallery/community snippets)
+export interface SnippetField {
+  name: string;
+  description?: string;
+  type: 'string' | 'number' | 'boolean';
+  required?: boolean;
+  default?: string | number | boolean;
+}
+
+export interface SnippetFileFormat {
+  id: string;
+  name: string;
+  description?: string;
+  author?: string;
+  version?: string;
+  tags?: string[];
+  fields?: SnippetField[];
+  steps: Step[];
+}
+
+export interface GallerySnippetIndexEntry {
+  id: string;
+  name: string;
+  description?: string;
+  author?: string;
+  version?: string;
+  tags?: string[];
+  fields?: SnippetField[];
+  path: string;
+  actions?: string[];
+}
+
+/**
+ * Type guard to check if a parsed snippet is in the new SnippetFileFormat.
+ */
+export function isSnippetFileFormat(value: unknown): value is SnippetFileFormat {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    'steps' in value &&
+    Array.isArray((value as SnippetFileFormat).steps)
+  );
+}

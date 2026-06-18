@@ -1,0 +1,113 @@
+---
+import { readFile } from 'node:fs/promises';
+
+interface SnippetField {
+  name: string;
+  description?: string;
+  type: 'string' | 'number' | 'boolean';
+  required: boolean;
+  default?: string | number | boolean;
+}
+
+interface GallerySnippet {
+  id: string;
+  name: string;
+  description: string;
+  author: string;
+  version: string;
+  tags: string[];
+  fields: SnippetField[];
+  path: string;
+  actions?: string[];
+}
+
+let snippets: GallerySnippet[] = [];
+
+try {
+  const indexPath = new URL('../../public/gallery/index.json', import.meta.url);
+  const content = await readFile(indexPath, 'utf-8');
+  const parsed = JSON.parse(content) as unknown;
+  if (Array.isArray(parsed)) {
+    for (const item of parsed) {
+      if (item && typeof item === 'object' && typeof (item as Record<string, unknown>).id === 'string') {
+        snippets.push(item as GallerySnippet);
+      }
+    }
+  }
+} catch (err) {
+  console.error('[GallerySnippetList] Failed to load gallery index:', err);
+}
+
+const sortedSnippets = [...snippets].sort((a, b) => a.id.localeCompare(b.id));
+---
+
+{
+  sortedSnippets.length === 0 ? (
+    <div class="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-6 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-900/40 dark:text-gray-300">
+      No snippets are currently available in the gallery index.
+    </div>
+  ) : (
+    <div class="space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-900/40">
+        <span class="font-medium text-gray-800 dark:text-gray-100">Available in gallery</span>
+        <span class="rounded-full bg-demo-time-accent/10 px-3 py-1 font-semibold text-demo-time-accent">
+          {sortedSnippets.length} snippet{sortedSnippets.length === 1 ? '' : 's'}
+        </span>
+      </div>
+
+      <div
+        class={`grid gap-4 ${sortedSnippets.length > 1 ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'}`}
+      >
+        {sortedSnippets.map((snippet) => (
+          <article class="flex flex-col rounded-xl border border-gray-200 bg-white p-4 shadow-xs transition-colors hover:border-demo-time-accent/50 dark:border-gray-700 dark:bg-gray-900/40 !mt-0">
+            <div class="flex flex-wrap items-start justify-between gap-2">
+              <h3 class="my-0 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                {snippet.name}
+              </h3>
+              <span class="rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700 dark:bg-gray-800 dark:text-gray-200">
+                v{snippet.version}
+              </span>
+            </div>
+
+            <p class="mt-2 mb-0 text-sm flex-grow text-gray-600 dark:text-gray-300">
+              {snippet.description}
+            </p>
+
+            <div class="mt-4 flex flex-wrap gap-2 text-xs">
+              {(snippet.tags || []).map((tag) => (
+                <span class="rounded-full border border-gray-200 bg-gray-50 px-2 py-0.5 text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            <div class="mt-5 flex flex-col gap-3 border-t border-gray-100 pt-4 text-sm dark:border-gray-800">
+              <div class="grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1.5">
+                <span class="text-gray-500 dark:text-gray-400">ID</span>
+                <code class="text-gray-800 dark:text-gray-200">{snippet.id}</code>
+
+                <span class="text-gray-500 dark:text-gray-400">Author</span>
+                <span class="text-gray-800 dark:text-gray-200">{snippet.author}</span>
+              </div>
+
+              {snippet.actions && snippet.actions.length > 0 && (
+                <div class="mt-1">
+                  <span class="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                    Actions ({snippet.actions.length})
+                  </span>
+                  <div class="flex flex-wrap gap-1.5">
+                    {snippet.actions.map((action) => (
+                      <span class="rounded border border-emerald-200 bg-emerald-50 px-2 py-1 text-[11px] font-medium text-emerald-700 dark:border-emerald-700/50 dark:bg-emerald-900/20 dark:text-emerald-300">
+                        {action}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  )
+}

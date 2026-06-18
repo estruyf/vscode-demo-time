@@ -157,6 +157,10 @@ export const WebViewMessages = {
        */
       checkSnippetArgs: 'checkSnippetArgs',
       /**
+       * listSnippets
+       */
+      listSnippets: 'listSnippets',
+      /**
        * getConfigEditorDemoIds
        */
       getDemoIds: 'getConfigEditorDemoIds',
@@ -207,6 +211,14 @@ export const WebViewMessages = {
     },
     proFeatures: {
       getSponsorStatus: 'getProFeaturesSponsorStatus',
+    },
+    gallery: {
+      getConfig: 'getGalleryConfig',
+      getDownloadedSnippets: 'getGalleryDownloadedSnippets',
+      downloadSnippet: 'downloadGallerySnippet',
+    },
+    themeBuilder: {
+      exportTheme: 'themeBuilderExportTheme',
     },
     presenter: {
       checkNextDemo: 'checkPresenterNextDemo',
@@ -271,6 +283,10 @@ export const WebViewMessages = {
      */
     updateStyles: 'updateStyles',
     /**
+     * updateAutoProceedState
+     */
+    updateAutoProceedState: 'updateAutoProceedState',
+    /**
      * updateIsInPresentationMode
      */
     updateIsInPresentationMode: 'updateIsInPresentationMode',
@@ -313,5 +329,10 @@ export const WebViewMessages = {
     presenter: {
       nextSlide: 'presenterNextSlide',
     },
+    // QR Code
+    /**
+     * showQR
+     */
+    showQR: 'showQR',
   },
 };

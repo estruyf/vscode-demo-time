@@ -222,6 +222,27 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange, onGenera
               </div>
             </div>
 
+            <div>
+              <Input
+                label="Auto advance after (seconds)"
+                type="number"
+                min={1}
+                value={typeof demo.autoAdvanceAfter === 'number' ? `${demo.autoAdvanceAfter}` : ''}
+                onChange={(value) => {
+                  const parsed = Number(value);
+                  handleChange(
+                    'autoAdvanceAfter',
+                    value.trim() === '' || !Number.isFinite(parsed) ? undefined : parsed,
+                  );
+                }}
+                placeholder="Optional"
+                error={getFieldError('autoAdvanceAfter')}
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-300 mt-2">
+                When set, this scene advances automatically after the given number of seconds.
+              </p>
+            </div>
+
             {/* Notes Section */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Notes File</label>

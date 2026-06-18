@@ -28,7 +28,7 @@ import {
   SlideTheme,
   Step,
   transformMarkdown,
-  twoColumnFormatting,
+  placeholderFormatting,
   getDemosFromConfig,
 } from '@demotime/common';
 import { ScreenshotService } from './ScreenshotService';
@@ -229,7 +229,7 @@ export class PdfExportService {
         const allSlides = parser.parseSlides(slide.content);
         for (const crntSlide of allSlides) {
           const vfile = await transformMarkdown(
-            twoColumnFormatting(crntSlide.content),
+            placeholderFormatting(crntSlide.content),
             undefined,
             undefined,
             undefined,

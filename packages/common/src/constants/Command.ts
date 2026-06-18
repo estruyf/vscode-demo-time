@@ -13,6 +13,7 @@ export const COMMAND = {
   previous: `${EXTENSION_NAME}.previous`,
   runStep: `${EXTENSION_NAME}.runStep`,
   runById: `${EXTENSION_NAME}.runById`,
+  runSingleMove: `${EXTENSION_NAME}.runSingleMove`,
   togglePresentationMode: `${EXTENSION_NAME}.togglePresentationMode`,
   reset: `${EXTENSION_NAME}.reset`,
   toggleHighlight: `${EXTENSION_NAME}.toggleHighlight`,
@@ -61,6 +62,10 @@ export const COMMAND = {
   showOverview: `${EXTENSION_NAME}.showOverview`,
   // Pro Features
   showProFeatures: `${EXTENSION_NAME}.showProFeatures`,
+  // Gallery
+  showGallery: `${EXTENSION_NAME}.showGallery`,
+  // Theme Builder
+  showThemeBuilder: `${EXTENSION_NAME}.showThemeBuilder`,
   // Resources
   openSupportTheProject: `${EXTENSION_NAME}.openSupportTheProject`,
   openRemoteControl: `${EXTENSION_NAME}.openRemoteControl`,
@@ -73,4 +78,8 @@ export const COMMAND = {
   analyticsToggle: `${EXTENSION_NAME}.analytics.toggle`,
   // Redaction
   toggleRedaction: `${EXTENSION_NAME}.toggleRedaction`,
+  // Auto-proceed
+  toggleAutoProceed: `${EXTENSION_NAME}.toggleAutoProceed`,
+  pauseAutoProceed: `${EXTENSION_NAME}.pauseAutoProceed`,
+  resumeAutoProceed: `${EXTENSION_NAME}.resumeAutoProceed`,
 };

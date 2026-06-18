@@ -26,11 +26,14 @@ import { ResourcesPanel } from './panels/ResourcesPanel';
 import { Preview } from './preview/Preview';
 import { PresenterView } from './presenterView/PresenterView';
 import { ConfigEditorProvider } from './providers/ConfigEditorProvider';
+import { DemoCodeLensProvider } from './providers/DemoCodeLensProvider';
 import { SettingsView } from './settingsView/SettingsView';
 import { Config } from '@demotime/common';
 import { InputService } from './services/InputService';
 import { Overview } from './overview/Overview';
 import { ProFeaturesView } from './proFeatures/ProFeaturesView';
+import { GalleryView } from './gallery/GalleryView';
+import { ThemeBuilderView } from './themeBuilderView/ThemeBuilderView';
 
 export async function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);
@@ -46,7 +49,10 @@ export async function activate(context: vscode.ExtensionContext) {
   Preview.register();
   Overview.register();
   ProFeaturesView.register();
+  GalleryView.register();
+  ThemeBuilderView.register();
   ConfigEditorProvider.register();
+  DemoCodeLensProvider.register();
 
   // Services
   DecoratorService.register();

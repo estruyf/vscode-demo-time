@@ -15,9 +15,9 @@ export class BaseWebview {
     return !this.isDisposed;
   }
 
-  protected static reveal() {
+  protected static reveal(preserveFocus: boolean = false) {
     if (this.webview) {
-      this.webview.reveal();
+      this.webview.reveal(undefined, preserveFocus);
     }
   }
 

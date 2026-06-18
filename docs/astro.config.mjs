@@ -77,20 +77,20 @@ export default defineConfig({
       ],
       sidebar: [
         {
-          label: 'It starts here',
+          label: 'Introduction',
           items: [
             { label: 'Getting started', slug: 'getting-started' },
             { label: 'Adding moves', slug: 'adding-moves' },
             { label: 'Start presenting', slug: 'presentation-mode' },
           ],
         },
-        { 
+        {
           label: 'Pro Features',
           collapsed: true,
           items: [
             { label: 'Overview', slug: 'pro-features' },
             { label: 'Analytics', slug: 'pro-features/analytics' },
-          ] 
+          ]
         },
         {
           label: 'Actions',
@@ -117,76 +117,83 @@ export default defineConfig({
           label: 'Slides',
           collapsed: true,
           items: [
-            { label: 'Present your slides', slug: 'slides' },
+            { label: 'Getting started', slug: 'slides' },
             {
               label: 'Layouts',
+              collapsed: true,
               items: [
                 { label: 'Overview', slug: 'slides/layouts' },
-                { label: 'Default layout', slug: 'slides/layouts/default' },
-                { label: 'Intro layout', slug: 'slides/layouts/intro' },
-                { label: 'Section layout', slug: 'slides/layouts/section' },
-                { label: 'Quote layout', slug: 'slides/layouts/quote' },
-                { label: 'Video layout', slug: 'slides/layouts/video' },
-                { label: 'Image layout', slug: 'slides/layouts/image' },
-                { label: 'Image left layout', slug: 'slides/layouts/image-left' },
-                { label: 'Image right layout', slug: 'slides/layouts/image-right' },
-                { label: 'Two columns layout', slug: 'slides/layouts/two-columns' },
-                { label: 'Custom layout', slug: 'slides/layouts/custom' },
-                { label: 'Animated SVG layout', slug: 'slides/layouts/animated' },
+                { label: 'Default', slug: 'slides/layouts/default' },
+                { label: 'Intro', slug: 'slides/layouts/intro' },
+                { label: 'Section', slug: 'slides/layouts/section' },
+                { label: 'Quote', slug: 'slides/layouts/quote' },
+                { label: 'Video', slug: 'slides/layouts/video' },
+                { label: 'Image', slug: 'slides/layouts/image' },
+                { label: 'Image left', slug: 'slides/layouts/image-left' },
+                { label: 'Image right', slug: 'slides/layouts/image-right' },
+                { label: 'Two columns', slug: 'slides/layouts/two-columns' },
+                { label: 'Animated SVG', slug: 'slides/layouts/animated' },
+                { label: 'Custom', slug: 'slides/layouts/custom' },
                 { label: 'Header & Footer', slug: 'slides/layouts/header-footer' },
               ],
             },
             {
               label: 'Themes',
+              collapsed: true,
               items: [
                 { label: 'Overview', slug: 'slides/themes' },
-                { label: 'Default theme', slug: 'slides/themes/default' },
-                { label: 'Minimal theme', slug: 'slides/themes/minimal' },
-                { label: 'Monomi theme', slug: 'slides/themes/monomi' },
-                { label: 'Unnamed theme', slug: 'slides/themes/unnamed' },
-                { label: 'Quantum theme', slug: 'slides/themes/quantum' },
-                { label: 'Frost theme', slug: 'slides/themes/frost' },
-                { label: 'Pixels theme', slug: 'slides/themes/pixels' },
-                { label: 'Custom theme', slug: 'slides/themes/custom' },
+                { label: 'Default', slug: 'slides/themes/default' },
+                { label: 'Minimal', slug: 'slides/themes/minimal' },
+                { label: 'Monomi', slug: 'slides/themes/monomi' },
+                { label: 'Unnamed', slug: 'slides/themes/unnamed' },
+                { label: 'Quantum', slug: 'slides/themes/quantum' },
+                { label: 'Frost', slug: 'slides/themes/frost' },
+                { label: 'Pixels', slug: 'slides/themes/pixels' },
+                { label: 'Custom', slug: 'slides/themes/custom' },
               ],
             },
-            { label: 'Slide transitions', slug: 'slides/transitions' },
-            { label: 'Animations', slug: 'slides/animations' },
+            { label: 'Theme Builder', slug: 'slides/themes/theme-builder', badge: { text: 'New', variant: 'tip' } },
             {
               label: 'Components',
+              collapsed: true,
               items: [
-                { label: 'Overview', slug:  'slides/components' },
+                { label: 'Overview', slug: 'slides/components' },
                 { label: 'Custom components', slug: 'slides/components/custom' },
               ],
             },
-            { label: 'Mermaid', slug: 'slides/mermaid' },
-            { label: 'Import PowerPoint slides', slug: 'slides/powerpoint-import' },
-            { label: 'Exporting slides', slug: 'slides/export' },
+            {
+              label: 'Motion',
+              collapsed: true,
+              items: [
+                { label: 'Transitions', slug: 'slides/transitions' },
+                { label: 'Animations', slug: 'slides/animations' },
+              ],
+            },
+            {
+              label: 'Content',
+              collapsed: true,
+              items: [
+                { label: 'Mermaid diagrams', slug: 'slides/mermaid' },
+                { label: 'Import PowerPoint', slug: 'slides/powerpoint-import' },
+                { label: 'Export slides', slug: 'slides/export' },
+              ],
+            },
           ]
         },
         {
-          label: 'Other features',
+          label: 'Features',
           collapsed: true,
           items: [
             { label: 'Overview Dashboard', slug: 'features/overview-dashboard' },
             { label: 'Presenter view', slug: 'features/presenter-view' },
             { label: 'Using notes', slug: 'features/using-notes' },
-            { label: 'URI handler', slug: 'features/uri-handler' },
             { label: 'Timer and clock', slug: 'features/timer-clock' },
-            { label: 'MCP server support', slug: 'features/mcp-server' },
+            { label: 'Auto-proceed and loop', slug: 'features/auto-proceed-looping' },
+            { label: 'Remote Control', slug: 'remote-control' },
             { label: 'Redaction mode', slug: 'features/redaction-mode' },
+            { label: 'URI handler', slug: 'features/uri-handler' },
+            { label: 'MCP server support', slug: 'features/mcp-server' },
           ],
-        },
-        {
-          label: 'References',
-          collapsed: true,
-          items: [
-            { label: 'Terminology', slug: 'references/terminology' },
-            { label: 'Commands', slug: 'references/commands' },
-            { label: 'Settings', slug: 'references/settings' },
-            { label: 'API', slug: 'references/api' },
-            { label: 'JSON schema', slug: 'references/json-schema' },
-          ]
         },
         {
           label: 'Tips & Tricks',
@@ -201,6 +208,14 @@ export default defineConfig({
           ],
         },
         {
+          label: 'Snippets',
+          collapsed: true,
+          items: [
+            { label: 'Snippets', slug: 'snippets' },
+            { label: 'Snippet Gallery', slug: 'snippets/gallery' },
+          ],
+        },
+        {
           label: 'Integrations',
           collapsed: true,
           items: [
@@ -210,30 +225,33 @@ export default defineConfig({
           ]
         },
         {
-          label: 'Snippets',
+          label: 'References',
           collapsed: true,
           items: [
-            { label: 'Snippets', slug: 'snippets' },
+            { label: 'Terminology', slug: 'references/terminology' },
+            { label: 'Commands', slug: 'references/commands' },
+            { label: 'Settings', slug: 'references/settings' },
+            { label: 'API', slug: 'references/api' },
+            { label: 'JSON schema', slug: 'references/json-schema' },
+          ]
+        },
+        {
+          label: 'Community',
+          collapsed: true,
+          items: [
+            { label: 'Projects', slug: 'examples' },
+            { label: 'Showcases', slug: 'showcases' },
+            { label: 'Articles', link: 'articles' },
           ],
         },
-        { label: 'Remote Control', slug: 'remote-control' },
-        { label: 'Projects', slug: 'examples' },
-        { label: 'Showcases', slug: 'showcases' },
         {
-          label: 'Community Articles',
-          link: 'articles'
-        },
-        {
-          label: 'Beta version',
-          link: 'beta'
-        },
-        {
-          label: 'Contributing',
-          link: 'contribute'
-        },
-        {
-          label: 'Support the project ❤️',
-          link: 'support'
+          label: 'Get involved',
+          collapsed: true,
+          items: [
+            { label: 'Beta version', link: 'beta' },
+            { label: 'Contributing', link: 'contribute' },
+            { label: 'Support the project ❤️', link: 'support' },
+          ],
         },
       ],
     }), 

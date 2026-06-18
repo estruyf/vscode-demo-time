@@ -93,6 +93,9 @@ export const getActionIcon = (action: Action): string => {
     [Action.ZoomReset]: 'refresh-cw',
     [Action.EnableZenMode]: 'maximize',
     [Action.DisableZenMode]: 'minimize',
+    [Action.ShowQR]: 'qr-code',
+    [Action.HideQR]: 'qr-code',
+    [Action.ClosePreview]: 'panel-right-close',
   };
   return iconMap[action] || 'circle';
 };
@@ -249,6 +252,9 @@ export const getRequiredFields = (action: Action): string[] => {
     [Action.ZoomReset]: [],
     [Action.EnableZenMode]: [],
     [Action.DisableZenMode]: [],
+    [Action.ShowQR]: ['url'],
+    [Action.HideQR]: [],
+    [Action.ClosePreview]: [],
   };
   return requiredMap[action] || [];
 };
@@ -326,7 +332,7 @@ export const getFieldsForAction = (action: Action): string[] => {
       'insertTypingSpeed',
     ],
     [Action.SendKeybinding]: ['keybinding'],
-    [Action.ExecuteScript]: ['id', 'command', 'path', 'args'],
+    [Action.ExecuteScript]: ['id', 'command', 'path', 'args', 'waitForMessage', 'showProgress'],
     [Action.CloseTerminal]: ['terminalId'],
     [Action.Snippet]: ['contentPath', 'args'],
     [Action.OpenPowerPoint]: [],
@@ -372,13 +378,16 @@ export const getFieldsForAction = (action: Action): string[] => {
     [Action.CloseEngageTimeSession]: [],
     [Action.CloseEngageTimePoll]: ['pollId'],
     [Action.ShowEngageTimeSession]: [],
-    [Action.ShowEngageTimePoll]: ['pollId', 'startOnOpen', 'closeOnOpen'],
+    [Action.ShowEngageTimePoll]: ['pollId', 'startOnOpen', 'closeOnOpen', 'pollDarkTheme', 'pollControls'],
     [Action.SendEngageTimeMessage]: ['type', 'title', 'message'],
     [Action.ZoomIn]: ['zoom'],
     [Action.ZoomOut]: ['zoom'],
     [Action.ZoomReset]: [],
     [Action.EnableZenMode]: [],
     [Action.DisableZenMode]: [],
+    [Action.ShowQR]: ['qrLayout', 'url', 'topText', 'title', 'description', 'logo'],
+    [Action.HideQR]: [],
+    [Action.ClosePreview]: [],
   };
 
   return fieldMap[action] || [];

@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "prebuild": "node scripts/update-changelog.cjs && node scripts/update-llms.cjs",
+    "prebuild": "npx ts-node ../scripts/generate-gallery-index.cts && node scripts/update-changelog.cjs && node scripts/update-llms.cjs",
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",

@@ -7,7 +7,7 @@ interface StatusMessageProps {
 }
 
 export const StatusMessage: React.FC<StatusMessageProps> = ({ text, type, visible }) => {
-  if (!visible) return null;
+  if (!visible) {return null;}
 
   return (
     <section className={`mt-4 p-2 rounded-sm ${type || ''} ${visible ? 'block' : 'hidden'}`}>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { validateConfig } from '../../utils/validation';
 import { messageHandler } from '@estruyf/vscode/dist/client/webview';
 import { DemoConfig, WebViewMessages } from '@demotime/common';
-import { Textarea } from '../ui';
+import { Switch, Textarea } from '../ui';
 import { NoteBox } from '../ui/NoteBox';
 
 interface MainConfigFormProps {
@@ -71,6 +71,21 @@ export const MainConfigForm: React.FC<MainConfigFormProps> = ({ config, onChange
           min="1"
         />
         <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">Optional. Use this to show a timer during the presentation for this act.</p>
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Loop Act
+            </label>
+            <p className="text-xs text-gray-600 dark:text-gray-400">Restart from the first scene after the last one finishes.</p>
+          </div>
+          <Switch
+            checked={!!config.loop}
+            onCheckedChange={(checked) => onChange({ loop: checked })}
+          />
+        </div>
       </div>
 
       <div>
