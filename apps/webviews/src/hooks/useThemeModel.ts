@@ -10,8 +10,8 @@ import type {
   ThemeModel,
   Typography,
 } from '../types/theme';
-import { createDefaultTheme } from '../lib/defaultTheme';
-import { loadTheme, saveTheme } from '../lib/storage';
+import { createDefaultTheme } from '../utils/theme-builder/defaultTheme';
+import { loadTheme, saveTheme } from '../utils/theme-builder/storage';
 
 type HeadingTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5';
 

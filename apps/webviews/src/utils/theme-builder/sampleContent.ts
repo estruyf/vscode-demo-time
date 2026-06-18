@@ -1,4 +1,4 @@
-import type { LayoutKey } from '../types/theme';
+import type { LayoutKey } from '../../types/theme';
 
 /**
  * Sample slide bodies for each layout. The HTML mirrors exactly what Demo Time

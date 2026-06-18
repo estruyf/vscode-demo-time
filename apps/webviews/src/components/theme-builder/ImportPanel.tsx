@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FileUp, ShieldCheck, TriangleAlert } from 'lucide-react';
-import type { ThemeModel } from '../types/theme';
-import { parseCss } from '../lib/parseCss';
+import type { ThemeModel } from '../../types/theme';
+import { parseCss } from '../../utils/theme-builder/parseCss';
 import { Modal } from './Modal';
 import { btnGhost, btnPrimary } from './controls';
 

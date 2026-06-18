@@ -7,9 +7,9 @@ import type {
   LayoutColors,
   LayoutKey,
   Typography,
-} from '../types/theme';
-import type { ThemeModelApi } from '../hooks/useThemeModel';
-import { FONT_OPTIONS, LAYOUTS, POPULAR_GOOGLE_FONTS } from '../lib/constants';
+} from '../../types/theme';
+import type { ThemeModelApi } from '../../hooks/useThemeModel';
+import { FONT_OPTIONS, LAYOUTS, POPULAR_GOOGLE_FONTS } from '../../utils/theme-builder/constants';
 import {
   ColorField,
   Field,
@@ -20,7 +20,7 @@ import {
   Toggle,
 } from './controls';
 import { ImageField } from './ImageField';
-import { sanitizeName } from '../lib/generateCss';
+import { sanitizeName } from '../../utils/theme-builder/generateCss';
 
 const WEIGHTS = [
   { label: 'Light (300)', value: '300' },

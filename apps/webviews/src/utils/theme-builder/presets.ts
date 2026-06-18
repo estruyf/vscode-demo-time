@@ -1,4 +1,4 @@
-import { LAYOUT_KEYS, type ThemeModel } from '../types/theme';
+import { LAYOUT_KEYS, type ThemeModel } from '../../types/theme';
 import { createDefaultTheme, emptyLayoutTypography } from './defaultTheme';
 import { parseCss } from './parseCss';
 import { PRESET_CSS } from './presetCss.generated';

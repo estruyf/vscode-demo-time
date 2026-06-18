@@ -5,7 +5,7 @@ import {
   type LayoutSettings,
   type LayoutTypography,
   type ThemeModel,
-} from '../types/theme';
+} from '../../types/theme';
 import { vscodeThemeColors } from './importVscodeTheme';
 
 /** All per-layout colours empty = inherit the global colour. */

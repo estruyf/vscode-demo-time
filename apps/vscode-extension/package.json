@@ -597,7 +597,7 @@
       },
       {
         "command": "demo-time.showThemeBuilder",
-        "title": "Theme Builder",
+        "title": "Theme Builder (beta)",
         "category": "Demo Time",
         "icon": "$(symbol-color)"
       },

@@ -1,4 +1,4 @@
-import type { ThemeColors } from '../types/theme';
+import type { ThemeColors } from '../../types/theme';
 
 /**
  * Whether the builder is running inside a VS Code webview. VS Code provides

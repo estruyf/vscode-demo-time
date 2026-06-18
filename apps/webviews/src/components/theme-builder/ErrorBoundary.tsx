@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { clearTheme } from '../lib/storage';
+import { clearTheme } from '../../utils/theme-builder/storage';
 import { btnPrimary, btnSecondary } from './controls';
 
 interface State {

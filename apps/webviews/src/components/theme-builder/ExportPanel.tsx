@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Check, Copy, Download, Save } from 'lucide-react';
-import type { ThemeModel } from '../types/theme';
-import { generateCss, sanitizeName } from '../lib/generateCss';
-import { copyText, downloadText } from '../lib/download';
+import type { ThemeModel } from '../../types/theme';
+import { generateCss, sanitizeName } from '../../utils/theme-builder/generateCss';
+import { copyText, downloadText } from '../../utils/theme-builder/download';
 import { Modal } from './Modal';
 import { btnPrimary, btnSecondary } from './controls';
 

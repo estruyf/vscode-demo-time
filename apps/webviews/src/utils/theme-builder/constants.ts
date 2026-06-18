@@ -1,4 +1,4 @@
-import type { LayoutKey } from '../types/theme';
+import type { LayoutKey } from '../../types/theme';
 
 /** Platform-appropriate font family mirroring VS Code's DEFAULT_FONT_FAMILY. */
 const _ua = navigator.userAgent;

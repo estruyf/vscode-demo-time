@@ -13,7 +13,7 @@ interface ExportThemePayload {
 
 export class ThemeBuilderView extends BaseWebview {
   public static id: WebviewType = 'theme-builder';
-  public static title: string = `${Config.title}: Theme Builder`;
+  public static title: string = `${Config.title}: Theme Builder (beta)`;
 
   public static register() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;

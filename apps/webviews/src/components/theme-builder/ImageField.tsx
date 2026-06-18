@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ImageUp, Trash2 } from 'lucide-react';
-import type { BackgroundImage, BackgroundRepeat, BackgroundSize } from '../types/theme';
+import type { BackgroundImage, BackgroundRepeat, BackgroundSize } from '../../types/theme';
 import { Field, NumberField, SelectField, TextField } from './controls';
 
 const EMPTY: BackgroundImage = {

@@ -1,4 +1,4 @@
-import type { BackgroundSize, ThemeModel } from '../types/theme';
+import type { BackgroundSize, ThemeModel } from '../../types/theme';
 import { createDefaultTheme } from './defaultTheme';
 import { sanitizeName } from './generateCss';
 import { decodeModel, MODEL_MARKER } from './serialize';

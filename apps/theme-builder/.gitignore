@@ -1,9 +1,0 @@
-node_modules
-dist
-dist-ssr
-*.local
-*.tsbuildinfo
-
-# Editor directories and files
-.DS_Store
-*.sw?

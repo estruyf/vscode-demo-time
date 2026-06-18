@@ -6,8 +6,8 @@ import type {
   LayoutSettings,
   ThemeColors,
   ThemeModel,
-} from '../types/theme';
-import { LAYOUT_KEYS } from '../types/theme';
+} from '../../types/theme';
+import { LAYOUT_KEYS } from '../../types/theme';
 import { encodeModel, MODEL_MARKER } from './serialize';
 import { PRESET_CSS } from './presetCss.generated';
 

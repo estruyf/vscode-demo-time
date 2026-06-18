@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ChevronDown } from 'lucide-react';
 import clsx from 'clsx';
-import { formatColor, parseColor, rgbToHex } from '../lib/color';
+import { formatColor, parseColor, rgbToHex } from '../../utils/theme-builder/color';
 
 /* Shared button styles. */
 export const btnBase =

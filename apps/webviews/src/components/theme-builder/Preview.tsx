@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Sun, Moon } from 'lucide-react';
 import clsx from 'clsx';
-import type { LayoutKey, ThemeModel } from '../types/theme';
-import { LAYOUTS, SLIDE_HEIGHT, SLIDE_WIDTH } from '../lib/constants';
-import { generateCss, sanitizeName } from '../lib/generateCss';
-import { getSlideInner, placeholderImage } from '../lib/sampleContent';
-import { buildPreviewDocument } from '../lib/previewBase';
-import { collectVscodeVariables } from '../lib/importVscodeTheme';
+import type { LayoutKey, ThemeModel } from '../../types/theme';
+import { LAYOUTS, SLIDE_HEIGHT, SLIDE_WIDTH } from '../../utils/theme-builder/constants';
+import { generateCss, sanitizeName } from '../../utils/theme-builder/generateCss';
+import { getSlideInner, placeholderImage } from '../../utils/theme-builder/sampleContent';
+import { buildPreviewDocument } from '../../utils/theme-builder/previewBase';
+import { collectVscodeVariables } from '../../utils/theme-builder/importVscodeTheme';
 
 // A fallback image for the image-left/right columns; the theme can override it.
 const PREVIEW_CSS = `.slide__image_left,.slide__image_right{background-image:url('${placeholderImage()}');background-size:cover;background-position:center;background-repeat:no-repeat;}`;

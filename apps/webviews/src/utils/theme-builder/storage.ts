@@ -1,4 +1,4 @@
-import type { ThemeModel } from '../types/theme';
+import type { ThemeModel } from '../../types/theme';
 import { STORAGE_KEY } from './constants';
 import { normalizeModel } from './defaultTheme';
 

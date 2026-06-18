@@ -8,7 +8,7 @@ import {
   Undo2,
   Redo2,
 } from 'lucide-react';
-import { PRESETS } from '../lib/presets';
+import { PRESETS } from '../../utils/theme-builder/presets';
 import { btnGhost, btnPrimary, btnSecondary } from './controls';
 import { DemoTimeLogo } from './DemoTimeLogo';
 
@@ -58,7 +58,7 @@ export function Toolbar({
           <DemoTimeLogo />
         </span>
         <div className="leading-tight">
-          <p className="text-sm font-semibold text-gray-100">Theme Builder</p>
+          <p className="text-sm font-semibold text-gray-100">Theme Builder (beta)</p>
         </div>
       </div>
 

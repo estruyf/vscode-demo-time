@@ -1,4 +1,4 @@
-import type { ThemeModel } from '../types/theme';
+import type { ThemeModel } from '../../types/theme';
 import { normalizeModel } from './defaultTheme';
 
 /**
