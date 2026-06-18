@@ -33,7 +33,7 @@ export class ScriptExecutor {
 
       const platform = getPlatform();
       if (step.command === CommandType.Node && platform !== 'windows') {
-        step.command = await evaluateCommand(CommandType.Node);
+        command = await evaluateCommand(CommandType.Node);
       }
 
       const wsPath = Extension.getInstance().workspaceFolder;
@@ -48,9 +48,7 @@ export class ScriptExecutor {
         return;
       }
 
-      if (platform === 'windows' && command.toLowerCase() === 'powershell') {
-        command = `${command} -File`;
-      }
+      const isPowerShell = platform === 'windows' && command.toLowerCase() === 'powershell';
 
       const args = step.args as string[] | undefined;
       const output = await ScriptExecutor.spawnScriptAsync(
@@ -59,6 +57,7 @@ export class ScriptExecutor {
         wsPath.uri.fsPath,
         args,
         step.waitForMessage,
+        isPowerShell,
       );
       Logger.info(`Step ID: ${id} - Output: ${output}`);
 
@@ -134,10 +133,12 @@ export class ScriptExecutor {
     wsPath: string,
     args?: string[],
     waitForMessage?: string,
+    isPowerShell?: boolean,
   ): Promise<string> {
     return new Promise((resolve, reject) => {
       const argsArray = ScriptExecutor.formatArgsArray(args);
-      const childProcess = spawn(command, [scriptPath, ...argsArray], { cwd: wsPath });
+      const spawnArgs = isPowerShell ? ['-File', scriptPath, ...argsArray] : [scriptPath, ...argsArray];
+      const childProcess = spawn(command, spawnArgs, { cwd: wsPath });
 
       let stdout = '';
       let stderr = '';

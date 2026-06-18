@@ -27,9 +27,15 @@ try {
   const indexPath = new URL('../../public/gallery/index.json', import.meta.url);
   const content = await readFile(indexPath, 'utf-8');
   const parsed = JSON.parse(content) as unknown;
-  snippets = Array.isArray(parsed) ? (parsed as GallerySnippet[]) : [];
-} catch {
-  snippets = [];
+  if (Array.isArray(parsed)) {
+    for (const item of parsed) {
+      if (item && typeof item === 'object' && typeof (item as Record<string, unknown>).id === 'string') {
+        snippets.push(item as GallerySnippet);
+      }
+    }
+  }
+} catch (err) {
+  console.error('[GallerySnippetList] Failed to load gallery index:', err);
 }
 
 const sortedSnippets = [...snippets].sort((a, b) => a.id.localeCompare(b.id));

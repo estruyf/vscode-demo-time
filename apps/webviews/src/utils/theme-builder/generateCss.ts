@@ -442,8 +442,8 @@ function generateOverlay(
     rs.set(`${root} li::marker`, 'color', t.list.markerColor);
   }
 
-  // A chosen Google Font overrides the design's body font family.
-  if (t.googleFont && t.googleFont.trim()) {
+  // Apply the body font family whenever one is set (Google or non-Google).
+  if (t.fontFamily && t.fontFamily.trim()) {
     rs.set(root, 'font-family', t.fontFamily);
   }
   // A separate heading font overrides the design's headings.
