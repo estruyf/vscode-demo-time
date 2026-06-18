@@ -1,6 +1,6 @@
 # Change Log
 
-## [2.2.0] - 2026-xx-xx
+## [2.2.0] - 2026-06-18
 
 - Added `waitForMessage` property to the `executeScript` action to wait until the script outputs a specific string before advancing to the next step, instead of waiting for the process to exit
 - Added `showProgress` property to the `executeScript` action to control whether the progress notification is shown while the script is executing (default: `true`)
