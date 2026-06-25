@@ -20,8 +20,5 @@ export const getRandomizedTypingDelay = (
   const percentage = Math.min(randomnessPercentage, 100) / 100;
   const jitter = Math.random() * baseDelay * percentage;
   const delay = Math.round(baseDelay + jitter);
-  console.log(
-    `getRandomizedTypingDelay: baseDelay=${baseDelay}, randomnessPercentage=${randomnessPercentage}, jitter=${jitter.toFixed(2)}, totalDelay=${delay}`,
-  );
   return delay;
 };
