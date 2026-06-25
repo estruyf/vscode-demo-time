@@ -65,4 +65,7 @@ export const Config = {
     enabled: 'redaction.enabled',
     customPatterns: 'redaction.customPatterns',
   },
+  recording: {
+    captureSaves: 'recording.captureSaves',
+  },
 };

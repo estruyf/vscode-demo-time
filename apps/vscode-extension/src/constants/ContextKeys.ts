@@ -14,4 +14,5 @@ export const ContextKeys = {
   isSponsor: 'demo-time.isSponsor',
   autoProceedActive: 'demo-time.autoProceedActive',
   autoProceedPaused: 'demo-time.autoProceedPaused',
+  isRecording: 'demo-time.isRecording',
 };

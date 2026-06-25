@@ -20,6 +20,7 @@ import {
   TerminalService,
   ResourceService,
   RedactionService,
+  RecordingService,
 } from './services';
 import { DemoPanel } from './panels/DemoPanel';
 import { ResourcesPanel } from './panels/ResourcesPanel';
@@ -60,6 +61,7 @@ export async function activate(context: vscode.ExtensionContext) {
   ResourcesPanel.register();
   DemoRunner.registerCommands();
   DemoCreator.registerCommands();
+  RecordingService.registerCommands();
   DemoListeners.register();
   DemoStatusBar.register();
   DemoFileProvider.register();

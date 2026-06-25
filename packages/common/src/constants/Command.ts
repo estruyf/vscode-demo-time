@@ -29,6 +29,12 @@ export const COMMAND = {
   createSnapshot: `${EXTENSION_NAME}.createSnapshot`,
   createPatch: `${EXTENSION_NAME}.createPatch`,
   createDemoFile: `${EXTENSION_NAME}.createDemoFile`,
+  // Recording
+  recordingStart: `${EXTENSION_NAME}.recording.start`,
+  recordingStop: `${EXTENSION_NAME}.recording.stop`,
+  recordingSplitMove: `${EXTENSION_NAME}.recording.splitMove`,
+  recordingNewScene: `${EXTENSION_NAME}.recording.newScene`,
+  recordingMarkHighlight: `${EXTENSION_NAME}.recording.markHighlight`,
   // Output
   showOutputChannel: `${EXTENSION_NAME}.showOutputChannel`,
   // Panel view

@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.3.0] - 2026-xx-xx
+
+- [#412](https://github.com/estruyf/vscode-demo-time/issues/412): Added the ability to record a demo flow (create file, open file, append text, highlight text, etc.)
+
 ## [2.2.0] - 2026-06-18
 
 - Added `waitForMessage` property to the `executeScript` action to wait until the script outputs a specific string before advancing to the next step, instead of waiting for the process to exit

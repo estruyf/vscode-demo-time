@@ -1,0 +1,141 @@
+---
+title: Recording demos
+description: Record your actions in the editor — creating files, typing, saving and highlighting — and turn them into an act with scenes and moves automatically.
+lastmod: 2026-06-25T00:00:00.000Z
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Instead of writing scenes and moves by hand, you can **record** what you do in the editor and let Demo Time turn it into an act for you. Click record, create a file, type some content, save and highlight a few lines, then click stop — Demo Time writes a version 3 act file with the matching `create`, `open`, `applyPatch`, `save` and `highlight` moves.
+
+<Aside type="caution" title="Experimental">
+Recording is a new way to author demos. The generated act is a normal act file, so you can always open it in the [Act Editor](/adding-moves/) afterwards to fine-tune the scenes and moves.
+</Aside>
+
+## Start and stop recording
+
+The recorder is controlled from the **Acts & Scenes** view in the Demo Time activity bar:
+
+- Click the **● Record** button in the view title bar to start. The button changes to a **■ Stop** button while recording.
+- Do your thing in the editor — create files, type, save, switch files.
+- Click **■ Stop** to finish. Demo Time asks for a title and creates a new act file in the `.demo` folder.
+
+You can also use the command palette: **`Demo Time: Record demo`** and **`Demo Time: Stop recording`**.
+
+## What gets captured
+
+| You do… | Recorded move |
+| --- | --- |
+| Have a file open when you start recording | `open` |
+| Create a new file | `create` followed by `open` |
+| Type or edit a file | `applyPatch` (edits are coalesced — see [segmentation](#how-edits-become-moves)) |
+| Save a file | `save` (can be disabled, see [settings](#settings)) |
+| Switch to another file | flushes the pending edits into a move |
+
+Highlights, move boundaries and new scenes are added on demand through the [recording actions](#recording-actions).
+
+<Aside type="note">
+Only files inside your workspace are recorded. The `.demo` folder itself (act files, snapshots and patches) is ignored, so the recorder never captures its own output.
+</Aside>
+
+## How edits become moves
+
+While recording, your edits to a file are **coalesced**: everything you type piles up and only becomes a single `applyPatch` move when a boundary is reached. The boundaries are:
+
+- Switching to another file
+- Saving the file
+- The **Split move** action (a manual boundary, see below)
+- The **New scene** action
+- Stopping the recording
+
+This keeps the result clean — one move per meaningful chunk instead of one move per keystroke. Use **Split move** when you want to break a long edit into several steps within the same scene.
+
+## Recording actions
+
+While recording, **right-click in the editor** to open the **Demo Time** submenu. The same actions are available via the command palette and through keybindings. The menu only appears while a recording is active.
+
+| Action | Keybinding | What it does |
+| --- | --- | --- |
+| **Mark highlight** | <kbd>Cmd/Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>H</kbd> | Capture the current selection as a `highlight` move. With no selection it highlights the current line. |
+| **Split move** | <kbd>Cmd/Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>M</kbd> | End the current move and start a new one — without leaving the file or saving. |
+| **New scene** | <kbd>Cmd/Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>N</kbd> | End the current scene and start a new one. You are prompted for the scene title. |
+| **Stop recording** | — | Finish recording and create the act file. |
+
+<Aside type="tip">
+**Split move** keeps you in the same scene and just starts a new move; **New scene** ends the whole scene (a group of moves) and begins a new section of your demo.
+</Aside>
+
+## Generated files
+
+When you stop, Demo Time creates:
+
+- A new **act file** in the `.demo` folder (in JSON or YAML, depending on your `demoTime.defaultFileType` setting).
+- A **snapshot** and **patch** per edit move, under `.demo/snapshots/recording-<timestamp>/` and `.demo/patches/recording-<timestamp>/`. These are referenced by the `applyPatch` moves and use the same format as the [Patch actions](/actions/patch/).
+
+Here is an example of what a recorded act looks like:
+
+<Tabs syncKey="demo-file-format">
+<TabItem label="JSON">
+
+```json
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Recorded demo 20260625-101500",
+  "description": "Recorded with Demo Time",
+  "version": 3,
+  "scenes": [
+    {
+      "title": "Scene 1",
+      "moves": [
+        { "action": "create", "path": "/src/app.ts" },
+        { "action": "open", "path": "/src/app.ts" },
+        {
+          "action": "applyPatch",
+          "path": "/src/app.ts",
+          "contentPath": "/.demo/snapshots/recording-20260625-101500/001-app.ts",
+          "patch": "/.demo/patches/recording-20260625-101500/001-app.ts.patch"
+        },
+        { "action": "highlight", "path": "/src/app.ts", "position": "1:3" },
+        { "action": "save" }
+      ]
+    }
+  ]
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+title: Recorded demo 20260625-101500
+description: Recorded with Demo Time
+version: 3
+scenes:
+  - title: Scene 1
+    moves:
+      - action: create
+        path: /src/app.ts
+      - action: open
+        path: /src/app.ts
+      - action: applyPatch
+        path: /src/app.ts
+        contentPath: /.demo/snapshots/recording-20260625-101500/001-app.ts
+        patch: /.demo/patches/recording-20260625-101500/001-app.ts.patch
+      - action: highlight
+        path: /src/app.ts
+        position: "1:3"
+      - action: save
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="tip">
+After recording, open the act in the [Act Editor](/adding-moves/) to tweak titles, reorder moves, change the [typing mode](/actions/text/) of the `applyPatch` moves, or remove anything you do not need.
+</Aside>
+
+## Settings
+
+| Setting | Description | Default |
+| --- | --- | --- |
+| `demoTime.recording.captureSaves` | When recording a demo, capture file saves as `save` moves. | `true` |

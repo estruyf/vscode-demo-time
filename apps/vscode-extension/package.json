@@ -357,6 +357,11 @@
           },
           "default": [],
           "markdownDescription": "Additional regex patterns to redact sensitive data. Each pattern should be a valid JavaScript regular expression string. Example: `[\"CUSTOM_SECRET_[A-Za-z0-9]+\", \"my-api-key-\\\\w+\"]`"
+        },
+        "demoTime.recording.captureSaves": {
+          "type": "boolean",
+          "default": true,
+          "description": "When recording a demo, capture file saves as 'save' moves."
         }
       }
     },
@@ -366,6 +371,36 @@
         "title": "Open Demo Time documentation",
         "category": "Demo Time",
         "icon": "$(dt-logo)"
+      },
+      {
+        "command": "demo-time.recording.start",
+        "title": "Record demo",
+        "category": "Demo Time",
+        "icon": "$(record)"
+      },
+      {
+        "command": "demo-time.recording.stop",
+        "title": "Stop recording",
+        "category": "Demo Time",
+        "icon": "$(debug-stop)"
+      },
+      {
+        "command": "demo-time.recording.splitMove",
+        "title": "Split move",
+        "category": "Demo Time",
+        "icon": "$(split-horizontal)"
+      },
+      {
+        "command": "demo-time.recording.newScene",
+        "title": "New scene",
+        "category": "Demo Time",
+        "icon": "$(add)"
+      },
+      {
+        "command": "demo-time.recording.markHighlight",
+        "title": "Mark highlight",
+        "category": "Demo Time",
+        "icon": "$(paintcan)"
       },
       {
         "command": "demo-time.addStepToDemo",
@@ -682,11 +717,63 @@
         "icon": "$(play-circle)"
       }
     ],
+    "submenus": [
+      {
+        "id": "demo-time.recording.submenu",
+        "label": "Demo Time",
+        "icon": "$(record)"
+      }
+    ],
     "menus": {
+      "editor/context": [
+        {
+          "submenu": "demo-time.recording.submenu",
+          "group": "demotime@1",
+          "when": "demo-time.isRecording"
+        }
+      ],
+      "demo-time.recording.submenu": [
+        {
+          "command": "demo-time.recording.markHighlight",
+          "group": "1_actions@1"
+        },
+        {
+          "command": "demo-time.recording.splitMove",
+          "group": "1_actions@2"
+        },
+        {
+          "command": "demo-time.recording.newScene",
+          "group": "1_actions@3"
+        },
+        {
+          "command": "demo-time.recording.stop",
+          "group": "2_stop@1"
+        }
+      ],
       "commandPalette": [
         {
           "command": "demo-time.addStepToDemo",
           "when": "((editorLangId == jsonc || editorLangId == json) || editorLangId == yaml) && resourceDirname =~ /\\.demo$/"
+        },
+        {
+          "command": "demo-time.recording.start",
+          "when": "!demo-time.isRecording"
+        },
+        {
+          "command": "demo-time.recording.stop",
+          "when": "demo-time.isRecording"
+        },
+        {
+          "command": "demo-time.recording.splitMove",
+          "when": "demo-time.isRecording"
+        },
+        {
+          "command": "demo-time.recording.newScene",
+          "when": "demo-time.isRecording"
+        },
+        {
+          "command": "demo-time.recording.markHighlight",
+          "when": "demo-time.isRecording"
         },
         {
           "command": "demo-time.previous",
@@ -766,6 +853,16 @@
         }
       ],
       "view/title": [
+        {
+          "command": "demo-time.recording.start",
+          "when": "view == demo-time-scenes && demo-time.isInitialized && !demo-time.isRecording",
+          "group": "navigation@-2"
+        },
+        {
+          "command": "demo-time.recording.stop",
+          "when": "view == demo-time-scenes && demo-time.isRecording",
+          "group": "navigation@-2"
+        },
         {
           "command": "demo-time.togglePresentationMode",
           "when": "view == demo-time-scenes && !demo-time.presentation",
@@ -979,6 +1076,24 @@
         "command": "demo-time.toggleAutoProceed",
         "key": "space",
         "when": "demo-time.presentation && demo-time.autoProceedActive == true"
+      },
+      {
+        "command": "demo-time.recording.splitMove",
+        "key": "ctrl+alt+m",
+        "mac": "cmd+alt+m",
+        "when": "demo-time.isRecording"
+      },
+      {
+        "command": "demo-time.recording.newScene",
+        "key": "ctrl+alt+n",
+        "mac": "cmd+alt+n",
+        "when": "demo-time.isRecording"
+      },
+      {
+        "command": "demo-time.recording.markHighlight",
+        "key": "ctrl+alt+h",
+        "mac": "cmd+alt+h",
+        "when": "demo-time.isRecording"
       }
     ],
     "viewsWelcome": [
