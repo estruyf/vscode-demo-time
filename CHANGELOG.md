@@ -2,6 +2,7 @@
 
 ## [2.3.0] - 2026-xx-xx
 
+- [#295](https://github.com/estruyf/vscode-demo-time/issues/295): Added the `insertTypingSpeedRandomness` setting and action property to add a semi-random variation to the character-by-character typing speed so it feels more human and less robotic
 - [#412](https://github.com/estruyf/vscode-demo-time/issues/412): Added the ability to record a demo flow (create file, open file, append text, highlight text, etc.)
 - [#413](https://github.com/estruyf/vscode-demo-time/issues/413): Added the ability to move one or more moves to an existing or new scene from the act editor (select moves, then use "Move to scene…"), preserving their order
 

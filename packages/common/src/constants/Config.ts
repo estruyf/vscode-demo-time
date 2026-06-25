@@ -30,6 +30,7 @@ export const Config = {
     speed: 'lineInsertionDelay',
     typingMode: 'insertTypingMode',
     typingSpeed: 'insertTypingSpeed',
+    typingSpeedRandomness: 'insertTypingSpeedRandomness',
     hackerTyperChunkSize: 'hackerTyperChunkSize',
   },
   terminal: {

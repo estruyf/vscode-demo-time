@@ -1,6 +1,6 @@
 import { commands, Terminal, window, Disposable, TerminalShellExecution } from 'vscode';
 import { Notifications } from './Notifications';
-import { sleep } from '../utils';
+import { getInsertionSpeedRandomness, getRandomizedTypingDelay, sleep } from '../utils';
 import { DemoRunner } from './DemoRunner';
 import { Step, Config } from '@demotime/common';
 import { AnalyticsService } from './analytics';
@@ -65,12 +65,13 @@ export class TerminalService {
 
     const typeMode = insertTypingMode ?? 'instant';
     const typeSpeed = insertTypingSpeed || 50;
+    const typeRandomness = getInsertionSpeedRandomness(step.insertTypingSpeedRandomness);
 
     let execution: TerminalShellExecution | undefined;
     if (typeMode === 'character-by-character') {
       for (const char of command) {
         terminal.sendText(char, false);
-        await sleep(typeSpeed);
+        await sleep(getRandomizedTypingDelay(typeSpeed, typeRandomness));
       }
       if (autoExecute) {
         terminal.sendText('', true);

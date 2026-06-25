@@ -254,6 +254,13 @@
           "default": 50,
           "description": "Characters per second for character-by-character typing mode"
         },
+        "demoTime.insertTypingSpeedRandomness": {
+          "type": "number",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 100,
+          "markdownDescription": "Adds a semi-random variation to the character-by-character typing speed so it feels less robotic. The value is the maximum percentage (0-100) of extra delay added on top of `#demoTime.insertTypingSpeed#` for each character. Set to `0` to disable (default)."
+        },
         "demoTime.hackerTyperChunkSize": {
           "type": "number",
           "default": 3,

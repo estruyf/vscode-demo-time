@@ -18,7 +18,9 @@ import {
 import {
   getFileContents,
   getInsertionSpeed,
+  getInsertionSpeedRandomness,
   getLineRange,
+  getRandomizedTypingDelay,
   saveFiles,
   setContext,
   sleep,
@@ -88,6 +90,7 @@ export class TextTypingService {
 
     const typingMode = TextTypingService.getInsertTypingMode(step);
     const typingSpeed = getInsertionSpeed(step.insertTypingSpeed);
+    const typingRandomness = getInsertionSpeedRandomness(step.insertTypingSpeedRandomness);
     let range = new Range(position, position);
 
     if (!lineContent) {
@@ -98,6 +101,7 @@ export class TextTypingService {
         position,
         typingMode,
         typingSpeed,
+        typingRandomness,
       );
     } else {
       await TextTypingService.replaceAtPosition(
@@ -108,6 +112,7 @@ export class TextTypingService {
         position,
         typingMode,
         typingSpeed,
+        typingRandomness,
       );
     }
 
@@ -129,10 +134,17 @@ export class TextTypingService {
     position: Position,
     typingMode: InsertTypingMode,
     typingSpeed: number | undefined,
+    typingRandomness?: number,
   ) {
     if (typingMode === 'character-by-character') {
       textEditor.revealRange(new Range(position, position), TextEditorRevealType.InCenter);
-      await TextTypingService.insertCharByChar(textEditor, content, position, typingSpeed);
+      await TextTypingService.insertCharByChar(
+        textEditor,
+        content,
+        position,
+        typingSpeed,
+        typingRandomness,
+      );
     } else if (typingMode === 'hacker-typer') {
       textEditor.revealRange(new Range(position, position), TextEditorRevealType.InCenter);
       await TextTypingService.insertHackerTyper(textEditor, content, position);
@@ -154,12 +166,19 @@ export class TextTypingService {
     position: Position,
     typingMode: InsertTypingMode,
     typingSpeed: number | undefined,
+    typingRandomness?: number,
   ) {
     if (typingMode === 'character-by-character') {
       const line = editor.lineAt(position);
       const range = line.range;
       textEditor.revealRange(range, TextEditorRevealType.InCenter);
-      await TextTypingService.replaceCharByChar(textEditor, range, content, typingSpeed);
+      await TextTypingService.replaceCharByChar(
+        textEditor,
+        range,
+        content,
+        typingSpeed,
+        typingRandomness,
+      );
     } else if (typingMode === 'hacker-typer') {
       const line = editor.lineAt(position);
       const range = line.range;
@@ -209,6 +228,7 @@ export class TextTypingService {
 
     const typingMode = TextTypingService.getInsertTypingMode(step);
     const typingSpeed = getInsertionSpeed(step.insertTypingSpeed);
+    const typingRandomness = getInsertionSpeedRandomness(step.insertTypingSpeedRandomness);
 
     if (range) {
       await TextTypingService.replaceWithRange(
@@ -219,6 +239,7 @@ export class TextTypingService {
         range,
         typingMode,
         typingSpeed,
+        typingRandomness,
       );
     } else if (position) {
       await TextTypingService.replaceWithPosition(
@@ -229,6 +250,7 @@ export class TextTypingService {
         position,
         typingMode,
         typingSpeed,
+        typingRandomness,
       );
     }
 
@@ -322,10 +344,17 @@ export class TextTypingService {
     range: Range,
     typingMode: InsertTypingMode,
     typingSpeed: number | undefined,
+    typingRandomness?: number,
   ) {
     if (typingMode === 'character-by-character') {
       textEditor.revealRange(range, TextEditorRevealType.InCenter);
-      await TextTypingService.replaceCharByChar(textEditor, range, content, typingSpeed);
+      await TextTypingService.replaceCharByChar(
+        textEditor,
+        range,
+        content,
+        typingSpeed,
+        typingRandomness,
+      );
     } else if (typingMode === 'hacker-typer') {
       textEditor.revealRange(range, TextEditorRevealType.InCenter);
       await TextTypingService.replaceHackerTyper(textEditor, range, content);
@@ -353,12 +382,19 @@ export class TextTypingService {
     position: Position,
     typingMode: InsertTypingMode,
     typingSpeed: number | undefined,
+    typingRandomness?: number,
   ) {
     if (typingMode === 'character-by-character') {
       const line = editor.lineAt(position);
       const range = line.range;
       textEditor.revealRange(range, TextEditorRevealType.InCenter);
-      await TextTypingService.replaceCharByChar(textEditor, range, content, typingSpeed);
+      await TextTypingService.replaceCharByChar(
+        textEditor,
+        range,
+        content,
+        typingSpeed,
+        typingRandomness,
+      );
     } else if (typingMode === 'hacker-typer') {
       const line = editor.lineAt(position);
       const range = line.range;
@@ -453,9 +489,17 @@ export class TextTypingService {
 
     const typingMode = TextTypingService.getInsertTypingMode(step);
     const typingSpeed = getInsertionSpeed(step.insertTypingSpeed);
+    const typingRandomness = getInsertionSpeedRandomness(step.insertTypingSpeedRandomness);
 
     if (typingMode === 'character-by-character') {
-      await TextTypingService.applyDiffByChar(filePath, content, patched, typingSpeed, token);
+      await TextTypingService.applyDiffByChar(
+        filePath,
+        content,
+        patched,
+        typingSpeed,
+        typingRandomness,
+        token,
+      );
     } else if (typingMode === 'hacker-typer') {
       await TextTypingService.applyDiffByHackerTyper(filePath, content, patched, token);
     } else if (typingMode === 'line-by-line') {
@@ -475,6 +519,7 @@ export class TextTypingService {
     startPosition: number,
     delayMs: number,
     token?: CancellationToken,
+    randomness?: number,
   ): Promise<void> {
     for (let i = textToRemove.length - 1; i >= 0; i--) {
       if (token?.isCancellationRequested) {
@@ -485,7 +530,9 @@ export class TextTypingService {
       const edit = new WorkspaceEdit();
       edit.delete(editor.document.uri, new Range(currentPos, nextPos));
       await workspace.applyEdit(edit);
-      await new Promise((resolve) => setTimeout(resolve, delayMs));
+      await new Promise((resolve) =>
+        setTimeout(resolve, getRandomizedTypingDelay(delayMs, randomness)),
+      );
     }
   }
 
@@ -497,12 +544,13 @@ export class TextTypingService {
     content: string,
     position: Position,
     typingSpeed?: number,
+    randomness?: number,
     token?: CancellationToken,
   ): Promise<void> {
     const delayMs = getInsertionSpeed(typingSpeed);
     editor.revealRange(new Range(position, position), TextEditorRevealType.InCenter);
     editor.selection = new Selection(position, position);
-    await TextTypingService.typeText(editor, content, position, delayMs, token);
+    await TextTypingService.typeText(editor, content, position, delayMs, token, randomness);
   }
 
   /**
@@ -582,6 +630,7 @@ export class TextTypingService {
     startPosition: Position | number,
     delayMs: number,
     token?: CancellationToken,
+    randomness?: number,
   ): Promise<void> {
     TextTypingService.isTyping = true;
     let i = 0;
@@ -603,7 +652,9 @@ export class TextTypingService {
 
         currentPos = TextTypingService.getNextPosition(currentPos, char, editor, startPosition);
         editor.selection = new Selection(currentPos, currentPos);
-        await new Promise((resolve) => setTimeout(resolve, delayMs));
+        await new Promise((resolve) =>
+          setTimeout(resolve, getRandomizedTypingDelay(delayMs, randomness)),
+        );
       }
     } finally {
       TextTypingService.isTyping = false;
@@ -650,12 +701,20 @@ export class TextTypingService {
     range: Range,
     content: string,
     typingSpeed?: number,
+    randomness?: number,
     token?: CancellationToken,
   ): Promise<void> {
     const deleteEdit = new WorkspaceEdit();
     deleteEdit.delete(editor.document.uri, range);
     await workspace.applyEdit(deleteEdit);
-    await TextTypingService.insertCharByChar(editor, content, range.start, typingSpeed, token);
+    await TextTypingService.insertCharByChar(
+      editor,
+      content,
+      range.start,
+      typingSpeed,
+      randomness,
+      token,
+    );
   }
 
   /**
@@ -666,6 +725,7 @@ export class TextTypingService {
     currentContent: string,
     targetContent: string,
     typingSpeed?: number,
+    randomness?: number,
     token?: CancellationToken,
   ): Promise<void> {
     const editor = TextTypingService.findEditorForFile(filePath);
@@ -684,10 +744,24 @@ export class TextTypingService {
             continue;
           }
           if (diff.removed) {
-            await TextTypingService.removeText(editor, diff.value, currentPosition, delayMs, token);
+            await TextTypingService.removeText(
+              editor,
+              diff.value,
+              currentPosition,
+              delayMs,
+              token,
+              randomness,
+            );
           }
           if (diff.added) {
-            await TextTypingService.typeText(editor, diff.value, currentPosition, delayMs, token);
+            await TextTypingService.typeText(
+              editor,
+              diff.value,
+              currentPosition,
+              delayMs,
+              token,
+              randomness,
+            );
             currentPosition += diff.value.length;
           }
         }

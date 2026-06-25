@@ -262,6 +262,33 @@ insertTypingSpeed: 250
 </TabItem>
 </Tabs>
 
+To make the typing feel more human and less robotic, add the `insertTypingSpeedRandomness` property. The value is the maximum percentage (`0`-`100`) of extra random delay added on top of `insertTypingSpeed` for each character:
+
+<Tabs syncKey="type-text-randomness">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "typeText",
+  "content": "This is typed like a human...",
+  "insertTypingSpeed": 100,
+  "insertTypingSpeedRandomness": 50
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: typeText
+content: "This is typed like a human..."
+insertTypingSpeed: 100
+insertTypingSpeedRandomness: 50
+```
+
+</TabItem>
+</Tabs>
+
 ### Example: Type in command palette
 
 <Tabs syncKey="type-in-command-palette">

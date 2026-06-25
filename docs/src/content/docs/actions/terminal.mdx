@@ -104,6 +104,7 @@ insertTypingSpeed: <speed in milliseconds (optional)>
   - `instant`: Types the command instantly
   - `character-by-character`: Types each character individually
 - **insertTypingSpeed**: Optional. Speed in milliseconds between each typing unit.
+- **insertTypingSpeedRandomness**: Optional. Adds a semi-random variation to the `character-by-character` typing speed so it feels less robotic. The value is the maximum percentage (`0`-`100`) of extra delay added on top of `insertTypingSpeed` for each character. Defaults to `0` (disabled).
 
 ### Examples
 

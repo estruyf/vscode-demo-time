@@ -13,6 +13,7 @@ const defaultDemoTimeSettings: IDemoTimeSettings = {
   timer: 0,
   insertTypingMode: 'instant',
   insertTypingSpeed: 50,
+  insertTypingSpeedRandomness: 0,
   hackerTyperChunkSize: 5,
   'api.enabled': false,
   'api.port': 3000,

@@ -226,6 +226,31 @@
       ]
     },
     {
+      "title": "Insert text (random)",
+      "description": "",
+      "steps": [
+        {
+          "action": "create",
+          "path": "temp/file-action.md",
+          "contentPath": ".demo/content/file-action.md"
+        },
+        {
+          "action": "open",
+          "path": "temp/file-action.md"
+        },
+        {
+          "action": "insert",
+          "path": "temp/file-action.md",
+          "position": "4",
+          "contentPath": ".demo/content/file-insert.md",
+          "insertTypingMode": "character-by-character",
+          "insertTypingSpeedRandomness": 100,
+          "insertTypingSpeed": 50
+        }
+      ],
+      "id": "demo-mqtlpfnr-2u1b"
+    },
+    {
       "title": "Insert text (hacker-typer)",
       "description": "",
       "steps": [

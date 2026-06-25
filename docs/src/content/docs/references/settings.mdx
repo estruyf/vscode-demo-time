@@ -35,6 +35,7 @@ Here is a list of all the settings available in Demo Time.
 | `demoTime.timer` | Count down timer for how long the session should last. If not set, it will not count down. The value is the number of minutes. | `null` |
 | `demoTime.insertTypingMode` | The typing mode for inserting text. Options are: `instant`, `line-by-line`, `character-by-character`, or `hacker-typer` | `instant` |
 | `demoTime.insertTypingSpeed` | The speed in milliseconds for inserting text. | `50` |
+| `demoTime.insertTypingSpeedRandomness` | Adds a semi-random variation to the character-by-character typing speed so it feels less robotic. The value is the maximum percentage (`0`-`100`) of extra delay added on top of `demoTime.insertTypingSpeed` for each character. Set to `0` to disable. | `0` |
 | `demoTime.hackerTyperChunkSize` | Number of characters to insert per 'keystroke' in hacker-typer mode | `3` |
 | `demoTime.terminalCommandBoundaryDelay` | Delay (in milliseconds) between sequential terminal commands to prevent character bleed. Increase this if commands overlap or if you use custom shell prompts (Oh My Posh, Starship, Powerlevel10k) which can cause VS Code shell integration to be unreliable. See [VS Code issue #242897](https://github.com/microsoft/vscode/issues/242897). | `200` |
 | `demoTime.api.enabled` | Enable the API to control the extension. | `false` |

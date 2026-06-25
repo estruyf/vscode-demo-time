@@ -11,6 +11,7 @@ export interface IDemoTimeSettings {
   timer: number;
   insertTypingMode: string;
   insertTypingSpeed: number;
+  insertTypingSpeedRandomness: number;
   hackerTyperChunkSize: number;
   'api.enabled': boolean;
   'api.port': number;

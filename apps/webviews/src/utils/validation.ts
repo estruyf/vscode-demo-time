@@ -118,6 +118,19 @@ export const validateStep = (
     }
   });
 
+  // Typing speed randomness is a percentage (0-100) and shared across typing actions
+  if (
+    typeof step.insertTypingSpeedRandomness !== 'undefined' &&
+    (step.insertTypingSpeedRandomness < 0 || step.insertTypingSpeedRandomness > 100)
+  ) {
+    errors.push({
+      field: 'insertTypingSpeedRandomness',
+      message: 'Insert typing speed randomness must be a percentage between 0 and 100',
+      demoIndex,
+      stepIndex,
+    });
+  }
+
   // Custom validation rules for specific actions
   switch (step.action) {
     case Action.Create:

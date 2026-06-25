@@ -102,6 +102,7 @@ export class SettingsView extends BaseWebview {
       timer: ext.getSetting(Config.clock.timer),
       insertTypingMode: ext.getSetting(Config.insert.typingMode),
       insertTypingSpeed: ext.getSetting(Config.insert.typingSpeed),
+      insertTypingSpeedRandomness: ext.getSetting(Config.insert.typingSpeedRandomness),
       hackerTyperChunkSize: ext.getSetting(Config.insert.hackerTyperChunkSize),
       'api.enabled': ext.getSetting(Config.api.enabled),
       'api.port': ext.getSetting(Config.api.port),

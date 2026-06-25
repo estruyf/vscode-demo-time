@@ -45,6 +45,15 @@ export default function TypingAnimationSettings({ settings, updateSetting }: Typ
               <p className="text-sm text-gray-600 dark:text-gray-300">Characters per second for character-by-character mode</p>
             </div>
             <div className="space-y-2">
+              <Label htmlFor="typingSpeedRandomness">Typing Speed Randomness (%)</Label>
+              <Input
+                type="number"
+                value={(settings.insertTypingSpeedRandomness ?? 0).toString()}
+                onChange={(value) => updateSetting("insertTypingSpeedRandomness", Number(value))}
+              />
+              <p className="text-sm text-gray-600 dark:text-gray-300">Adds up to this percentage (0-100) of random extra delay per character so typing feels less robotic. 0 disables it.</p>
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="chunkSize">Hacker Typer Chunk Size</Label>
               <Input
                 type="number"

@@ -1,5 +1,5 @@
 import { commands, env } from 'vscode';
-import { getFileContents, insertVariables, sleep } from '../utils';
+import { getFileContents, getRandomizedTypingDelay, insertVariables, sleep } from '../utils';
 import { Notifications } from './Notifications';
 import { ScriptExecutor } from './ScriptExecutor';
 import { homedir, platform } from 'os';
@@ -10,9 +10,11 @@ export class InteractionService {
    *
    * @param text - The text to be typed into the editor.
    * @param delay - The delay in milliseconds between typing each character. Defaults to 50ms.
+   * @param randomness - The maximum percentage (0-100) of extra random delay to add per
+   *                     character so the typing feels less robotic. Defaults to none.
    * @returns A promise that resolves when all characters have been typed.
    */
-  public static async typeText(text?: string, delay?: number): Promise<void> {
+  public static async typeText(text?: string, delay?: number, randomness?: number): Promise<void> {
     if (!text) {
       Notifications.error('No text provided to type.');
       return;
@@ -25,7 +27,7 @@ export class InteractionService {
     for (const char of text) {
       await env.clipboard.writeText(char);
       await InteractionService.pasteFromClipboard();
-      await sleep(delay);
+      await sleep(getRandomizedTypingDelay(delay, randomness));
     }
   }
 

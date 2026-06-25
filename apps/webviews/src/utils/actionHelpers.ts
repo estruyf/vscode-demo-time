@@ -332,7 +332,14 @@ export const getRequiredFields = (action: Action): string[] => {
 
 export const getFieldsForAction = (action: Action): string[] => {
   const fieldMap: Record<Action, string[]> = {
-    [Action.ApplyPatch]: ['path', 'contentPath', 'patch', 'insertTypingSpeed', 'insertTypingMode'],
+    [Action.ApplyPatch]: [
+      'path',
+      'contentPath',
+      'patch',
+      'insertTypingSpeed',
+      'insertTypingSpeedRandomness',
+      'insertTypingMode',
+    ],
     [Action.Create]: ['path', 'content', 'contentPath'],
     [Action.Open]: ['path', 'focusTop'],
     [Action.Rename]: ['path', 'dest'],
@@ -352,6 +359,7 @@ export const getFieldsForAction = (action: Action): string[] => {
       'startPlaceholder',
       'endPlaceholder',
       'insertTypingSpeed',
+      'insertTypingSpeedRandomness',
       'insertTypingMode',
     ],
     [Action.Highlight]: [
@@ -373,6 +381,7 @@ export const getFieldsForAction = (action: Action): string[] => {
       'startPlaceholder',
       'endPlaceholder',
       'insertTypingSpeed',
+      'insertTypingSpeedRandomness',
       'insertTypingMode',
     ],
     [Action.Unselect]: [],
@@ -401,6 +410,7 @@ export const getFieldsForAction = (action: Action): string[] => {
       'autoExecute',
       'insertTypingMode',
       'insertTypingSpeed',
+      'insertTypingSpeedRandomness',
     ],
     [Action.SendKeybinding]: ['keybinding'],
     [Action.ExecuteScript]: ['id', 'command', 'path', 'args', 'waitForMessage', 'showProgress'],
@@ -419,7 +429,7 @@ export const getFieldsForAction = (action: Action): string[] => {
     [Action.CopyToClipboard]: ['content', 'contentPath'],
     [Action.CopyFromSelection]: [],
     [Action.PasteFromClipboard]: [],
-    [Action.TypeText]: ['content', 'insertTypingSpeed'],
+    [Action.TypeText]: ['content', 'insertTypingSpeed', 'insertTypingSpeedRandomness'],
     [Action.PressEnter]: [],
     [Action.PressTab]: [],
     [Action.PressArrowLeft]: [],
