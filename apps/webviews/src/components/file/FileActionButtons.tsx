@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '../ui/Button';
-import { Eye, LayoutGrid, Plus, Settings } from 'lucide-react';
+import { Clapperboard, Eye, LayoutGrid, Settings } from 'lucide-react';
 
 interface FileActionButtonsProps {
   onSettingsClick: () => void;
@@ -10,50 +10,46 @@ interface FileActionButtonsProps {
 }
 
 export const FileActionButtons: React.FC<FileActionButtonsProps> = ({ onSettingsClick, onOverviewClick, onViewSource, onNewFile }) => (
-  <div className="flex items-center space-x-2 sm:space-x-3 w-full sm:w-auto">
-    <Button
-      variant="secondary"
-      onClick={onSettingsClick}
-      icon={Settings}
-      className="flex-1"
-      size="sm"
-      aria-label='Open Demo Time Settings'
-      title='Open Demo Time Settings'
-    >
-    </Button>
-    {
-      onOverviewClick && (
+  <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+    <div className="flex items-center gap-1 rounded-lg border border-gray-200 bg-gray-100 p-0 dark:border-gray-700 dark:bg-gray-800">
+      <Button
+        variant="outline"
+        onClick={onSettingsClick}
+        icon={Settings}
+        className="h-10 w-10"
+        size="xs"
+        title="Open Demo Time Settings"
+      />
+
+      {onOverviewClick && (
         <Button
-          variant="secondary"
+          variant="outline"
           onClick={onOverviewClick}
           icon={LayoutGrid}
-          className="flex-1"
-          size="sm"
-          aria-label='Open Demo Time Overview'
-          title='Open Demo Time Overview'
-        >
-        </Button>
-      )
-    }
+          className="h-10 w-10"
+          size="xs"
+          title="Open Demo Time Overview"
+        />
+      )}
+
+      <Button
+        variant="outline"
+        onClick={onViewSource}
+        icon={Eye}
+        className="h-10 w-10"
+        size="xs"
+        title="View Source"
+      />
+    </div>
+
     <Button
       variant="secondary"
-      onClick={onViewSource}
-      icon={Eye}
-      className="flex-1 sm:flex-none text-xs sm:text-sm"
-      size="sm"
-    >
-      <span className="font-medium hidden sm:inline">View Source</span>
-      <span className="font-medium sm:hidden">View</span>
-    </Button>
-    <Button
-      variant="success"
       onClick={onNewFile}
-      icon={Plus}
-      className="flex-1 sm:flex-none text-xs sm:text-sm"
+      icon={Clapperboard}
+      className="h-10 px-5 text-sm text-gray-800"
       size="sm"
     >
-      <span className="font-medium hidden lg:inline">New Act File</span>
-      <span className="font-medium lg:hidden">New</span>
+      <span className="font-semibold">New act</span>
     </Button>
   </div>
 );

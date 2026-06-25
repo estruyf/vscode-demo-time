@@ -4,6 +4,7 @@ import { Card } from '../ui/Card';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client';
 import { EventData } from '@estruyf/vscode';
 import { StepList } from '../step/StepList';
+import { MoveToSceneTarget } from '../step/MoveToSceneModal';
 import { useAutoSave, useDemoConfigContext, useFileOperations } from '../../hooks';
 import { AppHeader, MainContent, Sidebar } from '../layout';
 import { ActionControls, FileControls } from '../file';
@@ -17,7 +18,8 @@ export const DemoBuilder: React.FC = () => {
   const [selectedDemo, setSelectedDemo] = useState<number | null>(null);
   const [isTestingDemo, setIsTestingDemo] = useState<boolean>(false);
   const [showValidation, setShowValidation] = useState<boolean>(false);
-  const [collapsed, setCollapsed] = useState<boolean>(false);
+  // Act settings are hidden by default to keep the editor compact.
+  const [collapsed, setCollapsed] = useState<boolean>(true);
   const mainContentRef = React.useRef<HTMLDivElement>(null);
 
   // Check if we're on the settings page
@@ -37,12 +39,17 @@ export const DemoBuilder: React.FC = () => {
     handleDuplicateStep,
     handleReorderDemo,
     handleReorderStep,
+    handleMoveStepsToScene,
     validation
   } = useDemoConfigContext();
 
   const {
     handleSave,
   } = useFileOperations();
+
+  // Summary counts shown in the collapsed Act header.
+  const sceneCount = config.demos.length;
+  const moveCount = config.demos.reduce((total, demo) => total + (demo.steps?.length ?? 0), 0);
 
   // Function to generate unique scene ID
   const generateUniqueDemoId = React.useCallback(() => {
@@ -226,6 +233,15 @@ export const DemoBuilder: React.FC = () => {
     }
   };
 
+  const handleMoveStepsToSceneWithState = (stepIndices: number[], target: MoveToSceneTarget) => {
+    if (selectedDemo === null) { return; }
+
+    handleMoveStepsToScene(selectedDemo, stepIndices, target);
+
+    // The indices of the current scene's moves shift after a move, so close any open editor.
+    setEditingStep(null);
+  };
+
   const handleEditStep = (stepIndex: number | null) => {
     if (selectedDemo === null) { return; }
 
@@ -372,21 +388,31 @@ export const DemoBuilder: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full min-h-0">
           <Sidebar className="lg:sticky lg:top-0 lg:self-start h-full lg:overflow-y-auto">
             <Card className='space-y-6'>
-              <div className="flex items-center">
-                <button
-                  className="text-gray-900 hover:text-gray-800 dark:text-white dark:hover:text-gray-300"
-                  aria-label={collapsed ? "Expand settings" : "Collapse settings"}
-                  onClick={() => setCollapsed((prev) => !prev)}
-                >
-                  <div className="flex items-center space-x-2">
-                    {collapsed ? <ChevronDown /> : <ChevronUp />}
-
-                    <h2 className="text-xl font-semibold">Act Settings</h2>
+              <button
+                type="button"
+                className="w-full text-left"
+                aria-expanded={!collapsed}
+                aria-label={collapsed ? "Show act settings" : "Hide act settings"}
+                onClick={() => setCollapsed((prev) => !prev)}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <h2 className="text-lg font-bold text-gray-900 dark:text-white truncate" title={config.title}>
+                      {config.title || <span className="text-gray-400 dark:text-gray-500">Untitled act</span>}
+                    </h2>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                      {sceneCount} scene{sceneCount !== 1 ? 's' : ''} · {moveCount} move{moveCount !== 1 ? 's' : ''}
+                    </p>
                   </div>
-                </button>
-              </div>
+                  <span className="shrink-0 text-gray-400 dark:text-gray-500">
+                    {collapsed ? <ChevronDown className="h-5 w-5" /> : <ChevronUp className="h-5 w-5" />}
+                  </span>
+                </div>
+              </button>
               {!collapsed && (
-                <MainConfigForm config={config} onChange={handleConfigChange} />
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+                  <MainConfigForm config={config} onChange={handleConfigChange} />
+                </div>
               )}
             </Card>
 
@@ -412,6 +438,7 @@ export const DemoBuilder: React.FC = () => {
               <>
                 <DemoEditor
                   demo={config.demos[selectedDemo]}
+                  index={selectedDemo}
                   onChange={(demo) => handleDemoChange(selectedDemo, demo)}
                   onGenerateId={generateUniqueDemoId}
                 />
@@ -419,6 +446,7 @@ export const DemoBuilder: React.FC = () => {
                 <Card padding="md">
                   <StepList
                     demo={config.demos[selectedDemo]}
+                    demos={config.demos}
                     isTestingDemo={isTestingDemo}
                     onStopTesting={() => setIsTestingDemo(false)}
                     onPlayDemo={() => handlePlayDemo(selectedDemo)}
@@ -430,6 +458,7 @@ export const DemoBuilder: React.FC = () => {
                     onEditStep={handleEditStep}
                     onReorderStep={handleReorderStepWithState}
                     onStepChange={(stepIndex, updatedStep) => handleStepChange(selectedDemo!, stepIndex, updatedStep)}
+                    onMoveStepsToScene={handleMoveStepsToSceneWithState}
                   />
                 </Card>
               </>

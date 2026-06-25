@@ -16,15 +16,15 @@ export const ActionControls: React.FC<ActionControlsProps> = ({
   return (
     <div className="flex items-center w-full sm:w-auto">
       <Button
-        variant="dark"
+        variant="primary"
         onClick={onSave}
         icon={Save}
         disabled={!canSave || isSaving}
         loading={isSaving}
-        className="flex-1 sm:flex-none text-xs sm:text-sm"
+        className="flex-1 sm:flex-none h-10 rounded-2xl px-6 text-sm"
         size="sm"
       >
-        <span className="font-medium">Save</span>
+        <span className="font-semibold">Save</span>
       </Button>
     </div>
   );

@@ -2,6 +2,7 @@ import React from 'react';
 import { ChevronRight, Trash2, Copy, Play, GripVertical } from 'lucide-react';
 import { messageHandler } from '@estruyf/vscode/dist/client';
 import { cn } from '../../utils/cn';
+import { getActionDotColor, getActionLabel } from '../../utils/actionHelpers';
 import { Action, Step, WebViewMessages } from '@demotime/common';
 
 interface StepListItemProps {
@@ -18,6 +19,9 @@ interface StepListItemProps {
   editor?: React.ReactNode;
   draggingIndex: number | null;
   setDraggingIndex: (index: number | null) => void;
+  isSelected?: boolean;
+  onToggleSelect?: (selected: boolean, shiftKey: boolean) => void;
+  selectionActive?: boolean;
 }
 
 export const StepListItem: React.FC<StepListItemProps> = ({
@@ -33,6 +37,9 @@ export const StepListItem: React.FC<StepListItemProps> = ({
   editor,
   draggingIndex,
   setDraggingIndex,
+  isSelected = false,
+  onToggleSelect,
+  selectionActive = false,
 }) => {
   const rootRef = React.useRef<HTMLDivElement>(null);
   const wasEditing = React.useRef(isEditing);
@@ -118,6 +125,14 @@ export const StepListItem: React.FC<StepListItemProps> = ({
 
   const isBeingDragged = draggingIndex === stepIndex;
 
+  // Secondary detail shown under the action label (path, command, target, ...).
+  const detail =
+    step.path ||
+    step.contentPath ||
+    step.command ||
+    step.url ||
+    (step.action === Action.RunDemoById ? step.id : undefined);
+
   return (
     <div
       ref={rootRef}
@@ -125,89 +140,131 @@ export const StepListItem: React.FC<StepListItemProps> = ({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       className={cn(
-        `relative border rounded-lg transition-all duration-300 ease-in-out`,
-        isEditing ? 'z-10 border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg' : 'z-0 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-md dark:hover:shadow-xl',
+        'group relative rounded-lg border transition-colors duration-200',
+        isEditing
+          ? 'border-amber-300 bg-amber-50 dark:border-amber-700/60 dark:bg-amber-900/20'
+          : isSelected
+            ? 'border-blue-200 bg-blue-50/60 dark:border-blue-800/60 dark:bg-blue-900/10'
+            : 'border-transparent hover:bg-gray-50 dark:hover:bg-gray-700/40',
         resultBgColor,
-        step.disabled ? 'opacity-50 grayscale' : '',
-        isBeingDragged ? 'opacity-40 border-dashed border-blue-600 scale-105' : 'scale-100',
-        !isBeingDragged && dropPosition === 'top' && 'border-t-4 border-t-blue-500',
-        !isBeingDragged && dropPosition === 'bottom' && 'border-b-4 border-b-blue-500'
+        isBeingDragged && 'opacity-40',
+        step.disabled && 'opacity-60'
       )}
     >
-      <div className="p-4 flex items-center justify-between select-none">
-        <div className="flex items-center space-x-2 flex-1 min-w-0">
-          <div
-            draggable
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            className="cursor-move p-2 text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 -ml-2"
-            title="Drag to reorder"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <GripVertical className="h-5 w-5" />
-          </div>
+      {/* Drop indicators */}
+      {!isBeingDragged && dropPosition === 'top' && (
+        <span className="absolute left-2 right-2 -top-0.5 h-0.5 rounded-full bg-blue-500" />
+      )}
+      {!isBeingDragged && dropPosition === 'bottom' && (
+        <span className="absolute left-2 right-2 -bottom-0.5 h-0.5 rounded-full bg-blue-500" />
+      )}
 
-          <div
-            className={cn(
-              "flex items-center justify-between flex-1 min-w-0 cursor-pointer",
-            )}
-            onClick={() => {
-              if (isEditing) {
-                onCloseEdit();
-              } else {
-                onEdit();
-              }
+      <div className="flex items-center gap-2 p-3 select-none">
+        {/* Selection checkbox - revealed on hover, persistent while selecting */}
+        {onToggleSelect && (
+          <input
+            type="checkbox"
+            checked={isSelected}
+            onChange={() => undefined}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleSelect(e.currentTarget.checked, e.shiftKey);
             }}
+            className={cn(
+              'rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer shrink-0 transition-opacity',
+              isSelected || selectionActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+            )}
+            title="Select move (Shift+click to select a range)"
+            aria-label={`Select move ${stepIndex + 1}`}
+          />
+        )}
+
+        {/* Drag handle - revealed on hover / when editing */}
+        <div
+          draggable
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+          onClick={(e) => e.stopPropagation()}
+          title="Drag to reorder"
+          className={cn(
+            'cursor-move shrink-0 text-gray-400 dark:text-gray-500 transition-opacity',
+            isEditing ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+          )}
+        >
+          <GripVertical className="h-4 w-4" />
+        </div>
+
+        {/* Clickable content: number + action + detail */}
+        <div
+          className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer"
+          onClick={() => (isEditing ? onCloseEdit() : onEdit())}
+        >
+          <span
+            className={cn(
+              'shrink-0 w-7 text-center text-lg font-semibold tabular-nums',
+              isEditing ? 'text-gray-700 dark:text-gray-200' : 'text-gray-400 dark:text-gray-500'
+            )}
           >
-            <div className="flex items-center space-x-3 min-w-0">
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                Move {stepIndex + 1}:
-              </span>
-              <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                {step.action}
-                {step.action === Action.Snippet && (step.path || step.contentPath) && (
-                  <span className="ml-2 text-xs text-gray-500 dark:text-gray-300 font-normal">{step.path || step.contentPath}</span>
-                )}
-                {step.action === Action.RunDemoById && (step.id) && (
-                  <span className="ml-2 text-xs text-gray-500 dark:text-gray-300 font-normal">{step.id}</span>
-                )}
-                {step.action === Action.ExecuteVSCodeCommand && (step.command) && (
-                  <span className="ml-2 text-xs text-gray-500 dark:text-gray-300 font-normal">{step.command}</span>
-                )}
-              </span>
-              {step.disabled && (
-                <span className="ml-2 px-2 py-0.5 rounded-xs text-xs text-gray-600 dark:text-gray-300 font-semibold border border-gray-300">Disabled</span>
-              )}
+            {String(stepIndex + 1).padStart(2, '0')}
+          </span>
+
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className={cn('h-2 w-2 rounded-full shrink-0', getActionDotColor(step.action))} />
+              <h4 className="font-semibold text-gray-900 dark:text-white truncate" title={getActionLabel(step.action)}>
+                {step.action
+                  ? getActionLabel(step.action)
+                  : <span className="text-gray-400 dark:text-gray-500">Select an action</span>}
+              </h4>
             </div>
-            <ChevronRight className={`h-4 w-4 text-gray-400 dark:text-gray-500 transition-transform duration-200 ${isEditing ? 'rotate-90' : ''} ml-2`} />
+            {detail && (
+              <p className="text-sm text-gray-500 dark:text-gray-400 truncate mt-0.5" title={detail}>
+                {detail}
+              </p>
+            )}
           </div>
         </div>
 
-        <div className="flex items-center space-x-1 ml-4">
-          <button
-            onClick={handleDuplicateClick}
-            disabled={step.disabled}
-            className="p-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Duplicate step"
-          >
-            <Copy className="h-4 w-4" />
-          </button>
-          <button
-            onClick={handlePlayClick}
-            disabled={step.disabled}
-            className="p-1 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Test step"
-          >
-            <Play className="h-4 w-4" />
-          </button>
-          <button
-            onClick={handleRemoveClick}
-            className="p-1 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Remove step"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
+        {/* Right side: disabled badge (at rest) and actions (on hover / when editing) */}
+        <div className="shrink-0 flex items-center">
+          {step.disabled && !isEditing && (
+            <span className="group-hover:hidden px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700">
+              Disabled
+            </span>
+          )}
+          <div className={cn('items-center gap-1', isEditing ? 'flex' : 'hidden group-hover:flex')}>
+            <button
+              onClick={handleDuplicateClick}
+              disabled={step.disabled}
+              className="p-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Duplicate move"
+            >
+              <Copy className="h-4 w-4" />
+            </button>
+            <button
+              onClick={handlePlayClick}
+              disabled={step.disabled}
+              className="p-1 text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/30 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Test move"
+            >
+              <Play className="h-4 w-4" />
+            </button>
+            <button
+              onClick={handleRemoveClick}
+              className="p-1 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-md transition-colors"
+              title="Remove move"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
         </div>
+
+        <ChevronRight
+          className={cn(
+            'h-4 w-4 shrink-0 text-gray-400 dark:text-gray-500 transition-transform duration-200',
+            isEditing && 'rotate-90'
+          )}
+        />
       </div>
 
       {editor && (

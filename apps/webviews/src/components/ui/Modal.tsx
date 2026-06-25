@@ -47,7 +47,7 @@ export const Modal: React.FC<ModalProps> = ({
         </div>
 
         {actions && (
-          <div className="p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 flex justify-end space-x-3">
+          <div className="p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 flex justify-end space-x-3 rounded-b-lg">
             {actions}
           </div>
         )}

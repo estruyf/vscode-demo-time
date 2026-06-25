@@ -3,6 +3,7 @@
 ## [2.3.0] - 2026-xx-xx
 
 - [#412](https://github.com/estruyf/vscode-demo-time/issues/412): Added the ability to record a demo flow (create file, open file, append text, highlight text, etc.)
+- [#413](https://github.com/estruyf/vscode-demo-time/issues/413): Added the ability to move one or more moves to an existing or new scene from the act editor (select moves, then use "Move to scene…"), preserving their order
 
 ## [2.2.0] - 2026-06-18
 
