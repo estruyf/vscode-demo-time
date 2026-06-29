@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ChevronDown, ChevronUp, FileText } from 'lucide-react';
+import { ArrowDownCircle, ChevronDown, ChevronUp, FileText } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client';
 import { EventData } from '@estruyf/vscode';
@@ -18,9 +18,11 @@ export const DemoBuilder: React.FC = () => {
   const [selectedDemo, setSelectedDemo] = useState<number | null>(null);
   const [isTestingDemo, setIsTestingDemo] = useState<boolean>(false);
   const [showValidation, setShowValidation] = useState<boolean>(false);
+  const [showConfigJump, setShowConfigJump] = useState<boolean>(false);
   // Act settings are hidden by default to keep the editor compact.
   const [collapsed, setCollapsed] = useState<boolean>(true);
   const mainContentRef = React.useRef<HTMLDivElement>(null);
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
   // Check if we're on the settings page
   const isSettingsPage = window.location.pathname === '/settings';
@@ -338,13 +340,44 @@ export const DemoBuilder: React.FC = () => {
     });
   }, []);
 
+  useEffect(() => {
+    const updateJumpVisibility = () => {
+      const isSmallLayout = window.innerWidth < 1024;
+
+      if (!isSmallLayout || selectedDemo === null || !mainContentRef.current) {
+        setShowConfigJump(false);
+        return;
+      }
+
+      const rect = mainContentRef.current.getBoundingClientRect();
+      // Show cue only while the editor section is mostly below the fold.
+      setShowConfigJump(rect.top > window.innerHeight * 0.9);
+    };
+
+    const scrollEl = scrollContainerRef.current;
+    updateJumpVisibility();
+
+    if (scrollEl) {
+      scrollEl.addEventListener('scroll', updateJumpVisibility, { passive: true });
+    }
+
+    window.addEventListener('resize', updateJumpVisibility);
+
+    return () => {
+      if (scrollEl) {
+        scrollEl.removeEventListener('scroll', updateJumpVisibility);
+      }
+      window.removeEventListener('resize', updateJumpVisibility);
+    };
+  }, [selectedDemo, config.demos.length, editingStep]);
+
   // If we're on the settings page, render the settings component
   if (isSettingsPage) {
     return <SettingsView />;
   }
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+    <div className="h-dvh flex flex-col bg-gray-50 dark:bg-gray-900 overflow-hidden">
       <AppHeader
         title={"Act Editor"}
         subtitle={"Manage your act configuration"}
@@ -383,11 +416,11 @@ export const DemoBuilder: React.FC = () => {
         }
       />
 
-      <div className="flex-1 max-w-7xl mx-auto px-6 py-8 w-full overflow-y-auto lg:overflow-hidden">
+      <div ref={scrollContainerRef} className="flex-1 min-h-0 max-w-7xl mx-auto w-full px-3 sm:px-4 lg:px-6 py-4 sm:py-5 lg:py-8 overflow-y-auto lg:overflow-hidden">
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full min-h-0">
-          <Sidebar className="lg:sticky lg:top-0 lg:self-start h-full lg:overflow-y-auto">
-            <Card className='space-y-6'>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 lg:h-full lg:min-h-0 content-start">
+          <Sidebar className="lg:sticky lg:top-0 lg:self-start lg:h-full lg:overflow-y-auto">
+            <Card className='space-y-4 sm:space-y-6'>
               <button
                 type="button"
                 className="w-full text-left"
@@ -410,7 +443,7 @@ export const DemoBuilder: React.FC = () => {
                 </div>
               </button>
               {!collapsed && (
-                <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-4 sm:pt-6">
                   <MainConfigForm config={config} onChange={handleConfigChange} />
                 </div>
               )}
@@ -465,15 +498,38 @@ export const DemoBuilder: React.FC = () => {
             )}
 
             {selectedDemo === null && (
-              <Card className="p-12 text-center">
-                <FileText className="h-12 w-12 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
+              <Card className="p-6 sm:p-10 lg:p-12 text-center">
+                <FileText className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No Scene Selected</h3>
-                <p className="text-gray-600 dark:text-gray-300">Select a scene from the left panel to view and edit its moves</p>
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Select a scene from the left panel to view and edit its moves</p>
               </Card>
             )}
           </MainContent>
         </div>
       </div>
+
+      {showConfigJump && (
+        <button
+          type="button"
+          onClick={() => {
+            const scrollEl = scrollContainerRef.current;
+            const mainEl = mainContentRef.current;
+
+            if (scrollEl && mainEl) {
+              const targetTop = mainEl.offsetTop - 8;
+              scrollEl.scrollTo({
+                top: Math.max(0, targetTop),
+                behavior: 'smooth',
+              });
+            }
+          }}
+          className="lg:hidden fixed bottom-4 right-4 z-30 inline-flex items-center gap-2 rounded-full bg-demo-time-accent hover:bg-demo-time-accent-high text-white dark:text-black px-4 py-2.5 text-sm font-semibold shadow-lg focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent"
+          aria-label="Jump to scene configuration"
+        >
+          <ArrowDownCircle className="h-4 w-4" />
+          Configure Scene
+        </button>
+      )}
     </div>
   );
 };

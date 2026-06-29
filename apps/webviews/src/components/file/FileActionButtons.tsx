@@ -10,7 +10,7 @@ interface FileActionButtonsProps {
 }
 
 export const FileActionButtons: React.FC<FileActionButtonsProps> = ({ onSettingsClick, onOverviewClick, onViewSource, onNewFile }) => (
-  <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+  <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
     <div className="flex items-center gap-1 rounded-lg border border-gray-200 bg-gray-100 p-0 dark:border-gray-700 dark:bg-gray-800">
       <Button
         variant="outline"
@@ -46,7 +46,7 @@ export const FileActionButtons: React.FC<FileActionButtonsProps> = ({ onSettings
       variant="secondary"
       onClick={onNewFile}
       icon={Clapperboard}
-      className="h-10 px-5 text-sm text-gray-800"
+      className="h-10 px-4 sm:px-5 text-sm text-gray-800"
       size="sm"
     >
       <span className="font-semibold">New act</span>
