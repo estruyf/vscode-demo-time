@@ -204,6 +204,7 @@ export default defineConfig({
           label: 'Integrations',
           collapsed: true,
           items: [
+            { label: 'Copilot Mock Server', slug: 'integrations/copilot-mock-server' },
             { label: 'Slidev', slug: 'integrations/slidev' },
             { label: 'PowerPoint', slug: 'integrations/powerpoint' },
             { label: 'Apple Keynote', slug: 'integrations/keynote' },

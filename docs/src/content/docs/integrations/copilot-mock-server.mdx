@@ -1,0 +1,196 @@
+---
+title: Copilot Mock Server
+description: Learn how to use the copilot-mock-server to script deterministic GitHub Copilot responses in your Demo Time demos.
+lastmod: 2026-06-29T00:00:00.000Z
+---
+
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+
+[copilot-mock-server](https://github.com/estruyf/copilot-mock-server) is a local proxy that intercepts GitHub Copilot Chat requests and returns scripted, deterministic responses. Instead of hitting the real Copilot API during a demo, it streams your own pre-written answers token-by-token through the same VS Code interface — so the demo looks completely natural.
+
+<Aside type="tip">
+  Read the blog post [Keeping GitHub Copilot on script during demos](https://www.eliostruyf.com/keeping-github-copilot-script-demos/) for the full background on why this tool was built and when to use it.
+</Aside>
+
+<Aside type="note" title="Sample repository">
+  A ready-to-run Demo Time + copilot-mock-server example is available at [demo-time-github-copilot-mocking](https://github.com/estruyf/demo-time-github-copilot-mocking).
+</Aside>
+
+## How it works
+
+`copilot-mock-server` sits between VS Code and the Copilot API. It supports both WebSocket and HTTP `text/event-stream` transports, so it works without any changes to the Copilot extension itself. You point VS Code at the local server via a few workspace settings, and from that point on every Copilot Chat request is matched against your rule file and answered locally.
+
+## Installation
+
+Run without installing:
+
+<Code code={`npx copilot-mock-server`} lang="bash" />
+
+Or install globally:
+
+<Code code={`npm i -g copilot-mock-server
+copilot-mock-server`} lang="bash" />
+
+The server starts on `http://localhost:3000` by default and looks for a config file at `./cms.config.json` in the current directory.
+
+## Step 1 — Write your mock rules
+
+Create a `cms.mock.json` file in your project root. Each rule maps one or more keywords to the response Copilot should return.
+
+### Simple text response
+
+<Code code={`[
+    {
+      "input": ["hello"],
+      "output": "Hi! I am running in mocked mode."
+    }
+]`} lang="json" title="cms.mock.json" />
+
+All words listed in `input` must appear in the user's prompt (case-insensitive) for the rule to match. When multiple rules match, the most specific one wins.
+
+### Response with a delay
+
+Use `delayMs` to insert a pause before the response starts streaming — useful for mimicking a "thinking" moment:
+
+<Code code={`{
+    "input": ["joke"],
+    "output": "Why did the developer go broke? Because he used up all his cache.",
+    "delayMs": 1500
+}`} lang="json" />
+
+### Multi-step responses
+
+Use `steps` to simulate an agent that narrates, calls tools, and narrates again. Each step can carry its own delay and tool calls:
+
+<Code code={`{
+    "input": ["create a sample typescript file"],
+    "steps": [
+      {
+        "text": "Let me check what I can use for the sample TypeScript file.",
+        "delayMs": 200
+      },
+      {
+        "text": "Creating the TypeScript file now.",
+        "delayMs": 300,
+        "toolCalls": [
+          {
+            "name": "create_file",
+            "arguments": "{\\"filePath\\":\\"{{cwd}}/add.ts\\",\\"content\\":\\"export function add(a: number, b: number): number {\\\\n  return a + b;\\\\n}\\\\n\\"}"
+          }
+        ]
+      }
+    ],
+    "outcome": "Created add.ts"
+}`} lang="json" />
+
+The `{{cwd}}` placeholder is replaced at stream time with the server's working directory (your project root). `{{home}}` resolves to the current user's home directory. Use these in `arguments` strings and `output` text wherever you need an absolute path.
+
+The optional `outcome` field is returned when VS Code sends a follow-up summarisation request. If omitted, that request is forwarded to the real upstream.
+
+### Clickable file links
+
+Embed clickable file links in the response text using the `[[file:…]]` syntax:
+
+<Code code={`{
+    "input": ["check", "working"],
+    "output": "Created [[file:test.json]] with your content."
+}`} lang="json" />
+
+## Step 2 — Configure the server (optional)
+
+All server behaviour is controlled by `cms.config.json`. Every field is optional:
+
+<Code code={`{
+    "port": 3000,
+    "responsesPath": "./cms.mock.json",
+    "defaultResponse": "I am running in mocked mode.",
+    "tokenDelayMs": 25,
+    "chunkBy": "word",
+    "forwardUnmatched": false
+}`} lang="json" title="cms.config.json" />
+
+| Field | Default | Description |
+|---|---|---|
+| `port` | `3000` | Port the server listens on |
+| `responsesPath` | `./cms.mock.json` | Path to your mock rules file |
+| `defaultResponse` | *(built-in text)* | Returned when no rule matches |
+| `tokenDelayMs` | `25` | Milliseconds between streamed tokens |
+| `chunkBy` | `"word"` | Stream by `"word"` or `"char"` |
+| `forwardUnmatched` | `false` | Proxy unmatched prompts to the real Copilot API |
+
+<Aside type="caution">
+  Keep `logRequestBodies` set to `false` (the default) during live demos for the best streaming performance.
+</Aside>
+
+## Step 3 — Point VS Code at the mock server
+
+Run the built-in command to inject the required workspace settings automatically:
+
+<Code code={`copilot-mock-server vscode add`} lang="bash" />
+
+This writes three keys to `.vscode/settings.json`:
+
+<Code code={`{
+    "github.copilot.advanced.debug.overrideProxyUrl": "http://localhost:3000",
+    "github.copilot.advanced.debug.overrideCapiUrl": "http://localhost:3000",
+    "github.copilot.advanced.debug.overrideAuthType": "token"
+}`} lang="json" title=".vscode/settings.json" />
+
+Reload the VS Code window after running the command. To restore normal Copilot behaviour after the demo, run:
+
+<Code code={`copilot-mock-server vscode remove`} lang="bash" />
+
+## Step 4 — Start the server and run your demo
+
+<Code code={`npx copilot-mock-server`} lang="bash" />
+
+Open GitHub Copilot Chat in VS Code and type a prompt that matches one of your rules. The scripted response streams back exactly as it would from the real API.
+
+Combine this with Demo Time's [GitHub Copilot actions](../copilot) to trigger chat messages directly from your demo script:
+
+<Tabs syncKey="cms-demotime">
+<TabItem label="JSON">
+
+```json
+[
+    {
+      "action": "newCopilotChat"
+    },
+    {
+      "action": "askCopilotChat",
+      "message": "create a sample typescript file"
+    }
+]
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+- action: newCopilotChat
+- action: askCopilotChat
+  message: "create a sample typescript file"
+```
+
+</TabItem>
+</Tabs>
+
+## Learning mode — record real responses to replay later
+
+Run the server in learning mode to record real Copilot responses without writing rules by hand:
+
+<Code code={`npx copilot-mock-server learn`} lang="bash" />
+
+Every response is saved to `./cms.learn.json` as a ready-to-use rule. Internal VS Code requests (title generation, branch names) are forwarded but not recorded. Once you have captured what you need, trim the `input` keywords and copy the entries into your `cms.mock.json`.
+
+Add `--raw` to also print the raw SSE stream for each interaction — handy for inspecting the exact response format:
+
+<Code code={`npx copilot-mock-server learn --raw`} lang="bash" />
+
+## Forwarding unmatched prompts
+
+Set `forwardUnmatched: true` in `cms.config.json` to proxy any prompt that does not match a rule to the real Copilot API. This lets you script only the important demo moments while keeping everything else live:
+
+<Code code={`{
+    "forwardUnmatched": true
+}`} lang="json" title="cms.config.json" />
