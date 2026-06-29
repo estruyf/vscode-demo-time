@@ -2,9 +2,33 @@
 import HeartIcon from './HeartIcon.astro';
 import SponsorButton from './SponsorButton.astro';
 
-// Fetch sponsors data from the API
-const response = await fetch('https://api.frontmatter.codes/sponsors');
-const sponsors = await response.json();
+// Fetch sponsors data from the API but fall back to an empty list on transient API issues.
+const sponsorsResponse = await fetch('https://api.frontmatter.codes/sponsors').catch(() => null);
+
+let sponsors: Array<{
+  id?: string;
+  name?: string;
+  login?: string;
+  url?: string;
+  avatarUrl?: string;
+}> = [];
+
+if (sponsorsResponse?.ok) {
+  const contentType = sponsorsResponse.headers.get('content-type') || '';
+  if (contentType.includes('application/json')) {
+    const rawBody = await sponsorsResponse.text();
+    if (rawBody.trim()) {
+      try {
+        const parsed = JSON.parse(rawBody) as unknown;
+        if (Array.isArray(parsed)) {
+          sponsors = parsed as typeof sponsors;
+        }
+      } catch {
+        // Ignore malformed API responses so docs build remains deterministic.
+      }
+    }
+  }
+}
 const oneTimeSponsors = [
   {
     name: 'Stephan van Rooij',

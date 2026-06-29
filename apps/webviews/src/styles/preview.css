@@ -225,6 +225,16 @@ table td {
 }
 
 /* Layouts */
+.center {
+  .slide__content {
+    @apply flex items-center justify-center;
+
+    .slide__content__inner {
+      @apply flex flex-col items-center justify-center text-center;
+    }
+  }
+}
+
 .image-left,
 .image-right {
   @apply grid grid-cols-2 w-full h-full auto-rows-fr;

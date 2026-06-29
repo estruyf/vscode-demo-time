@@ -2,10 +2,15 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
+const shouldGenerateSourceMaps = process.env.DEMOTIME_BETA_SOURCEMAPS === 'true';
+
 // https://vitejs.dev/config/
 export default defineConfig({
   // Critical for VS Code webviews
   base: process.env.NODE_ENV === 'production' ? './' : '/',
+  build: {
+    sourcemap: shouldGenerateSourceMaps,
+  },
   plugins: [react(), tailwindcss()],
   optimizeDeps: {
     exclude: ['lucide-react'],

@@ -180,6 +180,18 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     setCrntSlide(slide);
   }, [slides]);
 
+  const navigateToSlide = React.useCallback((slideIdx: number) => {
+    updateSlideIdx(slideIdx);
+    messageHandler.send(WebViewMessages.toVscode.updateSlideIndex, slideIdx);
+  }, [updateSlideIdx]);
+
+  const slideOptions = React.useMemo(() => {
+    return slides.map((slide) => ({
+      index: slide.index,
+      title: extractFirstH1(slide.rawContent) || `Slide ${slide.index + 1}`,
+    }));
+  }, [slides]);
+
   const toggleZoom = React.useCallback(() => {
     setIsZoomed(prev => {
       if (prev) {
@@ -568,7 +580,15 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           path={relativePath}
           slides={slides.length}
           currentSlide={crntSlide?.index}
+          slideOptions={slideOptions}
+          slideData={slides}
+          vsCodeTheme={vsCodeTheme as never}
+          isDarkTheme={isDarkTheme}
+          webviewUrl={webviewUrl}
+          filePath={crntFilePath}
+          slideTheme={theme}
           updateSlideIdx={updateSlideIdx}
+          onNavigateToSlide={navigateToSlide}
           triggerMouseMove={setIsMouseMoveEnabled}
           hideControls={hidePreviewControls}
           laserPointerEnabled={laserPointerEnabled}

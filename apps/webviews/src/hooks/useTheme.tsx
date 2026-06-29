@@ -59,4 +59,4 @@ export const useTheme = () => {
     vsCodeTheme,
     isDarkTheme
   };
-}
+};

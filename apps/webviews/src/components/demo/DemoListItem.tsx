@@ -52,7 +52,7 @@ export const DemoListItem: React.FC<DemoListItemProps> = ({
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    if (draggingIndex === null || draggingIndex === index) return;
+    if (draggingIndex === null || draggingIndex === index) {return;}
 
     const rect = rootRef.current?.getBoundingClientRect();
     if (rect) {

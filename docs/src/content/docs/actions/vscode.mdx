@@ -273,13 +273,15 @@ action: zoomReset
 
 Open a website in your browser or in the editor using the `openWebsite` action.
 
+If the URL does not start with a scheme such as `https://`, Demo Time resolves it relative to the current workspace folder. This is useful for local reports and other generated files. You can also use `{DT_WORKSPACE_PATH}` if you want to build the URL yourself.
+
 <Tabs syncKey="vscode-open-website">
 <TabItem label="JSON">
 
 ```json
 {
   "action": "openWebsite",
-  "url": "<URL>",
+  "url": "Reports/index.html",
   "openInVSCode": "<true/false>"
 }
 ```
@@ -289,12 +291,16 @@ Open a website in your browser or in the editor using the `openWebsite` action.
 
 ```yaml
 action: openWebsite
-url: <URL>
+url: Reports/index.html
 openInVSCode: <true/false>
 ```
 
 </TabItem>
 </Tabs>
+
+<Aside type="note">
+When `openInVSCode` is enabled, the same relative-path resolution is applied in the VS Code browser. Absolute URLs and `file:` URLs keep working as before.
+</Aside>
 
 ## Zen Mode actions
 

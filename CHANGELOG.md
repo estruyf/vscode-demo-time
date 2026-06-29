@@ -1,5 +1,24 @@
 # Change Log
 
+## [2.2.0] - 2026-06-18
+
+- Added `waitForMessage` property to the `executeScript` action to wait until the script outputs a specific string before advancing to the next step, instead of waiting for the process to exit
+- Added `showProgress` property to the `executeScript` action to control whether the progress notification is shown while the script is executing (default: `true`)
+- Fix preview taking focus when saving a markdown file and only update the preview when editing the current slide
+- Custom themes are now loaded from the workspace URL instead of retrieving the file contents
+- Fix slide content not updating when navigating between slides that share the same custom layout template
+- Add QR preview support with `showQR`, `hideQR`, and `closePreview` actions
+- Add `qrLayout` option to `showQR` with constrained `left`/`right` layout choices
+- [#210](https://github.com/estruyf/vscode-demo-time/issues/210): Add a Snippets Gallery webview to browse and download community snippets directly into `.demo/snippets`, including downloaded-state indicators and a gallery snippet schema at `docs/public/gallery/snippet.schema.json`
+- [#394](https://github.com/estruyf/vscode-demo-time/issues/394): Allow relative paths for `openWebsite` when opening content in the VS Code browser and expose workspace path variables
+- [#397](https://github.com/estruyf/vscode-demo-time/issues/397): Enable running scenes and moves from source file
+- [#398](https://github.com/estruyf/vscode-demo-time/issues/398): Add slide navigator in the preview webview when using a slide group
+- [#401](https://github.com/estruyf/vscode-demo-time/issues/401): Add a new `center` slide layout that centers all content both vertically and horizontally
+- [#402](https://github.com/estruyf/vscode-demo-time/issues/402): Added an auto-proceed mode for acts to automatically advance to the next move after a specified delay, with the ability to loop back to the beginning of the act when reaching the end
+- [#407](https://github.com/estruyf/vscode-demo-time/issues/407): Added `pollDarkTheme` and `pollControls` properties to the `showEngageTimePoll` action to control the poll embed's theme and controls visibility
+- [#408](https://github.com/estruyf/vscode-demo-time/pull/408): Added a theme builder to create and customize slide themes visually (beta)
+- [#409](https://github.com/estruyf/vscode-demo-time/issues/409): Slide controls redesign to have a more compact layout
+
 ## [2.1.1] - 2026-04-16
 
 - Fix on next and previous slide controls

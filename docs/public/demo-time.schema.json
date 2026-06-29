@@ -3,7 +3,7 @@
   "$id": "https://demotime.show/demo-time.schema.json",
   "title": "Demo Time - Schema",
   "description": "The schema for the Demo Time - VSCode extension",
-  "lastModified": "2025-12-06",
+  "lastModified": "2026-05-21",
   "type": "object",
   "properties": {
     "title": {
@@ -21,6 +21,9 @@
     "timer": {
       "type": "number",
       "description": "The timer in minutes for the demo."
+    },
+    "loop": {
+      "$ref": "#/definitions/loop"
     },
     "demos": {
       "type": "array",
@@ -50,6 +53,9 @@
             "type": "boolean",
             "default": false,
             "description": "If true, the demo will not be shown in the UI."
+          },
+          "autoAdvanceAfter": {
+            "$ref": "#/definitions/autoAdvanceAfter"
           },
           "icons": {
             "type": "object",
@@ -163,7 +169,10 @@
                     "closeEngageTimePoll",
                     "showEngageTimeSession",
                     "showEngageTimePoll",
-                    "sendEngageTimeMessage"
+                    "sendEngageTimeMessage",
+                    "showQR",
+                    "hideQR",
+                    "closePreview"
                   ]
                 },
                 "disabled": {
@@ -664,6 +673,12 @@
                         "items": {
                           "type": "string"
                         }
+                      },
+                      "waitForMessage": {
+                        "$ref": "#/definitions/waitForMessage"
+                      },
+                      "showProgress": {
+                        "$ref": "#/definitions/showProgress"
                       }
                     }
                   }
@@ -930,6 +945,12 @@
                       },
                       "closeOnOpen": {
                         "$ref": "#/definitions/closeOnOpen"
+                      },
+                      "pollDarkTheme": {
+                        "$ref": "#/definitions/pollDarkTheme"
+                      },
+                      "pollControls": {
+                        "$ref": "#/definitions/pollControls"
                       }
                     },
                     "not": {
@@ -960,6 +981,51 @@
                       },
                       "description": {
                         "$ref": "#/definitions/description"
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "action": {
+                        "const": "showQR"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["url"],
+                    "properties": {
+                      "url": {
+                        "$ref": "#/definitions/url"
+                      },
+                      "topText": {
+                        "type": "string",
+                        "title": "The top text shown above the QR code"
+                      },
+                      "title": {
+                        "type": "string",
+                        "title": "The title shown with the QR code"
+                      },
+                      "description": {
+                        "type": "string",
+                        "title": "The description shown with the QR code"
+                      },
+                      "logo": {
+                        "type": "string",
+                        "title": "A URL to the logo image shown next to the QR code"
+                      },
+                      "qrLayout": {
+                        "type": "string",
+                        "enum": [
+                          "default",
+                          "reversed",
+                          "minimal",
+                          "stacked",
+                          "text-left",
+                          "text-right"
+                        ],
+                        "title": "The QR slide layout: default (QR right, logo left), reversed (QR left, logo right), minimal (QR only), stacked (QR top, text below), text-left (text left, QR right), text-right (text right, QR left)"
                       }
                     }
                   }
@@ -1089,6 +1155,9 @@
             "default": false,
             "description": "If true, the scene will not be shown in the UI."
           },
+          "autoAdvanceAfter": {
+            "$ref": "#/definitions/autoAdvanceAfter"
+          },
           "icons": {
             "type": "object",
             "properties": {
@@ -1150,6 +1219,12 @@
       "default": true,
       "title": "Automatically execute the command. Default is true."
     },
+    "autoAdvanceAfter": {
+      "type": "number",
+      "minimum": 1,
+      "title": "Auto advance after (seconds)",
+      "description": "Automatically advance to the next scene after this many seconds."
+    },
     "content": {
       "type": "string",
       "title": "Content to insert"
@@ -1192,6 +1267,11 @@
     "insertTypingSpeed": {
       "type": "number",
       "title": "Speed in milliseconds between each character when typing text. Used with the typeText action."
+    },
+    "loop": {
+      "type": "boolean",
+      "title": "Loop scenes",
+      "description": "When enabled, the act restarts from the first scene after the last scene."
     },
     "notificationMessage": {
       "type": "string",
@@ -1361,6 +1441,16 @@
       "description": "Close the poll when it is shown. Default is false.",
       "default": false
     },
+    "pollDarkTheme": {
+      "type": "boolean",
+      "description": "When true, the EngageTime poll embed opens with the dark theme.",
+      "default": false
+    },
+    "pollControls": {
+      "type": "boolean",
+      "description": "Whether to show the poll controls in the embed. Default is true.",
+      "default": true
+    },
     "type": {
       "type": "string",
       "enum": ["demo", "slide", "custom"],
@@ -1377,6 +1467,15 @@
     "duration": {
       "type": "number",
       "title": "Duration in minutes (for macos.enableCaffeine). If not specified, prevents sleep indefinitely."
+    },
+    "waitForMessage": {
+      "type": "string",
+      "title": "Wait until this string appears in stdout before advancing to the next step. If not set, waits for the script process to exit."
+    },
+    "showProgress": {
+      "type": "boolean",
+      "title": "Show the progress notification while the script is executing. Default is true.",
+      "default": true
     }
   }
 }

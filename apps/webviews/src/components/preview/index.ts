@@ -4,6 +4,8 @@ export * from './LaserPointer';
 export * from './Markdown';
 export * from './MarkdownPreview';
 export * from './ProjectorIcon';
+export * from './QRPreview';
 export * from './SlideControl';
 export * from './SlideControls';
+export * from './SlideControlsMenu';
 export * from './WhiteboardIcon';

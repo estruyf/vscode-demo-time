@@ -1,4 +1,5 @@
 import { parseWinPath } from './../utils/parseWinPath';
+import { getRelPath } from './../utils/getRelPath';
 import { Uri, window, workspace } from 'vscode';
 import { Extension } from './Extension';
 import { DemoFileType } from '../models';
@@ -17,7 +18,10 @@ export class DemoFileProvider {
     subscriptions.push(
       workspace.onDidSaveTextDocument((e) => {
         if (e.uri.fsPath.endsWith(`.md`)) {
-          Preview.triggerUpdate(e.uri);
+          const relPath = getRelPath(parseWinPath(e.uri.fsPath));
+          if (Preview.isCurrentFile(relPath) || Preview.isCurrentFile(parseWinPath(e.uri.fsPath))) {
+            Preview.triggerUpdate(e.uri);
+          }
         }
       }),
     );

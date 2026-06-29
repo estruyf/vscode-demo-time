@@ -1,14 +1,14 @@
 ---
 title: Present your slides
 description: From Markdown to slides - present your slides with Demo Time
-lastmod: 2025-10-01T12:22:17.993Z
+lastmod: 2026-06-12T08:02:33.790Z
 ---
 
 import { Code, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 import { Image } from 'astro:assets';
 
 import slidesImg from "../../../assets/docs/slides.webp";
-import slideControlsImg from "../../../assets/docs/slide-controls-1.6.0.webp";
+import slideControlsImg from "../../../assets/docs/slide-controls-2.2.0.webp";
 import slidePreviewImg from "../../../assets/docs/slide-preview.webp";
 
 Demo Time is more than just a tool for live demos, it also lets you present slides seamlessly within your editor. With Markdown-based slides, you can deliver presentations without switching between different applications, ensuring a smooth transition between your slides and demos.
@@ -161,33 +161,38 @@ With this approach, you can seamlessly integrate slides into your demos, making 
 
 ## Slide controls
 
-When presenting slides, you have the following control available:
+When previewing or presenting slides, a compact control bar appears at the bottom of the slide. It is organized into three sections — **view tools**, **slide navigation**, and **slide tools** — and tucks the less-common actions into a **More actions** (`…`) menu so the bar stays uncluttered and adapts to narrow windows.
 
 <Image class="mx-auto" src={slideControlsImg} alt="Slide controls" />
 
-### Left section
+<Aside type="note">
+The control bar is keyboard and screen reader friendly. Every button is reachable with `Tab` and exposes a descriptive label, toggle buttons announce their on/off state, and the **More actions** menu opens with `Enter`/`Space` (or the arrow keys) and is navigated with the arrow, `Home`, `End`, and `Escape` keys.
+</Aside>
 
-- **Toggle presentation mode**: This toggles the presentation mode, which allows you to use your clicker or keyboard to navigate through your slides.
-- **Fullscreen mode**: Toggles the fullscreen mode from Visual Studio Code.
-- **Presentation view**: This toggles the presentation view, which hides the status bar, tabs, and activity bar to provide a distraction-free experience. You can also use the `setPresentationView` and `unsetPresentationView` actions to control the presentation view programmatically, or from the `Demo Time: Toggle presentation view (hides status bar, tabs, and activity bar)` command.
-- **Close side panel**: Closes the side panel to provide more space for your slides.
-- **Open the Demo Time panel**: Opens the Demo Time panel to access your demos and slides.
-- **Hide controls**: Hides the slide controls and mouse, allowing you to focus on your presentation without distractions.
+### View tools
 
-### Middle section
+- **Toggle presentation mode**: Toggles presentation mode, which allows you to use your clicker or keyboard to navigate through your slides. The button is highlighted while presentation mode is active.
+- **Toggle presentation view**: Toggles the presentation view, which hides VS Code UI areas (status bar, tabs, activity bar, …) for a distraction-free experience. You can also use the `setPresentationView` and `unsetPresentationView` actions, or the `Demo Time: Toggle presentation view (hides status bar, tabs, and activity bar)` command.
+- **Toggle fullscreen**: Toggles Visual Studio Code's fullscreen mode.
 
-- **Previous move**: Triggers the previous move (only if the `demo-time.previousEnabled` setting is enabled or when using grouped slides).
-- **Next move**: Triggers the next move.
+### Slide navigation
 
-### Right section
+- **Previous**: Triggers the previous move (only if the `demo-time.previousEnabled` setting is enabled or when using grouped slides).
+- **Slide counter**: Shows the current slide and total (for example `01 / 05`). When slide thumbnails are available, selecting it opens the **Go to slide** overview so you can jump straight to any slide.
+- **Next**: Triggers the next move.
 
-- **Toggle laser pointer**: Toggles the laser pointer, which can be used to highlight specific areas on your slides during the presentation.
-- **Toggle zoom**: Toggles the zoom feature, allowing you to zoom in on specific parts of your slides for better visibility.
+### Slide tools
 
-The following actions are only available when you are not in presentation mode:
-
-- **Toggle mouse position**: Toggles the mouse position overlay on the slide, which can be useful to position elements on your slides.
-- **Open slide source**: Opens the source file of the slide in the editor, allowing you to edit the slide content directly.
+- **Toggle laser pointer**: Toggles the laser pointer to highlight specific areas on your slides. The button is highlighted while the laser pointer is active.
+- **Toggle zoom**: Toggles the zoom feature to zoom in on parts of your slides. The button is highlighted while zoom is active.
+- **More actions** (`…`): Opens a menu with the remaining actions, grouped for discoverability:
+  - **Slide** _(only available when you are not in presentation mode)_
+    - **Mouse position**: Toggles the mouse position overlay on the slide, which can be useful to position elements on your slides.
+    - **Open slide source**: Opens the source file of the slide in the editor, allowing you to edit the slide content directly.
+  - **Workspace**
+    - **Show demos**: Opens the Demo Time panel to access your demos and slides.
+    - **Close sidebar**: Closes the side bar to provide more space for your slides.
+  - **Hide controls**: Hides the slide controls and mouse, allowing you to focus on your presentation without distractions.
 
 ## Auto-advancing to the next slide
 

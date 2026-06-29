@@ -2,6 +2,8 @@ export * from './analytics';
 export * from './ChatActionsService';
 export * from './DecoratorService';
 export * from './DemoApi';
+export * from './DemoActionDispatcher';
+export * from './DemoAutoProceedService';
 export * from './DesktopActionsService';
 export * from './DemoCreator';
 export * from './DemoFileProvider';

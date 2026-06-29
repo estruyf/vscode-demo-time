@@ -101,6 +101,30 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
     };
   }
 
+  if (action === Action.ShowQR) {
+    return {
+      action: Action.ShowQR,
+      url: '',
+      topText: '',
+      title: '',
+      description: '',
+      logo: '',
+      qrLayout: 'default',
+    };
+  }
+
+  if (action === Action.HideQR) {
+    return {
+      action: Action.HideQR,
+    };
+  }
+
+  if (action === Action.ClosePreview) {
+    return {
+      action: Action.ClosePreview,
+    };
+  }
+
   /**
    * Text actions
    */
@@ -635,6 +659,8 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
       pollId: '',
       startOnOpen: false,
       closeOnOpen: false,
+      pollDarkTheme: false,
+      pollControls: true,
     };
   }
 

@@ -12,6 +12,7 @@ import { WebViewMessages, COMMAND, Config, Demo, getDemosFromConfig } from '@dem
 export class DemoStatusBar {
   private static statusPresenting: StatusBarItem;
   private static statusBarItem: StatusBarItem;
+  private static statusBarAutomation: StatusBarItem;
   private static statusBarNotes: StatusBarItem;
   private static statusBarClock: StatusBarItem;
   private static statusBarPause: StatusBarItem;
@@ -39,6 +40,7 @@ export class DemoStatusBar {
     DemoStatusBar.createStatusBarItems();
 
     DemoStatusBar.update();
+    DemoStatusBar.updateAutomationIndicator();
 
     DemoStatusBar.startClock();
     DemoStatusBar.showTimer();
@@ -92,6 +94,19 @@ export class DemoStatusBar {
       DemoStatusBar.statusBarNotes.tooltip = `Show the notes for the current move`;
     }
 
+    if (!DemoStatusBar.statusBarAutomation) {
+      DemoStatusBar.statusBarAutomation = window.createStatusBarItem(
+        'automation',
+        StatusBarAlignment.Left,
+        100004,
+      );
+      DemoStatusBar.statusBarAutomation.name = `${Config.title} - Automation`;
+      DemoStatusBar.statusBarAutomation.backgroundColor = new ThemeColor(
+        'statusBarItem.prominentBackground',
+      );
+      DemoStatusBar.statusBarAutomation.color = new ThemeColor('statusBarItem.prominentForeground');
+    }
+
     if (!DemoStatusBar.statusBarPause) {
       DemoStatusBar.statusBarPause = window.createStatusBarItem(
         'pause-countdown',
@@ -126,6 +141,7 @@ export class DemoStatusBar {
       Logger.info('No next act file path found');
       DemoStatusBar.nextDemo = undefined;
       DemoStatusBar.statusBarItem?.hide();
+      DemoStatusBar.statusBarAutomation?.hide();
       DemoStatusBar.statusBarNotes?.hide();
       PresenterView.postMessage(WebViewMessages.toWebview.updateNextDemo, DemoStatusBar.nextDemo);
       return;
@@ -136,6 +152,7 @@ export class DemoStatusBar {
       Logger.info('Executing file not found in loaded act files');
       DemoStatusBar.nextDemo = undefined;
       DemoStatusBar.statusBarItem?.hide();
+      DemoStatusBar.statusBarAutomation?.hide();
       DemoStatusBar.statusBarNotes?.hide();
       PresenterView.postMessage(WebViewMessages.toWebview.updateNextDemo, DemoStatusBar.nextDemo);
       return;
@@ -147,6 +164,7 @@ export class DemoStatusBar {
       Logger.info('No current move found');
       DemoStatusBar.nextDemo = undefined;
       DemoStatusBar.statusBarItem?.hide();
+      DemoStatusBar.statusBarAutomation?.hide();
       DemoStatusBar.statusBarNotes?.hide();
       PresenterView.postMessage(WebViewMessages.toWebview.updateNextDemo, DemoStatusBar.nextDemo);
       return;
@@ -229,6 +247,50 @@ export class DemoStatusBar {
     } else {
       DemoStatusBar.statusPresenting.hide();
     }
+  }
+
+  public static updateAutomationIndicator() {
+    DemoStatusBar.createStatusBarItems();
+
+    const autoProceedActive = DemoRunner.getIsAutoProceedActive();
+    const autoProceedPaused = DemoRunner.getIsAutoProceedPaused();
+    const loopEnabled = DemoRunner.getIsLoopEnabled();
+    const countdown = DemoRunner.getAutoProceedCountdown();
+
+    if (!autoProceedActive && !loopEnabled) {
+      DemoStatusBar.statusBarAutomation.hide();
+      return;
+    }
+
+    const labels: string[] = [];
+    const tooltips: string[] = [];
+
+    if (autoProceedActive) {
+      if (autoProceedPaused) {
+        labels.push('$(debug-pause) Auto paused');
+        tooltips.push('Auto-proceed is paused');
+        DemoStatusBar.statusBarAutomation.command = COMMAND.resumeAutoProceed;
+      } else {
+        labels.push(countdown > 0 ? `$(watch) Auto ${countdown}s` : '$(watch) Auto');
+        tooltips.push(
+          countdown > 0
+            ? `Auto-proceed is active (${countdown}s remaining)`
+            : 'Auto-proceed is active',
+        );
+        DemoStatusBar.statusBarAutomation.command = COMMAND.pauseAutoProceed;
+      }
+    } else {
+      DemoStatusBar.statusBarAutomation.command = undefined;
+    }
+
+    if (loopEnabled) {
+      labels.push('$(debug-restart-frame) Loop');
+      tooltips.push('Loop is enabled for this act');
+    }
+
+    DemoStatusBar.statusBarAutomation.text = labels.join('  ');
+    DemoStatusBar.statusBarAutomation.tooltip = tooltips.join('\n');
+    DemoStatusBar.statusBarAutomation.show();
   }
 
   /**
@@ -331,6 +393,7 @@ export class DemoStatusBar {
 
   private static async startClock() {
     DemoStatusBar.ensureStatusBarClock();
+    DemoStatusBar.updateAutomationIndicator();
     const clock = DemoStatusBar.getCurrentClock();
     const timer = await DemoStatusBar.getTimer();
     DemoStatusBar.setStatusBarClockCommand(timer);

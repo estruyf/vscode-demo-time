@@ -162,4 +162,85 @@ describe('parseSnippetContent', () => {
       expect(result[3].action).toBe(Action.Highlight);
     });
   });
+
+  describe('New gallery snippet format', () => {
+    it('should parse new format JSON snippet (object with steps)', () => {
+      const jsonContent = JSON.stringify({
+        id: 'editor/insert-and-highlight',
+        name: 'Insert & highlight code',
+        description: 'Inserts content into a file and highlights the inserted lines.',
+        author: 'estruyf',
+        version: '1.0.0',
+        tags: ['editor', 'code'],
+        fields: [
+          { name: 'MAIN_FILE', type: 'string', required: true },
+          { name: 'CONTENT_PATH', type: 'string', required: true },
+          { name: 'CONTENT_POSITION', type: 'number', required: true },
+          { name: 'HIGHLIGHT_POSITION', type: 'number', required: false },
+        ],
+        steps: [
+          { action: 'unselect' },
+          {
+            action: 'insert',
+            path: '{MAIN_FILE}',
+            contentPath: '{CONTENT_PATH}',
+            position: '{CONTENT_POSITION}',
+          },
+          { action: 'highlight', path: '{MAIN_FILE}', position: '{HIGHLIGHT_POSITION}' },
+        ],
+      });
+
+      const result = parseSnippetContent(jsonContent, 'insert-and-highlight.json');
+
+      expect(result).toHaveLength(3);
+      expect(result[0].action).toBe(Action.Unselect);
+      expect(result[1].action).toBe(Action.Insert);
+      expect(result[2].action).toBe(Action.Highlight);
+    });
+
+    it('should parse new format YAML snippet (object with steps)', () => {
+      const yamlContent = `id: editor/insert-and-highlight
+name: Insert & highlight code
+description: Inserts content into a file and highlights the inserted lines.
+author: estruyf
+version: "1.0.0"
+tags:
+  - editor
+  - code
+fields:
+  - name: MAIN_FILE
+    type: string
+    required: true
+  - name: CONTENT_PATH
+    type: string
+    required: true
+steps:
+  - action: unselect
+  - action: insert
+    path: "{MAIN_FILE}"
+    contentPath: "{CONTENT_PATH}"
+  - action: highlight
+    path: "{MAIN_FILE}"
+`;
+
+      const result = parseSnippetContent(yamlContent, 'insert-and-highlight.yaml');
+
+      expect(result).toHaveLength(3);
+      expect(result[0].action).toBe(Action.Unselect);
+      expect(result[1].action).toBe(Action.Insert);
+      expect(result[2].action).toBe(Action.Highlight);
+    });
+
+    it('should throw for new format JSON snippet with invalid steps', () => {
+      const jsonContent = JSON.stringify({
+        id: 'bad/snippet',
+        name: 'Bad snippet',
+        steps: 'not-an-array',
+      });
+
+      expect(() => {
+        parseSnippetContent(jsonContent, 'bad.json');
+      }).toThrow(/Invalid snippet format/);
+    });
+  });
 });

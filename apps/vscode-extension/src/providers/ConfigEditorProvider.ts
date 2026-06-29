@@ -22,6 +22,7 @@ import {
 } from '../services';
 import {
   checkSnippetArgs,
+  listSnippetFiles,
   getDemoApiData,
   getFileUri,
   getRelPath,
@@ -188,6 +189,8 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           openFile(payload, document.uri);
         } else if (command === WebViewMessages.toVscode.configEditor.checkSnippetArgs && payload) {
           await handleCheckSnippetArgs(payload, webviewPanel, command, requestId);
+        } else if (command === WebViewMessages.toVscode.configEditor.listSnippets) {
+          await handleListSnippets(webviewPanel, command, requestId);
         } else if (command === WebViewMessages.toVscode.configEditor.getDemoIds) {
           await handleGetDemoIds(webviewPanel, command, requestId);
         } else if (command === WebViewMessages.toVscode.configEditor.createNotes) {
@@ -381,6 +384,10 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
       // Reason: the config is downgraded to the DemoConfig to keep supporting the older schema in the editor,
       // but we want to save in the latest ActConfig format if the config is already in that format (version 3)
       const configToSave = config.version === 3 ? demoConfigToActConfig(config) : config;
+      if (config.version === 3) {
+        // Keep act-level loop stable even if conversion helpers are out of date in a running build.
+        configToSave.loop = config.loop;
+      }
 
       const edit = new WorkspaceEdit();
       const demo = DemoFileProvider.formatFileContent(configToSave, document.uri);
@@ -409,6 +416,9 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
 
       // If version is 3, it's already an ActConfig; otherwise convert from DemoConfig
       const configToSave = config.version === 3 ? config : demoConfigToActConfig(config);
+      if (config.version === 3) {
+        configToSave.loop = config.loop;
+      }
 
       const demo = DemoFileProvider.formatFileContent(configToSave, document.uri);
       if (!demo) {
@@ -490,6 +500,28 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           command,
           requestId: requestId,
           payload: undefined,
+        });
+      }
+    }
+
+    async function handleListSnippets(
+      webviewPanel: WebviewPanel,
+      command: string,
+      requestId: string | undefined,
+    ) {
+      try {
+        const snippets = await listSnippetFiles();
+        webviewPanel.webview.postMessage({
+          command,
+          requestId: requestId,
+          payload: snippets,
+        });
+      } catch (error) {
+        console.error('Failed to list snippet files:', error);
+        webviewPanel.webview.postMessage({
+          command,
+          requestId: requestId,
+          payload: [],
         });
       }
     }

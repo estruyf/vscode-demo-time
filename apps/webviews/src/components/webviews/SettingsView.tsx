@@ -41,7 +41,7 @@ const SettingsView = () => {
   };
 
   const saveSettings = () => {
-    if (!settings || !originalSettings) return;
+    if (!settings || !originalSettings) {return;}
     setSaveLoading(true);
     const changed: Partial<IDemoTimeSettings> = {};
     for (const key in settings) {
@@ -184,7 +184,7 @@ const SettingsView = () => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
 export default SettingsView;
