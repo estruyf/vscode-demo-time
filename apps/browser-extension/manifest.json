@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "DemoTime Browser Extension",
+  "version": "1.0.0",
+  "description": "Navigate back to DemoTime slides in Visual Studio Code",
+  "action": {
+    "default_popup": "pages/home.html",
+    "default_icon": {
+      "16": "assets/logo-16.png",
+      "48": "assets/logo-48.png",
+      "128": "assets/logo-128.png"
+    }
+  },
+  "icons": {
+    "16": "assets/logo-16.png",
+    "48": "assets/logo-48.png",
+    "128": "assets/logo-128.png"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ]
+}
