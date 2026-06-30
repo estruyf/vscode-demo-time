@@ -610,6 +610,9 @@
                       },
                       "insertTypingSpeed": {
                         "$ref": "#/definitions/insertTypingSpeed"
+                      },
+                      "waitTimeout": {
+                        "$ref": "#/definitions/waitTimeout"
                       }
                     }
                   }
@@ -1373,6 +1376,12 @@
     "timeout": {
       "type": "number",
       "title": "Timeout in milliseconds"
+    },
+    "waitTimeout": {
+      "type": "number",
+      "default": 5000,
+      "minimum": 1,
+      "title": "Maximum time in milliseconds to wait for shell integration to confirm command completion. Overrides the default 5000ms cap. Useful for long-running commands such as builds or test suites."
     },
     "url": {
       "type": "string",
