@@ -1,3 +1,214 @@
+## [2.2.0] - 2026-xx-xx
+
+- Added `waitForMessage` property to the `executeScript` action to wait until the script outputs a specific string before advancing to the next step, instead of waiting for the process to exit
+- Added `showProgress` property to the `executeScript` action to control whether the progress notification is shown while the script is executing (default: `true`)
+- Fix preview taking focus when saving a markdown file and only update the preview when editing the current slide
+- Custom themes are now loaded from the workspace URL instead of retrieving the file contents
+- Fix slide content not updating when navigating between slides that share the same custom layout template
+- Add QR preview support with `showQR`, `hideQR`, and `closePreview` actions
+- Add `qrLayout` option to `showQR` with constrained `left`/`right` layout choices
+- [#210](https://github.com/estruyf/vscode-demo-time/issues/210): Add a Snippets Gallery webview to browse and download community snippets directly into `.demo/snippets`, including downloaded-state indicators and a gallery snippet schema at `docs/public/gallery/snippet.schema.json`
+- [#394](https://github.com/estruyf/vscode-demo-time/issues/394): Allow relative paths for `openWebsite` when opening content in the VS Code browser and expose workspace path variables
+- [#397](https://github.com/estruyf/vscode-demo-time/issues/397): Enable running scenes and moves from source file
+- [#398](https://github.com/estruyf/vscode-demo-time/issues/398): Add slide navigator in the preview webview when using a slide group
+- [#401](https://github.com/estruyf/vscode-demo-time/issues/401): Add a new `center` slide layout that centers all content both vertically and horizontally
+- [#402](https://github.com/estruyf/vscode-demo-time/issues/402): Added an auto-proceed mode for acts to automatically advance to the next move after a specified delay, with the ability to loop back to the beginning of the act when reaching the end
+
+## [2.1.1] - 2026-04-16
+
+- Fix on next and previous slide controls
+
+## [2.1.0] - 2026-04-02
+
+- [#360](https://github.com/estruyf/vscode-demo-time/issues/360): Added `hideDesktopIcons` and `showDesktopIcons` actions to control the visibility of desktop icons during a demo
+- [#368](https://github.com/estruyf/vscode-demo-time/issues/368): Added new slide type called `animated` to displays an SVG file and progressively draws its paths and shapes using a stroke animation effect
+- [#376](https://github.com/estruyf/vscode-demo-time/issues/376): Have the ability to enlarge notes in the presenter view for better readability during demos/presentations
+- [#381](https://github.com/estruyf/vscode-demo-time/issues/381): Add redaction mode for masking sensitive values during demos
+- [#388](https://github.com/estruyf/vscode-demo-time/issues/388): Fix terminal command character bleed in sequential executeTerminalCommand calls
+- [#389](https://github.com/estruyf/vscode-demo-time/issues/389): Support the integrated Visual Studio Code browser
+
+## [2.0.0] - 2026-02-09
+
+- [#257](https://github.com/estruyf/vscode-demo-time/issues/257): Have a new
+  `demoTime.presentationViewToggles` setting to control the UI areas that get
+  hidden when toggling presentation view
+- [#322](https://github.com/estruyf/vscode-demo-time/issues/322): Added support
+  for YAML snippets - snippets can now be created in both JSON and YAML formats
+  (`.json`, `.jsonc`, `.yaml`, `.yml`)
+- [#327](https://github.com/estruyf/vscode-demo-time/issues/327): Added the new
+  terminology - Play, Act, Scene, and Move - to replace the previous Demo, Step,
+  and Action terminology
+- [#339](https://github.com/estruyf/vscode-demo-time/issues/339): Prevent
+  unnecessary zoom when consecutive highlights are performed
+- [#340](https://github.com/estruyf/vscode-demo-time/issues/340): Fix an issue
+  with the `path` label for the `executeScript` action in the step editor
+- [#341](https://github.com/estruyf/vscode-demo-time/issues/341): Added the
+  `args` property to the `executeScript` action to allow passing command-line
+  arguments to the script being executed
+- [#343](https://github.com/estruyf/vscode-demo-time/issues/343): added the zoom
+  actions: `zoomIn`, `zoomOut`, and `zoomReset` to control the editor zoom level
+  during your demo
+- [#345](https://github.com/estruyf/vscode-demo-time/issues/345): Allow
+  `showEngageTimePoll` to close the poll on show via `closeOnOpen`, mutually
+  exclusive with `startOnOpen`
+- [#348](https://github.com/estruyf/vscode-demo-time/issues/348): Added the
+  analytics PRO feature
+- [#361](https://github.com/estruyf/vscode-demo-time/issues/361): Video control
+  support in slides
+- [#362](https://github.com/estruyf/vscode-demo-time/issues/362): Ignore next
+  click when the editor is still in typing mode
+- [#363](https://github.com/estruyf/vscode-demo-time/issues/363): Fixed video
+  control support in custom slide layouts
+- [#365](https://github.com/estruyf/vscode-demo-time/issues/365): New
+  `focusTerminal` action to focus the terminal view in VS Code
+- [#366](https://github.com/estruyf/vscode-demo-time/issues/366): Added the
+  `sendKeybinding` action to send keybindings to the focused terminal
+- [#371](https://github.com/estruyf/vscode-demo-time/issues/371): Fix demo count
+  on the overview page
+- [#373](https://github.com/estruyf/vscode-demo-time/issues/373): Added the
+  `pixels` theme to the slide themes
+- [#382](https://github.com/estruyf/vscode-demo-time/issues/382): Enable
+  per-step blur and opacity overrides for individual highlight actions via
+  `highlightBlur` and `highlightOpacity` properties
+- [#383](https://github.com/estruyf/vscode-demo-time/issues/383): Added the
+  `enableZenMode` and `disableZenMode` actions to control Zen Mode during Scenes
+
+## [1.12.0] - 2025-12-16
+
+- **BREAKING**: Changed project license from MIT to Apache License 2.0. See
+  [LICENSE](./LICENSE) for details.
+- [#302](https://github.com/estruyf/vscode-demo-time/issues/302): Added a new
+  `selection` action to select text in the editor based on start and end
+  placeholders or line and character positioning
+- [#305](https://github.com/estruyf/vscode-demo-time/issues/305): Fix Windows
+  file parsing
+- [#308](https://github.com/estruyf/vscode-demo-time/issues/308): Fixed sticky
+  header issue in StepEditor component
+- [#309](https://github.com/estruyf/vscode-demo-time/issues/309): Updated
+  `InsertTypingModePicker` component to correctly fetch and display the current
+  typing mode setting
+- [#310](https://github.com/estruyf/vscode-demo-time/issues/310): Fixed issue
+  where `InsertTypingModePicker` did not highlight on single line selection
+- [#311](https://github.com/estruyf/vscode-demo-time/issues/311): Added support
+  for next and previous commands in the shell with the
+  `terminal.integrated.commandsToSkipShell` setting
+- [#315](https://github.com/estruyf/vscode-demo-time/issues/315): Dark mode
+  fixes on the config and overview editor
+- [#318](https://github.com/estruyf/vscode-demo-time/issues/318): Added the
+  `cancelCopilotChat` action to cancel the current Copilot chat request
+- [#319](https://github.com/estruyf/vscode-demo-time/issues/319): Added preview
+  next slide support on the presenter view
+- [#321](https://github.com/estruyf/vscode-demo-time/issues/321): Fix the file
+  formatting when moving steps in the act file
+- [#326](https://github.com/estruyf/vscode-demo-time/issues/326): Move the Demo
+  Time to the activity bar
+- [#330](https://github.com/estruyf/vscode-demo-time/issues/330): Added new
+  `copyFromSelection` action to copy text from the current selection in the
+  editor
+
+## [1.11.0] - 2025-11-04
+
+- [#262](https://github.com/estruyf/vscode-demo-time/issues/262): Added a recent
+  files dropdown to the path input component in the act editor
+- [#265](https://github.com/estruyf/vscode-demo-time/issues/265): Verify the
+  demo IDs when in source mode so that there are no duplicate IDs across
+  multiple files in the workspace
+- [#266](https://github.com/estruyf/vscode-demo-time/issues/266): Added a
+  `generate demo id` button to (re)generate a unique id for the demo
+- [#267](https://github.com/estruyf/vscode-demo-time/issues/267): Clean up
+  unrelated properties after selecting a new action
+- [#269](https://github.com/estruyf/vscode-demo-time/issues/269): Added a new
+  `video` slide layout to allow video as slide background
+- [#270](https://github.com/estruyf/vscode-demo-time/issues/270): Added the
+  `startOnOpen` property to the `showEngageTimePoll` action to automatically
+  start the poll when it is shown
+- [#271](https://github.com/estruyf/vscode-demo-time/issues/271): Add new
+  `/api/previous` API endpoint for PWA integration
+- [#273](https://github.com/estruyf/vscode-demo-time/issues/273): Added the new
+  `/api/notes` API endpoint to retrieve the notes of the current slide
+- [#274](https://github.com/estruyf/vscode-demo-time/issues/274): Added support
+  for `shellIntegration` by VS Code terminals
+- [#280](https://github.com/estruyf/vscode-demo-time/issues/280): Added new
+  `/api/screenshot` API endpoint to retrieve a screenshot of the next slide
+- [#282](https://github.com/estruyf/vscode-demo-time/issues/282): Updated the
+  GitHub Copilot chat actions to use the new commands
+- [#283](https://github.com/estruyf/vscode-demo-time/issues/283): Added a new
+  `customCopilotChat` action to allow users to start a chat in a specific mode
+- [#284](https://github.com/estruyf/vscode-demo-time/issues/284): Added clock
+  information to the `/api/demos` endpoint
+- [#285](https://github.com/estruyf/vscode-demo-time/issues/285): Render the
+  next screenshot in the PWA remote control view
+- [#287](https://github.com/estruyf/vscode-demo-time/issues/287): Added the
+  `/api/zoom-in` and `/api/zoom-out` API endpoints to control the font size in
+  the editor
+- [#288](https://github.com/estruyf/vscode-demo-time/issues/288): Added the
+  `sendEngageTimeMessage` action to send messages to EngageTime timeline
+- [#289](https://github.com/estruyf/vscode-demo-time/issues/289): Added support
+  for `code-insiders` when using the `bringToFront` argument
+- [#291](https://github.com/estruyf/vscode-demo-time/issues/291): Added VS Code
+  Command Picker to select commands when using the `executeVSCodeCommand` action
+- [#292](https://github.com/estruyf/vscode-demo-time/issues/292): Dark mode
+  fixes for the act editor
+- [#293](https://github.com/estruyf/vscode-demo-time/issues/293): Add the
+  command name to step when using the `executeVSCodeCommand` action
+- [#294](https://github.com/estruyf/vscode-demo-time/issues/294): When adding a
+  new action, the action dropdown will now be focused automatically
+
+## [1.10.0] - 2025-10-01
+
+- [#201](https://github.com/estruyf/vscode-demo-time/issues/201): Project is
+  moved to a new monorepo structure with Nx
+- [#227](https://github.com/estruyf/vscode-demo-time/issues/227): Open a slide
+  at a specific location
+- [#229](https://github.com/estruyf/vscode-demo-time/issues/229): Integration
+  with [EngageTime](https://engagetime.live)
+- [#234](https://github.com/estruyf/vscode-demo-time/issues/234): Fix for
+  negative values in the insert typing speed and improved the labels
+- [#235](https://github.com/estruyf/vscode-demo-time/issues/235): Added the
+  `pause` action to pause the demo and wait until the `Demo Time: Continue Demo`
+  command is triggered
+- [#236](https://github.com/estruyf/vscode-demo-time/issues/236): Visual
+  improvements for the Act Editor
+- [#239](https://github.com/estruyf/vscode-demo-time/issues/239): New overview
+  dashboard which can be opened by using the `Demo Time: Overview` command
+- [#240](https://github.com/estruyf/vscode-demo-time/issues/240): Every GitHub
+  Copilot chat action now opens the chat view by default
+- [#242](https://github.com/estruyf/vscode-demo-time/issues/242): Fix the
+  content path in the `Demo Time: Create patch for current file` command
+  execution
+- [#244](https://github.com/estruyf/vscode-demo-time/issues/244): Moved the
+  EngageTime session ID to the act file level
+- [#245](https://github.com/estruyf/vscode-demo-time/issues/245): Fix right
+  panel height
+- [#246](https://github.com/estruyf/vscode-demo-time/issues/246): Added support
+  for relative URLs to images in CSS themes
+- [#249](https://github.com/estruyf/vscode-demo-time/issues/249): Fix reveal of
+  slides after navigating to another file
+- [#253](https://github.com/estruyf/vscode-demo-time/issues/253): Added support
+  for other types of keyboard keys: `tab`, `arrowLeft`, `arrowRight`, `arrowUp`,
+  `arrowDown`, `escape`, `backspace`, and `delete`
+- [#255](https://github.com/estruyf/vscode-demo-time/issues/255): Optimize the
+  normalized source path handling in the custom template conversion
+- [#256](https://github.com/estruyf/vscode-demo-time/issues/256): Added
+  `{{crntSlideIdx}}` and `{{totalSlides}}` variables to the slide header and
+  footer templates
+- [#260](https://github.com/estruyf/vscode-demo-time/issues/260): Added dark
+  mode support for the act editor, settings editor, and overview dashboard
+- [#261](https://github.com/estruyf/vscode-demo-time/issues/261): Added a
+  message for the PowerPoint addin that it can be shown outside of the visible
+  slide container
+- [#263](https://github.com/estruyf/vscode-demo-time/issues/263): Show icons in
+  the icon picker
+- [#264](https://github.com/estruyf/vscode-demo-time/issues/264): New `focusTop`
+  property for the `openFile` action to control if the editor should focus on
+  the top of the file or not
+- [#268](https://github.com/estruyf/vscode-demo-time/issues/268): Fix the
+  `openInVSCode` property which was not working as expected
+- [#271](https://github.com/estruyf/vscode-demo-time/issues/271): Added the new
+  `/api/previous` endpoint to trigger the previous move
+- [#272](https://github.com/estruyf/vscode-demo-time/issues/272): Added the Demo
+  Time Remote Control PWA to control your presentation from another device
+
 ## [1.9.0] - 2025-08-25
 
 - [#219](https://github.com/estruyf/vscode-demo-time/issues/219): Added a GUI
@@ -6,24 +217,24 @@
   title for the `waitForInput` action
 - [#221](https://github.com/estruyf/vscode-demo-time/issues/221): Added support
   for the `autoAdvanceAfter` property in the slide front matter to automatically
-  advance to the next slide or demo
+  advance to the next slide or scene
 - [#222](https://github.com/estruyf/vscode-demo-time/issues/222): Added the
-  ability to disable a demo or step
+  ability to disable a scene or move
 - [#225](https://github.com/estruyf/vscode-demo-time/issues/225): Added a GUI
   for editing all the settings from Demo Time
 - [#226](https://github.com/estruyf/vscode-demo-time/issues/226): New Demo Time
-  action `runDemoById` to allow to trigger a demo from another demo
+  action `runDemoById` to allow to trigger a scene from another scene
 
 ## [1.8.0] - 2025-08-02
-- [#271](https://github.com/estruyf/vscode-demo-time/issues/271): Added the new
-  `/api/previous` endpoint to trigger the previous move loading the slides when
-  switching between demo and slides
-- [#221](https://github.com/estruyf/vscode-demo-time/issues/221): Added support
-  for the `autoAdvanceAfter` property in the slide front matter to automatically
-  advance to the next slide or scene `hacker-typer` typing mode to the `insert`,
-  `replace`, and `patch` actions
-- [#222](https://github.com/estruyf/vscode-demo-time/issues/222): Added the
-  ability to disable a scene or move
+
+- [#199](https://github.com/estruyf/vscode-demo-time/issues/199): Improve
+  loading the slides when switching between demo and slides
+- [#204](https://github.com/estruyf/vscode-demo-time/issues/204): Added the
+  `openTerminal` action to open a the terminal
+- [#205](https://github.com/estruyf/vscode-demo-time/issues/205): Added the
+  `hacker-typer` typing mode to the `insert`, `replace`, and `patch` actions
+- [#207](https://github.com/estruyf/vscode-demo-time/issues/207): Made the
+  `message` property optional for the GitHub Copilot chat actions
 - [#208](https://github.com/estruyf/vscode-demo-time/issues/208): The JSON
   schema has been refactored to have intellisense per action on which properties
   are required and optional
@@ -41,7 +252,7 @@
 ## [1.7.1] - 2025-07-10
 
 - [#202](https://github.com/estruyf/vscode-demo-time/issues/202): Fix an issue
-  with the demo parsing during add step
+  with the demo parsing during add demo step
 
 ## [1.7.0] - 2025-07-07
 
@@ -161,7 +372,7 @@
   Demo Time via [@demotime/mcp](https://www.npmjs.com/package/@demotime/mcp)
 - [#113](https://github.com/estruyf/vscode-demo-time/pull/113): Enhancement for
   the end placeholder setting to look after the start placeholder index. Thanks
-  to [Leonardo Montini](https://github.com/Balastrong).
+  to, [Leonardo Montini](https://github.com/Balastrong).
 - [#114](https://github.com/estruyf/vscode-demo-time/issues/114): Fix to show
   the correct view step demo. Thanks to
   [Leonardo Montini](https://github.com/Balastrong).
@@ -647,7 +858,7 @@
 
 ## [0.0.20] - 2024-06-07
 
-- [#3](https://github.com/estruyf/vscode-demo-time/issues/3): Added a statusbar
+- [#3](https://github.com/estruyf/vscode-demo-time/issues/3): Added a status bar
   item to show the next step to execute
 
 ## [0.0.19] - 2024-05-18
@@ -750,3 +961,4 @@
 ## [0.0.1] - 2023-12-08
 
 - Initial release
+
