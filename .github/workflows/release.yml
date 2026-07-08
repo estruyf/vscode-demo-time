@@ -8,6 +8,7 @@ on:
 env:
   MS_URL: "https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-demo-time"
   VSX_URL: "https://open-vsx.org/extension/eliostruyf/vscode-demo-time"
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
 
 jobs:
   verify:

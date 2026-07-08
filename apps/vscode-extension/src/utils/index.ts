@@ -24,6 +24,8 @@ export * from './getFileContents';
 export * from './getFileName';
 export * from './getFileUri';
 export * from './getInsertionSpeed';
+export * from './getInsertionSpeedRandomness';
+export * from './getRandomizedTypingDelay';
 export * from './getLineAndCharacterPosition';
 export * from './getLineRange';
 export * from './getNextDemoFile';

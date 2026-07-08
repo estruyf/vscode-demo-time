@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, Info } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { DemoListItem } from './DemoListItem';
@@ -28,8 +28,6 @@ export const DemoSection: React.FC<DemoSectionProps> = ({
   onPlayDemo,
   onDuplicateDemo,
 }) => {
-  const [showInfo, setShowInfo] = React.useState(false);
-
   // Drag-and-drop state for the drop zone
   const [draggingIndex, setDraggingIndex] = React.useState<number | null>(null);
   const [dropZoneActive, setDropZoneActive] = React.useState(false);
@@ -54,41 +52,26 @@ export const DemoSection: React.FC<DemoSectionProps> = ({
 
   return (
     <Card>
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-3">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-            Scenes ({(demos || []).length})
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+            Scenes
           </h2>
-          <button
-            onClick={() => setShowInfo(!showInfo)}
-            className="p-1 text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xs transition-colors"
-            title="About demos"
-          >
-            <Info className="h-4 w-4" />
-          </button>
+          <span className="px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-sm font-semibold tabular-nums">
+            {(demos || []).length}
+          </span>
         </div>
-        <div>
-          <Button
-            variant="dark"
-            onClick={onAddDemo}
-            icon={Plus}
-            size="sm"
-          >
-            Add Scene
-          </Button>
-        </div>
+        <Button
+          variant="dark"
+          onClick={onAddDemo}
+          icon={Plus}
+          size="sm"
+        >
+          Add
+        </Button>
       </div>
 
-      {showInfo && (
-        <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
-          <p className="text-xs text-blue-800 dark:text-blue-200">
-            <span className="font-medium text-blue-900 dark:text-blue-100">About Scenes:</span> Each scene can consist of multiple moves that will be running in sequence right after each other.
-            Create organized demonstrations by grouping related actions together.
-          </p>
-        </div>
-      )}
-
-      <div className="space-y-3">
+      <div className="space-y-1">
         {/* Drop zone before the first item */}
         <div
           onDragOver={handleDropZoneDragOver}

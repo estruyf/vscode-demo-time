@@ -1,6 +1,6 @@
 [
   {
-    "$schema": "https://beta.demotime.show/gallery/snippet.schema.json",
+    "$schema": "https://beta.demotime.show/gallery/index.schema.json",
     "id": "setup/presentation-clean-up-macos",
     "name": "Presentation clean-up",
     "description": "Restores VS Code to its original state after a presentation: disables Caffeine, shows the menubar, switches back to the original theme, exits full screen, and shows the activity bar and title bar.",
@@ -29,7 +29,7 @@
     ]
   },
   {
-    "$schema": "https://beta.demotime.show/gallery/snippet.schema.json",
+    "$schema": "https://beta.demotime.show/gallery/index.schema.json",
     "id": "setup/presentation-mode-macos",
     "name": "Presentation mode setup",
     "description": "Prepares VS Code for presenting: enables Caffeine (no sleep), hides the menubar, switches to a theme, enters full screen, and hides the activity bar and title bar for a clean, distraction-free setup.",

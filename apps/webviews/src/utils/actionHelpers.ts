@@ -159,6 +159,77 @@ export const getActionColor = (action: Action): string => {
   return colorMap.default;
 };
 
+/**
+ * Returns a human-readable label for an action value.
+ * e.g. "applyPatch" -> "Apply patch", "macos.enableFocusMode" -> "Enable focus mode".
+ */
+export const getActionLabel = (action: Action | string): string => {
+  const raw = String(action || '').split('.').pop() || '';
+  if (!raw) {
+    return '';
+  }
+  const spaced = raw
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .replace(/[_-]+/g, ' ')
+    .trim();
+  return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+};
+
+/**
+ * Returns a solid dot color (Tailwind background class) for a move's action,
+ * grouped by the same categories as getActionColor. Used for the per-move
+ * indicator dots in the scenes list.
+ */
+export const getActionDotColor = (action: Action | string): string => {
+  const a = String(action || '');
+
+  if (
+    a.includes('file') ||
+    a.includes('File') ||
+    a.includes('open') ||
+    a.includes('create') ||
+    a.includes('save')
+  ) {
+    return 'bg-blue-500';
+  }
+  if (
+    a.includes('edit') ||
+    a.includes('insert') ||
+    a.includes('replace') ||
+    a.includes('highlight') ||
+    a.includes('selection') ||
+    a.includes('format')
+  ) {
+    return 'bg-green-500';
+  }
+  if (a.includes('delete') || a.includes('close') || a.includes('unselect')) {
+    return 'bg-red-500';
+  }
+  if (
+    a.includes('execute') ||
+    a.includes('command') ||
+    a.includes('script') ||
+    a.includes('terminal')
+  ) {
+    return 'bg-purple-500';
+  }
+  if (
+    a.includes('Setting') ||
+    a.includes('Theme') ||
+    a.includes('View') ||
+    a.includes('message')
+  ) {
+    return 'bg-amber-500';
+  }
+  if (a.includes('Copilot') || a.includes('Chat')) {
+    return 'bg-indigo-500';
+  }
+  if (a.includes('clipboard') || a.includes('Clipboard')) {
+    return 'bg-teal-500';
+  }
+  return 'bg-gray-400';
+};
+
 export const getRequiredFields = (action: Action): string[] => {
   const requiredMap: Record<Action, string[]> = {
     [Action.ApplyPatch]: ['path', 'contentPath', 'patch'],
@@ -261,7 +332,14 @@ export const getRequiredFields = (action: Action): string[] => {
 
 export const getFieldsForAction = (action: Action): string[] => {
   const fieldMap: Record<Action, string[]> = {
-    [Action.ApplyPatch]: ['path', 'contentPath', 'patch', 'insertTypingSpeed', 'insertTypingMode'],
+    [Action.ApplyPatch]: [
+      'path',
+      'contentPath',
+      'patch',
+      'insertTypingSpeed',
+      'insertTypingSpeedRandomness',
+      'insertTypingMode',
+    ],
     [Action.Create]: ['path', 'content', 'contentPath'],
     [Action.Open]: ['path', 'focusTop'],
     [Action.Rename]: ['path', 'dest'],
@@ -281,6 +359,7 @@ export const getFieldsForAction = (action: Action): string[] => {
       'startPlaceholder',
       'endPlaceholder',
       'insertTypingSpeed',
+      'insertTypingSpeedRandomness',
       'insertTypingMode',
     ],
     [Action.Highlight]: [
@@ -302,6 +381,7 @@ export const getFieldsForAction = (action: Action): string[] => {
       'startPlaceholder',
       'endPlaceholder',
       'insertTypingSpeed',
+      'insertTypingSpeedRandomness',
       'insertTypingMode',
     ],
     [Action.Unselect]: [],
@@ -330,6 +410,7 @@ export const getFieldsForAction = (action: Action): string[] => {
       'autoExecute',
       'insertTypingMode',
       'insertTypingSpeed',
+      'insertTypingSpeedRandomness',
     ],
     [Action.SendKeybinding]: ['keybinding'],
     [Action.ExecuteScript]: ['id', 'command', 'path', 'args', 'waitForMessage', 'showProgress'],
@@ -348,7 +429,7 @@ export const getFieldsForAction = (action: Action): string[] => {
     [Action.CopyToClipboard]: ['content', 'contentPath'],
     [Action.CopyFromSelection]: [],
     [Action.PasteFromClipboard]: [],
-    [Action.TypeText]: ['content', 'insertTypingSpeed'],
+    [Action.TypeText]: ['content', 'insertTypingSpeed', 'insertTypingSpeedRandomness'],
     [Action.PressEnter]: [],
     [Action.PressTab]: [],
     [Action.PressArrowLeft]: [],
@@ -378,7 +459,7 @@ export const getFieldsForAction = (action: Action): string[] => {
     [Action.CloseEngageTimeSession]: [],
     [Action.CloseEngageTimePoll]: ['pollId'],
     [Action.ShowEngageTimeSession]: [],
-    [Action.ShowEngageTimePoll]: ['pollId', 'startOnOpen', 'closeOnOpen'],
+    [Action.ShowEngageTimePoll]: ['pollId', 'startOnOpen', 'closeOnOpen', 'pollDarkTheme', 'pollControls'],
     [Action.SendEngageTimeMessage]: ['type', 'title', 'message'],
     [Action.ZoomIn]: ['zoom'],
     [Action.ZoomOut]: ['zoom'],

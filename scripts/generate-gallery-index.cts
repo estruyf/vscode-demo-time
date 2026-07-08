@@ -144,8 +144,8 @@ function validateSnippet(snippet: GallerySnippetFull, expectedId: string): strin
   }
 
   // Tags must be a non-empty array of strings
-  if (!Array.isArray(snippet.tags) || snippet.tags.length === 0) {
-    errors.push(`"tags" must be a non-empty array`);
+  if (!Array.isArray(snippet.tags) || snippet.tags.length === 0 || !snippet.tags.every((t: unknown) => typeof t === 'string')) {
+    errors.push(`"tags" must be a non-empty array of strings`);
   }
 
   // Steps must be a non-empty array
@@ -162,6 +162,10 @@ function validateSnippet(snippet: GallerySnippetFull, expectedId: string): strin
   // Validate each field entry
   const definedFieldNames = new Set<string>();
   for (const field of snippet.fields) {
+    if (!field || typeof field !== 'object') {
+      errors.push(`A field entry is not a valid object`);
+      continue;
+    }
     if (!field.name) {
       errors.push(`A field entry is missing "name"`);
       continue;
@@ -177,8 +181,8 @@ function validateSnippet(snippet: GallerySnippetFull, expectedId: string): strin
       );
     }
 
-    if (field.required === undefined) {
-      errors.push(`Field "${field.name}" is missing "required"`);
+    if (typeof field.required !== 'boolean') {
+      errors.push(`Field "${field.name}" "required" must be a boolean`);
     }
 
     if (field.required === true && field.default !== undefined) {

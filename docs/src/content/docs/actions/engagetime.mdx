@@ -171,6 +171,11 @@ pollId: poll-1
 
 Use `showEngageTimePoll` to display poll results in the presenter view. You can set **either** `startOnOpen` to start the poll when shown, **or** `closeOnOpen` to close it immediately when shown (for quizzes or timed questions). These options are mutually exclusive.
 
+The poll embed supports two additional appearance options:
+
+- `pollDarkTheme` — When `true`, opens the poll embed with the dark theme (`?theme=dark`). Defaults to the light theme.
+- `pollControls` — Controls whether the poll UI controls are shown in the embed. Defaults to `true`.
+
 <Tabs syncKey="show-engagetime-poll">
 <TabItem label="JSON">
 
@@ -179,7 +184,9 @@ Use `showEngageTimePoll` to display poll results in the presenter view. You can 
   "action": "showEngageTimePoll",
   "pollId": "poll-1",
   "startOnOpen": false,
-  "closeOnOpen": true
+  "closeOnOpen": true,
+  "pollDarkTheme": true,
+  "pollControls": false
 }
 ```
 
@@ -191,6 +198,8 @@ action: showEngageTimePoll
 pollId: poll-1
 startOnOpen: false
 closeOnOpen: true
+pollDarkTheme: true
+pollControls: false
 ```
 
 </TabItem>

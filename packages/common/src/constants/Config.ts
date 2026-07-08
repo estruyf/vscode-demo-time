@@ -30,6 +30,7 @@ export const Config = {
     speed: 'lineInsertionDelay',
     typingMode: 'insertTypingMode',
     typingSpeed: 'insertTypingSpeed',
+    typingSpeedRandomness: 'insertTypingSpeedRandomness',
     hackerTyperChunkSize: 'hackerTyperChunkSize',
   },
   terminal: {
@@ -64,5 +65,8 @@ export const Config = {
   redaction: {
     enabled: 'redaction.enabled',
     customPatterns: 'redaction.customPatterns',
+  },
+  recording: {
+    captureSaves: 'recording.captureSaves',
   },
 };

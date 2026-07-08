@@ -32,9 +32,9 @@ export default function UICustomizationSettings({ settings, updateSetting }: UIC
       updateSetting(
         "customWebComponents",
         settings.customWebComponents.filter((_, i) => i !== index),
-      )
+      );
     }
-  }
+  };
 
   return (
     <Card>

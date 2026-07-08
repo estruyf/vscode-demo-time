@@ -50,10 +50,10 @@ export const SlideNavigator: React.FunctionComponent<ISlideNavigatorProps> = ({
 
   // Compute thumbnail scale based on container width
   React.useEffect(() => {
-    if (!isOpen || !containerRef.current) return;
+    if (!isOpen || !containerRef.current) {return;}
 
     const updateScale = () => {
-      if (!containerRef.current) return;
+      if (!containerRef.current) {return;}
       const containerWidth = containerRef.current.clientWidth;
       // 3 columns with gap (3 * 12px gap = 36px) and padding (2 * 16px = 32px)
       const cardWidth = (containerWidth - 36 - 32) / 3;
@@ -79,7 +79,7 @@ export const SlideNavigator: React.FunctionComponent<ISlideNavigatorProps> = ({
 
   // ESC to close (capture phase to intercept before presentation close)
   React.useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {return;}
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -111,16 +111,14 @@ export const SlideNavigator: React.FunctionComponent<ISlideNavigatorProps> = ({
     <>
       <button
         onClick={toggleOpen}
-        className="flex items-center gap-1 text-sm px-2 py-1 rounded-xs text-(--vscode-editorWidget-foreground) hover:bg-(--vscode-toolbar-hoverBackground) cursor-pointer"
-        title="Navigate to slide"
+        className="flex items-center gap-1 px-2 py-1 rounded-lg tabular-nums text-sm text-(--vscode-editorWidget-foreground) hover:bg-(--vscode-toolbar-hoverBackground) cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--vscode-focusBorder)"
+        title="Go to slide"
+        aria-haspopup="dialog"
+        aria-expanded={isOpen}
+        aria-label={`Slide ${currentSlide + 1} of ${slides}. Go to slide`}
       >
-        <span>
-          Slide {currentSlide + 1} / {slides}
-        </span>
-        <Icon
-          name={(isOpen ? 'chevron-down' : 'chevron-up') as never}
-          className="text-(--vscode-editorWidget-foreground)! inline-flex justify-center items-center"
-        />
+        <span className="font-semibold">{String(currentSlide + 1).padStart(2, '0')}</span>
+        <span className="opacity-50">/ {String(slides).padStart(2, '0')}</span>
       </button>
 
       {isOpen && (

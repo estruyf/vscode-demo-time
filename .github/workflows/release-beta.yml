@@ -7,9 +7,11 @@ on:
   workflow_dispatch:
 
 env:
-  MS_URL: "https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-\
+  MS_URL:
+    "https://marketplace.visualstudio.com/items?itemName=eliostruyf.vscode-\
     demo-time"
   VSX_URL: "https://open-vsx.org/extension/eliostruyf/vscode-demo-time"
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
 
 jobs:
   verify:
@@ -64,7 +66,8 @@ jobs:
           path: apps/vscode-extension
 
       - name: Publish
-        if: contains(github.event.head_commit.message, '#release') && github.ref !=
+        if:
+          contains(github.event.head_commit.message, '#release') && github.ref !=
           'refs/heads/alpha'
         run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }} --baseImagesUrl
           https://raw.githubusercontent.com/estruyf/vscode-demo-time/dev
@@ -73,7 +76,7 @@ jobs:
 
       - name: Package VSIX (alpha branch)
         if: github.ref == 'refs/heads/alpha'
-        run: npx @vscode/vsce package
+        run: npx @vscode/vsce package --no-dependencies
         working-directory: apps/vscode-extension
 
       - name: Upload VSIX artifact (alpha branch)
@@ -103,7 +106,8 @@ jobs:
           path: apps/vscode-extension
 
       - name: Publish to open-vsx.org
-        if: contains(github.event.head_commit.message, '#release') && github.ref !=
+        if:
+          contains(github.event.head_commit.message, '#release') && github.ref !=
           'refs/heads/alpha'
         run: npx ovsx publish -p ${{ secrets.OPEN_VSX_PAT }} --no-dependencies
         working-directory: apps/vscode-extension

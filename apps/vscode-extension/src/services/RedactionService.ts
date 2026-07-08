@@ -398,7 +398,7 @@ export class RedactionService {
     // Sort by start position
     matches.sort((a, b) => {
       const lineDiff = a.range.start.line - b.range.start.line;
-      if (lineDiff !== 0) return lineDiff;
+      if (lineDiff !== 0) {return lineDiff;}
       return a.range.start.character - b.range.start.character;
     });
 

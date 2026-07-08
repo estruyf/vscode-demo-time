@@ -6,4 +6,5 @@ export type WebviewType =
   | 'overview'
   | 'analytics-dashboard'
   | 'pro-features'
-  | 'gallery';
+  | 'gallery'
+  | 'theme-builder';

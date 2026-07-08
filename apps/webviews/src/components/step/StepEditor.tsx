@@ -299,6 +299,8 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       label = "Zoom Level (times to use VS Code zoom)";
     } else if (field === 'insertTypingSpeed') {
       label = "Insert Typing Speed (ms)";
+    } else if (field === 'insertTypingSpeedRandomness') {
+      label = "Insert Typing Speed Randomness (0-100%)";
     } else if (field === 'highlightBlur') {
       label = "Highlight Blur (0-10px)";
     } else if (field === 'highlightOpacity') {
@@ -313,6 +315,10 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       label = 'Start the poll when opening it';
     } else if (field === 'closeOnOpen') {
       label = 'Close the poll when opening it';
+    } else if (field === 'pollDarkTheme') {
+      label = 'Use dark theme';
+    } else if (field === 'pollControls') {
+      label = 'Show poll controls';
     }
 
     switch (field) {
@@ -514,6 +520,40 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
           </div>
         );
 
+      case 'pollDarkTheme':
+        return (
+          <div key={field}>
+            <label className="h-full flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={typeof step.pollDarkTheme === 'undefined' ? false : step.pollDarkTheme}
+                onChange={(e) => handleChange('pollDarkTheme', e.target.checked)}
+                className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                {label} {isRequired && <span className="text-red-500">*</span>}
+              </span>
+            </label>
+          </div>
+        );
+
+      case 'pollControls':
+        return (
+          <div key={field}>
+            <label className="h-full flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={typeof step.pollControls === 'undefined' ? true : step.pollControls}
+                onChange={(e) => handleChange('pollControls', e.target.checked)}
+                className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                {label} {isRequired && <span className="text-red-500">*</span>}
+              </span>
+            </label>
+          </div>
+        );
+
       case 'timeout':
       case 'zoom':
       case 'insertTypingSpeed':
@@ -531,6 +571,29 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                 }`}
               placeholder={`Enter ${label.toLowerCase()}`}
               min={0}
+            />
+            {fieldErrors.map((error, index) => (
+              <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
+            ))}
+          </div>
+        );
+
+      case 'insertTypingSpeedRandomness':
+        return (
+          <div key={field}>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              {label} {isRequired && <span className="text-red-500">*</span>}
+            </label>
+            <input
+              type="number"
+              value={typeof step[field] !== 'undefined' ? step[field] : ''}
+              onChange={(e) => handleChange(field, e.target.value ? parseInt(e.target.value) : undefined)}
+              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
+                }`}
+              placeholder="Enter randomness (0-100)"
+              min={0}
+              max={100}
+              step={1}
             />
             {fieldErrors.map((error, index) => (
               <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>

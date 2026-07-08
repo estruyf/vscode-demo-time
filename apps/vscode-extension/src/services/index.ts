@@ -23,6 +23,7 @@ export * from './MacOSActionsService';
 export * from './NotesService';
 export * from './Notifications';
 export * from './PdfExportService';
+export * from './RecordingService';
 export * from './RedactionService';
 export * from './ResourceService';
 export * from './ScreenshotService';

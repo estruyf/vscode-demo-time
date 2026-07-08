@@ -442,6 +442,9 @@
                       },
                       "insertTypingSpeed": {
                         "$ref": "#/definitions/insertTypingSpeed"
+                      },
+                      "insertTypingSpeedRandomness": {
+                        "$ref": "#/definitions/insertTypingSpeedRandomness"
                       }
                     }
                   }
@@ -547,6 +550,9 @@
                       },
                       "insertTypingSpeed": {
                         "$ref": "#/definitions/insertTypingSpeed"
+                      },
+                      "insertTypingSpeedRandomness": {
+                        "$ref": "#/definitions/insertTypingSpeedRandomness"
                       }
                     }
                   }
@@ -610,6 +616,9 @@
                       },
                       "insertTypingSpeed": {
                         "$ref": "#/definitions/insertTypingSpeed"
+                      },
+                      "insertTypingSpeedRandomness": {
+                        "$ref": "#/definitions/insertTypingSpeedRandomness"
                       }
                     }
                   }
@@ -945,6 +954,12 @@
                       },
                       "closeOnOpen": {
                         "$ref": "#/definitions/closeOnOpen"
+                      },
+                      "pollDarkTheme": {
+                        "$ref": "#/definitions/pollDarkTheme"
+                      },
+                      "pollControls": {
+                        "$ref": "#/definitions/pollControls"
                       }
                     },
                     "not": {
@@ -1060,6 +1075,9 @@
                       },
                       "insertTypingSpeed": {
                         "$ref": "#/definitions/insertTypingSpeed"
+                      },
+                      "insertTypingSpeedRandomness": {
+                        "$ref": "#/definitions/insertTypingSpeedRandomness"
                       }
                     }
                   }
@@ -1262,6 +1280,13 @@
       "type": "number",
       "title": "Speed in milliseconds between each character when typing text. Used with the typeText action."
     },
+    "insertTypingSpeedRandomness": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "default": 0,
+      "title": "Adds a semi-random variation to the character-by-character typing speed so it feels less robotic. The value is the maximum percentage (0-100) of extra delay added on top of the typing speed for each character."
+    },
     "loop": {
       "type": "boolean",
       "title": "Loop scenes",
@@ -1434,6 +1459,16 @@
       "type": "boolean",
       "description": "Close the poll when it is shown. Default is false.",
       "default": false
+    },
+    "pollDarkTheme": {
+      "type": "boolean",
+      "description": "When true, the EngageTime poll embed opens with the dark theme.",
+      "default": false
+    },
+    "pollControls": {
+      "type": "boolean",
+      "description": "Whether to show the poll controls in the embed. Default is true.",
+      "default": true
     },
     "type": {
       "type": "string",

@@ -29,6 +29,11 @@ interface DemoConfigContextType {
   handleDuplicateStep: (demoIndex: number, stepIndex: number) => void;
   handleReorderDemo: (fromIndex: number, toIndex: number) => void;
   handleReorderStep: (demoIndex: number, fromIndex: number, toIndex: number) => void;
+  handleMoveStepsToScene: (
+    sourceDemoIndex: number,
+    stepIndices: number[],
+    target: { type: 'existing'; demoIndex: number } | { type: 'new'; title?: string; id?: string },
+  ) => void;
   validation: ValidationResult;
 }
 

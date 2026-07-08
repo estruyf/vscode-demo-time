@@ -15,6 +15,7 @@ const WEBVIEW_MAP: Record<string, React.LazyExoticComponent<React.FC<object>>> =
   'analytics-dashboard': lazy(() => import('./components/webviews/AnalyticsDashboardView')),
   'pro-features': lazy(() => import('./components/webviews/ProFeaturesView')),
   'gallery': lazy(() => import('./components/webviews/GalleryView')),
+  'theme-builder': lazy(() => import('./components/webviews/ThemeBuilderView')),
 };
 
 const root = document.getElementById('root');

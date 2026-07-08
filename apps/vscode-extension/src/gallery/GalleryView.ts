@@ -100,8 +100,17 @@ export class GalleryView extends BaseWebview {
     const relativeSnippetPath = normalizedSnippetPath.startsWith('gallery/')
       ? normalizedSnippetPath.slice('gallery/'.length)
       : normalizedSnippetPath;
+    const safeRelativePath = path.posix.normalize(relativeSnippetPath);
 
-    const targetUri = Uri.joinPath(workspaceFolder.uri, '.demo', 'snippets', relativeSnippetPath);
+    if (
+      safeRelativePath === '..' ||
+      safeRelativePath.startsWith('../') ||
+      path.posix.isAbsolute(safeRelativePath)
+    ) {
+      return { success: false, message: 'Invalid snippet path.' };
+    }
+
+    const targetUri = Uri.joinPath(workspaceFolder.uri, '.demo', 'snippets', safeRelativePath);
 
     try {
       const targetDir = Uri.file(path.dirname(targetUri.fsPath));
@@ -110,7 +119,7 @@ export class GalleryView extends BaseWebview {
 
       return {
         success: true,
-        path: `.demo/snippets/${relativeSnippetPath}`,
+        path: `.demo/snippets/${safeRelativePath}`,
       };
     } catch (error) {
       return {

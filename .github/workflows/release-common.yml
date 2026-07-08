@@ -19,6 +19,9 @@ on:
         required: true
         type: string
 
+env:
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest

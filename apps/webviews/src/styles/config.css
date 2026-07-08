@@ -24,3 +24,25 @@ body {
     color: var(--vscode-editor-foreground, #d4d4d4);
   }
 }
+
+/* Entrance animation for the floating move-selection action bar */
+@keyframes selectionBarIn {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.selection-action-bar {
+  animation: selectionBarIn 0.15s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .selection-action-bar {
+    animation: none;
+  }
+}

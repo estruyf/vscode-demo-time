@@ -35,6 +35,8 @@ export class EngageTimeService {
     pollId?: string,
     startOnOpen?: boolean,
     closeOnOpen?: boolean,
+    darkTheme?: boolean,
+    controls?: boolean,
   ): Promise<void> {
     if (!pollId) {
       Notifications.error(`EngageTime poll ID is required to show a poll.`);
@@ -54,10 +56,18 @@ export class EngageTimeService {
       await EngageTimeService.startPoll(pollId);
     }
 
-    await vscode.commands.executeCommand(
-      'workbench.action.browser.open',
-      `https://engagetime.live/poll/${pollId}`,
-    );
+    const params = new URLSearchParams();
+    params.set('theme', darkTheme ? 'dark' : 'light');
+    if (typeof controls === 'boolean') {
+      params.set('controls', controls.toString());
+    }
+
+    const queryString = params.toString();
+    const url = queryString
+      ? `https://engagetime.live/poll/${pollId}?${queryString}`
+      : `https://engagetime.live/poll/${pollId}`;
+
+    await vscode.commands.executeCommand('workbench.action.browser.open', url);
   }
 
   public static async startSession(sessionId?: string): Promise<void> {
