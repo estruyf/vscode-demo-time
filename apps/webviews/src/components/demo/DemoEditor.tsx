@@ -3,7 +3,7 @@ import { validateDemo } from '../../utils/validation';
 import { Card, Input, PathInput, Textarea, Switch, SearchableDropdown } from '../ui';
 import { Icon } from 'vscrui';
 import { VSCODE_ICONS } from '../../constants/icons';
-import { ChevronDown, ChevronUp, FilePlus, RefreshCw } from 'lucide-react';
+import { ChevronDown, ChevronUp, FilePlus, Link, RefreshCw } from 'lucide-react';
 import { messageHandler } from '@estruyf/vscode/dist/client';
 import { Demo, WebViewMessages } from '@demotime/common';
 
@@ -11,10 +11,12 @@ interface DemoEditorProps {
   demo: Demo;
   onChange: (demo: Demo) => void;
   onGenerateId?: () => string;
+  index?: number;
 }
 
-export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange, onGenerateId }) => {
-  const [collapsed, setCollapsed] = useState<boolean>(false);
+export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange, onGenerateId, index }) => {
+  // Scene details are hidden by default to keep the editor compact.
+  const [collapsed, setCollapsed] = useState<boolean>(true);
 
   // Notes file helpers
   const handleNotesPathChange = React.useCallback((path: string) => {
@@ -87,29 +89,73 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange, onGenera
   return (
     <Card>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <button
-            className="text-gray-900 hover:text-gray-800 dark:text-white dark:hover:text-gray-300"
-            aria-label={collapsed ? "Expand settings" : "Collapse settings"}
-            onClick={() => setCollapsed((prev) => !prev)}
-          >
-            <div className="flex items-center space-x-2">
-              {collapsed ? <ChevronDown /> : <ChevronUp />}
-
-              <h2 className="text-xl font-semibold">Scene Information</h2>
+        <div className="space-y-4">
+          {/* Row 1: scene number, title and enabled toggle */}
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center gap-3 min-w-0">
+              {typeof index === 'number' && (
+                <span className="flex items-center justify-center h-10 w-10 shrink-0 rounded-lg bg-gray-900 dark:bg-gray-700 text-white text-sm font-semibold tabular-nums">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+              )}
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white truncate" title={demo.title}>
+                {demo.title || <span className="text-gray-400 dark:text-gray-500">Untitled scene</span>}
+              </h2>
             </div>
-          </button>
-          <div className="flex items-center">
-            <span className="text-sm text-gray-700 dark:text-gray-400 mr-2">{demo.disabled ? 'Disabled' : 'Enabled'}</span>
-            <Switch
-              checked={!demo.disabled}
-              onCheckedChange={(checked) => handleChange('disabled', !checked)}
-            />
+            <div className="flex items-center shrink-0">
+              <span className={`text-sm font-medium mr-2 ${demo.disabled ? 'text-gray-500 dark:text-gray-400' : 'text-green-600 dark:text-green-400'}`}>
+                {demo.disabled ? 'Disabled' : 'Enabled'}
+              </span>
+              <Switch
+                checked={!demo.disabled}
+                onCheckedChange={(checked) => handleChange('disabled', !checked)}
+              />
+            </div>
+          </div>
+
+          {/* Row 2: scene id, generate action and details toggle */}
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <span
+                className="inline-flex items-center gap-1.5 max-w-full px-3 py-1.5 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40"
+                title={demo.id || 'No scene ID set'}
+              >
+                <Link className="h-3.5 w-3.5 shrink-0 text-gray-400 dark:text-gray-500" />
+                <span className={`truncate font-mono text-xs ${demo.id ? 'text-gray-700 dark:text-gray-300' : 'text-gray-400 dark:text-gray-500'}`}>
+                  {demo.id || 'No ID'}
+                </span>
+              </span>
+              <button
+                type="button"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => {
+                  if (onGenerateId) {
+                    handleChange('id', onGenerateId());
+                  }
+                }}
+                title="Generate unique scene ID"
+                disabled={!onGenerateId}
+              >
+                <RefreshCw className="h-4 w-4" />
+                Generate ID
+              </button>
+            </div>
+
+            <button
+              type="button"
+              className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              aria-expanded={!collapsed}
+              aria-label={collapsed ? 'Show scene details' : 'Hide scene details'}
+              onClick={() => setCollapsed((prev) => !prev)}
+            >
+              <span>Scene details</span>
+              {collapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+            </button>
           </div>
         </div>
 
         {!collapsed &&
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-gray-200 dark:border-gray-700 pt-6">
             <Input
               label="Scene title"
               required
@@ -123,31 +169,14 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange, onGenera
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Scene ID
               </label>
-              <div className="flex items-center gap-2">
-                <Input
-                  label={undefined}
-                  value={demo.id || ''}
-                  onChange={(value) => handleChange('id', value || undefined)}
-                  placeholder="Enter scene ID (optional)"
-                  error={getFieldError('id')}
-                  className="flex-1"
-                />
-                <button
-                  type="button"
-                  className="px-3 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-md flex items-center gap-1 whitespace-nowrap"
-                  onClick={() => {
-                    if (onGenerateId) {
-                      handleChange('id', onGenerateId());
-                    }
-                  }}
-                  title="Generate unique scene ID"
-                  disabled={!onGenerateId}
-                >
-                  <RefreshCw className="h-4 w-4" />
-                  Generate
-                </button>
-              </div>
-              <p className="text-xs text-gray-500 dark:text-gray-300 mt-2">Optional. This ID can be used to trigger this demo from the API of URI handler.</p>
+              <Input
+                label={undefined}
+                value={demo.id || ''}
+                onChange={(value) => handleChange('id', value || undefined)}
+                placeholder="Enter scene ID (optional)"
+                error={getFieldError('id')}
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-300 mt-2">Optional. This ID can be used to trigger this demo from the API of URI handler. Use <span className="font-medium">Generate ID</span> above for a unique value.</p>
             </div>
 
             <div className="md:col-span-2">

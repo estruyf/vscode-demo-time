@@ -244,6 +244,74 @@ export const useDemoConfig = (initialConfig?: DemoConfig) => {
     });
   }, []);
 
+  const handleMoveStepsToScene = useCallback(
+    (
+      sourceDemoIndex: number,
+      stepIndices: number[],
+      target: { type: 'existing'; demoIndex: number } | { type: 'new'; title?: string; id?: string },
+    ) => {
+      setConfig((prev) => {
+        const sourceDemo = prev.demos[sourceDemoIndex];
+        if (!sourceDemo) {
+          return prev;
+        }
+
+        // Moving into the same scene is a no-op.
+        if (target.type === 'existing' && target.demoIndex === sourceDemoIndex) {
+          return prev;
+        }
+
+        // Normalize the indices (unique + ascending) so the original move order is preserved.
+        const orderedIndices = Array.from(new Set(stepIndices)).sort((a, b) => a - b);
+        const movedSteps = orderedIndices
+          .map((index) => sourceDemo.steps[index])
+          .filter((step): step is Step => step !== undefined);
+
+        if (movedSteps.length === 0) {
+          return prev;
+        }
+
+        const indicesToRemove = new Set(orderedIndices);
+
+        // Remove the moved steps from the source scene.
+        let newDemos = prev.demos.map((demo, index) =>
+          index === sourceDemoIndex
+            ? { ...demo, steps: demo.steps.filter((_, stepIndex) => !indicesToRemove.has(stepIndex)) }
+            : demo,
+        );
+
+        if (target.type === 'existing') {
+          // Append the moved steps to the target scene, keeping their order.
+          newDemos = newDemos.map((demo, index) =>
+            index === target.demoIndex ? { ...demo, steps: [...demo.steps, ...movedSteps] } : demo,
+          );
+        } else {
+          // Create a new scene that holds the moved steps.
+          const generateDemoId = () => {
+            const timestamp = Date.now().toString(36);
+            const random = Math.random().toString(36).substring(2, 6);
+            return `scene-${timestamp}-${random}`;
+          };
+
+          let newId = target.id?.trim() || generateDemoId();
+          while (newDemos.some((demo) => demo.id === newId)) {
+            newId = generateDemoId();
+          }
+
+          const newDemo: Demo = {
+            id: newId,
+            title: target.title?.trim() || `Scene ${newDemos.length + 1}`,
+            steps: movedSteps,
+          };
+          newDemos = [...newDemos, newDemo];
+        }
+
+        return { ...prev, demos: newDemos };
+      });
+    },
+    [],
+  );
+
   const validation = validateConfig(config);
 
   return {
@@ -262,6 +330,7 @@ export const useDemoConfig = (initialConfig?: DemoConfig) => {
     handleReorderStep,
     handleDuplicateDemo,
     handleDuplicateStep,
+    handleMoveStepsToScene,
     validation,
   };
 };

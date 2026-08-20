@@ -2,6 +2,7 @@ import { StateKeys } from '../constants';
 import { Preview } from '../preview/Preview';
 import {
   getFileContents,
+  getInsertionSpeedRandomness,
   getPositionAndRange,
   getUserInput,
   insertVariables,
@@ -440,7 +441,11 @@ export class DemoActionDispatcher {
     }
 
     if (step.action === Action.TypeText) {
-      await InteractionService.typeText(step.content, step.insertTypingSpeed);
+      await InteractionService.typeText(
+        step.content,
+        step.insertTypingSpeed,
+        getInsertionSpeedRandomness(step.insertTypingSpeedRandomness),
+      );
       return;
     }
 

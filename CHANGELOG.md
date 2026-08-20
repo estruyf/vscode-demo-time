@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.3.0] - 2026-08-20
+
+- Act editor is now responsive so it stays usable in a narrow side panel, with a "Configure Scene" jump button on smaller layouts to scroll straight to the scene configuration
+- [#295](https://github.com/estruyf/vscode-demo-time/issues/295): Added the `insertTypingSpeedRandomness` setting and action property to add a semi-random variation to the character-by-character typing speed so it feels more human and less robotic
+- [#412](https://github.com/estruyf/vscode-demo-time/issues/412): Added the ability to record a demo flow (create file, open file, append text, highlight text, etc.)
+- [#413](https://github.com/estruyf/vscode-demo-time/issues/413): Added the ability to move one or more moves to an existing or new scene from the act editor (select moves, then use "Move to scene…"), preserving their order
+
 ## [2.2.0] - 2026-06-18
 
 - Added `waitForMessage` property to the `executeScript` action to wait until the script outputs a specific string before advancing to the next step, instead of waiting for the process to exit

@@ -117,6 +117,13 @@ export interface Step extends IOpenWebsite, IImagePreview, ITerminal {
   lineInsertionDelay?: number;
   insertTypingMode?: InsertTypingMode;
   insertTypingSpeed?: number;
+  /**
+   * Adds a semi-random "human" variation to the character-by-character typing speed.
+   * The value is the maximum percentage (0-100) of extra delay that can be added on
+   * top of `insertTypingSpeed` for each character, so the typing feels less robotic.
+   * Defaults to `0` (no variation).
+   */
+  insertTypingSpeedRandomness?: number;
   setting?: Setting;
   state?: State;
   dest?: string;

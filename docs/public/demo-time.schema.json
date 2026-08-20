@@ -442,6 +442,9 @@
                       },
                       "insertTypingSpeed": {
                         "$ref": "#/definitions/insertTypingSpeed"
+                      },
+                      "insertTypingSpeedRandomness": {
+                        "$ref": "#/definitions/insertTypingSpeedRandomness"
                       }
                     }
                   }
@@ -547,6 +550,9 @@
                       },
                       "insertTypingSpeed": {
                         "$ref": "#/definitions/insertTypingSpeed"
+                      },
+                      "insertTypingSpeedRandomness": {
+                        "$ref": "#/definitions/insertTypingSpeedRandomness"
                       }
                     }
                   }
@@ -610,6 +616,9 @@
                       },
                       "insertTypingSpeed": {
                         "$ref": "#/definitions/insertTypingSpeed"
+                      },
+                      "insertTypingSpeedRandomness": {
+                        "$ref": "#/definitions/insertTypingSpeedRandomness"
                       }
                     }
                   }
@@ -1066,6 +1075,9 @@
                       },
                       "insertTypingSpeed": {
                         "$ref": "#/definitions/insertTypingSpeed"
+                      },
+                      "insertTypingSpeedRandomness": {
+                        "$ref": "#/definitions/insertTypingSpeedRandomness"
                       }
                     }
                   }
@@ -1267,6 +1279,13 @@
     "insertTypingSpeed": {
       "type": "number",
       "title": "Speed in milliseconds between each character when typing text. Used with the typeText action."
+    },
+    "insertTypingSpeedRandomness": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "default": 0,
+      "title": "Adds a semi-random variation to the character-by-character typing speed so it feels less robotic. The value is the maximum percentage (0-100) of extra delay added on top of the typing speed for each character."
     },
     "loop": {
       "type": "boolean",
