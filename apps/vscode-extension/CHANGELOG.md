@@ -1,4 +1,11 @@
-## [2.2.0] - 2026-xx-xx
+## [2.3.0] - 2026-08-20
+
+- Act editor is now responsive so it stays usable in a narrow side panel, with a "Configure Scene" jump button on smaller layouts to scroll straight to the scene configuration
+- [#295](https://github.com/estruyf/vscode-demo-time/issues/295): Added the `insertTypingSpeedRandomness` setting and action property to add a semi-random variation to the character-by-character typing speed so it feels more human and less robotic
+- [#412](https://github.com/estruyf/vscode-demo-time/issues/412): Added the ability to record a demo flow (create file, open file, append text, highlight text, etc.)
+- [#413](https://github.com/estruyf/vscode-demo-time/issues/413): Added the ability to move one or more moves to an existing or new scene from the act editor (select moves, then use "Move to scene…"), preserving their order
+
+## [2.2.0] - 2026-06-18
 
 - Added `waitForMessage` property to the `executeScript` action to wait until the script outputs a specific string before advancing to the next step, instead of waiting for the process to exit
 - Added `showProgress` property to the `executeScript` action to control whether the progress notification is shown while the script is executing (default: `true`)
@@ -13,6 +20,9 @@
 - [#398](https://github.com/estruyf/vscode-demo-time/issues/398): Add slide navigator in the preview webview when using a slide group
 - [#401](https://github.com/estruyf/vscode-demo-time/issues/401): Add a new `center` slide layout that centers all content both vertically and horizontally
 - [#402](https://github.com/estruyf/vscode-demo-time/issues/402): Added an auto-proceed mode for acts to automatically advance to the next move after a specified delay, with the ability to loop back to the beginning of the act when reaching the end
+- [#407](https://github.com/estruyf/vscode-demo-time/issues/407): Added `pollDarkTheme` and `pollControls` properties to the `showEngageTimePoll` action to control the poll embed's theme and controls visibility
+- [#408](https://github.com/estruyf/vscode-demo-time/pull/408): Added a theme builder to create and customize slide themes visually (beta)
+- [#409](https://github.com/estruyf/vscode-demo-time/issues/409): Slide controls redesign to have a more compact layout
 
 ## [2.1.1] - 2026-04-16
 
