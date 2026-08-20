@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DemoTime - Scenes</title>
+  <link rel="stylesheet" href="../styles/main.css">
+  <script type="module" src="../scripts/theme.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="../assets/demotime.png" alt="DemoTime Logo" class="logo">
+      <nav class="navbar">
+        <a href="home.html" class="nav-icon" title="Home" aria-label="Home">
+          <img src="../assets/icon-house.svg" alt="Home" width="16" height="16">
+        </a>
+        <a href="scenes.html" class="nav-icon active" title="See all scenes" aria-label="See all scenes">
+          <img src="../assets/icon-layout-grid.svg" alt="All scenes" width="16" height="16">
+        </a>
+        <a href="settings.html" class="nav-icon" title="Settings" aria-label="Settings">
+          <img src="../assets/icon-settings.svg" alt="Settings" width="16" height="16">
+        </a>
+      </nav>
+    </div>
+    
+    <div class="content">
+      <h1 class="page-title">All Scenes</h1>
+      <div id="scenesList" class="scenes-list">
+        <!-- Scenes will be loaded here -->
+      </div>
+    </div>
+  </div>
+  
+  <script type="module" src="../scripts/scenes.js"></script>
+</body>
+</html>
