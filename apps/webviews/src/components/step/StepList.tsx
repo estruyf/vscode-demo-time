@@ -151,7 +151,7 @@ export const StepList: React.FC<StepListProps> = ({
         </div>
       )}
 
-      <div className="space-y-1">
+      <div className="space-y-2">
         {(demo?.steps || []).map((step, index) => (
           <StepListItem
             key={step.id || index}

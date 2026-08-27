@@ -145,7 +145,12 @@ export const StepListItem: React.FC<StepListItemProps> = ({
           ? 'border-amber-300 bg-amber-50 dark:border-amber-700/60 dark:bg-amber-900/20'
           : isSelected
             ? 'border-blue-200 bg-blue-50/60 dark:border-blue-800/90 dark:bg-blue-900/20'
-            : 'border-transparent hover:bg-gray-50 dark:hover:bg-gray-700/40',
+            : cn(
+              'border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600',
+              // Skip the resting surface while a test result is flashing so its colour stays visible.
+              !resultBgColor &&
+              'bg-gray-50/80 hover:bg-gray-100 dark:bg-gray-700/25 dark:hover:bg-gray-700/50'
+            ),
         resultBgColor,
         isBeingDragged && 'opacity-40',
         step.disabled && 'opacity-60'

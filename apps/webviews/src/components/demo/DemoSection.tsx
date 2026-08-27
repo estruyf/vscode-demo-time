@@ -71,7 +71,7 @@ export const DemoSection: React.FC<DemoSectionProps> = ({
         </Button>
       </div>
 
-      <div className="space-y-1">
+      <div className="space-y-2">
         {/* Drop zone before the first item */}
         <div
           onDragOver={handleDropZoneDragOver}
