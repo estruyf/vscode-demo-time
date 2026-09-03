@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { validateDemo } from '../../utils/validation';
 import { Card, Input, PathInput, Textarea, Switch, SearchableDropdown } from '../ui';
 import { Icon } from 'vscrui';
@@ -17,6 +17,35 @@ interface DemoEditorProps {
 export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange, onGenerateId, index }) => {
   // Scene details are hidden by default to keep the editor compact.
   const [collapsed, setCollapsed] = useState<boolean>(true);
+  // The title can be renamed inline by double-clicking it, without opening the scene details.
+  const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
+  const [titleDraft, setTitleDraft] = useState<string>('');
+  const titleInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isEditingTitle) {
+      titleInputRef.current?.focus();
+      titleInputRef.current?.select();
+    }
+  }, [isEditingTitle]);
+
+  const startTitleEdit = React.useCallback(() => {
+    setTitleDraft(demo?.title || '');
+    setIsEditingTitle(true);
+  }, [demo?.title]);
+
+  const commitTitleEdit = React.useCallback(() => {
+    setIsEditingTitle(false);
+    const title = titleDraft.trim();
+    if (title === (demo?.title || '')) {
+      return;
+    }
+    onChange({ ...demo, title });
+  }, [demo, onChange, titleDraft]);
+
+  const cancelTitleEdit = React.useCallback(() => {
+    setIsEditingTitle(false);
+  }, []);
 
   // Notes file helpers
   const handleNotesPathChange = React.useCallback((path: string) => {
@@ -98,9 +127,35 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange, onGenera
                   {String(index + 1).padStart(2, '0')}
                 </span>
               )}
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white truncate" title={demo.title}>
-                {demo.title || <span className="text-gray-400 dark:text-gray-500">Untitled scene</span>}
-              </h2>
+              {isEditingTitle ? (
+                <input
+                  ref={titleInputRef}
+                  type="text"
+                  value={titleDraft}
+                  aria-label="Scene title"
+                  className="w-full min-w-0 text-2xl font-bold text-gray-900 dark:text-white bg-transparent border-b border-gray-300 dark:border-gray-600 focus:outline-hidden focus:border-demo-time-accent"
+                  placeholder="Enter scene title"
+                  onChange={(e) => setTitleDraft(e.target.value)}
+                  onBlur={commitTitleEdit}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      commitTitleEdit();
+                    } else if (e.key === 'Escape') {
+                      e.preventDefault();
+                      cancelTitleEdit();
+                    }
+                  }}
+                />
+              ) : (
+                <h2
+                  className="text-2xl font-bold text-gray-900 dark:text-white truncate cursor-text"
+                  title={demo.title ? `${demo.title} (double-click to rename)` : 'Double-click to rename'}
+                  onDoubleClick={startTitleEdit}
+                >
+                  {demo.title || <span className="text-gray-400 dark:text-gray-500">Untitled scene</span>}
+                </h2>
+              )}
             </div>
             <div className="flex items-center shrink-0">
               <span className={`text-sm font-medium mr-2 ${demo.disabled ? 'text-gray-500 dark:text-gray-400' : 'text-green-600 dark:text-green-400'}`}>
