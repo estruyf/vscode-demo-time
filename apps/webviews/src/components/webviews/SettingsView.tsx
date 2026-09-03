@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import { Button } from "../ui/Button";
 import { Save, RotateCcw } from "lucide-react";
 import { Loader as Spinner } from "vscrui";
@@ -40,7 +40,7 @@ const SettingsView = () => {
     getSettings();
   };
 
-  const saveSettings = () => {
+  const saveSettings = useCallback(() => {
     if (!settings || !originalSettings) {return;}
     setSaveLoading(true);
     const changed: Partial<IDemoTimeSettings> = {};
@@ -67,7 +67,7 @@ const SettingsView = () => {
       setSaveStatus({ type: "error", text: "Something went wrong" });
       console.error("Error saving settings:", error.message);
     });
-  };
+  }, [settings, originalSettings]);
 
   const isDirty = useMemo(() => {
     if (!settings || !originalSettings) { return false; }
@@ -81,6 +81,26 @@ const SettingsView = () => {
     }
     return false;
   }, [settings, originalSettings]);
+
+  // Save with cmd+s (macOS) or ctrl+s (Windows/Linux)
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() !== "s" || !(e.metaKey || e.ctrlKey) || e.altKey) {
+        return;
+      }
+
+      e.preventDefault();
+
+      if (!isDirty || saveLoading) {
+        return;
+      }
+
+      saveSettings();
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isDirty, saveLoading, saveSettings]);
 
   // Show 'Unsaved changes' only when dirty
   useEffect(() => {
