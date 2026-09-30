@@ -5,6 +5,7 @@ import { DemoRunner } from './DemoRunner';
 import { Step, Config } from '@demotime/common';
 import { AnalyticsService } from './analytics';
 import { Extension } from './Extension';
+import { VideoExportService } from './VideoExportService';
 
 /**
  * Service to manage terminal operations for demo execution.
@@ -239,12 +240,14 @@ export class TerminalService {
    *
    * @param command - The exact command string to wait for.
    * @param terminalId - The identifier of the terminal whose last executed command will be observed.
-   * @returns A Promise that resolves when the command is observed or when the 5 second timeout elapses.
+   * @returns A Promise that resolves when the command is observed or when the timeout elapses
+   *          (5 seconds, or the export's terminal timeout during a video export).
    */
   private static async waitForTerminalExecuted(command: string, terminalId: string): Promise<void> {
     return new Promise<void>((resolve) => {
       const startTime = Date.now();
-      const maxWaitTime = 5000; // 5 seconds
+      // 5 seconds, or longer while a video export waits for the command's output
+      const maxWaitTime = VideoExportService.getTerminalTimeoutMs() ?? 5000;
 
       const checkExecution = () => {
         if (TerminalService.lastExecution[terminalId] === command) {

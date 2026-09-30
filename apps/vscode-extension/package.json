@@ -168,6 +168,54 @@
           "default": false,
           "description": "Enable the previous command when in presentation mode"
         },
+        "demoTime.videoExport.command": {
+          "type": "string",
+          "scope": "machine",
+          "default": "npx --yes @demotime/video@latest",
+          "description": "The command that runs the video export CLI. Point it at another build, for example `node /path/to/apps/video/dist/cli.js`. Only read from your user settings, so a workspace cannot run a command of its own."
+        },
+        "demoTime.videoExport.extension": {
+          "type": "string",
+          "scope": "machine",
+          "default": "",
+          "description": "The Demo Time build to record with: a Marketplace id (with @version) or a path to a VSIX. Empty uses the version you are running, from the Marketplace. Only read from your user settings."
+        },
+        "demoTime.videoExport.options": {
+          "type": "object",
+          "scope": "resource",
+          "description": "The choices of the last video export, so the next one can run without asking. Written by the \"Export play as video\" command.",
+          "properties": {
+            "range": {
+              "type": "string",
+              "description": "all, act:2, act:2/scenes:3-5 or act:2/scenes:3-"
+            },
+            "preset": {
+              "type": "string",
+              "enum": [
+                "16:9",
+                "1:1",
+                "9:16"
+              ]
+            },
+            "gif": {
+              "type": "boolean"
+            },
+            "captions": {
+              "type": "string",
+              "enum": [
+                "none",
+                "titles",
+                "notes"
+              ]
+            },
+            "chapters": {
+              "type": "boolean"
+            },
+            "cards": {
+              "type": "boolean"
+            }
+          }
+        },
         "demoTime.presentationViewToggles": {
           "type": "array",
           "items": {
@@ -177,6 +225,7 @@
               "tabs",
               "activityBar",
               "sideBar",
+              "secondarySideBar",
               "panel"
             ]
           },
@@ -185,9 +234,10 @@
             "tabs",
             "activityBar",
             "sideBar",
+            "secondarySideBar",
             "panel"
           ],
-          "description": "Choose which UI areas to hide when toggling presentation view (status bar, tabs, activity bar, side bar, or panel)."
+          "description": "Choose which UI areas to hide when toggling presentation view (status bar, tabs, activity bar, side bar, secondary side bar such as Chat, or panel)."
         },
         "demoTime.highlightBorderColor": {
           "type": "string",
@@ -587,6 +637,24 @@
         "icon": "$(file-pdf)"
       },
       {
+        "command": "demo-time.exportPlayAsVideo",
+        "title": "Export play as video",
+        "category": "Demo Time",
+        "icon": "$(device-camera-video)"
+      },
+      {
+        "command": "demo-time.runForVideoExport",
+        "title": "Run play unattended for recording",
+        "category": "Demo Time",
+        "icon": "$(device-camera-video)"
+      },
+      {
+        "command": "demo-time.stopVideoExport",
+        "title": "Stop unattended run",
+        "category": "Demo Time",
+        "icon": "$(debug-stop)"
+      },
+      {
         "command": "demo-time.importPowerPointImages",
         "title": "Import PowerPoint Images as Slides",
         "category": "Demo Time",
@@ -759,6 +827,10 @@
       ],
       "commandPalette": [
         {
+          "command": "demo-time.stopVideoExport",
+          "when": "demo-time.videoExportActive"
+        },
+        {
           "command": "demo-time.addStepToDemo",
           "when": "((editorLangId == jsonc || editorLangId == json) || editorLangId == yaml) && resourceDirname =~ /\\.demo$/"
         },
@@ -894,6 +966,11 @@
           "command": "demo-time.exportToPdf",
           "when": "view == demo-time-scenes",
           "group": "navigation@3"
+        },
+        {
+          "command": "demo-time.exportPlayAsVideo",
+          "when": "view == demo-time-scenes",
+          "group": "export@1"
         },
         {
           "command": "demo-time.treeviewFind",

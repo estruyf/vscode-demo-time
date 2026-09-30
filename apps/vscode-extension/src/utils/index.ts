@@ -62,5 +62,6 @@ export * from './sortFiles';
 export * from './togglePresentationView';
 export * from './updateConfig';
 export * from './upperCaseFirstLetter';
+export * from './videoExport';
 export * from './writeFile';
 export * from './writeText';

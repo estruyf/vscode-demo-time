@@ -1,0 +1,2 @@
+- The script shortens three links and follows each one back
+- Every code resolves to the URL it came from

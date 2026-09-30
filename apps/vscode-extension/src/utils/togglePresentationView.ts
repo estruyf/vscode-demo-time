@@ -5,7 +5,14 @@ import { StateKeys } from '../constants';
 import { updateConfig } from './updateConfig';
 
 export const togglePresentationView = async (enable?: boolean) => {
-  const defaultToggles = ['statusBar', 'tabs', 'activityBar', 'sideBar', 'panel'] as const;
+  const defaultToggles = [
+    'statusBar',
+    'tabs',
+    'activityBar',
+    'sideBar',
+    'secondarySideBar',
+    'panel',
+  ] as const;
   type PresentationToggle = (typeof defaultToggles)[number];
 
   const isKnownToggle = (value: string): value is PresentationToggle =>
@@ -76,6 +83,11 @@ export const togglePresentationView = async (enable?: boolean) => {
   if (showGetEnabled) {
     if (toggles.includes('sideBar')) {
       await commands.executeCommand('workbench.action.closeSidebar');
+    }
+
+    // The secondary side bar is where VS Code shows Chat
+    if (toggles.includes('secondarySideBar')) {
+      await commands.executeCommand('workbench.action.closeAuxiliaryBar');
     }
 
     if (toggles.includes('panel')) {

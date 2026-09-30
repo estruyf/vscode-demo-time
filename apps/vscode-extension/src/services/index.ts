@@ -36,4 +36,6 @@ export * from './TemplateCreator';
 export * from './TerminalService';
 export * from './TextTypingService';
 export * from './UriHandler';
+export * from './VideoExportCommand';
+export * from './VideoExportService';
 export * from './ZoomService';

@@ -185,6 +185,7 @@ export default defineConfig({
           collapsed: true,
           items: [
             { label: 'Recording demos', slug: 'features/recording-demos', badge: { text: 'New', variant: 'tip' } },
+            { label: 'Export as video', slug: 'features/video-export', badge: { text: 'New', variant: 'tip' } },
             { label: 'Overview Dashboard', slug: 'features/overview-dashboard' },
             { label: 'Presenter view', slug: 'features/presenter-view' },
             { label: 'Using notes', slug: 'features/using-notes' },
