@@ -1,5 +1,11 @@
 # Change Log
 
+## [2.3.1] - 2026-09-03
+
+- Scene titles can now be renamed inline in the act editor by double-clicking the title, without having to open the scene details
+- Fix the act editor's scene panel not taking the full available height, which cut off the action list when opening the action dropdown of a move
+- Added support for saving the settings editor with `cmd+s` (macOS) or `ctrl+s` (Windows/Linux)
+
 ## [2.3.0] - 2026-08-20
 
 - Act editor is now responsive so it stays usable in a narrow side panel, with a "Configure Scene" jump button on smaller layouts to scroll straight to the scene configuration

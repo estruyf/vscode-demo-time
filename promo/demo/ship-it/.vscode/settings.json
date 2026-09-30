@@ -1,0 +1,14 @@
+{
+  // The clock in the status bar and the presenter view is the real time of day.
+  // Off, so every capture shows the same thing.
+  "demoTime.showClock": false,
+  // Every slide in this talk uses the "Ship it" theme and the same footer.
+  "demoTime.customTheme": ".demo/slides/ship-it.css",
+  "demoTime.slideFooterTemplate": "./.demo/templates/footer.html",
+  // Highlights without a border: the lines being talked about keep the
+  // selection background and stay sharp, and
+  // everything around them blurs and dims.
+  "demoTime.highlightBorderColor": "transparent",
+  "demoTime.highlightBlur": 2,
+  "demoTime.highlightOpacity": 0.45
+}

@@ -114,7 +114,7 @@ export const DemoListItem: React.FC<DemoListItemProps> = ({
         'group relative rounded-lg border transition-colors duration-200',
         isSelected
           ? 'border-amber-300 bg-amber-50 dark:border-amber-700/60 dark:bg-amber-900/20'
-          : 'border-transparent hover:bg-gray-50 dark:hover:bg-gray-700/40',
+          : 'border-gray-200 bg-gray-50/80 hover:border-gray-300 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-700/25 dark:hover:border-gray-600 dark:hover:bg-gray-700/50',
         isBeingDragged && 'opacity-40',
         demo.disabled && 'opacity-60'
       )}

@@ -1,0 +1,3 @@
+- `POST /shorten` takes `{ url }` and answers with the code
+- Point out `save()` comes from the store we just looked at
+- Status **201**, not 200: we created something

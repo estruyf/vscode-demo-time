@@ -1,0 +1,19 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Opening",
+  "description": "Who I am and what we are about to build",
+  "version": 3,
+  "scenes": [
+    {
+      "title": "Welcome",
+      "description": "Title slide",
+      "notes": { "path": ".demo/notes/welcome.md" },
+      "moves": [{ "action": "openSlide", "path": ".demo/slides/intro.md" }]
+    },
+    {
+      "title": "What we'll build",
+      "description": "The agenda",
+      "moves": [{ "action": "openSlide", "path": ".demo/slides/agenda.md" }]
+    }
+  ]
+}

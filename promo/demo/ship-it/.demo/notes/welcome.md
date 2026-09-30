@@ -1,0 +1,3 @@
+- Say hi, ask who has built a URL shortener before
+- The whole thing is **one file per concern**, no framework
+- Promise: it runs before the ten minutes are up

@@ -418,7 +418,7 @@ export const DemoBuilder: React.FC = () => {
 
       <div ref={scrollContainerRef} className="flex-1 min-h-0 max-w-7xl mx-auto w-full px-3 sm:px-4 lg:px-6 py-4 sm:py-5 lg:py-8 overflow-y-auto lg:overflow-hidden">
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 lg:h-full lg:min-h-0 content-start">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 lg:h-full lg:min-h-0 content-start lg:content-stretch">
           <Sidebar className="lg:sticky lg:top-0 lg:self-start lg:h-full lg:overflow-y-auto">
             <Card className='space-y-4 sm:space-y-6'>
               <button

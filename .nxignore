@@ -1,0 +1,3 @@
+# The promo videos are a standalone project with their own package.json (and a
+# demo workspace with another inside it). Not part of the Nx workspace.
+promo/

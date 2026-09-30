@@ -1079,7 +1079,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       {step.action === 'copyToClipboard' && (
         <NoteBox className="mt-2" variant="info">
           <>
-            <strong>Note:</strong> This action requires either <code className="bg-white px-1 rounded-xs">content</code> OR <code className="bg-white px-1 rounded-xs">contentPath</code>.
+            <strong>Note:</strong> This action requires either <code className="bg-blue-100 dark:bg-gray-900 text-blue-900 dark:text-blue-100 font-mono px-1 rounded-xs">content</code> OR <code className="bg-blue-100 dark:bg-gray-900 text-blue-900 dark:text-blue-100 font-mono px-1 rounded-xs">contentPath</code>.
           </>
         </NoteBox>
       )}
