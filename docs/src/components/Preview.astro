@@ -7,11 +7,20 @@
   <div
     class="flex flex-col items-center gap-6 bg-[var(--sl-color-gray-6)] border border-[var(--sl-color-gray-2)] dark:border-[var(--sl-color-gray-7)] rounded-lg p-2"
   >
-    <img
-      src="/demotime-pitch.gif"
-      alt="Demo Time pitch animation"
-      class="rounded-lg w-full max-w-2xl"
-    />
+    <!-- Cut from a scripted capture of the extension in VS Code; see promo/ in the repo. -->
+    <video
+      src="/video/promo.mp4"
+      poster="/video/poster.jpg"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      aria-label="Demo Time in VS Code: an act is written once, then each click runs the next scene: a slide, highlighted code, code typing itself in, and the presenter view."
+      class="rounded-lg w-full max-w-4xl"
+      style="aspect-ratio: 16 / 9"
+    ></video>
+    <a href="/video/tour.mp4" class="text-sm pb-2">Watch the full tour (1:30) →</a>
   </div>
 
   <blockquote class="mt-8 opacity-90 text-base">

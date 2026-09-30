@@ -1,0 +1,52 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Build the API",
+  "description": "From an empty route table to a working shortener",
+  "version": 3,
+  "scenes": [
+    {
+      "title": "Tour the server",
+      "description": "One file, node:http only",
+      "notes": { "path": ".demo/notes/server.md" },
+      "moves": [
+        { "action": "closeAll" },
+        { "action": "open", "path": "src/server.ts" },
+        { "action": "highlight", "path": "src/server.ts", "position": "6:15" }
+      ]
+    },
+    {
+      "title": "Add the shorten route",
+      "description": "POST /shorten, typed out",
+      "notes": { "path": ".demo/notes/shorten.md" },
+      "moves": [
+        { "action": "open", "path": "src/routes.ts" },
+        {
+          "action": "insert",
+          "path": "src/routes.ts",
+          "position": "11",
+          "contentPath": ".demo/snippets/shorten.ts",
+          "insertTypingMode": "line-by-line",
+          "insertTypingSpeed": 320
+        },
+        { "action": "save" },
+        { "action": "highlight", "path": "src/routes.ts", "position": "12:19" }
+      ]
+    },
+    {
+      "title": "Try it",
+      "description": "Shorten three links and follow them back",
+      "moves": [
+        { "action": "unselect", "path": "src/routes.ts" },
+        { "action": "openTerminal", "terminalId": "try" },
+        { "action": "waitForTimeout", "timeout": 1200 },
+        {
+          "action": "executeTerminalCommand",
+          "terminalId": "try",
+          "command": "npm run try",
+          "insertTypingMode": "character-by-character",
+          "insertTypingSpeed": 60
+        }
+      ]
+    }
+  ]
+}

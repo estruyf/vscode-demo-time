@@ -1,0 +1,3 @@
+- `node:http` only, Node runs the TypeScript directly
+- The route table is a plain object: `METHOD /path` → handler
+- Anything unknown falls through to the redirect
