@@ -16,6 +16,7 @@ import { execFileSync } from 'node:child_process';
 import { mkdirSync, statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { FFMPEG } from './ffmpeg.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(HERE, '../out');
@@ -25,7 +26,7 @@ const VIDEO = resolve(HERE, '../../docs/public/video');
 mkdirSync(VIDEO, { recursive: true });
 
 const ffmpeg = (args) =>
-  execFileSync('ffmpeg', ['-y', '-hide_banner', '-loglevel', 'error', ...args], {
+  execFileSync(FFMPEG, ['-y', '-hide_banner', '-loglevel', 'error', ...args], {
     stdio: 'inherit',
   });
 const mb = (path) => `${(statSync(path).size / 1024 / 1024).toFixed(1)} MB`;

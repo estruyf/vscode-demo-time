@@ -46,6 +46,7 @@ import {
   VIEWPORT,
   webview,
 } from './harness.mjs';
+import { FFMPEG } from './ffmpeg.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const PUBLIC = resolve(HERE, '../public');
@@ -422,7 +423,7 @@ async function record(page, name, clip) {
   mkdirSync(CLIPS_DIR, { recursive: true });
   const out = join(CLIPS_DIR, `${name}.mp4`);
   execFileSync(
-    'ffmpeg',
+    FFMPEG,
     [
       '-y',
       '-hide_banner',

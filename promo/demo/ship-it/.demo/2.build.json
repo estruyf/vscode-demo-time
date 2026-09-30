@@ -24,7 +24,7 @@
           "action": "insert",
           "path": "src/routes.ts",
           "position": "11",
-          "contentPath": ".demo/snippets/shorten.ts",
+          "contentPath": ".demo/snippets/shorten.txt",
           "insertTypingMode": "line-by-line",
           "insertTypingSpeed": 320
         },
