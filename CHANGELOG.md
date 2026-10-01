@@ -28,6 +28,7 @@
 - [#444](https://github.com/estruyf/vscode-demo-time/issues/444): Added the **Hide slide while presenting** / **Show slide while presenting** action to the **More actions** menu of the slide controls, which adds or removes `hide: true` in the front matter of the current slide
 - [#444](https://github.com/estruyf/vscode-demo-time/issues/444): Added the `demoTime.pdfExport.includeHiddenSlides` setting. The PDF export leaves hidden slides out by default
 - [#453](https://github.com/estruyf/vscode-demo-time/issues/453): Fix `transformMarkdown` running `remarkPlugins` after `remark-rehype`, so remark plugins that change the markdown tree now see its nodes
+- [#455](https://github.com/estruyf/vscode-demo-time/issues/455): Fix the slides documentation listing only some of the built-in themes, and describe which document front matter properties the other slides in the file inherit
 
 ## [2.3.1] - 2026-09-03
 

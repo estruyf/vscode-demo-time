@@ -62,12 +62,31 @@ layout: section
 
 The block is only used as front matter when it is valid YAML with `key: value` properties. Otherwise, the `---` is a plain separator, so a slide can start with a line like `Note: remember this`. A `---` inside a code block (fenced with ` ``` ` or `~~~`) does not start a new slide.
 
-<Aside type="tip">
-When using **grouped slides**, each slide will inherit the following properties from the front matter of the first slide:
-- `theme`
-- `customTheme`
-- `transition`
-</Aside>
+### Front matter for all slides
+
+The front matter at the top of the file is the document front matter. It belongs to the first slide, and the other slides in the file inherit from it:
+
+- `theme` and `customTheme` apply to every slide. When the document front matter sets them, a slide can't use another value.
+- `transition`, `header` and `footer` apply to every slide that doesn't set its own value.
+- Any other property, like the properties you use in a [custom layout](/slides/layouts/custom/), applies to every slide that doesn't set its own value.
+- `layout`, `customLayout`, `image`, `autoAdvanceAfter` and `hide` only apply to the first slide.
+
+```md
+---
+theme: frost
+transition: fadeIn
+---
+
+# Slide 1 Title
+
+---
+transition: slideLeft
+---
+
+# Slide 2 Title
+```
+
+Both slides use the `frost` theme. The first slide uses the `fadeIn` transition, the second slide its own `slideLeft` transition.
 
 <Aside type="tip">
 To make the process easier, you can use the `Demo Time: Create a slide` command. This command will start the slide creation process where you will be asked for a title and if you want to add it to any of your demos.
@@ -93,15 +112,8 @@ Personalization matters! Demo Time allows you to customize the look and feel of 
 
 To change your slide theme, you can specify a different theme in the slide configuration with the `theme` property or provide a custom CSS file in the demo JSON file.
 
-Demo Time has the following built-in themes:
-
-- `default`
-- `minimal`
-- `monomi`
-- `unnamed`
-
 <Aside>
-More information on theming can be found in the [themes section](/slides/themes/) of the documentation.
+The [themes section](/slides/themes/) of the documentation lists the built-in themes and explains how to create your own.
 </Aside>
 
 ### Layouts
