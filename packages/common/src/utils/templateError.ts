@@ -1,4 +1,5 @@
 import { convertTemplateToHtml } from './convertTemplateToHtml';
+import { htmlEncode } from './htmlEncode';
 
 export interface TemplateErrorOptions {
   /**
@@ -23,14 +24,6 @@ export interface TemplateRenderResult {
   error?: string;
 }
 
-const escapeHtml = (value: string) =>
-  value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-
 export const getTemplateErrorMessage = ({ title, path }: TemplateErrorOptions, message: string) =>
   `${title}${path ? ` (${path})` : ''}: ${message}`;
 
@@ -42,9 +35,9 @@ export const renderTemplateError = (
   { title, path, compact }: TemplateErrorOptions,
   message: string,
 ) => {
-  const safeTitle = escapeHtml(title);
-  const safePath = path ? escapeHtml(path) : '';
-  const safeMessage = escapeHtml(message);
+  const safeTitle = htmlEncode(title);
+  const safePath = path ? htmlEncode(path) : '';
+  const safeMessage = htmlEncode(message);
 
   if (compact) {
     return `<div class="demotime__template-error" role="alert" style="color:#b91c1c;background:#fef2f2;border:1px solid #fca5a5;padding:0.25em 0.5em;font-family:sans-serif;font-size:0.75em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${safeMessage}">${safeTitle}${safePath ? ` (${safePath})` : ''}: ${safeMessage}</div>`;

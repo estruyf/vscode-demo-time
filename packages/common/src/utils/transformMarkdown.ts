@@ -11,6 +11,7 @@ import { ReactElement } from 'react';
 import { type Options as RemarkRehypeOptions } from 'mdast-util-to-hast';
 import { visit } from 'unist-util-visit';
 import { v4 as uuidv4 } from 'uuid';
+import { htmlEncode } from './htmlEncode';
 
 export const transformMarkdown = async (
   markdown: string,
@@ -35,7 +36,8 @@ export const transformMarkdown = async (
     .use(() => (tree: any) => {
       visit(tree, (node: any) => {
         if (node.type === 'code' && node.lang === 'mermaid') {
-          const code = node.value.trim();
+          // Escape the code, otherwise quotes end the attribute and `<` gets parsed as HTML
+          const code = htmlEncode(node.value.trim());
           node.type = 'html';
           const randomId = uuidv4();
           node.value = mermaidOptions?.isWebComponent

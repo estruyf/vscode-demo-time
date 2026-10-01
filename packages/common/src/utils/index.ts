@@ -2,6 +2,7 @@ export * from './convertTemplateToHtml';
 export * from './demoNormalizer';
 export * from './getVideoAutoplay';
 export * from './htmlDecode';
+export * from './htmlEncode';
 export * from './placeholderFormatting';
 export * from './sectionFormatting';
 export * from './templateError';
