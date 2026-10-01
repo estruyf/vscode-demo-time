@@ -6,16 +6,34 @@
   "scenes": [
     {
       "title": "Recap",
-      "notes": { "path": ".demo/notes/recap.md" },
       "moves": [
-        { "action": "closeAll" },
-        { "action": "openSlide", "path": ".demo/slides/recap.md" }
-      ]
+        {
+          "action": "closeTerminal",
+          "terminalId": "try"
+        },
+        {
+          "action": "closeAll"
+        },
+        {
+          "action": "openSlide",
+          "path": ".demo/slides/recap.md"
+        }
+      ],
+      "notes": {
+        "path": ".demo/notes/recap.md"
+      }
     },
     {
       "title": "Thank you",
-      "notes": { "path": ".demo/notes/thanks.md" },
-      "moves": [{ "action": "openSlide", "path": ".demo/slides/thanks.md" }]
+      "moves": [
+        {
+          "action": "openSlide",
+          "path": ".demo/slides/thanks.md"
+        }
+      ],
+      "notes": {
+        "path": ".demo/notes/thanks.md"
+      }
     }
   ]
 }
