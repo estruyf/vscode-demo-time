@@ -219,3 +219,35 @@ dt-show,
 dt-hide {
   @apply block my-2;
 }
+
+/* dt-action without its web component (next slide preview): show it as a static button or link */
+dt-action:not(:defined) {
+  display: inline-block;
+  vertical-align: middle;
+  padding: var(--demotime-action-padding, 0.4em 1em);
+  font-size: var(--demotime-action-font-size, 0.9em);
+  font-weight: var(--demotime-action-font-weight, 600);
+  color: var(--demotime-action-color, var(--vscode-button-foreground, #ffffff));
+  background: var(
+    --demotime-action-background,
+    var(--demotime-link-color, var(--vscode-button-background, #0e639c))
+  );
+  border: var(--demotime-action-border, 1px solid transparent);
+  border-radius: var(--demotime-action-radius, 0.375em);
+  box-shadow: var(--demotime-action-shadow, none);
+}
+
+dt-action[variant='link']:not(:defined) {
+  padding: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  color: var(
+    --demotime-action-link-color,
+    var(--demotime-link-color, var(--vscode-textLink-foreground))
+  );
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  text-decoration: underline;
+}

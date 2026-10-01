@@ -30,6 +30,7 @@ export * from './ScreenshotService';
 export * from './ScriptExecutor';
 export * from './SelectionService';
 export * from './Slides';
+export * from './SlideValidationService';
 export * from './SponsorService';
 export * from './StateManager';
 export * from './TemplateCreator';

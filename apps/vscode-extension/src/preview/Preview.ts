@@ -289,6 +289,12 @@ export class Preview extends BaseWebview {
       await Slides.setSlideNotes(payload.path, payload.slideIndex, payload.notes || '');
     } else if (command === WebViewMessages.toVscode.preview.updateSlideNotes) {
       Preview.updateSlideNotes(payload);
+    } else if (command === WebViewMessages.toVscode.preview.runById) {
+      // Only runs scenes by id (dt-action), so slides can't execute arbitrary commands
+      const id = typeof payload === 'string' ? payload.trim() : '';
+      if (id) {
+        await commands.executeCommand(COMMAND.runById, id);
+      }
     } else if (command === WebViewMessages.toVscode.preview.recordOpenSlide) {
       // Record slide change in analytics if recording
       if (

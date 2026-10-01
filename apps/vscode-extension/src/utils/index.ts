@@ -38,6 +38,7 @@ export * from './getPositionAndRange';
 export * from './getPreviousDemoFile';
 export * from './getRelPath';
 export * from './getSetting';
+export * from './getSlideActionTags';
 export * from './getShellPath';
 export * from './getTheme';
 export * from './getUserInput';

@@ -190,6 +190,7 @@ export const WebViewMessages = {
       setSlideHidden: 'setPreviewSlideHidden',
       setSlideNotes: 'setPreviewSlideNotes',
       updateSlideNotes: 'updatePreviewSlideNotes',
+      runById: 'runPreviewById',
     },
     settingsView: {
       /**
