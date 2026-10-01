@@ -13,6 +13,8 @@ import {
   ImportService,
   NotesService,
   PdfExportService,
+  VideoExportCommand,
+  VideoExportService,
   Slides,
   SponsorService,
   UriHandler,
@@ -71,6 +73,8 @@ export async function activate(context: vscode.ExtensionContext) {
   DemoApi.register();
   UriHandler.register();
   PdfExportService.register();
+  VideoExportService.register();
+  VideoExportCommand.register();
   ImportService.register();
   TerminalService.register();
   InputService.registerCommands();

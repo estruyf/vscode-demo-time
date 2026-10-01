@@ -88,4 +88,8 @@ export const COMMAND = {
   toggleAutoProceed: `${EXTENSION_NAME}.toggleAutoProceed`,
   pauseAutoProceed: `${EXTENSION_NAME}.pauseAutoProceed`,
   resumeAutoProceed: `${EXTENSION_NAME}.resumeAutoProceed`,
+  // Video export
+  runForVideoExport: `${EXTENSION_NAME}.runForVideoExport`,
+  stopVideoExport: `${EXTENSION_NAME}.stopVideoExport`,
+  exportPlayAsVideo: `${EXTENSION_NAME}.exportPlayAsVideo`,
 };

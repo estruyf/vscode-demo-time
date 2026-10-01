@@ -1,0 +1,2 @@
+- Forty lines, no dependencies, and it runs on plain Node
+- Each file does one thing: the server, the routes, the store

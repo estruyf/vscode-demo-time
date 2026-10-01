@@ -69,4 +69,9 @@ export const Config = {
   recording: {
     captureSaves: 'recording.captureSaves',
   },
+  videoExport: {
+    command: 'videoExport.command',
+    extension: 'videoExport.extension',
+    options: 'videoExport.options',
+  },
 };

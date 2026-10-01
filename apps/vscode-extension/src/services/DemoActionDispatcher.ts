@@ -29,6 +29,7 @@ import {
   StateManager,
   TerminalService,
   TextTypingService,
+  VideoExportService,
   ZoomService,
   MacOSActionsService,
 } from './';
@@ -104,6 +105,16 @@ export class DemoActionDispatcher {
     // Check if the step is disabled
     if (step.disabled) {
       return;
+    }
+
+    // While a play runs unattended for a video export, moves that need the presenter or
+    // happen outside VS Code are skipped or adjusted
+    if (VideoExportService.isActive()) {
+      const exportStep = await VideoExportService.beforeStep(step);
+      if (!exportStep) {
+        return;
+      }
+      step = exportStep;
     }
 
     // GitHub Copilot actions
