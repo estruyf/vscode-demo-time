@@ -40,8 +40,8 @@ export class SlideParser {
     const slideBlocks: string[] = [];
     const slides: InternalSlide[] = [];
     let buffer: string[] = [];
-    let inCodeBlock = false;
-    let codeBlockMarker = '```';
+    // The opening fence (``` or ~~~) of the code block we are in
+    let codeFence: string | undefined;
 
     // If document frontmatter exists and remaining content starts with another slide delimiter,
     // the document frontmatter gets its own (empty) first slide. The frontmatter object is used
@@ -62,39 +62,32 @@ export class SlideParser {
       const line = lines[i];
       const trimmed = line.trim();
 
-      if (!inCodeBlock && /^`{3,}/.test(trimmed)) {
-        inCodeBlock = true;
-        const match = /^`+/.exec(trimmed);
-        codeBlockMarker = match ? match[0] : '```';
+      if (codeFence) {
         buffer.push(line);
+        if (SlideParser.isClosingFence(trimmed, codeFence)) {
+          codeFence = undefined;
+        }
         continue;
       }
 
-      if (inCodeBlock) {
+      const openingFence = /^(`{3,}|~{3,})/.exec(trimmed);
+      if (openingFence) {
+        codeFence = openingFence[1];
         buffer.push(line);
-        if (trimmed.startsWith(codeBlockMarker)) {
-          inCodeBlock = false;
-        }
         continue;
       }
 
       if (trimmed === '---') {
         // Possible start of frontmatter for the next slide
-        if (i + 1 < lines.length && /^\w+\s*:/m.test(lines[i + 1])) {
+        const frontmatterEnd = SlideParser.findFrontmatterEnd(lines, i);
+        if (frontmatterEnd !== undefined) {
           if (buffer.length > 0 || mergedOptions.includeEmpty) {
             slideBlocks.push(buffer.join('\n'));
             buffer = [];
           }
 
-          buffer.push(line);
-          i++;
-          while (i < lines.length) {
-            buffer.push(lines[i]);
-            if (lines[i].trim() === '---') {
-              break;
-            }
-            i++;
-          }
+          buffer.push(...lines.slice(i, frontmatterEnd + 1));
+          i = frontmatterEnd;
           continue;
         }
 
@@ -189,6 +182,47 @@ export class SlideParser {
 
       return slide;
     });
+  }
+
+  /**
+   * Checks if a line closes a code block: the same fence character, at least as long as the
+   * opening fence, and nothing after it.
+   */
+  private static isClosingFence(trimmed: string, openingFence: string): boolean {
+    const match = /^(`{3,}|~{3,})$/.exec(trimmed);
+    return !!match && match[1][0] === openingFence[0] && match[1].length >= openingFence.length;
+  }
+
+  /**
+   * Checks if the `---` on the given line starts a frontmatter block for the next slide.
+   * That is the case when the next line is a `key:` line, a closing `---` follows, and the
+   * lines in between parse as a YAML mapping. A markdown heading after an empty line is slide
+   * content, even though YAML would read it as a comment.
+   *
+   * @returns The index of the closing `---` line, or undefined when it is a plain slide separator
+   */
+  private static findFrontmatterEnd(lines: string[], start: number): number | undefined {
+    if (start + 1 >= lines.length || !/^\w+\s*:/.test(lines[start + 1])) {
+      return undefined;
+    }
+
+    for (let end = start + 2; end < lines.length; end++) {
+      if (lines[end].trim() !== '---') {
+        continue;
+      }
+
+      const blockLines = lines.slice(start + 1, end);
+      const hasHeading = blockLines.some(
+        (line, idx) => idx > 0 && blockLines[idx - 1].trim() === '' && /^#{1,6}\s/.test(line),
+      );
+      if (hasHeading || !FrontMatterParser.parseYamlMapping(blockLines.join('\n'))) {
+        return undefined;
+      }
+
+      return end;
+    }
+
+    return undefined;
   }
 
   /**
