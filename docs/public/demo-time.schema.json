@@ -3,7 +3,7 @@
   "$id": "https://demotime.show/demo-time.schema.json",
   "title": "Demo Time - Schema",
   "description": "The schema for the Demo Time - VSCode extension",
-  "lastModified": "2026-05-21",
+  "lastModified": "2026-10-01",
   "type": "object",
   "properties": {
     "title": {
@@ -308,7 +308,7 @@
                   "if": {
                     "properties": {
                       "action": {
-                        "enum": ["highlight", "positionCursor"]
+                        "enum": ["highlight"]
                       }
                     }
                   },
@@ -1211,7 +1211,8 @@
       "if": {
         "properties": {
           "version": { "const": 3 }
-        }
+        },
+        "required": ["version"]
       },
       "then": {
         "required": ["title", "version", "scenes"]

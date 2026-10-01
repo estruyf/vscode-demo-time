@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { clearVariablesState } from './utils';
 import {
+  AiSkillsService,
   AnalyticsCommands,
   DecoratorService,
   DemoApi,
@@ -80,6 +81,7 @@ export async function activate(context: vscode.ExtensionContext) {
   InputService.registerCommands();
   AnalyticsCommands.registerCommands();
   RedactionService.register();
+  AiSkillsService.register();
   SponsorService.init(context);
 
   console.log(`${Config.title} is active!`);

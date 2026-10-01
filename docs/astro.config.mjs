@@ -194,6 +194,7 @@ export default defineConfig({
             { label: 'Remote Control', slug: 'remote-control' },
             { label: 'Redaction mode', slug: 'features/redaction-mode' },
             { label: 'URI handler', slug: 'features/uri-handler' },
+            { label: 'AI skills', slug: 'features/ai-skills', badge: { text: 'New', variant: 'tip' } },
             { label: 'MCP server support', slug: 'features/mcp-server' },
           ],
         },

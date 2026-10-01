@@ -65,6 +65,11 @@ the same change:
 
 Search the docs for the feature, setting or action name to find every page that refers to it.
 
+The AI skills in `skills/` bundle references and scripts that `npm run skills:build` generates
+from the docs, the JSON schema and the Theme Builder (they are gitignored and built with the
+extension). Update a skill's `SKILL.md` when a change affects how the assistant should create
+slides, themes or demos.
+
 ## Adding a new action
 
 The release workflows (`release.yml`, `release-beta.yml`) run `.github/scripts/verify-actions.mjs`,

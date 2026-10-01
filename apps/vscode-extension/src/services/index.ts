@@ -1,3 +1,4 @@
+export * from './AiSkillsService';
 export * from './analytics';
 export * from './ChatActionsService';
 export * from './DecoratorService';

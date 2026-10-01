@@ -72,6 +72,8 @@ export const COMMAND = {
   showGallery: `${EXTENSION_NAME}.showGallery`,
   // Theme Builder
   showThemeBuilder: `${EXTENSION_NAME}.showThemeBuilder`,
+  // AI skills
+  installAiSkills: `${EXTENSION_NAME}.installAiSkills`,
   // Resources
   openSupportTheProject: `${EXTENSION_NAME}.openSupportTheProject`,
   openRemoteControl: `${EXTENSION_NAME}.openRemoteControl`,

@@ -78,6 +78,20 @@
   ],
   "main": "./out/extension/extension.js",
   "contributes": {
+    "chatSkills": [
+      {
+        "path": "./skills/demotime-talk-plan/SKILL.md"
+      },
+      {
+        "path": "./skills/demotime-slides/SKILL.md"
+      },
+      {
+        "path": "./skills/demotime-slide-theme/SKILL.md"
+      },
+      {
+        "path": "./skills/demotime-code-demo/SKILL.md"
+      }
+    ],
     "configurationDefaults": {
       "files.associations": {
         "**/.demo/*.json": "jsonc",
@@ -752,6 +766,12 @@
         "icon": "$(symbol-color)"
       },
       {
+        "command": "demo-time.installAiSkills",
+        "title": "Install or update AI skills",
+        "category": "Demo Time",
+        "icon": "$(sparkle)"
+      },
+      {
         "command": "demo-time.continueDemo",
         "title": "Continue Demo",
         "category": "Demo Time"
@@ -1046,6 +1066,10 @@
           "when": "view == demo-time-scenes"
         },
         {
+          "command": "demo-time.installAiSkills",
+          "when": "view == demo-time-scenes"
+        },
+        {
           "command": "demo-time.openSupportTheProject",
           "when": "view == demo-time-scenes"
         }
@@ -1332,7 +1356,8 @@
         "options": {
           "commands": [
             "tsup --watch --sourcemap",
-            "tsup --watch --sourcemap --config tsup.wc.config.ts"
+            "tsup --watch --sourcemap --config tsup.wc.config.ts",
+            "node ../../scripts/skills/build-skills.mjs && node ../../scripts/skills/copy-skills.mjs"
           ],
           "cwd": "{projectRoot}"
         }
@@ -1340,7 +1365,7 @@
       "copy-assets": {
         "executor": "nx:run-commands",
         "options": {
-          "command": "node ./scripts/copy-webviews.js && node ./scripts/copy-assets.mjs"
+          "command": "node ./scripts/copy-webviews.js && node ./scripts/copy-assets.mjs && node ./scripts/skills/build-skills.mjs && node ./scripts/skills/copy-skills.mjs"
         },
         "dependsOn": [
           {

@@ -9,4 +9,5 @@ export const StateKeys = {
   variables: 'variables',
   presentationView: 'presentationView',
   sponsor: 'sponsor',
+  aiSkillsUpdateDismissed: 'aiSkillsUpdateDismissed',
 };

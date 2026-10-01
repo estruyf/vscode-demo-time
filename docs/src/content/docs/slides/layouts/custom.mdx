@@ -51,6 +51,51 @@ title: My custom layout
 </div>
 ```
 
+## Images, helpers and styles
+
+The template can use these values and helpers next to the slide properties:
+
+- **Images:** a relative `src` of an `<img>` resolves from the workspace root, so
+  `<img src="{{metadata.imageSrc}}" />` works with `imageSrc: .demo/assets/me.jpg`. A CSS `url()`
+  is not resolved for you; use `{{metadata.webViewUrl}}` as the base URL of the workspace:
+  `background-image: url('{{metadata.webViewUrl}}/{{metadata.imageSrc}}');`.
+- **`eq`:** compare two values, for example to switch between variants of the layout:
+  `{{#if (eq metadata.position "left")}}photo-left{{/if}}`.
+- **`date`:** today's date, or with a format `{{date "d MMM yyyy"}}`. To use the `date` property
+  of the slide, call it inside the slide properties: `{{#with metadata}}{{date "d MMM yyyy"}}{{/with}}`.
+  The format tokens are listed on the [header and footer](/slides/layouts/header-footer/#date-formats)
+  page.
+
+```html title=".demo/layouts/about-me.hbs"
+<style>
+  .about-me__photo {
+    background-image: url('{{metadata.webViewUrl}}/{{metadata.imageSrc}}');
+  }
+</style>
+
+<div class="about-me {{#if (eq metadata.position "left")}}about-me--left{{/if}}">
+  <div class="about-me__photo"></div>
+  <div class="about-me__info">
+    <h1>{{metadata.name}}</h1>
+    {{#if metadata.job}}<p>{{metadata.job}}</p>{{/if}}
+    {{{content}}}
+  </div>
+</div>
+```
+
+```md title="Slide using the about-me layout"
+---
+customLayout: .demo/layouts/about-me.hbs
+name: Jane Doe
+job: Developer Advocate
+position: left
+imageSrc: .demo/assets/jane.jpg
+---
+```
+
+Keep the styles of the layout in your [custom theme](/slides/themes/custom/), and only put values
+from the front matter in a `<style>` block of the template.
+
 ## Layout errors
 
 When the layout file can't be found, or its Handlebars template is invalid (for example an

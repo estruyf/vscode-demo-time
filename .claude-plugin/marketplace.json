@@ -1,0 +1,27 @@
+{
+  "name": "demotime",
+  "description": "Demo Time plugins for presenting with the Demo Time VS Code extension.",
+  "owner": {
+    "name": "Elio Struyf",
+    "url": "https://www.eliostruyf.com"
+  },
+  "plugins": [
+    {
+      "name": "presentation-skills",
+      "displayName": "Demo Time presentation skills",
+      "source": {
+        "source": "archive",
+        "url": "https://github.com/estruyf/vscode-demo-time/releases/latest/download/demotime-skills.zip"
+      },
+      "description": "Skills to plan a talk, create Demo Time slides and slide themes, and script live coding demos as Demo Time acts.",
+      "author": {
+        "name": "Elio Struyf",
+        "url": "https://www.eliostruyf.com"
+      },
+      "homepage": "https://demotime.show/features/ai-skills/",
+      "repository": "https://github.com/estruyf/vscode-demo-time",
+      "license": "Apache-2.0",
+      "keywords": ["demo-time", "presentation", "slides", "live-coding", "vscode"]
+    }
+  ]
+}
