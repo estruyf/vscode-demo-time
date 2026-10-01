@@ -31,6 +31,11 @@ import {
   placeholderFormatting,
   getDemosFromConfig,
   isSlideHidden,
+  getProgressBarPosition,
+  getSlideHeading,
+  getTemplateData,
+  renderProgressBar,
+  SlidePlaceholders,
 } from '@demotime/common';
 import { ScreenshotService } from './ScreenshotService';
 
@@ -99,14 +104,18 @@ export class PdfExportService {
             {} as typeof demoFiles,
           );
 
-          // Get all slide actions
-          const slideActions: Step[] = [];
+          // Get all slide actions, with the act and scene that open them
+          const slideActions: { step: Step; actTitle?: string; sceneTitle?: string }[] = [];
           for (const demoFile of Object.values(demoFiles)) {
             const demos = getDemosFromConfig(demoFile as any);
             for (const demo of demos) {
               for (const step of demo.steps) {
                 if (step.action === Action.OpenSlide && step.path) {
-                  slideActions.push(step);
+                  slideActions.push({
+                    step,
+                    actTitle: (demoFile as any)?.title,
+                    sceneTitle: demo.title,
+                  });
                 }
               }
             }
@@ -115,13 +124,13 @@ export class PdfExportService {
           // Retrieving slide contents
           progress.report({ message: 'Retrieving slide contents...' });
           const slideContents = [];
-          for (const slideAction of slideActions) {
+          for (const { step, actTitle, sceneTitle } of slideActions) {
             const slideUri = Uri.joinPath(
               PdfExportService.workspaceFolder?.uri as Uri,
-              slideAction.path as string,
+              step.path as string,
             );
             const content = await readFile(slideUri);
-            slideContents.push({ content });
+            slideContents.push({ content, actTitle, sceneTitle });
           }
 
           if (slideContents.length === 0) {
@@ -217,13 +226,19 @@ export class PdfExportService {
   /**
    * Generate HTML for slides using the existing markdown processing pipeline
    */
-  private static async generateSlidesHtml(slides: { content: string }[]): Promise<string> {
+  private static async generateSlidesHtml(
+    slides: { content: string; actTitle?: string; sceneTitle?: string }[],
+  ): Promise<string> {
     const theme = await getTheme(undefined);
     const ext = Extension.getInstance();
     const headerSetting = ext.getSetting<string>(Config.slides.slideHeaderTemplate);
     const footerSetting = ext.getSetting<string>(Config.slides.slideFooterTemplate);
     const includeHidden = ext.getSetting<boolean>(Config.pdfExport.includeHiddenSlides) || false;
     const notesPlacement = ext.getSetting<PdfNotesPlacement>(Config.pdfExport.notes) || 'none';
+    const progressSetting = ext.getSetting<string>(Config.slides.slideProgressBar);
+    const presentationTitle =
+      ext.getSetting<string>(Config.slides.presentationTitle) ||
+      PdfExportService.workspaceFolder?.name;
 
     // Generate slide content HTML
     const slideContents = [];
@@ -290,24 +305,25 @@ export class PdfExportService {
             footerTemplate = await readFile(abs);
           }
 
-          if (
-            headerTemplate?.includes(`{{crntSlideIdx}}`) ||
-            footerTemplate?.includes(`{{crntSlideIdx}}`)
-          ) {
-            crntSlide.frontmatter.crntSlideIdx = isHidden ? undefined : slideNr;
-          }
-
-          if (
-            headerTemplate?.includes(`{{totalSlides}}`) ||
-            footerTemplate?.includes(`{{totalSlides}}`)
-          ) {
-            crntSlide.frontmatter.totalSlides = totalSlides;
-          }
+          const placeholders: SlidePlaceholders = {
+            crntSlideIdx: isHidden ? undefined : slideNr,
+            totalSlides,
+            slideTitle: getSlideHeading(crntSlide.content),
+            sceneTitle: slide.sceneTitle,
+            actTitle: slide.actTitle,
+            presentationTitle,
+          };
+          const templateData = getTemplateData(crntSlide.frontmatter, placeholders);
+          const progressHtml = renderProgressBar(
+            getProgressBarPosition(progressSetting, crntSlide.frontmatter.progress),
+            placeholders.crntSlideIdx,
+            totalSlides,
+          );
 
           if (headerTemplate) {
             const { html: headerHtml, error } = tryConvertTemplateToHtml(
               headerTemplate,
-              crntSlide.frontmatter,
+              templateData,
               {
                 title: 'Header template error',
                 compact: true,
@@ -321,7 +337,7 @@ export class PdfExportService {
           if (footerTemplate) {
             const { html: footerHtml, error } = tryConvertTemplateToHtml(
               footerTemplate,
-              crntSlide.frontmatter,
+              templateData,
               {
                 title: 'Footer template error',
                 compact: true,
@@ -359,6 +375,7 @@ export class PdfExportService {
             customLayout,
             headerTemplate,
             footerTemplate,
+            progressHtml,
             notesHtml,
           });
 
@@ -530,6 +547,8 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
         }
 
         ${slide.footerTemplate ? `<footer class="slide__footer">${slide.footerTemplate}</footer>` : ``}
+
+        ${slide.progressHtml || ``}
       </div>
     </div>
   </div>

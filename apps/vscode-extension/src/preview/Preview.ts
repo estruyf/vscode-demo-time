@@ -209,18 +209,19 @@ export class Preview extends BaseWebview {
     if (command === WebViewMessages.toVscode.getSetting && requestId) {
       const setting = Extension.getInstance().getSetting(payload);
       Preview.postRequestMessage(command, requestId, setting);
-    } else if (command === WebViewMessages.toVscode.preview.getTotalSlides && requestId) {
-      const totalSlides = await Slides.getTotalSlides();
-      Preview.postRequestMessage(command, requestId, totalSlides);
     } else if (
-      command === WebViewMessages.toVscode.preview.getGlobalSlideIndex &&
+      command === WebViewMessages.toVscode.preview.getSlidePlaceholders &&
       requestId &&
       payload
     ) {
       // payload: { filePath, localSlideIdx }
       const { filePath, localSlideIdx } = payload;
-      const globalIdx = await Slides.getGlobalSlideIndex(filePath, localSlideIdx);
-      Preview.postRequestMessage(command, requestId, globalIdx);
+      const placeholders = await Slides.getSlidePlaceholders(
+        filePath,
+        localSlideIdx,
+        DemoRunner.currentDemo,
+      );
+      Preview.postRequestMessage(command, requestId, placeholders);
     } else if (command === WebViewMessages.toVscode.preview.getSlide && requestId) {
       const currentFile = Preview.crntFile;
       const path =

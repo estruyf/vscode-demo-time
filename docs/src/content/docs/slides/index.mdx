@@ -105,6 +105,7 @@ You can customize your slides using the following properties in the front matter
 - `customLayout` - Specify a custom layout for the slide.
 - `autoAdvanceAfter` - Automatically advance to the next slide or demo after a specified number of seconds.
 - `hide` - Skip the slide while presenting. See [hiding slides](#hiding-slides).
+- `progress` - Show (`true`, `top`, `bottom`) or hide (`false`) the [progress bar](/slides/layouts/header-footer/#progress-bar) on the slide.
 
 ### Themes
 
@@ -262,7 +263,7 @@ While [presentation mode](/presentation-mode/) is on, a hidden slide is:
 
 - skipped when you go to the next or previous slide, including auto-advancing with `autoAdvanceAfter`;
 - skipped by the next slide preview in the [presenter view](/features/presenter-view/);
-- not counted by the `{{crntSlideIdx}}` and `{{totalSlides}}` [header and footer placeholders](/slides/layouts/header-footer/).
+- not counted by the `{{crntSlideIdx}}` and `{{totalSlides}}` [header and footer placeholders](/slides/layouts/header-footer/#placeholders) and the [progress bar](/slides/layouts/header-footer/#progress-bar).
 
 When an `openSlide` move opens a hidden slide, the slide view continues with the next visible slide.
 
@@ -280,7 +281,7 @@ Hidden slides are left out of the [PDF export](/slides/export/) unless you enabl
 
 ## Header and Footer
 
-Learn how to add and customize headers and footers in your slides for branding, context, or additional information. See the [Header and Footer documentation](./layouts/header-footer/) for details and examples.
+Learn how to add and customize headers and footers in your slides for branding, context, or additional information, like the slide number, the act and scene title, or the date. You can also show a progress bar on your slides. See the [Header and Footer documentation](./layouts/header-footer/) for details and examples.
 
 ## Notes
 

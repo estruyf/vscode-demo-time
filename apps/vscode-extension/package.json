@@ -361,12 +361,32 @@
         "demoTime.slideHeaderTemplate": {
           "type": "string",
           "default": "",
-          "description": "HTML template for slide headers. Supports Handlebars syntax with frontmatter variables. Example: '<header><h1>{{title}}</h1> <span>{{date}}</span></header>'"
+          "markdownDescription": "HTML template for slide headers. Supports Handlebars syntax with the front matter properties of the slide and the `{{crntSlideIdx}}`, `{{totalSlides}}`, `{{slideTitle}}`, `{{sceneTitle}}`, `{{actTitle}}`, `{{presentationTitle}}` and `{{date \"d MMM yyyy\"}}` placeholders. Example: `<header><span>{{actTitle}}</span> <span>{{slideTitle}}</span></header>`"
         },
         "demoTime.slideFooterTemplate": {
           "type": "string",
           "default": "",
-          "description": "HTML template for slide footers. Supports Handlebars syntax with frontmatter variables. Example: '<footer><span>{{name}}</span> <span>{{date}}</span></footer>'"
+          "markdownDescription": "HTML template for slide footers. Supports Handlebars syntax with the front matter properties of the slide and the `{{crntSlideIdx}}`, `{{totalSlides}}`, `{{slideTitle}}`, `{{sceneTitle}}`, `{{actTitle}}`, `{{presentationTitle}}` and `{{date \"d MMM yyyy\"}}` placeholders. Example: `<footer><span>{{presentationTitle}}</span> <span>{{crntSlideIdx}} / {{totalSlides}}</span></footer>`"
+        },
+        "demoTime.slideProgressBar": {
+          "type": "string",
+          "enum": [
+            "none",
+            "top",
+            "bottom"
+          ],
+          "enumDescriptions": [
+            "Don't show a progress bar.",
+            "Show the progress bar at the top of the slides.",
+            "Show the progress bar at the bottom of the slides."
+          ],
+          "default": "none",
+          "markdownDescription": "Show a thin progress bar on the slides, based on the slide number and the total number of slides over all acts. Use `progress: true`, `false`, `top` or `bottom` in the slide front matter to change it for a slide."
+        },
+        "demoTime.presentationTitle": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Title of the presentation for the `{{presentationTitle}}` placeholder in slide header and footer templates. When empty, the name of the workspace folder is used."
         },
         "demoTime.pdfExport.includeHiddenSlides": {
           "type": "boolean",

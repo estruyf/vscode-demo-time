@@ -11,6 +11,7 @@ import {
   window,
   workspace,
   WorkspaceEdit,
+  WorkspaceFolder,
 } from 'vscode';
 import { Subscription } from '../models';
 import { Extension } from './Extension';
@@ -47,6 +48,8 @@ import {
   getDemosFromConfig,
   getVisibleSlides,
   isSlideHidden,
+  Slide,
+  SlidePlaceholders,
 } from '@demotime/common';
 
 export class Slides {
@@ -196,70 +199,124 @@ layout: ${layout.toLowerCase()}
   }
 
   /**
-   * Maps a file path and local slide index to the global slide index (1-based).
-   * Hidden slides (`hide: true`) are not counted and have no global index.
+   * Gets the values of the header and footer placeholders that don't come from the front matter:
+   * the slide number over all acts, the total number of slides, the act and scene that open the
+   * slide, and the presentation title. Hidden slides (`hide: true`) are not counted and have no
+   * slide number.
    * @param filePath Relative file path to the slide markdown file
    * @param localSlideIdx Local slide index (0-based)
-   * @returns Global slide index (1-based), or null if not found or hidden
+   * @param scene The scene that opened the slide. When more scenes open the same file, this one is
+   * used for `sceneTitle` and `actTitle`.
    */
-  public static async getGlobalSlideIndex(
+  public static async getSlidePlaceholders(
     filePath: string,
     localSlideIdx: number,
-  ): Promise<number | null> {
+    scene?: { id?: string; title?: string },
+  ): Promise<SlidePlaceholders> {
+    // The preview sends a webview URL, which can have encoded characters like `%20`
+    try {
+      filePath = decodeURIComponent(filePath);
+    } catch {
+      // Keep the path as is
+    }
     filePath = parseWinPath(filePath);
     const demoFiles = await DemoFileProvider.getFiles();
-    let globalIdx = 0;
-    if (demoFiles) {
-      for (const demoFile of Object.values(demoFiles)) {
-        const demos = getDemosFromConfig(demoFile as any);
-        for (const demo of demos) {
-          for (const step of demo.steps) {
-            if (step.action === 'openSlide' && step.path) {
-              let fileUri;
-              const wsFolder = Extension.getInstance().workspaceFolder;
-              if (wsFolder) {
-                fileUri = Uri.joinPath(wsFolder.uri, step.path);
+    const wsFolder = Extension.getInstance().workspaceFolder;
 
-                // Verify the resolved path is contained within the workspace
-                if (!isPathInWorkspace(fileUri, wsFolder)) {
-                  // Fallback: treat as one slide for invalid paths
-                  if (step.path === filePath && localSlideIdx === 0) {
-                    return globalIdx + 1;
-                  }
-                  globalIdx++;
-                  continue;
-                }
-              } else {
-                fileUri = Uri.file(step.path);
-              }
-              try {
-                const fileContent = await readFile(fileUri);
-                if (fileContent) {
-                  const parser = new SlideParser();
-                  const slides = parser.parseSlides(fileContent);
-                  for (let i = 0; i < slides.length; i++) {
-                    const hidden = isSlideHidden(slides[i]);
-                    if (filePath.endsWith(parseWinPath(step.path)) && i === localSlideIdx) {
-                      return hidden ? null : globalIdx + 1; // 1-based index
-                    }
-                    if (!hidden) {
-                      globalIdx++;
-                    }
-                  }
-                }
-              } catch {
-                // Fallback: treat as one slide
-                if (step.path === filePath && localSlideIdx === 0) {
-                  return globalIdx + 1;
-                }
-                globalIdx++;
-              }
+    let totalSlides = 0;
+    let crntSlideIdx: number | null = null;
+    // The first move that opens the file gives the slide number
+    let isNumbered = false;
+    let match: { actTitle?: string; sceneTitle?: string; isScene: boolean } | undefined;
+
+    for (const demoFile of Object.values(demoFiles || {})) {
+      const demos = getDemosFromConfig(demoFile as any);
+      for (const demo of demos) {
+        for (const step of demo.steps) {
+          if (step.action !== Action.OpenSlide || !step.path) {
+            continue;
+          }
+
+          const stepPath = parseWinPath(step.path).replace(/^\.\//, '');
+          const isFile =
+            filePath === stepPath ||
+            filePath.endsWith(`/${stepPath}`) ||
+            filePath === parseWinPath(step.path);
+          if (isFile) {
+            const isScene =
+              !!scene &&
+              (scene.id ? scene.id === demo.id : !!scene.title && scene.title === demo.title);
+            if (!match || (isScene && !match.isScene)) {
+              match = { actTitle: (demoFile as any)?.title, sceneTitle: demo.title, isScene };
+            }
+          }
+
+          const slides = await Slides.readSlides(step.path, wsFolder);
+          if (!slides) {
+            // Count as one slide when the file can't be read
+            if (isFile && localSlideIdx === 0 && !isNumbered) {
+              crntSlideIdx = totalSlides + 1;
+              isNumbered = true;
+            }
+            totalSlides++;
+            continue;
+          }
+
+          for (let i = 0; i < slides.length; i++) {
+            const hidden = isSlideHidden(slides[i]);
+            if (isFile && i === localSlideIdx && !isNumbered) {
+              crntSlideIdx = hidden ? null : totalSlides + 1;
+              isNumbered = true;
+            }
+            if (!hidden) {
+              totalSlides++;
             }
           }
         }
       }
     }
-    return null;
+
+    const presentationTitle =
+      Extension.getInstance().getSetting<string>(Config.slides.presentationTitle) || wsFolder?.name;
+
+    return {
+      crntSlideIdx,
+      totalSlides,
+      actTitle: match?.actTitle,
+      sceneTitle: match?.sceneTitle,
+      presentationTitle,
+    };
+  }
+
+  /**
+   * Reads and parses the slides of an `openSlide` move.
+   * @returns The slides, or `undefined` when the path is outside the workspace or can't be read
+   */
+  private static async readSlides(
+    path: string,
+    wsFolder: WorkspaceFolder | null | undefined,
+  ): Promise<Slide[] | undefined> {
+    let fileUri;
+    if (wsFolder) {
+      fileUri = Uri.joinPath(wsFolder.uri, path);
+
+      // Verify the resolved path is contained within the workspace
+      if (!isPathInWorkspace(fileUri, wsFolder)) {
+        return undefined;
+      }
+    } else {
+      fileUri = Uri.file(path);
+    }
+
+    try {
+      const fileContent = await readFile(fileUri);
+      if (!fileContent) {
+        return undefined;
+      }
+      return new SlideParser().parseSlides(fileContent);
+    } catch {
+      return undefined;
+    }
   }
 
   /**
@@ -454,6 +511,10 @@ layout: ${layout.toLowerCase()}
               return new Hover(
                 'Hides the slide while presenting. Hidden slides are skipped by navigation and not counted in the slide numbers, but you can still open them from the slide navigator.',
               );
+            } else if (line.startsWith('progress:')) {
+              return new Hover(
+                'Shows or hides the progress bar on the slide, overriding the `demoTime.slideProgressBar` setting. Use `true`, `false`, `top` or `bottom`.',
+              );
             }
           }
 
@@ -532,6 +593,13 @@ layout: ${layout.toLowerCase()}
                   },
                   CompletionItemKind.Property,
                 ),
+                new CompletionItem(
+                  {
+                    label: 'progress',
+                    description: 'Show or hide the progress bar',
+                  },
+                  CompletionItemKind.Property,
+                ),
               ];
             } else if (linePrefix.startsWith('theme:')) {
               return Object.values(SlideTheme).map((theme) => {
@@ -547,6 +615,10 @@ layout: ${layout.toLowerCase()}
               });
             } else if (linePrefix.startsWith('hide:')) {
               return ['true', 'false'].map((value) => {
+                return new CompletionItem(value, CompletionItemKind.Value);
+              });
+            } else if (linePrefix.startsWith('progress:')) {
+              return ['true', 'false', 'top', 'bottom'].map((value) => {
                 return new CompletionItem(value, CompletionItemKind.Value);
               });
             }

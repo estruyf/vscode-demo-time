@@ -16,6 +16,10 @@
   --demotime-link-color: var(--vscode-textLink-foreground);
   --demotime-link-active-color: var(--vscode-textLink-activeForeground);
 
+  --demotime-progress-color: var(--vscode-activityBarBadge-background);
+  --demotime-progress-background: transparent;
+  --demotime-progress-height: 4px;
+
   --demotime-code-background: var(--vscode-editor-background);
   --demotime-code-border: var(--vscode-panel-border);
 

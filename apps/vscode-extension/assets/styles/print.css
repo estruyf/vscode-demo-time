@@ -155,6 +155,31 @@ pre code {
   box-sizing: border-box;
 }
 
+/* Progress bar, styled per theme with the --demotime-progress-* variables */
+.slide__progress {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: var(--demotime-progress-height, 4px);
+  background: var(--demotime-progress-background, transparent);
+  z-index: 30;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.slide__progress--top {
+  top: 0;
+}
+
+.slide__progress--bottom {
+  bottom: 0;
+}
+
+.slide__progress__bar {
+  height: 100%;
+  background: var(--demotime-progress-color, var(--demotime-link-color, currentColor));
+}
+
 .slide__image_left,
 .slide__image_right {
   @apply z-10;

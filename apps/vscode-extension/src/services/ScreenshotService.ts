@@ -14,12 +14,18 @@ import {
   renderTemplateError,
   transformMarkdown,
   tryConvertTemplateToHtml,
+  getProgressBarPosition,
+  getSlideHeading,
+  getTemplateData,
+  renderProgressBar,
+  SlidePlaceholders,
 } from '@demotime/common';
 import { renderToString } from 'react-dom/server';
 import rehypePrettyCode from 'rehype-pretty-code';
 import { resolve } from 'mlly';
 import { Preview } from '../preview/Preview';
 import { DemoRunner } from './DemoRunner';
+import { Slides } from './Slides';
 import type { BrowserType } from 'playwright-chromium';
 
 export class ScreenshotService {
@@ -33,7 +39,10 @@ export class ScreenshotService {
       }
 
       // Always render fresh HTML, the screenshot cache only holds PNG data URLs
-      return await ScreenshotService.generateSlideHtml(slideData.targetSlide);
+      return await ScreenshotService.generateSlideHtml(
+        slideData.targetSlide,
+        slideData.placeholders,
+      );
     } catch (error) {
       Logger.error(`Error generating next slide preview: ${(error as Error).message}`);
       return null;
@@ -57,7 +66,7 @@ export class ScreenshotService {
         return null;
       }
 
-      const { targetSlide, cacheKey } = slideData;
+      const { targetSlide, cacheKey, placeholders } = slideData;
 
       if (ScreenshotService.cachedScreenshot?.key === cacheKey) {
         Logger.info('Returning cached next slide screenshot');
@@ -65,7 +74,11 @@ export class ScreenshotService {
       }
 
       // Generate screenshot
-      const screenshot = await ScreenshotService.generateScreenshot(chromium, targetSlide);
+      const screenshot = await ScreenshotService.generateScreenshot(
+        chromium,
+        targetSlide,
+        placeholders,
+      );
 
       ScreenshotService.cachedScreenshot = { key: cacheKey, value: screenshot };
 
@@ -79,7 +92,11 @@ export class ScreenshotService {
   /**
    * Get the target slide for the next slide (either current demo's next slide or next demo's first slide)
    */
-  private static async getTargetSlide(): Promise<{ targetSlide: any; cacheKey: string } | null> {
+  private static async getTargetSlide(): Promise<{
+    targetSlide: any;
+    cacheKey: string;
+    placeholders: SlidePlaceholders;
+  } | null> {
     const hasNextSlide = Preview.checkIfHasNextSlide();
     const crntSlideIdx = Preview.getCurrentSlideIndex();
     const demo = hasNextSlide ? DemoRunner.currentDemo : DemoStatusBar.getNextDemo();
@@ -129,9 +146,11 @@ export class ScreenshotService {
       DemoRunner.getIsPresentationMode(),
     );
     const targetSlide = slides[slideIndex];
-    const cacheKey = `${slideUri.toString()}#${slideIndex}`;
+    const placeholders = await Slides.getSlidePlaceholders(slideStep.path, slideIndex, demo);
+    // The placeholders are part of the key, so the screenshot updates when the slide number changes
+    const cacheKey = `${slideUri.toString()}#${slideIndex}#${JSON.stringify(placeholders)}`;
 
-    return { targetSlide, cacheKey };
+    return { targetSlide, cacheKey, placeholders };
   }
 
   /**
@@ -161,7 +180,11 @@ export class ScreenshotService {
   /**
    * Generate a screenshot from slide content
    */
-  private static async generateScreenshot(chromium: BrowserType<{}>, slide: any): Promise<string> {
+  private static async generateScreenshot(
+    chromium: BrowserType<{}>,
+    slide: any,
+    placeholders?: SlidePlaceholders,
+  ): Promise<string> {
     const browser = await chromium.launch({
       args: ['--allow-file-access-from-files', '--enable-local-file-accesses'],
     });
@@ -173,7 +196,7 @@ export class ScreenshotService {
       const page = await context.newPage();
 
       // Generate HTML for the slide
-      const html = await ScreenshotService.generateSlideHtml(slide);
+      const html = await ScreenshotService.generateSlideHtml(slide, placeholders);
 
       // Load the HTML
       const workspaceFolder = Extension.getInstance().workspaceFolder;
@@ -282,7 +305,10 @@ export class ScreenshotService {
   /**
    * Generate HTML for a single slide
    */
-  private static async generateSlideHtml(slide: any): Promise<string> {
+  private static async generateSlideHtml(
+    slide: any,
+    placeholders?: SlidePlaceholders,
+  ): Promise<string> {
     const extension = Extension.getInstance();
     const theme = await getTheme(undefined);
     const ext = Extension.getInstance();
@@ -320,43 +346,34 @@ export class ScreenshotService {
       footerTemplate = await readFile(abs);
     }
 
-    if (
-      headerTemplate?.includes(`{{crntSlideIdx}}`) ||
-      footerTemplate?.includes(`{{crntSlideIdx}}`)
-    ) {
-      slide.frontmatter.crntSlideIdx = 1; // For single slide screenshots, this is always 1
-    }
-
-    if (
-      headerTemplate?.includes(`{{totalSlides}}`) ||
-      footerTemplate?.includes(`{{totalSlides}}`)
-    ) {
-      slide.frontmatter.totalSlides = 1; // For single slide screenshots, this is always 1
-    }
+    const templateData = getTemplateData(slide.frontmatter, {
+      ...placeholders,
+      slideTitle: getSlideHeading(slide.content),
+    });
+    const progressHtml = renderProgressBar(
+      getProgressBarPosition(
+        ext.getSetting<string>(Config.slides.slideProgressBar),
+        slide.frontmatter.progress,
+      ),
+      placeholders?.crntSlideIdx,
+      placeholders?.totalSlides,
+    );
 
     if (headerTemplate) {
-      const { html: headerHtml, error } = tryConvertTemplateToHtml(
-        headerTemplate,
-        slide.frontmatter,
-        {
-          title: 'Header template error',
-          compact: true,
-        },
-      );
+      const { html: headerHtml, error } = tryConvertTemplateToHtml(headerTemplate, templateData, {
+        title: 'Header template error',
+        compact: true,
+      });
       if (error) {
         Logger.error(error);
       }
       headerTemplate = headerHtml;
     }
     if (footerTemplate) {
-      const { html: footerHtml, error } = tryConvertTemplateToHtml(
-        footerTemplate,
-        slide.frontmatter,
-        {
-          title: 'Footer template error',
-          compact: true,
-        },
-      );
+      const { html: footerHtml, error } = tryConvertTemplateToHtml(footerTemplate, templateData, {
+        title: 'Footer template error',
+        compact: true,
+      });
       if (error) {
         Logger.error(error);
       }
@@ -459,6 +476,8 @@ export class ScreenshotService {
           }
 
           ${footerTemplate ? `<footer class="slide__footer">${footerTemplate}</footer>` : ''}
+
+          ${progressHtml}
         </div>
       </div>
     </div>

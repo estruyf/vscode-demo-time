@@ -19,6 +19,15 @@
   --demotime-link-color: var(--demotime-primary);
   --demotime-link-active-color: var(--demotime-accent);
 
+  --demotime-progress-color: linear-gradient(
+    90deg,
+    var(--demotime-primary),
+    var(--demotime-secondary),
+    var(--demotime-accent)
+  );
+  --demotime-progress-background: rgba(255, 255, 255, 0.08);
+  --demotime-progress-height: 4px;
+
   --demotime-blockquote-border: var(--demotime-accent);
   --demotime-blockquote-background: rgba(255, 0, 110, 0.1);
 

@@ -5,7 +5,7 @@ import { EventData } from '@estruyf/vscode';
 import { SlideControls } from './SlideControls';
 import { LaserPointer } from './LaserPointer';
 import DOMPurify from 'dompurify';
-import { Config, getNextSlideIdx, getPreviousSlideIdx, getTemplateErrorMessage, getVideoAutoplay, getVisibleSlideIdx, isSlideHidden, renderTemplateError, tryConvertTemplateToHtml, Slide, SlideLayout, SlideParser, SlideTheme, SlideTransition, WebViewMessages } from '@demotime/common';
+import { Config, getNextSlideIdx, getPreviousSlideIdx, getProgressBarPosition, getProgressPercentage, getSlideHeading, getTemplateData, getTemplateErrorMessage, getVideoAutoplay, getVisibleSlideIdx, isSlideHidden, ProgressBarPosition, renderTemplateError, tryConvertTemplateToHtml, Slide, SlideLayout, SlideParser, SlidePlaceholders, SlideTheme, SlideTransition, TemplateErrorOptions, WebViewMessages } from '@demotime/common';
 import { Icon } from 'vscrui';
 import { useFileContents, useCursor, useScale, useMousePosition, useTheme, useClickSteps, usePresentationMode } from '../../hooks';
 import { extractFirstH1, getSlideTitle } from '../../utils';
@@ -38,6 +38,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const [transition, setTransition] = React.useState<SlideTransition | undefined>(undefined);
   const [header, setHeader] = React.useState<string | undefined>(undefined);
   const [footer, setFooter] = React.useState<string | undefined>(undefined);
+  const [progress, setProgress] = React.useState<{ position: ProgressBarPosition; crntSlideIdx: number; totalSlides: number; percentage: number } | undefined>(undefined);
   const [isZoomed, setIsZoomed] = React.useState(false);
   const [zoomLevel,] = React.useState(2.0); // 2x zoom by default
   const [panOffset, setPanOffset] = React.useState({ x: 0, y: 0 });
@@ -109,69 +110,37 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     hideCursor();
   }, [hideCursor]);
 
-  const fetchTemplate = React.useCallback(
+  /**
+   * Gets the template of the header or footer: the `header`/`footer` front matter of the slide, or
+   * the file of the global setting. Returns an error block when the file can't be read.
+   */
+  const getTemplate = React.useCallback(
     async (
+      slideTemplate: string | undefined,
       configKey: string,
-      setter: React.Dispatch<React.SetStateAction<string | undefined>>,
       title: string
-    ) => {
-      try {
-        const templatePath = await messageHandler.request<string>(
-          WebViewMessages.toVscode.getSetting,
-          configKey
-        );
-        if (!templatePath) {
-          setter(undefined);
-          return;
-        }
-
-        const errorOptions = { title, path: templatePath, compact: true };
-        const template = await messageHandler.request<string>(
-          WebViewMessages.toVscode.getFileContents,
-          templatePath
-        );
-        if (!template) {
-          const message = 'The template file could not be found or is empty.';
-          messageHandler.send(WebViewMessages.toVscode.logError, getTemplateErrorMessage(errorOptions, message));
-          setter(renderTemplateError(errorOptions, message));
-          return;
-        }
-
-        if (template && crntSlide?.frontmatter) {
-          if (template.includes(`{{crntSlideIdx}}`)) {
-            const crntSlideIdx = await messageHandler.request<number>(WebViewMessages.toVscode.preview.getGlobalSlideIndex, {
-              filePath: crntFilePath,
-              localSlideIdx: crntSlide.index
-            });
-            crntSlide.frontmatter.crntSlideIdx = crntSlideIdx;
-          }
-
-          if (template.includes(`{{totalSlides}}`)) {
-            const totalSlides = await messageHandler.request<number>(WebViewMessages.toVscode.preview.getTotalSlides);
-            crntSlide.frontmatter.totalSlides = totalSlides;
-          }
-
-          const { html, error } = tryConvertTemplateToHtml(template, crntSlide.frontmatter, { ...errorOptions, webviewUrl });
-          if (error) {
-            messageHandler.send(WebViewMessages.toVscode.logError, error);
-          }
-          setter(html);
-        }
-      } catch {
-        setter(undefined);
+    ): Promise<{ template?: string; html?: string; isSlideTemplate?: boolean; errorOptions?: TemplateErrorOptions }> => {
+      if (slideTemplate) {
+        return { template: slideTemplate, isSlideTemplate: true, errorOptions: { title, compact: true } };
       }
+
+      const templatePath = await messageHandler.request<string>(WebViewMessages.toVscode.getSetting, configKey);
+      if (!templatePath) {
+        return {};
+      }
+
+      const errorOptions = { title, path: templatePath, compact: true };
+      const template = await messageHandler.request<string>(WebViewMessages.toVscode.getFileContents, templatePath);
+      if (!template) {
+        const message = 'The template file could not be found or is empty.';
+        messageHandler.send(WebViewMessages.toVscode.logError, getTemplateErrorMessage(errorOptions, message));
+        return { html: renderTemplateError(errorOptions, message) };
+      }
+
+      return { template, errorOptions };
     },
-    [crntFilePath, crntSlide?.frontmatter, crntSlide?.index, webviewUrl]
+    []
   );
-
-  const fetchHeader = React.useCallback(() => {
-    fetchTemplate(Config.slides.slideHeaderTemplate, setHeader, 'Header template error');
-  }, [fetchTemplate]);
-
-  const fetchFooter = React.useCallback(() => {
-    fetchTemplate(Config.slides.slideFooterTemplate, setFooter, 'Footer template error');
-  }, [fetchTemplate]);
-
 
   React.useEffect(() => {
     skipHiddenRef.current = skipHidden;
@@ -409,34 +378,6 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     setLayout(crntSlide?.frontmatter.layout || SlideLayout.Default);
     setTransition(crntSlide?.frontmatter.transition || undefined);
 
-    if (crntSlide && crntSlide.frontmatter.header) {
-      const { html, error } = tryConvertTemplateToHtml(crntSlide.frontmatter.header, crntSlide.frontmatter, {
-        title: 'Header template error',
-        compact: true,
-        webviewUrl,
-      });
-      if (error) {
-        messageHandler.send(WebViewMessages.toVscode.logError, error);
-      }
-      setHeader(DOMPurify.sanitize(html, { USE_PROFILES: { html: true } }));
-    } else {
-      fetchHeader();
-    }
-
-    if (crntSlide && crntSlide.frontmatter.footer) {
-      const { html, error } = tryConvertTemplateToHtml(crntSlide.frontmatter.footer, crntSlide.frontmatter, {
-        title: 'Footer template error',
-        compact: true,
-        webviewUrl,
-      });
-      if (error) {
-        messageHandler.send(WebViewMessages.toVscode.logError, error);
-      }
-      setFooter(DOMPurify.sanitize(html, { USE_PROFILES: { html: true } }));
-    } else {
-      fetchFooter();
-    }
-
     // Load SVG content for animated layout
     if (crntSlide?.frontmatter.layout === SlideLayout.AnimatedSVG && crntSlide.frontmatter.svgFile) {
       setSvgContent(null); // Reset while loading
@@ -455,8 +396,79 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     } else {
       setSvgContent(null);
     }
-  }, [crntSlide, webviewUrl, fetchHeader, fetchFooter]);
+  }, [crntSlide]);
 
+
+  // Header, footer and progress bar of the slide
+  React.useEffect(() => {
+    let cancelled = false;
+
+    const update = async () => {
+      if (!crntSlide) {
+        setHeader(undefined);
+        setFooter(undefined);
+        setProgress(undefined);
+        return;
+      }
+
+      try {
+        const [headerTemplate, footerTemplate, progressSetting] = await Promise.all([
+          getTemplate(crntSlide.frontmatter.header, Config.slides.slideHeaderTemplate, 'Header template error'),
+          getTemplate(crntSlide.frontmatter.footer, Config.slides.slideFooterTemplate, 'Footer template error'),
+          messageHandler.request<string>(WebViewMessages.toVscode.getSetting, Config.slides.slideProgressBar),
+        ]);
+        const progressPosition = getProgressBarPosition(progressSetting, crntSlide.frontmatter.progress);
+
+        let placeholders: SlidePlaceholders = { slideTitle: getSlideHeading(crntSlide.content) };
+        if ((headerTemplate.template || footerTemplate.template || progressPosition) && crntFilePath) {
+          const slidePlaceholders = await messageHandler.request<SlidePlaceholders>(
+            WebViewMessages.toVscode.preview.getSlidePlaceholders,
+            { filePath: crntFilePath, localSlideIdx: crntSlide.index }
+          );
+          placeholders = { ...slidePlaceholders, ...placeholders };
+        }
+
+        if (cancelled) {
+          return;
+        }
+
+        const data = getTemplateData(crntSlide.frontmatter, placeholders);
+        const render = ({ template, html, isSlideTemplate, errorOptions }: Awaited<ReturnType<typeof getTemplate>>) => {
+          if (!template || !errorOptions) {
+            return html;
+          }
+
+          const result = tryConvertTemplateToHtml(template, data, { ...errorOptions, webviewUrl });
+          if (result.error) {
+            messageHandler.send(WebViewMessages.toVscode.logError, result.error);
+          }
+          return isSlideTemplate ? DOMPurify.sanitize(result.html, { USE_PROFILES: { html: true } }) : result.html;
+        };
+
+        setHeader(render(headerTemplate));
+        setFooter(render(footerTemplate));
+
+        const percentage = getProgressPercentage(placeholders.crntSlideIdx, placeholders.totalSlides);
+        setProgress(
+          progressPosition && percentage !== undefined
+            ? { position: progressPosition, crntSlideIdx: placeholders.crntSlideIdx as number, totalSlides: placeholders.totalSlides as number, percentage }
+            : undefined
+        );
+      } catch {
+        if (!cancelled) {
+          setHeader(undefined);
+          setFooter(undefined);
+          setProgress(undefined);
+        }
+      }
+    };
+
+    update();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [crntSlide, crntFilePath, webviewUrl, getTemplate]);
 
   React.useEffect(() => {
     Messenger.listen(slidesListener);
@@ -633,6 +645,20 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             {
               footer && (
                 <footer className={`slide__footer z-20`} dangerouslySetInnerHTML={{ __html: footer }}></footer>
+              )
+            }
+
+            {
+              progress && (
+                <div
+                  className={`slide__progress slide__progress--${progress.position}`}
+                  role="progressbar"
+                  aria-valuemin={0}
+                  aria-valuemax={progress.totalSlides}
+                  aria-valuenow={progress.crntSlideIdx}
+                >
+                  <div className="slide__progress__bar" style={{ width: `${progress.percentage}%` }}></div>
+                </div>
               )
             }
 

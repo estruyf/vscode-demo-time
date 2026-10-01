@@ -44,6 +44,8 @@ export const Config = {
     customTheme: 'customTheme',
     slideHeaderTemplate: 'slideHeaderTemplate',
     slideFooterTemplate: 'slideFooterTemplate',
+    slideProgressBar: 'slideProgressBar',
+    presentationTitle: 'presentationTitle',
   },
   webcomponents: {
     scripts: 'customWebComponents',

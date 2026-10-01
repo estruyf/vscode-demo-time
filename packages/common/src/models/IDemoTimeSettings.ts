@@ -18,6 +18,8 @@ export interface IDemoTimeSettings {
   customTheme: string;
   slideHeaderTemplate: string;
   slideFooterTemplate: string;
+  slideProgressBar: string;
+  presentationTitle: string;
   customWebComponents: string[];
   nextActionBehaviour: string;
   openInConfigEditor: boolean;
