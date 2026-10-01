@@ -373,6 +373,21 @@
           "default": false,
           "markdownDescription": "Include hidden slides (`hide: true` in the slide frontmatter) when exporting the slides to PDF."
         },
+        "demoTime.pdfExport.notes": {
+          "type": "string",
+          "default": "none",
+          "enum": [
+            "none",
+            "below",
+            "page"
+          ],
+          "enumDescriptions": [
+            "Leave the speaker notes out of the PDF.",
+            "Add the speaker notes below each slide, on the same page.",
+            "Add the speaker notes on a separate page after each slide."
+          ],
+          "markdownDescription": "Add the speaker notes of the slides (the `<!-- notes ... -->` blocks) to the PDF export."
+        },
         "demoTime.defaultFileType": {
           "type": "string",
           "enum": [

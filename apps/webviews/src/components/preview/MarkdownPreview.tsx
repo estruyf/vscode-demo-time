@@ -365,6 +365,14 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     return crntFilePath ? crntFilePath.replace(webviewUrl || "", "") : undefined;
   }, [crntFilePath, webviewUrl]);
 
+  // The presenter view and remote show the notes of the current slide
+  React.useEffect(() => {
+    messageHandler.send(
+      WebViewMessages.toVscode.preview.updateSlideNotes,
+      crntSlide ? { notes: crntSlide.notes, path: relativePath, slideIndex: crntSlide.index } : undefined
+    );
+  }, [crntSlide, relativePath]);
+
   const videoUrl = React.useMemo(() => {
     if (crntSlide?.frontmatter.video && webviewUrl) {
       const video = crntSlide.frontmatter.video;
@@ -689,6 +697,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           onZoomToggle={toggleZoom}
           style={{ cursor: 'default' }}
           matter={crntSlide?.frontmatter}
+          notes={crntSlide?.notes}
           clickStep={clickStep}
         >
           {/* Mouse Position */}

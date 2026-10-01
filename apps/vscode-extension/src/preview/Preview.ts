@@ -8,8 +8,8 @@ import {
   setContext,
   togglePresentationView,
 } from '../utils';
-import { AnalyticsService, DemoRunner, DemoStatusBar, Slides } from '../services';
-import { COMMAND, WebViewMessages, Config, Action } from '@demotime/common';
+import { AnalyticsService, DemoRunner, DemoStatusBar, NotesService, Slides } from '../services';
+import { COMMAND, WebViewMessages, Config, Action, SlideNotes } from '@demotime/common';
 import { BaseWebview } from '../webview/BaseWebviewPanel';
 import { WebviewType } from '../models';
 import { PresenterView } from '../presenterView/PresenterView';
@@ -194,6 +194,7 @@ export class Preview extends BaseWebview {
     Preview.hasPreviousClickStep = false;
     Preview.hasPreviousSlide = false;
     Preview.hasNextSlide = false;
+    Preview.updateSlideNotes(undefined);
   }
 
   protected static async messageListener(message: any) {
@@ -283,6 +284,10 @@ export class Preview extends BaseWebview {
       Preview.reveal(true);
     } else if (command === WebViewMessages.toVscode.preview.setSlideHidden && payload?.path) {
       await Slides.setSlideHidden(payload.path, payload.slideIndex, !!payload.hidden);
+    } else if (command === WebViewMessages.toVscode.preview.setSlideNotes && payload?.path) {
+      await Slides.setSlideNotes(payload.path, payload.slideIndex, payload.notes || '');
+    } else if (command === WebViewMessages.toVscode.preview.updateSlideNotes) {
+      Preview.updateSlideNotes(payload);
     } else if (command === WebViewMessages.toVscode.preview.recordOpenSlide) {
       // Record slide change in analytics if recording
       if (
@@ -303,6 +308,17 @@ export class Preview extends BaseWebview {
     setContext(
       ContextKeys.hasPreviousSlide,
       Preview.hasPreviousSlide || Preview.hasPreviousClickStep,
+    );
+  }
+
+  /**
+   * Stores the notes of the current slide, and shows them in the presenter view.
+   */
+  private static updateSlideNotes(slideNotes: SlideNotes | undefined) {
+    NotesService.setSlideNotes(slideNotes);
+    PresenterView.postMessage(
+      WebViewMessages.toWebview.presenter.slideNotes,
+      NotesService.getSlideNotes(),
     );
   }
 

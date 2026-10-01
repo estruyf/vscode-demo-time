@@ -206,6 +206,7 @@ The control bar is keyboard and screen reader friendly. Every button is reachabl
     - **Mouse position**: Toggles the mouse position overlay on the slide, which can be useful to position elements on your slides.
     - **Open slide source**: Opens the source file of the slide in the editor, allowing you to edit the slide content directly.
     - **Hide slide while presenting** / **Show slide while presenting**: Adds or removes `hide: true` in the front matter of the current slide. See [hiding slides](#hiding-slides).
+    - **Add speaker notes** / **Edit speaker notes**: Opens an editor for the notes of the current slide, and saves them in its `<!-- notes -->` block. See [notes in your slides](/features/using-notes/#notes-in-your-slides).
   - **Workspace**
     - **Show demos**: Opens the Demo Time panel to access your demos and slides.
     - **Close sidebar**: Closes the side bar to provide more space for your slides.
@@ -271,4 +272,14 @@ Learn how to add and customize headers and footers in your slides for branding, 
 
 ## Notes
 
-If you want to add notes to your slides or demos, you can check the [notes section](/features/using-notes/) of the documentation.
+Add speaker notes to a slide with a `<!-- notes` block in the slide markdown. The block is not shown on the slide, but in the presenter view and the remote control:
+
+```md
+# Why Demo Time
+
+<!-- notes
+Mention the conference from last year.
+-->
+```
+
+You can also add the notes from the **More actions** (`…`) menu of the [slide controls](#slide-controls). Check the [notes section](/features/using-notes/#notes-in-your-slides) of the documentation for all the details, and for notes on the scene level.

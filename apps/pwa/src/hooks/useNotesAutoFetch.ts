@@ -6,6 +6,7 @@ interface UseNotesAutoFetchProps {
   isMobile: boolean;
   fetchNotes: (notes: string) => void;
   clearNotes: () => void;
+  showNotes: (notes: string) => void;
 }
 
 export const useNotesAutoFetch = ({
@@ -13,9 +14,16 @@ export const useNotesAutoFetch = ({
   isMobile,
   fetchNotes,
   clearNotes,
+  showNotes,
 }: UseNotesAutoFetchProps) => {
   useEffect(() => {
     if (apiData && !isMobile) {
+      // The notes of the current slide come before the notes of the scene
+      if (apiData.slides?.notes) {
+        showNotes(apiData.slides.notes);
+        return;
+      }
+
       // Find the current active step
       const currentStep = apiData.demos
         .flatMap((demo) => demo.children)
@@ -31,5 +39,5 @@ export const useNotesAutoFetch = ({
       // Clear notes on mobile
       clearNotes();
     }
-  }, [apiData, isMobile, fetchNotes, clearNotes]);
+  }, [apiData, isMobile, fetchNotes, clearNotes, showNotes]);
 };

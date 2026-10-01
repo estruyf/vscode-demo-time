@@ -15,4 +15,12 @@ export interface SlideLocation {
    * The `---` line that separates the slide from the previous one, when it has no frontmatter
    */
   separatorLine?: number;
+  /**
+   * The last line of the slide
+   */
+  end?: number;
+  /**
+   * The opening and closing lines of the `<!-- notes ... -->` blocks of the slide
+   */
+  notes?: { start: number; end: number }[];
 }

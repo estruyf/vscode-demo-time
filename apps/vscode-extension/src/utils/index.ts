@@ -19,6 +19,7 @@ export * from './formatSessionFilename';
 export * from './getAbsolutePath';
 export * from './getNextSlideIndex';
 export * from './setSlideHidden';
+export * from './setSlideNotes';
 export * from './getActionOptions';
 export * from './getActionTemplate';
 export * from './getDemoApiData';

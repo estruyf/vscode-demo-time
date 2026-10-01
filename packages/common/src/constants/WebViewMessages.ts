@@ -189,6 +189,8 @@ export const WebViewMessages = {
       getGlobalSlideIndex: 'getPreviewGlobalSlideIndex',
       recordOpenSlide: 'recordPreviewOpenSlide',
       setSlideHidden: 'setPreviewSlideHidden',
+      setSlideNotes: 'setPreviewSlideNotes',
+      updateSlideNotes: 'updatePreviewSlideNotes',
     },
     settingsView: {
       /**
@@ -227,6 +229,7 @@ export const WebViewMessages = {
     },
     presenter: {
       checkNextDemo: 'checkPresenterNextDemo',
+      getSlideNotes: 'getPresenterSlideNotes',
     },
   },
   toWebview: {
@@ -341,6 +344,7 @@ export const WebViewMessages = {
     },
     presenter: {
       nextSlide: 'presenterNextSlide',
+      slideNotes: 'presenterSlideNotes',
     },
     // QR Code
     /**

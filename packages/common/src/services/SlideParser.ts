@@ -3,6 +3,9 @@ import { ParserOptions, Slide, InternalSlide, SlideLocation } from '../models';
 import { SlideLayout } from '../constants';
 import { FrontMatterParser } from '.';
 
+// The opening line of a speaker notes block: `<!-- notes`
+const NOTES_START = /^<!--\s*notes(?=\s|-->|$)/i;
+
 export class SlideParser {
   private defaultOptions: Required<ParserOptions> = {
     delimiterPattern: /^---(?:\s*|\s+(.+?)\s*)---$/gm,
@@ -85,7 +88,7 @@ export class SlideParser {
         frontmatter: {},
         index: 0,
       });
-      locations.push(docLocation);
+      locations.push({ ...docLocation, end: docLocation.frontmatter?.end });
     }
 
     for (let i = 0; i < lines.length; i++) {
@@ -107,11 +110,24 @@ export class SlideParser {
         continue;
       }
 
+      // A `---` in the speaker notes doesn't start a new slide
+      const notesEnd = SlideParser.findNotesEnd(lines, i);
+      if (notesEnd !== undefined) {
+        blockLocation.notes = [
+          ...(blockLocation.notes || []),
+          { start: i + lineOffset, end: notesEnd + lineOffset },
+        ];
+        buffer.push(...lines.slice(i, notesEnd + 1));
+        i = notesEnd;
+        continue;
+      }
+
       if (trimmed === '---') {
         // Possible start of frontmatter for the next slide
         const frontmatterEnd = SlideParser.findFrontmatterEnd(lines, i);
         if (frontmatterEnd !== undefined) {
           if (buffer.length > 0 || mergedOptions.includeEmpty) {
+            blockLocation.end = i - 1 + lineOffset;
             slideBlocks.push({ text: buffer.join('\n'), location: blockLocation });
             buffer = [];
           }
@@ -124,6 +140,7 @@ export class SlideParser {
           continue;
         }
 
+        blockLocation.end = i - 1 + lineOffset;
         slideBlocks.push({ text: buffer.join('\n'), location: blockLocation });
         buffer = [];
         blockLocation = { separatorLine: i + lineOffset };
@@ -134,6 +151,7 @@ export class SlideParser {
     }
 
     if (buffer.length > 0 || mergedOptions.includeEmpty) {
+      blockLocation.end = lines.length - 1 + lineOffset;
       slideBlocks.push({ text: buffer.join('\n'), location: blockLocation });
     }
 
@@ -141,29 +159,38 @@ export class SlideParser {
       const trimmedBlock = mergedOptions.trimContent ? block.trimStart() : block;
       const { frontmatter, remainingContent: content } =
         FrontMatterParser.extractFrontmatter(trimmedBlock);
-      const slideContent = content ?? trimmedBlock;
+      const { content: slideContent, notes } = SlideParser.extractNotes(content ?? trimmedBlock);
 
       // Skip empty slides unless:
       // - includeEmpty option is true
       // - the block has its own frontmatter
       // - this is the first slide and we have document-level frontmatter
+      // - the slide has speaker notes
       const isFirstSlide = slides.length === 0;
       const hasBlockFrontmatter = frontmatter && Object.keys(frontmatter).length > 0;
       const shouldIncludeEmptySlide =
-        mergedOptions.includeEmpty || hasBlockFrontmatter || (isFirstSlide && hasDocFrontmatter);
+        mergedOptions.includeEmpty ||
+        hasBlockFrontmatter ||
+        (isFirstSlide && hasDocFrontmatter) ||
+        !!notes;
 
       if (slideContent.trim() === '' && !shouldIncludeEmptySlide) {
         continue;
       }
 
       // The first slide also gets the document frontmatter
-      locations.push(isFirstSlide && hasDocFrontmatter ? docLocation : location);
+      locations.push(
+        isFirstSlide && hasDocFrontmatter
+          ? { ...docLocation, end: location.end, notes: location.notes }
+          : location,
+      );
       slides.push({
         content: mergedOptions.trimContent ? slideContent.trim() : slideContent,
         rawContent: slideContent,
         docFrontMatter: { ...docFrontMatter },
         frontmatter: frontmatter || {},
         index: slides.length,
+        ...(notes ? { notes } : {}),
       });
     }
 
@@ -224,6 +251,107 @@ export class SlideParser {
   }
 
   /**
+   * Removes the `<!-- notes ... -->` blocks from the slide content. Blocks in code blocks are
+   * slide content.
+   *
+   * @param markdown The content of a slide
+   * @returns The content without the notes blocks, and the notes when the slide has any
+   */
+  public static extractNotes(markdown: string): { content: string; notes?: string } {
+    const lines = markdown.split(/\r?\n/);
+    const contentLines: string[] = [];
+    const notes: string[] = [];
+    let hasNotesBlock = false;
+    let codeFence: string | undefined;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const trimmed = line.trim();
+
+      if (codeFence) {
+        contentLines.push(line);
+        if (SlideParser.isClosingFence(trimmed, codeFence)) {
+          codeFence = undefined;
+        }
+        continue;
+      }
+
+      const openingFence = /^(`{3,}|~{3,})/.exec(trimmed);
+      if (openingFence) {
+        codeFence = openingFence[1];
+        contentLines.push(line);
+        continue;
+      }
+
+      const notesEnd = SlideParser.findNotesEnd(lines, i);
+      if (notesEnd !== undefined) {
+        hasNotesBlock = true;
+        const text = SlideParser.getNotesText(lines.slice(i, notesEnd + 1));
+        if (text) {
+          notes.push(text);
+        }
+        i = notesEnd;
+        continue;
+      }
+
+      contentLines.push(line);
+    }
+
+    if (!hasNotesBlock) {
+      return { content: markdown };
+    }
+
+    return {
+      content: contentLines.join('\n'),
+      notes: notes.length > 0 ? notes.join('\n\n') : undefined,
+    };
+  }
+
+  /**
+   * Checks if the given line opens a `<!-- notes` block that gets closed by a `-->`.
+   *
+   * @returns The index of the line with the closing `-->`, or undefined when it is no notes block
+   */
+  private static findNotesEnd(lines: string[], start: number): number | undefined {
+    const trimmed = lines[start].trim();
+    if (!NOTES_START.test(trimmed)) {
+      return undefined;
+    }
+
+    if (trimmed.replace(NOTES_START, '').includes('-->')) {
+      return start;
+    }
+
+    for (let end = start + 1; end < lines.length; end++) {
+      if (lines[end].includes('-->')) {
+        return end;
+      }
+    }
+
+    return undefined;
+  }
+
+  /**
+   * Returns the text of a notes block without the comment markers and the common indentation.
+   */
+  private static getNotesText(blockLines: string[]): string {
+    const textLines = [...blockLines];
+    textLines[0] = textLines[0].trim().replace(NOTES_START, '');
+    const last = textLines.length - 1;
+    textLines[last] = textLines[last].slice(0, textLines[last].indexOf('-->'));
+
+    const indents = textLines
+      .slice(1)
+      .filter((line) => line.trim() !== '')
+      .map((line) => /^\s*/.exec(line)![0].length);
+    const indent = indents.length > 0 ? Math.min(...indents) : 0;
+
+    return [textLines[0].trim(), ...textLines.slice(1).map((line) => line.slice(indent).trimEnd())]
+      .join('\n')
+      .trim();
+  }
+
+  /**
    * Checks if a line closes a code block: the same fence character, at least as long as the
    * opening fence, and nothing after it.
    */
@@ -262,6 +390,22 @@ export class SlideParser {
     }
 
     return undefined;
+  }
+
+  /**
+   * Converts speaker notes to a `<!-- notes ... -->` block
+   *
+   * @param notes The speaker notes
+   * @returns The notes block, or an empty string when there are no notes
+   */
+  public static notesToMarkdown(notes: string): string {
+    const text = notes.trim();
+    if (!text) {
+      return '';
+    }
+
+    // A `-->` in the notes would close the comment
+    return `<!-- notes\n${text.replace(/-->/g, '-- >')}\n-->`;
   }
 
   /**
@@ -305,8 +449,10 @@ export class SlideParser {
         // Add slide delimiter if not the first slide
         const delimiter = index > 0 ? '---\n\n' : '';
 
+        const notes = slide.notes ? `\n\n${SlideParser.notesToMarkdown(slide.notes)}` : '';
+
         // Combine parts
-        return `${delimiter}${frontmatterStr}${slide.content}`;
+        return `${delimiter}${frontmatterStr}${slide.content}${notes}`;
       })
       .join('\n\n');
   }

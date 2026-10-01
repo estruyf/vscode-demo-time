@@ -74,4 +74,8 @@ export interface Slide {
   nextTitle: string;
   hasNext: boolean;
   slideIdx: number;
+  /**
+   * The speaker notes of the current slide
+   */
+  notes?: string;
 }

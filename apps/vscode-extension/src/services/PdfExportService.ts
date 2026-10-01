@@ -34,6 +34,11 @@ import {
 } from '@demotime/common';
 import { ScreenshotService } from './ScreenshotService';
 
+/**
+ * Where the speaker notes of a slide go in the PDF
+ */
+type PdfNotesPlacement = 'none' | 'below' | 'page';
+
 export class PdfExportService {
   private static workspaceFolder: WorkspaceFolder | undefined;
 
@@ -218,6 +223,7 @@ export class PdfExportService {
     const headerSetting = ext.getSetting<string>(Config.slides.slideHeaderTemplate);
     const footerSetting = ext.getSetting<string>(Config.slides.slideFooterTemplate);
     const includeHidden = ext.getSetting<boolean>(Config.pdfExport.includeHiddenSlides) || false;
+    const notesPlacement = ext.getSetting<PdfNotesPlacement>(Config.pdfExport.notes) || 'none';
 
     // Generate slide content HTML
     const slideContents = [];
@@ -249,6 +255,19 @@ export class PdfExportService {
             undefined,
           );
           let { reactContent } = vfile;
+
+          let notesHtml: string | undefined;
+          if (notesPlacement !== 'none' && crntSlide.notes) {
+            const notesFile = await transformMarkdown(
+              crntSlide.notes,
+              undefined,
+              undefined,
+              undefined,
+              [[rehypePrettyCode, { theme: theme ? theme : {} }]],
+              undefined,
+            );
+            notesHtml = renderToString(notesFile.reactContent);
+          }
 
           const slideTheme = crntSlide.frontmatter.theme || SlideTheme.default;
           const layout = crntSlide.frontmatter.customLayout
@@ -340,6 +359,7 @@ export class PdfExportService {
             customLayout,
             headerTemplate,
             footerTemplate,
+            notesHtml,
           });
 
           idx++;
@@ -482,7 +502,7 @@ export class PdfExportService {
           slideThemes.pixels.push(index + 1);
         }
 
-        html += `
+        const slideHtml = `
 <div class="w-full h-full flex items-center justify-center" id="slide-${index + 1}">
 ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` : ``}
 
@@ -514,6 +534,15 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
     </div>
   </div>
 </div>`;
+
+        if (slide.notesHtml && notesPlacement === 'below') {
+          // The page gets the height of the slide and its notes in `generatePdfFromHtml`
+          html += `<div class="slide-with-notes">${slideHtml}<div class="slide-notes">${slide.notesHtml}</div></div>`;
+        } else if (slide.notesHtml && notesPlacement === 'page') {
+          html += `${slideHtml}<div class="slide-notes slide-notes-page">${slide.notesHtml}</div>`;
+        } else {
+          html += slideHtml;
+        }
       }
 
       index++;
@@ -573,6 +602,18 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
     await page.emulateMedia({ media: 'print' });
 
     await page.waitForTimeout(5000);
+
+    // A slide with its notes below it gets a page with the height of both
+    await page.evaluate(`(() => {
+      const style = document.createElement('style');
+      document.querySelectorAll('.slide-with-notes').forEach((element, idx) => {
+        const name = 'slide-with-notes-' + idx;
+        const height = Math.ceil(element.getBoundingClientRect().height);
+        style.textContent += '@page ' + name + ' { size: 960px ' + height + 'px; margin: 0; }';
+        element.style.setProperty('page', name);
+      });
+      document.head.appendChild(style);
+    })()`);
 
     // Generate the PDF
     await page.pdf({

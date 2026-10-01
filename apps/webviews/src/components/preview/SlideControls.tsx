@@ -8,6 +8,7 @@ import { EventData } from '@estruyf/vscode';
 import { WebViewMessages } from '@demotime/common';
 import { SlideNavigator, SlideOption } from './SlideNavigator';
 import { SlideControlsMenu, ISlideMenuGroup, ISlideMenuItem } from './SlideControlsMenu';
+import { SlideNotesEditor } from './SlideNotesEditor';
 import { cn } from '../../utils/cn';
 
 export interface ISlideControlsProps {
@@ -32,6 +33,7 @@ export interface ISlideControlsProps {
   onZoomToggle?: () => void;
   style?: React.CSSProperties;
   matter?: SlideMetadata;
+  notes?: string;
   clickStep?: number;
 }
 
@@ -65,6 +67,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   onZoomToggle,
   style,
   matter,
+  notes,
   clickStep = 0,
 }: React.PropsWithChildren<ISlideControlsProps>) => {
   const [previousEnabled, setPreviousEnabled] = React.useState(false);
@@ -72,6 +75,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   const [showPosition, setShowPosition] = React.useState(false);
   const [isNavigatorOpen, setIsNavigatorOpen] = React.useState(false);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [isNotesEditorOpen, setIsNotesEditorOpen] = React.useState(false);
   const [extensionAutoProceedManaged, setExtensionAutoProceedManaged] = React.useState(false);
 
 
@@ -133,6 +137,24 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
       hidden: !isHidden,
     });
   }, [path, currentSlide, isHidden]);
+
+  const openNotesEditor = React.useCallback(() => {
+    setIsNotesEditorOpen(true);
+  }, []);
+
+  const closeNotesEditor = React.useCallback(() => {
+    setIsNotesEditorOpen(false);
+  }, []);
+
+  // Writes the notes to the `<!-- notes -->` block of the slide
+  const saveNotes = React.useCallback((value: string) => {
+    messageHandler.send(WebViewMessages.toVscode.preview.setSlideNotes, {
+      path,
+      slideIndex: currentSlide,
+      notes: value,
+    });
+    setIsNotesEditorOpen(false);
+  }, [path, currentSlide]);
 
   const toggleMousePosition = React.useCallback(() => {
     const nextValue = !showPosition;
@@ -215,6 +237,12 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
           iconName: isHidden ? 'eye' : 'eye-closed',
           onSelect: toggleSlideHidden,
         });
+        slideItems.push({
+          id: 'edit-slide-notes',
+          label: notes ? 'Edit speaker notes' : 'Add speaker notes',
+          iconName: 'note',
+          onSelect: openNotesEditor,
+        });
       }
     }
 
@@ -244,9 +272,9 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
     });
 
     return groups;
-  }, [isPresentationMode, showPosition, path, isHidden, toggleMousePosition, openSlideSource, toggleSlideHidden, focusPanel, closeSidebar, hideControls]);
+  }, [isPresentationMode, showPosition, path, isHidden, notes, toggleMousePosition, openSlideSource, toggleSlideHidden, openNotesEditor, focusPanel, closeSidebar, hideControls]);
 
-  const isOverlayOpen = isNavigatorOpen || isMenuOpen;
+  const isOverlayOpen = isNavigatorOpen || isMenuOpen || isNotesEditorOpen;
   const visible = show || isOverlayOpen;
 
   return (
@@ -345,6 +373,15 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
 
           <SlideControlsMenu groups={menuGroups} onOpenChange={setIsMenuOpen} />
         </div>
+
+        {isNotesEditorOpen && (
+          <SlideNotesEditor
+            slideNr={currentSlide + 1}
+            notes={notes}
+            onSave={saveNotes}
+            onClose={closeNotesEditor}
+          />
+        )}
       </div>
     </div>
   );

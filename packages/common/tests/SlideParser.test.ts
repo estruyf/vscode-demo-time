@@ -309,5 +309,152 @@ layout: section
       expect(slides[1].content).toBe('# Two');
       expect(slides[1].frontmatter.title).toBe('Step: two');
     });
+
+    it('should write the speaker notes back as a notes block', () => {
+      const parser = new SlideParser();
+      const markdown = parser.slidesToMarkdown([
+        { content: '# One', rawContent: '# One', index: 0, frontmatter: {}, notes: 'Say hi' },
+        { content: '# Two', rawContent: '# Two', index: 1, frontmatter: {} },
+      ]);
+
+      const slides = parser.parseSlides(markdown);
+
+      expect(slides.map((slide) => slide.content)).toEqual(['# One', '# Two']);
+      expect(slides[0].notes).toBe('Say hi');
+      expect(slides[1].notes).toBeUndefined();
+    });
+  });
+
+  describe('speaker notes', () => {
+    it('should move the notes block out of the slide content', () => {
+      const markdown = `# Why Demo Time
+
+- Point one
+
+<!-- notes
+Mention the conference from last year.
+Pause for questions here.
+-->
+
+---
+
+# Next`;
+      const slides = new SlideParser().parseSlides(markdown);
+
+      expect(slides.length).toBe(2);
+      expect(slides[0].content).toBe('# Why Demo Time\n\n- Point one');
+      expect(slides[0].rawContent).not.toContain('notes');
+      expect(slides[0].notes).toBe(
+        'Mention the conference from last year.\nPause for questions here.',
+      );
+      expect(slides[1].notes).toBeUndefined();
+    });
+
+    it('should keep a --- in the notes in the same slide', () => {
+      const markdown = `# One
+
+<!-- notes
+First part
+
+---
+
+Second part
+-->
+
+---
+
+# Two`;
+      const slides = new SlideParser().parseSlides(markdown);
+
+      expect(slides.map((slide) => slide.content)).toEqual(['# One', '# Two']);
+      expect(slides[0].notes).toBe('First part\n\n---\n\nSecond part');
+    });
+
+    it('should support single line notes and combine multiple blocks', () => {
+      const markdown = `# One
+<!-- notes Say hello -->
+Some text
+<!--notes
+  Indented
+    more
+-->`;
+      const slides = new SlideParser().parseSlides(markdown);
+
+      expect(slides[0].content).toBe('# One\nSome text');
+      expect(slides[0].notes).toBe('Say hello\n\nIndented\n  more');
+    });
+
+    it('should ignore regular comments, notes in code blocks and unclosed blocks', () => {
+      const markdown = `# One
+
+<!-- just a comment -->
+
+\`\`\`html
+<!-- notes
+not notes
+-->
+\`\`\`
+
+---
+
+# Two
+
+<!-- notes
+never closed`;
+      const slides = new SlideParser().parseSlides(markdown);
+
+      expect(slides.length).toBe(2);
+      expect(slides[0].notes).toBeUndefined();
+      expect(slides[0].content).toContain('<!-- just a comment -->');
+      expect(slides[0].content).toContain('not notes');
+      expect(slides[1].notes).toBeUndefined();
+      expect(slides[1].content).toContain('never closed');
+    });
+
+    it('should keep a slide that only has notes', () => {
+      const markdown = `# One
+
+---
+
+<!-- notes
+Talk over a blank slide
+-->
+
+---
+
+# Three`;
+      const slides = new SlideParser().parseSlides(markdown);
+
+      expect(slides.length).toBe(3);
+      expect(slides[1].content).toBe('');
+      expect(slides[1].notes).toBe('Talk over a blank slide');
+    });
+
+    it('should return the lines of the notes blocks and the end of each slide', () => {
+      const markdown = `---
+theme: default
+---
+
+# One
+
+<!-- notes
+Hello
+-->
+
+---
+layout: section
+---
+
+# Two
+<!-- notes Bye -->
+`;
+      const parser = new SlideParser();
+      const locations = parser.getSlideLocations(markdown);
+
+      expect(locations[0].notes).toEqual([{ start: 6, end: 8 }]);
+      expect(locations[0].end).toBe(9);
+      expect(locations[1].notes).toEqual([{ start: 15, end: 15 }]);
+      expect(locations[1].end).toBe(16);
+    });
   });
 });

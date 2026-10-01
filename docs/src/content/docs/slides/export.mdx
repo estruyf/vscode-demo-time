@@ -37,6 +37,18 @@ Each slide is exported in its final state: all `dt-list` items and `dt-show` con
 
 [Hidden slides](/slides/#hiding-slides) (`hide: true`) are left out of the export. To include them, enable the `demoTime.pdfExport.includeHiddenSlides` setting.
 
+## Speaker notes
+
+The [speaker notes of your slides](/features/using-notes/#notes-in-your-slides) are left out of the export by default. Use the `demoTime.pdfExport.notes` setting to add them:
+
+| Value | Result |
+| --- | --- |
+| `none` (default) | The PDF only contains the slides. |
+| `below` | The notes are added below the slide, on the same page. The page gets longer to fit the notes. |
+| `page` | The notes are added on a separate page after the slide. |
+
+Slides without notes are exported as usual.
+
 Here is a sample of the exported PDF file:
 
 <Image class="mx-auto" src={pdfSampleImg} alt="Exported PDF file" />

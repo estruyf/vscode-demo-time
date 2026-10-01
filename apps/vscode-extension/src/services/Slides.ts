@@ -27,6 +27,7 @@ import {
   readFile,
   sanitizeFileName,
   setSlideHidden,
+  setSlideNotes,
   upperCaseFirstLetter,
   writeFile,
 } from '../utils';
@@ -269,12 +270,46 @@ layout: ${layout.toLowerCase()}
    * @param hidden Whether the slide should be hidden
    */
   public static async setSlideHidden(filePath: string, slideIndex: number, hidden: boolean) {
+    await Slides.updateSlideFile(filePath, (content) => {
+      const newContent = setSlideHidden(content, slideIndex, hidden);
+      if (newContent === undefined) {
+        Notifications.error(`Slide ${slideIndex + 1} was not found in "${filePath}".`);
+      }
+      return newContent;
+    });
+  }
+
+  /**
+   * Sets the `<!-- notes ... -->` block of a slide and saves the file, which updates the slide
+   * preview.
+   * @param filePath Relative file path to the slide markdown file
+   * @param slideIndex Local slide index (0-based)
+   * @param notes The speaker notes, empty to remove them
+   */
+  public static async setSlideNotes(filePath: string, slideIndex: number, notes: string) {
+    await Slides.updateSlideFile(filePath, (content) => {
+      const newContent = setSlideNotes(content, slideIndex, notes);
+      if (newContent === undefined) {
+        Notifications.error(
+          `The notes of slide ${slideIndex + 1} in "${filePath}" could not be updated.`,
+        );
+      }
+      return newContent;
+    });
+  }
+
+  /**
+   * Updates a slide file with the content returned by `update`, and saves it.
+   */
+  private static async updateSlideFile(
+    filePath: string,
+    update: (content: string) => string | undefined,
+  ) {
     const fileUri = getAbsolutePath(parseWinPath(filePath));
     const document = await workspace.openTextDocument(fileUri);
     const crntContent = document.getText();
-    const newContent = setSlideHidden(crntContent, slideIndex, hidden);
+    const newContent = update(crntContent);
     if (newContent === undefined) {
-      Notifications.error(`Slide ${slideIndex + 1} was not found in "${filePath}".`);
       return;
     }
 

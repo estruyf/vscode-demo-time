@@ -1,7 +1,7 @@
 import { DemoFileProvider } from '../services/DemoFileProvider';
 import { DemoStatusBar } from '../services/DemoStatusBar';
 import { DemoPanel } from '../panels/DemoPanel';
-import { DemoRunner, Extension } from '../services';
+import { DemoRunner, Extension, NotesService } from '../services';
 import { Preview } from '../preview/Preview';
 import { Action, Config } from '@demotime/common';
 
@@ -65,6 +65,7 @@ export async function getDemoApiData() {
       hasNext: hasNextSlide,
       nextTitle: nextSlideTitle,
       slideIdx: Preview.getCurrentSlideIndex(),
+      notes: NotesService.getSlideNotes()?.notes,
     },
     clock: {
       current: clock,

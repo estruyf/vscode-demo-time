@@ -8,6 +8,9 @@
 - [#418](https://github.com/estruyf/vscode-demo-time/issues/418): Added the `demoTime.videoExport.command`, `demoTime.videoExport.extension` and `demoTime.videoExport.options` settings
 - Updated the README and Marketplace GIF with the new promo video
 - Added `secondarySideBar` to `demoTime.presentationViewToggles`, and to its defaults, so presentation view also closes the secondary side bar where VS Code shows Chat
+- [#421](https://github.com/estruyf/vscode-demo-time/issues/421): Added speaker notes inside the slide markdown with a `<!-- notes ... -->` block. The block is removed from the slide, and the presenter view, the remote control and the `/api/notes` endpoint show the notes of the current slide, updating on every slide change. Slides without notes fall back to the notes file of the scene
+- [#421](https://github.com/estruyf/vscode-demo-time/issues/421): Added the **Add speaker notes** / **Edit speaker notes** action to the **More actions** menu of the slide controls, to write the notes of the current slide from the slide preview
+- [#421](https://github.com/estruyf/vscode-demo-time/issues/421): Added the `demoTime.pdfExport.notes` setting to add the speaker notes of the slides to the PDF export, below each slide or on a separate page
 - [#428](https://github.com/estruyf/vscode-demo-time/issues/428): Fix slide files whose document front matter is followed directly by `---` showing the raw YAML as an extra first slide
 - [#429](https://github.com/estruyf/vscode-demo-time/issues/429): Fix a slide starting with a `Word:` line (like `Note: remember this`) being read as front matter, which merged it into the previous slide or made it disappear, and fix `---` inside a `~~~` code block splitting the slide
 - [#430](https://github.com/estruyf/vscode-demo-time/issues/430): Fix video slides ignoring `autoplay: false`, so a background video no longer always starts playing. `autoPlay` keeps working as an alias

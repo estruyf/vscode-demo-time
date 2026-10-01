@@ -71,6 +71,7 @@ export const Config = {
   },
   pdfExport: {
     includeHiddenSlides: 'pdfExport.includeHiddenSlides',
+    notes: 'pdfExport.notes',
   },
   videoExport: {
     command: 'videoExport.command',

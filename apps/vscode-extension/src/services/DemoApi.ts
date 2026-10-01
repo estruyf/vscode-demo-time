@@ -10,6 +10,7 @@ import { bringToFront, readFile, getDemoApiData, isPathInWorkspace } from '../ut
 import { COMMAND } from '@demotime/common';
 import { DemoRunner } from './DemoRunner';
 import { ScreenshotService } from './ScreenshotService';
+import { NotesService } from './NotesService';
 
 export class DemoApi {
   private static statusBarItem: StatusBarItem;
@@ -69,6 +70,7 @@ export class DemoApi {
     app.get('/api/previous', DemoApi.previous);
     app.get('/api/runById', DemoApi.runById);
     app.post('/api/runById', DemoApi.runById);
+    app.get('/api/notes', DemoApi.notes);
     app.post('/api/notes', DemoApi.notes);
     app.get('/api/screenshot', DemoApi.screenshot);
     app.get('/api/zoom-in', DemoApi.zoomIn);
@@ -209,20 +211,27 @@ export class DemoApi {
   }
 
   /**
-   * API endpoint to get the notes for a specific path.
+   * API endpoint to get the notes for a specific path. Without a path, it returns the notes of the
+   * current slide, or else the notes file of the current scene.
    * @param req
    * @param res
    * @returns
    */
   private static async notes(req: Request, res: Response) {
-    if (req.method !== 'POST') {
+    if (req.method !== 'POST' && req.method !== 'GET') {
       res.status(405).send('Method not allowed');
       return;
     }
 
     const path = typeof req.body?.path === 'string' ? req.body.path : undefined;
     if (!path) {
-      res.status(400).send('Missing notes path');
+      const notes = await NotesService.getCurrentNotes();
+      if (notes === undefined) {
+        res.status(404).send('Notes not found');
+        return;
+      }
+
+      res.status(200).send(notes);
       return;
     }
 
