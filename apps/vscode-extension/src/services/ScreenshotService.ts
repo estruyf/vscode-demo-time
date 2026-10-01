@@ -2,7 +2,7 @@ import { Uri, workspace } from 'vscode';
 import { Extension } from './Extension';
 import { DemoStatusBar } from './DemoStatusBar';
 import { Logger } from './Logger';
-import { getAbsolutePath, getTheme, readFile, writeFile } from '../utils';
+import { getAbsolutePath, getNextSlideIndex, getTheme, readFile, writeFile } from '../utils';
 import {
   Action,
   Config,
@@ -23,9 +23,7 @@ import { DemoRunner } from './DemoRunner';
 import type { BrowserType } from 'playwright-chromium';
 
 export class ScreenshotService {
-  private static cachedScreenshot: string | null = null;
-  private static cachedSlideIdx: number | undefined = undefined;
-  private static lastDemoId: string | undefined = undefined;
+  private static cachedScreenshot: { key: string; value: string } | null = null;
 
   public static async generate(): Promise<string | null> {
     try {
@@ -34,28 +32,10 @@ export class ScreenshotService {
         return null;
       }
 
-      const { targetSlide, demo, slideIndex } = slideData;
-
-      // Check cache validity
-      if (
-        demo?.id === ScreenshotService.lastDemoId &&
-        ScreenshotService.cachedSlideIdx === slideIndex &&
-        ScreenshotService.cachedScreenshot
-      ) {
-        Logger.info('Returning cached next slide screenshot');
-        return ScreenshotService.cachedScreenshot;
-      }
-
-      // Generate HTML for the slide
-      const html = await ScreenshotService.generateSlideHtml(targetSlide);
-
-      // Cache the result
-      ScreenshotService.lastDemoId = demo.id;
-      ScreenshotService.cachedSlideIdx = slideIndex;
-
-      return html;
+      // Always render fresh HTML, the screenshot cache only holds PNG data URLs
+      return await ScreenshotService.generateSlideHtml(slideData.targetSlide);
     } catch (error) {
-      Logger.error(`Error generating next slide screenshot: ${(error as Error).message}`);
+      Logger.error(`Error generating next slide preview: ${(error as Error).message}`);
       return null;
     }
   }
@@ -77,25 +57,17 @@ export class ScreenshotService {
         return null;
       }
 
-      const { targetSlide, demo, slideIndex } = slideData;
+      const { targetSlide, cacheKey } = slideData;
 
-      // Check cache validity
-      if (
-        demo?.id === ScreenshotService.lastDemoId &&
-        ScreenshotService.cachedSlideIdx === slideIndex &&
-        ScreenshotService.cachedScreenshot
-      ) {
+      if (ScreenshotService.cachedScreenshot?.key === cacheKey) {
         Logger.info('Returning cached next slide screenshot');
-        return ScreenshotService.cachedScreenshot;
+        return ScreenshotService.cachedScreenshot.value;
       }
 
       // Generate screenshot
       const screenshot = await ScreenshotService.generateScreenshot(chromium, targetSlide);
 
-      // Cache the result
-      ScreenshotService.cachedScreenshot = screenshot;
-      ScreenshotService.lastDemoId = demo.id;
-      ScreenshotService.cachedSlideIdx = slideIndex;
+      ScreenshotService.cachedScreenshot = { key: cacheKey, value: screenshot };
 
       return screenshot;
     } catch (error) {
@@ -107,11 +79,10 @@ export class ScreenshotService {
   /**
    * Get the target slide for the next slide (either current demo's next slide or next demo's first slide)
    */
-  private static async getTargetSlide(): Promise<any | null> {
+  private static async getTargetSlide(): Promise<{ targetSlide: any; cacheKey: string } | null> {
     const hasNextSlide = Preview.checkIfHasNextSlide();
     const crntSlideIdx = Preview.getCurrentSlideIndex();
     const demo = hasNextSlide ? DemoRunner.currentDemo : DemoStatusBar.getNextDemo();
-    const nextSlideIdx = hasNextSlide ? crntSlideIdx + 1 : 0;
 
     if (!demo) {
       Logger.info('No next demo available for screenshot');
@@ -150,15 +121,16 @@ export class ScreenshotService {
       return null;
     }
 
-    let slideIndex = 0;
-    if (nextSlideIdx !== null) {
-      slideIndex = nextSlideIdx;
-    } else if (typeof slideStep.slide === 'number') {
-      slideIndex = slideStep.slide;
-    }
-    const targetSlide = slides[slideIndex] || slides[0];
+    const slideIndex = getNextSlideIndex(
+      hasNextSlide,
+      crntSlideIdx,
+      slideStep.slide,
+      slides.length,
+    );
+    const targetSlide = slides[slideIndex];
+    const cacheKey = `${slideUri.toString()}#${slideIndex}`;
 
-    return { targetSlide, demo, slideIndex };
+    return { targetSlide, cacheKey };
   }
 
   /**
@@ -166,8 +138,6 @@ export class ScreenshotService {
    */
   public static clearCache(): void {
     ScreenshotService.cachedScreenshot = null;
-    ScreenshotService.lastDemoId = undefined;
-    ScreenshotService.cachedSlideIdx = undefined;
   }
 
   /**

@@ -17,6 +17,7 @@ export * from './findPositionByLineNumbers';
 export * from './findPositionByPlaceholders';
 export * from './formatSessionFilename';
 export * from './getAbsolutePath';
+export * from './getNextSlideIndex';
 export * from './getActionOptions';
 export * from './getActionTemplate';
 export * from './getDemoApiData';
