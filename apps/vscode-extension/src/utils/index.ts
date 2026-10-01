@@ -23,6 +23,7 @@ export * from './getDemoApiData';
 export * from './getFileContents';
 export * from './getFileName';
 export * from './getFileUri';
+export * from './getFrontmatterRange';
 export * from './getInsertionSpeed';
 export * from './getInsertionSpeedRandomness';
 export * from './getRandomizedTypingDelay';

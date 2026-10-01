@@ -16,6 +16,7 @@
 - [#436](https://github.com/estruyf/vscode-demo-time/issues/436): Fix click steps (`dt-show`, `dt-hide`, `dt-list`) only advancing with the right arrow key or a mouse click. The remote, the API, auto-advance, the **Next** button and `PageDown` now reveal the next step, clicks on the slide controls no longer count as a step, and `PageUp` or the left arrow key goes back one step
 - [#436](https://github.com/estruyf/vscode-demo-time/issues/436): Added `PageDown` and `PageUp` keybindings for `Demo Time: Start` and `Demo Time: Previous` in presentation mode, for presenter clickers that send these keys
 - [#436](https://github.com/estruyf/vscode-demo-time/issues/436): Added the `clicks` attribute to `dt-list` to set the click on which its first item appears
+- [#438](https://github.com/estruyf/vscode-demo-time/issues/438): Fix slide front matter hover and completion only working in the first front matter block of the file. They now work in the document front matter and in the front matter of every slide
 - [#453](https://github.com/estruyf/vscode-demo-time/issues/453): Fix `transformMarkdown` running `remarkPlugins` after `remark-rehype`, so remark plugins that change the markdown tree now see its nodes
 
 ## [2.3.1] - 2026-09-03
