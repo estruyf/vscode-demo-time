@@ -44,12 +44,13 @@ export const transformMarkdown = async (
         }
       });
     })
+    // Remark plugins work on the markdown tree (mdast), so they need to run before remark-rehype
+    .use(remarkPlugins || [])
     .use(remarRehype, {
       ...remarRehypeOptions,
       allowDangerousHtml: true,
     })
     .use(rehypeRaw)
-    .use(remarkPlugins || [])
     .use(rehypePlugins || [])
     .use(rehypeReact, {
       ...rehypeReactOptions,
