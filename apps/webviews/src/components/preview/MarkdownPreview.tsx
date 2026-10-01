@@ -444,17 +444,23 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     getFileContents(fileUri);
   }, [fileUri, getFileContents]);
 
-  // ESC key handler for zoom
+  // ESC key handler for zoom (capture phase so it wins over the presentation view Escape handler)
   React.useEffect(() => {
+    if (!isZoomed) {
+      return;
+    }
+
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isZoomed) {
+      if (event.key === 'Escape' && !event.defaultPrevented) {
+        event.preventDefault();
+        event.stopPropagation();
         toggleZoom();
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown, true);
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keydown', handleKeyDown, true);
     };
   }, [isZoomed, toggleZoom]);
 

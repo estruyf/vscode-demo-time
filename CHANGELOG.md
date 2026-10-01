@@ -11,6 +11,7 @@
 - [#429](https://github.com/estruyf/vscode-demo-time/issues/429): Fix a slide starting with a `Word:` line (like `Note: remember this`) being read as front matter, which merged it into the previous slide or made it disappear, and fix `---` inside a `~~~` code block splitting the slide
 - [#430](https://github.com/estruyf/vscode-demo-time/issues/430): Fix video slides ignoring `autoplay: false`, so a background video no longer always starts playing. `autoPlay` keeps working as an alias
 - [#431](https://github.com/estruyf/vscode-demo-time/issues/431): Fix custom layout errors being silent. A missing `customLayout` file or invalid Handlebars in a layout, header or footer template now shows an error with the file path and message on the slide, and logs it to the Demo Time output channel
+- [#433](https://github.com/estruyf/vscode-demo-time/issues/433): Fix pressing `Escape` while a slide is zoomed also turning off presentation view. The first `Escape` now only leaves zoom
 
 ## [2.3.1] - 2026-09-03
 
