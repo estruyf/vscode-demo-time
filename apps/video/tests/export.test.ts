@@ -1,6 +1,6 @@
 import type { VideoExportEvent } from '@demotime/common';
 import { afterAll, describe, it, expect } from '@jest/globals';
-import { parseExportArgs } from '../src/args';
+import { CLI_VERSION, isPreReleaseVersion, parseExportArgs } from '../src/args';
 import {
   buildChapters,
   buildCues,
@@ -398,5 +398,19 @@ describe('PR review fixes', () => {
     } finally {
       rmSync(root, { recursive: true, force: true });
     }
+  });
+});
+
+describe('pre-release of Demo Time', () => {
+  it('knows a beta version of the CLI', () => {
+    expect(isPreReleaseVersion('0.1.42-beta.1')).toBe(true);
+    expect(isPreReleaseVersion('0.1.42')).toBe(false);
+  });
+
+  it('follows the CLI version unless --pre-release or --stable says otherwise', () => {
+    expect(parseExportArgs([])!.preRelease).toBe(isPreReleaseVersion(CLI_VERSION));
+    expect(parseExportArgs(['--pre-release'])!.preRelease).toBe(true);
+    expect(parseExportArgs(['--stable'])!.preRelease).toBe(false);
+    expect(() => parseExportArgs(['--pre-release', '--stable'])).toThrow('not both');
   });
 });

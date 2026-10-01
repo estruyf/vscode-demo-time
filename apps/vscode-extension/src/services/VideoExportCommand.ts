@@ -253,10 +253,9 @@ export class VideoExportCommand {
     });
 
     const commandLine = (
-      ext.getSetting<string>(Config.videoExport.command) || 'npx --yes @demotime/video@latest'
-    )
-      .trim()
-      .split(/\s+/);
+      ext.getSetting<string>(Config.videoExport.command)?.trim() ||
+      VideoExportCommand.getDefaultCliCommand()
+    ).split(/\s+/);
     const [command, ...commandArgs] = commandLine;
     // VS Code hands the end event a task object of its own, so the export is found by its id
     const exportId = randomUUID();
@@ -297,6 +296,20 @@ export class VideoExportCommand {
       }
     });
     await tasks.executeTask(task);
+  }
+
+  /**
+   * The setting's default from this build's manifest: `@demotime/video@latest` for a release,
+   * `@demotime/video@next` for a pre-release (scripts/beta-release.mjs sets it), so an emptied
+   * setting still runs the CLI that goes with this build.
+   */
+  private static getDefaultCliCommand(): string {
+    const property =
+      Extension.getInstance().context.extension.packageJSON?.contributes?.configuration
+        ?.properties?.[`${Config.root}.${Config.videoExport.command}`];
+    return typeof property?.default === 'string' && property.default.trim()
+      ? property.default.trim()
+      : 'npx --yes @demotime/video@latest';
   }
 
   /** The running VS Code, so the recording uses the same version; the CLI finds one otherwise. */

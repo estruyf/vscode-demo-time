@@ -27,6 +27,8 @@ export interface ExportOptions {
   vscodeVersion?: string;
   /** Demo Time itself: a Marketplace id (optionally `@version`) or a VSIX path. */
   extension: string;
+  /** Install the pre-release of Demo Time from the Marketplace instead of the release. */
+  preRelease: boolean;
   /** More extensions to install, such as the color theme. */
   extensions: string[];
   /** A JSON file with user settings for the recording profile. */
@@ -71,6 +73,10 @@ Options:
   --vscode <path>         VS Code executable or app to record in (default: the installed one)
   --vscode-version <v>    Download this VS Code version instead (stable, insiders, 1.105.0)
   --extension <id|vsix>   Demo Time to install (default eliostruyf.vscode-demo-time)
+  --pre-release           Install the pre-release of Demo Time (the default for
+                          @demotime/video@next)
+  --stable                Install the release of Demo Time (the default for
+                          @demotime/video)
   --extensions <ids>      More extensions to install, comma separated (a theme, for example)
   --settings <file>       JSON file with VS Code user settings for the recording
   --vscode-arg=<arg>      Extra argument for VS Code, such as --vscode-arg=--disable-gpu;
@@ -87,6 +93,12 @@ Options:
   --ffmpeg <path>         ffmpeg to use (default: ffmpeg-static, FFMPEG, or PATH)
   -h, --help              Show this help
 `;
+
+/** This CLI's own version, from its package.json next to `dist`. */
+export const CLI_VERSION: string = require('../package.json').version;
+
+/** `0.1.42-beta.1` is a pre-release; `0.1.42` is not. */
+export const isPreReleaseVersion = (version: string): boolean => version.includes('-');
 
 /// The largest value each number option takes. Anything above is a typo, and would make the
 /// export plan billions of frames or wait for days.
@@ -149,6 +161,8 @@ export const parseExportArgs = (
       vscode: { type: 'string' },
       'vscode-version': { type: 'string' },
       extension: { type: 'string' },
+      'pre-release': { type: 'boolean' },
+      stable: { type: 'boolean' },
       extensions: { type: 'string' },
       settings: { type: 'string' },
       'vscode-arg': { type: 'string', multiple: true },
@@ -196,6 +210,10 @@ export const parseExportArgs = (
     throw new Error('--slide-min cannot be more than --slide-max.');
   }
 
+  if (values['pre-release'] && values.stable) {
+    throw new Error('Use --pre-release or --stable, not both.');
+  }
+
   return {
     workspace,
     range: values.range ?? 'all',
@@ -216,6 +234,8 @@ export const parseExportArgs = (
     showNotes: !!values['show-notes'],
     vscodePath: values.vscode ? abs(values.vscode) : undefined,
     vscodeVersion: values['vscode-version'],
+    // The beta of this CLI (@demotime/video@next) goes with the pre-release of Demo Time
+    preRelease: values['pre-release'] ?? (values.stable ? false : isPreReleaseVersion(CLI_VERSION)),
     extension: values.extension
       ? /\.vsix$/i.test(values.extension)
         ? abs(values.extension)

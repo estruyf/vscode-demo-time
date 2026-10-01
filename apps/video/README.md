@@ -18,7 +18,8 @@ npx @demotime/video export
 ```
 
 The CLI opens its own VS Code window with an empty profile and installs the Demo Time extension into
-it from the Marketplace. The VS Code you work in and its extensions aren't touched.
+it from the Marketplace: the release, or with `--pre-release` the pre-release. The VS Code you work
+in and its extensions aren't touched.
 
 The files go to `.demo/exports`:
 
@@ -52,34 +53,35 @@ npx @demotime/video export ./my-talk --out ./videos --gif --srt --chapters --car
 
 ## Options
 
-| Option                                       | What it does                                                             |
-| -------------------------------------------- | ------------------------------------------------------------------------ |
-| `[workspace]`                                | The folder with the `.demo` folder (default: the current folder)         |
-| `--range <range>`                            | `all` (default), `act:2`, `act:2/scenes:3-5` or `act:2/scenes:3-`        |
-| `--preset <preset>`                          | `16:9` (1920×1080, default), `1:1` (1080×1080) or `9:16` (1080×1920)     |
-| `--fps <n>`                                  | Frame rate (default 30)                                                  |
-| `--out <dir>`, `--name <name>`               | Where the files go (default `<workspace>/.demo/exports/demo.*`)          |
-| `--gif`, `--gif-width <px>`, `--gif-fps <n>` | Also write a GIF (default 960 pixels wide, 12 fps)                       |
-| `--srt`                                      | Also write captions as `<name>.srt`, from scene titles                   |
-| `--captions titles\|notes`                   | What the captions say: scene titles (default) or notes; implies `--srt`  |
-| `--chapters`                                 | Add chapters to the MP4 and write a chapter list                         |
-| `--cards`, `--card-seconds <n>`              | Add a title and end card from the first and last slide                   |
-| `--strict`                                   | Fail when a move cannot be recorded, instead of skipping it              |
-| `--show-notes`                               | Keep notes that open with `showOnTrigger` in the video                   |
-| `--vscode <path>`                            | The VS Code to record in (default: the installed one)                    |
-| `--vscode-version <v>`                       | Download this VS Code version instead: `stable`, `insiders` or `1.105.0` |
-| `--extension <id\|vsix>`                     | The Demo Time to install (default: the latest from the Marketplace)      |
-| `--extensions <ids>`                         | More extensions to install, comma separated, such as your theme          |
-| `--settings <file>`                          | A JSON file with VS Code settings for the recording                      |
-| `--vscode-arg=<arg>`                         | An extra argument for VS Code, such as `--vscode-arg=--disable-gpu`      |
-| `--in-place`                                 | Run in the workspace itself instead of a copy                            |
-| `--copy-node-modules`                        | Copy `node_modules` into the workspace copy instead of linking them      |
-| `--keep-temp`                                | Keep the temporary profile, workspace copy and frames                    |
-| `--scene-hold <s>`                           | Seconds a scene without slides stays on screen (default 2)               |
-| `--slide-min <s>`, `--slide-max <s>`         | The shortest and longest time a slide stays on screen (default 3 and 12) |
-| `--terminal-timeout <s>`                     | Seconds a terminal command gets to finish (default 30)                   |
-| `--timeout <minutes>`                        | Give up after this long (default 60)                                     |
-| `--ffmpeg <path>`                            | The ffmpeg to use (default: the bundled one, then `FFMPEG` or `PATH`)    |
+| Option                                       | What it does                                                                                                                                                    |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `[workspace]`                                | The folder with the `.demo` folder (default: the current folder)                                                                                                |
+| `--range <range>`                            | `all` (default), `act:2`, `act:2/scenes:3-5` or `act:2/scenes:3-`                                                                                               |
+| `--preset <preset>`                          | `16:9` (1920×1080, default), `1:1` (1080×1080) or `9:16` (1080×1920)                                                                                            |
+| `--fps <n>`                                  | Frame rate (default 30)                                                                                                                                         |
+| `--out <dir>`, `--name <name>`               | Where the files go (default `<workspace>/.demo/exports/demo.*`)                                                                                                 |
+| `--gif`, `--gif-width <px>`, `--gif-fps <n>` | Also write a GIF (default 960 pixels wide, 12 fps)                                                                                                              |
+| `--srt`                                      | Also write captions as `<name>.srt`, from scene titles                                                                                                          |
+| `--captions titles\|notes`                   | What the captions say: scene titles (default) or notes; implies `--srt`                                                                                         |
+| `--chapters`                                 | Add chapters to the MP4 and write a chapter list                                                                                                                |
+| `--cards`, `--card-seconds <n>`              | Add a title and end card from the first and last slide                                                                                                          |
+| `--strict`                                   | Fail when a move cannot be recorded, instead of skipping it                                                                                                     |
+| `--show-notes`                               | Keep notes that open with `showOnTrigger` in the video                                                                                                          |
+| `--vscode <path>`                            | The VS Code to record in (default: the installed one)                                                                                                           |
+| `--vscode-version <v>`                       | Download this VS Code version instead: `stable`, `insiders` or `1.105.0`                                                                                        |
+| `--extension <id\|vsix>`                     | The Demo Time to install (default: the latest from the Marketplace)                                                                                             |
+| `--pre-release`, `--stable`                  | Install the pre-release or the release of Demo Time from the Marketplace. `@demotime/video@next` uses the pre-release by default, `@demotime/video` the release |
+| `--extensions <ids>`                         | More extensions to install, comma separated, such as your theme                                                                                                 |
+| `--settings <file>`                          | A JSON file with VS Code settings for the recording                                                                                                             |
+| `--vscode-arg=<arg>`                         | An extra argument for VS Code, such as `--vscode-arg=--disable-gpu`                                                                                             |
+| `--in-place`                                 | Run in the workspace itself instead of a copy                                                                                                                   |
+| `--copy-node-modules`                        | Copy `node_modules` into the workspace copy instead of linking them                                                                                             |
+| `--keep-temp`                                | Keep the temporary profile, workspace copy and frames                                                                                                           |
+| `--scene-hold <s>`                           | Seconds a scene without slides stays on screen (default 2)                                                                                                      |
+| `--slide-min <s>`, `--slide-max <s>`         | The shortest and longest time a slide stays on screen (default 3 and 12)                                                                                        |
+| `--terminal-timeout <s>`                     | Seconds a terminal command gets to finish (default 30)                                                                                                          |
+| `--timeout <minutes>`                        | Give up after this long (default 60)                                                                                                                            |
+| `--ffmpeg <path>`                            | The ffmpeg to use (default: the bundled one, then `FFMPEG` or `PATH`)                                                                                           |
 
 `npx @demotime/video --help` lists them too.
 

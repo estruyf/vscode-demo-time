@@ -128,7 +128,13 @@ export const quoteForCmd = (arg: string): string =>
 /** Installs the extensions into the empty extensions folder of the recording profile. */
 export const installExtensions = (
   executable: string,
-  options: { profileDir: string; extensionsDir: string; extensions: string[] },
+  options: {
+    profileDir: string;
+    extensionsDir: string;
+    extensions: string[];
+    /** Install the pre-release versions; it applies to every extension in the call. */
+    preRelease?: boolean;
+  },
 ): Promise<void> => {
   const cli = resolveCliPathFromVSCodeExecutablePath(executable);
   const args = [
@@ -137,6 +143,7 @@ export const installExtensions = (
     '--extensions-dir',
     options.extensionsDir,
     ...options.extensions.flatMap((id) => ['--install-extension', id]),
+    ...(options.preRelease ? ['--pre-release'] : []),
     '--force',
   ];
 

@@ -260,18 +260,31 @@ export const exportVideo = async (
     reporter.info(`  ${executable}`);
 
     reporter.step('Installing the extensions');
+    // Demo Time on its own: --pre-release applies to every extension in the call, and a theme
+    // should come from its release. A VSIX or a pinned version is installed as given.
+    const pinned = /\.vsix$/i.test(options.extension) || options.extension.includes('@');
     await installExtensions(executable, {
       profileDir,
       extensionsDir,
-      extensions: [options.extension, ...options.extensions],
+      extensions: [options.extension],
+      preRelease: options.preRelease && !pinned,
     });
+    if (options.extensions.length > 0) {
+      await installExtensions(executable, {
+        profileDir,
+        extensionsDir,
+        extensions: options.extensions,
+      });
+    }
 
     // Fail now rather than after the start timeout when Demo Time is too old to run the play
     const demoTime = getDemoTimeSupport(extensionsDir);
     if (demoTime && !demoTime.supported) {
       throw new Error(
-        `Demo Time ${demoTime.version} cannot export videos yet. Install a newer version with ` +
-          '--extension eliostruyf.vscode-demo-time@<version>, or pass --extension <path to a .vsix>.',
+        `Demo Time ${demoTime.version} cannot export videos yet. ` +
+          (options.preRelease
+            ? 'Pass --extension eliostruyf.vscode-demo-time@<version> or a path to a .vsix.'
+            : 'Use the pre-release with --pre-release, or pass --extension with a version or a .vsix.'),
       );
     }
 
