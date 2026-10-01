@@ -7,6 +7,7 @@
 - [#418](https://github.com/estruyf/vscode-demo-time/issues/418): Added the `Demo Time: Run play unattended for recording` and `Demo Time: Stop unattended run` commands to play the whole play or an act on its own in the current window, for recording with your own tool
 - [#418](https://github.com/estruyf/vscode-demo-time/issues/418): Added the `demoTime.videoExport.command`, `demoTime.videoExport.extension` and `demoTime.videoExport.options` settings
 - Added `secondarySideBar` to `demoTime.presentationViewToggles`, and to its defaults, so presentation view also closes the secondary side bar where VS Code shows Chat
+- [#428](https://github.com/estruyf/vscode-demo-time/issues/428): Fix slide files whose document front matter is followed directly by `---` showing the raw YAML as an extra first slide
 
 ## [2.3.1] - 2026-09-03
 

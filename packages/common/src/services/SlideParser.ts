@@ -1,3 +1,4 @@
+import yaml from 'js-yaml';
 import { ParserOptions, Slide, InternalSlide } from '../models';
 import { SlideLayout } from '../constants';
 import { FrontMatterParser } from '.';
@@ -37,23 +38,24 @@ export class SlideParser {
     const lines = processedMarkdown.split(/\r?\n/);
 
     const slideBlocks: string[] = [];
+    const slides: InternalSlide[] = [];
     let buffer: string[] = [];
     let inCodeBlock = false;
     let codeBlockMarker = '```';
 
     // If document frontmatter exists and remaining content starts with another slide delimiter,
-    // create an initial slide block for the document frontmatter
+    // the document frontmatter gets its own (empty) first slide. The frontmatter object is used
+    // directly, so it does not need to be serialized and parsed again.
     const remainingStartsWithSlide = processedMarkdown.trimStart().startsWith('---');
 
     if (hasDocFrontmatter && remainingStartsWithSlide) {
-      // Create a synthetic frontmatter block for document-level metadata
-      const frontmatterBlock = `---\n${Object.entries(docFrontMatter)
-        .map(([key, value]) => {
-          const serializedValue = typeof value === 'object' ? JSON.stringify(value) : value;
-          return `${key}: ${serializedValue}`;
-        })
-        .join('\n')}\n---`;
-      slideBlocks.push(frontmatterBlock);
+      slides.push({
+        content: '',
+        rawContent: '',
+        docFrontMatter: { ...docFrontMatter },
+        frontmatter: {},
+        index: 0,
+      });
     }
 
     for (let i = 0; i < lines.length; i++) {
@@ -107,8 +109,6 @@ export class SlideParser {
     if (buffer.length > 0 || mergedOptions.includeEmpty) {
       slideBlocks.push(buffer.join('\n'));
     }
-
-    const slides: InternalSlide[] = [];
 
     for (const block of slideBlocks) {
       const trimmedBlock = mergedOptions.trimContent ? block.trimStart() : block;
@@ -225,9 +225,8 @@ export class SlideParser {
         // Convert frontmatter to YAML string
         let frontmatterStr = '';
         if (Object.keys(slide.frontmatter).length > 0) {
-          frontmatterStr = `---\n${Object.entries(slide.frontmatter)
-            .map(([key, value]) => `${key}: ${value}`)
-            .join('\n')}\n---\n\n`;
+          const yamlContent = yaml.dump(slide.frontmatter, { lineWidth: -1, skipInvalid: true });
+          frontmatterStr = `---\n${yamlContent.trimEnd()}\n---\n\n`;
         }
 
         // Add slide delimiter if not the first slide
