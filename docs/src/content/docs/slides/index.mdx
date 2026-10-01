@@ -47,6 +47,20 @@ Content for the first slide.
 Content for the second slide.
 ```
 
+To give a slide its own front matter, put it directly after the `---` separator and close it with another `---`:
+
+```md
+# Slide 1 Title
+
+---
+layout: section
+---
+
+# Slide 2 Title
+```
+
+The block is only used as front matter when it is valid YAML with `key: value` properties. Otherwise, the `---` is a plain separator, so a slide can start with a line like `Note: remember this`. A `---` inside a code block (fenced with ` ``` ` or `~~~`) does not start a new slide.
+
 <Aside type="tip">
 When using **grouped slides**, each slide will inherit the following properties from the front matter of the first slide:
 - `theme`
