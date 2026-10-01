@@ -12,6 +12,7 @@
 - [#430](https://github.com/estruyf/vscode-demo-time/issues/430): Fix video slides ignoring `autoplay: false`, so a background video no longer always starts playing. `autoPlay` keeps working as an alias
 - [#431](https://github.com/estruyf/vscode-demo-time/issues/431): Fix custom layout errors being silent. A missing `customLayout` file or invalid Handlebars in a layout, header or footer template now shows an error with the file path and message on the slide, and logs it to the Demo Time output channel
 - [#433](https://github.com/estruyf/vscode-demo-time/issues/433): Fix pressing `Escape` while a slide is zoomed also turning off presentation view. The first `Escape` now only leaves zoom
+- [#435](https://github.com/estruyf/vscode-demo-time/issues/435): Fix the presenter view's next-slide card not updating when the next slide has no H1. The card now always refreshes and falls back to the first heading, the `title` front matter or "Slide n"
 
 ## [2.3.1] - 2026-09-03
 

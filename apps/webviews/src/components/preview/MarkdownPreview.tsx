@@ -7,7 +7,7 @@ import { LaserPointer } from './LaserPointer';
 import DOMPurify from 'dompurify';
 import { Config, getTemplateErrorMessage, getVideoAutoplay, renderTemplateError, tryConvertTemplateToHtml, Slide, SlideLayout, SlideParser, SlideTheme, SlideTransition, WebViewMessages } from '@demotime/common';
 import { useFileContents, useCursor, useScale, useMousePosition, useTheme } from '../../hooks';
-import { extractFirstH1 } from '../../utils';
+import { extractFirstH1, getSlideTitle } from '../../utils';
 import { AnimatedSVGSlide } from '../slides/AnimatedSVGSlide';
 
 export interface IMarkdownPreviewProps {
@@ -351,10 +351,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       setCrntSlide(allSlides[0]);
       if (allSlides.length > 1) {
         messageHandler.send(WebViewMessages.toVscode.hasNextSlide, true);
-        const nextTitle = extractFirstH1(allSlides[1].content);
-        if (nextTitle) {
-          messageHandler.send(WebViewMessages.toVscode.nextSlideTitle, nextTitle);
-        }
+        messageHandler.send(WebViewMessages.toVscode.nextSlideTitle, getSlideTitle(allSlides[1]));
       }
     }
   }, [content]);
@@ -429,10 +426,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, (crntSlide?.index !== undefined && crntSlide.index > 0));
 
       const nextSlideIdx = crntSlide?.index !== undefined ? crntSlide.index + 1 : 0;
-      const nextTitle = extractFirstH1(slides[nextSlideIdx].content);
-      if (nextTitle) {
-        messageHandler.send(WebViewMessages.toVscode.nextSlideTitle, nextTitle);
-      }
+      messageHandler.send(WebViewMessages.toVscode.nextSlideTitle, getSlideTitle(slides[nextSlideIdx]));
     }
 
     return () => {
