@@ -5,7 +5,7 @@ import { EventData } from '@estruyf/vscode';
 import { SlideControls } from './SlideControls';
 import { LaserPointer } from './LaserPointer';
 import DOMPurify from 'dompurify';
-import { Config, convertTemplateToHtml, getVideoAutoplay, Slide, SlideLayout, SlideParser, SlideTheme, SlideTransition, WebViewMessages } from '@demotime/common';
+import { Config, getTemplateErrorMessage, getVideoAutoplay, renderTemplateError, tryConvertTemplateToHtml, Slide, SlideLayout, SlideParser, SlideTheme, SlideTransition, WebViewMessages } from '@demotime/common';
 import { useFileContents, useCursor, useScale, useMousePosition, useTheme } from '../../hooks';
 import { extractFirstH1 } from '../../utils';
 import { AnimatedSVGSlide } from '../slides/AnimatedSVGSlide';
@@ -97,7 +97,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const fetchTemplate = React.useCallback(
     async (
       configKey: string,
-      setter: React.Dispatch<React.SetStateAction<string | undefined>>
+      setter: React.Dispatch<React.SetStateAction<string | undefined>>,
+      title: string
     ) => {
       try {
         const templatePath = await messageHandler.request<string>(
@@ -109,12 +110,15 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           return;
         }
 
+        const errorOptions = { title, path: templatePath, compact: true };
         const template = await messageHandler.request<string>(
           WebViewMessages.toVscode.getFileContents,
           templatePath
         );
         if (!template) {
-          setter(undefined);
+          const message = 'The template file could not be found or is empty.';
+          messageHandler.send(WebViewMessages.toVscode.logError, getTemplateErrorMessage(errorOptions, message));
+          setter(renderTemplateError(errorOptions, message));
           return;
         }
 
@@ -132,8 +136,11 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             crntSlide.frontmatter.totalSlides = totalSlides;
           }
 
-          const processed = convertTemplateToHtml(template, crntSlide.frontmatter, webviewUrl);
-          setter(processed);
+          const { html, error } = tryConvertTemplateToHtml(template, crntSlide.frontmatter, { ...errorOptions, webviewUrl });
+          if (error) {
+            messageHandler.send(WebViewMessages.toVscode.logError, error);
+          }
+          setter(html);
         }
       } catch {
         setter(undefined);
@@ -143,11 +150,11 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   );
 
   const fetchHeader = React.useCallback(() => {
-    fetchTemplate(Config.slides.slideHeaderTemplate, setHeader);
+    fetchTemplate(Config.slides.slideHeaderTemplate, setHeader, 'Header template error');
   }, [fetchTemplate]);
 
   const fetchFooter = React.useCallback(() => {
-    fetchTemplate(Config.slides.slideFooterTemplate, setFooter);
+    fetchTemplate(Config.slides.slideFooterTemplate, setFooter, 'Footer template error');
   }, [fetchTemplate]);
 
 
@@ -358,14 +365,28 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     setTransition(crntSlide?.frontmatter.transition || undefined);
 
     if (crntSlide && crntSlide.frontmatter.header) {
-      const html = convertTemplateToHtml(crntSlide.frontmatter.header, crntSlide.frontmatter, webviewUrl);
+      const { html, error } = tryConvertTemplateToHtml(crntSlide.frontmatter.header, crntSlide.frontmatter, {
+        title: 'Header template error',
+        compact: true,
+        webviewUrl,
+      });
+      if (error) {
+        messageHandler.send(WebViewMessages.toVscode.logError, error);
+      }
       setHeader(DOMPurify.sanitize(html, { USE_PROFILES: { html: true } }));
     } else {
       fetchHeader();
     }
 
     if (crntSlide && crntSlide.frontmatter.footer) {
-      const html = convertTemplateToHtml(crntSlide.frontmatter.footer, crntSlide.frontmatter, webviewUrl);
+      const { html, error } = tryConvertTemplateToHtml(crntSlide.frontmatter.footer, crntSlide.frontmatter, {
+        title: 'Footer template error',
+        compact: true,
+        webviewUrl,
+      });
+      if (error) {
+        messageHandler.send(WebViewMessages.toVscode.logError, error);
+      }
       setFooter(DOMPurify.sanitize(html, { USE_PROFILES: { html: true } }));
     } else {
       fetchFooter();

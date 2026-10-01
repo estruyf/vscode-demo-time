@@ -50,3 +50,12 @@ title: My custom layout
   </div>
 </div>
 ```
+
+## Layout errors
+
+When the layout file can't be found, or its Handlebars template is invalid (for example an
+`{{#if}}` block without a closing `{{/if}}`), the slide shows an error with the path of the layout
+and the error message instead of the slide content. The same error is written to the **Demo Time**
+output channel (**View** > **Output**, then select **Demo Time**).
+
+This also applies to the [slide header and footer templates](/slides/layouts/header-footer/).

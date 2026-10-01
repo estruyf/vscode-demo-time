@@ -4,5 +4,6 @@ export * from './getVideoAutoplay';
 export * from './htmlDecode';
 export * from './placeholderFormatting';
 export * from './sectionFormatting';
+export * from './templateError';
 export * from './transformMarkdown';
 export * from './twoColumnFormatting';

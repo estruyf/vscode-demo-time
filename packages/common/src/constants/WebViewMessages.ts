@@ -87,6 +87,10 @@ export const WebViewMessages = {
      */
     getFileContents: 'getFileContents',
     /**
+     * logError
+     */
+    logError: 'logError',
+    /**
      * setHasClickListener
      */
     setHasClickListener: 'setHasClickListener',

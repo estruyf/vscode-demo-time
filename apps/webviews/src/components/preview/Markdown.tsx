@@ -1,7 +1,7 @@
 import * as React from 'react';
 import rehypePrettyCode from 'rehype-pretty-code';
 import { messageHandler } from '@estruyf/vscode/dist/client/webview';
-import { convertTemplateToHtml, getVideoAutoplay, placeholderFormatting, SlideMetadata, WebViewMessages } from '@demotime/common';
+import { getTemplateErrorMessage, getVideoAutoplay, placeholderFormatting, renderTemplateError, SlideMetadata, tryConvertTemplateToHtml, WebViewMessages } from '@demotime/common';
 import { renderToString } from 'react-dom/server';
 import { usePrevious, useRemark } from '../../hooks';
 import { transformImageUrl } from '../../utils';
@@ -85,28 +85,42 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     }
 
     if (layout) {
-      messageHandler.request<string>(WebViewMessages.toVscode.getFileContents, layout).then(async (templateHtml) => {
-        if (templateHtml) {
-          let crntSlideContent: string;
-          if (content) {
-            const processedContent = await processMarkdown(content);
-            crntSlideContent = renderToString(processedContent.reactContent);
-          } else {
-            crntSlideContent = textContent;
-          }
-
-          const metadataWithUrl = { ...metadata, webViewUrl: webviewUrl || undefined };
-
-          const html = convertTemplateToHtml(templateHtml, {
-            metadata: metadataWithUrl,
-            content: crntSlideContent,
-          }, webviewUrl);
-
-          setTemplate(html);
-          setIsReady(true);
-        }
-      }).catch(() => {
+      const errorOptions = { title: 'Custom layout error', path: layout };
+      const showError = (message: string) => {
+        messageHandler.send(WebViewMessages.toVscode.logError, getTemplateErrorMessage(errorOptions, message));
+        setTemplate(renderTemplateError(errorOptions, message));
         setIsReady(true);
+      };
+
+      messageHandler.request<string>(WebViewMessages.toVscode.getFileContents, layout).then(async (templateHtml) => {
+        if (!templateHtml) {
+          showError('The layout file could not be found or is empty.');
+          return;
+        }
+
+        let crntSlideContent: string;
+        if (content) {
+          const processedContent = await processMarkdown(content);
+          crntSlideContent = renderToString(processedContent.reactContent);
+        } else {
+          crntSlideContent = textContent;
+        }
+
+        const metadataWithUrl = { ...metadata, webViewUrl: webviewUrl || undefined };
+
+        const { html, error } = tryConvertTemplateToHtml(templateHtml, {
+          metadata: metadataWithUrl,
+          content: crntSlideContent,
+        }, { ...errorOptions, webviewUrl });
+
+        if (error) {
+          messageHandler.send(WebViewMessages.toVscode.logError, error);
+        }
+
+        setTemplate(html);
+        setIsReady(true);
+      }).catch((e) => {
+        showError(e instanceof Error ? e.message : String(e));
       });
     } else {
       setIsReady(true);

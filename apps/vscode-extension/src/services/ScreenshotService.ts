@@ -9,9 +9,11 @@ import {
   SlideLayout,
   SlideParser,
   SlideTheme,
-  convertTemplateToHtml,
+  getTemplateErrorMessage,
   placeholderFormatting,
+  renderTemplateError,
   transformMarkdown,
+  tryConvertTemplateToHtml,
 } from '@demotime/common';
 import { renderToString } from 'react-dom/server';
 import rehypePrettyCode from 'rehype-pretty-code';
@@ -239,6 +241,32 @@ export class ScreenshotService {
     }
   }
 
+  /**
+   * Render a custom layout, or an error block when the layout is missing or invalid
+   */
+  public static async renderCustomLayout(
+    layoutUri: Uri,
+    layoutPath: string,
+    data: { metadata: any; content: string },
+  ): Promise<string> {
+    const errorOptions = { title: 'Custom layout error', path: layoutPath };
+
+    let layoutContent: string;
+    try {
+      layoutContent = await readFile(layoutUri);
+    } catch (e) {
+      const message = `The layout file could not be read: ${(e as Error).message}`;
+      Logger.error(getTemplateErrorMessage(errorOptions, message));
+      return renderTemplateError(errorOptions, message);
+    }
+
+    const { html, error } = tryConvertTemplateToHtml(layoutContent, data, errorOptions);
+    if (error) {
+      Logger.error(error);
+    }
+    return html;
+  }
+
   public static async getThemeCss(slideTheme: SlideTheme): Promise<string> {
     let themeCss: string | null = null;
     const extensionPath = Extension.getInstance().extensionPath;
@@ -336,10 +364,32 @@ export class ScreenshotService {
     }
 
     if (headerTemplate) {
-      headerTemplate = convertTemplateToHtml(headerTemplate, slide.frontmatter);
+      const { html: headerHtml, error } = tryConvertTemplateToHtml(
+        headerTemplate,
+        slide.frontmatter,
+        {
+          title: 'Header template error',
+          compact: true,
+        },
+      );
+      if (error) {
+        Logger.error(error);
+      }
+      headerTemplate = headerHtml;
     }
     if (footerTemplate) {
-      footerTemplate = convertTemplateToHtml(footerTemplate, slide.frontmatter);
+      const { html: footerHtml, error } = tryConvertTemplateToHtml(
+        footerTemplate,
+        slide.frontmatter,
+        {
+          title: 'Footer template error',
+          compact: true,
+        },
+      );
+      if (error) {
+        Logger.error(error);
+      }
+      footerTemplate = footerHtml;
     }
 
     let html = renderToString(reactContent);
@@ -348,9 +398,7 @@ export class ScreenshotService {
       const wsFolder = extension.workspaceFolder;
       if (wsFolder) {
         const customLayoutPath = Uri.joinPath(wsFolder.uri, customLayout);
-        const customLayoutContent = await readFile(customLayoutPath);
-
-        html = convertTemplateToHtml(customLayoutContent, {
+        html = await ScreenshotService.renderCustomLayout(customLayoutPath, customLayout, {
           metadata: { ...slide.frontmatter },
           content: html,
         });

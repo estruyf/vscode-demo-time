@@ -22,7 +22,7 @@ import {
   Action,
   COMMAND,
   Config,
-  convertTemplateToHtml,
+  tryConvertTemplateToHtml,
   SlideLayout,
   SlideParser,
   SlideTheme,
@@ -274,10 +274,32 @@ export class PdfExportService {
           }
 
           if (headerTemplate) {
-            headerTemplate = convertTemplateToHtml(headerTemplate, crntSlide.frontmatter);
+            const { html: headerHtml, error } = tryConvertTemplateToHtml(
+              headerTemplate,
+              crntSlide.frontmatter,
+              {
+                title: 'Header template error',
+                compact: true,
+              },
+            );
+            if (error) {
+              Logger.error(error);
+            }
+            headerTemplate = headerHtml;
           }
           if (footerTemplate) {
-            footerTemplate = convertTemplateToHtml(footerTemplate, crntSlide.frontmatter);
+            const { html: footerHtml, error } = tryConvertTemplateToHtml(
+              footerTemplate,
+              crntSlide.frontmatter,
+              {
+                title: 'Footer template error',
+                compact: true,
+              },
+            );
+            if (error) {
+              Logger.error(error);
+            }
+            footerTemplate = footerHtml;
           }
 
           let html = renderToString(reactContent);
@@ -286,9 +308,7 @@ export class PdfExportService {
               PdfExportService.workspaceFolder?.uri as Uri,
               customLayout,
             );
-            const customLayoutContent = await readFile(customLayoutPath);
-
-            html = convertTemplateToHtml(customLayoutContent, {
+            html = await ScreenshotService.renderCustomLayout(customLayoutPath, customLayout, {
               metadata: { ...crntSlide.frontmatter },
               content: html,
             });
