@@ -98,8 +98,9 @@ GITHUB_STEP_SUMMARY=$(mktemp) node .github/scripts/verify-actions.mjs && echo OK
 Work happens on `dev`; feature branches (`feature/...`, `issue/...`) are created from and merged
 back into `dev`. `main` is for releases.
 
-When working on a GitHub issue, use an `issue/<number>` branch and start every commit message with
-the issue ID: `#428 - Fix the ...`. A PR description links the issue with `Fixes #428`.
+When working on a GitHub issue, ask whether to create an `issue/<number>` branch before starting;
+the default is no, so work on the current branch unless the user says otherwise. Start every commit
+message with the issue ID: `#428 - Fix the ...`. A PR description links the issue with `Fixes #428`.
 
 Some words in a commit message trigger publish workflows when pushed: `#release` (extension beta),
 `#video` (`@demotime/video`), `#mcp`, `#pwa` and `#powerpoint`. Only add them when asked.

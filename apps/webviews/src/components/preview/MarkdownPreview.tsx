@@ -5,7 +5,7 @@ import { EventData } from '@estruyf/vscode';
 import { SlideControls } from './SlideControls';
 import { LaserPointer } from './LaserPointer';
 import DOMPurify from 'dompurify';
-import { Config, convertTemplateToHtml, Slide, SlideLayout, SlideParser, SlideTheme, SlideTransition, WebViewMessages } from '@demotime/common';
+import { Config, convertTemplateToHtml, getVideoAutoplay, Slide, SlideLayout, SlideParser, SlideTheme, SlideTransition, WebViewMessages } from '@demotime/common';
 import { useFileContents, useCursor, useScale, useMousePosition, useTheme } from '../../hooks';
 import { extractFirstH1 } from '../../utils';
 import { AnimatedSVGSlide } from '../slides/AnimatedSVGSlide';
@@ -506,7 +506,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             {
               (layout === SlideLayout.Video && videoUrl && !crntSlide?.frontmatter.controls) && (
                 <div className="slide__video" aria-hidden="true">
-                  <video autoPlay loop muted playsInline preload="auto" src={videoUrl}></video>
+                  <video autoPlay={getVideoAutoplay(crntSlide?.frontmatter)} loop muted playsInline preload="auto" src={videoUrl}></video>
                 </div>
               )
             }

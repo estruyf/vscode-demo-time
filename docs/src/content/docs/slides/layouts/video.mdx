@@ -1,7 +1,7 @@
 ---
 title: Video Slide Layout
 description: Learn about the video slide layout in Demo Time
-lastmod: 2025-11-04T00:00:00.000Z
+lastmod: 2026-10-01T00:00:00.000Z
 ---
 
 import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
@@ -28,7 +28,7 @@ You can control video playback behavior using these front matter properties:
 
 - `video` - Path to the video file (relative to workspace or absolute URL)
 - `controls` - Show video controls (default: false for background videos)
-- `autoplay` - Auto-play the video (default: true for background videos)
+- `autoplay` - Auto-play the video (default: `true` for background videos, `false` when `controls` is `true`). `autoPlay` is supported as an alias.
 - `loop` - Loop the video (default: true for background videos)  
 - `muted` - Mute the video (default: true for background videos)
 - `playsInline` - Play inline on mobile devices (default: true)

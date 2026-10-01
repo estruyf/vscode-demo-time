@@ -1,7 +1,7 @@
 import * as React from 'react';
 import rehypePrettyCode from 'rehype-pretty-code';
 import { messageHandler } from '@estruyf/vscode/dist/client/webview';
-import { convertTemplateToHtml, placeholderFormatting, SlideMetadata, WebViewMessages } from '@demotime/common';
+import { convertTemplateToHtml, getVideoAutoplay, placeholderFormatting, SlideMetadata, WebViewMessages } from '@demotime/common';
 import { renderToString } from 'react-dom/server';
 import { usePrevious, useRemark } from '../../hooks';
 import { transformImageUrl } from '../../utils';
@@ -42,13 +42,15 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     return transformImageUrl(webviewUrl || "", raw) || raw;
   }, [videoUrl, matter?.video, webviewUrl]);
 
+  const shouldAutoplay = React.useMemo(() => getVideoAutoplay(matter), [matter]);
+
   const computedMuted = React.useMemo(() => {
     // If user explicitly set muted (true or 'true'), respect it.
     const explicit = matter && (matter.muted === true || matter.muted === 'true');
     if (explicit) { return true; }
-    // Allow autoPlay by muting when autoPlay is requested or when controls are hidden.
-    return Boolean(matter?.autoPlay) || !matter?.controls;
-  }, [matter]);
+    // Allow autoplay by muting when autoplay is requested or when controls are hidden.
+    return shouldAutoplay || !matter?.controls;
+  }, [matter, shouldAutoplay]);
 
   const {
     markdown,
@@ -218,7 +220,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     };
   }, [isReady]);
 
-  // Ensure the browser picks up the dynamically rendered source and respects autoPlay.
+  // Ensure the browser picks up the dynamically rendered source and respects autoplay.
   React.useEffect(() => {
     const video = videoRef.current;
     if (!video || !resolvedVideoUrl) { return; }
@@ -235,7 +237,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
         }
       }
 
-      if (Boolean(matter?.autoPlay) && computedMuted) {
+      if (shouldAutoplay && computedMuted) {
         void video.play();
       }
     };
@@ -256,7 +258,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     return () => {
       video.removeEventListener('loadedmetadata', setRateAndPlay);
     };
-  }, [resolvedVideoUrl, isReady, computedMuted, matter?.autoPlay, matter?.playbackRate]);
+  }, [resolvedVideoUrl, isReady, computedMuted, shouldAutoplay, matter?.playbackRate]);
 
   if (!isReady) {
     return null;
@@ -284,7 +286,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
                   <video
                     ref={videoRef}
                     controls={matter?.controls}
-                    autoPlay={matter?.autoPlay || !matter?.controls}
+                    autoPlay={shouldAutoplay}
                     loop={matter?.loop || !matter?.controls}
                     muted={computedMuted}
                     playsInline={matter?.playsInline || !matter?.controls}
