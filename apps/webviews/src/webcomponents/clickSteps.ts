@@ -22,6 +22,14 @@ let currentStep = 0;
 let revealAll = false;
 let lastSentState: string | undefined;
 
+/**
+ * Static rendering (like the PDF export) has no inputs to advance the clicks and no VS Code API,
+ * so all components render their final state.
+ */
+const isStaticMode = () =>
+  (typeof document !== 'undefined' && !!document.body?.hasAttribute('data-demotime-static')) ||
+  typeof (globalThis as { acquireVsCodeApi?: unknown }).acquireVsCodeApi !== 'function';
+
 const getTotalSteps = () => {
   let total = 0;
   registrations.forEach((registration) => {
@@ -32,12 +40,17 @@ const getTotalSteps = () => {
 
 const update = () => {
   const total = getTotalSteps();
-  if (revealAll) {
+  const isStatic = isStaticMode();
+  if (revealAll || isStatic) {
     currentStep = total;
   }
 
   registrations.forEach((registration) => registration.listener(currentStep));
   subscribers.forEach((subscriber) => subscriber(currentStep));
+
+  if (isStatic) {
+    return;
+  }
 
   const state = {
     listening: currentStep < total,

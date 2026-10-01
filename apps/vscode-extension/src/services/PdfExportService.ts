@@ -426,7 +426,7 @@ export class PdfExportService {
   ${css}
   </style>
 </head>
-<body>
+<body data-demotime-static>
     `;
 
     // Add each slide as a div
