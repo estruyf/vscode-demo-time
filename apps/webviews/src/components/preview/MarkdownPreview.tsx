@@ -6,9 +6,10 @@ import { SlideControls } from './SlideControls';
 import { LaserPointer } from './LaserPointer';
 import DOMPurify from 'dompurify';
 import { Config, getTemplateErrorMessage, getVideoAutoplay, renderTemplateError, tryConvertTemplateToHtml, Slide, SlideLayout, SlideParser, SlideTheme, SlideTransition, WebViewMessages } from '@demotime/common';
-import { useFileContents, useCursor, useScale, useMousePosition, useTheme } from '../../hooks';
+import { useFileContents, useCursor, useScale, useMousePosition, useTheme, useClickSteps } from '../../hooks';
 import { extractFirstH1, getSlideTitle } from '../../utils';
 import { AnimatedSVGSlide } from '../slides/AnimatedSVGSlide';
+import { nextClickStep, previousClickStep, resetClickSteps } from '../../webcomponents/clickSteps';
 
 export interface IMarkdownPreviewProps {
   fileUri: string;
@@ -45,6 +46,9 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const { vsCodeTheme, isDarkTheme } = useTheme();
   const { scale } = useScale(ref, slideRef);
   const { mousePosition, handleMouseMove, handleMouseLeave } = useMousePosition(slideRef, scale, resetCursorTimeout);
+  const clickStep = useClickSteps();
+  // Going back to the previous slide shows it with all its click steps revealed
+  const revealClickStepsRef = React.useRef(false);
 
   const handleZoomedMouseMove = React.useCallback((event: React.MouseEvent) => {
     if (!isZoomed || !ref.current) {
@@ -222,6 +226,11 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     // the event as consumed before we advance. If not consumed, fall back
     // to the async checkNext handshake.
     if (command === WebViewMessages.toWebview.nextSlide) {
+      // Reveal the remaining click steps of the slide first
+      if (nextClickStep()) {
+        return;
+      }
+
       // If a slide previously consumed a next and hasn't yet signalled completion,
       // ignore further next requests for that slide (they should be pressed again after completion).
       if (consumedSlideIndexRef.current !== null && consumedSlideIndexRef.current === crntSlide?.index) {
@@ -280,7 +289,12 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       updateSlideIdx(nextSlide);
       messageHandler.send(WebViewMessages.toVscode.updateSlideIndex, nextSlide);
     } else if (command === WebViewMessages.toWebview.previousSlide) {
+      if (previousClickStep()) {
+        return;
+      }
+
       const previousSlide = crntSlide ? crntSlide.index - 1 : 0;
+      revealClickStepsRef.current = previousSlide >= 0;
       updateSlideIdx(previousSlide);
       messageHandler.send(WebViewMessages.toVscode.updateSlideIndex, previousSlide);
     }
@@ -437,6 +451,12 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   React.useEffect(() => {
     getFileContents(fileUri);
   }, [fileUri, getFileContents]);
+
+  // Every slide starts with its own click steps
+  React.useEffect(() => {
+    resetClickSteps(revealClickStepsRef.current);
+    revealClickStepsRef.current = false;
+  }, [crntFilePath, crntSlide?.index]);
 
   // ESC key handler for zoom (capture phase so it wins over the presentation view Escape handler)
   React.useEffect(() => {
@@ -618,6 +638,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           onZoomToggle={toggleZoom}
           style={{ cursor: 'default' }}
           matter={crntSlide?.frontmatter}
+          clickStep={clickStep}
         >
           {/* Mouse Position */}
           {mousePosition && showControls && cursorVisible && (

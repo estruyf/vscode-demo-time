@@ -339,7 +339,11 @@ export class DemoRunner {
       return;
     }
 
+    // Reveal the next click step of the slide before moving on
     if (Preview.isListening()) {
+      await Preview.postMessage(WebViewMessages.toWebview.nextStep);
+      // Restart the auto-advance timer for the next step
+      await DemoRunner.syncAutoProceedForCurrentDemo();
       return;
     }
 
@@ -500,6 +504,11 @@ export class DemoRunner {
   private static async previous(): Promise<void> {
     if (TextTypingService.IsTyping) {
       Logger.info('DemoRunner.previous called while typing. Ignoring.');
+      return;
+    }
+
+    if (Preview.checkIfHasPreviousClickStep()) {
+      await Preview.postMessage(WebViewMessages.toWebview.previousStep);
       return;
     }
 

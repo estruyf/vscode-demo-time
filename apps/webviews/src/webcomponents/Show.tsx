@@ -1,7 +1,6 @@
-import { messageHandler } from '@estruyf/vscode/dist/client/webview';
 import * as React from 'react';
 import { createRoot, Root } from 'react-dom/client';
-import { WebViewMessages } from '@demotime/common';
+import { registerClickSteps } from './clickSteps';
 
 export interface IClickToHideProps {
   clicks?: number;
@@ -14,46 +13,12 @@ export const ClickToHide: React.FunctionComponent<React.PropsWithChildren<IClick
   content = '',
   invert = false,
 }: React.PropsWithChildren<IClickToHideProps>) => {
-  const [, setCount] = React.useState<number>(0);
-  const [visible, setVisible] = React.useState(!!invert);
+  const [step, setStep] = React.useState<number>(0);
+  const clickNr = clicks && clicks > 0 ? clicks : 1;
 
-  const handleEvent = React.useCallback((event: KeyboardEvent | MouseEvent) => {
-    const isKeyPress = event instanceof KeyboardEvent && event.key === 'ArrowRight';
-    const isClick = event instanceof MouseEvent;
+  React.useLayoutEffect(() => registerClickSteps(clickNr, setStep), [clickNr]);
 
-    if (isKeyPress || isClick) {
-      setCount((prevCount) => {
-        const newCount = prevCount + 1;
-        if (newCount === clicks) {
-          event.preventDefault();
-          setVisible(invert ? false : true);
-        }
-
-        if (newCount >= clicks) {
-          window.removeEventListener('keydown', handleEvent);
-          window.removeEventListener('click', handleEvent);
-          messageHandler.send(WebViewMessages.toVscode.setHasClickListener, { listening: false });
-        } else {
-          messageHandler.send(WebViewMessages.toVscode.setHasClickListener, { listening: true });
-        }
-
-        return newCount;
-      });
-    }
-  }, [clicks, invert]);
-
-  React.useEffect(() => {
-    setCount(0);
-    messageHandler.send(WebViewMessages.toVscode.setHasClickListener, { listening: true });
-    window.addEventListener('keydown', handleEvent);
-    window.addEventListener('click', handleEvent);
-
-    return () => {
-      messageHandler.send(WebViewMessages.toVscode.setHasClickListener, { listening: false });
-      window.removeEventListener('keydown', handleEvent);
-      window.removeEventListener('click', handleEvent);
-    };
-  }, [clicks, invert]);
+  const visible = invert ? step < clickNr : step >= clickNr;
 
   if (!content) {
     return null;
@@ -117,7 +82,6 @@ abstract class BaseWebComponent extends HTMLElement {
   }
 
   disconnectedCallback() {
-    messageHandler.send(WebViewMessages.toVscode.setHasClickListener, { listening: false });
     if (this.rootElm) {
       this.rootElm.unmount();
     }

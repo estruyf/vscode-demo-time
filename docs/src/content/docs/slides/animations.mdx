@@ -9,6 +9,23 @@ import { Image } from 'astro:assets';
 
 Demo Time provides you a couple of animation components to show or hide content during your presentations. On this page, you will learn how to use them.
 
+## Click steps
+
+The `dt-show`, `dt-hide` and [`dt-list`](/slides/components/#list) components reveal or hide content step by step. All of them share one click counter per slide, and the `clicks` attribute is the click number on which a component changes. Components with the same `clicks` value change together.
+
+Every "next" input reveals the next click step:
+
+- The right arrow key or `PageDown` (the button most presenter clickers send)
+- A click on the slide (clicks on the slide controls, links and other buttons don't count)
+- The **Next** button in the slide controls, the [remote control](/remote-control/) and the [API](/references/api/)
+- [Auto-advance](/features/auto-proceed-looping/) with the `autoAdvanceAfter` slide property, which reveals one step per interval
+
+Once all click steps are revealed, the next input moves to the next slide. The left arrow key or `PageUp` hides the last revealed step again, and when you go back to a previous slide, it shows with all its steps revealed.
+
+<Aside type="note">
+In [presentation mode](/presentation-mode/), the keys use the `Demo Time: Start` and `Demo Time: Previous` keybindings, so they work wherever the focus is. Outside presentation mode, the keys only step through the slide when the preview has focus.
+</Aside>
+
 ## Show Content
 
 The `dt-show` component allows you to reveal content after a specific number of clicks:

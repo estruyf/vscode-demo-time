@@ -302,6 +302,14 @@ export const WebViewMessages = {
      * nextSlide
      */
     nextSlide: 'nextSlide',
+    /**
+     * previousStep
+     */
+    previousStep: 'previousStep',
+    /**
+     * nextStep
+     */
+    nextStep: 'nextStep',
     preview: {
       /**
        * updateNextStep

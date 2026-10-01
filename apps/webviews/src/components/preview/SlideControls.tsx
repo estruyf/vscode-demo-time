@@ -32,6 +32,7 @@ export interface ISlideControlsProps {
   onZoomToggle?: () => void;
   style?: React.CSSProperties;
   matter?: SlideMetadata;
+  clickStep?: number;
 }
 
 const Divider: React.FunctionComponent = () => (
@@ -63,7 +64,8 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   isZoomed = false,
   onZoomToggle,
   style,
-  matter
+  matter,
+  clickStep = 0,
 }: React.PropsWithChildren<ISlideControlsProps>) => {
   const [previousEnabled, setPreviousEnabled] = React.useState(false);
   const [isPresentationMode, setIsPresentationMode] = React.useState(false);
@@ -150,7 +152,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
         clearTimeout(timer);
       }
     };
-  }, [extensionAutoProceedManaged, matter?.autoAdvanceAfter, currentSlide]);
+  }, [extensionAutoProceedManaged, matter?.autoAdvanceAfter, currentSlide, clickStep]);
 
   React.useEffect(() => {
     if (show) {
@@ -233,6 +235,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
 
   return (
     <div
+      data-slide-controls
       className={cn(
         'absolute bottom-0 left-0 w-full flex justify-center px-4 pb-4 pointer-events-none transition-opacity duration-300',
         visible ? 'opacity-100' : 'opacity-0',

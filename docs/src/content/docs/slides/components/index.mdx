@@ -124,6 +124,16 @@ You can use either Markdown or HTML list syntax inside the `dt-list` component. 
 ### Properties
 
 - `type` (optional): Set to `ol` for an ordered (numbered) list. Defaults to unordered list if omitted.
+- `clicks` (optional): The click on which the first item appears (default is `1`). Use it to reveal the list after other [click steps](/slides/animations/#click-steps) on the slide.
+
+```html title="Show the list after a dt-show"
+<dt-show>The plan</dt-show>
+
+<dt-list clicks="2">
+- Appears on the second click
+- Appears on the third click
+</dt-list>
+```
 
 <Aside type="tip">
 You can mix Markdown and HTML list items, but for best results, use one style per list.

@@ -1,4 +1,5 @@
 export * from './useAutoSave';
+export * from './useClickSteps';
 export * from './useCursor';
 export * from './useDemoConfig';
 export * from './useDemoConfigContext';

@@ -18,6 +18,7 @@ export class Preview extends BaseWebview {
   public static id: WebviewType = 'preview';
 
   private static hasClickListener = false;
+  private static hasPreviousClickStep = false;
   private static hasPreviousSlide = false;
   private static hasNextSlide = false;
   private static nextSlideTitle: string | undefined = undefined;
@@ -69,6 +70,14 @@ export class Preview extends BaseWebview {
     }
 
     return Preview.hasClickListener;
+  }
+
+  public static checkIfHasPreviousClickStep(): boolean {
+    if (!Preview.isOpen) {
+      return false;
+    }
+
+    return Preview.hasPreviousClickStep;
   }
 
   public static checkIfHasNextSlide(): boolean {
@@ -182,6 +191,7 @@ export class Preview extends BaseWebview {
   protected static onDispose(): void {
     Preview.isDisposed = true;
     Preview.hasClickListener = false;
+    Preview.hasPreviousClickStep = false;
     Preview.hasPreviousSlide = false;
     Preview.hasNextSlide = false;
   }
@@ -252,12 +262,14 @@ export class Preview extends BaseWebview {
       const isPresentationMode = DemoRunner.getIsPresentationMode();
       Preview.postRequestMessage(command, requestId, isPresentationMode);
     } else if (command === WebViewMessages.toVscode.setHasClickListener) {
-      Preview.hasClickListener = payload.listening ?? false;
+      Preview.hasClickListener = payload?.listening ?? false;
+      Preview.hasPreviousClickStep = payload?.hasPrevious ?? false;
+      Preview.updateHasPreviousContext();
     } else if (command === WebViewMessages.toVscode.hasNextSlide) {
       Preview.hasNextSlide = payload;
     } else if (command === WebViewMessages.toVscode.hasPreviousSlide) {
       Preview.hasPreviousSlide = payload;
-      setContext(ContextKeys.hasPreviousSlide, payload);
+      Preview.updateHasPreviousContext();
     } else if (command === WebViewMessages.toVscode.nextSlideTitle) {
       Preview.nextSlideTitle = payload;
       Preview.sendSlideData(payload);
@@ -280,6 +292,16 @@ export class Preview extends BaseWebview {
         AnalyticsService.recordSlideOpen(payload.filePath, payload.slideIndex, payload.slideTitle);
       }
     }
+  }
+
+  /**
+   * The previous keybinding also needs to work when the slide has a click step to go back to.
+   */
+  private static updateHasPreviousContext() {
+    setContext(
+      ContextKeys.hasPreviousSlide,
+      Preview.hasPreviousSlide || Preview.hasPreviousClickStep,
+    );
   }
 
   private static async sendSlideData(nextSlideTitle?: string) {
