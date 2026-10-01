@@ -1,5 +1,13 @@
 # Change Log
 
+## [2.4.0] - 2026-xx-xx
+
+- [#418](https://github.com/estruyf/vscode-demo-time/issues/418): Added the `Demo Time: Export play as video` command, which runs the play unattended in a separate VS Code window, records it, and writes an MP4 to `.demo/exports` in 16:9, 1:1 or 9:16, with an optional GIF, SRT captions from the scene titles or notes, chapters, and title and end cards made from the first and last slide
+- [#418](https://github.com/estruyf/vscode-demo-time/issues/418): Added the `@demotime/video` CLI (`npx @demotime/video export`) to export a play as a video from a terminal or in CI, without opening VS Code
+- [#418](https://github.com/estruyf/vscode-demo-time/issues/418): Added the `Demo Time: Run play unattended for recording` and `Demo Time: Stop unattended run` commands to play the whole play or an act on its own in the current window, for recording with your own tool
+- [#418](https://github.com/estruyf/vscode-demo-time/issues/418): Added the `demoTime.videoExport.command`, `demoTime.videoExport.extension` and `demoTime.videoExport.options` settings
+- Added `secondarySideBar` to `demoTime.presentationViewToggles`, and to its defaults, so presentation view also closes the secondary side bar where VS Code shows Chat
+
 ## [2.3.1] - 2026-09-03
 
 - Scene titles can now be renamed inline in the act editor by double-clicking the title, without having to open the scene details

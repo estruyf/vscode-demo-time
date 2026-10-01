@@ -44,7 +44,7 @@ More information about it can be found in the [control the next demo shortcut](/
 
 ## Customize what gets hidden
 
-When you toggle presentation view, Demo Time hides a few VS Code UI areas so you can focus on presenting. You can choose exactly which areas to hide via the `demoTime.presentationViewToggles` setting. Allowed values: `statusBar`, `tabs`, `activityBar`, `sideBar`, `panel`.
+When you toggle presentation view, Demo Time hides a few VS Code UI areas so you can focus on presenting. You can choose exactly which areas to hide via the `demoTime.presentationViewToggles` setting. Allowed values: `statusBar`, `tabs`, `activityBar`, `sideBar`, `secondarySideBar` (where VS Code shows Chat), `panel`.
 
 ```json title=".vscode/settings.json"
 {
@@ -53,6 +53,7 @@ When you toggle presentation view, Demo Time hides a few VS Code UI areas so you
         "tabs",
         "activityBar",
         "sideBar",
+        "secondarySideBar",
         "panel"
     ]
 }
