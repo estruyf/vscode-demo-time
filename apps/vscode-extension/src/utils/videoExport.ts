@@ -115,9 +115,10 @@ export const selectVideoExportScenes = (
     const from = range.type === 'act' && range.fromScene ? range.fromScene - 1 : 0;
     const to = range.type === 'act' && range.toScene ? range.toScene - 1 : act.demos.length - 1;
 
-    if (range.type === 'act' && range.fromScene && from >= act.demos.length) {
+    const lastScene = range.type === 'act' ? (range.toScene ?? range.fromScene) : undefined;
+    if (range.type === 'act' && lastScene !== undefined && lastScene > act.demos.length) {
       throw new Error(
-        `Act ${range.act} has ${act.demos.length} scene(s); scene ${range.fromScene} does not exist.`,
+        `Act ${range.act} has ${act.demos.length} scene(s); scene ${lastScene} does not exist.`,
       );
     }
 

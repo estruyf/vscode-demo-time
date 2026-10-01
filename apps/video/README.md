@@ -73,6 +73,7 @@ npx @demotime/video export ./my-talk --out ./videos --gif --srt --chapters --car
 | `--settings <file>`                          | A JSON file with VS Code settings for the recording                      |
 | `--vscode-arg=<arg>`                         | An extra argument for VS Code, such as `--vscode-arg=--disable-gpu`      |
 | `--in-place`                                 | Run in the workspace itself instead of a copy                            |
+| `--copy-node-modules`                        | Copy `node_modules` into the workspace copy instead of linking them      |
 | `--keep-temp`                                | Keep the temporary profile, workspace copy and frames                    |
 | `--scene-hold <s>`                           | Seconds a scene without slides stays on screen (default 2)               |
 | `--slide-min <s>`, `--slide-max <s>`         | The shortest and longest time a slide stays on screen (default 3 and 12) |
@@ -98,9 +99,11 @@ and how to burn the captions into the picture for social media.
 
 ## How it works
 
-1. **A copy of the workspace.** The play runs in a temporary copy, so nothing it writes ends up in
-   your files and every export starts from the same state. `node_modules` folders are linked into
-   the copy, so scripts in the demo still run.
+1. **A copy of the workspace.** The play runs in a temporary copy, so every export starts from the
+   same state and the files it creates or changes don't end up in your workspace. Symbolic links are
+   copied as the files they point to. `node_modules` folders are linked instead of copied, so
+   scripts in the demo run without a long copy; a demo that installs packages therefore changes your
+   real `node_modules`, unless you pass `--copy-node-modules`.
 2. **A clean VS Code.** VS Code opens with an empty profile and no Chat, tips or other UI. The
    window is sized for the preset, and Demo Time and any extensions you name are installed into the
    profile.

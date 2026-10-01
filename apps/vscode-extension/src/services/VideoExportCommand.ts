@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
 import { join, normalize } from 'node:path';
@@ -257,8 +258,10 @@ export class VideoExportCommand {
       .trim()
       .split(/\s+/);
     const [command, ...commandArgs] = commandLine;
+    // VS Code hands the end event a task object of its own, so the export is found by its id
+    const exportId = randomUUID();
     const task = new Task(
-      { type: 'demotime-video' },
+      { type: 'demotime-video', id: exportId },
       TaskScope.Workspace,
       'Export play as video',
       Config.title,
@@ -269,9 +272,10 @@ export class VideoExportCommand {
     );
     task.presentationOptions = { reveal: TaskRevealKind.Always, clear: true };
 
-    const execution = await tasks.executeTask(task);
+    // Listen before starting: a command that fails at once (npx missing, a bad argument) can
+    // end before executeTask resolves
     const listener = tasks.onDidEndTaskProcess(async (event) => {
-      if (event.execution !== execution) {
+      if (event.execution.task.definition.id !== exportId) {
         return;
       }
       listener.dispose();
@@ -292,6 +296,7 @@ export class VideoExportCommand {
         await commands.executeCommand('revealFileInOS', video);
       }
     });
+    await tasks.executeTask(task);
   }
 
   /** The running VS Code, so the recording uses the same version; the CLI finds one otherwise. */

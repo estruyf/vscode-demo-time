@@ -15,8 +15,17 @@ import {
 import { frameAt, holdFrame, planFrames } from '../src/frames';
 import { buildTimeline, parseEventLog } from '../src/timeline';
 import { getDemoTimeSupport, quoteForCmd } from '../src/vscode';
-import { readSettingsFile } from '../src/export';
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { readCompleteEvents, readSettingsFile, resolveInside } from '../src/export';
+import { copyWorkspace } from '../src/workspace';
+import {
+  lstatSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -330,6 +339,64 @@ describe('review fixes', () => {
       expect(() => readSettingsFile(bad)).toThrow('not a JSON object');
     } finally {
       rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('PR review fixes', () => {
+  it('only reads complete lines of the event log', () => {
+    const start = JSON.stringify(events[0]);
+    expect(readCompleteEvents(`${start}\n{"type":"sceneSt`)).toEqual([events[0]]);
+    expect(readCompleteEvents('{"type":"sta')).toEqual([]);
+    expect(readCompleteEvents(`${start}\n`)).toEqual([events[0]]);
+  });
+
+  it('only resolves notes inside the workspace', () => {
+    expect(resolveInside('/w', '.demo/notes/a.md')).toBe(join('/w', '.demo/notes/a.md'));
+    expect(resolveInside('/w', '../../etc/passwd')).toBeUndefined();
+    expect(resolveInside('/w', '/etc/passwd')).toBeUndefined();
+    expect(resolveInside('/w', '.demo/../../w2/a.md')).toBeUndefined();
+  });
+
+  it('rejects numbers that are too large, names that leave the folder, and reversed slide limits', () => {
+    expect(() => parseExportArgs(['--card-seconds', '200000000'])).toThrow('at most 60');
+    expect(() => parseExportArgs(['--fps', '1000'])).toThrow('at most 120');
+    expect(() => parseExportArgs(['--name', '.'])).toThrow('--name');
+    expect(() => parseExportArgs(['--name', '..'])).toThrow('--name');
+    expect(parseExportArgs(['--name', 'v1.2'])!.name).toBe('v1.2');
+    expect(() => parseExportArgs(['--slide-min', '12', '--slide-max', '3'])).toThrow(
+      '--slide-min cannot be more than --slide-max',
+    );
+  });
+
+  it('strips front matter with Windows line endings', () => {
+    expect(markdownToText('---\r\ntitle: x\r\n---\r\n- Say hi\r\n')).toBe('Say hi.');
+  });
+
+  it('copies symbolic links as their targets, and links or copies node_modules', () => {
+    const root = mkdtempSync(join(tmpdir(), 'dtv-copy-'));
+    try {
+      const outside = join(root, 'outside');
+      const source = join(root, 'source');
+      mkdirSync(outside);
+      mkdirSync(join(source, 'node_modules', 'pkg'), { recursive: true });
+      writeFileSync(join(outside, 'shared.txt'), 'original');
+      writeFileSync(join(source, 'node_modules', 'pkg', 'index.js'), '');
+      symlinkSync(join(outside, 'shared.txt'), join(source, 'shared.txt'));
+
+      const linked = join(root, 'linked');
+      copyWorkspace(source, linked);
+      expect(lstatSync(join(linked, 'shared.txt')).isSymbolicLink()).toBe(false);
+      writeFileSync(join(linked, 'shared.txt'), 'changed in the copy');
+      expect(readFileSync(join(outside, 'shared.txt'), 'utf8')).toBe('original');
+      expect(lstatSync(join(linked, 'node_modules')).isSymbolicLink()).toBe(true);
+
+      const copied = join(root, 'copied');
+      copyWorkspace(source, copied, [], { copyNodeModules: true });
+      expect(lstatSync(join(copied, 'node_modules')).isSymbolicLink()).toBe(false);
+      expect(lstatSync(join(copied, 'node_modules', 'pkg', 'index.js')).isFile()).toBe(true);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
     }
   });
 });

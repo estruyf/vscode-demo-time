@@ -359,3 +359,11 @@ describe('toWorkspaceRelativePath', () => {
     expect(toWorkspaceRelativePath('.demo/notes/intro.md')).toBe('.demo/notes/intro.md');
   });
 });
+
+describe('scene ranges past the end of an act', () => {
+  it('fails instead of exporting fewer scenes', () => {
+    expect(() => titles('act:1/scenes:1-3')).toThrow('scene 3 does not exist');
+    expect(() => titles('act:1/scenes:3-')).toThrow('scene 3 does not exist');
+    expect(titles('act:1/scenes:1-2')).toEqual(['A', 'B']);
+  });
+});

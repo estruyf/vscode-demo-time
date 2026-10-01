@@ -38,9 +38,9 @@ jobs:
           cache: 'yarn'
           registry-url: 'https://registry.npmjs.org/'
 
-      # Trusted publishing needs npm 11.5.1 or later
+      # Trusted publishing needs npm 11.5.1 or later. Pinned, so every publish runs the same npm.
       - name: Update npm
-        run: npm install -g npm@latest
+        run: npm install -g npm@11.21.0
 
       - name: Install dependencies
         run: yarn install --immutable

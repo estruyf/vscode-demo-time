@@ -78,6 +78,8 @@ export class VideoExportService {
   private static cancelled = false;
   private static options: ResolvedOptions | undefined;
   private static currentScene: VideoExportSceneRef | undefined;
+  /** The slide deck the current scene opened, with its variables filled in. */
+  private static sceneSlidePath: string | undefined;
 
   public static register() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
@@ -113,6 +115,17 @@ export class VideoExportService {
    * or `undefined` when the move is skipped.
    */
   public static async beforeStep(step: Step): Promise<Step | undefined> {
+    // Once the run is stopped, the rest of the scene's moves don't run either
+    if (VideoExportService.cancelled) {
+      return undefined;
+    }
+
+    // The move as it runs: variables are filled in and snippets expanded, so this is the
+    // deck the preview opens
+    if (step.action === Action.OpenSlide && step.path) {
+      VideoExportService.sceneSlidePath = step.path;
+    }
+
     const typingMode = Extension.getInstance().getSetting<InsertTypingMode>(
       Config.insert.typingMode,
     );
@@ -134,6 +147,19 @@ export class VideoExportService {
       return { ...step, insertTypingMode: 'character-by-character' };
     }
     return step;
+  }
+
+  /**
+   * A terminal without shell integration cannot tell when a command finishes, so the next move
+   * may start while the command is still printing.
+   */
+  public static async warnNoShellIntegration(): Promise<void> {
+    await VideoExportService.logIssue({
+      action: Action.ExecuteTerminalCommand,
+      handling: 'warn',
+      reason:
+        'The terminal has no shell integration, so the export cannot wait for the command to finish.',
+    });
   }
 
   public static stop(): void {
@@ -243,7 +269,14 @@ export class VideoExportService {
     VideoExportService.options = options;
     VideoExportService.cancelled = false;
     VideoExportService.currentScene = undefined;
-    await mkdir(dirname(options.eventLogPath), { recursive: true });
+    try {
+      await mkdir(dirname(options.eventLogPath), { recursive: true });
+    } catch (error) {
+      const message = `Cannot create the folder for the event log: ${(error as Error).message}`;
+      Logger.error(`Video export: ${message}`);
+      Notifications.error(message);
+      return { status: 'failed', issues: [], error: message };
+    }
 
     let scenes: VideoExportScene[];
     let issues: VideoExportIssue[];
@@ -303,10 +336,11 @@ export class VideoExportService {
       Logger.error(`Video export failed: ${errorMessage}`);
     } finally {
       VideoExportService.currentScene = undefined;
-      VideoExportService.active = false;
-      await setContext(ContextKeys.videoExportActive, false);
       await VideoExportService.log({ type: 'end', t: Date.now(), status, error: errorMessage });
       await VideoExportService.restore(options);
+      // Released last, so another run cannot take over the options and the log before the end
+      VideoExportService.active = false;
+      await setContext(ContextKeys.videoExportActive, false);
     }
 
     return { status, eventLogPath: options.eventLogPath, issues, error: errorMessage };
@@ -332,15 +366,16 @@ export class VideoExportService {
     // Notes open beside the editor when `showOnTrigger` is set; keep them out of the video
     // unless asked for. The notes path is in the log either way.
     const demoToRun: Demo = options.showNotes ? demo : { ...demo, notes: undefined };
+    VideoExportService.sceneSlidePath = undefined;
     await commands.executeCommand(COMMAND.runStep, {
       filePath: scene.act.filePath,
       idx: scene.sceneIndex,
       demo: demoToRun,
     });
 
-    const slideStep = demo.steps.find((step) => step.action === Action.OpenSlide && step.path);
-    if (slideStep?.path) {
-      await VideoExportService.playSlides(slideStep.path, demo, ref, options);
+    const slidePath = VideoExportService.sceneSlidePath;
+    if (slidePath) {
+      await VideoExportService.playSlides(slidePath, demo, ref, options);
     } else {
       await VideoExportService.hold(
         typeof demo.autoAdvanceAfter === 'number' && demo.autoAdvanceAfter > 0
@@ -414,6 +449,10 @@ export class VideoExportService {
       );
       await sleep(SLIDE_SETTLE_MS / 2);
     }
+
+    throw new Error(
+      `"${demo.title}" still had slides after ${MAX_SLIDE_ADVANCES}; the export stops rather than skip the rest.`,
+    );
   }
 
   private static async prepare(options: ResolvedOptions) {

@@ -48,7 +48,8 @@ const BLOCK_START = /^\s{0,3}(#{1,6}|[-*+]|\d+\.|>)\s+/;
  */
 export const markdownToText = (markdown: string): string => {
   const cleaned = markdown
-    .replace(/^---\n[\s\S]*?\n---\n?/, '')
+    // Front matter, with Windows line endings too
+    .replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, '')
     .replace(/```[\s\S]*?```/g, '\n')
     .replace(/<!--[\s\S]*?-->/g, ' ')
     .replace(/<[^>]+>/g, ' ')

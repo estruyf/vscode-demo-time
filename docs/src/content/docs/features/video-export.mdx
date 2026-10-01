@@ -48,7 +48,7 @@ The next time you run the command, **Export again** reuses your choices. They ar
 
 - **Your look**: from VS Code, the recording uses the same VS Code you run, with your color theme, file icon theme, product icon theme, and editor and terminal fonts. From the command line, it uses the installed VS Code, and you name the theme with `--extensions` and `--settings`.
 - **A clean window**: the recording profile is empty apart from those settings. The status bar, tabs, activity bar, side bars (including Chat) and panel are hidden, as in [presentation view](/presentation-mode).
-- **A copy of your workspace**: the demo runs in a temporary copy, so nothing it writes ends up in your files and every export starts from the same state. `node_modules` folders are linked into the copy, not copied, so scripts in your demo still run.
+- **A copy of your workspace**: the demo runs in a temporary copy, so every export starts from the same state and the files it creates or changes don't end up in your workspace. One exception: `node_modules` folders are linked into the copy rather than copied, so scripts in your demo run without a long copy, but a demo that installs or removes packages changes your real `node_modules`. Export with `--copy-node-modules` on the command line to copy them as well.
 
 ## How the play is timed
 
@@ -58,7 +58,7 @@ The moves run exactly as in a live talk. After a scene's moves finish, it stays 
 - otherwise, for a slide: the slide's `autoAdvanceAfter`, or the time it takes to read it (between 3 and 12 seconds);
 - otherwise: 2 seconds.
 
-Terminal commands get up to 30 seconds to finish, so their output is in the video. A command that keeps running, such as `npm start` for a dev server, holds its scene for those 30 seconds. Change the limit with `--terminal-timeout` on the command line.
+Terminal commands get up to 30 seconds to finish, so their output is in the video. This needs [shell integration](https://code.visualstudio.com/docs/terminal/shell-integration); without it, the export can't tell when a command finishes, and the event log warns about it. A command that keeps running, such as `npm start` for a dev server, holds its scene for those 30 seconds. Change the limit with `--terminal-timeout` on the command line.
 
 To give a scene more time, set `autoAdvanceAfter` on it. See [Auto-proceed and loop](/features/auto-proceed-looping).
 
@@ -230,6 +230,7 @@ All the options (`npx @demotime/video --help` lists them too):
 | `--settings <file>`                          | A JSON file with VS Code settings for the recording                      |
 | `--vscode-arg=<arg>`                         | An extra argument for VS Code, such as `--vscode-arg=--disable-gpu`      |
 | `--in-place`                                 | Run in the workspace itself instead of a copy                            |
+| `--copy-node-modules`                        | Copy `node_modules` into the workspace copy instead of linking them      |
 | `--keep-temp`                                | Keep the temporary profile, workspace copy and frames                    |
 | `--scene-hold <s>`                           | Seconds a scene without slides stays on screen (default 2)               |
 | `--slide-min <s>`, `--slide-max <s>`         | The shortest and longest time a slide stays on screen (default 3 and 12) |

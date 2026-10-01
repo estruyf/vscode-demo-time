@@ -86,6 +86,9 @@ export class TerminalService {
           ]);
         } else {
           await sleep(TerminalService.getCommandBoundaryDelay());
+          if (VideoExportService.isActive()) {
+            await VideoExportService.warnNoShellIntegration();
+          }
         }
       }
     } else if (autoExecute) {
@@ -94,6 +97,9 @@ export class TerminalService {
       } else {
         terminal.sendText(command, autoExecute);
         await sleep(TerminalService.getCommandBoundaryDelay());
+        if (VideoExportService.isActive()) {
+          await VideoExportService.warnNoShellIntegration();
+        }
       }
     } else {
       terminal.sendText(command, false);

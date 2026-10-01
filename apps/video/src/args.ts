@@ -33,6 +33,8 @@ export interface ExportOptions {
   settingsFile?: string;
   vscodeArgs: string[];
   inPlace: boolean;
+  /** Copy node_modules into the workspace copy instead of linking them. */
+  copyNodeModules: boolean;
   keepTemp: boolean;
   timeoutMinutes: number;
   ffmpegPath?: string;
@@ -74,6 +76,8 @@ Options:
   --vscode-arg=<arg>      Extra argument for VS Code, such as --vscode-arg=--disable-gpu;
                           repeat for more
   --in-place              Run in the workspace itself instead of a temporary copy
+  --copy-node-modules     Copy node_modules into the workspace copy instead of linking
+                          them, so a demo that installs packages leaves yours alone
   --keep-temp             Keep the temporary profile, workspace copy and frames
   --scene-hold <s>        Seconds a scene without slides stays on screen (default 2)
   --slide-min <s>         Minimum seconds for a slide (default 3)
@@ -84,6 +88,20 @@ Options:
   -h, --help              Show this help
 `;
 
+/// The largest value each number option takes. Anything above is a typo, and would make the
+/// export plan billions of frames or wait for days.
+const MAX: Record<string, number> = {
+  fps: 120,
+  'gif-width': 3840,
+  'gif-fps': 50,
+  'card-seconds': 60,
+  timeout: 24 * 60,
+  'scene-hold': 600,
+  'slide-min': 600,
+  'slide-max': 600,
+  'terminal-timeout': 3600,
+};
+
 const toNumber = (value: string | undefined, name: string, fallback: number): number => {
   if (value === undefined) {
     return fallback;
@@ -91,6 +109,9 @@ const toNumber = (value: string | undefined, name: string, fallback: number): nu
   const number = Number(value);
   if (!Number.isFinite(number) || number <= 0) {
     throw new Error(`--${name} needs a positive number, got "${value}".`);
+  }
+  if (MAX[name] !== undefined && number > MAX[name]) {
+    throw new Error(`--${name} can be at most ${MAX[name]}, got "${value}".`);
   }
   return number;
 };
@@ -133,6 +154,7 @@ export const parseExportArgs = (
       'vscode-arg': { type: 'string', multiple: true },
       'in-place': { type: 'boolean' },
       'keep-temp': { type: 'boolean' },
+      'copy-node-modules': { type: 'boolean' },
       timeout: { type: 'string' },
       'scene-hold': { type: 'string' },
       'slide-min': { type: 'string' },
@@ -159,8 +181,19 @@ export const parseExportArgs = (
   }
 
   const name = values.name ?? 'demo';
-  if (!/^[\w.-]+$/.test(name)) {
+  // "." and ".." pass the character check but point at the output folder or its parent
+  if (!/^[\w.-]+$/.test(name) || /^\.+$/.test(name)) {
     throw new Error(`--name can only use letters, numbers, ".", "-" and "_", got "${name}".`);
+  }
+
+  const minSlideSeconds = optionalNumber(values['slide-min'], 'slide-min');
+  const maxSlideSeconds = optionalNumber(values['slide-max'], 'slide-max');
+  if (
+    minSlideSeconds !== undefined &&
+    maxSlideSeconds !== undefined &&
+    minSlideSeconds > maxSlideSeconds
+  ) {
+    throw new Error('--slide-min cannot be more than --slide-max.');
   }
 
   return {
@@ -195,12 +228,13 @@ export const parseExportArgs = (
     settingsFile: values.settings ? abs(values.settings) : undefined,
     vscodeArgs: values['vscode-arg'] ?? [],
     inPlace: !!values['in-place'],
+    copyNodeModules: !!values['copy-node-modules'],
     keepTemp: !!values['keep-temp'],
     timeoutMinutes: toNumber(values.timeout, 'timeout', 60),
     timing: {
       sceneHoldSeconds: optionalNumber(values['scene-hold'], 'scene-hold'),
-      minSlideSeconds: optionalNumber(values['slide-min'], 'slide-min'),
-      maxSlideSeconds: optionalNumber(values['slide-max'], 'slide-max'),
+      minSlideSeconds,
+      maxSlideSeconds,
       terminalTimeoutSeconds: optionalNumber(values['terminal-timeout'], 'terminal-timeout'),
     },
     ffmpegPath: values.ffmpeg ? abs(values.ffmpeg) : undefined,

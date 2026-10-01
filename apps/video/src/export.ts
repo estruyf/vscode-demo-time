@@ -9,7 +9,7 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
-import { basename, join } from 'node:path';
+import { basename, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import type { VideoExportEvent, VideoExportRunOptions } from '@demotime/common';
 import { parse as parseJsonc, ParseError } from 'jsonc-parser';
 import { ExportOptions } from './args';
@@ -53,8 +53,15 @@ const POLL_MS = 250;
 /// A card shows its slide from just before the slide ended, when it is fully rendered.
 const CARD_FRAME_BEFORE_END_MS = 200;
 
+/**
+ * The events written so far. Demo Time may be writing a line while this reads, so only lines
+ * that end with a newline count; the last one is picked up on the next read.
+ */
+export const readCompleteEvents = (content: string): VideoExportEvent[] =>
+  parseEventLog(content.slice(0, content.lastIndexOf('\n') + 1));
+
 const readEvents = (path: string): VideoExportEvent[] =>
-  existsSync(path) ? parseEventLog(readFileSync(path, 'utf8')) : [];
+  existsSync(path) ? readCompleteEvents(readFileSync(path, 'utf8')) : [];
 
 /**
  * Waits for the run to end, reporting scenes and issues as they come in.
@@ -158,6 +165,17 @@ const writeSequence = (frames: RecordedFrame[], plan: number[], dir: string): st
   return join(dir, '%07d.jpg');
 };
 
+/**
+ * `path` resolved against `root`, or `undefined` when it points outside it: the captions only
+ * ever show notes from inside the workspace.
+ */
+export const resolveInside = (root: string, path: string): string | undefined => {
+  const base = resolve(root);
+  const full = resolve(base, path);
+  const rel = relative(base, full);
+  return rel === '..' || rel.startsWith(`..${sep}`) || isAbsolute(rel) ? undefined : full;
+};
+
 /** Reads a settings file the way VS Code does: comments and trailing commas are fine. */
 export const readSettingsFile = (path: string): Record<string, unknown> => {
   const errors: ParseError[] = [];
@@ -206,10 +224,12 @@ export const exportVideo = async (
     if (!options.inPlace) {
       reporter.step('Copying the workspace');
       workspace = join(temp, 'w', basename(options.workspace));
-      copyWorkspace(options.workspace, workspace, [
-        options.outDir,
-        join(options.workspace, '.demo', 'exports'),
-      ]);
+      copyWorkspace(
+        options.workspace,
+        workspace,
+        [options.outDir, join(options.workspace, '.demo', 'exports')],
+        { copyNodeModules: options.copyNodeModules },
+      );
     }
     mkdirSync(options.outDir, { recursive: true });
 
@@ -331,7 +351,7 @@ export const exportVideo = async (
 
     if (options.srt) {
       const cues = buildCues(timeline, options.captions, offset, (scene) => {
-        const path = scene.notesPath && join(workspace, scene.notesPath);
+        const path = scene.notesPath && resolveInside(workspace, scene.notesPath);
         return path && existsSync(path) ? markdownToText(readFileSync(path, 'utf8')) : undefined;
       });
       writeFileSync(`${base}.srt`, toSrt(cues));
