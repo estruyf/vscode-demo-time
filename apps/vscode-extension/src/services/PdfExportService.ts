@@ -30,6 +30,7 @@ import {
   transformMarkdown,
   placeholderFormatting,
   getDemosFromConfig,
+  isSlideHidden,
 } from '@demotime/common';
 import { ScreenshotService } from './ScreenshotService';
 
@@ -216,11 +217,14 @@ export class PdfExportService {
     const ext = Extension.getInstance();
     const headerSetting = ext.getSetting<string>(Config.slides.slideHeaderTemplate);
     const footerSetting = ext.getSetting<string>(Config.slides.slideFooterTemplate);
+    const includeHidden = ext.getSetting<boolean>(Config.pdfExport.includeHiddenSlides) || false;
 
     // Generate slide content HTML
     const slideContents = [];
 
     let idx = 0;
+    // The slide number for `{{crntSlideIdx}}`, which doesn't count hidden slides
+    let slideNr = 0;
     const parser = new SlideParser();
     const totalSlides = await Slides.getTotalSlides();
 
@@ -228,6 +232,14 @@ export class PdfExportService {
       try {
         const allSlides = parser.parseSlides(slide.content);
         for (const crntSlide of allSlides) {
+          const isHidden = isSlideHidden(crntSlide);
+          if (isHidden && !includeHidden) {
+            continue;
+          }
+          if (!isHidden) {
+            slideNr++;
+          }
+
           const vfile = await transformMarkdown(
             placeholderFormatting(crntSlide.content),
             undefined,
@@ -263,7 +275,7 @@ export class PdfExportService {
             headerTemplate?.includes(`{{crntSlideIdx}}`) ||
             footerTemplate?.includes(`{{crntSlideIdx}}`)
           ) {
-            crntSlide.frontmatter.crntSlideIdx = idx + 1;
+            crntSlide.frontmatter.crntSlideIdx = isHidden ? undefined : slideNr;
           }
 
           if (

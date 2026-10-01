@@ -57,6 +57,8 @@ Demo Time provides two Handlebars placeholders you can use in header and footer 
 
 These placeholders work in both global templates (set via `demoTime.slideHeaderTemplate` / `demoTime.slideFooterTemplate`) and slide-level `header`/`footer` front matter. They reflect numbering after slides are grouped, so counts are across the entire group rather than just the current file.
 
+[Hidden slides](/slides/#hiding-slides) (`hide: true`) are not counted. On a hidden slide itself, `{{crntSlideIdx}}` is empty, so you can use `{{#if crntSlideIdx}}` to leave out the slide number there.
+
 Example `footer.html` using the placeholders:
 
 ```html title="footer.html"

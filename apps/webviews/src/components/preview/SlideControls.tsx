@@ -1,6 +1,6 @@
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import * as React from 'react';
-import { COMMAND, Slide, SlideMetadata } from '@demotime/common';
+import { COMMAND, isSlideHidden, Slide, SlideMetadata } from '@demotime/common';
 import { SlideControl } from './SlideControl';
 import { WhiteboardIcon } from './WhiteboardIcon';
 import { ProjectorIcon } from './ProjectorIcon';
@@ -125,6 +125,15 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
     messageHandler.send(WebViewMessages.toVscode.openFile, path);
   }, [path]);
 
+  const isHidden = isSlideHidden({ frontmatter: matter });
+  const toggleSlideHidden = React.useCallback(() => {
+    messageHandler.send(WebViewMessages.toVscode.preview.setSlideHidden, {
+      path,
+      slideIndex: currentSlide,
+      hidden: !isHidden,
+    });
+  }, [path, currentSlide, isHidden]);
+
   const toggleMousePosition = React.useCallback(() => {
     const nextValue = !showPosition;
     setShowPosition(nextValue);
@@ -199,6 +208,13 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
           iconName: 'file-code',
           onSelect: openSlideSource,
         });
+        // Adds or removes `hide: true` in the slide front matter
+        slideItems.push({
+          id: 'toggle-slide-hidden',
+          label: isHidden ? 'Show slide while presenting' : 'Hide slide while presenting',
+          iconName: isHidden ? 'eye' : 'eye-closed',
+          onSelect: toggleSlideHidden,
+        });
       }
     }
 
@@ -228,7 +244,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
     });
 
     return groups;
-  }, [isPresentationMode, showPosition, path, toggleMousePosition, openSlideSource, focusPanel, closeSidebar, hideControls]);
+  }, [isPresentationMode, showPosition, path, isHidden, toggleMousePosition, openSlideSource, toggleSlideHidden, focusPanel, closeSidebar, hideControls]);
 
   const isOverlayOpen = isNavigatorOpen || isMenuOpen;
   const visible = show || isOverlayOpen;

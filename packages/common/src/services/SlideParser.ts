@@ -1,5 +1,5 @@
 import yaml from 'js-yaml';
-import { ParserOptions, Slide, InternalSlide } from '../models';
+import { ParserOptions, Slide, InternalSlide, SlideLocation } from '../models';
 import { SlideLayout } from '../constants';
 import { FrontMatterParser } from '.';
 
@@ -19,13 +19,27 @@ export class SlideParser {
    * @returns Array of parsed slides
    */
   public parseSlides(markdown: string): Slide[] {
+    return this.parse(markdown).slides;
+  }
+
+  /**
+   * Returns where each slide starts in the markdown, in the same order as `parseSlides`
+   *
+   * @param markdown The markdown content to parse
+   * @returns The location of each slide
+   */
+  public getSlideLocations(markdown: string): SlideLocation[] {
+    return this.parse(markdown).locations;
+  }
+
+  private parse(markdown: string): { slides: Slide[]; locations: SlideLocation[] } {
     const mergedOptions: Required<ParserOptions> = {
       ...this.defaultOptions,
       ...this.options,
     };
 
     if (!markdown || markdown.trim() === '') {
-      return [];
+      return { slides: [], locations: [] };
     }
 
     const { frontmatter: docFrontMatter, remainingContent } =
@@ -35,11 +49,26 @@ export class SlideParser {
     const hasDocFrontmatter = Object.keys(docFrontMatter).length > 0;
     const processedMarkdown = hasDocFrontmatter ? remainingContent : markdown;
 
+    // The document frontmatter lines, to map the lines of the remaining content to the file
+    const docLines = hasDocFrontmatter
+      ? markdown.slice(0, markdown.length - remainingContent.length).split(/\r?\n/)
+      : [];
+    const lineOffset = Math.max(docLines.length - 1, 0);
+    const docLocation: SlideLocation = {
+      frontmatter: {
+        start: 0,
+        end: docLines.map((line) => line.trim()).lastIndexOf('---'),
+      },
+      isDocument: true,
+    };
+
     const lines = processedMarkdown.split(/\r?\n/);
 
-    const slideBlocks: string[] = [];
+    const slideBlocks: { text: string; location: SlideLocation }[] = [];
     const slides: InternalSlide[] = [];
+    const locations: SlideLocation[] = [];
     let buffer: string[] = [];
+    let blockLocation: SlideLocation = {};
     // The opening fence (``` or ~~~) of the code block we are in
     let codeFence: string | undefined;
 
@@ -56,6 +85,7 @@ export class SlideParser {
         frontmatter: {},
         index: 0,
       });
+      locations.push(docLocation);
     }
 
     for (let i = 0; i < lines.length; i++) {
@@ -82,17 +112,21 @@ export class SlideParser {
         const frontmatterEnd = SlideParser.findFrontmatterEnd(lines, i);
         if (frontmatterEnd !== undefined) {
           if (buffer.length > 0 || mergedOptions.includeEmpty) {
-            slideBlocks.push(buffer.join('\n'));
+            slideBlocks.push({ text: buffer.join('\n'), location: blockLocation });
             buffer = [];
           }
 
+          blockLocation = {
+            frontmatter: { start: i + lineOffset, end: frontmatterEnd + lineOffset },
+          };
           buffer.push(...lines.slice(i, frontmatterEnd + 1));
           i = frontmatterEnd;
           continue;
         }
 
-        slideBlocks.push(buffer.join('\n'));
+        slideBlocks.push({ text: buffer.join('\n'), location: blockLocation });
         buffer = [];
+        blockLocation = { separatorLine: i + lineOffset };
         continue;
       }
 
@@ -100,10 +134,10 @@ export class SlideParser {
     }
 
     if (buffer.length > 0 || mergedOptions.includeEmpty) {
-      slideBlocks.push(buffer.join('\n'));
+      slideBlocks.push({ text: buffer.join('\n'), location: blockLocation });
     }
 
-    for (const block of slideBlocks) {
+    for (const { text: block, location } of slideBlocks) {
       const trimmedBlock = mergedOptions.trimContent ? block.trimStart() : block;
       const { frontmatter, remainingContent: content } =
         FrontMatterParser.extractFrontmatter(trimmedBlock);
@@ -122,6 +156,8 @@ export class SlideParser {
         continue;
       }
 
+      // The first slide also gets the document frontmatter
+      locations.push(isFirstSlide && hasDocFrontmatter ? docLocation : location);
       slides.push({
         content: mergedOptions.trimContent ? slideContent.trim() : slideContent,
         rawContent: slideContent,
@@ -132,7 +168,7 @@ export class SlideParser {
     }
 
     // Apply default layout where not specified
-    return slides.map((slide, idx) => {
+    const parsedSlides = slides.map((slide, idx) => {
       if (idx === 0) {
         slide.frontmatter = {
           ...slide.frontmatter,
@@ -173,6 +209,7 @@ export class SlideParser {
             'image',
             'autoAdvanceAfter',
             'slide',
+            'hide',
           ].includes(key) &&
           slide.frontmatter[key] === undefined
         ) {
@@ -182,6 +219,8 @@ export class SlideParser {
 
       return slide;
     });
+
+    return { slides: parsedSlides, locations };
   }
 
   /**

@@ -10,6 +10,7 @@ import { Image } from 'astro:assets';
 import slidesImg from "../../../assets/docs/slides.webp";
 import slideControlsImg from "../../../assets/docs/slide-controls-2.2.0.webp";
 import slidePreviewImg from "../../../assets/docs/slide-preview.webp";
+import hiddenSlideImg from "../../../assets/docs/hidden-slide.webp";
 
 Demo Time is more than just a tool for live demos, it also lets you present slides seamlessly within your editor. With Markdown-based slides, you can deliver presentations without switching between different applications, ensuring a smooth transition between your slides and demos.
 
@@ -84,6 +85,7 @@ You can customize your slides using the following properties in the front matter
 - `customTheme` - Provide a custom CSS file for the slide.
 - `customLayout` - Specify a custom layout for the slide.
 - `autoAdvanceAfter` - Automatically advance to the next slide or demo after a specified number of seconds.
+- `hide` - Skip the slide while presenting. See [hiding slides](#hiding-slides).
 
 ### Themes
 
@@ -192,7 +194,7 @@ The control bar is keyboard and screen reader friendly. Every button is reachabl
 ### Slide navigation
 
 - **Previous**: Triggers the previous move (only if the `demo-time.previousEnabled` setting is enabled or when using grouped slides).
-- **Slide counter**: Shows the current slide and total (for example `01 / 05`). When slide thumbnails are available, selecting it opens the **Go to slide** overview so you can jump straight to any slide.
+- **Slide counter**: Shows the current slide and total (for example `01 / 05`). When slide thumbnails are available, selecting it opens the **Go to slide** overview so you can jump straight to any slide. [Hidden slides](#hiding-slides) are dimmed in the overview, but you can still open them.
 - **Next**: Triggers the next move.
 
 ### Slide tools
@@ -203,6 +205,7 @@ The control bar is keyboard and screen reader friendly. Every button is reachabl
   - **Slide** _(only available when you are not in presentation mode)_
     - **Mouse position**: Toggles the mouse position overlay on the slide, which can be useful to position elements on your slides.
     - **Open slide source**: Opens the source file of the slide in the editor, allowing you to edit the slide content directly.
+    - **Hide slide while presenting** / **Show slide while presenting**: Adds or removes `hide: true` in the front matter of the current slide. See [hiding slides](#hiding-slides).
   - **Workspace**
     - **Show demos**: Opens the Demo Time panel to access your demos and slides.
     - **Close sidebar**: Closes the side bar to provide more space for your slides.
@@ -227,6 +230,40 @@ autoAdvanceAfter: 3
 ```
 
 When the slide has [click steps](/slides/animations/#click-steps), each interval reveals one step, and the slide moves on after the last step.
+
+## Hiding slides
+
+Add `hide: true` to the front matter of a slide to keep it in the file without presenting it. This is useful for backup slides for questions, an alternative ending, a slide for the long version of your talk, or a draft.
+
+```markdown
+# Thank you!
+
+---
+hide: true
+---
+
+# Backup: how the cache works
+```
+
+While [presentation mode](/presentation-mode/) is on, a hidden slide is:
+
+- skipped when you go to the next or previous slide, including auto-advancing with `autoAdvanceAfter`;
+- skipped by the next slide preview in the [presenter view](/features/presenter-view/);
+- not counted by the `{{crntSlideIdx}}` and `{{totalSlides}}` [header and footer placeholders](/slides/layouts/header-footer/).
+
+When an `openSlide` move opens a hidden slide, the slide view continues with the next visible slide.
+
+Hidden slides are still in the **Go to slide** overview of the [slide controls](#slide-controls), dimmed and with an eye icon. Open one from there to show it during your talk, for instance to answer a question.
+
+Outside presentation mode, the slide preview still shows hidden slides so you can navigate to them and edit them. A hidden slide gets a dashed frame, and a **Hidden slide** bar above it.
+
+To hide or show the current slide from the slide preview, open the **More actions** (`…`) menu of the [slide controls](#slide-controls) and select **Hide slide while presenting** or **Show slide while presenting**. This adds or removes `hide: true` in the front matter of the slide and saves the file.
+
+<Image class="mx-auto" src={hiddenSlideImg} alt="A hidden slide in the slide preview, with the Hidden slide bar above it and the Show slide while presenting action in the More actions menu" />
+
+<Aside type="tip">
+Hidden slides are left out of the [PDF export](/slides/export/) unless you enable the `demoTime.pdfExport.includeHiddenSlides` setting.
+</Aside>
 
 ## Header and Footer
 

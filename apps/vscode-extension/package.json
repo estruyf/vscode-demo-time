@@ -368,6 +368,11 @@
           "default": "",
           "description": "HTML template for slide footers. Supports Handlebars syntax with frontmatter variables. Example: '<footer><span>{{name}}</span> <span>{{date}}</span></footer>'"
         },
+        "demoTime.pdfExport.includeHiddenSlides": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Include hidden slides (`hide: true` in the slide frontmatter) when exporting the slides to PDF."
+        },
         "demoTime.defaultFileType": {
           "type": "string",
           "enum": [

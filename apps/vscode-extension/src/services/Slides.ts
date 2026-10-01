@@ -5,9 +5,12 @@ import {
   Hover,
   languages,
   Position,
+  Range,
   TextDocument,
   Uri,
   window,
+  workspace,
+  WorkspaceEdit,
 } from 'vscode';
 import { Subscription } from '../models';
 import { Extension } from './Extension';
@@ -16,17 +19,20 @@ import {
   addStepsToDemo,
   chooseDemoFile,
   fileExists,
+  getAbsolutePath,
   getFrontmatterRange,
   getRelPath,
   isPathInWorkspace,
   parseWinPath,
   readFile,
   sanitizeFileName,
+  setSlideHidden,
   upperCaseFirstLetter,
   writeFile,
 } from '../utils';
 import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
 import { DemoFileProvider } from './DemoFileProvider';
+import { Notifications } from './Notifications';
 import { Preview } from '../preview/Preview';
 import {
   COMMAND,
@@ -38,6 +44,8 @@ import {
   Step,
   SlideParser,
   getDemosFromConfig,
+  getVisibleSlides,
+  isSlideHidden,
 } from '@demotime/common';
 
 export class Slides {
@@ -139,6 +147,9 @@ layout: ${layout.toLowerCase()}
     });
   }
 
+  /**
+   * Counts the slides of all act files. Hidden slides (`hide: true`) are not counted.
+   */
   public static async getTotalSlides(): Promise<number> {
     // Get all act files and count all slides
     const demoFiles = await DemoFileProvider.getFiles();
@@ -169,7 +180,7 @@ layout: ${layout.toLowerCase()}
                   // Parse slides from markdown content
                   const parser = new SlideParser();
                   const slides = parser.parseSlides(fileContent);
-                  totalSlides += slides.length;
+                  totalSlides += getVisibleSlides(slides).length;
                 }
               } catch {
                 // If file can't be read, count as 1 slide fallback
@@ -184,10 +195,11 @@ layout: ${layout.toLowerCase()}
   }
 
   /**
-   * Maps a file path and local slide index to the global slide index (1-based)
+   * Maps a file path and local slide index to the global slide index (1-based).
+   * Hidden slides (`hide: true`) are not counted and have no global index.
    * @param filePath Relative file path to the slide markdown file
    * @param localSlideIdx Local slide index (0-based)
-   * @returns Global slide index (1-based), or null if not found
+   * @returns Global slide index (1-based), or null if not found or hidden
    */
   public static async getGlobalSlideIndex(
     filePath: string,
@@ -225,10 +237,13 @@ layout: ${layout.toLowerCase()}
                   const parser = new SlideParser();
                   const slides = parser.parseSlides(fileContent);
                   for (let i = 0; i < slides.length; i++) {
+                    const hidden = isSlideHidden(slides[i]);
                     if (filePath.endsWith(parseWinPath(step.path)) && i === localSlideIdx) {
-                      return globalIdx + 1; // 1-based index
+                      return hidden ? null : globalIdx + 1; // 1-based index
                     }
-                    globalIdx++;
+                    if (!hidden) {
+                      globalIdx++;
+                    }
                   }
                 }
               } catch {
@@ -244,6 +259,72 @@ layout: ${layout.toLowerCase()}
       }
     }
     return null;
+  }
+
+  /**
+   * Adds or removes `hide: true` in the frontmatter of a slide and saves the file, which updates
+   * the slide preview.
+   * @param filePath Relative file path to the slide markdown file
+   * @param slideIndex Local slide index (0-based)
+   * @param hidden Whether the slide should be hidden
+   */
+  public static async setSlideHidden(filePath: string, slideIndex: number, hidden: boolean) {
+    const fileUri = getAbsolutePath(parseWinPath(filePath));
+    const document = await workspace.openTextDocument(fileUri);
+    const crntContent = document.getText();
+    const newContent = setSlideHidden(crntContent, slideIndex, hidden);
+    if (newContent === undefined) {
+      Notifications.error(`Slide ${slideIndex + 1} was not found in "${filePath}".`);
+      return;
+    }
+
+    if (newContent === crntContent) {
+      return;
+    }
+
+    // Only replace the changed lines, so an open editor keeps its cursor and scroll position
+    const crntLines = crntContent.split(/\r?\n/);
+    const newLines = newContent.split(/\r?\n/);
+    let startLine = 0;
+    while (
+      startLine < crntLines.length &&
+      startLine < newLines.length &&
+      crntLines[startLine] === newLines[startLine]
+    ) {
+      startLine++;
+    }
+    let crntEnd = crntLines.length;
+    let newEnd = newLines.length;
+    while (
+      crntEnd > startLine &&
+      newEnd > startLine &&
+      crntLines[crntEnd - 1] === newLines[newEnd - 1]
+    ) {
+      crntEnd--;
+      newEnd--;
+    }
+
+    const edit = new WorkspaceEdit();
+    if (crntEnd < crntLines.length) {
+      const eol = crntContent.includes('\r\n') ? '\r\n' : '\n';
+      edit.replace(
+        fileUri,
+        new Range(new Position(startLine, 0), new Position(crntEnd, 0)),
+        newLines
+          .slice(startLine, newEnd)
+          .map((line) => `${line}${eol}`)
+          .join(''),
+      );
+    } else {
+      // The last line changed
+      edit.replace(
+        fileUri,
+        new Range(document.positionAt(0), document.positionAt(crntContent.length)),
+        newContent,
+      );
+    }
+    await workspace.applyEdit(edit);
+    await document.save();
   }
 
   private static async viewSlide(item: ActionTreeItem) {
@@ -334,6 +415,10 @@ layout: ${layout.toLowerCase()}
               return new Hover(
                 `Specifies the time (in seconds) to wait before advancing to the next slide.`,
               );
+            } else if (line.startsWith('hide:')) {
+              return new Hover(
+                'Hides the slide while presenting. Hidden slides are skipped by navigation and not counted in the slide numbers, but you can still open them from the slide navigator.',
+              );
             }
           }
 
@@ -405,6 +490,13 @@ layout: ${layout.toLowerCase()}
                   },
                   CompletionItemKind.Property,
                 ),
+                new CompletionItem(
+                  {
+                    label: 'hide',
+                    description: 'Skip the slide while presenting',
+                  },
+                  CompletionItemKind.Property,
+                ),
               ];
             } else if (linePrefix.startsWith('theme:')) {
               return Object.values(SlideTheme).map((theme) => {
@@ -417,6 +509,10 @@ layout: ${layout.toLowerCase()}
             } else if (linePrefix.startsWith('transition:')) {
               return Object.values(SlideTransition).map((transition) => {
                 return new CompletionItem(transition, CompletionItemKind.EnumMember);
+              });
+            } else if (linePrefix.startsWith('hide:')) {
+              return ['true', 'false'].map((value) => {
+                return new CompletionItem(value, CompletionItemKind.Value);
               });
             }
           }

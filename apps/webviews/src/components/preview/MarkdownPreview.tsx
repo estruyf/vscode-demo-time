@@ -5,8 +5,9 @@ import { EventData } from '@estruyf/vscode';
 import { SlideControls } from './SlideControls';
 import { LaserPointer } from './LaserPointer';
 import DOMPurify from 'dompurify';
-import { Config, getTemplateErrorMessage, getVideoAutoplay, renderTemplateError, tryConvertTemplateToHtml, Slide, SlideLayout, SlideParser, SlideTheme, SlideTransition, WebViewMessages } from '@demotime/common';
-import { useFileContents, useCursor, useScale, useMousePosition, useTheme, useClickSteps } from '../../hooks';
+import { Config, getNextSlideIdx, getPreviousSlideIdx, getTemplateErrorMessage, getVideoAutoplay, getVisibleSlideIdx, isSlideHidden, renderTemplateError, tryConvertTemplateToHtml, Slide, SlideLayout, SlideParser, SlideTheme, SlideTransition, WebViewMessages } from '@demotime/common';
+import { Icon } from 'vscrui';
+import { useFileContents, useCursor, useScale, useMousePosition, useTheme, useClickSteps, usePresentationMode } from '../../hooks';
 import { extractFirstH1, getSlideTitle } from '../../utils';
 import { AnimatedSVGSlide } from '../slides/AnimatedSVGSlide';
 import { nextClickStep, previousClickStep, resetClickSteps } from '../../webcomponents/clickSteps';
@@ -16,6 +17,9 @@ export interface IMarkdownPreviewProps {
   slideIdx?: number;
   webviewUrl: string | null;
 }
+
+// Height of the bar above a hidden slide
+const HIDDEN_BAR_HEIGHT = 36;
 
 export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = ({
   fileUri,
@@ -44,9 +48,16 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const slideRef = React.useRef<HTMLDivElement>(null);
   const { cursorVisible, resetCursorTimeout, hideCursor } = useCursor();
   const { vsCodeTheme, isDarkTheme } = useTheme();
-  const { scale } = useScale(ref, slideRef);
+  const isPresentationMode = usePresentationMode();
+  // Outside presentation mode, hidden slides are shown so you can edit them, with a bar above them
+  const showHiddenMarker = isPresentationMode === false && isSlideHidden(crntSlide ?? undefined);
+  const offsetTop = showHiddenMarker ? HIDDEN_BAR_HEIGHT : 0;
+  const { scale } = useScale(ref, slideRef, offsetTop);
   const { mousePosition, handleMouseMove, handleMouseLeave } = useMousePosition(slideRef, scale, resetCursorTimeout);
   const clickStep = useClickSteps();
+  // Hidden slides (`hide: true`) are only skipped while presenting
+  const skipHidden = !!isPresentationMode;
+  const skipHiddenRef = React.useRef(skipHidden);
   // Going back to the previous slide shows it with all its click steps revealed
   const revealClickStepsRef = React.useRef(false);
 
@@ -162,20 +173,34 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   }, [fetchTemplate]);
 
 
+  React.useEffect(() => {
+    skipHiddenRef.current = skipHidden;
+  }, [skipHidden]);
+
+  const isPresentationModeKnown = isPresentationMode !== undefined;
+
   // Load the correct slide based on slideIdx prop
+  // Runs again once the presentation mode is known, but not when it gets toggled, so toggling
+  // presentation mode doesn't move away from the current slide.
   React.useEffect(() => {
     if (Array.isArray(slides) && slides.length > 0) {
+      let targetIdx = 0;
       if (typeof slideIdx === 'number' && slideIdx >= 0 && slideIdx < slides.length) {
-        setCrntSlide(slides[slideIdx]);
+        targetIdx = slideIdx;
       } else if (typeof initialSlideIndex === 'number' && initialSlideIndex >= 0 && initialSlideIndex < slides.length) {
-        setCrntSlide(slides[initialSlideIndex]);
-      } else {
-        setCrntSlide(slides[0]);
+        targetIdx = initialSlideIndex;
+      }
+
+      // While presenting, a deck that opens on a hidden slide continues with the next visible slide
+      const visibleIdx = skipHiddenRef.current ? getVisibleSlideIdx(slides, targetIdx) : targetIdx;
+      setCrntSlide(slides[visibleIdx]);
+      if (visibleIdx !== targetIdx) {
+        messageHandler.send(WebViewMessages.toVscode.updateSlideIndex, visibleIdx);
       }
     } else {
       setCrntSlide(null);
     }
-  }, [slideIdx, initialSlideIndex, slides]);
+  }, [slideIdx, initialSlideIndex, slides, isPresentationModeKnown]);
 
   const updateSlideIdx = React.useCallback((slideIdx: number) => {
     if (slideIdx < 0 || slideIdx >= slides.length) {
@@ -200,6 +225,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     return slides.map((slide) => ({
       index: slide.index,
       title: extractFirstH1(slide.rawContent) || `Slide ${slide.index + 1}`,
+      hidden: isSlideHidden(slide),
     }));
   }, [slides]);
 
@@ -285,7 +311,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         return;
       }
 
-      const nextSlide = crntSlide ? crntSlide.index + 1 : 1;
+      const nextSlide = crntSlide ? (getNextSlideIdx(slides, crntSlide.index, skipHidden) ?? slides.length) : 1;
       updateSlideIdx(nextSlide);
       messageHandler.send(WebViewMessages.toVscode.updateSlideIndex, nextSlide);
     } else if (command === WebViewMessages.toWebview.previousSlide) {
@@ -293,12 +319,12 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         return;
       }
 
-      const previousSlide = crntSlide ? crntSlide.index - 1 : 0;
+      const previousSlide = crntSlide ? (getPreviousSlideIdx(slides, crntSlide.index, skipHidden) ?? -1) : 0;
       revealClickStepsRef.current = previousSlide >= 0;
       updateSlideIdx(previousSlide);
       messageHandler.send(WebViewMessages.toVscode.updateSlideIndex, previousSlide);
     }
-  }, [crntSlide, updateSlideIdx]);
+  }, [crntSlide, slides, skipHidden, updateSlideIdx]);
 
   const getBgStyles = React.useCallback(() => {
     if (!layout || layout === SlideLayout.ImageLeft || layout === SlideLayout.ImageRight) {
@@ -427,26 +453,21 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   React.useEffect(() => {
     Messenger.listen(slidesListener);
 
-    if (slides === null || slides.length === 0 || slides.length === 1) {
-      messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
-      messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, false);
-      messageHandler.send(WebViewMessages.toVscode.nextSlideTitle, undefined);
-    } else if (slides.length > 1 && crntSlide?.index === slides.length - 1) {
-      messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
-      messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, true);
-      messageHandler.send(WebViewMessages.toVscode.nextSlideTitle, undefined);
-    } else if (slides.length > 1) {
-      messageHandler.send(WebViewMessages.toVscode.hasNextSlide, true);
-      messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, (crntSlide?.index !== undefined && crntSlide.index > 0));
+    const crntIdx = crntSlide?.index ?? 0;
+    const nextSlideIdx = slides?.length > 1 ? getNextSlideIdx(slides, crntIdx, skipHidden) : undefined;
+    const previousSlideIdx = slides?.length > 1 ? getPreviousSlideIdx(slides, crntIdx, skipHidden) : undefined;
 
-      const nextSlideIdx = crntSlide?.index !== undefined ? crntSlide.index + 1 : 0;
-      messageHandler.send(WebViewMessages.toVscode.nextSlideTitle, getSlideTitle(slides[nextSlideIdx]));
-    }
+    messageHandler.send(WebViewMessages.toVscode.hasNextSlide, nextSlideIdx !== undefined);
+    messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, previousSlideIdx !== undefined);
+    messageHandler.send(
+      WebViewMessages.toVscode.nextSlideTitle,
+      nextSlideIdx !== undefined ? getSlideTitle(slides[nextSlideIdx]) : undefined
+    );
 
     return () => {
       Messenger.unlisten(slidesListener);
     };
-  }, [slides, crntSlide, slidesListener]);
+  }, [slides, crntSlide, skipHidden, slidesListener]);
 
   React.useEffect(() => {
     getFileContents(fileUri);
@@ -532,6 +553,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         <div
           className='slide__container absolute top-[50%] left-[50%] w-[960px] h-[540px] transition-transform duration-300'
           style={{
+            // Center the slide below the bar of a hidden slide
+            top: offsetTop ? `calc(50% + ${offsetTop / 2}px)` : undefined,
             transform: `translate(-50%, -50%) scale(${isZoomed ? scale * zoomLevel : 'var(--demotime-scale, 1)'}) translate(${isZoomed ? panOffset.x / (scale * zoomLevel) : 0}px, ${isZoomed ? panOffset.y / (scale * zoomLevel) : 0}px)`
           }}>
           <div
@@ -614,7 +637,35 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
               />
             )}
           </div>
+
+          {
+            // Marks the edges of a hidden slide without covering its content
+            showHiddenMarker && (
+              <div
+                className="slide__hidden pointer-events-none absolute inset-0 z-40"
+                style={{ border: '4px dashed var(--vscode-editorWarning-foreground)' }}
+              ></div>
+            )
+          }
         </div>
+
+        {
+          showHiddenMarker && (
+            <div
+              className="slide__hidden-bar absolute top-0 left-0 right-0 z-30 flex items-center justify-center gap-2 px-4 text-sm whitespace-nowrap overflow-hidden pointer-events-none"
+              style={{
+                height: HIDDEN_BAR_HEIGHT,
+                backgroundColor: 'var(--vscode-editorWarning-foreground)',
+                color: 'var(--vscode-editor-background)',
+              }}
+            >
+              {/* The icon has its own color, so it needs to inherit the label color */}
+              <Icon name={'eye-closed' as never} className="inline-flex justify-center items-center" style={{ color: 'inherit', fontSize: '16px' }} />
+              <span className="font-semibold">Hidden slide</span>
+              <span className="opacity-80 truncate">· skipped while presenting</span>
+            </div>
+          )
+        }
 
         <SlideControls
           show={showControls && cursorVisible}

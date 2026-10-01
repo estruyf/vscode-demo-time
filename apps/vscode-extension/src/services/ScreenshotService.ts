@@ -125,7 +125,8 @@ export class ScreenshotService {
       hasNextSlide,
       crntSlideIdx,
       slideStep.slide,
-      slides.length,
+      slides,
+      DemoRunner.getIsPresentationMode(),
     );
     const targetSlide = slides[slideIndex];
     const cacheKey = `${slideUri.toString()}#${slideIndex}`;

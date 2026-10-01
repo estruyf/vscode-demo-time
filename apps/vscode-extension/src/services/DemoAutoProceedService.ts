@@ -1,7 +1,7 @@
 import { ContextKeys, StateKeys } from '../constants';
 import { Preview } from '../preview/Preview';
 import { getFileContents, setContext } from '../utils';
-import { Action, COMMAND, Demo, SlideParser } from '@demotime/common';
+import { Action, COMMAND, Demo, getVisibleSlides, SlideParser } from '@demotime/common';
 import { commands } from 'vscode';
 import { DemoPanel } from '../panels/DemoPanel';
 import { DemoStatusBar } from './DemoStatusBar';
@@ -60,7 +60,13 @@ export class DemoAutoProceedService {
     await DemoAutoProceedService.syncAutoProceedForDemo(currentDemo);
   }
 
-  public static async hasSceneAutoLoopTiming(demo: Demo): Promise<boolean> {
+  /**
+   * Checks whether the scene advances on its own: through the scene's `autoAdvanceAfter`, or
+   * because every slide from the start slide has one.
+   *
+   * @param skipHidden - Whether hidden slides are skipped (while presenting), so they need no timing
+   */
+  public static async hasSceneAutoLoopTiming(demo: Demo, skipHidden = false): Promise<boolean> {
     if (demo.autoAdvanceAfter && demo.autoAdvanceAfter > 0) {
       return true;
     }
@@ -88,7 +94,8 @@ export class DemoAutoProceedService {
 
     const startSlideIndex =
       typeof slideStep.slide === 'number' && slideStep.slide >= 0 ? slideStep.slide : 0;
-    const slidesToValidate = slides.slice(startSlideIndex);
+    const remainingSlides = slides.slice(startSlideIndex);
+    const slidesToValidate = skipHidden ? getVisibleSlides(remainingSlides) : remainingSlides;
 
     return (
       slidesToValidate.length > 0 &&

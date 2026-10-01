@@ -8,6 +8,7 @@ export * from './InsertTypingMode';
 export * from './InternalSlide';
 export * from './ParserOptions';
 export * from './Slide';
+export * from './SlideLocation';
 export * from './SlideMetadata';
 export * from './Version';
 export * from './VideoExport';

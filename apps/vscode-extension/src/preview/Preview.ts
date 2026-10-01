@@ -281,6 +281,8 @@ export class Preview extends BaseWebview {
       await DemoRunner.onSlideIndexUpdated(payload);
     } else if (command === WebViewMessages.toVscode.slideReady) {
       Preview.reveal(true);
+    } else if (command === WebViewMessages.toVscode.preview.setSlideHidden && payload?.path) {
+      await Slides.setSlideHidden(payload.path, payload.slideIndex, !!payload.hidden);
     } else if (command === WebViewMessages.toVscode.preview.recordOpenSlide) {
       // Record slide change in analytics if recording
       if (

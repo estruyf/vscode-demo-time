@@ -6,6 +6,7 @@
 - [#418](https://github.com/estruyf/vscode-demo-time/issues/418): Added the `@demotime/video` CLI (`npx @demotime/video export`) to export a play as a video from a terminal or in CI, without opening VS Code
 - [#418](https://github.com/estruyf/vscode-demo-time/issues/418): Added the `Demo Time: Run play unattended for recording` and `Demo Time: Stop unattended run` commands to play the whole play or an act on its own in the current window, for recording with your own tool
 - [#418](https://github.com/estruyf/vscode-demo-time/issues/418): Added the `demoTime.videoExport.command`, `demoTime.videoExport.extension` and `demoTime.videoExport.options` settings
+- Updated the README and Marketplace GIF with the new promo video
 - Added `secondarySideBar` to `demoTime.presentationViewToggles`, and to its defaults, so presentation view also closes the secondary side bar where VS Code shows Chat
 - [#428](https://github.com/estruyf/vscode-demo-time/issues/428): Fix slide files whose document front matter is followed directly by `---` showing the raw YAML as an extra first slide
 - [#429](https://github.com/estruyf/vscode-demo-time/issues/429): Fix a slide starting with a `Word:` line (like `Note: remember this`) being read as front matter, which merged it into the previous slide or made it disappear, and fix `---` inside a `~~~` code block splitting the slide
@@ -20,6 +21,9 @@
 - [#436](https://github.com/estruyf/vscode-demo-time/issues/436): Added the `clicks` attribute to `dt-list` to set the click on which its first item appears
 - [#437](https://github.com/estruyf/vscode-demo-time/issues/437): Fix the PDF export showing `dt-list` lists empty and hiding `dt-show` content. The PDF now shows the final state of each slide: all list items and `dt-show` content, with `dt-hide` content hidden
 - [#438](https://github.com/estruyf/vscode-demo-time/issues/438): Fix slide front matter hover and completion only working in the first front matter block of the file. They now work in the document front matter and in the front matter of every slide
+- [#444](https://github.com/estruyf/vscode-demo-time/issues/444): Added the `hide` slide front matter property to keep a slide in the file without presenting it. In presentation mode, hidden slides are skipped by next/previous, auto-advance and the presenter view's next-slide preview, and `{{crntSlideIdx}}` and `{{totalSlides}}` don't count them. The **Go to slide** overview shows them dimmed so you can still open one, and outside presentation mode the preview marks them with a dashed frame and a **Hidden slide** bar above the slide
+- [#444](https://github.com/estruyf/vscode-demo-time/issues/444): Added the **Hide slide while presenting** / **Show slide while presenting** action to the **More actions** menu of the slide controls, which adds or removes `hide: true` in the front matter of the current slide
+- [#444](https://github.com/estruyf/vscode-demo-time/issues/444): Added the `demoTime.pdfExport.includeHiddenSlides` setting. The PDF export leaves hidden slides out by default
 - [#453](https://github.com/estruyf/vscode-demo-time/issues/453): Fix `transformMarkdown` running `remarkPlugins` after `remark-rehype`, so remark plugins that change the markdown tree now see its nodes
 
 ## [2.3.1] - 2026-09-03

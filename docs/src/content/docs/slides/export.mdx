@@ -35,6 +35,8 @@ The export command will generate a PDF file in the root of your project with the
 
 Each slide is exported in its final state: all `dt-list` items and `dt-show` content are visible, and `dt-hide` content is hidden.
 
+[Hidden slides](/slides/#hiding-slides) (`hide: true`) are left out of the export. To include them, enable the `demoTime.pdfExport.includeHiddenSlides` setting.
+
 Here is a sample of the exported PDF file:
 
 <Image class="mx-auto" src={pdfSampleImg} alt="Exported PDF file" />

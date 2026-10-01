@@ -5,6 +5,8 @@ export * from './htmlDecode';
 export * from './htmlEncode';
 export * from './placeholderFormatting';
 export * from './sectionFormatting';
+export * from './slideVisibility';
 export * from './templateError';
+export * from './toBoolean';
 export * from './transformMarkdown';
 export * from './twoColumnFormatting';

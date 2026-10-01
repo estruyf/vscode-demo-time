@@ -3,9 +3,15 @@ import { useEffect, useCallback, useState } from 'react';
 const Slide_Width = 960;
 const Slide_Height = 540;
 
+/**
+ * Scales the slide to fit the preview.
+ *
+ * @param offsetTop Space (in pixels) at the top of the preview the slide should not use
+ */
 export const useScale = (
   ref: React.RefObject<HTMLDivElement | null>,
-  slideRef: React.RefObject<HTMLDivElement | null>
+  slideRef: React.RefObject<HTMLDivElement | null>,
+  offsetTop = 0
 ) => {
   const [value, setValue] = useState(0);
 
@@ -14,7 +20,8 @@ export const useScale = (
       return;
     }
 
-    const { width, height } = ref.current.getBoundingClientRect();
+    const { width, height: fullHeight } = ref.current.getBoundingClientRect();
+    const height = Math.max(fullHeight - offsetTop, 0);
     const scale = Math.min(width / Slide_Width, height / Slide_Height);
     const scaledWidth = Slide_Width * scale;
     const scaledHeight = Slide_Height * scale;
@@ -33,7 +40,12 @@ export const useScale = (
     }
     document.documentElement.style.setProperty('--demotime-scale', `${scaleValue}`);
     setValue(scaleValue);
-  }, [slideRef.current, ref.current]);
+  }, [slideRef.current, ref.current, offsetTop]);
+
+  // Scale again when the reserved space changes
+  useEffect(() => {
+    updateScale();
+  }, [updateScale]);
 
   useEffect(() => {
     const handleResize = () => {

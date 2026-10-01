@@ -6,6 +6,7 @@ export * from './useDemoConfigContext';
 export * from './useFileContents';
 export * from './useFileOperations';
 export * from './useMousePosition';
+export * from './usePresentationMode';
 export * from './usePrevious';
 export * from './useRemark';
 export * from './useScale';

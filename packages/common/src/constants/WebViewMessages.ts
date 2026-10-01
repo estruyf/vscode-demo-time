@@ -188,6 +188,7 @@ export const WebViewMessages = {
       getTotalSlides: 'getPreviewTotalSlides',
       getGlobalSlideIndex: 'getPreviewGlobalSlideIndex',
       recordOpenSlide: 'recordPreviewOpenSlide',
+      setSlideHidden: 'setPreviewSlideHidden',
     },
     settingsView: {
       /**

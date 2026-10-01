@@ -399,7 +399,12 @@ export class DemoRunner {
         const enabledDemos = demos.filter((d) => !d.disabled);
         const missingTimings: Demo[] = [];
         for (const demo of enabledDemos) {
-          if (!(await DemoAutoProceedService.hasSceneAutoLoopTiming(demo))) {
+          if (
+            !(await DemoAutoProceedService.hasSceneAutoLoopTiming(
+              demo,
+              DemoRunner.isPresentationMode,
+            ))
+          ) {
             missingTimings.push(demo);
           }
         }

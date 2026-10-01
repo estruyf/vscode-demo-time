@@ -69,6 +69,9 @@ export const Config = {
   recording: {
     captureSaves: 'recording.captureSaves',
   },
+  pdfExport: {
+    includeHiddenSlides: 'pdfExport.includeHiddenSlides',
+  },
   videoExport: {
     command: 'videoExport.command',
     extension: 'videoExport.extension',
