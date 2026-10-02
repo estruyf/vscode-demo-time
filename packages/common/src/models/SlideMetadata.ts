@@ -12,6 +12,8 @@ export interface SlideMetadata {
   footer?: string;
   autoAdvanceAfter?: number;
   image?: string;
+  background?: string;
+  class?: string;
   video?: string;
   controls?: boolean;
   hide?: boolean;

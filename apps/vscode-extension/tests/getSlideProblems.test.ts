@@ -153,6 +153,36 @@ customLayout: .demo/layouts/missing.hbs
     ]);
   });
 
+  it('reports a missing background image, but not colours, gradients or URLs', async () => {
+    const markdown = `---
+background: .demo/assets/missing.png
+---
+
+# One
+
+---
+background: 'linear-gradient(135deg, #1e3a8a, #9333ea)'
+class: section-break
+---
+
+# Two
+
+---
+background: "#1e3a8a"
+---
+
+# Three
+
+---
+background: https://example.com/bg.png
+---
+
+# Four`;
+    expect(await problems(markdown)).toEqual([
+      { code: 'slide-missing-file', severity: 'warning', line: 1, fix: undefined },
+    ]);
+  });
+
   it('reports Handlebars errors in custom layouts and inline templates', async () => {
     const markdown = `---
 customLayout: .demo/layouts/broken.hbs

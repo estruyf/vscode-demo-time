@@ -39,6 +39,9 @@ import {
   AUTO_FIT_ATTRIBUTE,
   getSlideAutoFitScript,
   isAutoFitEnabled,
+  getSlideBackgroundStyles,
+  getSlideClassNames,
+  toStyleAttribute,
 } from '@demotime/common';
 import { ScreenshotService } from './ScreenshotService';
 
@@ -381,6 +384,8 @@ export class PdfExportService {
             progressHtml,
             notesHtml,
             autoFit: isAutoFitEnabled(crntSlide.frontmatter),
+            className: getSlideClassNames(crntSlide.frontmatter),
+            background: toStyleAttribute(getSlideBackgroundStyles(crntSlide.frontmatter)),
           });
 
           idx++;
@@ -505,7 +510,7 @@ export class PdfExportService {
           slide.layout !== SlideLayout.ImageLeft &&
           slide.layout !== SlideLayout.ImageRight
             ? `background-image: url(${slide.image});`
-            : ``;
+            : slide.background;
 
         if (slide.theme === SlideTheme.default) {
           slideThemes.default.push(index + 1);
@@ -529,7 +534,7 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
 
   <div class="slide ${slide.theme.toLowerCase()}" data-theme="${slide.theme.toLowerCase()}" data-layout="${slide.layout.toLowerCase()}" >
     <div class="slide__container">
-      <div class="slide__layout ${slide.layout.toLowerCase()}" style="${slideBg}">
+      <div class="slide__layout ${slide.layout.toLowerCase()} ${slide.className}" style="${slideBg}">
         ${slide.headerTemplate ? `<header class="slide__header">${slide.headerTemplate}</header>` : ``}
 
         ${

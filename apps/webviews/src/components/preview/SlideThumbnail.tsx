@@ -1,7 +1,15 @@
 import * as React from 'react';
-import { isAutoFitEnabled, Slide, SlideLayout, SlideTheme } from '@demotime/common';
+import {
+  getSlideBackgroundStyles,
+  getSlideClassNames,
+  isAutoFitEnabled,
+  Slide,
+  SlideLayout,
+  SlideTheme,
+} from '@demotime/common';
 import { Markdown } from './Markdown';
 import { useSlideOverflow } from '../../hooks';
+import { transformImageUrl } from '../../utils';
 
 export interface ISlideThumbnailProps {
   slide: Slide;
@@ -25,6 +33,11 @@ export const SlideThumbnail: React.FunctionComponent<ISlideThumbnailProps> = ({
   const layout = slide.frontmatter?.layout || SlideLayout.Default;
   // The theme of the slide itself, the preview uses the same fallback
   const slideTheme = slide.frontmatter?.theme || SlideTheme.default;
+  const slideClassNames = getSlideClassNames(slide.frontmatter);
+  const slideBgStyles = getSlideBackgroundStyles(
+    slide.frontmatter,
+    (path) => transformImageUrl(webviewUrl || '', path) || path,
+  );
   const layoutRef = React.useRef<HTMLDivElement>(null);
   const autoFit = isAutoFitEnabled(slide.frontmatter);
   // Scales down the content of a slide with `autoFit: true`, like the preview
@@ -53,7 +66,11 @@ export const SlideThumbnail: React.FunctionComponent<ISlideThumbnailProps> = ({
           className="slide__container absolute top-[50%] left-[50%] w-[960px] h-[540px]"
           style={{ transform: 'translate(-50%, -50%) scale(1)' }}
         >
-          <div ref={layoutRef} className={`slide__layout ${layout || 'default'}`}>
+          <div
+            ref={layoutRef}
+            className={`slide__layout ${layout || 'default'} ${slideClassNames}`}
+            style={slideBgStyles}
+          >
             {slide.content && vsCodeTheme && (
               <div className="slide__content">
                 <Markdown

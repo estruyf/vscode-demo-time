@@ -78,6 +78,9 @@ same layout for more than three slides in a row.
 | A list, a short code sample, a Mermaid diagram | `default`                      |
 
 Use a custom layout (`customLayout`) only when the slide needs a structure no built-in layout has.
+To only change the look of one slide, use `background` (a quoted `"#hex"` colour, a gradient, or an
+image path) or `class` (CSS classes that the custom theme styles with
+`.slide .slide__layout.<class>`) instead.
 
 ## 4. Write the slides
 

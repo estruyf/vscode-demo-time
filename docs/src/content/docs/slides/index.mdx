@@ -67,7 +67,7 @@ The block is only used as front matter when it is valid YAML with `key: value` p
 The front matter at the top of the file is the document front matter. It belongs to the first slide, and the other slides in the file inherit from it:
 
 - `theme` and `customTheme` apply to every slide. When the document front matter sets them, a slide can't use another value.
-- `transition`, `header` and `footer` apply to every slide that doesn't set its own value.
+- `transition`, `header`, `footer`, `background` and `class` apply to every slide that doesn't set its own value.
 - Any other property, like the properties you use in a [custom layout](/slides/layouts/custom/), applies to every slide that doesn't set its own value.
 - `layout`, `customLayout`, `image`, `autoAdvanceAfter` and `hide` only apply to the first slide.
 
@@ -102,6 +102,8 @@ You can customize your slides using the following properties in the front matter
 - `layout` - Choose a layout for the slide.
 - `transition` - Set the transition effect for the slide.
 - `image` - Set a background image for the slide.
+- `background` - Set a colour, gradient or image as the background of the slide. See [slide background and classes](#slide-background-and-classes).
+- `class` - Add CSS classes to the slide, so a custom theme can style it. See [slide background and classes](#slide-background-and-classes).
 - `video` - Set a video for the slide (works with video layout or custom layouts).
 - `customTheme` - Provide a custom CSS file for the slide.
 - `customLayout` - Specify a custom layout for the slide.
@@ -152,6 +154,47 @@ Transitions add a dynamic touch to your slides. You can specify the transition e
 <Aside type="tip">
 You can change the transition effect duration by setting the `--demotime-transition-duration` CSS variable in your custom CSS file.
 </Aside>
+
+## Slide background and classes
+
+To change the look of one slide, you don't need a custom layout or a theme of its own. Use the `background` and `class` front matter properties.
+
+`background` sets the background of the slide. It can be:
+
+- a CSS colour, like `"#1e3a8a"`, `navy` or `rgb(30 58 138)`;
+- a CSS gradient, like `linear-gradient(135deg, #1e3a8a, #9333ea)`;
+- the path (relative to the workspace folder) or URL of an image, like `.demo/assets/bg.png`. The image covers the slide.
+
+```md
+---
+layout: section
+background: "linear-gradient(135deg, #1e3a8a, #9333ea)"
+---
+
+# Part 2: the demo
+```
+
+<Aside type="caution">
+Put a value with a `#` in it between quotes, like `background: "#1e3a8a"`. Without quotes, YAML reads everything from the `#` on as a comment.
+</Aside>
+
+A value is used as an image when it starts with `http://`, `https://`, `/`, `./` or `../`, or ends with an image extension like `.png`, `.jpg`, `.svg` or `.webp`. Any other value is used as the CSS `background`, so a `url()` in it is not resolved against the workspace folder.
+
+When a slide sets both, the `image` property takes precedence on layouts that show it as the background. On the `image-left` and `image-right` layouts, the `image` is shown next to the content, and the `background` is the background of the whole slide.
+
+`class` adds one or more CSS classes, separated by spaces, to the `.slide__layout` element of the slide, next to the layout and transition classes. Style them in a [custom theme](/slides/themes/custom/#style-a-single-slide):
+
+```md
+---
+class: section-break dark
+---
+
+# Questions?
+```
+
+The `background` property of a slide, also one it gets from the document front matter, takes precedence over a background that a class sets in your theme. Add `!important` to the background of the class to use it on those slides.
+
+Both properties also apply in the **Go to slide** overview, the [PDF export](/slides/export/) and the next slide preview of the [presenter view](/features/presenter-view/). In the document front matter, they apply to every slide in the file that doesn't set its own value, so you can give a whole deck the same background.
 
 ## Slide preview
 
@@ -333,7 +376,7 @@ Demo Time checks the front matter of your slide files while you edit them, and r
 | A misspelled property, with a **did you mean** suggestion | `transtion: fadeIn` | Warning |
 | A property that Demo Time doesn't use, and that no custom layout, header or footer template reads | `speaker: Jane` | Information |
 | An invalid value for `layout`, `theme`, `transition`, `controlsPosition` or `progress`, or a value that isn't `true`/`false` or a number for a property that expects one | `layout: two-column` | Warning |
-| A file that doesn't exist for `image`, `video`, `svgFile`, `customTheme` or `customLayout`. Paths are relative to the workspace folder, the same way the slide preview loads them. `http(s)` URLs are not checked. | `image: .demo/assets/missing.png` | Warning, or Error for `customLayout` |
+| A file that doesn't exist for `image`, `video`, `svgFile`, `customTheme` or `customLayout`, or for a `background` image. Paths are relative to the workspace folder, the same way the slide preview loads them. `http(s)` URLs are not checked. | `image: .demo/assets/missing.png` | Warning, or Error for `customLayout` |
 | A custom layout, or an inline `header` or `footer` template, with invalid Handlebars | `{{#if title}}` without `{{/if}}` | Error |
 | A `---` followed by a line like `Note: text` (a capitalized word and a colon), which makes the lines up to the next `---` the front matter of the slide instead of its content | `Note: remember this` | Warning |
 

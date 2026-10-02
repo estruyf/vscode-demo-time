@@ -197,6 +197,24 @@
         "docs": "https://demotime.show/slides/layouts/image/"
       }
     },
+    "background": {
+      "type": "string",
+      "description": "The background of the slide: a CSS colour (`\"#1e3a8a\"`), a gradient (`\"linear-gradient(135deg, #1e3a8a, #9333ea)\"`), or the path (relative to the workspace folder) or URL of an image. Put a value with a `#` between quotes. An `image` that the layout shows as the background takes precedence. Default: The background of the theme.",
+      "markdownDescription": "The background of the slide: a CSS colour (`\"#1e3a8a\"`), a gradient (`\"linear-gradient(135deg, #1e3a8a, #9333ea)\"`), or the path (relative to the workspace folder) or URL of an image. Put a value with a `#` between quotes. An `image` that the layout shows as the background takes precedence. Default: The background of the theme.",
+      "x-demotime": {
+        "inheritance": "fallback",
+        "docs": "https://demotime.show/slides/#slide-background-and-classes"
+      }
+    },
+    "class": {
+      "type": "string",
+      "description": "One or more CSS classes, separated by spaces, that are added to the `.slide__layout` element of the slide, so a custom theme can style it.",
+      "markdownDescription": "One or more CSS classes, separated by spaces, that are added to the `.slide__layout` element of the slide, so a custom theme can style it.",
+      "x-demotime": {
+        "inheritance": "fallback",
+        "docs": "https://demotime.show/slides/#slide-background-and-classes"
+      }
+    },
     "video": {
       "type": "string",
       "format": "uri-reference",

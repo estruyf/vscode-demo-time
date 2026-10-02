@@ -5,10 +5,10 @@ import { EventData } from '@estruyf/vscode';
 import { SlideControls } from './SlideControls';
 import { LaserPointer } from './LaserPointer';
 import DOMPurify from 'dompurify';
-import { Config, getNextSlideIdx, getPreviousSlideIdx, getProgressBarPosition, getProgressPercentage, getSlideHeading, getTemplateData, getTemplateErrorMessage, getVideoAutoplay, getVisibleSlideIdx, hasSlideOverflow, isAutoFitEnabled, isSlideHidden, ProgressBarPosition, renderTemplateError, tryConvertTemplateToHtml, Slide, SlideLayout, SlideOverflow, SlideOverflowEdges, SlideOverflowResult, SlideParser, SlidePlaceholders, SlideTheme, SlideTransition, TemplateErrorOptions, WebViewMessages } from '@demotime/common';
+import { Config, getNextSlideIdx, getPreviousSlideIdx, getProgressBarPosition, getProgressPercentage, getSlideBackgroundStyles, getSlideClassNames, getSlideHeading, getTemplateData, getTemplateErrorMessage, getVideoAutoplay, getVisibleSlideIdx, hasSlideOverflow, isAutoFitEnabled, isSlideHidden, ProgressBarPosition, renderTemplateError, tryConvertTemplateToHtml, Slide, SlideLayout, SlideOverflow, SlideOverflowEdges, SlideOverflowResult, SlideParser, SlidePlaceholders, SlideTheme, SlideTransition, TemplateErrorOptions, WebViewMessages } from '@demotime/common';
 import { Icon } from 'vscrui';
 import { useFileContents, useCursor, useScale, useMousePosition, useTheme, useClickSteps, usePresentationMode, useSlideOverflow, useReducedMotionPreference } from '../../hooks';
-import { extractFirstH1, getSlideTitle } from '../../utils';
+import { extractFirstH1, getSlideTitle, transformImageUrl } from '../../utils';
 import { AnimatedSVGSlide } from '../slides/AnimatedSVGSlide';
 import { SlideOverflowScanner } from './SlideOverflowScanner';
 import { SlideFitBadge } from './SlideFitBadge';
@@ -341,6 +341,13 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     return bgStyles;
   }, [bgStyles, layout]);
 
+  // The `background` and `class` front matter properties of the slide
+  const slideBgStyles = React.useMemo(
+    () => getSlideBackgroundStyles(crntSlide?.frontmatter, (path) => transformImageUrl(webviewUrl || "", path) || path),
+    [crntSlide?.frontmatter, webviewUrl]
+  );
+  const slideClassNames = React.useMemo(() => getSlideClassNames(crntSlide?.frontmatter), [crntSlide?.frontmatter]);
+
   // Track which slide (if any) consumed a 'next' request and is waiting to complete
   const consumedSlideIndexRef = React.useRef<number | null>(null);
 
@@ -659,8 +666,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           }}>
           <div
             ref={slideRef}
-            className={`slide__layout ${layout || "default"} ${transition || ""}`}
-            style={getBgStyles()}>
+            className={`slide__layout ${layout || "default"} ${slideClassNames} ${transition || ""}`}
+            style={getBgStyles() || slideBgStyles}>
             {
               header && (
                 <header className={`slide__header z-20`} dangerouslySetInnerHTML={{ __html: header }}></header>

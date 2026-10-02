@@ -1,6 +1,7 @@
 import yaml from 'js-yaml';
 import {
   getTemplateSyntaxError,
+  isSlideBackgroundImage,
   SLIDE_PROPERTIES,
   SlideMetadata,
   SlideParser,
@@ -469,6 +470,27 @@ const getValueProblem = async (
             range,
           }
         : undefined;
+    }
+
+    case 'string': {
+      // A `background` can be the path of an image
+      if (key !== 'background' || typeof value !== 'string') {
+        return undefined;
+      }
+
+      const path = value.trim();
+      if (!path || URL_SCHEME.test(path) || !isSlideBackgroundImage(path)) {
+        return undefined;
+      }
+
+      return (await fileExists(path, host))
+        ? undefined
+        : {
+            code: 'slide-missing-file',
+            severity: 'warning',
+            message: `The background image "${path}" doesn't exist. Paths are relative to the workspace folder.`,
+            range,
+          };
     }
 
     default:

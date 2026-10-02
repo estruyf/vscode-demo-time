@@ -10,6 +10,7 @@ export * from './sectionFormatting';
 export * from './slideFrontmatterSchema';
 export * from './slideOverflow';
 export * from './slidePlaceholders';
+export * from './slideStyling';
 export * from './slideVisibility';
 export * from './templateError';
 export * from './toBoolean';

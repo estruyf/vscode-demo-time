@@ -22,6 +22,9 @@ import {
   AUTO_FIT_ATTRIBUTE,
   getSlideAutoFitScript,
   isAutoFitEnabled,
+  getSlideBackgroundStyles,
+  getSlideClassNames,
+  toStyleAttribute,
 } from '@demotime/common';
 import { renderToString } from 'react-dom/server';
 import rehypePrettyCode from 'rehype-pretty-code';
@@ -421,7 +424,7 @@ export class ScreenshotService {
     const slideBg =
       image && layout !== SlideLayout.ImageLeft && layout !== SlideLayout.ImageRight
         ? `background-image: url(${image});`
-        : ``;
+        : toStyleAttribute(getSlideBackgroundStyles(slide.frontmatter));
 
     // Custom themes on global level
     const customThemes = [];
@@ -460,7 +463,7 @@ export class ScreenshotService {
   <div class="w-full h-full flex items-center justify-center" id="slide-1">
     <div class="slide ${slideTheme.toLowerCase()}" data-theme="${slideTheme.toLowerCase()}" data-layout="${layout.toLowerCase()}">
       <div class="slide__container">
-        <div class="slide__layout ${layout.toLowerCase()}" style="${slideBg}">
+        <div class="slide__layout ${layout.toLowerCase()} ${getSlideClassNames(slide.frontmatter)}" style="${slideBg}">
           ${headerTemplate ? `<header class="slide__header">${headerTemplate}</header>` : ''}
 
           ${

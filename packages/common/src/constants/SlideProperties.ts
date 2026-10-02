@@ -203,6 +203,21 @@ export const SLIDE_PROPERTIES: Record<string, SlideProperty> = {
     inheritance: 'firstSlide',
     docs: '/slides/layouts/image/',
   },
+  background: {
+    type: 'string',
+    description:
+      'The background of the slide: a CSS colour (`"#1e3a8a"`), a gradient (`"linear-gradient(135deg, #1e3a8a, #9333ea)"`), or the path (relative to the workspace folder) or URL of an image. Put a value with a `#` between quotes. An `image` that the layout shows as the background takes precedence.',
+    defaultDescription: 'The background of the theme',
+    inheritance: 'fallback',
+    docs: '/slides/#slide-background-and-classes',
+  },
+  class: {
+    type: 'string',
+    description:
+      'One or more CSS classes, separated by spaces, that are added to the `.slide__layout` element of the slide, so a custom theme can style it.',
+    inheritance: 'fallback',
+    docs: '/slides/#slide-background-and-classes',
+  },
   // Video layout
   video: {
     type: 'file',

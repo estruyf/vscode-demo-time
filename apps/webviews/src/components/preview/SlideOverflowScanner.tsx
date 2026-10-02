@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
   fitSlideContent,
+  getSlideClassNames,
   isAutoFitEnabled,
   Slide,
   SlideLayout,
@@ -182,7 +183,7 @@ export const SlideOverflowScanner: React.FunctionComponent<ISlideOverflowScanner
         className={`slide ${slide.frontmatter.theme || SlideTheme.default} relative w-full h-full overflow-hidden`}
       >
         <div className="slide__container absolute top-0 left-0 w-[960px] h-[540px]">
-          <div className={`slide__layout ${layout}`}>
+          <div className={`slide__layout ${layout} ${getSlideClassNames(slide.frontmatter)}`}>
             {layout === SlideLayout.ImageLeft && (
               <div className="slide__image_left w-full h-full"></div>
             )}
