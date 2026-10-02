@@ -33,6 +33,7 @@ export * from './getRandomizedTypingDelay';
 export * from './getLineAndCharacterPosition';
 export * from './getLineRange';
 export * from './getNextDemoFile';
+export * from './getNextSceneButtonText';
 export * from './getPlatform';
 export * from './getPositionAndRange';
 export * from './getPreviousDemoFile';

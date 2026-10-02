@@ -8,6 +8,7 @@ export interface IDemoTimeSettings {
   presentationViewToggles: string[];
   showClock: boolean;
   timer: number | null;
+  nextSceneButtonText: string;
   highlightBorderColor: string;
   highlightBackground: string;
   highlightBlur: number;

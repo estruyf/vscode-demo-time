@@ -2,7 +2,11 @@
 
 ## [2.4.0] - 2026-xx-xx
 
+<<<<<<< HEAD
 - [#400](https://github.com/estruyf/vscode-demo-time/issues/400): Added the `waitTimeout` property to the `executeTerminalCommand` move, to wait longer than 5 seconds for a long-running command, like a build or a test run, to finish before the next move runs. Thanks to [@88871](https://github.com/88871).
+=======
+- [#380](https://github.com/estruyf/vscode-demo-time/issues/380): Added the `demoTime.nextSceneButtonText` setting to show a fixed text, like `Next`, on the next scene button in the status bar instead of the title of the next scene, so the button no longer changes width with every scene
+>>>>>>> origin/dev
 - [#418](https://github.com/estruyf/vscode-demo-time/issues/418): Added the `Demo Time: Export play as video` command, which runs the play unattended in a separate VS Code window, records it, and writes an MP4 to `.demo/exports` in 16:9, 1:1 or 9:16, with an optional GIF, SRT captions from the scene titles or notes, chapters, and title and end cards made from the first and last slide
 - [#418](https://github.com/estruyf/vscode-demo-time/issues/418): Added the `@demotime/video` CLI (`npx @demotime/video export`) to export a play as a video from a terminal or in CI, without opening VS Code
 - [#418](https://github.com/estruyf/vscode-demo-time/issues/418): Added the `Demo Time: Run play unattended for recording` and `Demo Time: Stop unattended run` commands to play the whole play or an act on its own in the current window, for recording with your own tool
