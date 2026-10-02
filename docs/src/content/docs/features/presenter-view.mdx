@@ -19,7 +19,7 @@ Follow these steps to use the presenter view:
 
 <Image class="mx-auto" src={presenterViewImage} alt="Presenter view" />
 
-The advantage of using the presenter view is that you can see the [notes](/features/using-notes/) and the next steps while presenting.
+The advantage of using the presenter view is that you can see the [notes](/features/using-notes/) and the next steps while presenting. When the current slide has [its own notes](/features/using-notes/#notes-in-your-slides), the presenter view shows them and updates them on every slide change. Otherwise, it shows the notes file of the scene.
 
 ## Next slide preview
 
@@ -34,6 +34,8 @@ To use the next slide preview feature, you need to enable the Demo Time API by s
 ### How it works
 
 - When you navigate through your slides, the presenter view automatically updates to show a preview of the next slide.
+- In presentation mode, the preview skips [hidden slides](/slides/#hiding-slides).
+- The card title shows the first `#` heading of the next slide. When the slide has none, it uses the first heading of any level, the `title` front matter property, or "Slide n".
 - The preview appears above the presenter notes in the right column of the presenter view.
 - You can collapse or expand the preview by clicking the chevron icon next to the "Next Slide" header.
 - The preview is hidden automatically when the next action is running another demo (e.g., using the `runDemoById` action).

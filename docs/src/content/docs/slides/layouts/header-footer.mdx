@@ -1,7 +1,7 @@
 ---
 title: Header and Footer Support
-lastmod: 2025-10-01T11:30:21.355Z
-description: Learn how to add and customize headers and footers in your slides.
+lastmod: 2026-10-01T12:00:00.000Z
+description: Learn how to add headers, footers and a progress bar to your slides, and which placeholders you can use in them.
 ---
 
 import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
@@ -48,24 +48,6 @@ description: "A slide demonstrating header and footer variables."
 ---
 ```
 
-### Slide number placeholders
-
-Demo Time provides two Handlebars placeholders you can use in header and footer templates to show the current slide number and the total number of slides in the grouped presentation:
-
-- `{{crntSlideIdx}}` — the current slide index (1-based) within the grouped slides.
-- `{{totalSlides}}` — the total number of slides in the current group.
-
-These placeholders work in both global templates (set via `demoTime.slideHeaderTemplate` / `demoTime.slideFooterTemplate`) and slide-level `header`/`footer` front matter. They reflect numbering after slides are grouped, so counts are across the entire group rather than just the current file.
-
-Example `footer.html` using the placeholders:
-
-```html title="footer.html"
-<footer class="slide-footer">
-  <span>Slide {{crntSlideIdx}} of {{totalSlides}}</span>
-  <span class="muted"> | {{date}}</span>
-</footer>
-```
-
 <Aside type="tip">
 You can control the styles of the header and footer using the `.slide__header` and `.slide__footer` classes in your slide's `<style>` block or in a global CSS file.
 </Aside>
@@ -82,6 +64,61 @@ footer: "<span>Created by {{name}}</span>"
 ---
 ```
 
+## Placeholders
+
+Next to the front matter properties of the slide, Demo Time provides these placeholders for header and footer templates. They work in the global templates (`demoTime.slideHeaderTemplate` / `demoTime.slideFooterTemplate`) and in the slide-level `header`/`footer` front matter, in the slide preview, the [PDF export](/slides/export/) and the next-slide preview of the presenter view.
+
+| Placeholder | Value |
+| --- | --- |
+| `{{crntSlideIdx}}` | The number of the current slide (1-based), counted over the slides of all acts. |
+| `{{totalSlides}}` | The total number of slides of all acts. |
+| `{{slideTitle}}` | The first H1 of the slide, or else its first heading of any level, without markdown formatting. |
+| `{{sceneTitle}}` | The title of the scene that opens the slide. |
+| `{{actTitle}}` | The title of the act that opens the slide. |
+| `{{presentationTitle}}` | The `demoTime.presentationTitle` setting, or the name of the workspace folder when the setting is empty. |
+| `{{date}}` | The `date` front matter property of the slide, or today's date in the long date format of your language, like `October 1, 2026`. |
+| `{{date "d MMM yyyy"}}` | The `date` front matter property, or today's date when there isn't one, in the format you pass. |
+
+`{{crntSlideIdx}}` and `{{totalSlides}}` follow the order of the act files and their scenes, so the numbers continue over all slide files. [Hidden slides](/slides/#hiding-slides) (`hide: true`) are not counted. On a hidden slide itself, `{{crntSlideIdx}}` is empty, so you can use `{{#if crntSlideIdx}}` to leave out the slide number there.
+
+When more scenes open the same slide file, `{{sceneTitle}}` and `{{actTitle}}` use the scene you are running, or else the first scene that opens the file. A slide that no scene opens has no slide number, scene or act title.
+
+A front matter property with the same name as `slideTitle`, `sceneTitle`, `actTitle` or `presentationTitle` takes precedence, so you can set a shorter title for a slide:
+
+```md
+---
+slideTitle: Setup
+---
+
+# Setting up the project and installing the dependencies
+```
+
+Example `footer.html` using the placeholders:
+
+```html title="footer.html"
+<footer class="slide-footer">
+  <span>{{presentationTitle}} · {{actTitle}}</span>
+  <span>{{#if crntSlideIdx}}{{crntSlideIdx}} / {{totalSlides}}{{/if}}</span>
+</footer>
+```
+
+### Date formats
+
+The `date` placeholder takes an optional format with these tokens. Month and day names use the language of VS Code, or of your system in the PDF export.
+
+| Token | Example | Token | Example |
+| --- | --- | --- | --- |
+| `yyyy` | `2026` | `yy` | `26` |
+| `MMMM` | `October` | `MMM` | `Oct` |
+| `MM` | `10` | `M` | `10` |
+| `dd` | `01` | `d` | `1` |
+| `EEEE` | `Thursday` | `EEE` | `Thu` |
+| `HH` / `H` | `14` | `hh` / `h` | `02` / `2` |
+| `mm` / `m` | `05` / `5` | `ss` / `s` | `09` / `9` |
+| `a` | `PM` | `'text'` | `text` |
+
+Put text in single quotes to keep it as is, for example `{{date "'Week of' d MMM"}}`. Without a format, `{{date}}` shows the `date` front matter property as you wrote it.
+
 ## Changing header and footer styles
 
 If you want to customize the styles of the header and footer, you can add a `<style>` block in your Markdown file or use a global CSS file by defining it in the `demoTime.customTheme` setting. For example:
@@ -95,3 +132,50 @@ If you want to customize the styles of the header and footer, you can add a `<st
   }
 </style>
 ```
+
+## Progress bar
+
+Demo Time can show a thin progress bar on your slides, based on `{{crntSlideIdx}}` and `{{totalSlides}}`. Turn it on for all slides with the `demoTime.slideProgressBar` setting:
+
+```json title=".vscode/settings.json"
+{
+  "demoTime.slideProgressBar": "bottom"
+}
+```
+
+The setting accepts `none` (default), `top` or `bottom`. Use the `progress` front matter property to change it for a slide:
+
+- `progress: false` hides the progress bar on the slide, for example on the title slide.
+- `progress: true` shows the progress bar, at the position of the setting, or at the bottom when the setting is `none`.
+- `progress: top` or `progress: bottom` shows the progress bar at that position.
+
+```md title="Hide the progress bar on the title slide"
+---
+layout: intro
+progress: false
+---
+
+# Demo Time
+```
+
+When you set `progress` in the [document front matter](/slides/#front-matter-for-all-slides), every slide in the file inherits it. Hidden slides and slides that no scene opens don't show the progress bar, as they have no slide number.
+
+### Styling the progress bar
+
+Each [theme](/slides/themes/) sets the colors and height of the progress bar with CSS variables. Override them in your [custom theme](/slides/themes/custom/):
+
+```css title=".demo/slides/theme.css"
+.slide {
+  --demotime-progress-color: #ffd43b;
+  --demotime-progress-background: rgba(255, 255, 255, 0.1);
+  --demotime-progress-height: 6px;
+}
+```
+
+| Variable | Description |
+| --- | --- |
+| `--demotime-progress-color` | Color of the bar. Can also be a gradient. |
+| `--demotime-progress-background` | Color of the track behind the bar. |
+| `--demotime-progress-height` | Height of the bar. |
+
+The progress bar uses the `.slide__progress` class, with `.slide__progress--top` or `.slide__progress--bottom` for its position, and `.slide__progress__bar` for the bar.

@@ -6,4 +6,5 @@ export interface InternalSlide {
   docFrontMatter: SlideMetadata;
   frontmatter: SlideMetadata;
   index: number;
+  notes?: string;
 }

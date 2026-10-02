@@ -96,6 +96,21 @@ export const getActionOptions = (): QuickPickItem[] => {
     description: 'Preview an image',
   } as QuickPickItem);
 
+  actions.push({
+    label: Action.ShowQR,
+    description: 'Show a QR code preview',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.HideQR,
+    description: 'Hide the QR code preview',
+  } as QuickPickItem);
+
+  actions.push({
+    label: Action.ClosePreview,
+    description: 'Close the preview window',
+  } as QuickPickItem);
+
   /**
    * Text/Code actions
    */

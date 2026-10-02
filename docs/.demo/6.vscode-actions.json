@@ -57,13 +57,13 @@
           }
         },
         {
-            "action": "create",
-            "path": "temp/output.log",
-            "content": "{STATE_message}"
+          "action": "create",
+          "path": "temp/output.log",
+          "content": "{STATE_message}"
         },
         {
-            "action": "open",
-            "path": "temp/output.log"
+          "action": "open",
+          "path": "temp/output.log"
         }
       ]
     },
@@ -87,6 +87,30 @@
           "openInVSCode": true
         }
       ]
+    },
+    {
+      "title": "Open file in browser",
+      "description": "",
+      "steps": [
+        {
+          "action": "openWebsite",
+          "openInVSCode": true,
+          "url": ".demo/sample.html"
+        }
+      ],
+      "id": "demo-mp9q06bd-n15l"
+    },
+    {
+      "title": "Open file in browser with variable",
+      "description": "",
+      "steps": [
+        {
+          "action": "openWebsite",
+          "openInVSCode": true,
+          "url": "file://{DT_WORKSPACE_PATH}/.demo/sample.html"
+        }
+      ],
+      "id": "demo-mp9q10ow-0u8e"
     }
   ]
 }

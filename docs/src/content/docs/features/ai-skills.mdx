@@ -1,0 +1,98 @@
+---
+title: AI skills
+description: Let GitHub Copilot, Claude Code and other AI assistants plan your talk, create slides and slide themes, and script your demos with the Demo Time AI skills.
+lastmod: 2026-10-02T00:00:00.000Z
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Demo Time ships [Agent Skills](https://code.visualstudio.com/docs/agent-customization/agent-skills) that teach AI assistants how Demo Time works:
+the act file format, the moves, the slide layouts and the themes. Instead of guessing, the assistant
+reads the Demo Time reference that comes with the skill, and writes files that load and run.
+
+The skills work with GitHub Copilot in VS Code, the Copilot CLI, Claude Code, and other assistants
+that support the `SKILL.md` format.
+
+## The skills
+
+| Skill                  | Ask for                       | What it does                                                                                                                                                                                                                                                                                               |
+| ---------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `demotime-talk-plan`   | "Help me plan a talk about X" | Interviews you when information is missing (audience, length, key messages, which parts need a live demo) and writes a talk plan in `.demo/talk-plan.md`.                                                                                                                                                  |
+| `demotime-slides`      | "Create slides about X"       | Creates markdown slides in `.demo/slides/` from the talk plan or your material, picks the layout that fits each slide, adds speaker notes, and adds the `openSlide` scenes to your act.                                                                                                                    |
+| `demotime-slide-theme` | "Create a slide theme"        | Creates a [custom theme](/slides/themes/custom/) from brand colours, a logo, a website or a mood, plus header, footer or [custom layouts](/slides/layouts/custom/) when needed, and a preview deck with every layout. The CSS opens in the [Theme Builder](/slides/themes/theme-builder/) for fine-tuning. |
+| `demotime-code-demo`   | "Create a demo for this code" | Scripts a live coding demo as scenes and moves: a reset-able starting state, typing or patching the code, and highlights on what you explain. It uses placeholders instead of line numbers and validates the act against the [JSON schema](/references/json-schema/).                                      |
+
+The skills build on each other: the talk plan feeds the slides and the demos. When you ask for slides
+without any material, the slides skill starts with the talk plan.
+
+<Aside type="tip">
+  The slide theme and code demo skills come with a small Node.js script (Node.js 18 or later): one
+  generates the theme CSS with the Theme Builder's generator, the other validates your acts. Without
+  Node.js, the assistant writes the CSS or checks the act by hand.
+</Aside>
+
+## GitHub Copilot in VS Code
+
+The skills are part of the extension. When Demo Time is installed, Copilot in VS Code loads them
+without any setup. Ask for what you need in the chat, or type `/` and pick one of the `demotime-`
+skills.
+
+<Aside>
+  Agent skills need VS Code 1.109 or later. In older versions, use the [install
+  command](#install-or-update-the-skills) to add the skills to your project.
+</Aside>
+
+## Install or update the skills
+
+For assistants that don't load the skills from the extension, like Claude Code or the Copilot CLI in
+your terminal, run the **Demo Time: Install or update AI skills** command. You can also find it in
+the `...` menu of the **Demo Time** view.
+
+1. Select the assistants: **GitHub Copilot**, **Claude Code** or **Other agents**.
+2. Select where to install the skills:
+   - **Project**: in the workspace, so you can share them with your team through source control.
+   - **User**: in your home folder, for all your projects.
+
+| Assistant      | Project           | User                 |
+| -------------- | ----------------- | -------------------- |
+| GitHub Copilot | `.github/skills/` | `~/.copilot/skills/` |
+| Claude Code    | `.claude/skills/` | `~/.claude/skills/`  |
+| Other agents   | `.agents/skills/` | `~/.agents/skills/`  |
+
+The command only replaces the `demotime-*` skill folders, so your own skills stay untouched. It
+writes a `.demotime-skill.json` file with the extension version in every skill folder. After an
+update of Demo Time, the extension finds skills from an older version and offers to update them.
+
+<Aside type="caution">
+  Copilot in VS Code also reads `.github/skills/`, `.claude/skills/` and `.agents/skills/`. When you
+  install the skills in your project, Copilot sees them next to the skills of the extension.
+</Aside>
+
+## Claude Code plugin
+
+The Demo Time repository is also a Claude Code plugin marketplace, named `demotime`. Add it and
+install the `presentation-skills` plugin:
+
+```sh
+/plugin marketplace add estruyf/vscode-demo-time
+/plugin install presentation-skills@demotime
+```
+
+The plugin is the `demotime-skills.zip` file of the
+[latest release](https://github.com/estruyf/vscode-demo-time/releases/latest), so it has the same
+version as the extension. Claude Code prefixes plugin skills with the plugin name, for example
+`/presentation-skills:demotime-slides`. Run `/plugin marketplace update demotime` to get the latest
+version.
+
+## Other assistants
+
+Download `demotime-skills.zip` from the
+[latest release](https://github.com/estruyf/vscode-demo-time/releases/latest) and copy the
+`demotime-*` folders from its `skills` folder into the skills folder of your assistant. Every skill
+folder has its own references and scripts, so copy the whole folder.
+
+## How the skills stay up to date
+
+The reference files of the skills (`references/` in every skill folder) are generated from this
+documentation, the act file JSON schema and the [slide front matter JSON schema](/references/json-schema/#slide-front-matter-schema) for every release, so the skills know the moves, layouts
+and themes of the version you use.

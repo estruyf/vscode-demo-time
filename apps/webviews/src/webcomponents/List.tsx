@@ -1,52 +1,40 @@
-import { messageHandler } from '@estruyf/vscode/dist/client/webview';
 import * as React from 'react';
 import { createRoot, Root } from 'react-dom/client';
-import { transformMarkdown, WebViewMessages } from '@demotime/common';
+import { transformMarkdown } from '@demotime/common';
 import { renderToString } from 'react-dom/server';
+import { isStaticElement, registerClickSteps } from './clickSteps';
 
 export interface IProgressiveListProps {
   totalItems: number;
+  /**
+   * The click on which the first item appears.
+   */
+  startClick?: number;
+  /**
+   * Shows all items without adding click steps, like in the slide thumbnails
+   */
+  isStatic?: boolean;
   children: React.ReactNode;
 }
 
 export const ProgressiveList: React.FunctionComponent<IProgressiveListProps> = ({
   totalItems,
+  startClick = 1,
+  isStatic = false,
   children,
 }) => {
-  const [visibleCount, setVisibleCount] = React.useState<number>(0);
+  const [step, setStep] = React.useState<number>(isStatic ? Infinity : 0);
+  const firstClick = startClick > 0 ? startClick : 1;
 
-  const handleEvent = React.useCallback((event: KeyboardEvent | MouseEvent) => {
-    const isKeyPress = event instanceof KeyboardEvent && event.key === 'ArrowRight';
-    const isClick = event instanceof MouseEvent;
-
-    if (isKeyPress || isClick) {
-      setVisibleCount((prevCount) => {
-        const newCount = Math.min(prevCount + 1, totalItems);
-
-        if (newCount >= totalItems) {
-          window.removeEventListener('keydown', handleEvent);
-          window.removeEventListener('click', handleEvent);
-          messageHandler.send(WebViewMessages.toVscode.setHasClickListener, { listening: false });
-        } else {
-          messageHandler.send(WebViewMessages.toVscode.setHasClickListener, { listening: true });
-        }
-
-        return newCount;
-      });
+  React.useLayoutEffect(() => {
+    if (totalItems <= 0 || isStatic) {
+      return;
     }
-  }, [totalItems]);
 
-  React.useEffect(() => {
-    messageHandler.send(WebViewMessages.toVscode.setHasClickListener, { listening: true });
-    window.addEventListener('keydown', handleEvent);
-    window.addEventListener('click', handleEvent);
+    return registerClickSteps(firstClick + totalItems - 1, setStep);
+  }, [firstClick, totalItems, isStatic]);
 
-    return () => {
-      messageHandler.send(WebViewMessages.toVscode.setHasClickListener, { listening: false });
-      window.removeEventListener('keydown', handleEvent);
-      window.removeEventListener('click', handleEvent);
-    };
-  }, [handleEvent]);
+  const visibleCount = Math.min(Math.max(step - firstClick + 1, 0), totalItems);
 
   // Show only the visible items
   const visibleChildren = React.Children.toArray(children).slice(0, visibleCount);
@@ -154,8 +142,14 @@ class ListWebComponent extends HTMLElement {
         )
       );
 
+      const clicks = parseInt(this.getAttribute('clicks') || '', 10);
+
       this.rootElm.render(
-        <ProgressiveList totalItems={totalItems}>
+        <ProgressiveList
+          totalItems={totalItems}
+          startClick={isNaN(clicks) ? undefined : clicks}
+          isStatic={isStaticElement(this)}
+        >
           {reactChildren}
         </ProgressiveList>
       );
@@ -163,7 +157,6 @@ class ListWebComponent extends HTMLElement {
   }
 
   disconnectedCallback() {
-    messageHandler.send(WebViewMessages.toVscode.setHasClickListener, { listening: false });
     if (this.rootElm) {
       this.rootElm.unmount();
     }

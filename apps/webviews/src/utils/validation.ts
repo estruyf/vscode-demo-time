@@ -45,6 +45,17 @@ export const validateDemo = (demo: Demo, demoIndex?: number): ValidationResult =
     });
   }
 
+  if (
+    typeof demo.autoAdvanceAfter !== 'undefined' &&
+    (typeof demo.autoAdvanceAfter !== 'number' || demo.autoAdvanceAfter <= 0)
+  ) {
+    errors.push({
+      field: 'autoAdvanceAfter',
+      message: 'Auto advance must be a positive number',
+      demoIndex,
+    });
+  }
+
   // Validate steps
   demo.steps.forEach((step, stepIndex) => {
     const stepErrors = validateStep(step, demoIndex, stepIndex);
@@ -106,6 +117,19 @@ export const validateStep = (
       });
     }
   });
+
+  // Typing speed randomness is a percentage (0-100) and shared across typing actions
+  if (
+    typeof step.insertTypingSpeedRandomness !== 'undefined' &&
+    (step.insertTypingSpeedRandomness < 0 || step.insertTypingSpeedRandomness > 100)
+  ) {
+    errors.push({
+      field: 'insertTypingSpeedRandomness',
+      message: 'Insert typing speed randomness must be a percentage between 0 and 100',
+      demoIndex,
+      stepIndex,
+    });
+  }
 
   // Custom validation rules for specific actions
   switch (step.action) {
@@ -320,6 +344,10 @@ const getFieldLabel = (field: string): string => {
     id: 'ID',
     args: 'Arguments',
     dest: 'Destination',
+    topText: 'Top text',
+    logo: 'Logo',
+    title: 'Title',
+    description: 'Description',
   };
 
   return labelMap[field] || field.charAt(0).toUpperCase() + field.slice(1);

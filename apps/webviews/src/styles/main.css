@@ -1,5 +1,9 @@
 @import 'tailwindcss';
 
+/* The theme builder (rendered in the theme-builder webview) lives in its own
+   workspace package, so its sources must be scanned explicitly for utilities. */
+@source '../../../theme-builder/src';
+
 @custom-variant dark (&:where(.vscode-dark, .vscode-dark *, .vscode-high-contrast, .vscode-high-contrast *));
 
 @theme {

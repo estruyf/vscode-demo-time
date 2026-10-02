@@ -221,7 +221,15 @@ export const useApi = () => {
   }, [connectionStatus, bringToFront]);
 
   const clearNotes = useCallback(() => {
+    // Ignore the response of a notes request that is still running
+    latestRequestIdRef.current++;
     setNotes(null);
+  }, []);
+
+  const showNotes = useCallback((notesContent: string) => {
+    // Ignore the response of a notes request that is still running
+    latestRequestIdRef.current++;
+    setNotes(notesContent);
   }, []);
 
   // Auto-connect on mount if URL is stored
@@ -259,6 +267,7 @@ export const useApi = () => {
     refreshData,
     fetchNotes,
     clearNotes,
+    showNotes,
     fetchScreenshot,
     zoomIn,
     zoomOut,

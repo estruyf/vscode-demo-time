@@ -1,15 +1,32 @@
-import { Uri, window, commands } from 'vscode';
+import { Uri, window, commands, workspace } from 'vscode';
 import { Extension } from '../services/Extension';
 import { ContextKeys } from '../constants';
 import {
   getAbsolutePath,
   getTheme,
   getWebviewWorkspaceUrl,
+  parseWinPath,
   setContext,
   togglePresentationView,
 } from '../utils';
-import { AnalyticsService, DemoRunner, DemoStatusBar, Slides } from '../services';
-import { COMMAND, WebViewMessages, Config, Action } from '@demotime/common';
+import {
+  AnalyticsService,
+  DemoRunner,
+  DemoStatusBar,
+  NotesService,
+  SlideOverflowService,
+  SlidePreviewSync,
+  Slides,
+} from '../services';
+import {
+  COMMAND,
+  WebViewMessages,
+  Config,
+  Action,
+  SlideNotes,
+  getReducedMotionPreference,
+  ReducedMotionPreference,
+} from '@demotime/common';
 import { BaseWebview } from '../webview/BaseWebviewPanel';
 import { WebviewType } from '../models';
 import { PresenterView } from '../presenterView/PresenterView';
@@ -18,6 +35,7 @@ export class Preview extends BaseWebview {
   public static id: WebviewType = 'preview';
 
   private static hasClickListener = false;
+  private static hasPreviousClickStep = false;
   private static hasPreviousSlide = false;
   private static hasNextSlide = false;
   private static nextSlideTitle: string | undefined = undefined;
@@ -34,6 +52,30 @@ export class Preview extends BaseWebview {
     subscriptions.push(
       commands.registerCommand(COMMAND.closePresentationView, () => togglePresentationView(false)),
     );
+    subscriptions.push(
+      workspace.onDidChangeConfiguration((e) => {
+        if (
+          Preview.isOpen &&
+          (e.affectsConfiguration(`${Config.root}.${Config.slides.reducedMotion}`) ||
+            e.affectsConfiguration('workbench.reduceMotion'))
+        ) {
+          Preview.postMessage(
+            WebViewMessages.toWebview.preview.updateReducedMotion,
+            Preview.getReducedMotion(),
+          );
+        }
+      }),
+    );
+  }
+
+  /**
+   * The reduced motion preference of the slides, from the Demo Time and VS Code settings.
+   */
+  public static getReducedMotion(): ReducedMotionPreference {
+    return getReducedMotionPreference(
+      Extension.getInstance().getSetting<string>(Config.slides.reducedMotion),
+      workspace.getConfiguration('workbench').get<string>('reduceMotion'),
+    );
   }
 
   public static getCurrentSlideIndex(): number {
@@ -48,12 +90,59 @@ export class Preview extends BaseWebview {
     Preview.currentSlideIndex = Math.max(index, -1);
   }
 
+  public static updateAutoProceedState(payload: { managedByExtension: boolean }): void {
+    if (!Preview.isOpen) {
+      return;
+    }
+
+    Preview.postMessage(WebViewMessages.toWebview.updateAutoProceedState, payload);
+  }
+
+  public static isCurrentFile(fileUri: string): boolean {
+    if (!Preview.crntFile) {
+      return false;
+    }
+    return Preview.crntFile === fileUri;
+  }
+
+  /**
+   * Checks if the preview shows the given file. The preview path can be relative to the workspace,
+   * with or without a leading `/` or `./`.
+   */
+  public static isShowingFile(fileUri: Uri): boolean {
+    if (!Preview.crntFile || Preview.crntFile.startsWith('http')) {
+      return false;
+    }
+    return getAbsolutePath(parseWinPath(Preview.crntFile)).fsPath === fileUri.fsPath;
+  }
+
+  /**
+   * Shows another slide of the current file, without loading the file again.
+   * @param slideIndex The 0-based slide index
+   */
+  public static goToSlide(slideIndex: number) {
+    if (!Preview.isOpen) {
+      return;
+    }
+
+    Preview.currentSlideIndex = slideIndex;
+    Preview.postMessage(WebViewMessages.toWebview.preview.goToSlide, slideIndex);
+  }
+
   public static isListening(): boolean {
     if (!Preview.isOpen) {
       return false;
     }
 
     return Preview.hasClickListener;
+  }
+
+  public static checkIfHasPreviousClickStep(): boolean {
+    if (!Preview.isOpen) {
+      return false;
+    }
+
+    return Preview.hasPreviousClickStep;
   }
 
   public static checkIfHasNextSlide(): boolean {
@@ -108,6 +197,41 @@ export class Preview extends BaseWebview {
     }
   }
 
+  public static async showQr({
+    url,
+    topText,
+    title,
+    description,
+    logo,
+    qrLayout,
+  }: {
+    url: string;
+    topText?: string;
+    title?: string;
+    description?: string;
+    logo?: string;
+    qrLayout?: 'default' | 'reversed' | 'minimal' | 'stacked' | 'text-left' | 'text-right';
+  }) {
+    // Ensure the preview is open (without showing a specific file)
+    if (!Preview.isOpen) {
+      const separator = url.includes('?') ? '&' : '?';
+      await Preview.show(
+        `${url}${separator}qrTopText=${encodeURIComponent(topText || '')}&qrTitle=${encodeURIComponent(title || '')}&qrDescription=${encodeURIComponent(description || '')}&qrLogo=${encodeURIComponent(logo || '')}&qrLayout=${encodeURIComponent(qrLayout || 'default')}`,
+      );
+    } else {
+      Preview.postMessage(WebViewMessages.toWebview.showQR, {
+        url: url,
+        topText: topText,
+        title: title,
+        description: description,
+        logo: logo,
+        qrLayout: qrLayout,
+      });
+      Preview.reveal();
+    }
+    return;
+  }
+
   public static triggerUpdate(fileUri?: Uri | string, slide?: number, reset: boolean = false) {
     if (!fileUri || !Preview.webview?.webview) {
       return;
@@ -132,8 +256,10 @@ export class Preview extends BaseWebview {
   protected static onDispose(): void {
     Preview.isDisposed = true;
     Preview.hasClickListener = false;
+    Preview.hasPreviousClickStep = false;
     Preview.hasPreviousSlide = false;
     Preview.hasNextSlide = false;
+    Preview.updateSlideNotes(undefined);
   }
 
   protected static async messageListener(message: any) {
@@ -148,18 +274,19 @@ export class Preview extends BaseWebview {
     if (command === WebViewMessages.toVscode.getSetting && requestId) {
       const setting = Extension.getInstance().getSetting(payload);
       Preview.postRequestMessage(command, requestId, setting);
-    } else if (command === WebViewMessages.toVscode.preview.getTotalSlides && requestId) {
-      const totalSlides = await Slides.getTotalSlides();
-      Preview.postRequestMessage(command, requestId, totalSlides);
     } else if (
-      command === WebViewMessages.toVscode.preview.getGlobalSlideIndex &&
+      command === WebViewMessages.toVscode.preview.getSlidePlaceholders &&
       requestId &&
       payload
     ) {
       // payload: { filePath, localSlideIdx }
       const { filePath, localSlideIdx } = payload;
-      const globalIdx = await Slides.getGlobalSlideIndex(filePath, localSlideIdx);
-      Preview.postRequestMessage(command, requestId, globalIdx);
+      const placeholders = await Slides.getSlidePlaceholders(
+        filePath,
+        localSlideIdx,
+        DemoRunner.currentDemo,
+      );
+      Preview.postRequestMessage(command, requestId, placeholders);
     } else if (command === WebViewMessages.toVscode.preview.getSlide && requestId) {
       const currentFile = Preview.crntFile;
       const path =
@@ -198,16 +325,20 @@ export class Preview extends BaseWebview {
         requestId,
         previousEnabled,
       );
+    } else if (command === WebViewMessages.toVscode.preview.getReducedMotion && requestId) {
+      Preview.postRequestMessage(command, requestId, Preview.getReducedMotion());
     } else if (command === WebViewMessages.toVscode.getPresentationStarted) {
       const isPresentationMode = DemoRunner.getIsPresentationMode();
       Preview.postRequestMessage(command, requestId, isPresentationMode);
     } else if (command === WebViewMessages.toVscode.setHasClickListener) {
-      Preview.hasClickListener = payload.listening ?? false;
+      Preview.hasClickListener = payload?.listening ?? false;
+      Preview.hasPreviousClickStep = payload?.hasPrevious ?? false;
+      Preview.updateHasPreviousContext();
     } else if (command === WebViewMessages.toVscode.hasNextSlide) {
       Preview.hasNextSlide = payload;
     } else if (command === WebViewMessages.toVscode.hasPreviousSlide) {
       Preview.hasPreviousSlide = payload;
-      setContext(ContextKeys.hasPreviousSlide, payload);
+      Preview.updateHasPreviousContext();
     } else if (command === WebViewMessages.toVscode.nextSlideTitle) {
       Preview.nextSlideTitle = payload;
       Preview.sendSlideData(payload);
@@ -216,8 +347,28 @@ export class Preview extends BaseWebview {
       await window.showTextDocument(fileUri, { preview: false });
     } else if (command === WebViewMessages.toVscode.updateSlideIndex) {
       Preview.currentSlideIndex = payload;
+      await DemoRunner.onSlideIndexUpdated(payload);
     } else if (command === WebViewMessages.toVscode.slideReady) {
-      Preview.reveal();
+      Preview.reveal(true);
+    } else if (command === WebViewMessages.toVscode.preview.setSlideHidden && payload?.path) {
+      await Slides.setSlideHidden(payload.path, payload.slideIndex, !!payload.hidden);
+    } else if (command === WebViewMessages.toVscode.preview.setSlideNotes && payload?.path) {
+      await Slides.setSlideNotes(payload.path, payload.slideIndex, payload.notes || '');
+    } else if (command === WebViewMessages.toVscode.preview.revealSource && payload?.path) {
+      await SlidePreviewSync.revealSource(payload.path, payload.slideIndex ?? 0);
+    } else if (command === WebViewMessages.toVscode.preview.slideOverflow && payload?.path) {
+      await SlideOverflowService.update(
+        payload.path,
+        Array.isArray(payload.overflows) ? payload.overflows : [],
+      );
+    } else if (command === WebViewMessages.toVscode.preview.updateSlideNotes) {
+      Preview.updateSlideNotes(payload);
+    } else if (command === WebViewMessages.toVscode.preview.runById) {
+      // Only runs scenes by id (dt-action), so slides can't execute arbitrary commands
+      const id = typeof payload === 'string' ? payload.trim() : '';
+      if (id) {
+        await commands.executeCommand(COMMAND.runById, id);
+      }
     } else if (command === WebViewMessages.toVscode.preview.recordOpenSlide) {
       // Record slide change in analytics if recording
       if (
@@ -229,6 +380,27 @@ export class Preview extends BaseWebview {
         AnalyticsService.recordSlideOpen(payload.filePath, payload.slideIndex, payload.slideTitle);
       }
     }
+  }
+
+  /**
+   * The previous keybinding also needs to work when the slide has a click step to go back to.
+   */
+  private static updateHasPreviousContext() {
+    setContext(
+      ContextKeys.hasPreviousSlide,
+      Preview.hasPreviousSlide || Preview.hasPreviousClickStep,
+    );
+  }
+
+  /**
+   * Stores the notes of the current slide, and shows them in the presenter view.
+   */
+  private static updateSlideNotes(slideNotes: SlideNotes | undefined) {
+    NotesService.setSlideNotes(slideNotes);
+    PresenterView.postMessage(
+      WebViewMessages.toWebview.presenter.slideNotes,
+      NotesService.getSlideNotes(),
+    );
   }
 
   private static async sendSlideData(nextSlideTitle?: string) {

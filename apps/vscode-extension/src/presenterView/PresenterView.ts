@@ -6,7 +6,7 @@ import { DemoFileProvider } from '../services/DemoFileProvider';
 import { DemoRunner } from '../services/DemoRunner';
 import { DemoStatusBar } from '../services/DemoStatusBar';
 import { NotesService } from '../services/NotesService';
-import { getFileUri, isPathInWorkspace, openFile, readFile } from '../utils';
+import { getFileUri, isPathInWorkspace, openFile } from '../utils';
 import { COMMAND, Config, WebViewMessages } from '@demotime/common';
 import { BaseWebview } from '../webview/BaseWebviewPanel';
 
@@ -82,27 +82,10 @@ export class PresenterView extends BaseWebview {
       }
     } else if (command === WebViewMessages.toVscode.getNotes && payload) {
       const { path } = payload;
-      if (path) {
-        const workspaceFolder = Extension.getInstance().workspaceFolder;
-        const version = await DemoRunner.getCurrentVersion();
-        const notesPath = getFileUri(path, workspaceFolder, version);
-
-        if (notesPath) {
-          // Verify the resolved path is contained within the workspace
-          // This prevents path-traversal attacks by checking the resolved path
-          // doesn't escape the workspace directory
-          if (!isPathInWorkspace(notesPath, workspaceFolder)) {
-            PresenterView.postRequestMessage(command, requestId, undefined);
-            return;
-          }
-
-          // Path has been validated - safe to read
-          const notes = await readFile(notesPath);
-          PresenterView.postRequestMessage(command, requestId, notes);
-          return;
-        }
-      }
-      PresenterView.postRequestMessage(command, requestId, undefined);
+      const notes = path ? await NotesService.readNotes(path) : undefined;
+      PresenterView.postRequestMessage(command, requestId, notes);
+    } else if (command === WebViewMessages.toVscode.presenter.getSlideNotes) {
+      PresenterView.postRequestMessage(command, requestId, NotesService.getSlideNotes());
     } else if (command === WebViewMessages.toVscode.openFile && payload) {
       const workspaceFolder = Extension.getInstance().workspaceFolder;
       const version = await DemoRunner.getCurrentVersion();

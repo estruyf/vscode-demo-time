@@ -1,19 +1,29 @@
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import * as React from 'react';
-import { COMMAND, SlideMetadata } from '@demotime/common';
+import { COMMAND, isSlideHidden, Slide, SlideMetadata } from '@demotime/common';
 import { SlideControl } from './SlideControl';
 import { WhiteboardIcon } from './WhiteboardIcon';
-import { Icon } from 'vscrui';
 import { ProjectorIcon } from './ProjectorIcon';
 import { EventData } from '@estruyf/vscode';
 import { WebViewMessages } from '@demotime/common';
+import { SlideNavigator, SlideOption } from './SlideNavigator';
+import { SlideControlsMenu, ISlideMenuGroup, ISlideMenuItem } from './SlideControlsMenu';
+import { SlideNotesEditor } from './SlideNotesEditor';
+import { cn } from '../../utils/cn';
 
 export interface ISlideControlsProps {
   show: boolean;
   path?: string;
   slides: number;
   currentSlide?: number;
+  slideOptions?: SlideOption[];
+  slideData?: Slide[];
+  vsCodeTheme?: never;
+  isDarkTheme?: boolean;
+  webviewUrl?: string | null;
+  filePath?: string;
   updateSlideIdx: (index: number) => void;
+  onNavigateToSlide?: (index: number) => void;
   triggerMouseMove: (value: boolean) => void;
   hideControls: () => void;
   laserPointerEnabled?: boolean;
@@ -22,7 +32,16 @@ export interface ISlideControlsProps {
   onZoomToggle?: () => void;
   style?: React.CSSProperties;
   matter?: SlideMetadata;
+  notes?: string;
+  clickStep?: number;
 }
+
+const Divider: React.FunctionComponent = () => (
+  <div
+    aria-hidden="true"
+    className="w-px self-stretch my-1 bg-(--vscode-editorWidget-foreground) opacity-20"
+  />
+);
 
 export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISlideControlsProps>> = ({
   show,
@@ -30,7 +49,14 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   children,
   slides,
   currentSlide = 0,
+  slideOptions,
+  slideData,
+  vsCodeTheme,
+  isDarkTheme,
+  webviewUrl,
+  filePath,
   updateSlideIdx,
+  onNavigateToSlide,
   triggerMouseMove,
   hideControls,
   laserPointerEnabled = false,
@@ -38,11 +64,17 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   isZoomed = false,
   onZoomToggle,
   style,
-  matter
+  matter,
+  notes,
+  clickStep = 0,
 }: React.PropsWithChildren<ISlideControlsProps>) => {
   const [previousEnabled, setPreviousEnabled] = React.useState(false);
   const [isPresentationMode, setIsPresentationMode] = React.useState(false);
   const [showPosition, setShowPosition] = React.useState(false);
+  const [isNavigatorOpen, setIsNavigatorOpen] = React.useState(false);
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [isNotesEditorOpen, setIsNotesEditorOpen] = React.useState(false);
+  const [extensionAutoProceedManaged, setExtensionAutoProceedManaged] = React.useState(false);
 
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -54,6 +86,8 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
 
     if (command === WebViewMessages.toWebview.updateIsInPresentationMode) {
       setIsPresentationMode(payload);
+    } else if (command === WebViewMessages.toWebview.updateAutoProceedState) {
+      setExtensionAutoProceedManaged(!!payload?.managedByExtension);
     }
   };
 
@@ -85,14 +119,63 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
     messageHandler.send(WebViewMessages.toVscode.runCommand, "demo-time.togglePresentationMode");
   }, []);
 
-  const openSlideSource = React.useCallback(() => {
-    messageHandler.send(WebViewMessages.toVscode.openFile, path);
-  }, [path]);
+  const reloadWebview = React.useCallback(() => {
+    messageHandler.send(WebViewMessages.toVscode.runCommand, "workbench.action.webview.reloadWebviewAction");
+  }, []);
+
+  // Moves the editor cursor to the source of the current slide
+  const revealSlideSource = React.useCallback(() => {
+    messageHandler.send(WebViewMessages.toVscode.preview.revealSource, {
+      path,
+      slideIndex: currentSlide,
+    });
+  }, [path, currentSlide]);
+
+  const isHidden = isSlideHidden({ frontmatter: matter });
+  const toggleSlideHidden = React.useCallback(() => {
+    messageHandler.send(WebViewMessages.toVscode.preview.setSlideHidden, {
+      path,
+      slideIndex: currentSlide,
+      hidden: !isHidden,
+    });
+  }, [path, currentSlide, isHidden]);
+
+  const openNotesEditor = React.useCallback(() => {
+    setIsNotesEditorOpen(true);
+  }, []);
+
+  const closeNotesEditor = React.useCallback(() => {
+    setIsNotesEditorOpen(false);
+  }, []);
+
+  // Writes the notes to the `<!-- notes -->` block of the slide
+  const saveNotes = React.useCallback((value: string) => {
+    messageHandler.send(WebViewMessages.toVscode.preview.setSlideNotes, {
+      path,
+      slideIndex: currentSlide,
+      notes: value,
+    });
+    setIsNotesEditorOpen(false);
+  }, [path, currentSlide]);
+
+  const toggleMousePosition = React.useCallback(() => {
+    const nextValue = !showPosition;
+    setShowPosition(nextValue);
+    triggerMouseMove(nextValue);
+  }, [showPosition, triggerMouseMove]);
+
+  const toggleLaserPointer = React.useCallback(() => {
+    onLaserPointerToggle?.(!laserPointerEnabled);
+  }, [laserPointerEnabled, onLaserPointerToggle]);
+
+  const toggleZoom = React.useCallback(() => {
+    onZoomToggle?.();
+  }, [onZoomToggle]);
 
   React.useEffect(() => {
     // Always clear previous timer on effect run
     let timer: NodeJS.Timeout | undefined;
-    if (matter?.autoAdvanceAfter && matter.autoAdvanceAfter > 0) {
+    if (!extensionAutoProceedManaged && matter?.autoAdvanceAfter && matter.autoAdvanceAfter > 0) {
       timer = setTimeout(() => {
         next();
       }, matter.autoAdvanceAfter * 1000);
@@ -102,7 +185,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
         clearTimeout(timer);
       }
     };
-  }, [matter?.autoAdvanceAfter, currentSlide]);
+  }, [extensionAutoProceedManaged, matter?.autoAdvanceAfter, currentSlide, clickStep]);
 
   React.useEffect(() => {
     if (show) {
@@ -124,93 +207,182 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
     };
   }, []);
 
+  const hasMultipleSlides = slides > 1;
+  const canPrevious = previousEnabled || (hasMultipleSlides && currentSlide >= 1);
+  const showPrevious = hasMultipleSlides || previousEnabled;
+  const hasNavigator = hasMultipleSlides && !!slideOptions && slideOptions.length > 0;
+
+  // Secondary actions live in the overflow menu so the bar stays compact and discoverable.
+  const menuGroups = React.useMemo<ISlideMenuGroup[]>(() => {
+    const groups: ISlideMenuGroup[] = [];
+
+    const slideItems: ISlideMenuItem[] = [];
+    if (!isPresentationMode) {
+      slideItems.push({
+        id: 'mouse-position',
+        label: 'Mouse position',
+        iconName: 'symbol-ruler',
+        pressed: showPosition,
+        onSelect: toggleMousePosition,
+      });
+      if (path) {
+        slideItems.push({
+          id: 'reveal-slide-source',
+          label: 'Reveal slide source',
+          iconName: 'file-code',
+          onSelect: revealSlideSource,
+        });
+        // Adds or removes `hide: true` in the slide front matter
+        slideItems.push({
+          id: 'toggle-slide-hidden',
+          label: isHidden ? 'Show slide while presenting' : 'Hide slide while presenting',
+          iconName: isHidden ? 'eye' : 'eye-closed',
+          onSelect: toggleSlideHidden,
+        });
+        slideItems.push({
+          id: 'edit-slide-notes',
+          label: notes ? 'Edit speaker notes' : 'Add speaker notes',
+          iconName: 'note',
+          onSelect: openNotesEditor,
+        });
+      }
+    }
+
+    slideItems.push({
+      id: 'reload-webview',
+      label: 'Reload webview',
+      iconName: 'refresh',
+      onSelect: reloadWebview,
+    });
+
+    if (slideItems.length > 0) {
+      groups.push({ id: 'slide', label: 'Slide', items: slideItems });
+    }
+
+    groups.push({
+      id: 'workspace',
+      label: 'Workspace',
+      items: [
+        { id: 'show-demos', label: 'Show demos', iconName: 'list-unordered', onSelect: focusPanel },
+        { id: 'close-sidebar', label: 'Close sidebar', iconName: 'layout-sidebar-left', onSelect: closeSidebar },
+      ],
+    });
+
+    groups.push({
+      id: 'view',
+      items: [{ id: 'hide-controls', label: 'Hide controls', iconName: 'eye-closed', onSelect: hideControls }],
+    });
+
+    return groups;
+  }, [isPresentationMode, showPosition, path, isHidden, notes, toggleMousePosition, revealSlideSource, toggleSlideHidden, openNotesEditor, focusPanel, closeSidebar, hideControls]);
+
+  const isOverlayOpen = isNavigatorOpen || isMenuOpen || isNotesEditorOpen;
+  const visible = show || isOverlayOpen;
+
   return (
     <div
-      className={`absolute bottom-0 w-full transition-opacity duration-300 ${show ? 'opacity-90' : 'opacity-0 pointer-events-none'
-        }`}
+      data-slide-controls
+      className={cn(
+        'absolute bottom-0 left-0 w-full flex justify-center px-4 pb-4 pointer-events-none transition-opacity duration-300',
+        visible ? 'opacity-100' : 'opacity-0',
+      )}
       style={style}
     >
       <div
-        className="bg-(--vscode-editorWidget-background) p-2 grid grid-cols-3 gap-4"
-        style={{ boxShadow: '0 0 8px 0 var(--vscode-widget-shadow)' }}
+        role="toolbar"
+        aria-label="Slide controls"
+        className={cn(
+          'inline-flex items-center gap-1 rounded-2xl px-2 py-1.5 max-w-full',
+          'bg-(--vscode-editorWidget-background)',
+          visible ? 'pointer-events-auto' : 'pointer-events-none',
+        )}
+        style={{
+          border: '1px solid var(--vscode-editorWidget-border, var(--vscode-widget-border))',
+          boxShadow: '0 0 12px 0 var(--vscode-widget-shadow)',
+        }}
       >
-        <div className='flex items-center'>
-          <SlideControl title="Toggle presentation mode" className={`${isPresentationMode ? `bg-(--vscode-statusBarItem-errorBackground) hover:bg-(--vscode-statusBarItem-errorHoverBackground)` : ''}`} icon={<ProjectorIcon className={`w-4 h-4 inline-flex justify-center items-center ${isPresentationMode ? `text-(--vscode-statusBarItem-errorForeground) hover:text-(--vscode-statusBarItem-errorHoverForeground)` : `text-(--vscode-editorWidget-foreground)`}`} />} action={togglePresentationMode} />
+        {/* View tools */}
+        <div className="flex items-center gap-0.5">
+          <SlideControl
+            title="Toggle presentation mode"
+            active={isPresentationMode}
+            icon={<ProjectorIcon className="w-4 h-4" />}
+            ariaPressed={isPresentationMode}
+            action={togglePresentationMode}
+          />
+          <SlideControl
+            title="Toggle presentation view"
+            icon={<WhiteboardIcon className="w-4 h-4" />}
+            action={togglePresentationView}
+          />
           <SlideControl title="Toggle fullscreen" iconName="screen-full" action={toggleFullscreen} />
-          <SlideControl title="Toggle presentation view" icon={<WhiteboardIcon className="w-4 h-4 text-(--vscode-editorWidget-foreground) inline-flex justify-center items-center" />} action={togglePresentationView} />
-          <SlideControl title="Close sidebar" icon={(
-            <div className='relative inline-flex justify-center items-center'>
-              <div className='absolute -top-[2px] -right-[2px] w-2 h-2 bg-(--vscode-editorWidget-foreground) rounded-full inline-flex justify-center items-center'>
-                <Icon name='close' className='text-(--vscode-editorWidget-background)! block' style={{ fontSize: "8px" }} />
-              </div>
-              <Icon name='layout-sidebar-left' className='text-(--vscode-editorWidget-foreground)! inline-flex justify-center items-center' />
-            </div>
-          )} action={closeSidebar} />
-          <SlideControl title="Show demos" iconName='list-unordered' action={focusPanel} />
-          <SlideControl title="Hide controls" iconName='eye-closed' action={hideControls} />
         </div>
 
-        <div className="flex items-center justify-center gap-4">
-          {
-            (previousEnabled || (slides > 1 && currentSlide >= 1)) ? (
-              <SlideControl title="Previous" iconName="arrow-left" action={previous} isSlideControl />
-            ) : (
-              <div style={{ width: "32px" }} />
-            )
-          }
+        <Divider />
+
+        {/* Slide navigation */}
+        <div className="flex items-center justify-center gap-1">
+          {showPrevious ? (
+            <SlideControl title="Previous" iconName="arrow-left" action={previous} disabled={!canPrevious} isSlideControl />
+          ) : (
+            <div style={{ width: '32px' }} />
+          )}
+
+          {hasNavigator ? (
+            <SlideNavigator
+              slides={slides}
+              currentSlide={currentSlide}
+              slideOptions={slideOptions}
+              slideData={slideData || []}
+              vsCodeTheme={vsCodeTheme as never}
+              isDarkTheme={isDarkTheme || false}
+              webviewUrl={webviewUrl || null}
+              filePath={filePath}
+              onNavigate={onNavigateToSlide || updateSlideIdx}
+              onOpenChange={setIsNavigatorOpen}
+            />
+          ) : hasMultipleSlides ? (
+            <div className="slide-info text-sm px-2 py-1 tabular-nums text-(--vscode-editorWidget-foreground)">
+              <span className="font-semibold">{String(currentSlide + 1).padStart(2, '0')}</span>
+              <span className="opacity-50"> / {String(slides).padStart(2, '0')}</span>
+            </div>
+          ) : null}
 
           <SlideControl title="Next" iconName="arrow-right" action={next} isSlideControl />
         </div>
-        <div className="flex items-center justify-end">
-          {slides > 1 && (
-            <div className="slide-info text-sm px-2 py-1 text-(--vscode-editorWidget-foreground)">
-              Slide {currentSlide + 1} of {slides}
-            </div>
-          )}
+
+        <Divider />
+
+        {/* Slide tools */}
+        <div className="flex items-center gap-0.5">
+          {showPosition && children}
+
           <SlideControl
             title="Toggle laser pointer"
-            className={`hover:bg-(--vscode-toolbar-hoverBackground) ${laserPointerEnabled ? 'bg-(--vscode-statusBarItem-errorBackground)' : ''}`}
             iconName="record"
-            action={() => {
-              if (onLaserPointerToggle) {
-                onLaserPointerToggle(!laserPointerEnabled);
-              }
-            }}
+            active={laserPointerEnabled}
+            ariaPressed={laserPointerEnabled}
+            action={toggleLaserPointer}
           />
           <SlideControl
-            title={isZoomed ? "Exit zoom" : "Zoom in"}
-            className={`hover:bg-(--vscode-toolbar-hoverBackground) ${isZoomed ? 'bg-(--vscode-statusBarItem-errorBackground)' : ''}`}
-            iconName={isZoomed ? "zoom-out" : "zoom-in"}
-            action={() => {
-              if (onZoomToggle) {
-                onZoomToggle();
-              }
-            }}
+            title={isZoomed ? 'Exit zoom' : 'Zoom in'}
+            iconName={isZoomed ? 'zoom-out' : 'zoom-in'}
+            active={isZoomed}
+            ariaPressed={isZoomed}
+            action={toggleZoom}
           />
 
-          {
-            !isPresentationMode && (
-              <>
-                {showPosition && children}
-                <SlideControl
-                  title="Toggle mouse position"
-                  className='-rotate-90 hover:bg-(--vscode-toolbar-hoverBackground)'
-                  iconName="symbol-ruler"
-                  action={() => {
-                    setShowPosition(prev => !prev);
-                    triggerMouseMove(!showPosition);
-                  }}
-                />
-              </>
-            )
-          }
-
-          {
-            path && !isPresentationMode && (
-              <SlideControl title="Open slide source" iconName="preview" action={openSlideSource} />
-            )
-          }
+          <SlideControlsMenu groups={menuGroups} onOpenChange={setIsMenuOpen} />
         </div>
+
+        {isNotesEditorOpen && (
+          <SlideNotesEditor
+            slideNr={currentSlide + 1}
+            notes={notes}
+            onSave={saveNotes}
+            onClose={closeNotesEditor}
+          />
+        )}
       </div>
     </div>
   );

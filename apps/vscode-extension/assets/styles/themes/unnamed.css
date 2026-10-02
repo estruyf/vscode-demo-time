@@ -14,6 +14,10 @@
   --demotime-link-color: var(--vscode-textLink-foreground);
   --demotime-link-active-color: var(--vscode-textLink-activeForeground);
 
+  --demotime-progress-color: var(--vscode-activityBarBadge-background);
+  --demotime-progress-background: transparent;
+  --demotime-progress-height: 4px;
+
   --demotime-code-background: var(--vscode-editor-background);
   --demotime-code-border: var(--vscode-panel-border);
 
@@ -60,12 +64,8 @@
   font-size: var(--demotime-font-size);
 
   .slide__content__inner {
-    @apply p-8;
+    @apply p-8 space-y-4;
     box-sizing: border-box;
-
-    > :not([hidden]) ~ :not([hidden]) {
-      margin-top: 1rem;
-    }
   }
 
   h1 {
@@ -308,7 +308,12 @@
     color: var(--demotime-two-columns-color);
 
     .slide__content__inner {
-      @apply w-full grid grid-cols-2 gap-4 space-y-0;
+      @apply w-full space-y-4;
+    }
+
+    .slide__content__inner:has(> .slide__left),
+    .slide__section:has(> .slide__left) {
+      @apply grid grid-cols-2 gap-4 space-y-0;
     }
 
     .slide__left,

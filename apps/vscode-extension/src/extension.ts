@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { clearVariablesState } from './utils';
 import {
+  AiSkillsService,
   AnalyticsCommands,
   DecoratorService,
   DemoApi,
@@ -13,24 +14,31 @@ import {
   ImportService,
   NotesService,
   PdfExportService,
+  VideoExportCommand,
+  VideoExportService,
   Slides,
+  SlidePreviewSync,
   SponsorService,
   UriHandler,
   TextTypingService,
   TerminalService,
   ResourceService,
   RedactionService,
+  RecordingService,
 } from './services';
 import { DemoPanel } from './panels/DemoPanel';
 import { ResourcesPanel } from './panels/ResourcesPanel';
 import { Preview } from './preview/Preview';
 import { PresenterView } from './presenterView/PresenterView';
 import { ConfigEditorProvider } from './providers/ConfigEditorProvider';
+import { DemoCodeLensProvider } from './providers/DemoCodeLensProvider';
 import { SettingsView } from './settingsView/SettingsView';
 import { Config } from '@demotime/common';
 import { InputService } from './services/InputService';
 import { Overview } from './overview/Overview';
 import { ProFeaturesView } from './proFeatures/ProFeaturesView';
+import { GalleryView } from './gallery/GalleryView';
+import { ThemeBuilderView } from './themeBuilderView/ThemeBuilderView';
 
 export async function activate(context: vscode.ExtensionContext) {
   Extension.getInstance(context);
@@ -46,7 +54,10 @@ export async function activate(context: vscode.ExtensionContext) {
   Preview.register();
   Overview.register();
   ProFeaturesView.register();
+  GalleryView.register();
+  ThemeBuilderView.register();
   ConfigEditorProvider.register();
+  DemoCodeLensProvider.register();
 
   // Services
   DecoratorService.register();
@@ -54,20 +65,25 @@ export async function activate(context: vscode.ExtensionContext) {
   ResourcesPanel.register();
   DemoRunner.registerCommands();
   DemoCreator.registerCommands();
+  RecordingService.registerCommands();
   DemoListeners.register();
   DemoStatusBar.register();
   DemoFileProvider.register();
   Slides.register();
+  SlidePreviewSync.register();
   NotesService.registerCommands();
   TextTypingService.registerCommands();
   DemoApi.register();
   UriHandler.register();
   PdfExportService.register();
+  VideoExportService.register();
+  VideoExportCommand.register();
   ImportService.register();
   TerminalService.register();
   InputService.registerCommands();
   AnalyticsCommands.registerCommands();
   RedactionService.register();
+  AiSkillsService.register();
   SponsorService.init(context);
 
   console.log(`${Config.title} is active!`);

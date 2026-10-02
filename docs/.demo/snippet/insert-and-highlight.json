@@ -1,0 +1,54 @@
+{
+  "id": "editor/insert-and-highlight",
+  "name": "Insert & highlight code",
+  "description": "Inserts content into a file and highlights the inserted lines.",
+  "author": "estruyf",
+  "version": "1.0.0",
+  "tags": ["editor", "code"],
+  "fields": [
+    {
+      "name": "MAIN_FILE",
+      "description": "Relative path to the file to insert content into",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "CONTENT_PATH",
+      "description": "Relative path to the content file",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "CONTENT_POSITION",
+      "description": "Line number where the content should be inserted",
+      "type": "number",
+      "required": true
+    },
+    {
+      "name": "HIGHLIGHT_POSITION",
+      "description": "Line number to highlight after insertion",
+      "type": "number",
+      "required": false
+    },
+    {
+      "name": "TEST_BOOLEAN",
+      "description": "A boolean test field",
+      "type": "boolean",
+      "required": false
+    }
+  ],
+  "steps": [
+    { "action": "unselect" },
+    {
+      "action": "insert",
+      "path": "{MAIN_FILE}",
+      "contentPath": "{CONTENT_PATH}",
+      "position": "{CONTENT_POSITION}"
+    },
+    {
+      "action": "highlight",
+      "path": "{MAIN_FILE}",
+      "position": "{HIGHLIGHT_POSITION}"
+    }
+  ]
+}

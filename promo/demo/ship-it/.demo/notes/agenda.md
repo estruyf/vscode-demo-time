@@ -1,0 +1,2 @@
+- Four steps: a server, a route that shortens, a redirect back, and a run
+- On the right is the whole contract: send a URL, get a short code

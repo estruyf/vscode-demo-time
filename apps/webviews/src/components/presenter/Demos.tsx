@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
-import { COMMAND, Demo, DemoFileCache, DemoFiles } from '@demotime/common';
+import { COMMAND, Demo, DemoFileCache, DemoFiles, SlideNotes } from '@demotime/common';
 import { EventData } from '@estruyf/vscode';
 import DemoListItem from './DemoListItem';
 import { Notes } from './Notes';
@@ -12,6 +12,7 @@ export const Demos = () => {
   const [demoFiles, setDemoFiles] = React.useState<DemoFiles | null>(null);
   const [runningDemos, setRunningDemos] = React.useState<DemoFileCache | null>(null);
   const [notes, setNotes] = React.useState<string | undefined>(undefined);
+  const [slideNotes, setSlideNotes] = React.useState<SlideNotes | undefined>(undefined);
   const [crntDemo, setCrntDemo] = React.useState<Demo | undefined>(undefined);
 
   const activeDemoRef = React.useRef<HTMLLIElement | null>(null);
@@ -39,6 +40,9 @@ export const Demos = () => {
       setRunningDemos(payload as DemoFileCache);
     } else if (command === WebViewMessages.toWebview.resetNotes) {
       setNotes(undefined);
+      setSlideNotes(undefined);
+    } else if (command === WebViewMessages.toWebview.presenter.slideNotes) {
+      setSlideNotes(payload as SlideNotes | undefined);
     }
   };
 
@@ -92,6 +96,11 @@ export const Demos = () => {
     messageHandler.request<Demo | undefined>(WebViewMessages.toVscode.getCurrentDemo).then((demo) => {
       setCrntDemo(demo);
       checkToSetNotes(demo);
+    });
+
+    // The slide notes only apply to a scene that shows slides
+    messageHandler.request<SlideNotes | undefined>(WebViewMessages.toVscode.presenter.getSlideNotes).then((value) => {
+      setSlideNotes(value);
     });
   }, [crntDemos?.demos]);
 
@@ -157,7 +166,15 @@ export const Demos = () => {
       {(crntDemos && crntDemos.demos) && (
         <div className="space-y-4">
           <NextSlide />
-          <Notes content={notes} path={crntDemo?.notes?.path} />
+          {slideNotes?.notes ? (
+            <Notes
+              content={slideNotes.notes}
+              path={slideNotes.path}
+              label={typeof slideNotes.slideIndex === 'number' ? `Slide ${slideNotes.slideIndex + 1}` : undefined}
+            />
+          ) : (
+            <Notes content={notes} path={crntDemo?.notes?.path} />
+          )}
         </div>
       )}
     </section>

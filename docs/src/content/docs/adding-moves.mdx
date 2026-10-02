@@ -29,6 +29,10 @@ In the [getting started](/getting-started/) guide, you learned how to initialize
   Instead of creating separate scenes for each action, group related moves together for a smoother, more automated presentation.
 </Aside>
 
+<Aside type="tip" title="Prefer to record?">
+  You can also let Demo Time build the scenes and moves for you by recording what you do in the editor. See [Recording demos](/features/recording-demos/).
+</Aside>
+
 In version `1.9.0`, Demo Time introduced a new Act Editor GUI that makes it easier to create and manage your scenes and its related moves. That means that you now have the option to create your scenes in a more visual way, without having to edit JSON or YAML files directly. You can still have the option to switch back to the code view if you prefer by setting the `demoTime.openInConfigEditor` setting to `false`.
 
 ## Adding your first moves
@@ -57,7 +61,7 @@ In the **Scene Information** section, you can define the settings for your scene
 
 - **Title**: The title of your scene.
 - **Description**: A brief description of what your scene does.
-- **Scene ID**: The unique identifier for your scene, which can be used to trigger the scene via the API, URI Handler, or `runById` action.
+- **Scene ID**: The unique identifier for your scene, which can be used to trigger the scene via the API, URI Handler, `runById` action, or a [`dt-action`](/slides/components/#action) button on a slide.
 - **Icons**: The icons that will be used in the tree view panel.
 - **Notes**: Any additional notes or information about your scene.
 

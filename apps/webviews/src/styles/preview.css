@@ -65,6 +65,32 @@ table td {
   @apply absolute bottom-0 left-0 w-full h-8 text-[0.75rem] px-8 flex items-center justify-between opacity-75 text-(--vscode-editor-foreground);
 }
 
+/* Progress bar, styled per theme with the --demotime-progress-* variables */
+.slide__progress {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: var(--demotime-progress-height, 4px);
+  background: var(--demotime-progress-background, transparent);
+  z-index: 30;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.slide__progress--top {
+  top: 0;
+}
+
+.slide__progress--bottom {
+  bottom: 0;
+}
+
+.slide__progress__bar {
+  height: 100%;
+  background: var(--demotime-progress-color, var(--demotime-link-color, currentColor));
+  transition: width 0.3s ease-in-out;
+}
+
 .slide__content {
   @apply h-full w-full text-base overflow-hidden z-20;
 
@@ -224,7 +250,40 @@ table td {
   animation: rotateOut var(--demotime-transition-duration) ease-in-out;
 }
 
+/* Reduced motion: slide transitions become a short crossfade */
+:root[data-reduced-motion] {
+  .fadeIn,
+  .slideLeft,
+  .slideRight,
+  .slideUp,
+  .slideDown,
+  .zoomIn,
+  .zoomOut,
+  .rotateIn,
+  .rotateOut {
+    animation: fadeIn 150ms ease-in-out;
+  }
+
+  .slide__container {
+    transition: none;
+  }
+
+  .laser-pointer {
+    animation: none;
+  }
+}
+
 /* Layouts */
+.center {
+  .slide__content {
+    @apply flex items-center justify-center;
+
+    .slide__content__inner {
+      @apply flex flex-col items-center justify-center text-center;
+    }
+  }
+}
+
 .image-left,
 .image-right {
   @apply grid grid-cols-2 w-full h-full auto-rows-fr;

@@ -1,0 +1,22 @@
+title: Auto proceed and loop
+description: ''
+version: 3
+loop: true
+scenes:
+  - id: scene-mpfk945u-dr1p
+    title: Scene 1
+    moves:
+      - action: openSlide
+        path: .demo/slides/pixels/intro.md
+    autoAdvanceAfter: 3
+  - id: demo-mpfk9vvp-rgkv
+    title: Scene 2
+    moves:
+      - action: openSlide
+        path: .demo/slides/pixels/default-slide.md
+    autoAdvanceAfter: 3
+  - id: scene-mpfl4g10-uexp
+    title: Scene 3
+    moves:
+      - action: openSlide
+        path: .demo/slides/grouped-slide-3.md

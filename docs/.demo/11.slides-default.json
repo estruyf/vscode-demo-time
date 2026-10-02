@@ -35,6 +35,16 @@
       ]
     },
     {
+      "title": "Center slide",
+      "description": "",
+      "steps": [
+        {
+          "action": "openSlide",
+          "path": "/.demo/slides/default/center.md"
+        }
+      ]
+    },
+    {
       "title": "Section slide",
       "description": "",
       "steps": [

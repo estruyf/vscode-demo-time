@@ -1,0 +1,225 @@
+/*
+ * "Ship it" — the slide theme for this talk.
+ *
+ * Deep navy, Demo Time yellow, big tight headings and a dot grid. Built on the
+ * default theme: its variables are set here, and a few rules on top give the
+ * layouts their own character — a yellow kicker on the intro, numbered cards
+ * for the agenda, a full-bleed yellow section slide.
+ */
+
+.slide.default {
+  --ship-ink: #0e1220;
+  --ship-ink-2: #161c2e;
+  --ship-line: #26304a;
+  --ship-text: #e8ebf3;
+  --ship-muted: #9aa3ba;
+  --ship-yellow: #ffd43b;
+  --ship-yellow-deep: #f2b90c;
+
+  --demotime-background: var(--ship-ink);
+  --demotime-color: var(--ship-text);
+  --demotime-heading-color: #ffffff;
+  --demotime-link-color: var(--ship-yellow);
+  --demotime-link-active-color: var(--ship-yellow-deep);
+
+  --demotime-section-background: var(--ship-yellow);
+  --demotime-section-color: var(--ship-ink);
+  --demotime-section-heading-color: var(--ship-ink);
+
+  font-family:
+    'SF Pro Display',
+    'Inter',
+    -apple-system,
+    'Segoe UI',
+    system-ui,
+    sans-serif;
+  font-size: 22px;
+  -webkit-font-smoothing: antialiased;
+
+  /* The letterbox around the 16:9 slide. */
+  background: #090c16;
+
+  .slide__container {
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+  }
+
+  .slide__layout {
+    background:
+      radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1.4px) 0 0 / 22px 22px,
+      radial-gradient(900px 420px at 100% 0%, rgba(255, 212, 59, 0.14), transparent 60%),
+      var(--ship-ink);
+  }
+
+  .slide__content__inner {
+    padding: 64px 72px 72px;
+  }
+
+  h1 {
+    font-size: 2.6em;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1.02;
+  }
+
+  h2 {
+    font-size: 1.15em;
+    font-weight: 500;
+    color: var(--ship-muted);
+    letter-spacing: -0.01em;
+  }
+
+  p {
+    opacity: 1;
+    color: var(--ship-muted);
+  }
+
+  code {
+    font-family: 'SF Mono', ui-monospace, Menlo, monospace;
+    color: var(--ship-yellow);
+    background: rgba(255, 212, 59, 0.1);
+    padding: 1px 6px;
+    border-radius: 5px;
+  }
+
+  pre {
+    background: var(--ship-ink-2);
+    border: 1px solid var(--ship-line);
+    border-radius: 12px;
+    padding: 20px 22px;
+    font-size: 0.64em;
+    line-height: 1.6;
+
+    code {
+      background: transparent;
+      color: var(--ship-text);
+    }
+  }
+
+  /* The footer: talk on the left, speaker on the right. */
+  .slide__footer {
+    height: 44px;
+    padding: 0 72px;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    color: var(--ship-muted);
+    opacity: 1;
+
+    b {
+      color: var(--ship-yellow);
+      font-weight: 700;
+    }
+  }
+
+  /* ---- intro: a yellow kicker bar over a very large title ---------------- */
+
+  .intro {
+    .slide__content__inner {
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    h1 {
+      font-size: 4.4em;
+      position: relative;
+      padding-top: 28px;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 2px;
+        width: 72px;
+        height: 8px;
+        border-radius: 4px;
+        background: var(--ship-yellow);
+      }
+    }
+
+    h2 {
+      font-size: 1.5em;
+      color: var(--ship-text);
+      margin-top: 6px;
+    }
+
+    p {
+      font-size: 0.9em;
+      color: var(--ship-muted);
+      opacity: 1;
+      margin-top: 22px;
+    }
+  }
+
+  /* ---- two-columns: numbered cards on the left, code on the right -------- */
+
+  .two-columns {
+    .section-1 h1 {
+      font-size: 2.2em;
+      margin-bottom: 26px;
+    }
+
+    .slide__section:has(> .slide__left) {
+      gap: 36px;
+      align-items: center;
+    }
+
+    ol {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      counter-reset: step;
+
+      li {
+        counter-increment: step;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin: 0 0 12px;
+        padding: 12px 16px;
+        background: var(--ship-ink-2);
+        border: 1px solid var(--ship-line);
+        border-radius: 12px;
+        font-size: 0.86em;
+
+        &::before {
+          content: counter(step, decimal-leading-zero);
+          flex: none;
+          width: 38px;
+          height: 38px;
+          border-radius: 10px;
+          display: grid;
+          place-items: center;
+          background: var(--ship-yellow);
+          color: var(--ship-ink);
+          font-weight: 800;
+          font-size: 0.82em;
+        }
+      }
+    }
+  }
+
+  /* ---- section: full-bleed yellow ---------------------------------------- */
+
+  .section {
+    background:
+      radial-gradient(rgba(14, 18, 32, 0.12) 1px, transparent 1.4px) 0 0 / 22px 22px,
+      var(--ship-yellow);
+
+    h1 {
+      font-size: 3.6em;
+      color: var(--ship-ink);
+    }
+
+    h2 {
+      color: rgba(14, 18, 32, 0.75);
+      opacity: 1;
+      font-size: 1.2em;
+    }
+
+    .slide__footer,
+    .slide__footer b {
+      color: rgba(14, 18, 32, 0.7);
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Wrap up",
+  "description": "Recap and questions",
+  "version": 3,
+  "scenes": [
+    {
+      "title": "Recap",
+      "moves": [
+        {
+          "action": "closeTerminal",
+          "terminalId": "try"
+        },
+        {
+          "action": "closeAll"
+        },
+        {
+          "action": "openSlide",
+          "path": ".demo/slides/recap.md"
+        }
+      ],
+      "notes": {
+        "path": ".demo/notes/recap.md"
+      }
+    },
+    {
+      "title": "Thank you",
+      "moves": [
+        {
+          "action": "openSlide",
+          "path": ".demo/slides/thanks.md"
+        }
+      ],
+      "notes": {
+        "path": ".demo/notes/thanks.md"
+      }
+    }
+  ]
+}

@@ -23,7 +23,7 @@ To use the EngageTime actions, you need to have an EngageTime account and API ke
 1. Go to [engagetime.live](https://engagetime.live) and sign up for an account if you don't have one.
 2. Obtain your API key from the [API Management](https://engagetime.live/speaker/api-keys) section in your account settings.
 3. Execute the `Demo Time: Settings` command in VS Code.
-4. Enter the API key in the `EngageTime API Key` field and save the settings.
+4. Open the **EngageTime** section, enter the key in the **EngageTime API key** field and save the settings.
 
 ## Available actions
 
@@ -171,6 +171,11 @@ pollId: poll-1
 
 Use `showEngageTimePoll` to display poll results in the presenter view. You can set **either** `startOnOpen` to start the poll when shown, **or** `closeOnOpen` to close it immediately when shown (for quizzes or timed questions). These options are mutually exclusive.
 
+The poll embed supports two additional appearance options:
+
+- `pollDarkTheme` — When `true`, opens the poll embed with the dark theme (`?theme=dark`). Defaults to the light theme.
+- `pollControls` — Controls whether the poll UI controls are shown in the embed. Defaults to `true`.
+
 <Tabs syncKey="show-engagetime-poll">
 <TabItem label="JSON">
 
@@ -179,7 +184,9 @@ Use `showEngageTimePoll` to display poll results in the presenter view. You can 
   "action": "showEngageTimePoll",
   "pollId": "poll-1",
   "startOnOpen": false,
-  "closeOnOpen": true
+  "closeOnOpen": true,
+  "pollDarkTheme": true,
+  "pollControls": false
 }
 ```
 
@@ -191,6 +198,8 @@ action: showEngageTimePoll
 pollId: poll-1
 startOnOpen: false
 closeOnOpen: true
+pollDarkTheme: true
+pollControls: false
 ```
 
 </TabItem>

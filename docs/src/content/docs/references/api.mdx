@@ -101,6 +101,7 @@ Returns all act files, the next demo, and the currently executing act file.
 - `demoFiles`: Array of act files, each with its file path and contained demos (id and title).
 - `nextDemo`: The next demo to be executed (id and title), if available.
 - `currentDemoFile`: The currently executing act file, with its file path and demos.
+- `slides.notes`: The [speaker notes](/features/using-notes/#notes-in-your-slides) of the current slide, if it has any.
 
 ### `/api/previous`
 
@@ -112,21 +113,25 @@ This endpoint will execute the previous step in the demo.
 
 ### `/api/notes`
 
-Returns the notes of the current slide or move.
+Returns the notes as markdown text.
 
-- Method: `GET`
+- Method: `GET` or `POST`
+- Body (`POST`, optional):
 
-#### Response
+  ```json title="API Body"
+  {
+    "path": "<relative path to a notes file>"
+  }
+  ```
 
-```json title="Notes API Response"
-{
-  "notes": "Your slide or step notes here..."
-}
-```
+- Headers:
+  - `Content-Type: application/json`
 
 #### Description
 
-- `notes`: The notes content of the current slide or step, if available.
+- Without a `path`, it returns the notes of the current slide (its [`<!-- notes -->` block](/features/using-notes/#notes-in-your-slides)). When the slide has no notes, it returns the notes file of the current scene.
+- With a `path`, it returns the content of that notes file in the workspace.
+- Returns `404` when there are no notes.
 
 ### `/api/screenshot`
 

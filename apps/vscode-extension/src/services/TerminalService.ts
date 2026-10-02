@@ -1,10 +1,11 @@
 import { commands, Terminal, window, Disposable, TerminalShellExecution } from 'vscode';
 import { Notifications } from './Notifications';
-import { sleep } from '../utils';
+import { getInsertionSpeedRandomness, getRandomizedTypingDelay, sleep } from '../utils';
 import { DemoRunner } from './DemoRunner';
 import { Step, Config } from '@demotime/common';
 import { AnalyticsService } from './analytics';
 import { Extension } from './Extension';
+import { VideoExportService } from './VideoExportService';
 
 /**
  * Service to manage terminal operations for demo execution.
@@ -52,7 +53,8 @@ export class TerminalService {
    * @returns A promise that resolves when the command execution is complete.
    */
   public static async executeCommand(step: Step): Promise<void> {
-    let { command, terminalId, autoExecute, insertTypingMode, insertTypingSpeed, waitTimeout } = step;
+    let { command, terminalId, autoExecute, insertTypingMode, insertTypingSpeed, waitTimeout } =
+      step;
 
     if (!command) {
       Notifications.error('No command specified');
@@ -65,12 +67,13 @@ export class TerminalService {
 
     const typeMode = insertTypingMode ?? 'instant';
     const typeSpeed = insertTypingSpeed || 50;
+    const typeRandomness = getInsertionSpeedRandomness(step.insertTypingSpeedRandomness);
 
     let execution: TerminalShellExecution | undefined;
     if (typeMode === 'character-by-character') {
       for (const char of command) {
         terminal.sendText(char, false);
-        await sleep(typeSpeed);
+        await sleep(getRandomizedTypingDelay(typeSpeed, typeRandomness));
       }
       if (autoExecute) {
         terminal.sendText('', true);
@@ -84,6 +87,9 @@ export class TerminalService {
           ]);
         } else {
           await sleep(TerminalService.getCommandBoundaryDelay());
+          if (VideoExportService.isActive()) {
+            await VideoExportService.warnNoShellIntegration();
+          }
         }
       }
     } else if (autoExecute) {
@@ -92,6 +98,9 @@ export class TerminalService {
       } else {
         terminal.sendText(command, autoExecute);
         await sleep(TerminalService.getCommandBoundaryDelay());
+        if (VideoExportService.isActive()) {
+          await VideoExportService.warnNoShellIntegration();
+        }
       }
     } else {
       terminal.sendText(command, false);
@@ -238,13 +247,21 @@ export class TerminalService {
    *
    * @param command - The exact command string to wait for.
    * @param terminalId - The identifier of the terminal whose last executed command will be observed.
-   * @param maxWaitTimeMs - Maximum milliseconds to wait before resolving. Defaults to 5000ms.
-   * @returns A Promise that resolves when the command is observed or when the timeout elapses.
+   * @param waitTimeout - The `waitTimeout` of the move, in milliseconds (optional).
+   * @returns A Promise that resolves when the command is observed or when the timeout elapses
+   *          (the `waitTimeout` of the move or 5 seconds, and at least the export's terminal
+   *          timeout during a video export).
    */
-  private static async waitForTerminalExecuted(command: string, terminalId: string, maxWaitTimeMs?: number): Promise<void> {
+  private static async waitForTerminalExecuted(
+    command: string,
+    terminalId: string,
+    waitTimeout?: number,
+  ): Promise<void> {
     return new Promise<void>((resolve) => {
       const startTime = Date.now();
-      const maxWaitTime = maxWaitTimeMs ?? 5000; // Default: 5 seconds
+      // The move's waitTimeout or 5 seconds, or longer while a video export waits for the output
+      const exportTimeout = VideoExportService.getTerminalTimeoutMs();
+      const maxWaitTime = Math.max(waitTimeout ?? 0, exportTimeout ?? 0) || 5000;
 
       const checkExecution = () => {
         if (TerminalService.lastExecution[terminalId] === command) {

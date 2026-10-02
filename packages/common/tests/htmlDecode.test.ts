@@ -6,11 +6,9 @@ beforeAll(() => {
   (global as any).document = {
     createElement: () => {
       return {
-        _html: '',
-        childNodes: [] as any[],
-        set innerHTML(value: string) {
-          this._html = value;
-          this.childNodes = [{ textContent: decode(value) }];
+        value: '',
+        set innerHTML(html: string) {
+          this.value = decode(html);
         },
       };
     },
@@ -24,6 +22,10 @@ afterAll(() => {
 describe('htmlDecode', () => {
   it('decodes basic HTML entities', () => {
     expect(htmlDecode('&amp;')).toBe('&');
+  });
+
+  it('keeps tags as text', () => {
+    expect(htmlDecode('A[&quot;a<br/>b&quot;] --&gt; B')).toBe('A["a<br/>b"] --> B');
   });
 
   it('returns undefined for empty input', () => {

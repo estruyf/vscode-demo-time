@@ -13,7 +13,7 @@
 - [Interaction actions | Demo Time](https://demotime.show/actions/interactions/): Perform interaction actions in your scenes like copying to clipboard, pasting content, typing text, and pressing keys.
 - [OS and desktop actions | Demo Time](https://demotime.show/actions/os-and-desktop/): Actions for controlling desktop visibility and operating system presentation features in Demo Time
 - [Patch actions | Demo Time](https://demotime.show/actions/patch/): File patch actions can be used to insert code based on a snapshot of the file and a patch file.
-- [Preview actions | Demo Time](https://demotime.show/actions/preview/): Preview actions are used to preview files like Markdown and images in the editor.
+- [Preview actions | Demo Time](https://demotime.show/actions/preview/): Preview actions are used to preview files like Markdown, images, and QR codes in the editor.
 - [Setting actions | Demo Time](https://demotime.show/actions/setting/): Perform setting actions in your demos like update settings, change themes, and more.
 - [Snippet actions | Demo Time](https://demotime.show/actions/snippet/): Snippets can be used when you have steps that you want to reuse in multiple demos.
 - [Terminal actions | Demo Time](https://demotime.show/actions/terminal/): Perform terminal actions in your demos like running commands, clearing the terminal, and more.
@@ -39,9 +39,11 @@
 
 ## Features
 
+- [Auto-proceed and looped playback | Demo Time](https://demotime.show/features/auto-proceed-looping/): Automatically advance through scenes with optional act-level looping and status bar controls.
 - [MCP server support | Demo Time](https://demotime.show/features/mcp-server/): Learn how to use the Model Context Protocol (MCP) server with Demo Time for AI assistants and automation.
 - [Overview Dashboard | Demo Time](https://demotime.show/features/overview-dashboard/): Learn more about the overview dashboard in Demo Time.
 - [Presenter View | Demo Time](https://demotime.show/features/presenter-view/): Learn how to use the presenter view in Demo Time.
+- [Redaction mode | Demo Time](https://demotime.show/features/redaction-mode/): Automatically mask sensitive data like API keys, tokens, passwords, and emails in the editor during live presentations.
 - [Using clock and timer functions | Demo Time](https://demotime.show/features/timer-clock/): To keep an eye on the time, you can use the clock and timer functions from Demo Time.
 - [Trigger from a link | Demo Time](https://demotime.show/features/uri-handler/): Learn how to trigger a demo from a link.
 - [Using notes | Demo Time](https://demotime.show/features/using-notes/): Learn how to provide notes for your demos in Demo Time.
@@ -82,6 +84,7 @@
 - [v1.8.0 | Demo Time](https://demotime.show/releases/1.8.0/): Release notes for version 1.8.0 of the Demo Time extension, including new features, improvements, and bug fixes.
 - [v1.9.0 | Demo Time](https://demotime.show/releases/1.9.0/): 
 - [v2.0.0 | Demo Time](https://demotime.show/releases/2.0.0/): 
+- [v2.1.0 | Demo Time](https://demotime.show/releases/2.1.0/): 
 
 ## Remote-control
 
@@ -99,6 +102,8 @@
 - [Custom Components | Demo Time](https://demotime.show/slides/components/custom/): Learn how to use custom components in your slides.
 - [Exporting your slides | Demo Time](https://demotime.show/slides/export/): Export your slides to PDF
 - [Slide layouts | Demo Time](https://demotime.show/slides/layouts/): Learn about the different slide layouts available in Demo Time
+- [Animated SVG Slide Layout | Demo Time](https://demotime.show/slides/layouts/animated/): Learn how to create animated SVG slides in Demo Time with stroke-draw effects, typewriter text, and playback controls.
+- [Center Slide Layout | Demo Time](https://demotime.show/slides/layouts/center/): Learn about the center slide layout in Demo Time
 - [Custom Slide Layout | Demo Time](https://demotime.show/slides/layouts/custom/): Learn about creating and using a custom slide layout in Demo Time
 - [Default Slide Layout | Demo Time](https://demotime.show/slides/layouts/default/): Learn about the default slide layout in Demo Time
 - [Header and Footer Support | Demo Time](https://demotime.show/slides/layouts/header-footer/): Learn how to add and customize headers and footers in your slides.
@@ -126,6 +131,7 @@
 ## Snippets
 
 - [Snippets | Demo Time](https://demotime.show/snippets/): Snippets that you can use to automate some tasks in your demo.
+- [Snippet Gallery | Demo Time](https://demotime.show/snippets/gallery/): Browse available community snippets, learn how to contribute new ones, and understand how the gallery index is refreshed.
 
 ## Tips
 

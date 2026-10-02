@@ -1,0 +1,11 @@
+{
+  "name": "tiny-links",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.ts",
+    "try": "node scripts/try.ts",
+    "video": "npx --yes @demotime/video export --captions notes --chapters --cards --extensions eliostruyf.vscode-demotime-theme"
+  }
+}

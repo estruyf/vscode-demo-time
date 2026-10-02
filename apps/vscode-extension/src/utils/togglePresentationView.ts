@@ -5,7 +5,14 @@ import { StateKeys } from '../constants';
 import { updateConfig } from './updateConfig';
 
 export const togglePresentationView = async (enable?: boolean) => {
-  const defaultToggles = ['statusBar', 'tabs', 'activityBar', 'sideBar', 'panel'] as const;
+  const defaultToggles = [
+    'statusBar',
+    'tabs',
+    'activityBar',
+    'sideBar',
+    'secondarySideBar',
+    'panel',
+  ] as const;
   type PresentationToggle = (typeof defaultToggles)[number];
 
   const isKnownToggle = (value: string): value is PresentationToggle =>
@@ -40,22 +47,29 @@ export const togglePresentationView = async (enable?: boolean) => {
     toggles,
   };
 
-  // If these values are set, it means that the presentation view is enabled
-  const isPresentationViewEnabled = toggles.every((toggle) => {
-    if (toggle === 'statusBar') {
-      return statusBarValue === false;
-    }
+  // If these values are set, it means that the presentation view is enabled. The side bar,
+  // secondary side bar and panel are only closed, never restored, so they leave no trace to
+  // check: with only those in the list, every toggle closes them.
+  const settingToggles = toggles.filter(
+    (toggle) => toggle === 'statusBar' || toggle === 'tabs' || toggle === 'activityBar',
+  );
+  const isPresentationViewEnabled =
+    settingToggles.length > 0 &&
+    settingToggles.every((toggle) => {
+      if (toggle === 'statusBar') {
+        return statusBarValue === false;
+      }
 
-    if (toggle === 'tabs') {
-      return tabsValue === 'none';
-    }
+      if (toggle === 'tabs') {
+        return tabsValue === 'none';
+      }
 
-    if (toggle === 'activityBar') {
-      return activityBarValue === 'hidden';
-    }
+      if (toggle === 'activityBar') {
+        return activityBarValue === 'hidden';
+      }
 
-    return true;
-  });
+      return true;
+    });
 
   if (isPresentationViewEnabled) {
     const storedValues = Extension.getInstance().getState<typeof previousValues>(
@@ -76,6 +90,11 @@ export const togglePresentationView = async (enable?: boolean) => {
   if (showGetEnabled) {
     if (toggles.includes('sideBar')) {
       await commands.executeCommand('workbench.action.closeSidebar');
+    }
+
+    // The secondary side bar is where VS Code shows Chat
+    if (toggles.includes('secondarySideBar')) {
+      await commands.executeCommand('workbench.action.closeAuxiliaryBar');
     }
 
     if (toggles.includes('panel')) {

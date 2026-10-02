@@ -8,10 +8,10 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ children, className = '' }) => {
   return (
     <div
-      className={`${className} lg:min-w-[320px] xl:min-w-[360px] custom-scrollbar`}
+      className={`${className} w-full lg:min-w-80 xl:min-w-90 custom-scrollbar`}
       style={{ scrollBehavior: 'smooth' }}
     >
-      <div className="space-y-8">
+      <div className="space-y-4 sm:space-y-8">
         {children}
       </div>
     </div>

@@ -1,1 +1,7 @@
-{"apps":{"vscode-extension":{"tests":{}}}}
+{
+  "apps": {
+    "vscode-extension": {
+      "tests": {}
+    }
+  }
+}

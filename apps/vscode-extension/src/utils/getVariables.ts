@@ -27,6 +27,10 @@ export const getVariables = async (
       DT_CLIPBOARD: clipboard,
     };
 
+    if (workspaceFolder) {
+      defaultVariables.DT_WORKSPACE_PATH = workspaceFolder.uri.fsPath;
+    }
+
     // Get the state variables
 
     const stateVariables = ext.getState<{ [key: string]: string }>(StateKeys.variables) || {};

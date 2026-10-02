@@ -2,7 +2,7 @@ import { EventData } from '@estruyf/vscode';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import * as React from 'react';
 import { COMMAND, WebViewMessages } from '@demotime/common';
-import { ImagePreview, MarkdownPreview } from '../preview';
+import { ImagePreview, MarkdownPreview, QRPreview } from '../preview';
 
 import '../../styles/preview.css';
 import '../../themes/default.css';
@@ -20,6 +20,14 @@ const PreviewView = () => {
   const [customTheme, setCustomTheme] = React.useState<string | undefined>(undefined);
   const [fileUri, setFileUri] = React.useState<string | undefined>(undefined);
   const [slideIdx, setSlideIdx] = React.useState<number | undefined>(undefined);
+  const [qrData, setQrData] = React.useState<{
+    url: string;
+    topText?: string;
+    title?: string;
+    description?: string;
+    logo?: string;
+    qrLayout?: 'default' | 'reversed' | 'minimal' | 'stacked' | 'text-left' | 'text-right';
+  } | null>(null);
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Escape') {
@@ -35,9 +43,26 @@ const PreviewView = () => {
 
     if (command === WebViewMessages.toWebview.updateStyles) {
       setCustomTheme(payload as string);
+    } else if (command === WebViewMessages.toWebview.showQR) {
+      const qrPayload = payload as {
+        url: string;
+        topText?: string;
+        title?: string;
+        description?: string;
+        logo?: string;
+        qrLayout?: 'default' | 'reversed' | 'minimal' | 'stacked' | 'text-left' | 'text-right';
+      };
+      if (qrPayload?.url) {
+        // Replace current preview with QR preview
+        setQrData(qrPayload);
+        setFileUri(undefined);
+        setSlideIdx(undefined);
+        messageHandler.send(WebViewMessages.toVscode.updateTitle, 'QR Code');
+      }
     } else if (command === WebViewMessages.toWebview.updateFileUri) {
       setFileUri(payload as string);
     } else if (command === WebViewMessages.toWebview.triggerUpdate) {
+      setQrData(null); // Clear QR data on update trigger to allow switching back to file previews
       type UpdatePayload = { fileUriString: string; slideIndex: number };
       const updatePayload = payload as UpdatePayload;
       if (
@@ -59,6 +84,11 @@ const PreviewView = () => {
   }, []);
 
   const type = React.useMemo(() => {
+    // QR preview takes priority
+    if (qrData) {
+      return 'qr';
+    }
+
     if (!fileUri) {
       return null;
     }
@@ -67,6 +97,26 @@ const PreviewView = () => {
     if (fileExtension === 'md') {
       messageHandler.send(WebViewMessages.toVscode.updateTitle, 'Slide');
       return 'markdown';
+    }
+
+    if (fileUri.startsWith('http')) {
+      messageHandler.send(WebViewMessages.toVscode.updateTitle, 'QR');
+      const url = new URL(fileUri);
+      const topText = url.searchParams.get('qrTopText') || undefined;
+      const title = url.searchParams.get('qrTitle') || url.searchParams.get('qrLabel') || undefined;
+      const description = url.searchParams.get('qrDescription') || undefined;
+      const logo = url.searchParams.get('qrLogo') || undefined;
+      const qrLayoutParam = url.searchParams.get('qrLayout');
+      const validLayouts = ['default', 'reversed', 'minimal', 'stacked', 'text-left', 'text-right'] as const;
+      const qrLayout = validLayouts.includes(qrLayoutParam as typeof validLayouts[number]) ? qrLayoutParam as typeof validLayouts[number] : undefined;
+      url.searchParams.delete('qrTopText');
+      url.searchParams.delete('qrTitle');
+      url.searchParams.delete('qrDescription');
+      url.searchParams.delete('qrLabel');
+      url.searchParams.delete('qrLogo');
+      url.searchParams.delete('qrLayout');
+      setQrData({ url: url.href, topText, title, description, logo, qrLayout });
+      return 'qr';
     }
 
     if (fileExtension === 'png' ||
@@ -82,7 +132,7 @@ const PreviewView = () => {
     }
 
     return null;
-  }, [fileUri]);
+  }, [fileUri, qrData]);
 
   React.useEffect(() => {
     Messenger.listen(messageListener);
@@ -106,7 +156,7 @@ const PreviewView = () => {
     };
   }, [messageListener]);
 
-  if (!fileUri || typeof slideIdx === 'undefined') {
+  if (!qrData && (!fileUri || typeof slideIdx === 'undefined')) {
     return null;
   }
 
@@ -114,8 +164,18 @@ const PreviewView = () => {
     <>
       {customTheme && <link href={customTheme} rel="stylesheet" />}
 
-      {type === 'markdown' && <MarkdownPreview fileUri={fileUri} slideIdx={slideIdx} webviewUrl={webviewUrl} />}
-      {type === 'image' && <ImagePreview fileUri={fileUri} />}
+      {type === 'qr' && qrData && (
+        <QRPreview
+          url={qrData.url}
+          topText={qrData.topText}
+          title={qrData.title}
+          description={qrData.description}
+          logo={qrData.logo}
+          qrLayout={qrData.qrLayout}
+        />
+      )}
+      {type === 'markdown' && fileUri && typeof slideIdx !== 'undefined' && <MarkdownPreview fileUri={fileUri} slideIdx={slideIdx} webviewUrl={webviewUrl} />}
+      {type === 'image' && fileUri && <ImagePreview fileUri={fileUri} />}
     </>
   );
 };

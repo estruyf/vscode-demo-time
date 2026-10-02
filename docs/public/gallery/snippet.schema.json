@@ -1,0 +1,138 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://demotime.show/schemas/gallery-snippet.json",
+  "title": "Demo Time Gallery Snippet",
+  "description": "Schema for a community snippet in the Demo Time Snippets Gallery",
+  "type": "object",
+  "required": ["id", "name", "description", "author", "version", "tags", "fields", "steps"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the snippet. Must match the file path relative to the gallery/ folder, without the .json extension (e.g. 'setup/presentation-mode').",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*(?:\\/[a-z0-9]+(?:-[a-z0-9]+)*)+$",
+      "examples": [
+        "setup/presentation-mode",
+        "terminal/open-and-clear",
+        "editor/insert-and-highlight"
+      ]
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name of the snippet.",
+      "minLength": 3,
+      "maxLength": 60,
+      "examples": ["Presentation mode setup", "Open & clear terminal"]
+    },
+    "description": {
+      "type": "string",
+      "description": "A clear explanation of what the snippet does and when to use it.",
+      "minLength": 10,
+      "maxLength": 300,
+      "examples": [
+        "Prepares VS Code for presenting by enabling Caffeine, hiding the menubar, and entering full screen."
+      ]
+    },
+    "author": {
+      "type": "string",
+      "description": "GitHub username of the snippet author.",
+      "pattern": "^[a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38}$",
+      "examples": ["estruyf"]
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version of the snippet (MAJOR.MINOR.PATCH).",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "examples": ["1.0.0", "1.1.0", "2.0.0"]
+    },
+    "tags": {
+      "type": "array",
+      "description": "List of tags used for filtering in the gallery panel. Use lowercase, short, descriptive words.",
+      "minItems": 1,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+        "minLength": 2,
+        "maxLength": 20,
+        "examples": ["setup", "terminal", "editor", "git", "macos", "presentation"]
+      }
+    },
+    "fields": {
+      "type": "array",
+      "description": "Defines the arguments the snippet accepts via the args property. Each field maps to a {PLACEHOLDER} used in the steps. Can be empty if the snippet has no placeholders.",
+      "items": {
+        "type": "object",
+        "required": ["name", "description", "type", "required"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The placeholder name as used in steps, written in UPPER_SNAKE_CASE (without curly braces).",
+            "pattern": "^[A-Z][A-Z0-9_]*$",
+            "examples": ["MAIN_FILE", "CONTENT_PATH", "THEME"]
+          },
+          "description": {
+            "type": "string",
+            "description": "A short explanation of what value this field expects.",
+            "minLength": 5,
+            "maxLength": 150,
+            "examples": ["Relative path to the file to insert content into"]
+          },
+          "type": {
+            "type": "string",
+            "description": "The expected value type for this field.",
+            "enum": ["string", "number", "boolean"]
+          },
+          "required": {
+            "type": "boolean",
+            "description": "Whether this field must be provided by the user. Required fields must not have a default value."
+          },
+          "default": {
+            "description": "Default value used when the user does not provide one. Only allowed when required is false.",
+            "oneOf": [{ "type": "string" }, { "type": "number" }, { "type": "boolean" }]
+          }
+        },
+        "if": {
+          "properties": {
+            "required": { "const": true }
+          }
+        },
+        "then": {
+          "not": {
+            "required": ["default"]
+          }
+        }
+      }
+    },
+    "steps": {
+      "type": "array",
+      "description": "The Demo Time steps this snippet executes. Placeholders written as {FIELD_NAME} will be replaced with the values provided via args.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["action"],
+        "properties": {
+          "action": {
+            "type": "string",
+            "description": "The Demo Time action to perform.",
+            "minLength": 1,
+            "examples": [
+              "executeVSCodeCommand",
+              "insert",
+              "highlight",
+              "unselect",
+              "setTheme",
+              "macos.enableCaffeine",
+              "macos.hideMenubar",
+              "terminal.open",
+              "snippet"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  }
+}

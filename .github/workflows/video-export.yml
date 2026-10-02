@@ -1,0 +1,65 @@
+name: Export demo video
+
+# Exports the ship-it demo with the extension and CLI from this commit, as a check that video
+# export works on Linux and as an example of running it in CI.
+on:
+  workflow_dispatch:
+    inputs:
+      range:
+        description: 'Range: all, act:2 or act:2/scenes:1-2'
+        default: 'all'
+        required: true
+
+# The job runs the checked-out code, so it gets read access and no saved git credentials
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+
+      - name: Build and package the extension
+        run: |
+          npx nx build vscode-demo-time
+          cd apps/vscode-extension
+          npx --yes @vscode/vsce package --no-dependencies -o ../../demo-time.vsix
+
+      - name: Build the CLI
+        working-directory: apps/video
+        run: npm run build
+
+      - name: Export the play
+        env:
+          RANGE: ${{ inputs.range }}
+        run: >
+          echo '{ "workbench.colorTheme": "Demo Time Dark" }' > recording-settings.json &&
+          xvfb-run -a node apps/video/dist/cli.js export promo/demo/ship-it
+          --range "$RANGE"
+          --vscode-version stable
+          --extension demo-time.vsix
+          --extensions eliostruyf.vscode-demotime-theme
+          --settings recording-settings.json
+          --out video --name ship-it
+          --gif --chapters --srt
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: ship-it-video
+          path: video

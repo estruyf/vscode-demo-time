@@ -11,7 +11,7 @@ export const Config = {
     previousEnabled: 'previousEnabled',
     viewToggles: 'presentationViewToggles',
   },
-  zoom: 'zoomLevel',
+  zoom: 'zoom',
   highlight: {
     borderColor: 'highlightBorderColor',
     background: 'highlightBackground',
@@ -30,6 +30,7 @@ export const Config = {
     speed: 'lineInsertionDelay',
     typingMode: 'insertTypingMode',
     typingSpeed: 'insertTypingSpeed',
+    typingSpeedRandomness: 'insertTypingSpeedRandomness',
     hackerTyperChunkSize: 'hackerTyperChunkSize',
   },
   terminal: {
@@ -43,6 +44,10 @@ export const Config = {
     customTheme: 'customTheme',
     slideHeaderTemplate: 'slideHeaderTemplate',
     slideFooterTemplate: 'slideFooterTemplate',
+    slideProgressBar: 'slideProgressBar',
+    presentationTitle: 'presentationTitle',
+    previewSync: 'slidePreviewSync',
+    reducedMotion: 'slideReducedMotion',
   },
   webcomponents: {
     scripts: 'customWebComponents',
@@ -64,5 +69,17 @@ export const Config = {
   redaction: {
     enabled: 'redaction.enabled',
     customPatterns: 'redaction.customPatterns',
+  },
+  recording: {
+    captureSaves: 'recording.captureSaves',
+  },
+  pdfExport: {
+    includeHiddenSlides: 'pdfExport.includeHiddenSlides',
+    notes: 'pdfExport.notes',
+  },
+  videoExport: {
+    command: 'videoExport.command',
+    extension: 'videoExport.extension',
+    options: 'videoExport.options',
   },
 };

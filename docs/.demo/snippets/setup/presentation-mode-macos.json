@@ -1,0 +1,41 @@
+{
+  "id": "setup/presentation-mode-macos",
+  "name": "Presentation mode setup",
+  "description": "Prepares VS Code for presenting: enables Caffeine (no sleep), hides the menubar, switches to a theme, enters full screen, and hides the activity bar and title bar for a clean, distraction-free setup.",
+  "author": "Elio Struyf",
+  "version": "1.0.0",
+  "tags": ["setup", "macos", "presentation"],
+  "fields": [
+    {
+      "name": "THEME",
+      "description": "The VS Code theme to switch to at the start of the presentation",
+      "type": "string",
+      "required": false,
+      "default": "Demo Time Dark"
+    }
+  ],
+  "steps": [
+    {
+      "action": "macos.enableCaffeine"
+    },
+    {
+      "action": "macos.hideMenubar"
+    },
+    {
+      "action": "setTheme",
+      "theme": "{THEME}"
+    },
+    {
+      "action": "executeVSCodeCommand",
+      "command": "workbench.action.toggleFullScreen"
+    },
+    {
+      "action": "executeVSCodeCommand",
+      "command": "workbench.action.activityBarLocation.hide"
+    },
+    {
+      "action": "executeVSCodeCommand",
+      "command": "hideCustomTitleBarInFullScreen"
+    }
+  ]
+}

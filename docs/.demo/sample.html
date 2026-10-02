@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple Sample</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        max-width: 640px;
+        margin: 3rem auto;
+        padding: 0 1rem;
+        line-height: 1.5;
+      }
+
+      button {
+        padding: 0.6rem 1rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background: #f4f4f4;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Simple Sample Page</h1>
+    <p>This is a basic HTML sample with a small interaction.</p>
+
+    <button id="hello-btn">Click me</button>
+    <p id="output"></p>
+
+    <script>
+      const button = document.getElementById('hello-btn');
+      const output = document.getElementById('output');
+
+      button.addEventListener('click', () => {
+        output.textContent = 'Hello! Your sample is working.';
+      });
+    </script>
+  </body>
+</html>

@@ -269,19 +269,19 @@ h1 {
 }
 
 .card--scene {
-  background: var(--bg-deep);
+  background: var(--bg-card);
   border-color: var(--green);
   margin-top: 16px;
 }
 
 .card--moves {
-  background: #1a1a1a;
+  background: var(--bg-nested);
   border-color: var(--blue);
   margin-top: 16px;
 }
 
 .card--scene-placeholder {
-  background: transparent;
+  background: var(--bg-card);
   border-style: dashed;
   border-color: var(--green);
   padding: 20px 24px;

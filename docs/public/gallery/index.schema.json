@@ -1,0 +1,141 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://demotime.show/schemas/gallery-index.json",
+  "title": "Demo Time Gallery Index Entry",
+  "description": "Schema for a summary entry in the Demo Time Gallery index",
+  "type": "object",
+  "required": ["id", "name", "description", "author", "version", "tags", "fields", "path", "actions"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference for this document."
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the snippet. Must match the file path relative to the gallery/ folder, without the .json extension (e.g. 'setup/presentation-mode').",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*(?:\\/[a-z0-9]+(?:-[a-z0-9]+)*)+$",
+      "examples": [
+        "setup/presentation-mode",
+        "terminal/open-and-clear",
+        "editor/insert-and-highlight"
+      ]
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name of the snippet.",
+      "minLength": 3,
+      "maxLength": 60,
+      "examples": ["Presentation mode setup", "Open & clear terminal"]
+    },
+    "description": {
+      "type": "string",
+      "description": "A clear explanation of what the snippet does and when to use it.",
+      "minLength": 10,
+      "maxLength": 300,
+      "examples": [
+        "Prepares VS Code for presenting by enabling Caffeine, hiding the menubar, and entering full screen."
+      ]
+    },
+    "author": {
+      "type": "string",
+      "description": "Display name of the snippet author.",
+      "minLength": 1,
+      "maxLength": 100,
+      "examples": ["Elio Struyf"]
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version of the snippet (MAJOR.MINOR.PATCH).",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "examples": ["1.0.0", "1.1.0", "2.0.0"]
+    },
+    "tags": {
+      "type": "array",
+      "description": "List of tags used for filtering in the gallery panel.",
+      "minItems": 1,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+        "minLength": 2,
+        "maxLength": 20,
+        "examples": ["setup", "terminal", "editor", "git", "macos", "presentation"]
+      }
+    },
+    "fields": {
+      "type": "array",
+      "description": "Summary of the arguments the snippet accepts. Each field maps to a {PLACEHOLDER} used in the snippet's steps.",
+      "items": {
+        "type": "object",
+        "required": ["name", "description", "type", "required"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The placeholder name as used in steps, written in UPPER_SNAKE_CASE.",
+            "pattern": "^[A-Z][A-Z0-9_]*$",
+            "examples": ["MAIN_FILE", "CONTENT_PATH", "THEME"]
+          },
+          "description": {
+            "type": "string",
+            "description": "A short explanation of what value this field expects.",
+            "minLength": 5,
+            "maxLength": 150,
+            "examples": ["Relative path to the file to insert content into"]
+          },
+          "type": {
+            "type": "string",
+            "description": "The expected value type for this field.",
+            "enum": ["string", "number", "boolean"]
+          },
+          "required": {
+            "type": "boolean",
+            "description": "Whether this field must be provided by the user."
+          },
+          "default": {
+            "description": "Default value used when the user does not provide one. Only allowed when required is false.",
+            "oneOf": [{ "type": "string" }, { "type": "number" }, { "type": "boolean" }]
+          }
+        },
+        "if": {
+          "properties": {
+            "required": { "const": true }
+          }
+        },
+        "then": {
+          "not": {
+            "required": ["default"]
+          }
+        }
+      }
+    },
+    "path": {
+      "type": "string",
+      "description": "Relative path to the full snippet JSON file within the gallery.",
+      "pattern": "^gallery\\/.+\\.json$",
+      "examples": ["gallery/setup/presentation-mode-macos.json"]
+    },
+    "actions": {
+      "type": "array",
+      "description": "List of Demo Time action types used by this snippet.",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "examples": [
+          "executeVSCodeCommand",
+          "insert",
+          "highlight",
+          "setTheme",
+          "macos.enableCaffeine",
+          "macos.hideMenubar",
+          "terminal.open",
+          "snippet"
+        ]
+      }
+    }
+  }
+}

@@ -9,7 +9,7 @@ import { messageHandler } from '@estruyf/vscode/dist/client';
 import { Switch } from '../ui/Switch';
 import { SnippetArguments } from './SnippetArguments';
 import { DemoIdPicker } from '../ui/DemoIdPicker';
-import { Action, EngageTimeMessageType, Step, WebViewMessages } from '@demotime/common';
+import { Action, COMMAND, EngageTimeMessageType, Step, WebViewMessages } from '@demotime/common';
 import { PollIdPicker } from './PollIdPicker';
 import { useDemoConfigContext } from '../../hooks';
 import { VSCodeCommandPicker } from './VSCodeCommandPicker';
@@ -45,6 +45,23 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
   const [fetchedThemes, setFetchedThemes] = useState<string[]>([]);
   const [loadingThemes, setLoadingThemes] = useState(false);
   const [themeError, setThemeError] = useState<string | null>(null);
+
+  // State for available snippet files (used in contentPath suggestions)
+  const [snippetSuggestions, setSnippetSuggestions] = useState<{ label: string; path: string; description?: string }[]>([]);
+  const [loadingSnippetSuggestions, setLoadingSnippetSuggestions] = useState(false);
+
+  useEffect(() => {
+    setLoadingSnippetSuggestions(true);
+    messageHandler
+      .request<{ label: string; path: string; description?: string }[]>(
+        WebViewMessages.toVscode.configEditor.listSnippets,
+      )
+      .then((data) => {
+        setSnippetSuggestions(Array.isArray(data) ? data : []);
+      })
+      .catch(() => setSnippetSuggestions([]))
+      .finally(() => setLoadingSnippetSuggestions(false));
+  }, []);
 
   useEffect(() => {
     const fetchThemes = async () => {
@@ -251,7 +268,24 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
     handleChange('position', combinedPosition);
   };
 
+  const getQrFieldsForLayout = (layout: Step['qrLayout']): string[] => {
+    switch (layout) {
+      case 'minimal': return ['qrLayout', 'url'];
+      case 'stacked':
+      case 'text-left':
+      case 'text-right': return ['qrLayout', 'url', 'topText', 'title', 'description'];
+      default: return ['qrLayout', 'url', 'topText', 'title', 'description', 'logo'];
+    }
+  };
+
   const renderField = (field: string) => {
+    if (step.action === Action.ShowQR && field !== 'action') {
+      const allowedQrFields = getQrFieldsForLayout(step.qrLayout);
+      if (!allowedQrFields.includes(field)) {
+        return null;
+      }
+    }
+
     const isRequired = requiredFields.includes(field);
     const fieldErrors = stepValidation.errors.filter(error => error.field === field || error[`field:${field}`] !== undefined);
     const hasError = fieldErrors.length > 0;
@@ -265,6 +299,8 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       label = "Zoom Level (times to use VS Code zoom)";
     } else if (field === 'insertTypingSpeed') {
       label = "Insert Typing Speed (ms)";
+    } else if (field === 'insertTypingSpeedRandomness') {
+      label = "Insert Typing Speed Randomness (0-100%)";
     } else if (field === 'highlightBlur') {
       label = "Highlight Blur (0-10px)";
     } else if (field === 'highlightOpacity') {
@@ -279,6 +315,10 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       label = 'Start the poll when opening it';
     } else if (field === 'closeOnOpen') {
       label = 'Close the poll when opening it';
+    } else if (field === 'pollDarkTheme') {
+      label = 'Use dark theme';
+    } else if (field === 'pollControls') {
+      label = 'Show poll controls';
     }
 
     switch (field) {
@@ -373,6 +413,21 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
           </div>
         );
 
+      case 'qrLayout':
+        return (
+          <div key={field}>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              QR Layout {isRequired && <span className="text-red-500">*</span>}
+            </label>
+            <SearchableDropdown
+              value={step.qrLayout || 'default'}
+              options={['default', 'reversed', 'minimal', 'stacked', 'text-left', 'text-right']}
+              onChange={(value) => handleChange('qrLayout', value as Step['qrLayout'])}
+              placeholder="Select QR layout..."
+            />
+          </div>
+        );
+
       case 'insertTypingMode':
         return (
           <InsertTypingModePicker
@@ -414,6 +469,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       case 'overwrite':
       case 'openInVSCode':
       case 'autoExecute':
+      case 'showProgress':
         return (
           <div key={field}>
             <label className="h-full flex items-center space-x-2">
@@ -464,6 +520,40 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
           </div>
         );
 
+      case 'pollDarkTheme':
+        return (
+          <div key={field}>
+            <label className="h-full flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={typeof step.pollDarkTheme === 'undefined' ? false : step.pollDarkTheme}
+                onChange={(e) => handleChange('pollDarkTheme', e.target.checked)}
+                className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                {label} {isRequired && <span className="text-red-500">*</span>}
+              </span>
+            </label>
+          </div>
+        );
+
+      case 'pollControls':
+        return (
+          <div key={field}>
+            <label className="h-full flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={typeof step.pollControls === 'undefined' ? true : step.pollControls}
+                onChange={(e) => handleChange('pollControls', e.target.checked)}
+                className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                {label} {isRequired && <span className="text-red-500">*</span>}
+              </span>
+            </label>
+          </div>
+        );
+
       case 'timeout':
       case 'zoom':
       case 'insertTypingSpeed':
@@ -481,6 +571,29 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                 }`}
               placeholder={`Enter ${label.toLowerCase()}`}
               min={0}
+            />
+            {fieldErrors.map((error, index) => (
+              <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
+            ))}
+          </div>
+        );
+
+      case 'insertTypingSpeedRandomness':
+        return (
+          <div key={field}>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              {label} {isRequired && <span className="text-red-500">*</span>}
+            </label>
+            <input
+              type="number"
+              value={typeof step[field] !== 'undefined' ? step[field] : ''}
+              onChange={(e) => handleChange(field, e.target.value ? parseInt(e.target.value) : undefined)}
+              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
+                }`}
+              placeholder="Enter randomness (0-100)"
+              min={0}
+              max={100}
+              step={1}
             />
             {fieldErrors.map((error, index) => (
               <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
@@ -593,33 +706,60 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
 
       case 'args':
         return (
-          <div key={field}>
+          <div key={field} className='col-span-1 md:col-span-2'>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Arguments {isRequired && <span className="text-red-500">*</span>}
+              {step.action !== 'snippet' && (
+                <span className="text-xs text-gray-600 dark:text-gray-400 block mt-1">
+                  For VS Code commands: JSON object/array. For scripts: positional args array
+                </span>
+              )}
+            </label>
+            {step.action === 'snippet' && step.contentPath ? (
+              <SnippetArguments
+                path={step.contentPath}
+                args={typeof step.args === 'object' && step.args !== null ? step.args : undefined}
+                onChange={(newArgs) => handleChange('args', newArgs)}
+              />
+            ) : (
+              <textarea
+                value={typeof step.args === 'string' ? step.args : JSON.stringify(step.args, null, 2)}
+                onChange={(e) => {
+                  try {
+                    const parsed = JSON.parse(e.target.value);
+                    handleChange('args', parsed);
+                  } catch {
+                    handleChange('args', e.target.value);
+                  }
+                }}
+                rows={3}
+                className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
+                  }`}
+                placeholder="Enter arguments (JSON or string)"
+              />
+            )}
+            {fieldErrors.map((error, index) => (
+              <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
+            ))}
+          </div>
+        );
+
+      case 'waitForMessage':
+        return (
+          <div key={field}>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Wait For Message
               <span className="text-xs text-gray-600 dark:text-gray-400 block mt-1">
-                For VS Code commands: JSON object/array. For snippets: placeholder names
+                Optional: wait until stdout contains this string before advancing
               </span>
             </label>
-            <textarea
-              value={typeof step.args === 'string' ? step.args : JSON.stringify(step.args, null, 2)}
-              onChange={(e) => {
-                try {
-                  const parsed = JSON.parse(e.target.value);
-                  handleChange('args', parsed);
-                } catch {
-                  handleChange('args', e.target.value);
-                }
-              }}
-              rows={3}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
-                }`}
-              placeholder="Enter arguments (JSON or string)"
+            <input
+              type="text"
+              value={step.waitForMessage || ''}
+              onChange={(e) => handleChange('waitForMessage', e.target.value || undefined)}
+              className={`w-full px-3 py-2 border rounded-md focus:outline-hidden focus:ring-2 focus:ring-demo-time-accent focus:border-demo-time-accent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${hasError ? 'border-red-300 bg-red-50 dark:border-red-400 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`}
+              placeholder="e.g. done"
             />
-            {
-              (step.action === 'snippet' && step.contentPath) && (
-                <SnippetArguments path={step.contentPath} />
-              )
-            }
             {fieldErrors.map((error, index) => (
               <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error.message}</p>
             ))}
@@ -841,6 +981,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
         // Handle path fields with file picker
         if (field === 'path' || field === 'contentPath' || field === 'dest') {
           const fileTypes = step.action === 'openSlide' ? ['md'] : undefined;
+          const isSnippetContentPath = field === 'contentPath' && step.action === 'snippet';
           return (
             <div key={field}>
               <PathInput
@@ -852,7 +993,20 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
                 error={fieldErrors.length > 0 ? fieldErrors[0].message : undefined}
                 type={field === 'contentPath' ? 'file' : 'file'}
                 fileTypes={fileTypes}
+                suggestions={isSnippetContentPath ? snippetSuggestions : undefined}
+                loadingSuggestions={isSnippetContentPath ? loadingSnippetSuggestions : false}
               />
+              {isSnippetContentPath && (
+                <div className="mt-2 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => messageHandler.send(WebViewMessages.toVscode.runCommand, { command: COMMAND.showGallery })}
+                    className="text-xs text-demo-time-accent hover:underline"
+                  >
+                    Open Snippet Gallery
+                  </button>
+                </div>
+              )}
             </div>
           );
         }
@@ -925,7 +1079,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       {step.action === 'copyToClipboard' && (
         <NoteBox className="mt-2" variant="info">
           <>
-            <strong>Note:</strong> This action requires either <code className="bg-white px-1 rounded-xs">content</code> OR <code className="bg-white px-1 rounded-xs">contentPath</code>.
+            <strong>Note:</strong> This action requires either <code className="bg-blue-100 dark:bg-gray-900 text-blue-900 dark:text-blue-100 font-mono px-1 rounded-xs">content</code> OR <code className="bg-blue-100 dark:bg-gray-900 text-blue-900 dark:text-blue-100 font-mono px-1 rounded-xs">contentPath</code>.
           </>
         </NoteBox>
       )}

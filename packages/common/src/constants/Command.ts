@@ -13,6 +13,7 @@ export const COMMAND = {
   previous: `${EXTENSION_NAME}.previous`,
   runStep: `${EXTENSION_NAME}.runStep`,
   runById: `${EXTENSION_NAME}.runById`,
+  runSingleMove: `${EXTENSION_NAME}.runSingleMove`,
   togglePresentationMode: `${EXTENSION_NAME}.togglePresentationMode`,
   reset: `${EXTENSION_NAME}.reset`,
   toggleHighlight: `${EXTENSION_NAME}.toggleHighlight`,
@@ -28,6 +29,12 @@ export const COMMAND = {
   createSnapshot: `${EXTENSION_NAME}.createSnapshot`,
   createPatch: `${EXTENSION_NAME}.createPatch`,
   createDemoFile: `${EXTENSION_NAME}.createDemoFile`,
+  // Recording
+  recordingStart: `${EXTENSION_NAME}.recording.start`,
+  recordingStop: `${EXTENSION_NAME}.recording.stop`,
+  recordingSplitMove: `${EXTENSION_NAME}.recording.splitMove`,
+  recordingNewScene: `${EXTENSION_NAME}.recording.newScene`,
+  recordingMarkHighlight: `${EXTENSION_NAME}.recording.markHighlight`,
   // Output
   showOutputChannel: `${EXTENSION_NAME}.showOutputChannel`,
   // Panel view
@@ -61,6 +68,12 @@ export const COMMAND = {
   showOverview: `${EXTENSION_NAME}.showOverview`,
   // Pro Features
   showProFeatures: `${EXTENSION_NAME}.showProFeatures`,
+  // Gallery
+  showGallery: `${EXTENSION_NAME}.showGallery`,
+  // Theme Builder
+  showThemeBuilder: `${EXTENSION_NAME}.showThemeBuilder`,
+  // AI skills
+  installAiSkills: `${EXTENSION_NAME}.installAiSkills`,
   // Resources
   openSupportTheProject: `${EXTENSION_NAME}.openSupportTheProject`,
   openRemoteControl: `${EXTENSION_NAME}.openRemoteControl`,
@@ -73,4 +86,12 @@ export const COMMAND = {
   analyticsToggle: `${EXTENSION_NAME}.analytics.toggle`,
   // Redaction
   toggleRedaction: `${EXTENSION_NAME}.toggleRedaction`,
+  // Auto-proceed
+  toggleAutoProceed: `${EXTENSION_NAME}.toggleAutoProceed`,
+  pauseAutoProceed: `${EXTENSION_NAME}.pauseAutoProceed`,
+  resumeAutoProceed: `${EXTENSION_NAME}.resumeAutoProceed`,
+  // Video export
+  runForVideoExport: `${EXTENSION_NAME}.runForVideoExport`,
+  stopVideoExport: `${EXTENSION_NAME}.stopVideoExport`,
+  exportPlayAsVideo: `${EXTENSION_NAME}.exportPlayAsVideo`,
 };

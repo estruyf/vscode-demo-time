@@ -1,7 +1,7 @@
 import * as React from 'react';
 import rehypePrettyCode from 'rehype-pretty-code';
 import { messageHandler } from '@estruyf/vscode/dist/client/webview';
-import { convertTemplateToHtml, SlideMetadata, twoColumnFormatting, WebViewMessages } from '@demotime/common';
+import { getTemplateErrorMessage, getVideoAutoplay, placeholderFormatting, renderTemplateError, SlideMetadata, tryConvertTemplateToHtml, WebViewMessages } from '@demotime/common';
 import { renderToString } from 'react-dom/server';
 import { usePrevious, useRemark } from '../../hooks';
 import { transformImageUrl } from '../../utils';
@@ -14,6 +14,11 @@ export interface IMarkdownProps {
   isDarkTheme: boolean;
   webviewUrl: string | null;
   videoUrl?: string;
+  /**
+   * Renders the slide for a thumbnail or a measurement: it doesn't reveal the preview or log
+   * errors
+   */
+  isStatic?: boolean;
   updateBgStyles: (styles: React.CSSProperties | undefined) => void;
 }
 
@@ -25,15 +30,15 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   isDarkTheme,
   webviewUrl,
   videoUrl,
+  isStatic = false,
   updateBgStyles
 }: React.PropsWithChildren<IMarkdownProps>) => {
   const prevContent = usePrevious(content);
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const [isReady, setIsReady] = React.useState(false);
   const [customTheme, setCustomTheme] = React.useState<string | undefined>(undefined);
-  const [customLayout, setCustomLayout] = React.useState<string | undefined>(undefined);
   const [template, setTemplate] = React.useState<string | undefined>(undefined);
-  const [currentLayoutPath, setCurrentLayoutPath] = React.useState<string | undefined>(undefined);
+  const currentLayoutPathRef = React.useRef<string | undefined>(undefined);
 
   const resolvedVideoUrl = React.useMemo(() => {
     // Prefer explicit prop `videoUrl`, fall back to `matter.video`.
@@ -43,13 +48,15 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     return transformImageUrl(webviewUrl || "", raw) || raw;
   }, [videoUrl, matter?.video, webviewUrl]);
 
+  const shouldAutoplay = React.useMemo(() => getVideoAutoplay(matter), [matter]);
+
   const computedMuted = React.useMemo(() => {
     // If user explicitly set muted (true or 'true'), respect it.
     const explicit = matter && (matter.muted === true || matter.muted === 'true');
     if (explicit) { return true; }
-    // Allow autoPlay by muting when autoPlay is requested or when controls are hidden.
-    return Boolean(matter?.autoPlay) || !matter?.controls;
-  }, [matter]);
+    // Allow autoplay by muting when autoplay is requested or when controls are hidden.
+    return shouldAutoplay || !matter?.controls;
+  }, [matter, shouldAutoplay]);
 
   const {
     markdown,
@@ -78,37 +85,55 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
 
   const updateCustomLayout = React.useCallback((metadata: SlideMetadata, layout?: string) => {
     // Clear previous template if layout path changed
-    if (layout !== currentLayoutPath) {
+    if (layout !== currentLayoutPathRef.current) {
       setTemplate(undefined);
-      setCurrentLayoutPath(layout);
+      currentLayoutPathRef.current = layout;
     }
 
     if (layout) {
-      messageHandler.request<string>(WebViewMessages.toVscode.getFileContents, layout).then(async (templateHtml) => {
-        if (templateHtml) {
-          let crntSlideContent = textContent;
-          if (!textContent && content) {
-            const processedContent = await processMarkdown(content);
-            crntSlideContent = renderToString(processedContent.reactContent);
-          }
-
-          const metadataWithUrl = { ...metadata, webViewUrl: webviewUrl || undefined };
-
-          const html = convertTemplateToHtml(templateHtml, {
-            metadata: metadataWithUrl,
-            content: crntSlideContent,
-          }, webviewUrl);
-
-          setTemplate(html);
-          setIsReady(true);
+      const errorOptions = { title: 'Custom layout error', path: layout };
+      const showError = (message: string) => {
+        if (!isStatic) {
+          messageHandler.send(WebViewMessages.toVscode.logError, getTemplateErrorMessage(errorOptions, message));
         }
-      }).catch(() => {
+        setTemplate(renderTemplateError(errorOptions, message));
         setIsReady(true);
+      };
+
+      messageHandler.request<string>(WebViewMessages.toVscode.getFileContents, layout).then(async (templateHtml) => {
+        if (!templateHtml) {
+          showError('The layout file could not be found or is empty.');
+          return;
+        }
+
+        let crntSlideContent: string;
+        if (content) {
+          const processedContent = await processMarkdown(content);
+          crntSlideContent = renderToString(processedContent.reactContent);
+        } else {
+          crntSlideContent = textContent;
+        }
+
+        const metadataWithUrl = { ...metadata, webViewUrl: webviewUrl || undefined };
+
+        const { html, error } = tryConvertTemplateToHtml(templateHtml, {
+          metadata: metadataWithUrl,
+          content: crntSlideContent,
+        }, { ...errorOptions, webviewUrl });
+
+        if (error && !isStatic) {
+          messageHandler.send(WebViewMessages.toVscode.logError, error);
+        }
+
+        setTemplate(html);
+        setIsReady(true);
+      }).catch((e) => {
+        showError(e instanceof Error ? e.message : String(e));
       });
     } else {
       setIsReady(true);
     }
-  }, [content, textContent, webviewUrl]);
+  }, [content, textContent, webviewUrl, processMarkdown, isStatic]);
 
   const updateCustomThemePath = React.useCallback((customThemePath?: string) => {
     if (!customThemePath) {
@@ -138,7 +163,6 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     }
 
     setIsReady(false);
-    setCustomLayout(undefined);
     setCustomTheme(undefined);
     setTemplate(undefined);
 
@@ -159,14 +183,25 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     } else {
       updateBgStyles(undefined);
     }
-  }, [isReady, prevContent, prevMatter, matter, updateCustomThemePath, updateBgStyles, webviewUrl, updateCustomLayout]);
+  }, [prevMatter, matter, updateCustomThemePath, updateBgStyles, webviewUrl, updateCustomLayout]);
 
   React.useEffect(() => {
-    if (content && content !== prevContent) {
-      // Passing the theme here as it could be that the theme has been updated
-      setMarkdown(twoColumnFormatting(content), [[rehypePrettyCode, { theme: vsCodeTheme ? vsCodeTheme : {} }]], isDarkTheme);
+    if (!matter || !content || content === prevContent) {
+      return;
     }
-  }, [content, vsCodeTheme, isDarkTheme, prevContent, setMarkdown]);
+
+    if (matter.customLayout) {
+      // For custom layouts: only call updateCustomLayout if matter didn't change this render.
+      // If matter changed, the matter effect already called it — avoid a double async fetch.
+      if (prevMatter === JSON.stringify(matter)) {
+        updateCustomLayout(matter, matter.customLayout);
+      }
+    } else {
+      // Standard slides: process markdown (rehype). Skip for custom layouts since
+      // the `markdown` output is never rendered when a `template` is active.
+      setMarkdown(placeholderFormatting(content), [[rehypePrettyCode, { theme: vsCodeTheme ? vsCodeTheme : {} }]], isDarkTheme);
+    }
+  }, [content, vsCodeTheme, isDarkTheme, prevContent, prevMatter, setMarkdown, matter, updateCustomLayout]);
 
   // Set playback rate when video is ready
   React.useEffect(() => {
@@ -193,7 +228,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
 
   React.useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
-    if (isReady) {
+    if (isReady && !isStatic) {
       // Sent a reveal message to the extension when the slide is ready.
       timeoutId = setTimeout(() => {
         messageHandler.send(WebViewMessages.toVscode.slideReady);
@@ -205,9 +240,9 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
         clearTimeout(timeoutId);
       }
     };
-  }, [isReady]);
+  }, [isReady, isStatic]);
 
-  // Ensure the browser picks up the dynamically rendered source and respects autoPlay.
+  // Ensure the browser picks up the dynamically rendered source and respects autoplay.
   React.useEffect(() => {
     const video = videoRef.current;
     if (!video || !resolvedVideoUrl) { return; }
@@ -224,7 +259,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
         }
       }
 
-      if (Boolean(matter?.autoPlay) && computedMuted) {
+      if (shouldAutoplay && computedMuted) {
         void video.play();
       }
     };
@@ -245,18 +280,14 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     return () => {
       video.removeEventListener('loadedmetadata', setRateAndPlay);
     };
-  }, [resolvedVideoUrl, isReady, computedMuted, matter?.autoPlay, matter?.playbackRate]);
+  }, [resolvedVideoUrl, isReady, computedMuted, shouldAutoplay, matter?.playbackRate]);
 
   if (!isReady) {
     return null;
   }
 
-  if (customLayout && !template) {
-    return null;
-  }
-
   return (
-    <>
+    <React.Fragment>
       {customTheme && <link href={customTheme} rel="stylesheet" />}
 
       {
@@ -277,7 +308,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
                   <video
                     ref={videoRef}
                     controls={matter?.controls}
-                    autoPlay={matter?.autoPlay || !matter?.controls}
+                    autoPlay={shouldAutoplay}
                     loop={matter?.loop || !matter?.controls}
                     muted={computedMuted}
                     playsInline={matter?.playsInline || !matter?.controls}
@@ -293,6 +324,6 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
           </div>
         )
       }
-    </>
+    </React.Fragment>
   );
 };

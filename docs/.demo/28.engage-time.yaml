@@ -24,6 +24,23 @@ demos:
         pollId: 2ftkkx
         startOnOpen: false
         closeOnOpen: false
+  - id: demo-mqf7302w-6zrt
+    title: Show the poll (dark)
+    steps:
+      - action: showEngageTimePoll
+        pollId: 2ftkkx
+        startOnOpen: false
+        closeOnOpen: false
+        pollDarkTheme: true
+  - id: demo-mqf7630x-ycyy
+    title: Show the poll (no controls)
+    steps:
+      - action: showEngageTimePoll
+        pollId: 2ftkkx
+        startOnOpen: false
+        closeOnOpen: false
+        pollDarkTheme: false
+        pollControls: false
   - id: demo-mevobuhg-bwu1
     title: Close a poll
     steps:

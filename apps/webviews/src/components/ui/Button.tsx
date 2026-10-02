@@ -1,9 +1,9 @@
+import type { LucideIcon } from 'lucide-react';
 import React from 'react';
-import { DivideIcon as LucideIcon } from 'lucide-react';
 
 interface ButtonProps {
-  variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'dark';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'dark' | 'outline';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   disabled?: boolean;
   loading?: boolean;
   icon?: LucideIcon;
@@ -36,10 +36,12 @@ export const Button: React.FC<ButtonProps> = ({
     success: 'bg-[#ffd43b] hover:bg-[#e6c135] text-gray-900 focus:ring-[#ffd43b]',
     danger: 'bg-red-600 hover:bg-red-700 text-white focus:ring-red-500',
     warning: 'bg-yellow-600 hover:bg-yellow-700 text-white focus:ring-yellow-500',
-    dark: 'bg-gray-800 hover:bg-gray-700 text-white focus:ring-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600'
+    dark: 'bg-gray-800 hover:bg-gray-700 text-white focus:ring-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600',
+    outline: 'border-transparent bg-transparent px-0 text-gray-600 hover:bg-gray-200 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'
   };
 
   const sizeClasses = {
+    xs: 'px-2 py-1 text-xs',
     sm: 'px-3 py-2 text-sm',
     md: 'px-4 py-2 text-sm',
     lg: 'px-6 py-3 text-base'

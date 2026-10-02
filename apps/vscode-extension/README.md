@@ -41,6 +41,9 @@ presentations.</h2>
   of your demo.
 - **PowerPoint Integration**: Seamlessly move from slides to code using the
   [PowerPoint integration](https://demotime.show/integrations/powerpoint/).
+- **AI Skills**: Let GitHub Copilot, Claude Code and other AI assistants plan
+  your talk, create slides and slide themes, and script your demos with the
+  [Demo Time AI skills](https://demotime.show/features/ai-skills/).
 
 ## Getting Started
 

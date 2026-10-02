@@ -4,8 +4,14 @@ import {
   CompletionItemKind,
   Hover,
   languages,
+  MarkdownString,
+  Position,
+  Range,
   Uri,
   window,
+  workspace,
+  WorkspaceEdit,
+  WorkspaceFolder,
 } from 'vscode';
 import { Subscription } from '../models';
 import { Extension } from './Extension';
@@ -14,32 +20,42 @@ import {
   addStepsToDemo,
   chooseDemoFile,
   fileExists,
+  getAbsolutePath,
   getRelPath,
+  getSlidePropertyAtLine,
+  getSlidePropertyCompletions,
   isPathInWorkspace,
   parseWinPath,
   readFile,
   sanitizeFileName,
+  setSlideHidden,
+  setSlideNotes,
   upperCaseFirstLetter,
   writeFile,
 } from '../utils';
 import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
 import { DemoFileProvider } from './DemoFileProvider';
+import { SlidePreviewSync } from './SlidePreviewSync';
+import { Notifications } from './Notifications';
 import { Preview } from '../preview/Preview';
 import {
   COMMAND,
   Config,
   SlideLayout,
-  SlideTheme,
-  SlideTransition,
   Action,
   Step,
   SlideParser,
   getDemosFromConfig,
+  getVisibleSlides,
+  isSlideHidden,
+  Slide,
+  SlidePlaceholders,
+  getSlidePropertyMarkdown,
+  getSlidePropertyTypeName,
+  getSlidePropertyValues,
 } from '@demotime/common';
 
 export class Slides {
-  private static frontmatterRegex = /^---(?:[^\r\n]*\r?\n)+?---/;
-
   public static register() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
 
@@ -138,6 +154,9 @@ layout: ${layout.toLowerCase()}
     });
   }
 
+  /**
+   * Counts the slides of all act files. Hidden slides (`hide: true`) are not counted.
+   */
   public static async getTotalSlides(): Promise<number> {
     // Get all act files and count all slides
     const demoFiles = await DemoFileProvider.getFiles();
@@ -168,7 +187,7 @@ layout: ${layout.toLowerCase()}
                   // Parse slides from markdown content
                   const parser = new SlideParser();
                   const slides = parser.parseSlides(fileContent);
-                  totalSlides += slides.length;
+                  totalSlides += getVisibleSlides(slides).length;
                 }
               } catch {
                 // If file can't be read, count as 1 slide fallback
@@ -183,66 +202,224 @@ layout: ${layout.toLowerCase()}
   }
 
   /**
-   * Maps a file path and local slide index to the global slide index (1-based)
+   * Gets the values of the header and footer placeholders that don't come from the front matter:
+   * the slide number over all acts, the total number of slides, the act and scene that open the
+   * slide, and the presentation title. Hidden slides (`hide: true`) are not counted and have no
+   * slide number.
    * @param filePath Relative file path to the slide markdown file
    * @param localSlideIdx Local slide index (0-based)
-   * @returns Global slide index (1-based), or null if not found
+   * @param scene The scene that opened the slide. When more scenes open the same file, this one is
+   * used for `sceneTitle` and `actTitle`.
    */
-  public static async getGlobalSlideIndex(
+  public static async getSlidePlaceholders(
     filePath: string,
     localSlideIdx: number,
-  ): Promise<number | null> {
+    scene?: { id?: string; title?: string },
+  ): Promise<SlidePlaceholders> {
+    // The preview sends a webview URL, which can have encoded characters like `%20`
+    try {
+      filePath = decodeURIComponent(filePath);
+    } catch {
+      // Keep the path as is
+    }
     filePath = parseWinPath(filePath);
     const demoFiles = await DemoFileProvider.getFiles();
-    let globalIdx = 0;
-    if (demoFiles) {
-      for (const demoFile of Object.values(demoFiles)) {
-        const demos = getDemosFromConfig(demoFile as any);
-        for (const demo of demos) {
-          for (const step of demo.steps) {
-            if (step.action === 'openSlide' && step.path) {
-              let fileUri;
-              const wsFolder = Extension.getInstance().workspaceFolder;
-              if (wsFolder) {
-                fileUri = Uri.joinPath(wsFolder.uri, step.path);
+    const wsFolder = Extension.getInstance().workspaceFolder;
 
-                // Verify the resolved path is contained within the workspace
-                if (!isPathInWorkspace(fileUri, wsFolder)) {
-                  // Fallback: treat as one slide for invalid paths
-                  if (step.path === filePath && localSlideIdx === 0) {
-                    return globalIdx + 1;
-                  }
-                  globalIdx++;
-                  continue;
-                }
-              } else {
-                fileUri = Uri.file(step.path);
-              }
-              try {
-                const fileContent = await readFile(fileUri);
-                if (fileContent) {
-                  const parser = new SlideParser();
-                  const slides = parser.parseSlides(fileContent);
-                  for (let i = 0; i < slides.length; i++) {
-                    if (filePath.endsWith(parseWinPath(step.path)) && i === localSlideIdx) {
-                      return globalIdx + 1; // 1-based index
-                    }
-                    globalIdx++;
-                  }
-                }
-              } catch {
-                // Fallback: treat as one slide
-                if (step.path === filePath && localSlideIdx === 0) {
-                  return globalIdx + 1;
-                }
-                globalIdx++;
-              }
+    let totalSlides = 0;
+    let crntSlideIdx: number | null = null;
+    // The first move that opens the file gives the slide number
+    let isNumbered = false;
+    let match: { actTitle?: string; sceneTitle?: string; isScene: boolean } | undefined;
+
+    for (const demoFile of Object.values(demoFiles || {})) {
+      const demos = getDemosFromConfig(demoFile as any);
+      for (const demo of demos) {
+        for (const step of demo.steps) {
+          if (step.action !== Action.OpenSlide || !step.path) {
+            continue;
+          }
+
+          const stepPath = parseWinPath(step.path).replace(/^\.\//, '');
+          const isFile =
+            filePath === stepPath ||
+            filePath.endsWith(`/${stepPath}`) ||
+            filePath === parseWinPath(step.path);
+          if (isFile) {
+            const isScene =
+              !!scene &&
+              (scene.id ? scene.id === demo.id : !!scene.title && scene.title === demo.title);
+            if (!match || (isScene && !match.isScene)) {
+              match = { actTitle: (demoFile as any)?.title, sceneTitle: demo.title, isScene };
+            }
+          }
+
+          const slides = await Slides.readSlides(step.path, wsFolder);
+          if (!slides) {
+            // Count as one slide when the file can't be read
+            if (isFile && localSlideIdx === 0 && !isNumbered) {
+              crntSlideIdx = totalSlides + 1;
+              isNumbered = true;
+            }
+            totalSlides++;
+            continue;
+          }
+
+          for (let i = 0; i < slides.length; i++) {
+            const hidden = isSlideHidden(slides[i]);
+            if (isFile && i === localSlideIdx && !isNumbered) {
+              crntSlideIdx = hidden ? null : totalSlides + 1;
+              isNumbered = true;
+            }
+            if (!hidden) {
+              totalSlides++;
             }
           }
         }
       }
     }
-    return null;
+
+    const presentationTitle =
+      Extension.getInstance().getSetting<string>(Config.slides.presentationTitle) || wsFolder?.name;
+
+    return {
+      crntSlideIdx,
+      totalSlides,
+      actTitle: match?.actTitle,
+      sceneTitle: match?.sceneTitle,
+      presentationTitle,
+    };
+  }
+
+  /**
+   * Reads and parses the slides of an `openSlide` move.
+   * @returns The slides, or `undefined` when the path is outside the workspace or can't be read
+   */
+  private static async readSlides(
+    path: string,
+    wsFolder: WorkspaceFolder | null | undefined,
+  ): Promise<Slide[] | undefined> {
+    let fileUri;
+    if (wsFolder) {
+      fileUri = Uri.joinPath(wsFolder.uri, path);
+
+      // Verify the resolved path is contained within the workspace
+      if (!isPathInWorkspace(fileUri, wsFolder)) {
+        return undefined;
+      }
+    } else {
+      fileUri = Uri.file(path);
+    }
+
+    try {
+      const fileContent = await readFile(fileUri);
+      if (!fileContent) {
+        return undefined;
+      }
+      return new SlideParser().parseSlides(fileContent);
+    } catch {
+      return undefined;
+    }
+  }
+
+  /**
+   * Adds or removes `hide: true` in the frontmatter of a slide and saves the file, which updates
+   * the slide preview.
+   * @param filePath Relative file path to the slide markdown file
+   * @param slideIndex Local slide index (0-based)
+   * @param hidden Whether the slide should be hidden
+   */
+  public static async setSlideHidden(filePath: string, slideIndex: number, hidden: boolean) {
+    await Slides.updateSlideFile(filePath, (content) => {
+      const newContent = setSlideHidden(content, slideIndex, hidden);
+      if (newContent === undefined) {
+        Notifications.error(`Slide ${slideIndex + 1} was not found in "${filePath}".`);
+      }
+      return newContent;
+    });
+  }
+
+  /**
+   * Sets the `<!-- notes ... -->` block of a slide and saves the file, which updates the slide
+   * preview.
+   * @param filePath Relative file path to the slide markdown file
+   * @param slideIndex Local slide index (0-based)
+   * @param notes The speaker notes, empty to remove them
+   */
+  public static async setSlideNotes(filePath: string, slideIndex: number, notes: string) {
+    await Slides.updateSlideFile(filePath, (content) => {
+      const newContent = setSlideNotes(content, slideIndex, notes);
+      if (newContent === undefined) {
+        Notifications.error(
+          `The notes of slide ${slideIndex + 1} in "${filePath}" could not be updated.`,
+        );
+      }
+      return newContent;
+    });
+  }
+
+  /**
+   * Updates a slide file with the content returned by `update`, and saves it.
+   */
+  private static async updateSlideFile(
+    filePath: string,
+    update: (content: string) => string | undefined,
+  ) {
+    const fileUri = getAbsolutePath(parseWinPath(filePath));
+    const document = await workspace.openTextDocument(fileUri);
+    const crntContent = document.getText();
+    const newContent = update(crntContent);
+    if (newContent === undefined) {
+      return;
+    }
+
+    if (newContent === crntContent) {
+      return;
+    }
+
+    // Only replace the changed lines, so an open editor keeps its cursor and scroll position
+    const crntLines = crntContent.split(/\r?\n/);
+    const newLines = newContent.split(/\r?\n/);
+    let startLine = 0;
+    while (
+      startLine < crntLines.length &&
+      startLine < newLines.length &&
+      crntLines[startLine] === newLines[startLine]
+    ) {
+      startLine++;
+    }
+    let crntEnd = crntLines.length;
+    let newEnd = newLines.length;
+    while (
+      crntEnd > startLine &&
+      newEnd > startLine &&
+      crntLines[crntEnd - 1] === newLines[newEnd - 1]
+    ) {
+      crntEnd--;
+      newEnd--;
+    }
+
+    const edit = new WorkspaceEdit();
+    if (crntEnd < crntLines.length) {
+      const eol = crntContent.includes('\r\n') ? '\r\n' : '\n';
+      edit.replace(
+        fileUri,
+        new Range(new Position(startLine, 0), new Position(crntEnd, 0)),
+        newLines
+          .slice(startLine, newEnd)
+          .map((line) => `${line}${eol}`)
+          .join(''),
+      );
+    } else {
+      // The last line changed
+      edit.replace(
+        fileUri,
+        new Range(document.positionAt(0), document.positionAt(crntContent.length)),
+        newContent,
+      );
+    }
+    await workspace.applyEdit(edit);
+    await document.save();
   }
 
   private static async viewSlide(item: ActionTreeItem) {
@@ -287,7 +464,13 @@ layout: ${layout.toLowerCase()}
     }
 
     const path = editor.document.uri.fsPath;
-    Preview.show(getRelPath(parseWinPath(path)));
+    // Opens at the slide under the cursor; `show` takes a 1-based slide number
+    const slideIndex = SlidePreviewSync.getCursorSlideIndex(editor);
+    Preview.show(
+      getRelPath(parseWinPath(path)),
+      undefined,
+      slideIndex !== undefined ? slideIndex + 1 : undefined,
+    );
   }
 
   private static registerHoverProvider() {
@@ -295,59 +478,16 @@ layout: ${layout.toLowerCase()}
       { language: 'markdown', scheme: 'file' },
       {
         provideHover(document, position) {
-          const text = document.getText();
-          const frontmatterMatch = Slides.frontmatterRegex.exec(text);
-
-          if (frontmatterMatch) {
-            const frontmatterStart = text.indexOf(frontmatterMatch[0]);
-            const frontmatterEnd = frontmatterStart + frontmatterMatch[0].length;
-
-            const cursorOffset = document.offsetAt(position);
-            if (cursorOffset >= frontmatterStart && cursorOffset <= frontmatterEnd) {
-              const line = document.lineAt(position).text.trim();
-
-              if (line.startsWith('theme:')) {
-                const themes = Object.values(SlideTheme)
-                  .map((theme) => `- \`${theme}\``)
-                  .join('\n');
-                return new Hover(
-                  `Specifies the theme for the slide. Available options:\n${themes}`,
-                );
-              } else if (line.startsWith('layout:')) {
-                const layouts = Object.values(SlideLayout)
-                  .map((layout) => `- \`${layout}\``)
-                  .join('\n');
-                return new Hover(
-                  `Specifies the layout for the slide. Available options:\n${layouts}`,
-                );
-              } else if (line.startsWith('customTheme:')) {
-                return new Hover(
-                  'Specifies a custom theme for the slide. Provide a relative path or URL to a CSS file.',
-                );
-              } else if (line.startsWith('image:')) {
-                return new Hover(
-                  'Specifies the image URL or path for the slide. Provide a relative path to the image file.',
-                );
-              } else if (line.startsWith('customLayout:')) {
-                return new Hover(
-                  'Specifies a custom layout for the slide. Provide a relative path to the Handlebars template.',
-                );
-              } else if (line.startsWith('transition:')) {
-                const transitions = Object.values(SlideTransition)
-                  .map((transition) => `- \`${transition}\``)
-                  .join('\n');
-                return new Hover(
-                  `Specifies the transition for the slide. Available options:\n${transitions}`,
-                );
-              } else if (line.startsWith('autoAdvanceAfter:')) {
-                return new Hover(
-                  `Specifies the time (in seconds) to wait before advancing to the next slide.`,
-                );
-              }
-            }
+          const lines = document.getText().split(/\r?\n/);
+          const match = getSlidePropertyAtLine(lines, position.line);
+          if (!match) {
+            return undefined;
           }
 
-          return undefined;
+          return new Hover(
+            new MarkdownString(getSlidePropertyMarkdown(match.key, match.property)),
+            new Range(position.line, match.start, position.line, match.end),
+          );
         },
       },
     );
@@ -358,86 +498,46 @@ layout: ${layout.toLowerCase()}
       { language: 'markdown', scheme: 'file' },
       {
         provideCompletionItems(document, position) {
-          const linePrefix = document.lineAt(position).text.substring(0, position.character);
+          const lines = document.getText().split(/\r?\n/);
+          const completions = getSlidePropertyCompletions(lines, position.line, position.character);
 
-          // Check if the cursor is within the frontmatter section
-          const text = document.getText();
-          const frontmatterMatch = Slides.frontmatterRegex.exec(text);
-
-          if (frontmatterMatch) {
-            const frontmatterStart = text.indexOf(frontmatterMatch[0]);
-            const frontmatterEnd = frontmatterStart + frontmatterMatch[0].length;
-
-            const cursorOffset = document.offsetAt(position);
-            if (cursorOffset >= frontmatterStart && cursorOffset <= frontmatterEnd) {
-              if (!linePrefix.includes(':')) {
-                // Provide suggestions for frontmatter keys
-                return [
-                  new CompletionItem(
-                    {
-                      label: 'image',
-                      description: 'Image URL or path',
-                    },
-                    CompletionItemKind.Property,
-                  ),
-                  new CompletionItem(
-                    {
-                      label: 'theme',
-                      description: 'Theme for the slide',
-                    },
-                    CompletionItemKind.Property,
-                  ),
-                  new CompletionItem(
-                    {
-                      label: 'layout',
-                      description: 'Layout for the slide',
-                    },
-                    CompletionItemKind.Property,
-                  ),
-                  new CompletionItem(
-                    {
-                      label: 'customTheme',
-                      description: 'Relative path or URL to a CSS file for custom theme',
-                    },
-                    CompletionItemKind.Property,
-                  ),
-                  new CompletionItem(
-                    {
-                      label: 'customLayout',
-                      description: 'Relative path to the Handlebars template',
-                    },
-                    CompletionItemKind.Property,
-                  ),
-                  new CompletionItem(
-                    {
-                      label: 'transition',
-                      description: 'Transition for the slide',
-                    },
-                    CompletionItemKind.Property,
-                  ),
-                  new CompletionItem(
-                    {
-                      label: 'autoAdvanceAfter',
-                      description:
-                        'Time in seconds to wait before advancing to the next slide or demo',
-                    },
-                    CompletionItemKind.Property,
-                  ),
-                ];
-              } else if (linePrefix.startsWith('theme:')) {
-                return Object.values(SlideTheme).map((theme) => {
-                  return new CompletionItem(theme, CompletionItemKind.EnumMember);
-                });
-              } else if (linePrefix.startsWith('layout:')) {
-                return Object.values(SlideLayout).map((layout) => {
-                  return new CompletionItem(layout, CompletionItemKind.EnumMember);
-                });
-              } else if (linePrefix.startsWith('transition:')) {
-                return Object.values(SlideTransition).map((transition) => {
-                  return new CompletionItem(transition, CompletionItemKind.EnumMember);
-                });
+          if (completions?.type === 'key') {
+            return completions.suggestions.map(({ key, property, sortGroup }) => {
+              const item = new CompletionItem(
+                {
+                  label: key,
+                  description: property.layouts
+                    ? `${property.layouts.join(', ')} layout`
+                    : undefined,
+                },
+                CompletionItemKind.Property,
+              );
+              item.detail = getSlidePropertyTypeName(property);
+              item.documentation = new MarkdownString(getSlidePropertyMarkdown(key, property));
+              item.sortText = `${sortGroup}_${key}`;
+              item.insertText = `${key}: `;
+              if (getSlidePropertyValues(property).length > 0) {
+                item.command = { command: 'editor.action.triggerSuggest', title: 'Suggest values' };
               }
-            }
+              return item;
+            });
+          }
+
+          if (completions?.type === 'value') {
+            const { property, values } = completions;
+            return values.map((value, idx) => {
+              const item = new CompletionItem(
+                value,
+                property.type === 'boolean'
+                  ? CompletionItemKind.Value
+                  : CompletionItemKind.EnumMember,
+              );
+              item.sortText = `${idx}`.padStart(3, '0');
+              if (property.default !== undefined && `${property.default}` === value) {
+                item.detail = 'Default';
+              }
+              return item;
+            });
           }
 
           return undefined;

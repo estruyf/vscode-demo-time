@@ -1,6 +1,6 @@
 {
   "name": "demo-time",
-  "version": "2.1.1",
+  "version": "2.3.0",
   "private": true,
   "description": "Demo Time - The extension to present and perform live coding demos with confidence.",
   "keywords": [
@@ -43,7 +43,11 @@
     "test": "npx nx run-many -t test",
     "lint": "npx nx run-many -t lint",
     "sync:version:extension": "node ./scripts/sync-version-to-extension.js",
-    "postversion": "node ./scripts/sync-version-to-extension.js"
+    "postversion": "node ./scripts/sync-version-to-extension.js && node ./scripts/copy-changelog.cjs",
+    "generate:gallery": "npx ts-node scripts/generate-gallery-index.cts",
+    "slides:schema": "node ./scripts/generate-slide-schema.mjs",
+    "skills:build": "node ./scripts/skills/build-skills.mjs",
+    "skills:pack": "node ./scripts/skills/build-skills.mjs && node ./scripts/skills/pack-skills.mjs"
   },
   "homepage": "https://demotime.show/",
   "directories": {

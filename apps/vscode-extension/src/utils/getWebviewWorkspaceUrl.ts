@@ -2,6 +2,10 @@ import { Uri, Webview } from 'vscode';
 import { Extension } from '../services';
 
 export const getWebviewWorkspaceUrl = (webview: Webview, path: string | null) => {
+  if (path?.startsWith('http')) {
+    return path;
+  }
+
   const wsFolder = Extension.getInstance().workspaceFolder;
   if (!wsFolder) {
     return;

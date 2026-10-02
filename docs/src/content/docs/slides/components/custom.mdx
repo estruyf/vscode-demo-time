@@ -1,7 +1,7 @@
 ---
 title: Custom Components
 description: Learn how to use custom components in your slides.
-lastmod: 2025-05-30T09:13:46.399Z
+lastmod: 2026-10-02T00:00:00.000Z
 ---
 
 import { Code, Aside } from '@astrojs/starlight/components';
@@ -113,3 +113,21 @@ You can also <dt-highlight color="#15181f" text-color="#ffffff">change the text 
 Open your slide in the preview and you will see the highlighted text with the specified colors and padding.
 
 <Image class="mx-auto" src={customComponentWc} alt="Custom component used on your slides" />
+
+## Reduced motion
+
+If your component animates, respect the [reduced motion](/slides/transitions/#reduced-motion)
+setting of the presenter. While reduced motion is on, the slide preview has a `data-reduced-motion`
+attribute on its `<html>` element, and a `demotime.reducedMotion` event fires on `window` when it
+changes:
+
+```js title="Check for reduced motion"
+const isReducedMotion = () => document.documentElement.hasAttribute('data-reduced-motion');
+
+window.addEventListener('demotime.reducedMotion', (event) => {
+  console.log('Reduced motion:', event.detail.reducedMotion);
+});
+```
+
+In the styles of your component, you can use the attribute with the `:host-context()` selector, or
+in a global stylesheet with `:root[data-reduced-motion]`.

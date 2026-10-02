@@ -1,0 +1,93 @@
+---
+title: Snippet Gallery
+description: Browse available community snippets, learn how to contribute new ones, and understand how the gallery index is refreshed.
+lastmod: 2026-05-18T12:00:00.000Z
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import GallerySnippetList from '../../../components/GallerySnippetList.astro';
+
+The Snippet Gallery lets you browse and download community snippets directly in Demo Time.
+
+Open the gallery from the Demo Time resources section via **Snippet Gallery**, or run the `Demo Time: Open Snippet Gallery` command from the Command Palette.
+
+<Aside type="tip" title="What users see in the extension">
+  In the VS Code gallery panel, downloaded snippets are marked with a downloaded state so users can quickly see what is already available in their workspace.
+</Aside>
+
+## Available snippets
+
+The list below is generated from the gallery index and shows which snippets are currently available to users.
+
+<GallerySnippetList />
+
+## Using a gallery snippet
+
+After downloading a snippet from the gallery, it is saved in your workspace under `.demo/snippets/...`.
+
+You can reference it in your move with the existing `snippet` action:
+
+<Tabs syncKey="gallery-snippet-format">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "snippet",
+  "contentPath": ".demo/snippets/setup/presentation-mode-macos.json",
+  "args": {
+    "THEME": "Demo Time Dark"
+  }
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: snippet
+contentPath: .demo/snippets/setup/presentation-mode-macos.json
+args:
+  THEME: Demo Time Dark
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="tip" title="Validation and consistency">
+  From the config editor, you'll be able to select and configure the downloaded snippets with a user-friendly form that validates the input based on the snippet schema. This ensures that the arguments you provide are correct and that the snippet will work as expected in your demo.
+</Aside>
+
+## Want to contribute a snippet to the gallery?
+
+To contribute a new gallery snippet:
+
+- Clone the [Demo Time Repository](https://github.com/estruyf/vscode-demo-time)
+- Add a new JSON file in the `gallery` folder on the root of the project that matches the `https://demotime.show/gallery/snippet.schema.json` schema
+- Create a PR
+- Once the PR is merged, the snippet is shared and accessible to others
+
+Example snippet file:
+
+```json
+{
+  "$schema": "https://demotime.show/gallery/snippet.schema.json",
+  "id": "<type>/<id>",
+  "name": "name",
+  "description": "",
+  "author": "",
+  "version": "1.0.0",
+  "tags": [],
+  "fields": [],
+  "steps": []
+}
+```
+
+<Aside type="note" title="Validation and consistency">
+  You can find sample snippet files in the `gallery/` folder in the project. [Here is one example](https://github.com/estruyf/vscode-demo-time/blob/dev/gallery/setup/presentation-mode-macos.json).
+</Aside>
+
+## How gallery updates per build
+
+The docs and extension read from `docs/public/gallery/index.json`.
+
+During build/release flows, this index is regenerated from the `gallery/` folder so the published gallery reflects the latest snippets in the repository.

@@ -9,10 +9,10 @@ export const MainContent = React.forwardRef<HTMLDivElement, MainContentProps>(({
   return (
     <div
       ref={ref}
-      className={`h-full lg:col-span-2 lg:overflow-y-auto custom-scrollbar ${className}`}
+      className={`w-full lg:h-full lg:min-h-0 lg:col-span-2 lg:overflow-y-auto custom-scrollbar ${className}`}
       style={{ scrollBehavior: 'smooth' }}
     >
-      <div className="space-y-6 min-h-full">
+      <div className="space-y-4 sm:space-y-6 lg:min-h-full">
         {children}
       </div>
     </div>

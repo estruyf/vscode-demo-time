@@ -62,6 +62,16 @@ export class ResourcesTreeviewProvider implements TreeDataProvider<ResourceTreeI
         },
         COMMAND.openPowerPointAddin,
       ),
+      new ResourceTreeItem(
+        'Snippet Gallery',
+        'Browse and download reusable snippets',
+        {
+          name: 'library',
+          custom: false,
+          color: new ThemeColor('symbolIcon.arrayForeground'),
+        },
+        COMMAND.showGallery,
+      ),
     ];
 
     let isSponsor = false;

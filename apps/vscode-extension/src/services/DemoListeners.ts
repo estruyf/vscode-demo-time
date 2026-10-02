@@ -9,14 +9,18 @@ import { RedactionService } from './RedactionService';
 import { Config } from '@demotime/common';
 import { Overview } from '../overview/Overview';
 import { DemoValidationService } from './DemoValidationService';
+import { SlideValidationService } from './SlideValidationService';
+import { SlideOverflowService } from './SlideOverflowService';
 import { Extension } from '.';
 
 export class DemoListeners {
   public static register() {
     const ctx = Extension.getInstance().context;
 
-    // Initialize validation service
+    // Initialize validation services
     DemoValidationService.register(ctx);
+    SlideValidationService.register(ctx);
+    SlideOverflowService.register(ctx);
 
     workspace.onDidSaveTextDocument(DemoListeners.checkToUpdate);
     workspace.onDidChangeConfiguration((e) => {

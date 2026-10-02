@@ -74,7 +74,7 @@ export const useThemeManager = (): UseThemeManagerReturn => {
 
   // Listen for VS Code theme changes when in auto mode
   useEffect(() => {
-    if (theme !== 'auto') return;
+    if (theme !== 'auto') {return;}
 
     const observer = new MutationObserver(() => {
       const newResolvedTheme = resolveTheme(theme);

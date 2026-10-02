@@ -1,0 +1,27 @@
+{
+  // The clock in the status bar and the presenter view is the real time of day.
+  // Off, so every capture shows the same thing.
+  "demoTime.showClock": false,
+  // Every slide in this talk uses the "Ship it" theme and the same footer.
+  "demoTime.customTheme": ".demo/slides/ship-it.css",
+  "demoTime.slideFooterTemplate": "./.demo/templates/footer.html",
+  // Highlights without a border: the lines being talked about keep the
+  // selection background and stay sharp, and
+  // everything around them blurs and dims.
+  "demoTime.highlightBorderColor": "transparent",
+  "demoTime.highlightBlur": 2,
+  "demoTime.highlightOpacity": 0.45,
+  // The talk's own theme (the eliostruyf.vscode-demotime-theme extension), which the
+  // video export records with too.
+  "workbench.colorTheme": "Demo Time Dark",
+  // "Demo Time: Export play as video" with these choices: the whole play in 16:9, with
+  // captions made from the scene notes, chapters, and the first and last slide as cards.
+  "demoTime.videoExport.options": {
+    "range": "all",
+    "preset": "16:9",
+    "gif": false,
+    "captions": "notes",
+    "chapters": true,
+    "cards": true
+  }
+}

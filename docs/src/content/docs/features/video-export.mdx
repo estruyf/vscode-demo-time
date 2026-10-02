@@ -1,0 +1,278 @@
+---
+title: Export a play as a video
+description: Run your play unattended in VS Code and turn it into an MP4, a GIF, captions and chapters, without screen-recording yourself.
+lastmod: 2026-09-30T00:00:00.000Z
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Your play already describes the demo: what gets opened, typed, highlighted and run, in which order. Demo Time can play it back on its own and record it, so a recording for people who missed the talk, a tutorial, or a README clip is one command instead of a screen recording you edit by hand. When the demo changes, you export it again.
+
+## Export from VS Code
+
+1. Run **Demo Time: Export play as video** from the command palette, or pick it from the **...** menu of the Acts & Scenes view.
+2. Choose what to export: the whole play or one act.
+3. Choose the format:
+   - **16:9**, 1920×1080, for talks and YouTube.
+   - **1:1**, 1080×1080, for social feeds.
+   - **9:16**, 1080×1920, for Shorts and Reels.
+4. Choose any extras:
+   - **GIF**: for a README or a Marketplace page.
+   - **Captions from scene titles** or **Captions from scene notes**: an SRT subtitle file next to the video. See [Captions](#captions).
+   - **Chapters**: one per scene, in the MP4 and as a list you can paste into a video description.
+   - **Title and end cards**: the first and last slide, held for three seconds.
+
+A **Export play as video** task opens a second VS Code window, plays the demo in it, and records it. Leave that window alone until it closes. When it is done, the files are in `.demo/exports` of your workspace:
+
+| File                  | What it is                                                      |
+| --------------------- | --------------------------------------------------------------- |
+| `<name>.mp4`          | The video, with chapters when you asked for them                |
+| `<name>.gif`          | The GIF                                                         |
+| `<name>.srt`          | The captions, as a subtitle file (see [Captions](#captions))    |
+| `<name>-chapters.txt` | The chapter list, as `0:00 Title` lines                         |
+| `<name>-events.jsonl` | When each scene and slide started, and which moves were skipped |
+
+The next time you run the command, **Export again** reuses your choices. They are saved in the `demoTime.videoExport.options` workspace setting.
+
+<Aside type="note">
+  The export needs a local workspace: it opens a VS Code window next to yours. In a remote workspace
+  (WSL, SSH, a dev container or a codespace), clone the project locally, or run the [command
+  line](#export-from-the-command-line) on a machine with a display.
+</Aside>
+
+<Aside type="tip">
+  Add `.demo/exports/` to your `.gitignore` unless you want the videos in your repository.
+</Aside>
+
+## What the recording looks like
+
+- **Your look**: from VS Code, the recording uses the same VS Code you run, with your color theme, file icon theme, product icon theme, and editor and terminal fonts. From the command line, it uses the installed VS Code, and you name the theme with `--extensions` and `--settings`.
+- **A clean window**: the recording profile is empty apart from those settings. The status bar, tabs, activity bar, side bars (including Chat) and panel are hidden, as in [presentation view](/presentation-mode).
+- **A copy of your workspace**: the demo runs in a temporary copy, so every export starts from the same state and the files it creates or changes don't end up in your workspace. One exception: `node_modules` folders are linked into the copy rather than copied, so scripts in your demo run without a long copy, but a demo that installs or removes packages changes your real `node_modules`. Export with `--copy-node-modules` on the command line to copy them as well.
+
+## How the play is timed
+
+The moves run exactly as in a live talk. After a scene's moves finish, it stays on screen for:
+
+- the scene's `autoAdvanceAfter`, when it has one;
+- otherwise, for a slide: the slide's `autoAdvanceAfter`, or the time it takes to read it (between 3 and 12 seconds);
+- otherwise: 2 seconds.
+
+Terminal commands get up to 30 seconds to finish, so their output is in the video. This needs [shell integration](https://code.visualstudio.com/docs/terminal/shell-integration); without it, the export can't tell when a command finishes, and the event log warns about it. A command that keeps running, such as `npm start` for a dev server, holds its scene for those 30 seconds. Change the limit with `--terminal-timeout` on the command line.
+
+To give a scene more time, set `autoAdvanceAfter` on it. See [Auto-proceed and loop](/features/auto-proceed-looping).
+
+## Captions
+
+Demo Time can write captions for the video as an SRT file: a plain-text subtitle format that video players and platforms understand. Each caption is a numbered cue with a start time, an end time and one or two lines of text:
+
+```text title="demo.srt"
+1
+00:00:01,003 --> 00:00:03,810
+node:http only, Node runs the TypeScript
+directly.
+```
+
+The file is written next to the video, as `<name>.srt`. The video itself doesn't change: the captions aren't burned into the picture or stored in the MP4. So viewers can turn them on and off, and you can fix a typo in the text without exporting again.
+
+### Turn captions on
+
+- **In VS Code**: in the last step of **Export play as video**, pick **Captions from scene titles** or **Captions from scene notes**.
+- **On the command line**: `--srt` for captions from scene titles, or `--captions notes` for captions from scene notes. `--captions` alone is enough; it implies `--srt`.
+
+### Where the text comes from
+
+**Scene titles** (the default) show each scene's title for the first 4 seconds of the scene, or the whole scene when it is shorter. They work as a lower third that says what is happening:
+
+```text
+3
+00:00:21,866 --> 00:00:25,866
+Tour the server
+```
+
+**Scene notes** turn the scene's notes file (its `notes.path`, see [Using notes](/features/using-notes)) into captions. For this notes file:
+
+```md title=".demo/notes/server.md"
+- `node:http` only, Node runs the TypeScript directly
+- The route table is a plain object: `METHOD /path` → handler
+- Anything unknown falls through to the redirect
+```
+
+the captions are:
+
+```text
+1
+00:00:01,003 --> 00:00:03,810
+node:http only, Node runs the TypeScript
+directly.
+
+2
+00:00:03,810 --> 00:00:07,066
+The route table is a plain object: METHOD
+/path → handler.
+
+3
+00:00:07,066 --> 00:00:09,704
+Anything unknown falls through to the
+redirect.
+```
+
+To get there, Demo Time:
+
+1. Turns the markdown into plain text: formatting is removed, code blocks are left out, and links become their text. Each heading, list item and paragraph ends as a sentence.
+2. Splits the text into cues of at most two lines of 42 characters, the usual limit for readable subtitles. A cue ends at the end of a sentence where it fits.
+3. Spreads the cues over the scene, each for a time in proportion to its length.
+4. Keeps the scene on screen at least as long as its notes take to read (200 words a minute), so captions don't flash by.
+
+A scene without notes gets its title as a caption instead.
+
+<Aside type="tip">
+  Notes are usually reminders for the presenter ("Ask who has built this before"). If you use them
+  for captions, write them the way you would say them to the viewer.
+</Aside>
+
+### Timing
+
+The times match the video exactly: they come from when each scene started and ended while it was recorded. With a title card, every caption moves back by the length of the card.
+
+### A complete sample
+
+The [ship-it demo](https://github.com/estruyf/vscode-demo-time/tree/main/promo/demo/ship-it) in the Demo Time repository has notes on every scene and saved export choices. Run `npm run video` in it to get a video with captions from the notes, chapters and cards.
+
+### Use the captions
+
+- **Video players**: VLC and IINA load the captions by themselves when the `.srt` file has the same name as the video and is in the same folder. In others, open the file from the subtitles menu.
+- **YouTube, Vimeo and LinkedIn**: upload the `.srt` file as the video's subtitles or captions.
+- **Social media**: videos in feeds usually play muted, and many apps don't take a subtitle file. To show the captions there, import the `.srt` in a video editor, such as DaVinci Resolve, Premiere Pro or CapCut, and burn them into the picture.
+
+## What is not recorded
+
+- **Other windows.** Only the main VS Code window is recorded: not the presenter view, a second VS Code window, native dialogs, or anything outside VS Code.
+- **Files outside the workspace.** The play runs in a copy of the workspace folder. Moves that use paths outside it (`../shared/file.ts`) don't find them. A workspace inside a monorepo that relies on the `node_modules` of a parent folder can't run its scripts either. For both, export with `--in-place` on the command line: the play then runs in the workspace itself, and the files it changes stay changed.
+
+## Run the play without recording it
+
+**Demo Time: Run play unattended for recording** plays the whole play, or one act, on its own in your current window, with the timing and move handling described on this page. It doesn't record anything, so you can record it with your own tool, such as OBS or QuickTime. **Demo Time: Stop unattended run** stops it.
+
+It writes the event log to `.demo/exports/video-<time>/events.jsonl`, with the time each scene and slide started.
+
+## Moves that run differently
+
+Some moves need a presenter or happen outside VS Code. They are handled like this, and each one is listed in the terminal and in the event log:
+
+| Move                                                     | In the video                                                    |
+| -------------------------------------------------------- | --------------------------------------------------------------- |
+| `pause`, `waitForInput`                                  | Continues after one second                                      |
+| Typing with `insertTypingMode: "hacker-typer"`           | Typed character by character                                    |
+| `openWebsite` in an external browser                     | Skipped. Set `"openInVSCode": true` to show the page in VS Code |
+| `openPowerPoint`, `openKeynote`, macOS and desktop moves | Skipped                                                         |
+| EngageTime moves                                         | Skipped                                                         |
+| GitHub Copilot chat moves                                | Run, but the answer differs on every export                     |
+
+## Settings
+
+| Setting                          | What it does                                                                                                  |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `demoTime.videoExport.options`   | The choices of the last export, written by **Export play as video** (workspace setting)                       |
+| `demoTime.videoExport.command`   | The command that runs the export (default `npx --yes @demotime/video@latest`)                                 |
+| `demoTime.videoExport.extension` | The Demo Time to record with: a Marketplace id with `@version`, or a VSIX path (default: the version you run) |
+
+`demoTime.videoExport.command` and `demoTime.videoExport.extension` are only read from your user settings, so a workspace you open can't make the export run a command of its own.
+
+## Export from the command line
+
+The command in VS Code runs the [`@demotime/video`](https://www.npmjs.com/package/@demotime/video) command-line tool. You can also run it from any terminal, without opening VS Code or installing Demo Time first. From the folder that contains your `.demo` folder:
+
+```bash
+npx @demotime/video export
+```
+
+The CLI opens its own VS Code window with an empty profile and installs Demo Time into it from the Marketplace. That is the release of Demo Time, whatever you have installed yourself; add `--pre-release` to record with the pre-release. The VS Code you work in and its extensions aren't touched. The files go to `.demo/exports`, as with the command in VS Code.
+
+The beta of the CLI, which goes with the pre-release version of Demo Time, is `npx @demotime/video@next export`. The pre-release version of the extension uses it by default.
+
+A few examples:
+
+```bash
+# The second act as a vertical video with captions from the scene notes
+npx @demotime/video export --range act:2 --preset 9:16 --captions notes
+
+# A GIF of scenes 1 to 3 of the first act, for a README
+npx @demotime/video export --range act:1/scenes:1-3 --gif --name readme
+
+# Another folder, with your theme
+npx @demotime/video export ./my-talk --out ./videos --chapters \
+  --extensions eliostruyf.vscode-demotime-theme --settings ./recording-settings.json
+```
+
+Unlike the command in VS Code, the CLI doesn't pick up your theme and fonts by itself. Name the theme extension with `--extensions` and the settings in a JSON file with `--settings`, such as `{ "workbench.colorTheme": "Demo Time Dark" }`.
+
+All the options (`npx @demotime/video --help` lists them too):
+
+| Option                                       | What it does                                                                                                                                                    |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `[workspace]`                                | The folder with the `.demo` folder (default: the current folder)                                                                                                |
+| `--range <range>`                            | `all` (default), `act:2`, `act:2/scenes:3-5` or `act:2/scenes:3-`                                                                                               |
+| `--preset <preset>`                          | `16:9` (default), `1:1` or `9:16`                                                                                                                               |
+| `--fps <n>`                                  | Frame rate (default 30)                                                                                                                                         |
+| `--out <dir>`, `--name <name>`               | Where the files go (default `<workspace>/.demo/exports/demo.*`)                                                                                                 |
+| `--gif`, `--gif-width <px>`, `--gif-fps <n>` | Also write a GIF (default 960 pixels wide, 12 fps)                                                                                                              |
+| `--srt`                                      | Also write [captions](#captions) as `<name>.srt`, from scene titles                                                                                             |
+| `--captions titles\|notes`                   | What the captions say: scene titles (default) or notes; implies `--srt`                                                                                         |
+| `--chapters`                                 | Add chapters to the MP4 and write a chapter list                                                                                                                |
+| `--cards`, `--card-seconds <n>`              | Add a title and end card from the first and last slide                                                                                                          |
+| `--strict`                                   | Fail when a move cannot be recorded, instead of skipping it                                                                                                     |
+| `--show-notes`                               | Keep notes that open with `showOnTrigger` in the video                                                                                                          |
+| `--vscode <path>`                            | The VS Code to record in (default: the installed one)                                                                                                           |
+| `--vscode-version <v>`                       | Download this VS Code version instead: `stable`, `insiders` or `1.105.0`                                                                                        |
+| `--extension <id\|vsix>`                     | The Demo Time to install (default: the latest from the Marketplace)                                                                                             |
+| `--pre-release`, `--stable`                  | Install the pre-release or the release of Demo Time from the Marketplace. `@demotime/video@next` uses the pre-release by default, `@demotime/video` the release |
+| `--extensions <ids>`                         | More extensions to install, comma separated, such as your theme                                                                                                 |
+| `--settings <file>`                          | A JSON file with VS Code settings for the recording                                                                                                             |
+| `--vscode-arg=<arg>`                         | An extra argument for VS Code, such as `--vscode-arg=--disable-gpu`                                                                                             |
+| `--in-place`                                 | Run in the workspace itself instead of a copy                                                                                                                   |
+| `--copy-node-modules`                        | Copy `node_modules` into the workspace copy instead of linking them                                                                                             |
+| `--keep-temp`                                | Keep the temporary profile, workspace copy and frames                                                                                                           |
+| `--scene-hold <s>`                           | Seconds a scene without slides stays on screen (default 2)                                                                                                      |
+| `--slide-min <s>`, `--slide-max <s>`         | The shortest and longest time a slide stays on screen (default 3 and 12)                                                                                        |
+| `--terminal-timeout <s>`                     | Seconds a terminal command gets to finish (default 30)                                                                                                          |
+| `--timeout <minutes>`                        | Give up after this long (default 60)                                                                                                                            |
+| `--ffmpeg <path>`                            | The ffmpeg to use (default: the bundled one, then `FFMPEG` or `PATH`)                                                                                           |
+
+## Keep the video in sync in CI
+
+Because the export needs no one at the keyboard, it can run in CI whenever the demo changes. On Linux, run it under a virtual display:
+
+```yaml title=".github/workflows/demo-video.yml"
+name: Demo video
+
+on:
+  push:
+    branches: [main]
+    paths: ['.demo/**']
+  workflow_dispatch:
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - run: npm ci
+      - name: Export the play
+        run: >
+          xvfb-run -a npx --yes @demotime/video export .
+          --vscode-version stable
+          --extensions eliostruyf.vscode-demotime-theme
+          --out video --name demo --gif --chapters --srt
+      - uses: actions/upload-artifact@v6
+        with:
+          name: demo-video
+          path: video
+```
+
+When the job runs as root in a container, add `--vscode-arg=--no-sandbox`.
+
+Put your theme's extension id in `--extensions`, and its name in a settings file passed with `--settings`, for example `{ "workbench.colorTheme": "Demo Time Dark" }`.

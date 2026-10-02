@@ -165,12 +165,17 @@ export class DemoPanel {
         );
       });
 
+      let icon = executingDemoFile.filePath === path ? 'play-circle' : 'dt-act';
+      if (demos.loop) {
+        icon = 'debug-restart-frame';
+      }
+
       accountCommands.push(
         new ActionTreeItem(
           demos.title,
           path.split('/').pop() as string,
           {
-            name: executingDemoFile.filePath === path ? 'play-circle' : 'dt-act',
+            name: icon,
             custom: false,
             color:
               executingDemoFile.filePath === path
