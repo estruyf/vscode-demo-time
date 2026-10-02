@@ -39,6 +39,7 @@ export * from './getPreviousDemoFile';
 export * from './getRelPath';
 export * from './getSetting';
 export * from './getSlideActionTags';
+export * from './getSlideProblems';
 export * from './getShellPath';
 export * from './getTheme';
 export * from './getUserInput';

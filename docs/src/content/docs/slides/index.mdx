@@ -319,6 +319,28 @@ With `autoFit`, the content of a slide that doesn't fit is scaled down until it 
 The quick fix of the warning (`Ctrl+.` or `Cmd+.` on the line in the editor, or the light bulb in the **Problems** panel) adds `autoFit: true` to the front matter of the slide.
 </Aside>
 
+## Problems in slide files
+
+Demo Time checks the front matter of your slide files while you edit them, and reports the problems in the **Problems** panel. It checks the markdown files in the `.demo` folder, and the files that an `openSlide` move opens.
+
+| Problem | Example | Severity |
+| --- | --- | --- |
+| Invalid YAML in a front matter block, at the line of the error. The slide shows these lines as content. | `theme: frost: dark` | Error |
+| A misspelled property, with a **did you mean** suggestion | `transtion: fadeIn` | Warning |
+| A property that Demo Time doesn't use, and that no custom layout, header or footer template reads | `speaker: Jane` | Information |
+| An invalid value for `layout`, `theme`, `transition`, `controlsPosition` or `progress`, or a value that isn't `true`/`false` or a number for a property that expects one | `layout: two-column` | Warning |
+| A file that doesn't exist for `image`, `video`, `svgFile`, `customTheme` or `customLayout`. Paths are relative to the workspace folder, the same way the slide preview loads them. `http(s)` URLs are not checked. | `image: .demo/assets/missing.png` | Warning, or Error for `customLayout` |
+| A custom layout, or an inline `header` or `footer` template, with invalid Handlebars | `{{#if title}}` without `{{/if}}` | Error |
+| A `---` followed by a line like `Note: text` (a capitalized word and a colon), which makes the lines up to the next `---` the front matter of the slide instead of its content | `Note: remember this` | Warning |
+
+Properties that are only meant for your own templates don't get a problem as long as a [custom layout](/slides/layouts/custom/), the `header` or `footer` of the slide, or the `demoTime.slideHeaderTemplate` and `demoTime.slideFooterTemplate` templates use them.
+
+The problems update when you change the slide file, and when you add or remove a file that the slides refer to, like an image or a layout.
+
+<Aside type="tip">
+A misspelled property or value, and a `---` that hides slide content, have a quick fix (`Ctrl+.` or `Cmd+.` on the line in the editor, or the light bulb in the **Problems** panel). For a `---`, the quick fix adds an empty line after it, so the lines are shown on the slide.
+</Aside>
+
 ## Header and Footer
 
 Learn how to add and customize headers and footers in your slides for branding, context, or additional information, like the slide number, the act and scene title, or the date. You can also show a progress bar on your slides. See the [Header and Footer documentation](./layouts/header-footer/) for details and examples.

@@ -1,3 +1,4 @@
+import Handlebars from 'handlebars';
 import { convertTemplateToHtml } from './convertTemplateToHtml';
 import { htmlEncode } from './htmlEncode';
 
@@ -67,5 +68,23 @@ export const tryConvertTemplateToHtml = (
       html: renderTemplateError(options, message),
       error: getTemplateErrorMessage(options, message),
     };
+  }
+};
+
+/**
+ * Checks the Handlebars syntax of a template, like an `{{#if}}` block without a closing `{{/if}}`.
+ *
+ * @returns The error on a single line, or `undefined` when the template is valid
+ */
+export const getTemplateSyntaxError = (template: string): string | undefined => {
+  try {
+    Handlebars.parse(template);
+    return undefined;
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    // A parse error shows the template line and a `---^` marker between the location and the
+    // reason
+    const lines = message.split(/\r?\n/);
+    return lines.length > 2 ? `${lines[0]} ${lines[lines.length - 1]}` : lines.join(' ');
   }
 };

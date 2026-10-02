@@ -173,6 +173,10 @@ of the live demos. Update an existing act when there is one; otherwise create on
   doesn't fit with a **Content doesn't fit the slide** badge and a warning in the **Problems** panel;
   when you can read the problems of the workspace, fix these warnings.
 - Every `openSlide` path points to a file that exists.
+- Demo Time reports front matter problems of slide files in the **Problems** panel: invalid YAML,
+  misspelled properties, invalid layout, theme or transition values, missing `image`, `video`,
+  `svgFile`, `customTheme` or `customLayout` files, and a `---` followed by a `Word: text` line
+  that hides slide content. When you can read the problems of the workspace, fix them.
 - When the `demotime-code-demo` skill is installed, run its act validator
   (`node <demotime-code-demo skill folder>/scripts/validate-act.mjs`) from the workspace root.
 
