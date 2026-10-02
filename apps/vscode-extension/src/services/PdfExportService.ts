@@ -527,7 +527,7 @@ export class PdfExportService {
 <div class="w-full h-full flex items-center justify-center" id="slide-${index + 1}">
 ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` : ``}
 
-  <div class="slide ${slide.theme.toLowerCase()}" date-theme="${slide.theme.toLowerCase()}" data-layout="${slide.layout.toLowerCase()}" >
+  <div class="slide ${slide.theme.toLowerCase()}" data-theme="${slide.theme.toLowerCase()}" data-layout="${slide.layout.toLowerCase()}" >
     <div class="slide__container">
       <div class="slide__layout ${slide.layout.toLowerCase()}" style="${slideBg}">
         ${slide.headerTemplate ? `<header class="slide__header">${slide.headerTemplate}</header>` : ``}

@@ -51,6 +51,7 @@
 - [#463](https://github.com/estruyf/vscode-demo-time/issues/463): Added a color control for `demoTime.highlightBorderColor` and `demoTime.highlightBackground` in the settings view, to pick a VS Code theme color (`var(--vscode-...)`), a custom color with opacity, or no color (`transparent`), with a preview of the highlight in the colors of the current theme
 - [#463](https://github.com/estruyf/vscode-demo-time/issues/463): Fix the `demoTime.zoom` setting being ignored by the `zoomIn` and `zoomOut` moves, which always zoomed one step
 - [#463](https://github.com/estruyf/vscode-demo-time/issues/463): Fix the descriptions of `demoTime.slideHeaderTemplate` and `demoTime.slideFooterTemplate`, which take the path to an HTML file and not the HTML itself, and the documented default of `demoTime.highlightOpacity`
+- Fix the PDF export writing the slide theme to a `date-theme` attribute instead of `data-theme`, so themes that target `[data-theme]` now also apply in the PDF
 
 ## [2.3.1] - 2026-09-03
 
