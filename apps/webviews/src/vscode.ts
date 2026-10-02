@@ -11,6 +11,7 @@ const defaultDemoTimeSettings: IDemoTimeSettings = {
   presentationViewToggles: ['statusBar', 'tabs', 'activityBar', 'sideBar', 'secondarySideBar', 'panel'],
   showClock: false,
   timer: null,
+  nextSceneButtonText: '',
   highlightBorderColor: 'rgba(255,0,0,0.5)',
   highlightBackground: 'var(--vscode-editor-selectionBackground)',
   highlightBlur: 0,

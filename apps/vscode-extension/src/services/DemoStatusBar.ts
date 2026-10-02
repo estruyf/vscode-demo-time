@@ -4,7 +4,7 @@ import { DemoFileProvider } from './DemoFileProvider';
 import { ContextKeys } from '../constants';
 import { Subscription } from '../models';
 import { Extension } from './Extension';
-import { getNextDemoFile, setContext } from '../utils';
+import { getNextDemoFile, getNextSceneButtonText, setContext } from '../utils';
 import { PresenterView } from '../presenterView/PresenterView';
 import { Logger } from './Logger';
 import { WebViewMessages, COMMAND, Config, Demo, getDemosFromConfig } from '@demotime/common';
@@ -128,6 +128,17 @@ export class DemoStatusBar {
     }
   }
 
+  /**
+   * Get the text of the next scene button, which is the scene title unless the
+   * `demoTime.nextSceneButtonText` setting is set
+   */
+  public static getNextSceneText(title: string | undefined) {
+    const customText = Extension.getInstance().getSetting<string>(
+      Config.statusBar.nextSceneButtonText,
+    );
+    return getNextSceneButtonText(title, customText);
+  }
+
   public static async showTimer() {
     const timer = await DemoStatusBar.getTimer();
     await setContext(ContextKeys.showTimer, !!timer);
@@ -213,7 +224,7 @@ export class DemoStatusBar {
 
       Logger.info(`Next demo: ${nextDemo.title}`);
       DemoStatusBar.nextDemo = nextDemo;
-      DemoStatusBar.statusBarItem.text = `$(dt-logo) ${nextDemo.title}`;
+      DemoStatusBar.statusBarItem.text = `$(dt-logo) ${DemoStatusBar.getNextSceneText(nextDemo.title)}`;
       DemoStatusBar.statusBarItem.tooltip = nextDemo.description || `Next demo: ${nextDemo.title}`;
       DemoStatusBar.statusBarItem.show();
     } else {

@@ -23,6 +23,9 @@ export const Config = {
     show: 'showClock',
     timer: 'timer',
   },
+  statusBar: {
+    nextSceneButtonText: 'nextSceneButtonText',
+  },
   insert: {
     /**
      * @deprecated Use `insertTypingSpeed` instead.

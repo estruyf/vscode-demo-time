@@ -29,6 +29,10 @@ export class DemoListeners {
         DemoRunner.allowPrevious();
         DemoStatusBar.showTimer();
 
+        if (e.affectsConfiguration(`${Config.root}.${Config.statusBar.nextSceneButtonText}`)) {
+          DemoStatusBar.update();
+        }
+
         // Re-apply redaction if active and redaction settings changed
         if (RedactionService.isEnabled()) {
           RedactionService.disable();

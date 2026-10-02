@@ -220,6 +220,15 @@ export const SETTINGS_CATALOG: SettingDefinition[] = [
     unit: 'min',
     placeholder: 'No timer',
   },
+  {
+    key: 'nextSceneButtonText',
+    label: 'Next scene button text',
+    description:
+      'The text of the next scene button in the status bar, like `Next`. Leave empty to show the title of the next scene.',
+    category: 'presenting',
+    control: 'text',
+    placeholder: 'Title of the next scene',
+  },
 
   // Highlighting
   {

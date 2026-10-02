@@ -47,7 +47,10 @@ export class InputService {
               });
             }
           } else {
-            DemoStatusBar.updateNextDemoItem(nextDemo?.title || '', COMMAND.start);
+            DemoStatusBar.updateNextDemoItem(
+              DemoStatusBar.getNextSceneText(nextDemo.title),
+              COMMAND.start,
+            );
             if (PresenterView.isOpen) {
               PresenterView.postMessage(WebViewMessages.toWebview.preview.updateNextStep, {
                 title: nextDemo?.title,

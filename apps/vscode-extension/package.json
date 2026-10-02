@@ -296,6 +296,11 @@
           "default": true,
           "description": "Show a clock in the status bar"
         },
+        "demoTime.nextSceneButtonText": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "The text of the next scene button in the status bar, like `Next`. Use a fixed text to keep the button the same width for every scene. You can use codicons, like `$(arrow-right) Next`. Leave empty to show the title of the next scene."
+        },
         "demoTime.lineInsertionDelay": {
           "type": "number",
           "default": 0,
