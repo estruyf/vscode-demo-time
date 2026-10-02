@@ -19,6 +19,9 @@ import {
   getTemplateData,
   renderProgressBar,
   SlidePlaceholders,
+  AUTO_FIT_ATTRIBUTE,
+  getSlideAutoFitScript,
+  isAutoFitEnabled,
 } from '@demotime/common';
 import { renderToString } from 'react-dom/server';
 import rehypePrettyCode from 'rehype-pretty-code';
@@ -214,6 +217,9 @@ export class ScreenshotService {
       await page.setContent(html, { waitUntil: 'networkidle' });
       await page.waitForLoadState('networkidle');
       await page.emulateMedia({ media: 'print' });
+
+      // Scales down the content of a slide with `autoFit: true` that doesn't fit
+      await page.evaluate(getSlideAutoFitScript());
 
       // Take screenshot
       const screenshot = await page.screenshot({
@@ -463,7 +469,7 @@ export class ScreenshotService {
               : ``
           }
 
-          <div class="slide__content">
+          <div class="slide__content"${isAutoFitEnabled(slide.frontmatter) ? ` ${AUTO_FIT_ATTRIBUTE}` : ``}>
             <div class="${customLayout ? `slide__content__custom` : `slide__content__inner`}">
               ${html}
             </div>

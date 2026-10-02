@@ -1,22 +1,30 @@
 import * as React from 'react';
 import { createRoot, Root } from 'react-dom/client';
-import { registerClickSteps } from './clickSteps';
+import { isStaticElement, registerClickSteps } from './clickSteps';
 
 export interface IClickToHideProps {
   clicks?: number;
   content?: string;
   invert?: boolean;
+  /**
+   * Shows the final state without adding click steps, like in the slide thumbnails
+   */
+  isStatic?: boolean;
 }
 
 export const ClickToHide: React.FunctionComponent<React.PropsWithChildren<IClickToHideProps>> = ({
   clicks = 1,
   content = '',
   invert = false,
+  isStatic = false,
 }: React.PropsWithChildren<IClickToHideProps>) => {
-  const [step, setStep] = React.useState<number>(0);
+  const [step, setStep] = React.useState<number>(isStatic ? Infinity : 0);
   const clickNr = clicks && clicks > 0 ? clicks : 1;
 
-  React.useLayoutEffect(() => registerClickSteps(clickNr, setStep), [clickNr]);
+  React.useLayoutEffect(
+    () => (isStatic ? undefined : registerClickSteps(clickNr, setStep)),
+    [clickNr, isStatic],
+  );
 
   const visible = invert ? step < clickNr : step >= clickNr;
 
@@ -76,7 +84,12 @@ abstract class BaseWebComponent extends HTMLElement {
     if (this.rootElm) {
       const parsedClicks = clicks ? parseInt(clicks, 10) : undefined;
       this.rootElm.render(
-        <ClickToHide clicks={parsedClicks} content={this.innerHTML} invert={this.invert} />
+        <ClickToHide
+          clicks={parsedClicks}
+          content={this.innerHTML}
+          invert={this.invert}
+          isStatic={isStaticElement(this)}
+        />
       );
     }
   }

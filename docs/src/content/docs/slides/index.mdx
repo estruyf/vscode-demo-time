@@ -105,6 +105,7 @@ You can customize your slides using the following properties in the front matter
 - `customLayout` - Specify a custom layout for the slide.
 - `autoAdvanceAfter` - Automatically advance to the next slide or demo after a specified number of seconds.
 - `hide` - Skip the slide while presenting. See [hiding slides](#hiding-slides).
+- `autoFit` - Scale the content down when it doesn't fit on the slide. See [content that doesn't fit](#content-that-doesnt-fit).
 - `progress` - Show (`true`, `top`, `bottom`) or hide (`false`) the [progress bar](/slides/layouts/header-footer/#progress-bar) on the slide.
 
 ### Themes
@@ -217,7 +218,7 @@ The control bar is keyboard and screen reader friendly. Every button is reachabl
 ### Slide navigation
 
 - **Previous**: Triggers the previous move (only if the `demo-time.previousEnabled` setting is enabled or when using grouped slides).
-- **Slide counter**: Shows the current slide and total (for example `01 / 05`). When slide thumbnails are available, selecting it opens the **Go to slide** overview so you can jump straight to any slide. [Hidden slides](#hiding-slides) are dimmed in the overview, but you can still open them.
+- **Slide counter**: Shows the current slide and total (for example `01 / 05`). When slide thumbnails are available, selecting it opens the **Go to slide** overview so you can jump straight to any slide. [Hidden slides](#hiding-slides) are dimmed in the overview, but you can still open them. Slides with [content that doesn't fit](#content-that-doesnt-fit) get a warning icon.
 - **Next**: Triggers the next move.
 
 ### Slide tools
@@ -287,6 +288,35 @@ To hide or show the current slide from the slide preview, open the **More action
 
 <Aside type="tip">
 Hidden slides are left out of the [PDF export](/slides/export/) unless you enable the `demoTime.pdfExport.includeHiddenSlides` setting.
+</Aside>
+
+## Content that doesn't fit
+
+A slide is 960×540 pixels. When a slide has too much content, like a long code block or one bullet too many, the part that doesn't fit is cut off. How much fits depends on the theme and the fonts, so Demo Time measures the rendered slides in the slide preview and warns you:
+
+- The slide preview shows a **Content doesn't fit the slide** badge on a slide that doesn't fit, with how much it is too tall or too wide, like **84px too tall**. A frame marks the edges of the slide, so you can see where it ends when the slide has the same background as the preview, and a striped band with a label like **↓ 84px cut off** marks every edge where content is cut off. The badge and the marks are only shown outside [presentation mode](/presentation-mode/).
+- While the preview is open, it measures every slide of the file in the background, with all its [click steps](/slides/animations/#click-steps) revealed. The slides that don't fit get a warning in the **Problems** panel, on the first line of the slide, and a warning icon in the **Go to slide** overview of the [slide controls](#slide-controls). The warnings update when you save the file.
+
+Content counts as overflowing when it reaches past the edges of the slide. Elements with `position: absolute` or `position: fixed`, like decorations in a [custom layout](/slides/layouts/custom/), are left out, and content inside an element that scrolls or clips its content counts up to the edges of that element.
+
+The best fix is to remove content or to split the slide in two. When that isn't an option, add `autoFit: true` to the front matter of the slide:
+
+```markdown
+---
+autoFit: true
+---
+
+# The full configuration
+
+...
+```
+
+With `autoFit`, the content of a slide that doesn't fit is scaled down until it fits, keeping the padding of the layout, to at most 50% of its size. The text wraps at the smaller size, so a long line can take less room. Slides that fit keep their size. Outside presentation mode, a **Scaled to 85% by autoFit** badge shows how much the content of the current slide was scaled down. When the content doesn't fit at 50% either, you still get the warning, which tells you that `autoFit` is on and how much is left.
+
+`autoFit` also applies in presentation mode, the **Go to slide** overview, the [PDF export](/slides/export/) and the next slide preview of the [presenter view](/features/presenter-view/). In the document front matter, it applies to every slide in the file that doesn't set its own value.
+
+<Aside type="tip">
+The quick fix of the warning (`Ctrl+.` or `Cmd+.` on the line in the editor, or the light bulb in the **Problems** panel) adds `autoFit: true` to the front matter of the slide.
 </Aside>
 
 ## Header and Footer

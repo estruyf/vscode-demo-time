@@ -518,6 +518,10 @@ layout: ${layout.toLowerCase()}
               return new Hover(
                 'Hides the slide while presenting. Hidden slides are skipped by navigation and not counted in the slide numbers, but you can still open them from the slide navigator.',
               );
+            } else if (line.startsWith('autoFit:')) {
+              return new Hover(
+                'Scales the content down, to at least 50%, when it does not fit on the slide. In the document front matter, it applies to every slide that does not set its own value.',
+              );
             } else if (line.startsWith('progress:')) {
               return new Hover(
                 'Shows or hides the progress bar on the slide, overriding the `demoTime.slideProgressBar` setting. Use `true`, `false`, `top` or `bottom`.',
@@ -607,6 +611,13 @@ layout: ${layout.toLowerCase()}
                   },
                   CompletionItemKind.Property,
                 ),
+                new CompletionItem(
+                  {
+                    label: 'autoFit',
+                    description: 'Scale the content down when it does not fit',
+                  },
+                  CompletionItemKind.Property,
+                ),
               ];
             } else if (linePrefix.startsWith('theme:')) {
               return Object.values(SlideTheme).map((theme) => {
@@ -620,7 +631,7 @@ layout: ${layout.toLowerCase()}
               return Object.values(SlideTransition).map((transition) => {
                 return new CompletionItem(transition, CompletionItemKind.EnumMember);
               });
-            } else if (linePrefix.startsWith('hide:')) {
+            } else if (linePrefix.startsWith('hide:') || linePrefix.startsWith('autoFit:')) {
               return ['true', 'false'].map((value) => {
                 return new CompletionItem(value, CompletionItemKind.Value);
               });

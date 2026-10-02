@@ -30,6 +30,14 @@ export const isStaticMode = () =>
   (typeof document !== 'undefined' && !!document.body?.hasAttribute('data-demotime-static')) ||
   typeof (globalThis as { acquireVsCodeApi?: unknown }).acquireVsCodeApi !== 'function';
 
+/**
+ * Checks if a click component renders statically: in static mode, or inside an element with the
+ * `data-demotime-static` attribute, like the slide thumbnails. Static components show their final
+ * state and don't add click steps to the slide.
+ */
+export const isStaticElement = (element: Element) =>
+  isStaticMode() || !!element.closest('[data-demotime-static]');
+
 const getTotalSteps = () => {
   let total = 0;
   registrations.forEach((registration) => {

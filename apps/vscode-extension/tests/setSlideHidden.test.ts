@@ -1,6 +1,6 @@
 import { describe, it, expect } from '@jest/globals';
-import { isSlideHidden, SlideParser } from '@demotime/common';
-import { setSlideHidden } from '../src/utils/setSlideHidden';
+import { isAutoFitEnabled, isSlideHidden, SlideParser } from '@demotime/common';
+import { setSlideBooleanProperty, setSlideHidden } from '../src/utils/setSlideHidden';
 
 const hiddenSlides = (markdown: string) =>
   new SlideParser().parseSlides(markdown).map((slide) => isSlideHidden(slide));
@@ -103,5 +103,40 @@ describe('setSlideHidden', () => {
 
   it('returns undefined for a slide that does not exist', () => {
     expect(setSlideHidden(deck, 5, true)).toBeUndefined();
+  });
+});
+
+describe('setSlideBooleanProperty', () => {
+  const autoFit = (markdown: string) =>
+    new SlideParser().parseSlides(markdown).map((slide) => isAutoFitEnabled(slide.frontmatter));
+
+  it('adds autoFit to the frontmatter of a slide', () => {
+    const result = setSlideBooleanProperty(deck, 2, 'autoFit', true)!;
+    expect(result).toContain('---\nlayout: section\nautoFit: true\n---');
+    expect(autoFit(result)).toEqual([false, false, true]);
+    expect(titles(result)).toEqual(titles(deck));
+  });
+
+  it('adds a frontmatter block with autoFit to a slide without frontmatter', () => {
+    const result = setSlideBooleanProperty(deck, 1, 'autoFit', true)!;
+    expect(result).toContain('---\nautoFit: true\n---\n\n# Two');
+    expect(autoFit(result)).toEqual([false, true, false]);
+    expect(hiddenSlides(result)).toEqual([false, false, false]);
+  });
+
+  it('keeps a slide that inherits autoFit from the document frontmatter as is', () => {
+    const markdown = deck.replace('theme: default', 'theme: default\nautoFit: true');
+    expect(setSlideBooleanProperty(markdown, 1, 'autoFit', true)).toBe(markdown);
+  });
+
+  it('replaces autoFit: false', () => {
+    const markdown = deck.replace('layout: section', 'layout: section\nautoFit: false');
+    const result = setSlideBooleanProperty(markdown, 2, 'autoFit', true)!;
+    expect(result).toContain('layout: section\nautoFit: true');
+    expect(result).not.toContain('autoFit: false');
+  });
+
+  it('returns undefined for a slide that does not exist', () => {
+    expect(setSlideBooleanProperty(deck, 5, 'autoFit', true)).toBeUndefined();
   });
 });

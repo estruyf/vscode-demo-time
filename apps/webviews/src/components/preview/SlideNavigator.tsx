@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Slide } from '@demotime/common';
+import { getSlideOverflowSize, isAutoFitEnabled, Slide, SlideOverflow } from '@demotime/common';
 import { Icon } from 'vscrui';
 import { SlideThumbnail } from './SlideThumbnail';
 
@@ -7,6 +7,10 @@ export interface SlideOption {
   index: number;
   title: string;
   hidden?: boolean;
+  /**
+   * How far the content reaches past the slide, when it doesn't fit
+   */
+  overflow?: SlideOverflow;
 }
 
 export interface ISlideNavigatorProps {
@@ -18,7 +22,6 @@ export interface ISlideNavigatorProps {
   isDarkTheme: boolean;
   webviewUrl: string | null;
   filePath?: string;
-  theme?: string;
   onNavigate: (index: number) => void;
   onOpenChange?: (isOpen: boolean) => void;
 }
@@ -32,7 +35,6 @@ export const SlideNavigator: React.FunctionComponent<ISlideNavigatorProps> = ({
   isDarkTheme,
   webviewUrl,
   filePath,
-  theme,
   onNavigate,
   onOpenChange,
 }) => {
@@ -172,12 +174,21 @@ export const SlideNavigator: React.FunctionComponent<ISlideNavigatorProps> = ({
                 {slideOptions.map((option) => {
                   const isActive = option.index === currentSlide;
                   const slide = slideData[option.index];
+                  const overflowMessage = option.overflow
+                    ? isAutoFitEnabled(slide?.frontmatter)
+                      ? `still ${getSlideOverflowSize(option.overflow)} with autoFit`
+                      : getSlideOverflowSize(option.overflow)
+                    : undefined;
+                  const tooltip = [option.hidden ? 'hidden' : undefined, overflowMessage]
+                    .filter(Boolean)
+                    .join(', ');
                   return (
                     <button
                       key={option.index}
                       data-active={isActive}
                       data-hidden={option.hidden}
-                      title={option.hidden ? `${option.title} (hidden)` : undefined}
+                      data-overflow={!!option.overflow}
+                      title={tooltip ? `${option.title} (${tooltip})` : undefined}
                       onClick={() => handleSelect(option.index)}
                       className={`relative rounded-sm overflow-hidden cursor-pointer transition-all duration-150 text-left group ${
                         isActive
@@ -198,7 +209,6 @@ export const SlideNavigator: React.FunctionComponent<ISlideNavigatorProps> = ({
                             isDarkTheme={isDarkTheme}
                             webviewUrl={webviewUrl}
                             filePath={filePath}
-                            theme={theme}
                           />
                         ) : (
                           <div
@@ -247,6 +257,17 @@ export const SlideNavigator: React.FunctionComponent<ISlideNavigatorProps> = ({
                           <span className="truncate" style={{ opacity: option.hidden ? 0.7 : 1 }}>
                             {option.title}
                           </span>
+                          {overflowMessage && (
+                            <Icon
+                              name={'warning' as never}
+                              className="inline-flex shrink-0 justify-center items-center ml-auto"
+                              style={{
+                                color: 'var(--vscode-editorWarning-foreground)',
+                                fontSize: '14px',
+                              }}
+                              aria-label={overflowMessage}
+                            />
+                          )}
                         </p>
                       </div>
                     </button>

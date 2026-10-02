@@ -113,6 +113,9 @@ Content:
 - **Active voice and short lines.** Cut filler words.
 - **Code on slides stays short:** at most about 12 lines, always with a language on the code fence.
   Longer code belongs in a live demo (see the `demotime-code-demo` skill).
+- **Fit on the slide.** A slide is 960×540 pixels and content past its edges is cut off. When a
+  slide has too much content, split it into two slides. Only add `autoFit: true` to the front matter
+  of a slide that can't be split, like one code sample: it scales the content down, to at most 50%.
 - **Diagrams:** use Mermaid for flows and architecture, or the `animated` layout with an SVG when
   the diagram should build up.
 - **Reveal step by step** with `dt-list`, `dt-show` or `dt-hide` only when the order of the reveal
@@ -166,6 +169,9 @@ of the live demos. Update an existing act when there is one; otherwise create on
   with `key: value` lines.
 - Layout, theme and transition names exist in the references.
 - `---` separators are on their own line, and not inside code blocks.
+- No slide has more content than the content rules allow. The slide preview marks a slide that
+  doesn't fit with a **Content doesn't fit the slide** badge and a warning in the **Problems** panel;
+  when you can read the problems of the workspace, fix these warnings.
 - Every `openSlide` path points to a file that exists.
 - When the `demotime-code-demo` skill is installed, run its act validator
   (`node <demotime-code-demo skill folder>/scripts/validate-act.mjs`) from the workspace root.

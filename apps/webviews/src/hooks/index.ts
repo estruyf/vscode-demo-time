@@ -10,5 +10,6 @@ export * from './usePresentationMode';
 export * from './usePrevious';
 export * from './useRemark';
 export * from './useScale';
+export * from './useSlideOverflow';
 export * from './useTheme';
 export * from './useRecentFiles';

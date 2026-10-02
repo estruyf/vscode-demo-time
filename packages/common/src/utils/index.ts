@@ -6,6 +6,7 @@ export * from './htmlDecode';
 export * from './htmlEncode';
 export * from './placeholderFormatting';
 export * from './sectionFormatting';
+export * from './slideOverflow';
 export * from './slidePlaceholders';
 export * from './slideVisibility';
 export * from './templateError';

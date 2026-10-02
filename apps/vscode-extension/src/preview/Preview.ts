@@ -14,6 +14,7 @@ import {
   DemoRunner,
   DemoStatusBar,
   NotesService,
+  SlideOverflowService,
   SlidePreviewSync,
   Slides,
 } from '../services';
@@ -321,6 +322,11 @@ export class Preview extends BaseWebview {
       await Slides.setSlideNotes(payload.path, payload.slideIndex, payload.notes || '');
     } else if (command === WebViewMessages.toVscode.preview.revealSource && payload?.path) {
       await SlidePreviewSync.revealSource(payload.path, payload.slideIndex ?? 0);
+    } else if (command === WebViewMessages.toVscode.preview.slideOverflow && payload?.path) {
+      await SlideOverflowService.update(
+        payload.path,
+        Array.isArray(payload.overflows) ? payload.overflows : [],
+      );
     } else if (command === WebViewMessages.toVscode.preview.updateSlideNotes) {
       Preview.updateSlideNotes(payload);
     } else if (command === WebViewMessages.toVscode.preview.runById) {

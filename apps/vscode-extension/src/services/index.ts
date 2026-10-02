@@ -31,6 +31,7 @@ export * from './ScreenshotService';
 export * from './ScriptExecutor';
 export * from './SelectionService';
 export * from './Slides';
+export * from './SlideOverflowService';
 export * from './SlidePreviewSync';
 export * from './SlideValidationService';
 export * from './SponsorService';

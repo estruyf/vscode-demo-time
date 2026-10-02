@@ -15,6 +15,7 @@ export interface SlideMetadata {
   video?: string;
   controls?: boolean;
   hide?: boolean;
+  autoFit?: boolean;
 
   // Animated SVG specific properties
   svgFile?: string;

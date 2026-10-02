@@ -36,6 +36,9 @@ import {
   getTemplateData,
   renderProgressBar,
   SlidePlaceholders,
+  AUTO_FIT_ATTRIBUTE,
+  getSlideAutoFitScript,
+  isAutoFitEnabled,
 } from '@demotime/common';
 import { ScreenshotService } from './ScreenshotService';
 
@@ -377,6 +380,7 @@ export class PdfExportService {
             footerTemplate,
             progressHtml,
             notesHtml,
+            autoFit: isAutoFitEnabled(crntSlide.frontmatter),
           });
 
           idx++;
@@ -534,7 +538,7 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
             : ``
         }
         
-        <div class="slide__content">
+        <div class="slide__content"${slide.autoFit ? ` ${AUTO_FIT_ATTRIBUTE}` : ``}>
           <div class="${slide.customLayout ? `slide__content__custom` : `slide__content__inner`}">
             ${slide.html}
           </div>
@@ -621,6 +625,9 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
     await page.emulateMedia({ media: 'print' });
 
     await page.waitForTimeout(5000);
+
+    // Scales down the content of the slides with `autoFit: true` that don't fit
+    await page.evaluate(getSlideAutoFitScript());
 
     // A slide with its notes below it gets a page with the height of both
     await page.evaluate(`(() => {

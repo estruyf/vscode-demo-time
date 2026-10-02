@@ -5,11 +5,14 @@ import { EventData } from '@estruyf/vscode';
 import { SlideControls } from './SlideControls';
 import { LaserPointer } from './LaserPointer';
 import DOMPurify from 'dompurify';
-import { Config, getNextSlideIdx, getPreviousSlideIdx, getProgressBarPosition, getProgressPercentage, getSlideHeading, getTemplateData, getTemplateErrorMessage, getVideoAutoplay, getVisibleSlideIdx, isSlideHidden, ProgressBarPosition, renderTemplateError, tryConvertTemplateToHtml, Slide, SlideLayout, SlideParser, SlidePlaceholders, SlideTheme, SlideTransition, TemplateErrorOptions, WebViewMessages } from '@demotime/common';
+import { Config, getNextSlideIdx, getPreviousSlideIdx, getProgressBarPosition, getProgressPercentage, getSlideHeading, getTemplateData, getTemplateErrorMessage, getVideoAutoplay, getVisibleSlideIdx, hasSlideOverflow, isAutoFitEnabled, isSlideHidden, ProgressBarPosition, renderTemplateError, tryConvertTemplateToHtml, Slide, SlideLayout, SlideOverflow, SlideOverflowEdges, SlideOverflowResult, SlideParser, SlidePlaceholders, SlideTheme, SlideTransition, TemplateErrorOptions, WebViewMessages } from '@demotime/common';
 import { Icon } from 'vscrui';
-import { useFileContents, useCursor, useScale, useMousePosition, useTheme, useClickSteps, usePresentationMode } from '../../hooks';
+import { useFileContents, useCursor, useScale, useMousePosition, useTheme, useClickSteps, usePresentationMode, useSlideOverflow } from '../../hooks';
 import { extractFirstH1, getSlideTitle } from '../../utils';
 import { AnimatedSVGSlide } from '../slides/AnimatedSVGSlide';
+import { SlideOverflowScanner } from './SlideOverflowScanner';
+import { SlideFitBadge } from './SlideFitBadge';
+import { SlideOverflowMarker } from './SlideOverflowMarker';
 import { nextClickStep, previousClickStep, resetClickSteps } from '../../webcomponents/clickSteps';
 
 export interface IMarkdownPreviewProps {
@@ -43,6 +46,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const [zoomLevel,] = React.useState(2.0); // 2x zoom by default
   const [panOffset, setPanOffset] = React.useState({ x: 0, y: 0 });
   const [svgContent, setSvgContent] = React.useState<string | null>(null);
+  // The overflow of every slide of the file, measured in the background
+  const [scannedOverflows, setScannedOverflows] = React.useState<SlideOverflow[]>([]);
 
   const { content, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();
   const ref = React.useRef<HTMLDivElement>(null);
@@ -56,6 +61,26 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const { scale } = useScale(ref, slideRef, offsetTop);
   const { mousePosition, handleMouseMove, handleMouseLeave } = useMousePosition(slideRef, scale, resetCursorTimeout);
   const clickStep = useClickSteps();
+  const autoFit = isAutoFitEnabled(crntSlide?.frontmatter);
+  // Outside presentation mode, a badge warns about content that doesn't fit on the slide
+  const showOverflowWarning = isPresentationMode === false;
+  const liveFit = useSlideOverflow(slideRef, {
+    enabled: showOverflowWarning || autoFit,
+    autoFit,
+    slideKey: `${crntFilePath}-${crntSlide?.index}-${layout}`,
+  });
+  // The background scan shows the slide with all its click steps, the live measurement the
+  // current click step
+  const overflow = React.useMemo<SlideOverflow>(() => {
+    const scanned = crntSlide ? scannedOverflows[crntSlide.index] : undefined;
+    const edge = (side: keyof SlideOverflowEdges) =>
+      Math.max(liveFit.overflow.edges?.[side] ?? 0, scanned?.edges?.[side] ?? 0);
+    return {
+      x: Math.max(liveFit.overflow.x, scanned?.x ?? 0),
+      y: Math.max(liveFit.overflow.y, scanned?.y ?? 0),
+      edges: { top: edge('top'), right: edge('right'), bottom: edge('bottom'), left: edge('left') },
+    };
+  }, [liveFit, scannedOverflows, crntSlide]);
   // Hidden slides (`hide: true`) are only skipped while presenting
   const skipHidden = !!isPresentationMode;
   const skipHiddenRef = React.useRef(skipHidden);
@@ -195,8 +220,9 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       index: slide.index,
       title: extractFirstH1(slide.rawContent) || `Slide ${slide.index + 1}`,
       hidden: isSlideHidden(slide),
+      overflow: hasSlideOverflow(scannedOverflows[slide.index]) ? scannedOverflows[slide.index] : undefined,
     }));
-  }, [slides]);
+  }, [slides, scannedOverflows]);
 
   const toggleZoom = React.useCallback(() => {
     setIsZoomed(prev => {
@@ -344,6 +370,22 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     return crntFilePath ? crntFilePath.replace(webviewUrl || "", "") : undefined;
   }, [crntFilePath, webviewUrl]);
 
+  // The extension shows the slides that overflow in the Problems panel
+  const onSlidesScanned = React.useCallback((overflows: SlideOverflow[]) => {
+    setScannedOverflows(overflows);
+    if (!relativePath) {
+      return;
+    }
+
+    const results: SlideOverflowResult[] = overflows
+      .map((slideOverflow, slideIndex) => ({ slideIndex, ...slideOverflow }))
+      .filter((result) => hasSlideOverflow(result));
+    messageHandler.send(WebViewMessages.toVscode.preview.slideOverflow, {
+      path: relativePath,
+      overflows: results,
+    });
+  }, [relativePath]);
+
   // Double-clicking the slide moves the editor cursor to its source, unless the sync is turned off
   const revealSourceOnDoubleClick = React.useCallback(async (ev: React.MouseEvent<HTMLDivElement>) => {
     if (isPresentationMode !== false || !relativePath || !crntSlide) {
@@ -399,6 +441,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       const parser = new SlideParser();
       const allSlides = parser.parseSlides(content);
       setSlides(allSlides);
+      setScannedOverflows([]);
       setCrntSlide(allSlides[0]);
       if (allSlides.length > 1) {
         messageHandler.send(WebViewMessages.toVscode.hasNextSlide, true);
@@ -716,6 +759,13 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
               ></div>
             )
           }
+
+          {
+            // Shows where the slide ends and where its content is cut off
+            showOverflowWarning && hasSlideOverflow(overflow) && overflow.edges && (
+              <SlideOverflowMarker edges={overflow.edges} area={liveFit.area} />
+            )
+          }
         </div>
 
         {
@@ -736,6 +786,12 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           )
         }
 
+        {
+          showOverflowWarning && (
+            <SlideFitBadge overflow={overflow} autoFit={autoFit} zoom={liveFit.zoom} top={offsetTop + 8} />
+          )
+        }
+
         <SlideControls
           show={showControls && cursorVisible}
           path={relativePath}
@@ -747,7 +803,6 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           isDarkTheme={isDarkTheme}
           webviewUrl={webviewUrl}
           filePath={crntFilePath}
-          slideTheme={theme}
           updateSlideIdx={updateSlideIdx}
           onNavigateToSlide={navigateToSlide}
           triggerMouseMove={setIsMouseMoveEnabled}
@@ -769,6 +824,20 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           )}
         </SlideControls>
       </div>
+
+      {
+        // Outside the slide, so the theme of the current slide doesn't style the measured slides
+        showOverflowWarning && (
+          <SlideOverflowScanner
+            slides={slides}
+            filePath={crntFilePath}
+            vsCodeTheme={vsCodeTheme as never}
+            isDarkTheme={isDarkTheme}
+            webviewUrl={webviewUrl}
+            onScanned={onSlidesScanned}
+          />
+        )
+      }
     </>
   );
 };

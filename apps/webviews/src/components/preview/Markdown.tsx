@@ -14,6 +14,11 @@ export interface IMarkdownProps {
   isDarkTheme: boolean;
   webviewUrl: string | null;
   videoUrl?: string;
+  /**
+   * Renders the slide for a thumbnail or a measurement: it doesn't reveal the preview or log
+   * errors
+   */
+  isStatic?: boolean;
   updateBgStyles: (styles: React.CSSProperties | undefined) => void;
 }
 
@@ -25,6 +30,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   isDarkTheme,
   webviewUrl,
   videoUrl,
+  isStatic = false,
   updateBgStyles
 }: React.PropsWithChildren<IMarkdownProps>) => {
   const prevContent = usePrevious(content);
@@ -87,7 +93,9 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     if (layout) {
       const errorOptions = { title: 'Custom layout error', path: layout };
       const showError = (message: string) => {
-        messageHandler.send(WebViewMessages.toVscode.logError, getTemplateErrorMessage(errorOptions, message));
+        if (!isStatic) {
+          messageHandler.send(WebViewMessages.toVscode.logError, getTemplateErrorMessage(errorOptions, message));
+        }
         setTemplate(renderTemplateError(errorOptions, message));
         setIsReady(true);
       };
@@ -113,7 +121,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
           content: crntSlideContent,
         }, { ...errorOptions, webviewUrl });
 
-        if (error) {
+        if (error && !isStatic) {
           messageHandler.send(WebViewMessages.toVscode.logError, error);
         }
 
@@ -125,7 +133,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     } else {
       setIsReady(true);
     }
-  }, [content, textContent, webviewUrl, processMarkdown]);
+  }, [content, textContent, webviewUrl, processMarkdown, isStatic]);
 
   const updateCustomThemePath = React.useCallback((customThemePath?: string) => {
     if (!customThemePath) {
@@ -220,7 +228,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
 
   React.useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
-    if (isReady) {
+    if (isReady && !isStatic) {
       // Sent a reveal message to the extension when the slide is ready.
       timeoutId = setTimeout(() => {
         messageHandler.send(WebViewMessages.toVscode.slideReady);
@@ -232,7 +240,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
         clearTimeout(timeoutId);
       }
     };
-  }, [isReady]);
+  }, [isReady, isStatic]);
 
   // Ensure the browser picks up the dynamically rendered source and respects autoplay.
   React.useEffect(() => {

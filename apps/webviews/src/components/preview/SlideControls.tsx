@@ -22,7 +22,6 @@ export interface ISlideControlsProps {
   isDarkTheme?: boolean;
   webviewUrl?: string | null;
   filePath?: string;
-  slideTheme?: string;
   updateSlideIdx: (index: number) => void;
   onNavigateToSlide?: (index: number) => void;
   triggerMouseMove: (value: boolean) => void;
@@ -56,7 +55,6 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   isDarkTheme,
   webviewUrl,
   filePath,
-  slideTheme,
   updateSlideIdx,
   onNavigateToSlide,
   triggerMouseMove,
@@ -340,7 +338,6 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
               isDarkTheme={isDarkTheme || false}
               webviewUrl={webviewUrl || null}
               filePath={filePath}
-              theme={slideTheme}
               onNavigate={onNavigateToSlide || updateSlideIdx}
               onOpenChange={setIsNavigatorOpen}
             />

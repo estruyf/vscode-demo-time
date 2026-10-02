@@ -2,7 +2,7 @@ import * as React from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import { transformMarkdown } from '@demotime/common';
 import { renderToString } from 'react-dom/server';
-import { registerClickSteps } from './clickSteps';
+import { isStaticElement, registerClickSteps } from './clickSteps';
 
 export interface IProgressiveListProps {
   totalItems: number;
@@ -10,24 +10,29 @@ export interface IProgressiveListProps {
    * The click on which the first item appears.
    */
   startClick?: number;
+  /**
+   * Shows all items without adding click steps, like in the slide thumbnails
+   */
+  isStatic?: boolean;
   children: React.ReactNode;
 }
 
 export const ProgressiveList: React.FunctionComponent<IProgressiveListProps> = ({
   totalItems,
   startClick = 1,
+  isStatic = false,
   children,
 }) => {
-  const [step, setStep] = React.useState<number>(0);
+  const [step, setStep] = React.useState<number>(isStatic ? Infinity : 0);
   const firstClick = startClick > 0 ? startClick : 1;
 
   React.useLayoutEffect(() => {
-    if (totalItems <= 0) {
+    if (totalItems <= 0 || isStatic) {
       return;
     }
 
     return registerClickSteps(firstClick + totalItems - 1, setStep);
-  }, [firstClick, totalItems]);
+  }, [firstClick, totalItems, isStatic]);
 
   const visibleCount = Math.min(Math.max(step - firstClick + 1, 0), totalItems);
 
@@ -140,7 +145,11 @@ class ListWebComponent extends HTMLElement {
       const clicks = parseInt(this.getAttribute('clicks') || '', 10);
 
       this.rootElm.render(
-        <ProgressiveList totalItems={totalItems} startClick={isNaN(clicks) ? undefined : clicks}>
+        <ProgressiveList
+          totalItems={totalItems}
+          startClick={isNaN(clicks) ? undefined : clicks}
+          isStatic={isStaticElement(this)}
+        >
           {reactChildren}
         </ProgressiveList>
       );

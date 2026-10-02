@@ -192,6 +192,10 @@ export const WebViewMessages = {
       updateSlideNotes: 'updatePreviewSlideNotes',
       runById: 'runPreviewById',
       revealSource: 'revealPreviewSlideSource',
+      /**
+       * The overflow of the slides in the file, for the diagnostics
+       */
+      slideOverflow: 'reportPreviewSlideOverflow',
     },
     settingsView: {
       /**

@@ -1,6 +1,6 @@
 import { messageHandler } from '@estruyf/vscode/dist/client/webview';
 import { WebViewMessages } from '@demotime/common';
-import { isStaticMode } from './clickSteps';
+import { isStaticElement } from './clickSteps';
 
 const styles = `
 :host {
@@ -107,7 +107,7 @@ class ActionWebComponent extends HTMLElement {
       return;
     }
 
-    const isStatic = isStaticMode();
+    const isStatic = isStaticElement(this);
     const variant = this.getAttribute('variant') === 'link' ? 'link' : 'button';
 
     this.button.className = `dt-action dt-action--${variant}`;
@@ -130,7 +130,7 @@ class ActionWebComponent extends HTMLElement {
     event.preventDefault();
 
     const id = this.getSceneId();
-    if (!id || isStaticMode()) {
+    if (!id || isStaticElement(this)) {
       return;
     }
 
