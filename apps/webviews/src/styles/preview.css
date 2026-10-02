@@ -250,6 +250,29 @@ table td {
   animation: rotateOut var(--demotime-transition-duration) ease-in-out;
 }
 
+/* Reduced motion: slide transitions become a short crossfade */
+:root[data-reduced-motion] {
+  .fadeIn,
+  .slideLeft,
+  .slideRight,
+  .slideUp,
+  .slideDown,
+  .zoomIn,
+  .zoomOut,
+  .rotateIn,
+  .rotateOut {
+    animation: fadeIn 150ms ease-in-out;
+  }
+
+  .slide__container {
+    transition: none;
+  }
+
+  .laser-pointer {
+    animation: none;
+  }
+}
+
 /* Layouts */
 .center {
   .slide__content {

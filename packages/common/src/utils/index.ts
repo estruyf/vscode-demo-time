@@ -5,6 +5,7 @@ export * from './getVideoAutoplay';
 export * from './htmlDecode';
 export * from './htmlEncode';
 export * from './placeholderFormatting';
+export * from './reducedMotion';
 export * from './sectionFormatting';
 export * from './slideOverflow';
 export * from './slidePlaceholders';

@@ -405,6 +405,19 @@ export const SETTINGS_CATALOG: SettingDefinition[] = [
     category: 'slides',
     control: 'boolean',
   },
+  {
+    key: 'slideReducedMotion',
+    label: 'Reduced motion',
+    description:
+      'Replace slide transitions with a short crossfade and show animations in their end state. Auto follows the `workbench.reduceMotion` setting of VS Code and your OS.',
+    category: 'slides',
+    control: 'select',
+    options: [
+      { value: 'auto', label: 'Auto', description: 'Follow VS Code and the OS' },
+      { value: 'on', label: 'On', description: 'Always reduce motion' },
+      { value: 'off', label: 'Off', description: 'Always animate' },
+    ],
+  },
 
   // Export
   {

@@ -1,4 +1,4 @@
-import { Uri, window, commands } from 'vscode';
+import { Uri, window, commands, workspace } from 'vscode';
 import { Extension } from '../services/Extension';
 import { ContextKeys } from '../constants';
 import {
@@ -18,7 +18,15 @@ import {
   SlidePreviewSync,
   Slides,
 } from '../services';
-import { COMMAND, WebViewMessages, Config, Action, SlideNotes } from '@demotime/common';
+import {
+  COMMAND,
+  WebViewMessages,
+  Config,
+  Action,
+  SlideNotes,
+  getReducedMotionPreference,
+  ReducedMotionPreference,
+} from '@demotime/common';
 import { BaseWebview } from '../webview/BaseWebviewPanel';
 import { WebviewType } from '../models';
 import { PresenterView } from '../presenterView/PresenterView';
@@ -43,6 +51,30 @@ export class Preview extends BaseWebview {
     );
     subscriptions.push(
       commands.registerCommand(COMMAND.closePresentationView, () => togglePresentationView(false)),
+    );
+    subscriptions.push(
+      workspace.onDidChangeConfiguration((e) => {
+        if (
+          Preview.isOpen &&
+          (e.affectsConfiguration(`${Config.root}.${Config.slides.reducedMotion}`) ||
+            e.affectsConfiguration('workbench.reduceMotion'))
+        ) {
+          Preview.postMessage(
+            WebViewMessages.toWebview.preview.updateReducedMotion,
+            Preview.getReducedMotion(),
+          );
+        }
+      }),
+    );
+  }
+
+  /**
+   * The reduced motion preference of the slides, from the Demo Time and VS Code settings.
+   */
+  public static getReducedMotion(): ReducedMotionPreference {
+    return getReducedMotionPreference(
+      Extension.getInstance().getSetting<string>(Config.slides.reducedMotion),
+      workspace.getConfiguration('workbench').get<string>('reduceMotion'),
     );
   }
 
@@ -293,6 +325,8 @@ export class Preview extends BaseWebview {
         requestId,
         previousEnabled,
       );
+    } else if (command === WebViewMessages.toVscode.preview.getReducedMotion && requestId) {
+      Preview.postRequestMessage(command, requestId, Preview.getReducedMotion());
     } else if (command === WebViewMessages.toVscode.getPresentationStarted) {
       const isPresentationMode = DemoRunner.getIsPresentationMode();
       Preview.postRequestMessage(command, requestId, isPresentationMode);

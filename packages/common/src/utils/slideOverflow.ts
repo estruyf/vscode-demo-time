@@ -8,6 +8,13 @@ import { toBoolean } from './toBoolean';
 export const AUTO_FIT_ATTRIBUTE = 'data-autofit';
 
 /**
+ * The attribute an animation component (like `fade-in`) sets while its content moves. The overflow
+ * check counts the box of that element, which is where its content ends up, and not the content
+ * itself.
+ */
+export const SLIDE_ANIMATING_ATTRIBUTE = 'data-demotime-animating';
+
+/**
  * Returns whether the slide has `autoFit: true` in its frontmatter.
  */
 export const isAutoFitEnabled = (frontmatter?: SlideMetadata): boolean =>
@@ -51,6 +58,8 @@ export const getSlideOverflowMessage = (overflow: SlideOverflow, autoFit = false
  *
  * - Absolute and fixed positioned elements (decorations, background videos) are left out.
  * - Content inside an element that clips or scrolls only counts up to the edges of that element.
+ * - Content of an animation that is still moving (`data-demotime-animating`) counts at the box of
+ *   the animation element, which is where it ends up.
  * - `autoFit` sets the CSS `zoom` of the `.slide__content__inner` or `.slide__content__custom`
  *   element, so the text reflows at the smaller size, down to 50%. The zoomed content keeps the
  *   padding of that element as a margin. When the content doesn't fit at 50%, the remaining
@@ -72,6 +81,8 @@ export function fitSlideContent(
   const SEARCH_STEPS = 8;
   // Ignores subpixel differences from rounding and transforms
   const TOLERANCE = 1;
+  // SLIDE_ANIMATING_ATTRIBUTE, inside the function so the PDF export can run it from its source
+  const ANIMATING_ATTRIBUTE = 'data-demotime-animating';
 
   /**
    * @param padding The element whose padding the content has to stay inside, at the given zoom
@@ -125,7 +136,11 @@ export function fitSlideContent(
           right = Math.max(right, rect.right);
         }
 
-        if (style.overflowX === 'visible' && style.overflowY === 'visible') {
+        if (
+          style.overflowX === 'visible' &&
+          style.overflowY === 'visible' &&
+          !child.hasAttribute(ANIMATING_ATTRIBUTE)
+        ) {
           walk(child);
         }
       }

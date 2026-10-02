@@ -47,6 +47,7 @@ export const Config = {
     slideProgressBar: 'slideProgressBar',
     presentationTitle: 'presentationTitle',
     previewSync: 'slidePreviewSync',
+    reducedMotion: 'slideReducedMotion',
   },
   webcomponents: {
     scripts: 'customWebComponents',

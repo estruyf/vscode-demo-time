@@ -1,7 +1,7 @@
 ---
 title: Animations
 description: Learn how to use animation components in your slides.
-lastmod: 2025-04-09T13:27:30.989Z
+lastmod: 2026-10-02T00:00:00.000Z
 ---
 
 import { Code, Aside } from '@astrojs/starlight/components';
@@ -151,6 +151,18 @@ The `text-highlight` component animates a highlight effect over text:
 - `highlight-color`: Color of the highlight (optional - default is `#ffff00`)
 - `direction`: Direction of the highlight animation - `left-to-right`, `right-to-left`, `center-out` (optional - default is `left-to-right`)
 - `repeat`: Repeats the animation (optional - default is `false`)
+
+## Reduced motion
+
+When [reduced motion](/slides/transitions/#reduced-motion) is on, the animation components show
+their end state right away:
+
+- `fade-in` shows its content without fading or moving it
+- `text-typewriter` shows the whole text, with a steady cursor when `cursor` is set
+- `text-highlight` shows the whole highlight
+
+The `delay`, `duration` and `repeat` properties are ignored. Click steps (`dt-show`, `dt-hide` and
+`dt-list`) keep working as usual, as they don't animate.
 
 ## Combining animations
 

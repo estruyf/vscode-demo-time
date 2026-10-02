@@ -8,6 +8,7 @@ export * from './useFileOperations';
 export * from './useMousePosition';
 export * from './usePresentationMode';
 export * from './usePrevious';
+export * from './useReducedMotion';
 export * from './useRemark';
 export * from './useScale';
 export * from './useSlideOverflow';

@@ -407,6 +407,21 @@
           "default": true,
           "markdownDescription": "Sync the slide preview with the markdown editor: moving the cursor to another slide shows that slide in the preview, `Open slide preview` opens at the slide under the cursor, and double-clicking a slide in the preview moves the cursor to its source. Never applies in presentation mode."
         },
+        "demoTime.slideReducedMotion": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "on",
+            "off"
+          ],
+          "enumDescriptions": [
+            "Follow the `workbench.reduceMotion` setting of VS Code, which follows the reduced motion setting of your OS by default.",
+            "Always reduce motion on the slides.",
+            "Always animate the slides, even when VS Code or your OS reduces motion."
+          ],
+          "default": "auto",
+          "markdownDescription": "Reduce motion on the slides: slide transitions become a short crossfade, and `fade-in`, `text-typewriter`, `text-highlight` and animated SVG slides show their end state."
+        },
         "demoTime.pdfExport.includeHiddenSlides": {
           "type": "boolean",
           "default": false,

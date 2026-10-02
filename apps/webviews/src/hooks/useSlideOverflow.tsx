@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { fitSlideContent, SlideOverflow } from '@demotime/common';
+import { fitSlideContent, SLIDE_ANIMATING_ATTRIBUTE, SlideOverflow } from '@demotime/common';
 
 const NO_OVERFLOW: SlideOverflow = { x: 0, y: 0 };
 
@@ -107,7 +107,8 @@ export const useSlideOverflow = (
         .forEach((block) => resizeObserver.observe(block));
     };
 
-    // `style` is left out: `autoFit` sets the zoom with it
+    // `style` is left out: `autoFit` sets the zoom with it. An animation that stops moving
+    // (`data-demotime-animating`) gets measured again with its content.
     const mutationObserver = new MutationObserver(() => {
       observeBlocks();
       schedule();
@@ -117,7 +118,7 @@ export const useSlideOverflow = (
       subtree: true,
       characterData: true,
       attributes: true,
-      attributeFilter: ['class', 'src', 'hidden', 'open'],
+      attributeFilter: ['class', 'src', 'hidden', 'open', SLIDE_ANIMATING_ATTRIBUTE],
     });
 
     // Images and videos (the `load` event doesn't bubble, so listen in the capture phase)

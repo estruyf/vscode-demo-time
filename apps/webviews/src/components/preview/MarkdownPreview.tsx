@@ -7,7 +7,7 @@ import { LaserPointer } from './LaserPointer';
 import DOMPurify from 'dompurify';
 import { Config, getNextSlideIdx, getPreviousSlideIdx, getProgressBarPosition, getProgressPercentage, getSlideHeading, getTemplateData, getTemplateErrorMessage, getVideoAutoplay, getVisibleSlideIdx, hasSlideOverflow, isAutoFitEnabled, isSlideHidden, ProgressBarPosition, renderTemplateError, tryConvertTemplateToHtml, Slide, SlideLayout, SlideOverflow, SlideOverflowEdges, SlideOverflowResult, SlideParser, SlidePlaceholders, SlideTheme, SlideTransition, TemplateErrorOptions, WebViewMessages } from '@demotime/common';
 import { Icon } from 'vscrui';
-import { useFileContents, useCursor, useScale, useMousePosition, useTheme, useClickSteps, usePresentationMode, useSlideOverflow } from '../../hooks';
+import { useFileContents, useCursor, useScale, useMousePosition, useTheme, useClickSteps, usePresentationMode, useSlideOverflow, useReducedMotionPreference } from '../../hooks';
 import { extractFirstH1, getSlideTitle } from '../../utils';
 import { AnimatedSVGSlide } from '../slides/AnimatedSVGSlide';
 import { SlideOverflowScanner } from './SlideOverflowScanner';
@@ -55,6 +55,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const { cursorVisible, resetCursorTimeout, hideCursor } = useCursor();
   const { vsCodeTheme, isDarkTheme } = useTheme();
   const isPresentationMode = usePresentationMode();
+  // Slides only render once this is known, so they don't start an animation they should skip
+  const reducedMotion = useReducedMotionPreference();
   // Outside presentation mode, hidden slides are shown so you can edit them, with a bar above them
   const showHiddenMarker = isPresentationMode === false && isSlideHidden(crntSlide ?? undefined);
   const offsetTop = showHiddenMarker ? HIDDEN_BAR_HEIGHT : 0;
@@ -680,7 +682,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             }
 
             {
-              crntSlide && vsCodeTheme ? (
+              crntSlide && vsCodeTheme && reducedMotion !== undefined ? (
                 layout === SlideLayout.AnimatedSVG && svgContent ? (
                   <AnimatedSVGSlide
                     svgContent={svgContent}
@@ -688,7 +690,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
                     textTypeWriterEffect={crntSlide.frontmatter.textTypeWriterEffect}
                     textTypeWriterSpeed={crntSlide.frontmatter.textTypeWriterSpeed}
                     autoplay={crntSlide.frontmatter.autoplay}
-                    skipAnimation={crntSlide.frontmatter.skipAnimation}
+                    skipAnimation={crntSlide.frontmatter.skipAnimation || reducedMotion}
                     invertLightAndDarkColours={crntSlide.frontmatter.invertLightAndDarkColours}
                     controlsPosition={crntSlide.frontmatter.controlsPosition}
                     slideIndex={crntSlide.index}

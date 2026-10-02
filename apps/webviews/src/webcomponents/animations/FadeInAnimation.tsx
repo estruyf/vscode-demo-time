@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import { createRoot, Root } from 'react-dom/client';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { isStaticElement } from '../clickSteps';
+import { SLIDE_ANIMATING_ATTRIBUTE } from '@demotime/common';
 
 // Fade In Animation
 export interface FadeInProps {
@@ -11,6 +14,26 @@ export interface FadeInProps {
   direction?: 'up' | 'down' | 'left' | 'right' | 'none';
   distance?: number;
   className?: string;
+  /**
+   * Shows the end state without animating, like in the slide thumbnails
+   */
+  isStatic?: boolean;
+  /**
+   * Called when the content starts or stops moving
+   */
+  onAnimatingChange?: (animating: boolean) => void;
+}
+
+const END_STATE = { opacity: 1, transform: 'translate(0, 0)' };
+
+function getInitialTransform(dir: string, dist: number): string {
+  switch (dir) {
+    case 'up': return `translateY(${dist}px)`;
+    case 'down': return `translateY(-${dist}px)`;
+    case 'left': return `translateX(${dist}px)`;
+    case 'right': return `translateX(-${dist}px)`;
+    default: return 'translate(0, 0)';
+  }
 }
 
 export const FadeInAnimation: React.FC<FadeInProps> = ({
@@ -20,52 +43,41 @@ export const FadeInAnimation: React.FC<FadeInProps> = ({
   direction = 'up',
   distance = 20,
   className = '',
+  isStatic = false,
+  onAnimatingChange,
 }) => {
-  const [, setVisible] = useState(false);
-  const [animation, setAnimation] = useState({
-    opacity: 0,
-    transform: getInitialTransform(direction, distance),
-  });
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  function getInitialTransform(dir: string, dist: number): string {
-    switch (dir) {
-      case 'up': return `translateY(${dist}px)`;
-      case 'down': return `translateY(-${dist}px)`;
-      case 'left': return `translateX(${dist}px)`;
-      case 'right': return `translateX(-${dist}px)`;
-      default: return 'translate(0, 0)';
-    }
-  }
+  const reducedMotion = useReducedMotion();
+  const skipAnimation = isStatic || reducedMotion;
+  const [animation, setAnimation] = useState(() =>
+    skipAnimation ? END_STATE : { opacity: 0, transform: getInitialTransform(direction, distance) }
+  );
+  const onAnimatingChangeRef = useRef(onAnimatingChange);
+  onAnimatingChangeRef.current = onAnimatingChange;
 
   useEffect(() => {
-    // Clear any existing animations
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+    // With reduced motion or static rendering, show the end state right away
+    if (skipAnimation) {
+      setAnimation(END_STATE);
+      onAnimatingChangeRef.current?.(false);
+      return;
     }
 
     // Reset animation state
-    setVisible(false);
     setAnimation({
       opacity: 0,
       transform: getInitialTransform(direction, distance),
     });
+    onAnimatingChangeRef.current?.(true);
 
     // Start animation after delay
-    timeoutRef.current = setTimeout(() => {
-      setVisible(true);
-      setAnimation({
-        opacity: 1,
-        transform: 'translate(0, 0)',
-      });
-    }, delay);
+    const startTimer = setTimeout(() => setAnimation(END_STATE), delay);
+    const endTimer = setTimeout(() => onAnimatingChangeRef.current?.(false), delay + duration);
 
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      clearTimeout(startTimer);
+      clearTimeout(endTimer);
     };
-  }, [delay, duration, direction, distance]);
+  }, [delay, duration, direction, distance, skipAnimation]);
 
   return (
     <div
@@ -74,7 +86,7 @@ export const FadeInAnimation: React.FC<FadeInProps> = ({
         display: 'inline-block',
         opacity: animation.opacity,
         transform: animation.transform,
-        transition: `opacity ${duration}ms ease-out, transform ${duration}ms ease-out`,
+        transition: skipAnimation ? 'none' : `opacity ${duration}ms ease-out, transform ${duration}ms ease-out`,
       }}
     >
       {children}
@@ -106,6 +118,9 @@ export class FadeInComponent extends HTMLElement {
         duration: Number(this.getAttribute('duration')) || 1000,
         direction: (this.getAttribute('direction') as 'up' | 'down' | 'left' | 'right' | 'none') || 'none',
         distance: Number(this.getAttribute('distance')) || 20,
+        isStatic: isStaticElement(this),
+        // While the content moves, the overflow check of the slide only counts this element
+        onAnimatingChange: (animating) => this.toggleAttribute(SLIDE_ANIMATING_ATTRIBUTE, animating),
       };
 
       const absolute = this.hasAttribute('absolute');
@@ -135,6 +150,7 @@ export class FadeInComponent extends HTMLElement {
   }
 
   disconnectedCallback() {
+    this.removeAttribute(SLIDE_ANIMATING_ATTRIBUTE);
     if (this.rootElm) {
       this.rootElm.unmount();
     }

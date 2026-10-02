@@ -193,6 +193,10 @@ export const WebViewMessages = {
       runById: 'runPreviewById',
       revealSource: 'revealPreviewSlideSource',
       /**
+       * The reduced motion preference of the slides: `auto`, `on` or `off`
+       */
+      getReducedMotion: 'getPreviewReducedMotion',
+      /**
        * The overflow of the slides in the file, for the diagnostics
        */
       slideOverflow: 'reportPreviewSlideOverflow',
@@ -328,6 +332,10 @@ export const WebViewMessages = {
        * Shows the slide under the editor cursor
        */
       goToSlide: 'previewGoToSlide',
+      /**
+       * The reduced motion preference of the slides changed
+       */
+      updateReducedMotion: 'previewUpdateReducedMotion',
     },
     // Act Editor
     configEditor: {
