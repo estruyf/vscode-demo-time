@@ -295,6 +295,8 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
       label = "Slide Number (1-based index)";
     } else if (field === 'timeout') {
       label = "Timeout (ms)";
+    } else if (field === 'waitTimeout') {
+      label = "Wait Timeout (ms)";
     } else if (field === 'zoom') {
       label = "Zoom Level (times to use VS Code zoom)";
     } else if (field === 'insertTypingSpeed') {
@@ -555,6 +557,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
         );
 
       case 'timeout':
+      case 'waitTimeout':
       case 'zoom':
       case 'insertTypingSpeed':
       case 'slide':

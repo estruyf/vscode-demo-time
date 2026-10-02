@@ -53,7 +53,8 @@ export class TerminalService {
    * @returns A promise that resolves when the command execution is complete.
    */
   public static async executeCommand(step: Step): Promise<void> {
-    let { command, terminalId, autoExecute, insertTypingMode, insertTypingSpeed } = step;
+    let { command, terminalId, autoExecute, insertTypingMode, insertTypingSpeed, waitTimeout } =
+      step;
 
     if (!command) {
       Notifications.error('No command specified');
@@ -81,7 +82,7 @@ export class TerminalService {
         // to handle unreliable 633 sequence ordering (VS Code 1.98+)
         if (terminal.shellIntegration) {
           await Promise.all([
-            TerminalService.waitForTerminalExecuted(command, resolvedTerminalId),
+            TerminalService.waitForTerminalExecuted(command, resolvedTerminalId, waitTimeout),
             sleep(TerminalService.minSafetyDelayMs),
           ]);
         } else {
@@ -108,7 +109,7 @@ export class TerminalService {
     if (execution && typeMode === 'instant') {
       // Dual-layer waiting for shell integration reliability
       await Promise.all([
-        TerminalService.waitForTerminalExecuted(command, resolvedTerminalId),
+        TerminalService.waitForTerminalExecuted(command, resolvedTerminalId, waitTimeout),
         sleep(TerminalService.minSafetyDelayMs),
       ]);
     }
@@ -246,14 +247,21 @@ export class TerminalService {
    *
    * @param command - The exact command string to wait for.
    * @param terminalId - The identifier of the terminal whose last executed command will be observed.
+   * @param waitTimeout - The `waitTimeout` of the move, in milliseconds (optional).
    * @returns A Promise that resolves when the command is observed or when the timeout elapses
-   *          (5 seconds, or the export's terminal timeout during a video export).
+   *          (the `waitTimeout` of the move or 5 seconds, and at least the export's terminal
+   *          timeout during a video export).
    */
-  private static async waitForTerminalExecuted(command: string, terminalId: string): Promise<void> {
+  private static async waitForTerminalExecuted(
+    command: string,
+    terminalId: string,
+    waitTimeout?: number,
+  ): Promise<void> {
     return new Promise<void>((resolve) => {
       const startTime = Date.now();
-      // 5 seconds, or longer while a video export waits for the command's output
-      const maxWaitTime = VideoExportService.getTerminalTimeoutMs() ?? 5000;
+      // The move's waitTimeout or 5 seconds, or longer while a video export waits for the output
+      const exportTimeout = VideoExportService.getTerminalTimeoutMs();
+      const maxWaitTime = Math.max(waitTimeout ?? 0, exportTimeout ?? 0) || 5000;
 
       const checkExecution = () => {
         if (TerminalService.lastExecution[terminalId] === command) {
