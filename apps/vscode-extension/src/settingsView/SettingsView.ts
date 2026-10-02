@@ -111,6 +111,7 @@ export class SettingsView extends BaseWebview {
       slideFooterTemplate: ext.getSetting(Config.slides.slideFooterTemplate),
       slideProgressBar: ext.getSetting(Config.slides.slideProgressBar),
       presentationTitle: ext.getSetting(Config.slides.presentationTitle),
+      slidePreviewSync: ext.getSetting(Config.slides.previewSync),
       customWebComponents: ext.getSetting(Config.webcomponents.scripts),
       nextActionBehaviour: ext.getSetting(Config.demoRunner.nextActionBehaviour),
       openInConfigEditor: ext.getSetting(Config.configEditor.openInConfigEditor),

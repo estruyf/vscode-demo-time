@@ -63,6 +63,7 @@ export * from './saveFiles';
 export * from './resolveOpenWebsiteUrl';
 export * from './setContext';
 export * from './sleep';
+export * from './slideSourceLines';
 export * from './sortFiles';
 export * from './togglePresentationView';
 export * from './updateConfig';

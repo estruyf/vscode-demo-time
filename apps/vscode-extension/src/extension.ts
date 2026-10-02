@@ -17,6 +17,7 @@ import {
   VideoExportCommand,
   VideoExportService,
   Slides,
+  SlidePreviewSync,
   SponsorService,
   UriHandler,
   TextTypingService,
@@ -69,6 +70,7 @@ export async function activate(context: vscode.ExtensionContext) {
   DemoStatusBar.register();
   DemoFileProvider.register();
   Slides.register();
+  SlidePreviewSync.register();
   NotesService.registerCommands();
   TextTypingService.registerCommands();
   DemoApi.register();

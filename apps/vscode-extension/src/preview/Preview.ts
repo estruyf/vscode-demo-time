@@ -5,10 +5,18 @@ import {
   getAbsolutePath,
   getTheme,
   getWebviewWorkspaceUrl,
+  parseWinPath,
   setContext,
   togglePresentationView,
 } from '../utils';
-import { AnalyticsService, DemoRunner, DemoStatusBar, NotesService, Slides } from '../services';
+import {
+  AnalyticsService,
+  DemoRunner,
+  DemoStatusBar,
+  NotesService,
+  SlidePreviewSync,
+  Slides,
+} from '../services';
 import { COMMAND, WebViewMessages, Config, Action, SlideNotes } from '@demotime/common';
 import { BaseWebview } from '../webview/BaseWebviewPanel';
 import { WebviewType } from '../models';
@@ -62,6 +70,30 @@ export class Preview extends BaseWebview {
       return false;
     }
     return Preview.crntFile === fileUri;
+  }
+
+  /**
+   * Checks if the preview shows the given file. The preview path can be relative to the workspace,
+   * with or without a leading `/` or `./`.
+   */
+  public static isShowingFile(fileUri: Uri): boolean {
+    if (!Preview.crntFile || Preview.crntFile.startsWith('http')) {
+      return false;
+    }
+    return getAbsolutePath(parseWinPath(Preview.crntFile)).fsPath === fileUri.fsPath;
+  }
+
+  /**
+   * Shows another slide of the current file, without loading the file again.
+   * @param slideIndex The 0-based slide index
+   */
+  public static goToSlide(slideIndex: number) {
+    if (!Preview.isOpen) {
+      return;
+    }
+
+    Preview.currentSlideIndex = slideIndex;
+    Preview.postMessage(WebViewMessages.toWebview.preview.goToSlide, slideIndex);
   }
 
   public static isListening(): boolean {
@@ -287,6 +319,8 @@ export class Preview extends BaseWebview {
       await Slides.setSlideHidden(payload.path, payload.slideIndex, !!payload.hidden);
     } else if (command === WebViewMessages.toVscode.preview.setSlideNotes && payload?.path) {
       await Slides.setSlideNotes(payload.path, payload.slideIndex, payload.notes || '');
+    } else if (command === WebViewMessages.toVscode.preview.revealSource && payload?.path) {
+      await SlidePreviewSync.revealSource(payload.path, payload.slideIndex ?? 0);
     } else if (command === WebViewMessages.toVscode.preview.updateSlideNotes) {
       Preview.updateSlideNotes(payload);
     } else if (command === WebViewMessages.toVscode.preview.runById) {

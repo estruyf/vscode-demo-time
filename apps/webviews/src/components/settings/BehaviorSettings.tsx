@@ -1,6 +1,7 @@
 import { Card } from "../ui/Card";
 import { Label } from "../ui/Label";
 import { EnhancedSelect, EnhancedSelectContent, EnhancedSelectItem, EnhancedSelectTrigger, EnhancedSelectValue } from "../ui/EnhancedSelect";
+import { Switch } from "../ui/Switch";
 import { IDemoTimeSettings } from "@demotime/common";
 
 interface BehaviorSettingsProps {
@@ -30,6 +31,18 @@ export default function BehaviorSettings({ settings, updateSetting }: BehaviorSe
               </EnhancedSelectContent>
             </EnhancedSelect>
             <p className="text-sm text-gray-600 dark:text-gray-300">Define the behavior of the next action</p>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label>Sync Slide Preview</Label>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Show the slide under the editor cursor in the slide preview, and double-click a slide to reveal its source. Never applies in presentation mode.
+              </p>
+            </div>
+            <Switch
+              checked={settings.slidePreviewSync !== false}
+              onCheckedChange={(checked) => updateSetting("slidePreviewSync", checked)}
+            />
           </div>
         </div>
       </div>

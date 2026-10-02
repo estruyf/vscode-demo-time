@@ -191,6 +191,7 @@ export const WebViewMessages = {
       setSlideNotes: 'setPreviewSlideNotes',
       updateSlideNotes: 'updatePreviewSlideNotes',
       runById: 'runPreviewById',
+      revealSource: 'revealPreviewSlideSource',
     },
     settingsView: {
       /**
@@ -319,6 +320,10 @@ export const WebViewMessages = {
        * updateNextStep
        */
       updateNextStep: 'updateNextStep',
+      /**
+       * Shows the slide under the editor cursor
+       */
+      goToSlide: 'previewGoToSlide',
     },
     // Act Editor
     configEditor: {

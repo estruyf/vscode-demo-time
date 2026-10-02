@@ -22,6 +22,7 @@ const defaultDemoTimeSettings: IDemoTimeSettings = {
   slideFooterTemplate: '',
   slideProgressBar: 'none',
   presentationTitle: '',
+  slidePreviewSync: true,
   customWebComponents: [],
   nextActionBehaviour: 'lastExecuted',
   openInConfigEditor: false,

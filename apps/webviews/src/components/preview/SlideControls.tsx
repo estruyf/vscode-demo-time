@@ -125,9 +125,13 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
     messageHandler.send(WebViewMessages.toVscode.runCommand, "workbench.action.webview.reloadWebviewAction");
   }, []);
 
-  const openSlideSource = React.useCallback(() => {
-    messageHandler.send(WebViewMessages.toVscode.openFile, path);
-  }, [path]);
+  // Moves the editor cursor to the source of the current slide
+  const revealSlideSource = React.useCallback(() => {
+    messageHandler.send(WebViewMessages.toVscode.preview.revealSource, {
+      path,
+      slideIndex: currentSlide,
+    });
+  }, [path, currentSlide]);
 
   const isHidden = isSlideHidden({ frontmatter: matter });
   const toggleSlideHidden = React.useCallback(() => {
@@ -225,10 +229,10 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
       });
       if (path) {
         slideItems.push({
-          id: 'open-slide-source',
-          label: 'Open slide source',
+          id: 'reveal-slide-source',
+          label: 'Reveal slide source',
           iconName: 'file-code',
-          onSelect: openSlideSource,
+          onSelect: revealSlideSource,
         });
         // Adds or removes `hide: true` in the slide front matter
         slideItems.push({
@@ -272,7 +276,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
     });
 
     return groups;
-  }, [isPresentationMode, showPosition, path, isHidden, notes, toggleMousePosition, openSlideSource, toggleSlideHidden, openNotesEditor, focusPanel, closeSidebar, hideControls]);
+  }, [isPresentationMode, showPosition, path, isHidden, notes, toggleMousePosition, revealSlideSource, toggleSlideHidden, openNotesEditor, focusPanel, closeSidebar, hideControls]);
 
   const isOverlayOpen = isNavigatorOpen || isMenuOpen || isNotesEditorOpen;
   const visible = show || isOverlayOpen;

@@ -20,6 +20,7 @@ export interface IDemoTimeSettings {
   slideFooterTemplate: string;
   slideProgressBar: string;
   presentationTitle: string;
+  slidePreviewSync: boolean;
   customWebComponents: string[];
   nextActionBehaviour: string;
   openInConfigEditor: boolean;

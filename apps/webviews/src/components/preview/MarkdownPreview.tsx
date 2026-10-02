@@ -283,6 +283,16 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       const nextSlide = crntSlide ? (getNextSlideIdx(slides, crntSlide.index, skipHidden) ?? slides.length) : 1;
       updateSlideIdx(nextSlide);
       messageHandler.send(WebViewMessages.toVscode.updateSlideIndex, nextSlide);
+    } else if (command === WebViewMessages.toWebview.preview.goToSlide) {
+      // The editor cursor moved to another slide. The file can have more slides than the preview
+      // until it is saved.
+      if (typeof message.data.payload !== 'number' || slides.length === 0) {
+        return;
+      }
+      const slideIdx = Math.min(Math.max(message.data.payload, 0), slides.length - 1);
+      if (slideIdx !== crntSlide?.index) {
+        navigateToSlide(slideIdx);
+      }
     } else if (command === WebViewMessages.toWebview.previousSlide) {
       if (previousClickStep()) {
         return;
@@ -293,7 +303,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       updateSlideIdx(previousSlide);
       messageHandler.send(WebViewMessages.toVscode.updateSlideIndex, previousSlide);
     }
-  }, [crntSlide, slides, skipHidden, updateSlideIdx]);
+  }, [crntSlide, slides, skipHidden, updateSlideIdx, navigateToSlide]);
 
   const getBgStyles = React.useCallback(() => {
     if (!layout || layout === SlideLayout.ImageLeft || layout === SlideLayout.ImageRight) {
@@ -333,6 +343,30 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const relativePath = React.useMemo(() => {
     return crntFilePath ? crntFilePath.replace(webviewUrl || "", "") : undefined;
   }, [crntFilePath, webviewUrl]);
+
+  // Double-clicking the slide moves the editor cursor to its source, unless the sync is turned off
+  const revealSourceOnDoubleClick = React.useCallback(async (ev: React.MouseEvent<HTMLDivElement>) => {
+    if (isPresentationMode !== false || !relativePath || !crntSlide) {
+      return;
+    }
+
+    // Keep double-clicks on links, buttons and form fields for the element itself
+    const target = ev.target as HTMLElement | null;
+    if (target?.closest('a, button, input, textarea, select, video, audio, [contenteditable="true"]')) {
+      return;
+    }
+
+    const isSyncEnabled = await messageHandler.request<boolean>(WebViewMessages.toVscode.getSetting, Config.slides.previewSync);
+    if (isSyncEnabled === false) {
+      return;
+    }
+
+    window.getSelection()?.removeAllRanges();
+    messageHandler.send(WebViewMessages.toVscode.preview.revealSource, {
+      path: relativePath,
+      slideIndex: crntSlide.index,
+    });
+  }, [isPresentationMode, relativePath, crntSlide]);
 
   // The presenter view and remote show the notes of the current slide
   React.useEffect(() => {
@@ -572,6 +606,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       >
         <div
           className='slide__container absolute top-[50%] left-[50%] w-[960px] h-[540px] transition-transform duration-300'
+          onDoubleClick={revealSourceOnDoubleClick}
           style={{
             // Center the slide below the bar of a hidden slide
             top: offsetTop ? `calc(50% + ${offsetTop / 2}px)` : undefined,

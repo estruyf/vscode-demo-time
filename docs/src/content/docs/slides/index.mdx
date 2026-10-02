@@ -154,6 +154,19 @@ When you create a slide, you can preview it by running the `Demo Time: Open slid
 
 <Image class="mx-auto" src={slidePreviewImg} alt="Slide preview action" width="400" />
 
+### Sync the preview with the editor
+
+While you write your slides, the slide preview follows the cursor in the markdown editor:
+
+- **Editor to preview**: when the preview shows the file of the active editor, moving the cursor to another slide shows that slide in the preview. `Demo Time: Open slide preview` opens the preview at the slide under the cursor. Typing in a slide doesn't move the preview away from a slide you navigated to; clicking in the editor does.
+- **Preview to editor**: double-click the slide, or select **Reveal slide source** in the **More actions** (`…`) menu of the [slide controls](#slide-controls), to move the cursor to the source of the slide. When the file isn't open in a visible editor, it opens next to the preview.
+
+<Aside type="tip">
+Move the slide preview to an editor group next to your markdown file, so you see both while you write.
+</Aside>
+
+The sync never applies in [presentation mode](/presentation-mode/), so moving the cursor can't change slides during a talk. To turn it off, set `demoTime.slidePreviewSync` to `false`. **Reveal slide source** keeps working when the sync is off.
+
 ## Presenting slides
 
 To incorporate slides into your workflow, add them as moves in your scene script or configuration files. This ensures you can control when and where your slides appear during the presentation.
@@ -214,7 +227,7 @@ The control bar is keyboard and screen reader friendly. Every button is reachabl
 - **More actions** (`…`): Opens a menu with the remaining actions, grouped for discoverability:
   - **Slide** _(only available when you are not in presentation mode)_
     - **Mouse position**: Toggles the mouse position overlay on the slide, which can be useful to position elements on your slides.
-    - **Open slide source**: Opens the source file of the slide in the editor, allowing you to edit the slide content directly.
+    - **Reveal slide source**: Opens the source file of the slide in the editor, with the cursor on the current slide, so you can edit it directly. You can also double-click the slide. See [sync the preview with the editor](#sync-the-preview-with-the-editor).
     - **Hide slide while presenting** / **Show slide while presenting**: Adds or removes `hide: true` in the front matter of the current slide. See [hiding slides](#hiding-slides).
     - **Add speaker notes** / **Edit speaker notes**: Opens an editor for the notes of the current slide, and saves them in its `<!-- notes -->` block. See [notes in your slides](/features/using-notes/#notes-in-your-slides).
   - **Workspace**

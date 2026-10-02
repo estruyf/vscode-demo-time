@@ -402,6 +402,11 @@
           "default": "",
           "markdownDescription": "Title of the presentation for the `{{presentationTitle}}` placeholder in slide header and footer templates. When empty, the name of the workspace folder is used."
         },
+        "demoTime.slidePreviewSync": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Sync the slide preview with the markdown editor: moving the cursor to another slide shows that slide in the preview, `Open slide preview` opens at the slide under the cursor, and double-clicking a slide in the preview moves the cursor to its source. Never applies in presentation mode."
+        },
         "demoTime.pdfExport.includeHiddenSlides": {
           "type": "boolean",
           "default": false,

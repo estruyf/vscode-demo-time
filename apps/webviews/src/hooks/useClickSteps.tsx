@@ -84,6 +84,11 @@ export const useClickSteps = () => {
         return;
       }
 
+      // Outside presentation mode, a double-click reveals the slide source, so it counts as one click
+      if (!isPresentationModeRef.current && event.detail > 1) {
+        return;
+      }
+
       nextClickStep();
     };
 

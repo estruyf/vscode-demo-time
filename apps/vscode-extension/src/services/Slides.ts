@@ -34,6 +34,7 @@ import {
 } from '../utils';
 import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
 import { DemoFileProvider } from './DemoFileProvider';
+import { SlidePreviewSync } from './SlidePreviewSync';
 import { Notifications } from './Notifications';
 import { Preview } from '../preview/Preview';
 import {
@@ -461,7 +462,13 @@ layout: ${layout.toLowerCase()}
     }
 
     const path = editor.document.uri.fsPath;
-    Preview.show(getRelPath(parseWinPath(path)));
+    // Opens at the slide under the cursor; `show` takes a 1-based slide number
+    const slideIndex = SlidePreviewSync.getCursorSlideIndex(editor);
+    Preview.show(
+      getRelPath(parseWinPath(path)),
+      undefined,
+      slideIndex !== undefined ? slideIndex + 1 : undefined,
+    );
   }
 
   private static registerHoverProvider() {

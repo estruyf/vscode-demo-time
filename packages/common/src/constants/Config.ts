@@ -46,6 +46,7 @@ export const Config = {
     slideFooterTemplate: 'slideFooterTemplate',
     slideProgressBar: 'slideProgressBar',
     presentationTitle: 'presentationTitle',
+    previewSync: 'slidePreviewSync',
   },
   webcomponents: {
     scripts: 'customWebComponents',
