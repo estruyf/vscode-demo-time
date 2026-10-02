@@ -11,7 +11,7 @@ export const Config = {
     previousEnabled: 'previousEnabled',
     viewToggles: 'presentationViewToggles',
   },
-  zoom: 'zoomLevel',
+  zoom: 'zoom',
   highlight: {
     borderColor: 'highlightBorderColor',
     background: 'highlightBackground',

@@ -3,30 +3,43 @@ import { Action, DemoConfig, IDemoTimeSettings, WebViewMessages } from '@demotim
 // Default settings payload for mock response
 const defaultDemoTimeSettings: IDemoTimeSettings = {
   defaultFileType: 'yaml',
+  openInConfigEditor: false,
+  hideEditorActions: false,
+  debug: false,
   previousEnabled: true,
-  highlightBorderColor: '#ff0',
-  highlightBackground: '#fff',
+  nextActionBehaviour: 'lastExecuted',
+  presentationViewToggles: ['statusBar', 'tabs', 'activityBar', 'sideBar', 'secondarySideBar', 'panel'],
+  showClock: false,
+  timer: null,
+  highlightBorderColor: 'rgba(255,0,0,0.5)',
+  highlightBackground: 'var(--vscode-editor-selectionBackground)',
   highlightBlur: 0,
   highlightOpacity: 1,
   highlightZoomEnabled: false,
-  showClock: false,
-  timer: 0,
+  zoom: 1,
   insertTypingMode: 'instant',
   insertTypingSpeed: 50,
   insertTypingSpeedRandomness: 0,
   hackerTyperChunkSize: 5,
-  'api.enabled': false,
-  'api.port': 3000,
+  terminalCommandBoundaryDelay: 200,
   customTheme: '',
+  customWebComponents: [],
   slideHeaderTemplate: '',
   slideFooterTemplate: '',
-  slideProgressBar: 'none',
   presentationTitle: '',
+  slideProgressBar: 'none',
   slidePreviewSync: true,
-  customWebComponents: [],
-  nextActionBehaviour: 'lastExecuted',
-  openInConfigEditor: false,
+  'pdfExport.notes': 'none',
+  'pdfExport.includeHiddenSlides': false,
+  'videoExport.command': 'npx --yes @demotime/video@latest',
+  'videoExport.extension': '',
+  'api.enabled': false,
+  'api.port': 3000,
+  'remote.showScreenshot': true,
+  'remote.showNotes': true,
   engageTimeApiKey: '',
+  'recording.captureSaves': true,
+  'analytics.enabled': true,
   'redaction.enabled': false,
   'redaction.customPatterns': [],
 };
@@ -162,7 +175,16 @@ if (typeof (globalThis as any).acquireVsCodeApi === 'undefined') {
         };
 
         if (message.command === WebViewMessages.toVscode.settingsView.getSettings) {
-          respond(defaultDemoTimeSettings);
+          respond({
+            settings: defaultDemoTimeSettings,
+            defaults: { ...defaultDemoTimeSettings, hackerTyperChunkSize: 3, 'api.port': 3710 },
+          });
+          return;
+        }
+
+        if (message.command === WebViewMessages.toVscode.settingsView.saveSettings) {
+          Object.assign(defaultDemoTimeSettings, message.payload);
+          respond(true);
           return;
         }
 

@@ -276,7 +276,7 @@
         "demoTime.zoom": {
           "type": "number",
           "default": 1,
-          "description": "Zoom level to apply when using the zoomIn and zoomOut actions. This sets the editor font size accordingly."
+          "description": "The number of steps the zoomIn and zoomOut actions zoom the VS Code window."
         },
         "demoTime.highlightZoomEnabled": {
           "type": [
@@ -375,12 +375,12 @@
         "demoTime.slideHeaderTemplate": {
           "type": "string",
           "default": "",
-          "markdownDescription": "HTML template for slide headers. Supports Handlebars syntax with the front matter properties of the slide and the `{{crntSlideIdx}}`, `{{totalSlides}}`, `{{slideTitle}}`, `{{sceneTitle}}`, `{{actTitle}}`, `{{presentationTitle}}` and `{{date \"d MMM yyyy\"}}` placeholders. Example: `<header><span>{{actTitle}}</span> <span>{{slideTitle}}</span></header>`"
+          "markdownDescription": "Relative path to an HTML file with the template for slide headers. Supports Handlebars syntax with the front matter properties of the slide and the `{{crntSlideIdx}}`, `{{totalSlides}}`, `{{slideTitle}}`, `{{sceneTitle}}`, `{{actTitle}}`, `{{presentationTitle}}` and `{{date \"d MMM yyyy\"}}` placeholders. Example file content: `<header><span>{{actTitle}}</span> <span>{{slideTitle}}</span></header>`"
         },
         "demoTime.slideFooterTemplate": {
           "type": "string",
           "default": "",
-          "markdownDescription": "HTML template for slide footers. Supports Handlebars syntax with the front matter properties of the slide and the `{{crntSlideIdx}}`, `{{totalSlides}}`, `{{slideTitle}}`, `{{sceneTitle}}`, `{{actTitle}}`, `{{presentationTitle}}` and `{{date \"d MMM yyyy\"}}` placeholders. Example: `<footer><span>{{presentationTitle}}</span> <span>{{crntSlideIdx}} / {{totalSlides}}</span></footer>`"
+          "markdownDescription": "Relative path to an HTML file with the template for slide footers. Supports Handlebars syntax with the front matter properties of the slide and the `{{crntSlideIdx}}`, `{{totalSlides}}`, `{{slideTitle}}`, `{{sceneTitle}}`, `{{actTitle}}`, `{{presentationTitle}}` and `{{date \"d MMM yyyy\"}}` placeholders. Example file content: `<footer><span>{{presentationTitle}}</span> <span>{{crntSlideIdx}} / {{totalSlides}}</span></footer>`"
         },
         "demoTime.slideProgressBar": {
           "type": "string",

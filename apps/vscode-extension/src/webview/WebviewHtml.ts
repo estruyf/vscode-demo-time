@@ -5,8 +5,8 @@ export const WebviewHtml = `<!doctype html>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Demo Time Webview</title>
-    <script type="module" crossorigin src="./assets/index-D3SJrdgD.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-BTOiK2L1.css">
+    <script type="module" crossorigin src="./assets/index-RjU6ORZP.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DZqpOODE.css">
   </head>
   <body>
     <div id="root"></div>

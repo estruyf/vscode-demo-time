@@ -1,5 +1,6 @@
 export * from './Command';
 export * from './Config';
+export * from './SettingsCatalog';
 export * from './SlideLayout';
 export * from './SlideTheme';
 export * from './SlideTransition';

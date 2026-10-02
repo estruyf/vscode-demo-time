@@ -1,7 +1,7 @@
 ---
 title: Settings
 description: Customize the settings of Demo Time to fit your needs.
-lastmod: 2025-12-19T00:00:00.000Z
+lastmod: 2026-10-02T00:00:00.000Z
 tableOfContents: false
 ---
 
@@ -12,9 +12,16 @@ import settingsGuiImg from "../../../assets/docs/settings-view.webp";
 
 By using the `Demo Time: Settings` command, you can quickly access and modify the settings of the Demo Time extension.
 
-<Image class="mx-auto" src={settingsGuiImg} alt="Settings GUI" />
+<Image class="mx-auto" src={settingsGuiImg} alt="Demo Time settings view with the setting categories, search and the General settings" />
 
-When you use the Demo Time Settings GUI, they will automatically be configured and stored in the `.vscode/settings.json` file of your workspace.
+The settings view groups the settings in categories, like **Presenting**, **Highlight & zoom**, **Slides** and **Export**:
+
+- Use the category list to jump to a group, or search the settings by name, description or key (`Cmd+F` / `Ctrl+F`).
+- **Modified only** shows the settings that differ from their default. A modified setting has a **Reset to default** link, and a setting you changed but didn't save yet is marked **Unsaved**.
+- Select **Save** (or press `Cmd+S` / `Ctrl+S`) to store your changes, or **Discard** to undo them.
+- The highlight colors have a **Theme color**, **Custom** and **None** option, and a preview of the highlight with the colors of your current theme. See [customizing the highlight](/tips/highlighting/#customizing-the-highlight).
+
+The settings are stored in the `.vscode/settings.json` file of your workspace. A setting you reset to its default is removed from that file. The `demoTime.videoExport.command` and `demoTime.videoExport.extension` settings are stored in your user settings, as Demo Time only reads them from there. The EngageTime API key is stored in the VS Code secret storage.
 
 ## Overview
 
@@ -24,11 +31,11 @@ Here is a list of all the settings available in Demo Time.
 | --- | --- | --- |
 | `demoTime.previousEnabled` | Enable the previous command when in presentation mode. | `false` |
 | `demoTime.presentationViewToggles` | Which UI areas to hide when toggling presentation view. Allowed values: `statusBar`, `tabs`, `activityBar`, `sideBar`, `secondarySideBar`, `panel`. | `["statusBar", "tabs", "activityBar", "sideBar", "secondarySideBar", "panel"]` |
-| `demoTime.highlightBackground` | The background color of the highlighted code. | `var(--vscode-editor-selectionBackground)` |
-| `demoTime.highlightBorderColor` | The border color of the highlighted code. | `rgba(255,0,0,0.5)` |
+| `demoTime.highlightBackground` | The background color of the highlighted code: a VS Code theme color (`var(--vscode-...)`), a CSS color, or `transparent`. | `var(--vscode-editor-selectionBackground)` |
+| `demoTime.highlightBorderColor` | The border color of the highlighted code: a VS Code theme color (`var(--vscode-...)`), a CSS color, or `transparent`. | `rgba(255,0,0,0.5)` |
 | `demoTime.highlightBlur` | Blur effect on the text which is not highlighted. | `0` |
-| `demoTime.highlightOpacity` | The opacity of the text which is not highlighted. Number between 0 and 1. | `0.5` |
-| `demoTime.zoom` | Zoom level to apply when using the zoomIn and zoomOut actions. | `1` |
+| `demoTime.highlightOpacity` | The opacity of the text which is not highlighted. Number between 0 and 1. | `1` |
+| `demoTime.zoom` | The number of steps the `zoomIn` and `zoomOut` actions zoom the VS Code window. | `1` |
 | `demoTime.highlightZoomEnabled` | Enable zooming when highlighting code. | `false` \| `number (zoom level)` |
 | `demoTime.nextActionBehaviour` | Defines how the next action/step behaves. <br /><br />**lastExecuted (default):** The "Next" action always advances from the furthest step you have executed, even if you go back and view previous steps. This is the current behavior.<br /><br />**currentPosition:** The "Next" action advances from your current position, regardless of how far you have previously gone. If you go back and then press "Next", it moves forward from where you are. | `lastExecuted` |
 | `demoTime.showClock` | Show a clock in the status bar. | `true` |
@@ -44,8 +51,8 @@ Here is a list of all the settings available in Demo Time.
 | `demoTime.customWebComponents` | Custom web components to be used in the slides. Provide the relative paths to the JS file(s). | `[]` |
 | `demoTime.customTheme` | Custom CSS file to be used in the slides. Provide the relative path to the CSS file. | `` |
 | `demoTime.defaultFileType` | The default file type for new act files. Options: `json` (default), `yaml`. | `json` |
-| `demoTime.slideHeaderTemplate` | The template for the slide header. See the [placeholders](/slides/layouts/header-footer/#placeholders) you can use. |  |
-| `demoTime.slideFooterTemplate` | The template for the slide footer. |  |
+| `demoTime.slideHeaderTemplate` | Relative path to an HTML file with the template for the slide header. See the [placeholders](/slides/layouts/header-footer/#placeholders) you can use. |  |
+| `demoTime.slideFooterTemplate` | Relative path to an HTML file with the template for the slide footer. |  |
 | `demoTime.slideProgressBar` | Show a [progress bar](/slides/layouts/header-footer/#progress-bar) on the slides. Options: `none`, `top`, `bottom`. Use the `progress` front matter property to change it for a slide. | `none` |
 | `demoTime.presentationTitle` | The title for the `{{presentationTitle}}` [placeholder](/slides/layouts/header-footer/#placeholders) in slide header and footer templates. When empty, the name of the workspace folder is used. | `` |
 | `demoTime.slidePreviewSync` | [Sync the slide preview with the markdown editor](/slides/#sync-the-preview-with-the-editor): the preview shows the slide under the cursor, and double-clicking a slide moves the cursor to its source. Never applies in presentation mode. | `true` |
@@ -58,6 +65,9 @@ Here is a list of all the settings available in Demo Time.
 | `demoTime.redaction.enabled` | Enable redaction mode to automatically mask sensitive data (API keys, tokens, passwords, emails) during presentation mode. | `false` |
 | `demoTime.redaction.customPatterns` | Additional regex patterns to redact sensitive data. Each pattern should be a valid JavaScript regular expression string. | `[]` |
 | `demoTime.recording.captureSaves` | When [recording a demo](/features/recording-demos/), capture file saves as `save` moves. | `true` |
+| `demoTime.analytics.enabled` | Track timing, navigation and performance while presenting, for the analytics dashboard. | `true` |
+| `demoTime.videoExport.command` | The command that runs the [video export](/features/video-export/) CLI. Only read from your user settings. | `npx --yes @demotime/video@latest` |
+| `demoTime.videoExport.extension` | The Demo Time build to record the [video export](/features/video-export/) with: a Marketplace id (with @version) or a path to a VSIX. Empty uses the version you are running. Only read from your user settings. | `` |
 
 <Aside>
 The `demoTime.previousEnabled` is by default disabled to avoid conflicts when the previous action inserted content into a file.
