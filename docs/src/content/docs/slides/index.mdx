@@ -1,7 +1,7 @@
 ---
 title: Present your slides
 description: From Markdown to slides - present your slides with Demo Time
-lastmod: 2026-06-12T08:02:33.790Z
+lastmod: 2026-10-02T00:00:00.000Z
 ---
 
 import { Code, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
@@ -71,6 +71,8 @@ The front matter at the top of the file is the document front matter. It belongs
 - Any other property, like the properties you use in a [custom layout](/slides/layouts/custom/), applies to every slide that doesn't set its own value.
 - `layout`, `customLayout`, `image`, `autoAdvanceAfter` and `hide` only apply to the first slide.
 
+The [front matter reference](/slides/front-matter/) shows this for every property.
+
 ```md
 ---
 theme: frost
@@ -107,6 +109,8 @@ You can customize your slides using the following properties in the front matter
 - `hide` - Skip the slide while presenting. See [hiding slides](#hiding-slides).
 - `autoFit` - Scale the content down when it doesn't fit on the slide. See [content that doesn't fit](#content-that-doesnt-fit).
 - `progress` - Show (`true`, `top`, `bottom`) or hide (`false`) the [progress bar](/slides/layouts/header-footer/#progress-bar) on the slide.
+
+The [front matter reference](/slides/front-matter/) lists every property with its values and default, including the properties of the video and animated SVG layouts. In the editor, Demo Time suggests the properties and their values while you type, and shows their description when you hover over them.
 
 ### Themes
 

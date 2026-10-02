@@ -15,6 +15,9 @@ with an `openSlide` **move**. Always deliver both: the slide files and the scene
 Read [slides](references/slides.md) and [layouts](references/layouts.md) before writing. Read the
 others when you use what they cover:
 
+- [Front matter reference](references/front-matter.md): every front matter property, its values,
+  default and layouts. [references/slide.schema.json](references/slide.schema.json) has the same
+  properties as a JSON schema, with the `enum` values and types to check a front matter block against
 - [Speaker notes](references/notes.md): the `<!-- notes -->` block
 - [Components](references/components.md): `dt-arrow`, `dt-rectangle`, `dt-circle`, `dt-list`, ...
 - [Animations and transitions](references/animations.md): click steps (`dt-show`, `dt-hide`),
@@ -168,6 +171,10 @@ of the live demos. Update an existing act when there is one; otherwise create on
 - Every slide file starts with front matter, and every slide-level front matter block is valid YAML
   with `key: value` lines.
 - Layout, theme and transition names exist in the references.
+- Every front matter property is in [references/slide.schema.json](references/slide.schema.json),
+  with a value of its `type` or one of its `enum` values, and is used by the layout of the slide
+  (`x-demotime.layouts`). Only add other properties when a custom layout, header or footer reads
+  them.
 - `---` separators are on their own line, and not inside code blocks.
 - No slide has more content than the content rules allow. The slide preview marks a slide that
   doesn't fit with a **Content doesn't fit the slide** badge and a warning in the **Problems** panel;

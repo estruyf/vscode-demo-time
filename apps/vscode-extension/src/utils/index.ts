@@ -40,6 +40,7 @@ export * from './getRelPath';
 export * from './getSetting';
 export * from './getSlideActionTags';
 export * from './getSlideProblems';
+export * from './getSlidePropertyCompletions';
 export * from './getShellPath';
 export * from './getTheme';
 export * from './getUserInput';

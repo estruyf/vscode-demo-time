@@ -1,10 +1,13 @@
 import yaml from 'js-yaml';
 import { ParserOptions, Slide, InternalSlide, SlideLocation } from '../models';
-import { SlideLayout } from '../constants';
+import { getSlidePropertyInheritance, SlideLayout } from '../constants';
 import { FrontMatterParser } from '.';
 
 // The opening line of a speaker notes block: `<!-- notes`
 const NOTES_START = /^<!--\s*notes(?=\s|-->|$)/i;
+
+// A slide without a value, or with an empty one, uses the value of the document front matter
+const isUnset = (value: unknown) => value === undefined || value === null || value === '';
 
 export class SlideParser {
   private defaultOptions: Required<ParserOptions> = {
@@ -206,40 +209,18 @@ export class SlideParser {
       if (!slide.frontmatter.layout) {
         slide.frontmatter.layout = SlideLayout.Default;
       }
-      if (slide.docFrontMatter.theme) {
-        slide.frontmatter.theme = slide.docFrontMatter.theme;
-      }
-      if (slide.docFrontMatter.customTheme) {
-        slide.frontmatter.customTheme = slide.docFrontMatter.customTheme;
-      }
-      if (slide.docFrontMatter.transition && !slide.frontmatter.transition) {
-        slide.frontmatter.transition = slide.docFrontMatter.transition;
-      }
 
-      if (slide.docFrontMatter.header && !slide.frontmatter.header) {
-        slide.frontmatter.header = slide.docFrontMatter.header;
-      }
-      if (slide.docFrontMatter.footer && !slide.frontmatter.footer) {
-        slide.frontmatter.footer = slide.docFrontMatter.footer;
-      }
-
+      // The document front matter applies to the other slides as `SLIDE_PROPERTIES` describes
       for (const [key, value] of Object.entries(slide.docFrontMatter)) {
-        if (
-          ![
-            'theme',
-            'customTheme',
-            'customLayout',
-            'transition',
-            'header',
-            'footer',
-            'layout',
-            'image',
-            'autoAdvanceAfter',
-            'slide',
-            'hide',
-          ].includes(key) &&
-          slide.frontmatter[key] === undefined
-        ) {
+        // Only the first slide uses `slide`
+        if (key === 'slide') {
+          continue;
+        }
+
+        const inheritance = getSlidePropertyInheritance(key);
+        if (inheritance === 'always' && value) {
+          slide.frontmatter[key] = value;
+        } else if (inheritance === 'fallback' && isUnset(slide.frontmatter[key])) {
           slide.frontmatter[key] = value;
         }
       }

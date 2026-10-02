@@ -5,6 +5,7 @@
  * - `references/*.md` are converted from the documentation in `docs/src/content/docs`, so the
  *   skills stay in sync when actions, layouts or themes change.
  * - `demotime-code-demo/references/demo-time.schema.json` is a copy of the act file JSON schema.
+ * - `demotime-slides/references/slide.schema.json` is a copy of the slide front matter JSON schema.
  * - `demotime-slide-theme/references/theme-model.md` and `built-in-css/*.css` come from the Theme
  *   Builder source.
  * - `scripts/*.mjs` are bundled from `scripts/skills/*.ts`.
@@ -68,6 +69,7 @@ const DOC_REFERENCES = {
   },
   'demotime-slides': {
     'slides.md': ['slides/index.mdx'],
+    'front-matter.md': ['slides/front-matter.mdx'],
     'layouts.md': LAYOUT_PAGES,
     'custom-layouts.md': ['slides/layouts/custom.mdx', 'slides/layouts/header-footer.mdx'],
     'components.md': ['slides/components/index.mdx', 'slides/components/custom.mdx'],
@@ -358,6 +360,12 @@ function collectGeneratedFiles() {
   files.set(
     'demotime-code-demo/references/demo-time.schema.json',
     readFileSync(join(ROOT, 'docs', 'public', 'demo-time.schema.json'), 'utf8'),
+  );
+
+  // Slide front matter JSON schema
+  files.set(
+    'demotime-slides/references/slide.schema.json',
+    readFileSync(join(ROOT, 'docs', 'public', 'slide.schema.json'), 'utf8'),
   );
 
   // Theme model, from the Theme Builder types

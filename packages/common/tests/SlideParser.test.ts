@@ -263,6 +263,51 @@ layout: section
       expect(slides.map((slide) => slide.content)).toEqual(['just some text', '# One']);
     });
 
+    it('should apply the document frontmatter to the other slides as the slide properties describe', () => {
+      const markdown = `---
+theme: frost
+customTheme: .demo/theme.css
+layout: intro
+image: .demo/intro.png
+hide: true
+transition: fadeIn
+autoFit: true
+speaker: Jane
+---
+
+# One
+
+---
+theme: minimal
+transition: slideLeft
+speaker: John
+---
+
+# Two
+
+---
+
+# Three
+`;
+      const slides = new SlideParser().parseSlides(markdown);
+
+      expect(slides.length).toBe(3);
+      expect(slides[0].frontmatter).toMatchObject({ layout: 'intro', image: '.demo/intro.png' });
+      // `always`: the document value wins
+      expect(slides[1].frontmatter.theme).toBe('frost');
+      expect(slides[1].frontmatter.customTheme).toBe('.demo/theme.css');
+      // `fallback`: only when the slide doesn't set its own value, also for unknown properties
+      expect(slides[1].frontmatter.transition).toBe('slideLeft');
+      expect(slides[1].frontmatter.speaker).toBe('John');
+      expect(slides[2].frontmatter.transition).toBe('fadeIn');
+      expect(slides[2].frontmatter.speaker).toBe('Jane');
+      expect(slides[2].frontmatter.autoFit).toBe(true);
+      // `firstSlide`: not on the other slides
+      expect(slides[2].frontmatter.layout).toBe(SlideLayout.Default);
+      expect(slides[2].frontmatter.image).toBeUndefined();
+      expect(slides[2].frontmatter.hide).toBeUndefined();
+    });
+
     it('should return empty array for empty markdown', () => {
       const parser = new SlideParser();
       const slides = parser.parseSlides('');

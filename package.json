@@ -45,6 +45,7 @@
     "sync:version:extension": "node ./scripts/sync-version-to-extension.js",
     "postversion": "node ./scripts/sync-version-to-extension.js && node ./scripts/copy-changelog.cjs",
     "generate:gallery": "npx ts-node scripts/generate-gallery-index.cts",
+    "slides:schema": "node ./scripts/generate-slide-schema.mjs",
     "skills:build": "node ./scripts/skills/build-skills.mjs",
     "skills:pack": "node ./scripts/skills/build-skills.mjs && node ./scripts/skills/pack-skills.mjs"
   },

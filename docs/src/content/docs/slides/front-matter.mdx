@@ -1,0 +1,106 @@
+---
+title: Front matter reference
+description: All the front matter properties of a Demo Time slide, their values and defaults, and how the document front matter applies to the other slides.
+lastmod: 2026-10-02T00:00:00.000Z
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The front matter of a slide sets its theme, layout, transition and other options. This page lists every property that Demo Time reads. A [custom layout](/slides/layouts/custom/), [header or footer](/slides/layouts/header-footer/) can read any other property you add.
+
+```md
+---
+theme: frost
+layout: video
+video: .demo/assets/intro.mp4
+controls: true
+---
+
+# Welcome
+```
+
+## In the editor
+
+In a slide file, Demo Time helps you write the front matter of the slide the cursor is in:
+
+- **Completion** suggests the properties the slide doesn't set yet, with the properties of its layout first, and the values of `layout`, `theme`, `transition`, `controlsPosition`, `progress` and the `true`/`false` properties.
+- **Hover** over a property shows its description, values, default, layouts and how it applies from the document front matter, with a link to its documentation.
+- The **Problems** panel reports misspelled properties and invalid values. See [problems in slide files](/slides/#problems-in-slide-files).
+
+## Document front matter
+
+The front matter at the top of the file is the [document front matter](/slides/#front-matter-for-all-slides). The **Document front matter applies to** column of the tables tells how a property in it applies to the other slides of the file:
+
+- **Every slide**: every slide uses the value, even when it sets its own.
+- **Slides that don't set it**: every slide that doesn't set its own value uses it. This is also the case for properties that Demo Time doesn't know, like the ones of a custom layout.
+- **First slide only**: the other slides don't use it.
+
+## Properties
+
+Paths are relative to the workspace folder.
+
+{/* slide-properties:start */}
+
+### All layouts
+
+| Property            | Type                | Default                                                                       | Document front matter applies to | Description                                                                                                                                                                                                                                                                                      |
+| ------------------- | ------------------- | ----------------------------------------------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `theme`             | string              | `default`                                                                     | Every slide                      | The built-in theme of the slide. Values: `default`, `minimal`, `monomi`, `unnamed`, `quantum`, `frost`, `pixels`. [More](/slides/themes/)                                                                                                                                                        |
+| `layout`            | string              | `default`                                                                     | First slide only                 | The layout of the slide. Values: `default`, `center`, `intro`, `section`, `quote`, `image`, `video`, `image-right`, `image-left`, `two-columns`, `animated`. [More](/slides/layouts/)                                                                                                            |
+| `transition`        | string              | No transition                                                                 | Slides that don't set it         | The transition to show the slide with. Values: `fadeIn`, `slideRight`, `slideLeft`, `slideUp`, `slideDown`, `zoomIn`, `zoomOut`, `rotateIn`, `rotateOut`. [More](/slides/transitions/)                                                                                                           |
+| `customTheme`       | path or URL         | -                                                                             | Every slide                      | Path (relative to the workspace folder) or URL of a CSS file with your own theme, which builds on the `theme`. [More](/slides/themes/custom/)                                                                                                                                                    |
+| `customLayout`      | path                | -                                                                             | First slide only                 | Path (relative to the workspace folder) of a Handlebars template with your own layout. [More](/slides/layouts/custom/)                                                                                                                                                                           |
+| `header`            | Handlebars template | The `demoTime.slideHeaderTemplate` setting                                    | Slides that don't set it         | Handlebars template for the header of the slide. It can use the front matter properties and the header and footer placeholders. [More](/slides/layouts/header-footer/)                                                                                                                           |
+| `footer`            | Handlebars template | The `demoTime.slideFooterTemplate` setting                                    | Slides that don't set it         | Handlebars template for the footer of the slide. It can use the front matter properties and the header and footer placeholders. [More](/slides/layouts/header-footer/)                                                                                                                           |
+| `progress`          | string              | The `demoTime.slideProgressBar` setting                                       | Slides that don't set it         | Shows (`true`, `top` or `bottom`) or hides (`false`) the progress bar on the slide. `true` uses the position of the `demoTime.slideProgressBar` setting, or the bottom when the setting is `none`. Values: `true`, `false`, `top`, `bottom`. [More](/slides/layouts/header-footer/#progress-bar) |
+| `title`             | string              | -                                                                             | Slides that don't set it         | The title of the slide in the slide navigator and overview when the slide has no heading. Header and footer templates can read it with `{{title}}`.                                                                                                                                              |
+| `date`              | string              | Today's date                                                                  | Slides that don't set it         | The date that the `{{date}}` placeholder of header and footer templates shows. [More](/slides/layouts/header-footer/#placeholders)                                                                                                                                                               |
+| `slideTitle`        | string              | The first heading of the slide                                                | Slides that don't set it         | Overrides the `{{slideTitle}}` placeholder of header and footer templates. [More](/slides/layouts/header-footer/#placeholders)                                                                                                                                                                   |
+| `sceneTitle`        | string              | The title of the scene that opens the slide                                   | Slides that don't set it         | Overrides the `{{sceneTitle}}` placeholder of header and footer templates. [More](/slides/layouts/header-footer/#placeholders)                                                                                                                                                                   |
+| `actTitle`          | string              | The title of the act that opens the slide                                     | Slides that don't set it         | Overrides the `{{actTitle}}` placeholder of header and footer templates. [More](/slides/layouts/header-footer/#placeholders)                                                                                                                                                                     |
+| `presentationTitle` | string              | The `demoTime.presentationTitle` setting, or the name of the workspace folder | Slides that don't set it         | Overrides the `{{presentationTitle}}` placeholder of header and footer templates. [More](/slides/layouts/header-footer/#placeholders)                                                                                                                                                            |
+| `autoAdvanceAfter`  | number              | -                                                                             | First slide only                 | Goes to the next slide or scene after this number of seconds. [More](/slides/#auto-advancing-to-the-next-slide)                                                                                                                                                                                  |
+| `hide`              | boolean             | `false`                                                                       | First slide only                 | Skips the slide while presenting. A hidden slide is not counted in the slide numbers. [More](/slides/#hiding-slides)                                                                                                                                                                             |
+| `autoFit`           | boolean             | `false`                                                                       | Slides that don't set it         | Scales the content down, to at least 50%, when it doesn't fit on the slide. [More](/slides/#content-that-doesnt-fit)                                                                                                                                                                             |
+| `image`             | path or URL         | -                                                                             | First slide only                 | Path (relative to the workspace folder) or URL of an image. The `image-left` and `image-right` layouts show it next to the content, the other layouts as the background of the slide. [More](/slides/layouts/image/)                                                                             |
+
+### Video layout
+
+| Property       | Type        | Default                                        | Document front matter applies to | Description                                                                                                                                                 |
+| -------------- | ----------- | ---------------------------------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `video`        | path or URL | -                                              | Slides that don't set it         | Path (relative to the workspace folder) or URL of the video. A custom layout can use it too. [More](/slides/layouts/video/)                                 |
+| `controls`     | boolean     | `false`                                        | Slides that don't set it         | Shows the video controls. Without controls, the video plays as a muted background that loops. [More](/slides/layouts/video/)                                |
+| `autoplay`     | boolean     | `true`, or `false` for a video with `controls` | Slides that don't set it         | Starts the video, or the drawing of the animated SVG, when the slide opens. A video that starts automatically is muted.                                     |
+| `autoPlay`     | boolean     | -                                              | Slides that don't set it         | Another spelling of `autoplay` for the video layout. [More](/slides/layouts/video/)                                                                         |
+| `loop`         | boolean     | `false`                                        | Slides that don't set it         | Loops a video with `controls`. A video without controls always loops. [More](/slides/layouts/video/)                                                        |
+| `muted`        | boolean     | `false`                                        | Slides that don't set it         | Mutes a video with `controls` that doesn't start automatically. Other videos are always muted. [More](/slides/layouts/video/)                               |
+| `playsInline`  | boolean     | `false`                                        | Slides that don't set it         | Plays a video with `controls` inline on mobile devices instead of full screen. A video without controls always plays inline. [More](/slides/layouts/video/) |
+| `playbackRate` | number      | `1`                                            | Slides that don't set it         | The playback speed of the video, like `0.5` or `2`. [More](/slides/layouts/video/)                                                                          |
+
+### Animated SVG layout
+
+| Property                    | Type    | Default                                        | Document front matter applies to | Description                                                                                                                                                                      |
+| --------------------------- | ------- | ---------------------------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `autoplay`                  | boolean | `true`, or `false` for a video with `controls` | Slides that don't set it         | Starts the video, or the drawing of the animated SVG, when the slide opens. A video that starts automatically is muted.                                                          |
+| `svgFile`                   | path    | -                                              | Slides that don't set it         | Path (relative to the workspace folder) of the SVG file to draw. Required. [More](/slides/layouts/animated/)                                                                     |
+| `animationSpeed`            | number  | `100`                                          | Slides that don't set it         | Drawing speed in pixels per second. Higher values draw faster. [More](/slides/layouts/animated/)                                                                                 |
+| `textTypeWriterEffect`      | boolean | `true`                                         | Slides that don't set it         | Types the text of the SVG character by character. [More](/slides/layouts/animated/)                                                                                              |
+| `textTypeWriterSpeed`       | number  | `20`                                           | Slides that don't set it         | Typing speed in milliseconds per character. Lower values type faster. [More](/slides/layouts/animated/)                                                                          |
+| `skipAnimation`             | boolean | `false`                                        | Slides that don't set it         | Shows the complete SVG right away, without drawing it. [More](/slides/layouts/animated/)                                                                                         |
+| `invertLightAndDarkColours` | boolean | `false`                                        | Slides that don't set it         | Inverts the light and dark colours of the SVG, for contrast on a dark theme. [More](/slides/layouts/animated/)                                                                   |
+| `controlsPosition`          | string  | `bottomRight`                                  | Slides that don't set it         | The position of the play, reset and skip controls, or `none` to hide them. Values: `topLeft`, `topRight`, `bottomLeft`, `bottomRight`, `none`. [More](/slides/layouts/animated/) |
+
+{/* slide-properties:end */}
+
+<Aside type="note">
+  `autoPlay` is another spelling of `autoplay` for the video layout, which existing slides can keep
+  using. Use `autoplay` for new slides.
+</Aside>
+
+## JSON schema
+
+The properties are also available as a JSON schema, for other tools that read or write Demo Time slides:
+
+`https://demotime.show/slide.schema.json`
+
+Each property has an `x-demotime` object with its `inheritance` (`always`, `fallback` or `firstSlide`), the `layouts` that use it, and a link to its documentation.

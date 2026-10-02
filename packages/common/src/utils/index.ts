@@ -7,6 +7,7 @@ export * from './htmlEncode';
 export * from './placeholderFormatting';
 export * from './reducedMotion';
 export * from './sectionFormatting';
+export * from './slideFrontmatterSchema';
 export * from './slideOverflow';
 export * from './slidePlaceholders';
 export * from './slideVisibility';

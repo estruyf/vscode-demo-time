@@ -4,9 +4,9 @@ import {
   CompletionItemKind,
   Hover,
   languages,
+  MarkdownString,
   Position,
   Range,
-  TextDocument,
   Uri,
   window,
   workspace,
@@ -21,8 +21,9 @@ import {
   chooseDemoFile,
   fileExists,
   getAbsolutePath,
-  getFrontmatterRange,
   getRelPath,
+  getSlidePropertyAtLine,
+  getSlidePropertyCompletions,
   isPathInWorkspace,
   parseWinPath,
   readFile,
@@ -41,8 +42,6 @@ import {
   COMMAND,
   Config,
   SlideLayout,
-  SlideTheme,
-  SlideTransition,
   Action,
   Step,
   SlideParser,
@@ -51,6 +50,9 @@ import {
   isSlideHidden,
   Slide,
   SlidePlaceholders,
+  getSlidePropertyMarkdown,
+  getSlidePropertyTypeName,
+  getSlidePropertyValues,
 } from '@demotime/common';
 
 export class Slides {
@@ -476,60 +478,16 @@ layout: ${layout.toLowerCase()}
       { language: 'markdown', scheme: 'file' },
       {
         provideHover(document, position) {
-          if (Slides.isInFrontmatter(document, position)) {
-            const line = document.lineAt(position).text.trim();
-
-            if (line.startsWith('theme:')) {
-              const themes = Object.values(SlideTheme)
-                .map((theme) => `- \`${theme}\``)
-                .join('\n');
-              return new Hover(`Specifies the theme for the slide. Available options:\n${themes}`);
-            } else if (line.startsWith('layout:')) {
-              const layouts = Object.values(SlideLayout)
-                .map((layout) => `- \`${layout}\``)
-                .join('\n');
-              return new Hover(
-                `Specifies the layout for the slide. Available options:\n${layouts}`,
-              );
-            } else if (line.startsWith('customTheme:')) {
-              return new Hover(
-                'Specifies a custom theme for the slide. Provide a relative path or URL to a CSS file.',
-              );
-            } else if (line.startsWith('image:')) {
-              return new Hover(
-                'Specifies the image URL or path for the slide. Provide a relative path to the image file.',
-              );
-            } else if (line.startsWith('customLayout:')) {
-              return new Hover(
-                'Specifies a custom layout for the slide. Provide a relative path to the Handlebars template.',
-              );
-            } else if (line.startsWith('transition:')) {
-              const transitions = Object.values(SlideTransition)
-                .map((transition) => `- \`${transition}\``)
-                .join('\n');
-              return new Hover(
-                `Specifies the transition for the slide. Available options:\n${transitions}`,
-              );
-            } else if (line.startsWith('autoAdvanceAfter:')) {
-              return new Hover(
-                `Specifies the time (in seconds) to wait before advancing to the next slide.`,
-              );
-            } else if (line.startsWith('hide:')) {
-              return new Hover(
-                'Hides the slide while presenting. Hidden slides are skipped by navigation and not counted in the slide numbers, but you can still open them from the slide navigator.',
-              );
-            } else if (line.startsWith('autoFit:')) {
-              return new Hover(
-                'Scales the content down, to at least 50%, when it does not fit on the slide. In the document front matter, it applies to every slide that does not set its own value.',
-              );
-            } else if (line.startsWith('progress:')) {
-              return new Hover(
-                'Shows or hides the progress bar on the slide, overriding the `demoTime.slideProgressBar` setting. Use `true`, `false`, `top` or `bottom`.',
-              );
-            }
+          const lines = document.getText().split(/\r?\n/);
+          const match = getSlidePropertyAtLine(lines, position.line);
+          if (!match) {
+            return undefined;
           }
 
-          return undefined;
+          return new Hover(
+            new MarkdownString(getSlidePropertyMarkdown(match.key, match.property)),
+            new Range(position.line, match.start, position.line, match.end),
+          );
         },
       },
     );
@@ -540,106 +498,46 @@ layout: ${layout.toLowerCase()}
       { language: 'markdown', scheme: 'file' },
       {
         provideCompletionItems(document, position) {
-          const linePrefix = document.lineAt(position).text.substring(0, position.character);
+          const lines = document.getText().split(/\r?\n/);
+          const completions = getSlidePropertyCompletions(lines, position.line, position.character);
 
-          // Check if the cursor is within a frontmatter block
-          if (Slides.isInFrontmatter(document, position)) {
-            if (!linePrefix.includes(':')) {
-              // Provide suggestions for frontmatter keys
-              return [
-                new CompletionItem(
-                  {
-                    label: 'image',
-                    description: 'Image URL or path',
-                  },
-                  CompletionItemKind.Property,
-                ),
-                new CompletionItem(
-                  {
-                    label: 'theme',
-                    description: 'Theme for the slide',
-                  },
-                  CompletionItemKind.Property,
-                ),
-                new CompletionItem(
-                  {
-                    label: 'layout',
-                    description: 'Layout for the slide',
-                  },
-                  CompletionItemKind.Property,
-                ),
-                new CompletionItem(
-                  {
-                    label: 'customTheme',
-                    description: 'Relative path or URL to a CSS file for custom theme',
-                  },
-                  CompletionItemKind.Property,
-                ),
-                new CompletionItem(
-                  {
-                    label: 'customLayout',
-                    description: 'Relative path to the Handlebars template',
-                  },
-                  CompletionItemKind.Property,
-                ),
-                new CompletionItem(
-                  {
-                    label: 'transition',
-                    description: 'Transition for the slide',
-                  },
-                  CompletionItemKind.Property,
-                ),
-                new CompletionItem(
-                  {
-                    label: 'autoAdvanceAfter',
-                    description:
-                      'Time in seconds to wait before advancing to the next slide or demo',
-                  },
-                  CompletionItemKind.Property,
-                ),
-                new CompletionItem(
-                  {
-                    label: 'hide',
-                    description: 'Skip the slide while presenting',
-                  },
-                  CompletionItemKind.Property,
-                ),
-                new CompletionItem(
-                  {
-                    label: 'progress',
-                    description: 'Show or hide the progress bar',
-                  },
-                  CompletionItemKind.Property,
-                ),
-                new CompletionItem(
-                  {
-                    label: 'autoFit',
-                    description: 'Scale the content down when it does not fit',
-                  },
-                  CompletionItemKind.Property,
-                ),
-              ];
-            } else if (linePrefix.startsWith('theme:')) {
-              return Object.values(SlideTheme).map((theme) => {
-                return new CompletionItem(theme, CompletionItemKind.EnumMember);
-              });
-            } else if (linePrefix.startsWith('layout:')) {
-              return Object.values(SlideLayout).map((layout) => {
-                return new CompletionItem(layout, CompletionItemKind.EnumMember);
-              });
-            } else if (linePrefix.startsWith('transition:')) {
-              return Object.values(SlideTransition).map((transition) => {
-                return new CompletionItem(transition, CompletionItemKind.EnumMember);
-              });
-            } else if (linePrefix.startsWith('hide:') || linePrefix.startsWith('autoFit:')) {
-              return ['true', 'false'].map((value) => {
-                return new CompletionItem(value, CompletionItemKind.Value);
-              });
-            } else if (linePrefix.startsWith('progress:')) {
-              return ['true', 'false', 'top', 'bottom'].map((value) => {
-                return new CompletionItem(value, CompletionItemKind.Value);
-              });
-            }
+          if (completions?.type === 'key') {
+            return completions.suggestions.map(({ key, property, sortGroup }) => {
+              const item = new CompletionItem(
+                {
+                  label: key,
+                  description: property.layouts
+                    ? `${property.layouts.join(', ')} layout`
+                    : undefined,
+                },
+                CompletionItemKind.Property,
+              );
+              item.detail = getSlidePropertyTypeName(property);
+              item.documentation = new MarkdownString(getSlidePropertyMarkdown(key, property));
+              item.sortText = `${sortGroup}_${key}`;
+              item.insertText = `${key}: `;
+              if (getSlidePropertyValues(property).length > 0) {
+                item.command = { command: 'editor.action.triggerSuggest', title: 'Suggest values' };
+              }
+              return item;
+            });
+          }
+
+          if (completions?.type === 'value') {
+            const { property, values } = completions;
+            return values.map((value, idx) => {
+              const item = new CompletionItem(
+                value,
+                property.type === 'boolean'
+                  ? CompletionItemKind.Value
+                  : CompletionItemKind.EnumMember,
+              );
+              item.sortText = `${idx}`.padStart(3, '0');
+              if (property.default !== undefined && `${property.default}` === value) {
+                item.detail = 'Default';
+              }
+              return item;
+            });
           }
 
           return undefined;
@@ -648,13 +546,5 @@ layout: ${layout.toLowerCase()}
       ':',
       ' ',
     );
-  }
-
-  /**
-   * Checks if the position is inside the document frontmatter or the frontmatter of any slide
-   */
-  private static isInFrontmatter(document: TextDocument, position: Position) {
-    const lines = document.getText().split(/\r?\n/);
-    return !!getFrontmatterRange(lines, position.line);
   }
 }
