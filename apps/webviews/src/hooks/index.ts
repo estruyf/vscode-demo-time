@@ -1,3 +1,4 @@
+export * from './useActProblems';
 export * from './useAutoSave';
 export * from './useClickSteps';
 export * from './useCursor';
@@ -6,6 +7,7 @@ export * from './useDemoConfigContext';
 export * from './useFileContents';
 export * from './useFileOperations';
 export * from './useMousePosition';
+export * from './usePreflightProblems';
 export * from './usePresentationMode';
 export * from './usePrevious';
 export * from './useReducedMotion';

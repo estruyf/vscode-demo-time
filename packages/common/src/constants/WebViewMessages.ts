@@ -153,6 +153,10 @@ export const WebViewMessages = {
        */
       checkStepQueue: 'checkConfigEditorStepQueue',
       /**
+       * getConfigEditorPreflightProblems
+       */
+      getPreflightProblems: 'getConfigEditorPreflightProblems',
+      /**
        * openSettings
        */
       openSettings: 'openSettings',
@@ -351,6 +355,10 @@ export const WebViewMessages = {
        * openConfigEditorStep
        */
       openStep: 'openConfigEditorStep',
+      /**
+       * configEditorPreflightChanged
+       */
+      preflightChanged: 'configEditorPreflightChanged',
     },
     overview: {
       update: 'updateOverview',

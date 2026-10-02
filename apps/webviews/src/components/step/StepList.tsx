@@ -5,6 +5,7 @@ import { StepListItem } from './StepListItem';
 import { StepEditor } from './StepEditor';
 import { MoveToSceneModal, MoveToSceneTarget } from './MoveToSceneModal';
 import { Demo, Step } from '@demotime/common';
+import { useActProblems } from '../../hooks/useActProblems';
 
 interface StepListProps {
   demo: Demo;
@@ -39,6 +40,7 @@ export const StepList: React.FC<StepListProps> = ({
   onStepChange,
   onMoveStepsToScene,
 }) => {
+  const preflightProblems = useActProblems(selectedDemo);
   const [showInfo, setShowInfo] = React.useState(false);
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
   const [selectedSteps, setSelectedSteps] = useState<Set<number>>(new Set());
@@ -169,6 +171,7 @@ export const StepList: React.FC<StepListProps> = ({
               editingStep?.stepIndex === index && editingStep?.demoIndex === selectedDemo ? (
                 <StepEditor
                   step={step}
+                  problems={preflightProblems.filter((problem) => problem.moveIndex === index)}
                   onChange={(updatedStep) => onStepChange(index, updatedStep)}
                 />
               ) : undefined

@@ -10,6 +10,7 @@ export * from './InsertTypingModePicker';
 export * from './Label';
 export * from './Modal';
 export * from './PathInput';
+export * from './ProblemBadge';
 export * from './SearchableDropdown';
 export * from './Select';
 export * from './Switch';

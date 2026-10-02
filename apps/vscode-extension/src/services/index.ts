@@ -24,6 +24,7 @@ export * from './MacOSActionsService';
 export * from './NotesService';
 export * from './Notifications';
 export * from './PdfExportService';
+export * from './PreflightService';
 export * from './RecordingService';
 export * from './RedactionService';
 export * from './ResourceService';

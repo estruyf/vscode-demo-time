@@ -1,0 +1,86 @@
+---
+title: Preflight check
+description: Check all the moves in your play before you present, without running them.
+lastmod: 2026-10-02T00:00:00.000Z
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+A file that was renamed the night before your talk, a patch that no longer matches its snapshot, or a scene id with a typo breaks the move that uses it, and you only find out on stage. The **preflight check** goes through all the acts of your play and checks every move, without running a single one.
+
+## In the act editor
+
+The act editor always checks the act you're editing, also when you didn't run the preflight check, and checks again while you edit and when files in your workspace change:
+
+- The header shows the number of errors and warnings. Click it to list them, with links to their scene and move.
+- The scene list and move list show an error or warning icon with the number of problems. Hover the icon to read them.
+- The move editor shows each problem below the field it's about, like the **Path** of an `open` move. Problems that aren't about a field are shown above the fields.
+- The scene editor shows problems of the scene itself, like a missing notes file.
+- A problem about a file that doesn't exist has a **Create file** action, which creates the file (and its folders) and opens it.
+
+## Running the preflight check
+
+To check the whole play and list all the problems in the **Problems** panel, run the preflight check:
+
+- **Command:** `Demo Time: Run preflight check`
+- **Demo Time panel:** **More actions** (`...`) > **Run preflight check**
+
+The check reports what it finds in the **Problems** panel. Errors are problems that stop the move from working; warnings are problems that might. A notification shows how many moves were checked and how many problems were found.
+
+After the first run, the check runs again when you save, create, delete or rename a file, so fixed problems disappear from the **Problems** panel.
+
+## Going to the move
+
+Each problem shows its scene and move, like `Scene 3 · Move 2`. Click this link in the **Problems** panel to open the act file in the act editor with that move selected.
+
+Clicking the problem itself opens the act file, but the act editor can't show the line of the problem. For a file that doesn't exist, the quick fix **Create "path"** creates the file and opens it. When you turned the act editor off with the `demoTime.openInConfigEditor` setting, the act file opens in the text editor at the move.
+
+## What gets checked
+
+### Files
+
+| Property      | Moves                                                                                                                                                                                                                | Check                                                                                        |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `path`        | `open`, `markdownPreview`, `imagePreview`, `openSlide`, `copy`, `move`, `rename`, `deleteFile`, `applyPatch`, `insert`, `highlight`, `selection`, `replace`, `delete`, `positionCursor`, `write` and `executeScript` | The file exists.                                                                             |
+| `contentPath` | `create`, `insert`, `replace`, `write`, `applyPatch`, `copyToClipboard` and `snippet`                                                                                                                                | The file exists and is in the workspace folder.                                              |
+| `patch`       | `applyPatch`                                                                                                                                                                                                         | The file exists and is in the workspace folder.                                              |
+| `dest`        | `copy`, `move` and `rename`                                                                                                                                                                                          | Without `overwrite: true`, a warning when the destination already exists, as the move fails. |
+| `notes.path`  | Scenes                                                                                                                                                                                                               | The notes file exists and is in the workspace folder.                                        |
+
+### Moves
+
+- **Patches apply:** the `applyPatch` move applies its patch to the snapshot in `contentPath`, not to the file in the workspace, so the check can apply the patch to the snapshot and report a patch that doesn't match it.
+- **Required properties:** a move without a property it needs to run, like a `copy` move without `dest`, a `highlight` move without `position` or `startPlaceholder`, or an `executeScript` move without `id` or `command`. Moves with an unknown `action`, like a typo, are reported as well.
+- **Scene ids:** a `runDemoById` move for a scene id that doesn't exist in any act.
+- **Slide numbers:** an `openSlide` move with a `slide` number higher than the number of slides in the file. Hidden slides count as well.
+- **State and script variables:** a `{STATE_key}` or `{SCRIPT_id}` [variable](/tips/variables/) without an earlier `setState` move for that key or `executeScript` move with that id. The text of the variable stays in the move, so this is a warning.
+
+### Snippets
+
+The moves of a [snippet](/actions/snippet/) are checked with the `args` of the `snippet` move filled in, and their problems are reported at the `snippet` move. A placeholder that the `args` don't set stays as text in the snippet:
+
+- For a snippet with `fields`, a missing required field is an error, and a missing optional field that the snippet uses is a warning.
+- For a snippet without `fields`, every `{PLACEHOLDER}` that the `args` or your variables don't set is a warning.
+
+## How the check follows your play
+
+The check goes through the acts in play order, and through the scenes and moves in each act in order:
+
+- A file that an earlier `create`, `copy`, `move` or `rename` move creates isn't reported as missing.
+- A file that an earlier `deleteFile`, `move` or `rename` move removes is reported as missing.
+- After an `executeTerminalCommand`, `executeScript`, `executeVSCodeCommand` or Copilot edit or agent move, a missing file is a warning instead of an error, as that move might create it.
+- Disabled scenes and moves are skipped.
+- [Variables](/tips/variables/) from `.demo/variables.json` are filled in. Paths with a variable that only gets its value while the play runs, like `{DT_INPUT}`, `{DT_CLIPBOARD}`, `{STATE_...}` or `{SCRIPT_...}`, are skipped.
+
+<Aside>
+  The check doesn't verify positions or placeholders of moves like `highlight` and `replace`.
+  Earlier moves often add the code these moves use, so their position can only be checked while the
+  play runs.
+</Aside>
+
+<Aside type="tip">
+  The preflight check only checks that the slide file of an `openSlide` move exists and has the
+  slide. Problems inside slide files, like a missing `image` or `customTheme` file, are reported in
+  the **Problems** panel by the slide diagnostics. See [problems in slide
+  files](/slides/#problems-in-slide-files).
+</Aside>

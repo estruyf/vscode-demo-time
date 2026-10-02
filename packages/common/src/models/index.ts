@@ -1,3 +1,4 @@
+export * from './ActProblem';
 export * from './Action';
 export * from './Analytics';
 export * from './DemoFileCache';

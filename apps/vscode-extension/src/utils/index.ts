@@ -36,6 +36,7 @@ export * from './getNextDemoFile';
 export * from './getNextSceneButtonText';
 export * from './getPlatform';
 export * from './getPositionAndRange';
+export * from './getPreflightProblems';
 export * from './getPreviousDemoFile';
 export * from './getRelPath';
 export * from './getSetting';

@@ -5,7 +5,9 @@ import { messageHandler, Messenger } from '@estruyf/vscode/dist/client';
 import { EventData } from '@estruyf/vscode';
 import { StepList } from '../step/StepList';
 import { MoveToSceneTarget } from '../step/MoveToSceneModal';
-import { useAutoSave, useDemoConfigContext, useFileOperations } from '../../hooks';
+import { useAutoSave, useDemoConfigContext, useFileOperations, usePreflightProblems } from '../../hooks';
+import { PreflightProvider } from '../../providers/PreflightProvider';
+import { withoutEditorValidated } from '../../utils/preflight';
 import { AppHeader, MainContent, Sidebar } from '../layout';
 import { ActionControls, FileControls } from '../file';
 import { ValidationSummary } from './ValidationSummary';
@@ -44,6 +46,8 @@ export const DemoBuilder: React.FC = () => {
     handleMoveStepsToScene,
     validation
   } = useDemoConfigContext();
+  const preflightProblems = usePreflightProblems(config);
+  const headerPreflightProblems = withoutEditorValidated(preflightProblems);
 
   const {
     handleSave,
@@ -290,14 +294,16 @@ export const DemoBuilder: React.FC = () => {
     }, 100);
   };
 
-  const handleDemoStepNavigation = (payload: { stepIndex?: number }) => {
+  const handleDemoStepNavigation = (payload: { stepIndex?: number; moveIndex?: number }) => {
     if (!payload) {
       return;
     }
 
-    const { stepIndex } = payload;
+    const { stepIndex, moveIndex } = payload;
 
-    if (stepIndex !== undefined) {
+    if (stepIndex !== undefined && moveIndex !== undefined) {
+      handleNavigateToStep(stepIndex, moveIndex);
+    } else if (stepIndex !== undefined) {
       setSelectedDemo(stepIndex);
       setIsTestingDemo(false);
       setEditingStep(null);
@@ -312,7 +318,7 @@ export const DemoBuilder: React.FC = () => {
       if (command === WebViewMessages.toWebview.configEditor.triggerSave) {
         performManualSave();
       } else if (command === WebViewMessages.toWebview.configEditor.openStep) {
-        handleDemoStepNavigation(payload as { stepIndex?: number });
+        handleDemoStepNavigation(payload as { stepIndex?: number; moveIndex?: number });
       }
     }
 
@@ -336,7 +342,7 @@ export const DemoBuilder: React.FC = () => {
 
   useEffect(() => {
     messageHandler.request<unknown | null>(WebViewMessages.toVscode.configEditor.checkStepQueue).then(payload => {
-      handleDemoStepNavigation(payload as { stepIndex?: number });
+      handleDemoStepNavigation(payload as { stepIndex?: number; moveIndex?: number });
     });
   }, []);
 
@@ -377,11 +383,13 @@ export const DemoBuilder: React.FC = () => {
   }
 
   return (
+    <PreflightProvider value={preflightProblems}>
     <div className="h-dvh flex flex-col bg-gray-50 dark:bg-gray-900 overflow-hidden">
       <AppHeader
         title={"Act Editor"}
         subtitle={"Manage your act configuration"}
         validation={validation}
+        preflightProblems={headerPreflightProblems}
         showValidation={showValidation}
         onToggleValidation={() => setShowValidation(!showValidation)}
         fileControls={
@@ -408,6 +416,7 @@ export const DemoBuilder: React.FC = () => {
           showValidation ? (
             <ValidationSummary
               validationResult={validation}
+              preflightProblems={headerPreflightProblems}
               config={config}
               onNavigateToDemo={handleNavigateToDemo}
               onNavigateToStep={handleNavigateToStep}
@@ -531,5 +540,6 @@ export const DemoBuilder: React.FC = () => {
         </button>
       )}
     </div>
+    </PreflightProvider>
   );
 };

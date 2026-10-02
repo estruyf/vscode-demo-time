@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { CATEGORIZED_ACTIONS, THEMES } from '../../types/demo';
 import { getFieldsForAction, getRequiredFields } from '../../utils/actionHelpers';
 import { validateStep } from '../../utils/validation';
+import { withoutEditorValidated } from '../../utils/preflight';
 import { SearchableDropdown } from '../ui/SearchableDropdown';
 import { ComboBox } from '../ui/ComboBox';
 import { PathInput } from '../ui/PathInput';
@@ -9,7 +10,8 @@ import { messageHandler } from '@estruyf/vscode/dist/client';
 import { Switch } from '../ui/Switch';
 import { SnippetArguments } from './SnippetArguments';
 import { DemoIdPicker } from '../ui/DemoIdPicker';
-import { Action, COMMAND, EngageTimeMessageType, Step, WebViewMessages } from '@demotime/common';
+import { Action, ActProblem, COMMAND, EngageTimeMessageType, Step, WebViewMessages } from '@demotime/common';
+import { ProblemMessages } from '../ui/ProblemBadge';
 import { PollIdPicker } from './PollIdPicker';
 import { useDemoConfigContext } from '../../hooks';
 import { VSCodeCommandPicker } from './VSCodeCommandPicker';
@@ -21,10 +23,14 @@ import { KeybindingPicker } from './KeybindingPicker';
 
 interface StepEditorProps {
   step: Step;
+  /**
+   * The preflight problems of the move
+   */
+  problems?: ActProblem[];
   onChange: (step: Step) => void;
 }
 
-export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
+export const StepEditor: React.FC<StepEditorProps> = ({ step, problems = [], onChange }) => {
   // Local state for id field (ExecuteScript only)
   const [localId, setLocalId] = React.useState(step.id || '');
   React.useEffect(() => {
@@ -278,7 +284,30 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
     }
   };
 
+  const preflightProblems = withoutEditorValidated(problems);
+  const renderedFields = ['action', ...availableFields];
+  // Problems without a field in the editor are shown above the fields
+  const moveProblems = preflightProblems.filter(
+    (problem) => !problem.property || !renderedFields.includes(problem.property),
+  );
+
+  // Shows the preflight problems of a field below it
   const renderField = (field: string) => {
+    const control = renderFieldControl(field);
+    const fieldProblems = preflightProblems.filter((problem) => problem.property === field);
+    if (!React.isValidElement<{ children?: React.ReactNode }>(control) || fieldProblems.length === 0) {
+      return control;
+    }
+
+    return React.cloneElement(
+      control,
+      undefined,
+      ...React.Children.toArray(control.props.children),
+      <ProblemMessages key="preflight-problems" problems={fieldProblems} className="mt-1" />,
+    );
+  };
+
+  const renderFieldControl = (field: string) => {
     if (step.action === Action.ShowQR && field !== 'action') {
       const allowedQrFields = getQrFieldsForLayout(step.qrLayout);
       if (!allowedQrFields.includes(field)) {
@@ -1048,6 +1077,8 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, onChange }) => {
           />
         </div>
       </div>
+
+      <ProblemMessages problems={moveProblems} className="mb-4" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {renderField('action')}

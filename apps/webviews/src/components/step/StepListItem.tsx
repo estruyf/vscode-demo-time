@@ -3,6 +3,8 @@ import { ChevronRight, Trash2, Copy, Play, GripVertical } from 'lucide-react';
 import { messageHandler } from '@estruyf/vscode/dist/client';
 import { cn } from '../../utils/cn';
 import { getActionDotColor, getActionLabel } from '../../utils/actionHelpers';
+import { useActProblems } from '../../hooks/useActProblems';
+import { ProblemBadge } from '../ui/ProblemBadge';
 import { Action, Step, WebViewMessages } from '@demotime/common';
 
 interface StepListItemProps {
@@ -27,6 +29,7 @@ interface StepListItemProps {
 export const StepListItem: React.FC<StepListItemProps> = ({
   step,
   stepIndex,
+  demoIndex,
   totalCount,
   isEditing,
   onEdit,
@@ -41,6 +44,7 @@ export const StepListItem: React.FC<StepListItemProps> = ({
   onToggleSelect,
   selectionActive = false,
 }) => {
+  const problems = useActProblems(demoIndex, stepIndex);
   const rootRef = React.useRef<HTMLDivElement>(null);
   const wasEditing = React.useRef(isEditing);
   const [dropPosition, setDropPosition] = React.useState<'top' | 'bottom' | null>(null);
@@ -221,6 +225,7 @@ export const StepListItem: React.FC<StepListItemProps> = ({
                   ? getActionLabel(step.action)
                   : <span className="text-gray-400 dark:text-gray-500">Select an action</span>}
               </h4>
+              <ProblemBadge problems={problems} />
             </div>
             {detail && (
               <p className="text-sm text-gray-500 dark:text-gray-400 truncate mt-0.5" title={detail}>

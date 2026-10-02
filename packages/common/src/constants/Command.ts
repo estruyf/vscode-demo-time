@@ -8,6 +8,9 @@ export const COMMAND = {
   // Act file actions
   addStepToDemo: `${EXTENSION_NAME}.addStepToDemo`,
   fixDuplicateIds: `${EXTENSION_NAME}.fixDuplicateIds`,
+  runPreflightCheck: `${EXTENSION_NAME}.runPreflightCheck`,
+  openActMove: `${EXTENSION_NAME}.openActMove`,
+  createMissingFile: `${EXTENSION_NAME}.createMissingFile`,
   // Running the demo
   start: `${EXTENSION_NAME}.start`,
   previous: `${EXTENSION_NAME}.previous`,

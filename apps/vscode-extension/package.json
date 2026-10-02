@@ -617,6 +617,12 @@
         "icon": "$(warning)"
       },
       {
+        "command": "demo-time.runPreflightCheck",
+        "title": "Run preflight check",
+        "category": "Demo Time",
+        "icon": "$(checklist)"
+      },
+      {
         "command": "demo-time.reset",
         "title": "Reset",
         "category": "Demo Time",
@@ -1065,6 +1071,10 @@
         {
           "command": "demo-time.createDemoFile",
           "when": "view == demo-time-scenes"
+        },
+        {
+          "command": "demo-time.runPreflightCheck",
+          "when": "view == demo-time-scenes && demo-time.isInitialized"
         },
         {
           "command": "demo-time.docs",

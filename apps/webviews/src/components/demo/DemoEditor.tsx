@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { validateDemo } from '../../utils/validation';
-import { Card, Input, PathInput, Textarea, Switch, SearchableDropdown } from '../ui';
+import { Card, Input, PathInput, ProblemMessages, Textarea, Switch, SearchableDropdown } from '../ui';
+import { useActProblems } from '../../hooks/useActProblems';
 import { Icon } from 'vscrui';
 import { VSCODE_ICONS } from '../../constants/icons';
 import { ChevronDown, ChevronUp, FilePlus, Link, RefreshCw } from 'lucide-react';
@@ -15,6 +16,7 @@ interface DemoEditorProps {
 }
 
 export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange, onGenerateId, index }) => {
+  const sceneProblems = useActProblems(index).filter((problem) => problem.moveIndex === undefined);
   // Scene details are hidden by default to keep the editor compact.
   const [collapsed, setCollapsed] = useState<boolean>(true);
   // The title can be renamed inline by double-clicking it, without opening the scene details.
@@ -208,6 +210,9 @@ export const DemoEditor: React.FC<DemoEditorProps> = ({ demo, onChange, onGenera
             </button>
           </div>
         </div>
+
+        {/* Problems of the scene itself, like a missing notes file, also when the details are hidden */}
+        <ProblemMessages problems={sceneProblems} />
 
         {!collapsed &&
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-gray-200 dark:border-gray-700 pt-6">
