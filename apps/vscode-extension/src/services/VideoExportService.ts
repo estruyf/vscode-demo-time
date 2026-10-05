@@ -41,6 +41,7 @@ import {
 } from '../utils';
 import { DemoAutoProceedService } from './DemoAutoProceedService';
 import { DemoFileProvider } from './DemoFileProvider';
+import { DemoRunner } from './DemoRunner';
 import { Extension } from './Extension';
 import { Logger } from './Logger';
 import { Notifications } from './Notifications';
@@ -480,9 +481,12 @@ export class VideoExportService {
     if (options.hideUI) {
       await togglePresentationView(true);
     }
+    // Run as in a talk: no overflow warnings or hidden slides, and secrets redacted
+    await DemoRunner.setPresentationMode(true, true);
   }
 
   private static async restore(options: ResolvedOptions) {
+    await DemoRunner.setPresentationMode(false, true);
     if (options.hideUI) {
       await togglePresentationView(false);
     }

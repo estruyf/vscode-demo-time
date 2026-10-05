@@ -55,6 +55,7 @@ The next time you run the command, **Export again** reuses your choices. They ar
 
 - **Your look**: from VS Code, the recording uses the same VS Code you run, with your color theme, file icon theme, product icon theme, and editor and terminal fonts. From the command line, it uses the installed VS Code, and you name the theme with `--extensions` and `--settings`.
 - **A clean window**: the recording profile is empty apart from those settings. The status bar, tabs, activity bar, side bars (including Chat) and panel are hidden, as in [presentation view](/presentation-mode).
+- **Presentation mode**: the play runs in [presentation mode](/presentation-mode), as in a talk. Hidden slides are skipped, the warnings for content that doesn't fit a slide stay out of the video, and secrets are hidden when [redaction mode](/features/redaction-mode) is on (`demoTime.redaction.enabled` in the workspace settings). Analytics aren't recorded.
 - **A copy of your workspace**: the demo runs in a temporary copy, so every export starts from the same state and the files it creates or changes don't end up in your workspace. One exception: `node_modules` folders are linked into the copy rather than copied, so scripts in your demo run without a long copy, but a demo that installs or removes packages changes your real `node_modules`. Export with `--copy-node-modules` on the command line to copy them as well.
 
 ## How the play is timed
