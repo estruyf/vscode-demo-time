@@ -2,70 +2,48 @@ import {
   Disposable,
   FileCreateEvent,
   FileType,
+  RelativePattern,
   TextDocument,
   TextDocumentChangeEvent,
+  TextDocumentSaveReason,
+  TextDocumentWillSaveEvent,
   TextEditor,
   Uri,
   commands,
   window,
   workspace,
 } from 'vscode';
-import { createPatch as createUnifiedPatch } from 'diff';
-import { Action, ActConfig, COMMAND, Config, Move, Scene } from '@demotime/common';
+import { ActConfig, COMMAND, Config } from '@demotime/common';
 import { ContextKeys, General } from '../constants';
 import { Subscription } from '../models';
 import { Extension } from './Extension';
 import { Notifications } from './Notifications';
 import { Logger } from './Logger';
 import { DemoFileProvider } from './DemoFileProvider';
+import { RecordingSession, getRecordedHighlightPosition } from './RecordingSession';
 import { DemoPanel } from '../panels/DemoPanel';
 import { ConfigEditorProvider } from '../providers/ConfigEditorProvider';
 import { isPathInWorkspace, parseWinPath, setContext, writeFile } from '../utils';
-
-interface FileRecordingState {
-  /**
-   * Workspace-relative path (starting with `/`) used for the move `path` and artifacts.
-   */
-  relPath: string;
-  /**
-   * The content that the last emitted move left the file in. Acts as the baseline
-   * for the next patch.
-   */
-  lastContent: string;
-  /**
-   * Whether the file was created during the recording (gets a `create` move).
-   */
-  isNew: boolean;
-  /**
-   * Whether the lead-in moves (`create` + `open`, or just `open`) have been written.
-   */
-  headerEmitted: boolean;
-}
 
 /**
  * Records the user's actions (file creation, opening, edits and saves) while
  * building a demo and turns them into a version 3 act file on stop.
  *
- * Segmentation is hybrid: file switches and saves act as move boundaries, while
- * edits in between are coalesced into a single `applyPatch` move. The presenter
- * stays in control through the `splitMove`, `newScene` and `markHighlight`
- * commands (available from the editor context menu while recording).
+ * The VS Code events are forwarded to a `RecordingSession`, which turns them into
+ * scenes and moves. The presenter stays in control through the `splitMove`,
+ * `newScene` and `markHighlight` commands (available from the editor context menu
+ * and the command palette while recording).
  */
 export class RecordingService {
   private static recording = false;
   private static disposables: Disposable[] = [];
 
-  private static files: Map<string, FileRecordingState> = new Map();
-  private static pending: Map<string, string> = new Map();
-
-  private static scenes: Scene[] = [];
-  private static currentMoves: Move[] = [];
-  private static currentSceneTitle = 'Scene 1';
-  private static sceneCounter = 1;
-
+  private static session: RecordingSession | undefined;
   private static recordingFolder = '';
-  private static artifactSeq = 0;
-  private static lastActivePath: string | undefined;
+  /**
+   * Documents with a pending manual save. Auto saves are not move boundaries.
+   */
+  private static manualSaves: Set<string> = new Set();
 
   /**
    * Serializes all state mutations and artifact writes so events that fire in
@@ -106,32 +84,38 @@ export class RecordingService {
     }
 
     RecordingService.recording = true;
-    RecordingService.files = new Map();
-    RecordingService.pending = new Map();
-    RecordingService.scenes = [];
-    RecordingService.currentMoves = [];
-    RecordingService.currentSceneTitle = 'Scene 1';
-    RecordingService.sceneCounter = 1;
-    RecordingService.artifactSeq = 0;
-    RecordingService.lastActivePath = undefined;
+    RecordingService.session = new RecordingSession({
+      writeSnapshot: (name, content) =>
+        RecordingService.writeArtifact(General.snapshotsFolder, name, content),
+      writePatch: (name, content) =>
+        RecordingService.writeArtifact(General.patchesFolder, name, content),
+    });
+    RecordingService.manualSaves = new Set();
     RecordingService.opChain = Promise.resolve();
     RecordingService.recordingFolder = `recording-${RecordingService.timestamp()}`;
 
     // The file that is open when recording starts becomes the first thing the demo opens.
     const active = window.activeTextEditor;
     if (active && RecordingService.isRecordableDoc(active.document)) {
-      const state = RecordingService.register(
-        RecordingService.relPath(active.document.uri),
-        false,
-        active.document.getText(),
-      );
-      RecordingService.emitHeader(state);
-      RecordingService.lastActivePath = state.relPath;
+      const relPath = RecordingService.relPath(active.document.uri);
+      const content = active.document.getText();
+      RecordingService.enqueue((session) => session.fileActivated(relPath, content));
     }
 
+    // Catches files that are created outside VS Code (terminal, git, CLIs).
+    const watcher = workspace.createFileSystemWatcher(
+      new RelativePattern(wsFolder, '**/*'),
+      false,
+      true,
+      true,
+    );
+
     RecordingService.disposables.push(
+      watcher,
+      watcher.onDidCreate((uri) => RecordingService.onFilesCreated([uri], true)),
       workspace.onDidCreateFiles(RecordingService.onDidCreateFiles),
       workspace.onDidChangeTextDocument(RecordingService.onDidChangeTextDocument),
+      workspace.onWillSaveTextDocument(RecordingService.onWillSaveTextDocument),
       workspace.onDidSaveTextDocument(RecordingService.onDidSaveTextDocument),
       window.onDidChangeActiveTextEditor(RecordingService.onDidChangeActiveTextEditor),
     );
@@ -146,7 +130,8 @@ export class RecordingService {
    * Stops the recording and writes the captured scenes/moves to a new act file.
    */
   public static async stop() {
-    if (!RecordingService.recording) {
+    const session = RecordingService.session;
+    if (!RecordingService.recording || !session) {
       return;
     }
 
@@ -156,52 +141,66 @@ export class RecordingService {
 
     // Drain any queued work and flush the final pending edits.
     await RecordingService.opChain;
-    await RecordingService.flushAll();
-    RecordingService.pushScene();
+    const scenes = await session.finish();
+    RecordingService.session = undefined;
 
     await setContext(ContextKeys.isRecording, false);
 
-    if (RecordingService.scenes.length === 0) {
+    if (scenes.length === 0) {
       await RecordingService.cleanupArtifacts();
       Notifications.warning('Nothing was recorded.');
       return;
     }
 
-    const title = await window.showInputBox({
+    const defaultTitle = `Recorded demo ${RecordingService.timestamp()}`;
+    let title = await window.showInputBox({
       title: Config.title,
       prompt: 'Enter a title for the recorded act',
-      value: `Recorded demo ${RecordingService.timestamp()}`,
+      value: defaultTitle,
       ignoreFocusOut: true,
     });
 
-    if (!title) {
-      await RecordingService.cleanupArtifacts();
-      Notifications.warning('Recording discarded — no title provided.');
-      return;
+    if (typeof title === 'undefined') {
+      const answer = await window.showWarningMessage(
+        'Discard the recording?',
+        {
+          modal: true,
+          detail: `Keep creates the act with the title "${defaultTitle}".`,
+        },
+        'Keep',
+        'Discard',
+      );
+
+      if (answer === 'Discard') {
+        await RecordingService.cleanupArtifacts();
+        Notifications.warning('Recording discarded.');
+        return;
+      }
     }
+
+    title = title?.trim() || defaultTitle;
 
     const act: ActConfig = {
       $schema: 'https://demotime.show/demo-time.schema.json',
       title,
       description: 'Recorded with Demo Time',
       version: 3,
-      scenes: RecordingService.scenes,
+      scenes,
     };
 
-    const moveCount = RecordingService.scenes.reduce((total, scene) => total + scene.moves.length, 0);
-    const fileUri = await DemoFileProvider.createFile(title, act);
+    const moveCount = scenes.reduce((total, scene) => total + scene.moves.length, 0);
+    const fileUri = await RecordingService.createActFile(title, act);
 
     DemoPanel.update();
 
     if (fileUri) {
       ConfigEditorProvider.openInConfigEditor(fileUri);
       Notifications.infoWithProgress(
-        `Recorded act "${title}" created with ${RecordingService.scenes.length} scene(s) and ${moveCount} move(s).`,
+        `Recorded act "${title}" created with ${scenes.length} scene(s) and ${moveCount} move(s).`,
       );
     } else {
-      Notifications.warning(
-        `Could not create the act file for "${title}" — a file with that name may already exist.`,
-      );
+      await RecordingService.cleanupArtifacts();
+      Notifications.error(`Could not create the act file for "${title}".`);
     }
   }
 
@@ -213,7 +212,7 @@ export class RecordingService {
       return;
     }
 
-    RecordingService.enqueue(() => RecordingService.flushAll());
+    RecordingService.enqueue((session) => session.splitMove());
     Notifications.infoWithProgress('Move boundary set.', 1500);
   }
 
@@ -231,12 +230,12 @@ export class RecordingService {
       ignoreFocusOut: true,
     });
 
-    RecordingService.enqueue(async () => {
-      await RecordingService.flushAll();
-      RecordingService.pushScene();
-      RecordingService.sceneCounter++;
-      RecordingService.currentSceneTitle = title || `Scene ${RecordingService.sceneCounter}`;
-    });
+    // Escape cancels the new scene.
+    if (typeof title === 'undefined' || !RecordingService.recording) {
+      return;
+    }
+
+    RecordingService.enqueue((session) => session.newScene(title.trim()));
   }
 
   /**
@@ -254,19 +253,11 @@ export class RecordingService {
     }
 
     const relPath = RecordingService.relPath(editor.document.uri);
-    const start = editor.selection.start.line + 1;
-    const end = editor.selection.end.line + 1;
-    const position: string | number = start === end ? start : `${start}:${end}`;
+    const content = editor.document.getText();
+    const { start, end } = editor.selection;
+    const position = getRecordedHighlightPosition(start.line, end.line, end.character);
 
-    RecordingService.enqueue(async () => {
-      // Make sure the edits that produced this code are captured before the highlight.
-      await RecordingService.flushFile(relPath);
-      const state = RecordingService.files.get(relPath);
-      if (state) {
-        RecordingService.emitHeader(state);
-      }
-      RecordingService.currentMoves.push({ action: Action.Highlight, path: relPath, position });
-    });
+    RecordingService.enqueue((session) => session.highlight(relPath, content, position));
 
     Notifications.infoWithProgress('Highlight captured.', 1500);
   }
@@ -276,8 +267,12 @@ export class RecordingService {
   // ---------------------------------------------------------------------------
 
   private static onDidCreateFiles = (e: FileCreateEvent) => {
-    RecordingService.enqueue(async () => {
-      for (const uri of e.files) {
+    RecordingService.onFilesCreated(e.files, false);
+  };
+
+  private static onFilesCreated = (uris: readonly Uri[], fromWatcher: boolean) => {
+    RecordingService.enqueue(async (session) => {
+      for (const uri of uris) {
         if (!RecordingService.isRecordablePath(uri)) {
           continue;
         }
@@ -291,7 +286,7 @@ export class RecordingService {
           continue;
         }
 
-        RecordingService.register(RecordingService.relPath(uri), true, '');
+        session.fileCreated(RecordingService.relPath(uri), fromWatcher);
       }
     });
   };
@@ -304,149 +299,62 @@ export class RecordingService {
     const relPath = RecordingService.relPath(e.document.uri);
     const content = e.document.getText();
 
-    RecordingService.enqueue(() => {
-      if (!RecordingService.files.has(relPath)) {
-        // The file was never created or activated while recording; treat its current
-        // content as the baseline so we only capture changes from here on.
-        RecordingService.register(relPath, false, content);
-      }
-      RecordingService.pending.set(relPath, content);
-    });
+    RecordingService.enqueue((session) => session.fileChanged(relPath, content));
+  };
+
+  private static onWillSaveTextDocument = (e: TextDocumentWillSaveEvent) => {
+    if (e.reason === TextDocumentSaveReason.Manual) {
+      RecordingService.manualSaves.add(e.document.uri.toString());
+    }
   };
 
   private static onDidSaveTextDocument = (doc: TextDocument) => {
-    if (!RecordingService.isRecordableDoc(doc)) {
+    // Only manual saves are move boundaries, so auto save does not split the edits.
+    if (
+      !RecordingService.manualSaves.delete(doc.uri.toString()) ||
+      !RecordingService.isRecordableDoc(doc)
+    ) {
       return;
     }
 
     const relPath = RecordingService.relPath(doc.uri);
+    const content = doc.getText();
     const captureSaves =
       Extension.getInstance().getSetting<boolean>(Config.recording.captureSaves) ?? true;
 
-    RecordingService.enqueue(async () => {
-      RecordingService.pending.set(relPath, doc.getText());
-      await RecordingService.flushFile(relPath);
-
-      if (captureSaves) {
-        const state = RecordingService.files.get(relPath);
-        if (state) {
-          RecordingService.emitHeader(state);
-        }
-        RecordingService.currentMoves.push({ action: Action.Save });
-      }
-    });
+    RecordingService.enqueue((session) => session.fileSaved(relPath, content, captureSaves));
   };
 
   private static onDidChangeActiveTextEditor = (editor?: TextEditor) => {
-    RecordingService.enqueue(async () => {
+    if (!editor || !RecordingService.isRecordableDoc(editor.document)) {
       // Switching away from a file is a natural move boundary.
-      await RecordingService.flushAll();
+      RecordingService.enqueue((session) => session.splitMove());
+      return;
+    }
 
-      if (!editor || !RecordingService.isRecordableDoc(editor.document)) {
-        return;
-      }
+    const relPath = RecordingService.relPath(editor.document.uri);
+    const content = editor.document.getText();
 
-      const relPath = RecordingService.relPath(editor.document.uri);
-      if (relPath === RecordingService.lastActivePath) {
-        return;
-      }
-      RecordingService.lastActivePath = relPath;
-
-      let state = RecordingService.files.get(relPath);
-      if (!state) {
-        state = RecordingService.register(relPath, false, editor.document.getText());
-      }
-
-      // New files get their `create` + `open` header when their first content is
-      // flushed; existing files are opened as soon as they become active.
-      if (!state.isNew) {
-        RecordingService.emitHeader(state);
-      }
-    });
+    RecordingService.enqueue((session) => session.fileActivated(relPath, content));
   };
 
   // ---------------------------------------------------------------------------
   // Helpers
   // ---------------------------------------------------------------------------
 
-  private static register(relPath: string, isNew: boolean, baseline: string): FileRecordingState {
-    let state = RecordingService.files.get(relPath);
-    if (!state) {
-      state = { relPath, lastContent: baseline, isNew, headerEmitted: false };
-      RecordingService.files.set(relPath, state);
-    } else if (isNew) {
-      state.isNew = true;
+  /**
+   * Creates the act file, adding a number to the file name when an act with the
+   * same name already exists (`my-demo-2.json`).
+   */
+  private static async createActFile(title: string, act: ActConfig): Promise<Uri | undefined> {
+    for (let attempt = 1; attempt <= 100; attempt++) {
+      const fileName = attempt === 1 ? title : `${title}-${attempt}`;
+      const fileUri = await DemoFileProvider.createFile(fileName, act);
+      if (fileUri) {
+        return fileUri;
+      }
     }
-    return state;
-  }
-
-  private static emitHeader(state: FileRecordingState) {
-    if (state.headerEmitted) {
-      return;
-    }
-
-    if (state.isNew) {
-      RecordingService.currentMoves.push({ action: Action.Create, path: state.relPath });
-    }
-    RecordingService.currentMoves.push({ action: Action.Open, path: state.relPath });
-    state.headerEmitted = true;
-  }
-
-  private static pushScene() {
-    if (RecordingService.currentMoves.length === 0) {
-      return;
-    }
-
-    RecordingService.scenes.push({
-      title: RecordingService.currentSceneTitle,
-      moves: RecordingService.currentMoves,
-    });
-    RecordingService.currentMoves = [];
-  }
-
-  private static async flushAll() {
-    for (const relPath of Array.from(RecordingService.pending.keys())) {
-      await RecordingService.flushFile(relPath);
-    }
-  }
-
-  private static async flushFile(relPath: string) {
-    const content = RecordingService.pending.get(relPath);
-    if (typeof content === 'undefined') {
-      return;
-    }
-    RecordingService.pending.delete(relPath);
-
-    const state = RecordingService.files.get(relPath);
-    if (!state || content === state.lastContent) {
-      return;
-    }
-
-    RecordingService.emitHeader(state);
-
-    const seq = String(++RecordingService.artifactSeq).padStart(3, '0');
-    const fileName = relPath.split('/').pop() || 'file';
-    const baseName = `${seq}-${fileName}`;
-
-    const contentPath = await RecordingService.writeArtifact(
-      General.snapshotsFolder,
-      baseName,
-      state.lastContent,
-    );
-    const patch = await RecordingService.writeArtifact(
-      General.patchesFolder,
-      `${baseName}.patch`,
-      createUnifiedPatch(relPath, state.lastContent, content),
-    );
-
-    RecordingService.currentMoves.push({
-      action: Action.ApplyPatch,
-      path: relPath,
-      contentPath,
-      patch,
-    });
-
-    state.lastContent = content;
+    return undefined;
   }
 
   /**
@@ -491,10 +399,17 @@ export class RecordingService {
     }
   }
 
-  private static enqueue(fn: () => Promise<void> | void): Promise<void> {
-    RecordingService.opChain = RecordingService.opChain.then(fn).catch((error) => {
-      Logger.error(`${Config.title}: recording error - ${(error as Error).message}`);
-    });
+  private static enqueue(fn: (session: RecordingSession) => Promise<void> | void): Promise<void> {
+    const session = RecordingService.session;
+    if (!session) {
+      return RecordingService.opChain;
+    }
+
+    RecordingService.opChain = RecordingService.opChain
+      .then(() => fn(session))
+      .catch((error) => {
+        Logger.error(`${Config.title}: recording error - ${(error as Error).message}`);
+      });
     return RecordingService.opChain;
   }
 

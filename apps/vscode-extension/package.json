@@ -526,7 +526,7 @@
       },
       {
         "command": "demo-time.recording.stop",
-        "title": "Stop recording",
+        "title": "Stop demo recording",
         "category": "Demo Time",
         "icon": "$(debug-stop)"
       },
@@ -1299,24 +1299,6 @@
         "command": "demo-time.toggleAutoProceed",
         "key": "space",
         "when": "demo-time.presentation && demo-time.autoProceedActive == true"
-      },
-      {
-        "command": "demo-time.recording.splitMove",
-        "key": "ctrl+alt+m",
-        "mac": "cmd+alt+m",
-        "when": "demo-time.isRecording"
-      },
-      {
-        "command": "demo-time.recording.newScene",
-        "key": "ctrl+alt+n",
-        "mac": "cmd+alt+n",
-        "when": "demo-time.isRecording"
-      },
-      {
-        "command": "demo-time.recording.markHighlight",
-        "key": "ctrl+alt+h",
-        "mac": "cmd+alt+h",
-        "when": "demo-time.isRecording"
       }
     ],
     "viewsWelcome": [
