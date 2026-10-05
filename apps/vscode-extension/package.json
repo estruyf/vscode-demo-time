@@ -1071,7 +1071,7 @@
         {
           "command": "demo-time.exportPlayAsVideo",
           "when": "view == demo-time-scenes",
-          "group": "export@1"
+          "group": "3_export@1"
         },
         {
           "command": "demo-time.treeviewFind",
@@ -1080,43 +1080,53 @@
         },
         {
           "command": "demo-time.createDemoFile",
-          "when": "view == demo-time-scenes"
+          "when": "view == demo-time-scenes",
+          "group": "1_create@1"
         },
         {
           "command": "demo-time.runPreflightCheck",
-          "when": "view == demo-time-scenes && demo-time.isInitialized"
+          "when": "view == demo-time-scenes && demo-time.isInitialized",
+          "group": "2_check@2"
         },
         {
           "command": "demo-time.docs",
-          "when": "view == demo-time-scenes"
+          "when": "view == demo-time-scenes",
+          "group": "5_help@1"
         },
         {
           "command": "demo-time.showOverview",
-          "when": "view == demo-time-scenes"
+          "when": "view == demo-time-scenes",
+          "group": "2_check@1"
         },
         {
           "command": "demo-time.showSettings",
-          "when": "view == demo-time-scenes"
+          "when": "view == demo-time-scenes",
+          "group": "4_settings@1"
         },
         {
           "command": "demo-time.showProFeatures",
-          "when": "view == demo-time-scenes"
+          "when": "view == demo-time-scenes",
+          "group": "5_help@2"
         },
         {
           "command": "demo-time.showGallery",
-          "when": "view == demo-time-scenes"
+          "when": "view == demo-time-scenes",
+          "group": "1_create@2"
         },
         {
           "command": "demo-time.showThemeBuilder",
-          "when": "view == demo-time-scenes"
+          "when": "view == demo-time-scenes",
+          "group": "1_create@3"
         },
         {
           "command": "demo-time.installAiSkills",
-          "when": "view == demo-time-scenes"
+          "when": "view == demo-time-scenes",
+          "group": "1_create@4"
         },
         {
           "command": "demo-time.openSupportTheProject",
-          "when": "view == demo-time-scenes"
+          "when": "view == demo-time-scenes",
+          "group": "5_help@3"
         }
       ],
       "view/item/context": [
