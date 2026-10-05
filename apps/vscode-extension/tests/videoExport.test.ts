@@ -13,6 +13,7 @@ import {
   formatVideoExportRange,
   getSlideHoldSeconds,
   getVideoExportStepIssue,
+  isStaticSlide,
   parseVideoExportRange,
   preflightVideoExport,
   selectVideoExportScenes,
@@ -229,6 +230,47 @@ describe('slide timing', () => {
   });
 });
 
+describe('isStaticSlide', () => {
+  const slide = (content: string, frontmatter: Record<string, unknown> = {}) => ({
+    content,
+    frontmatter,
+  });
+
+  it('is static for text, images, code and the static shapes', () => {
+    expect(isStaticSlide(slide('# Ship it\n\n- One\n- Two'))).toBe(true);
+    expect(isStaticSlide(slide('![Logo](./logo.png)\n\n```ts\nconst a = 1;\n```'))).toBe(true);
+    expect(isStaticSlide(slide('<dt-arrow x1="0"></dt-arrow><dt-circle></dt-circle>'))).toBe(true);
+    expect(isStaticSlide(slide('# Hi', { layout: 'image', image: './photo.jpg' }))).toBe(true);
+    expect(isStaticSlide(slide('# Hi', { textTypeWriterEffect: false }))).toBe(true);
+  });
+
+  it('is live when the front matter makes it move', () => {
+    expect(isStaticSlide(slide('# Hi', { transition: 'fadeIn' }))).toBe(false);
+    expect(isStaticSlide(slide('# Hi', { textTypeWriterEffect: 'true' }))).toBe(false);
+    expect(isStaticSlide(slide('', { layout: 'animated', svgFile: './a.svg' }))).toBe(false);
+    expect(isStaticSlide(slide('', { layout: 'video', video: './a.mp4' }))).toBe(false);
+    expect(isStaticSlide(slide('# Hi', { image: './spinner.gif' }))).toBe(false);
+    expect(isStaticSlide(slide('# Hi', { background: 'url(./bg.gif)' }))).toBe(false);
+  });
+
+  it('is live for animations, click steps, Mermaid, media and unknown elements', () => {
+    expect(isStaticSlide(slide('<fade-in>Hi</fade-in>'))).toBe(false);
+    expect(isStaticSlide(slide('<text-typewriter>Hi</text-typewriter>'))).toBe(false);
+    expect(isStaticSlide(slide('<dt-show at="1">Hi</dt-show>'))).toBe(false);
+    expect(isStaticSlide(slide('<dt-list>\n- A\n</dt-list>'))).toBe(false);
+    expect(isStaticSlide(slide('<dt-mermaid>graph TD; A-->B</dt-mermaid>'))).toBe(false);
+    expect(isStaticSlide(slide('<my-counter></my-counter>'))).toBe(false);
+    expect(isStaticSlide(slide('<video src="./a.mp4"></video>'))).toBe(false);
+    expect(isStaticSlide(slide('<iframe src="https://x.y"></iframe>'))).toBe(false);
+    expect(isStaticSlide(slide('![Demo](./demo.gif)'))).toBe(false);
+    expect(isStaticSlide(slide('<style>.a { animation: spin 1s; }</style>'))).toBe(false);
+  });
+
+  it('is live when there is no slide to check', () => {
+    expect(isStaticSlide(undefined)).toBe(false);
+  });
+});
+
 describe('export command helpers', () => {
   it('reads saved choices and drops what it does not know', () => {
     expect(normalizeVideoExportChoices(undefined)).toBeUndefined();
@@ -241,6 +283,7 @@ describe('export command helpers', () => {
         captions: 'notes',
         chapters: false,
         cards: true,
+        realtime: true,
       }),
     ).toEqual({
       range: 'act:2',
@@ -249,10 +292,24 @@ describe('export command helpers', () => {
       captions: 'notes',
       chapters: false,
       cards: true,
+      realtime: true,
     });
     expect(normalizeVideoExportChoices({ range: 'nope', preset: '4:3', captions: 'x' })).toEqual(
       DEFAULT_VIDEO_EXPORT_CHOICES,
     );
+  });
+
+  it('keeps a valid slide time and drops one the CLI would reject', () => {
+    const read = (slideSeconds: unknown) =>
+      normalizeVideoExportChoices({ range: 'all', slideSeconds })?.slideSeconds;
+    expect(read(5)).toBe(5);
+    expect(read(2.5)).toBe(2.5);
+    expect(read(600)).toBe(600);
+    expect(read(0)).toBeUndefined();
+    expect(read(-3)).toBeUndefined();
+    expect(read(601)).toBeUndefined();
+    expect(read('5')).toBeUndefined();
+    expect(read(undefined)).toBeUndefined();
   });
 
   it('describes the choices in one line', () => {
@@ -270,6 +327,9 @@ describe('export command helpers', () => {
         ['Intro', 'Build the API'],
       ),
     ).toBe('Build the API, scenes 1-3 · 16:9 · GIF · captions from notes · chapters');
+    expect(describeVideoExportChoices({ ...DEFAULT_VIDEO_EXPORT_CHOICES, slideSeconds: 5 })).toBe(
+      'Whole play · 16:9 · chapters · 5 s per slide',
+    );
   });
 
   it('makes file names from folder and act names', () => {
@@ -340,6 +400,20 @@ describe('export command helpers', () => {
       '--settings',
       '/s.json',
     ]);
+  });
+
+  it('gives every slide the same time by passing it as the shortest and longest', () => {
+    const context = { workspace: '/w', outDir: '/o', name: 'talk', extension: 'e', extensions: [] };
+    expect(
+      buildVideoExportArgs({ ...DEFAULT_VIDEO_EXPORT_CHOICES, slideSeconds: 5 }, context),
+    ).toEqual(expect.arrayContaining(['--slide-min', '5', '--slide-max', '5']));
+    expect(buildVideoExportArgs(DEFAULT_VIDEO_EXPORT_CHOICES, context)).not.toContain(
+      '--slide-min',
+    );
+    expect(
+      buildVideoExportArgs({ ...DEFAULT_VIDEO_EXPORT_CHOICES, realtime: true }, context),
+    ).toContain('--realtime');
+    expect(buildVideoExportArgs(DEFAULT_VIDEO_EXPORT_CHOICES, context)).not.toContain('--realtime');
   });
 });
 

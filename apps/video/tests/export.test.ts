@@ -13,7 +13,7 @@ import {
   toSrt,
 } from '../src/captions';
 import { frameAt, holdFrame, planFrames } from '../src/frames';
-import { buildTimeline, parseEventLog } from '../src/timeline';
+import { buildTimeline, parseEventLog, toRunTime } from '../src/timeline';
 import { getDemoTimeSupport, quoteForCmd } from '../src/vscode';
 import { readCompleteEvents, readSettingsFile, resolveInside } from '../src/export';
 import { copyWorkspace } from '../src/workspace';
@@ -125,6 +125,8 @@ describe('parseExportArgs', () => {
     expect(options.extension).toBe('/work/build/demo-time.vsix');
     expect(options.extensions).toEqual(['a.theme', 'b.icons']);
     expect(options.vscodeArgs).toEqual(['--disable-gpu', '--no-sandbox']);
+    expect(options.realtime).toBe(false);
+    expect(parseExportArgs(['--realtime'], '/work')!.realtime).toBe(true);
   });
 
   it('writes captions when a caption source is given, even without --srt', () => {
@@ -174,6 +176,43 @@ describe('buildTimeline', () => {
     expect(timeline.issues).toHaveLength(1);
   });
 
+  // The first scene of `events` again, with the slides held instead of recorded in real time:
+  // everything after a hold happens that much earlier in the run.
+  const shift = (event: VideoExportEvent, ms: number): VideoExportEvent => ({
+    ...event,
+    t: event.t - ms,
+  });
+  const stretched: VideoExportEvent[] = [
+    events[0],
+    events[1],
+    events[2],
+    { type: 'hold', t: T0 + 1700, ms: 2000 },
+    shift(events[3], 2000),
+    { type: 'hold', t: T0 + 2200, ms: 2500 },
+    ...events.slice(4).map((event) => shift(event, 4500)),
+  ];
+
+  it('places held slides and everything after them in video time', () => {
+    const real = buildTimeline(events)!;
+    const timeline = buildTimeline(stretched)!;
+    expect(timeline.duration).toBe(real.duration);
+    expect(timeline.scenes).toEqual(real.scenes);
+    expect(timeline.slides).toEqual(real.slides);
+    expect(timeline.holds).toEqual([
+      { at: 1700, start: 1700, ms: 2000 },
+      { at: 2200, start: 4200, ms: 2500 },
+    ]);
+    expect(real.holds).toEqual([]);
+  });
+
+  it('maps video time back to the recording, frozen during a hold', () => {
+    const { holds } = buildTimeline(stretched)!;
+    expect(
+      [0, 1699, 1700, 3699, 3700, 4000, 4200, 6699, 7000].map((v) => toRunTime(holds, v)),
+    ).toEqual([0, 1699, 1700, 1700, 1700, 2000, 2200, 2200, 2500]);
+    expect(toRunTime([], 1234)).toBe(1234);
+  });
+
   it('ends an unfinished scene at the end of a stopped run', () => {
     const timeline = buildTimeline([
       events[0],
@@ -198,6 +237,11 @@ describe('frames', () => {
   it('resamples onto a fixed frame rate', () => {
     expect(planFrames(times, 0, 1200, 10)).toEqual([0, 1, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3]);
     expect(planFrames([], 0, 1000, 30)).toEqual([]);
+  });
+
+  it('repeats the frame of a hold', () => {
+    const holds = [{ at: 100, start: 100, ms: 200 }];
+    expect(planFrames(times, 0, 600, 10, (ms) => toRunTime(holds, ms))).toEqual([0, 1, 1, 1, 1, 2]);
   });
 
   it('holds a frame for a card', () => {

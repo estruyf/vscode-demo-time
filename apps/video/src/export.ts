@@ -24,7 +24,7 @@ import {
 import { encodeGif, encodeMp4, findFfmpeg } from './ffmpeg';
 import { frameAt, holdFrame, planFrames } from './frames';
 import { Recorder, RecordedFrame } from './recorder';
-import { buildTimeline, parseEventLog, Timeline } from './timeline';
+import { buildTimeline, parseEventLog, Timeline, toRunTime } from './timeline';
 import {
   DEFAULT_SETTINGS,
   getDemoTimeSupport,
@@ -115,7 +115,10 @@ const waitForEnd = async (
   }
 };
 
-/** Picks the frames of the video: the run itself, with a title and end card when asked. */
+/**
+ * Picks the frames of the video: the run itself, with a title and end card when asked. A static
+ * slide the run moved past shows its last frame for its hold.
+ */
 const cutFrames = (
   frames: RecordedFrame[],
   timeline: Timeline,
@@ -128,6 +131,7 @@ const cutFrames = (
     timeline.startedAt,
     timeline.startedAt + timeline.duration,
     options.fps,
+    (ms) => toRunTime(timeline.holds, ms),
   );
 
   if (!options.cards) {
@@ -141,8 +145,12 @@ const cutFrames = (
     return { plan: main, offset: 0 };
   }
 
+  // Slide times are video times; the frame comes from the recording
   const cardFrame = (end: number) =>
-    frameAt(times, timeline.startedAt + Math.max(0, end - CARD_FRAME_BEFORE_END_MS));
+    frameAt(
+      times,
+      timeline.startedAt + toRunTime(timeline.holds, Math.max(0, end - CARD_FRAME_BEFORE_END_MS)),
+    );
   const title = holdFrame(cardFrame(first.end), options.cardSeconds, options.fps);
   const endCard = holdFrame(cardFrame(last.end), options.cardSeconds, options.fps);
   return {
@@ -240,6 +248,7 @@ export const exportVideo = async (
       showNotes: options.showNotes,
       holdForNotes: options.srt && options.captions === 'notes',
       hideUI: true,
+      stretchStaticSlides: !options.realtime,
       ...options.timing,
     };
     writeFileSync(optionsFile, JSON.stringify(runOptions, null, 2));
@@ -334,6 +343,12 @@ export const exportVideo = async (
     }
     if (frames.length === 0) {
       throw new Error('The recording has no frames.');
+    }
+    if (timeline.holds.length > 0) {
+      const seconds = Math.round(timeline.holds.reduce((total, hold) => total + hold.ms, 0) / 1000);
+      reporter.info(
+        `Held ${timeline.holds.length} static slide(s) for ${seconds}s instead of recording them in real time`,
+      );
     }
 
     reporter.step('Encoding');

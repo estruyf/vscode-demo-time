@@ -227,6 +227,16 @@
             },
             "cards": {
               "type": "boolean"
+            },
+            "realtime": {
+              "type": "boolean",
+              "description": "Record every slide for its full time, instead of holding the last frame of a slide without animations."
+            },
+            "slideSeconds": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 600,
+              "description": "Seconds each slide stays on screen. Leave it out to use the time it takes to read the slide, between 3 and 12 seconds."
             }
           }
         },

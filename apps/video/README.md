@@ -67,6 +67,7 @@ npx @demotime/video export ./my-talk --out ./videos --gif --srt --chapters --car
 | `--cards`, `--card-seconds <n>`              | Add a title and end card from the first and last slide                                                                                                          |
 | `--strict`                                   | Fail when a move cannot be recorded, instead of skipping it                                                                                                     |
 | `--show-notes`                               | Keep notes that open with `showOnTrigger` in the video                                                                                                          |
+| `--realtime`                                 | Record every slide for its full time, instead of holding the frame of a static slide                                                                            |
 | `--vscode <path>`                            | The VS Code to record in (default: the installed one)                                                                                                           |
 | `--vscode-version <v>`                       | Download this VS Code version instead: `stable`, `insiders` or `1.105.0`                                                                                        |
 | `--extension <id\|vsix>`                     | The Demo Time to install (default: the latest from the Marketplace)                                                                                             |
@@ -113,7 +114,10 @@ and how to burn the captions into the picture for social media.
    and hides the status bar, tabs, side bars and panel. After a scene's moves finish, it stays on
    screen for the scene's `autoAdvanceAfter`. Without one, a slide stays for its reading time and
    other scenes for 2 seconds. Terminal commands get up to 30 seconds to finish
-   (`--terminal-timeout`).
+   (`--terminal-timeout`). A slide without a transition, animation, click steps, Mermaid diagram,
+   video or GIF is static: the run moves on once it has rendered, and the video holds that frame for
+   the slide's time, so static slides record in under a second each. `--realtime` records every
+   slide for its full time, for animations Demo Time can't detect, like those of a custom theme.
 4. **Moves that need a presenter are handled.**
    - `pause` and `waitForInput` continue after a second.
    - Hacker-typer typing becomes character by character.
@@ -121,7 +125,7 @@ and how to burn the captions into the picture for social media.
      with a warning.
 5. **The window is recorded.** The DevTools screencast captures only the VS Code window, not the
    rest of your screen. The frames are resampled to a fixed frame rate and cut from the first to the
-   last scene.
+   last scene, with the frame of each static slide repeated for its time.
 6. **ffmpeg encodes the files.** It writes the MP4 with its chapters and the GIF. The CLI writes the
    captions and the chapter list from the timing of each scene.
 

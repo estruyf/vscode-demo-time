@@ -39,6 +39,13 @@ export interface VideoExportRunOptions {
   holdForNotes?: boolean;
   /** Fail before running when a move cannot be recorded, instead of skipping it. Default: false. */
   strict?: boolean;
+  /**
+   * Record a slide that doesn't move (no transition, animation, click steps or video) only until
+   * it has rendered, and log a `hold` event with how long it should stay on screen. The recorder
+   * repeats that frame for the hold, so the video looks the same as a real-time recording.
+   * Only for a recorder that reads the `hold` events. Default: false, every slide in real time.
+   */
+  stretchStaticSlides?: boolean;
 }
 
 export type VideoExportRange =
@@ -75,4 +82,9 @@ export type VideoExportEvent =
   | ({ type: 'sceneStart'; t: number } & VideoExportSceneRef)
   | ({ type: 'slide'; t: number; slideIndex: number; slideTitle?: string } & VideoExportSceneRef)
   | ({ type: 'sceneEnd'; t: number } & VideoExportSceneRef)
+  /**
+   * The frame on screen at `t` belongs in the video for `ms` milliseconds, though the run moved
+   * on right away. Written for static slides when `stretchStaticSlides` is set.
+   */
+  | { type: 'hold'; t: number; ms: number }
   | { type: 'end'; t: number; status: 'completed' | 'cancelled' | 'failed'; error?: string };

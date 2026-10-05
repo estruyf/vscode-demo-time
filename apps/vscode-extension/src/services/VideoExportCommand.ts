@@ -25,6 +25,8 @@ import {
   buildVideoExportArgs,
   describeVideoExportChoices,
   getVSCodeExecutableCandidates,
+  isValidSlideSeconds,
+  MAX_VIDEO_EXPORT_SLIDE_SECONDS,
   normalizeVideoExportChoices,
   parseVideoExportRange,
   toVideoFileName,
@@ -139,7 +141,7 @@ export class VideoExportCommand {
           value: `act:${idx + 1}`,
         })),
       ],
-      { title: `${title} (1/3)`, placeHolder: 'What do you want to export?' },
+      { title: `${title} (1/4)`, placeHolder: 'What do you want to export?' },
     );
     if (!range) {
       return undefined;
@@ -156,13 +158,21 @@ export class VideoExportCommand {
         ...presets.filter((item) => item.value === previous.preset),
         ...presets.filter((item) => item.value !== previous.preset),
       ],
-      { title: `${title} (2/3)`, placeHolder: 'Which format?' },
+      { title: `${title} (2/4)`, placeHolder: 'Which format?' },
     );
     if (!preset) {
       return undefined;
     }
 
-    type Extra = 'gif' | 'titles' | 'notes' | 'chapters' | 'cards';
+    const slideSeconds = await VideoExportCommand.askSlideSeconds(
+      previous.slideSeconds,
+      `${title} (3/4)`,
+    );
+    if (slideSeconds === null) {
+      return undefined;
+    }
+
+    type Extra = 'gif' | 'titles' | 'notes' | 'chapters' | 'cards' | 'realtime';
     const extras = await window.showQuickPick<PickItem<Extra>>(
       [
         { label: 'GIF', description: 'For a README or a Marketplace page', value: 'gif' as Extra },
@@ -186,6 +196,11 @@ export class VideoExportCommand {
           description: 'The first and last slide, held for 3 seconds',
           value: 'cards' as Extra,
         },
+        {
+          label: 'Record slides in real time',
+          description: 'Slower; for slides with animations Demo Time cannot detect',
+          value: 'realtime' as Extra,
+        },
       ].map((item) => ({
         ...item,
         picked:
@@ -193,10 +208,11 @@ export class VideoExportCommand {
           (item.value === 'titles' && previous.captions === 'titles') ||
           (item.value === 'notes' && previous.captions === 'notes') ||
           (item.value === 'chapters' && previous.chapters) ||
-          (item.value === 'cards' && previous.cards),
+          (item.value === 'cards' && previous.cards) ||
+          (item.value === 'realtime' && !!previous.realtime),
       })),
       {
-        title: `${title} (3/3)`,
+        title: `${title} (4/4)`,
         placeHolder: 'Anything besides the MP4? (Enter to continue)',
         canPickMany: true,
       },
@@ -214,7 +230,71 @@ export class VideoExportCommand {
       captions: picked.has('notes') ? 'notes' : picked.has('titles') ? 'titles' : 'none',
       chapters: picked.has('chapters'),
       cards: picked.has('cards'),
+      realtime: picked.has('realtime'),
+      slideSeconds,
     };
+  }
+
+  /**
+   * Asks how long each slide stays on screen. Returns `undefined` for the time it takes to read
+   * the slide, and `null` when cancelled.
+   */
+  private static async askSlideSeconds(
+    previous: number | undefined,
+    title: string,
+  ): Promise<number | undefined | null> {
+    const fixed = [3, 5, 8];
+    if (previous !== undefined && !fixed.includes(previous)) {
+      fixed.push(previous);
+      fixed.sort((a, b) => a - b);
+    }
+    type SlideTime = number | 'reading' | 'custom';
+    const items: PickItem<SlideTime>[] = [
+      {
+        label: 'Based on the text',
+        description: 'The time it takes to read the slide, between 3 and 12 seconds',
+        value: 'reading',
+      },
+      ...fixed.map((seconds) => ({
+        label: `${seconds} seconds`,
+        description: 'Every slide',
+        value: seconds,
+      })),
+      { label: 'Custom…', description: 'Enter the number of seconds', value: 'custom' },
+    ];
+    // The time used last time comes first, so Enter keeps it
+    const current: SlideTime = previous ?? 'reading';
+    const picked = await window.showQuickPick(
+      [
+        ...items.filter((item) => item.value === current),
+        ...items.filter((item) => item.value !== current),
+      ],
+      {
+        title,
+        placeHolder:
+          'How long should each slide stay on screen? A scene or slide with autoAdvanceAfter keeps its own time',
+      },
+    );
+    if (!picked) {
+      return null;
+    }
+    if (picked.value === 'reading') {
+      return undefined;
+    }
+    if (picked.value !== 'custom') {
+      return picked.value;
+    }
+
+    const input = await window.showInputBox({
+      title,
+      prompt: 'Seconds each slide stays on screen',
+      value: previous !== undefined ? String(previous) : '5',
+      validateInput: (value) =>
+        isValidSlideSeconds(Number(value.trim()))
+          ? undefined
+          : `Enter a number of seconds, more than 0 and at most ${MAX_VIDEO_EXPORT_SLIDE_SECONDS}`,
+    });
+    return input === undefined ? null : Number(input.trim());
   }
 
   private static async runExport(

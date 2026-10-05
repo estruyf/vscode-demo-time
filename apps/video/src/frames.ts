@@ -26,15 +26,24 @@ export const frameAt = (times: number[], at: number): number => {
  * frame to show.
  *
  * @param times - Recorded frame times in milliseconds, sorted.
+ * @param toRecorded - Maps milliseconds since `from` in the video to milliseconds since `from` in
+ *   the recording, for a video that holds frames longer than they were recorded. By default the
+ *   video follows the recording.
  */
-export const planFrames = (times: number[], from: number, to: number, fps: number): number[] => {
+export const planFrames = (
+  times: number[],
+  from: number,
+  to: number,
+  fps: number,
+  toRecorded: (ms: number) => number = (ms) => ms,
+): number[] => {
   if (times.length === 0) {
     return [];
   }
   const count = Math.max(1, Math.round(((to - from) * fps) / 1000));
   const plan: number[] = [];
   for (let idx = 0; idx < count; idx++) {
-    plan.push(frameAt(times, from + (idx * 1000) / fps));
+    plan.push(frameAt(times, from + toRecorded((idx * 1000) / fps)));
   }
   return plan;
 };

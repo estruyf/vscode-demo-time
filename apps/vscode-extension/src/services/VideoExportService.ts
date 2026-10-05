@@ -26,6 +26,7 @@ import {
   getReadingSeconds,
   getSlideHoldSeconds,
   getVideoExportStepIssue,
+  isStaticSlide,
   parseVideoExportRange,
   preflightVideoExport,
   selectVideoExportScenes,
@@ -65,6 +66,9 @@ const ENV_START_DELAY_MS = 2000;
 const SLIDE_SETTLE_MS = 800;
 /// Time to wait for the preview to confirm it moved to the next slide.
 const SLIDE_ADVANCE_TIMEOUT_MS = 3000;
+/// Extra time for the last paint of a static slide to reach the screencast before its hold is
+/// logged: the recorder holds the last frame painted at or before the `hold` event.
+const STATIC_SLIDE_FRAME_MS = 200;
 /// Guard against a slide that never reports it reached the end.
 const MAX_SLIDE_ADVANCES = 500;
 
@@ -80,6 +84,8 @@ export class VideoExportService {
   private static currentScene: VideoExportSceneRef | undefined;
   /** The slide deck the current scene opened, with its variables filled in. */
   private static sceneSlidePath: string | undefined;
+  /** Milliseconds of `hold` events logged in the current scene: video time the run skipped. */
+  private static sceneHeldMs = 0;
 
   public static register() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
@@ -360,6 +366,7 @@ export class VideoExportService {
         : undefined,
     };
     VideoExportService.currentScene = ref;
+    VideoExportService.sceneHeldMs = 0;
     const startedAt = Date.now();
     await VideoExportService.log({ type: 'sceneStart', t: startedAt, ...ref });
 
@@ -384,10 +391,12 @@ export class VideoExportService {
       );
     }
 
-    // Captions made from the notes need the scene on screen long enough to read them
+    // Captions made from the notes need the scene on screen long enough to read them. The held
+    // static slides are on screen in the video, so they count, though the run skipped them.
     if (options.holdForNotes && demo.notes?.path) {
       const notesSeconds = await VideoExportService.getNotesReadingSeconds(demo.notes.path);
-      await VideoExportService.hold(notesSeconds - (Date.now() - startedAt) / 1000);
+      const shownMs = Date.now() - startedAt + VideoExportService.sceneHeldMs;
+      await VideoExportService.hold(notesSeconds - shownMs / 1000);
     }
 
     await VideoExportService.log({ type: 'sceneEnd', t: Date.now(), ...ref });
@@ -395,7 +404,8 @@ export class VideoExportService {
 
   /**
    * Holds each slide of the scene's slide deck, then advances the preview, until the
-   * preview reports there is no next slide.
+   * preview reports there is no next slide. With `stretchStaticSlides`, a slide that doesn't move
+   * is only held until it has rendered; its `hold` event tells the recorder how long to show it.
    */
   private static async playSlides(
     slidePath: string,
@@ -425,16 +435,24 @@ export class VideoExportService {
         });
       }
 
-      await VideoExportService.hold(
-        getSlideHoldSeconds(
-          slide?.content,
-          {
-            sceneAutoAdvanceAfter: demo.autoAdvanceAfter,
-            slideAutoAdvanceAfter: slide?.frontmatter?.autoAdvanceAfter,
-          },
-          options,
-        ),
+      const holdSeconds = getSlideHoldSeconds(
+        slide?.content,
+        {
+          sceneAutoAdvanceAfter: demo.autoAdvanceAfter,
+          slideAutoAdvanceAfter: slide?.frontmatter?.autoAdvanceAfter,
+        },
+        options,
       );
+      // Click steps left on the slide only show up once it rendered, so ask the preview too
+      if (options.stretchStaticSlides && isStaticSlide(slide) && !Preview.isListening()) {
+        await sleep(STATIC_SLIDE_FRAME_MS);
+        // The wait for the paint was on screen already
+        const ms = Math.max(0, Math.round(holdSeconds * 1000) - STATIC_SLIDE_FRAME_MS);
+        await VideoExportService.log({ type: 'hold', t: Date.now(), ms });
+        VideoExportService.sceneHeldMs += ms;
+      } else {
+        await VideoExportService.hold(holdSeconds);
+      }
 
       if (!Preview.checkIfHasNextSlide()) {
         return;

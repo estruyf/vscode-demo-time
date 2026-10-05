@@ -2,7 +2,10 @@ import {
   Action,
   Demo,
   InsertTypingMode,
+  Slide,
+  SlideLayout,
   Step,
+  toBoolean,
   VideoExportIssue,
   VideoExportRange,
   VideoExportRunOptions,
@@ -21,6 +24,7 @@ export const VIDEO_EXPORT_DEFAULTS: Required<
   showNotes: false,
   holdForNotes: false,
   strict: false,
+  stretchStaticSlides: false,
 };
 
 export interface VideoExportAct {
@@ -291,6 +295,56 @@ export const getSlideHoldSeconds = (
   );
 };
 
+/// Custom elements that draw once and stay as they are. Any other element with a dash in its
+/// name may move: `fade-in`, `text-typewriter`, `text-highlight`, the `dt-show`, `dt-hide` and
+/// `dt-list` click steps, `dt-mermaid` (which draws after the slide), and your own elements.
+const STATIC_SLIDE_ELEMENTS = new Set(['dt-arrow', 'dt-circle', 'dt-rectangle', 'dt-action']);
+const CUSTOM_ELEMENT = /<([a-z][a-z0-9]*-[a-z0-9-]*)[\s/>]/gi;
+const MOVING_CONTENT = [
+  /<(video|iframe|audio|canvas)[\s/>]/i,
+  /\.(gif|apng)\b/i,
+  /@keyframes|animation\s*:/i,
+];
+
+/**
+ * Whether a slide looks the same from the moment it rendered until the next one, so the video
+ * export can record it once and hold that frame instead of recording it in real time. A slide
+ * that moves is live: one with a transition, the typewriter effect, an animated SVG, a video or
+ * GIF, an iframe, a CSS animation, or a custom element other than the static shapes. Click steps
+ * the preview reports at run time count as moving too. Unknown means live.
+ */
+export const isStaticSlide = (slide: Pick<Slide, 'content' | 'frontmatter'> | undefined) => {
+  if (!slide) {
+    return false;
+  }
+
+  const matter = slide.frontmatter ?? {};
+  if (
+    matter.transition ||
+    toBoolean(matter.textTypeWriterEffect) ||
+    matter.layout === SlideLayout.AnimatedSVG ||
+    matter.layout === SlideLayout.Video ||
+    matter.svgFile ||
+    matter.video
+  ) {
+    return false;
+  }
+  if ([matter.image, matter.background].some((value) => /\.(gif|apng)\b/i.test(`${value ?? ''}`))) {
+    return false;
+  }
+
+  const content = slide.content ?? '';
+  if (MOVING_CONTENT.some((pattern) => pattern.test(content))) {
+    return false;
+  }
+  for (const match of content.matchAll(CUSTOM_ELEMENT)) {
+    if (!STATIC_SLIDE_ELEMENTS.has(match[1].toLowerCase())) {
+      return false;
+    }
+  }
+  return true;
+};
+
 export type VideoExportPreset = '16:9' | '1:1' | '9:16';
 
 /** What the "Export play as video" command asks for, saved in `demoTime.videoExport.options`. */
@@ -301,7 +355,24 @@ export interface VideoExportChoices {
   captions: 'none' | 'titles' | 'notes';
   chapters: boolean;
   cards: boolean;
+  /** Record every slide for its full time, instead of holding the frame of a static slide. */
+  realtime?: boolean;
+  /**
+   * Seconds each slide stays on screen. Not set: the time it takes to read the slide, between
+   * 3 and 12 seconds. A scene or slide `autoAdvanceAfter` wins over both.
+   */
+  slideSeconds?: number;
 }
+
+/// The longest time a slide can be on screen; the CLI rejects more for `--slide-min/--slide-max`.
+export const MAX_VIDEO_EXPORT_SLIDE_SECONDS = 600;
+
+/** Checks the seconds a slide stays on screen: a positive number the CLI accepts. */
+export const isValidSlideSeconds = (value: unknown): value is number =>
+  typeof value === 'number' &&
+  Number.isFinite(value) &&
+  value > 0 &&
+  value <= MAX_VIDEO_EXPORT_SLIDE_SECONDS;
 
 export const DEFAULT_VIDEO_EXPORT_CHOICES: VideoExportChoices = {
   range: 'all',
@@ -310,6 +381,7 @@ export const DEFAULT_VIDEO_EXPORT_CHOICES: VideoExportChoices = {
   captions: 'none',
   chapters: true,
   cards: false,
+  realtime: false,
 };
 
 /** Reads saved choices, dropping anything unknown so an edited setting cannot break the command. */
@@ -336,6 +408,8 @@ export const normalizeVideoExportChoices = (value: unknown): VideoExportChoices 
       : 'none',
     chapters: saved.chapters !== false,
     cards: saved.cards === true,
+    realtime: saved.realtime === true,
+    slideSeconds: isValidSlideSeconds(saved.slideSeconds) ? saved.slideSeconds : undefined,
   };
 };
 
@@ -357,6 +431,8 @@ export const describeVideoExportChoices = (
     choices.captions === 'notes' && 'captions from notes',
     choices.chapters && 'chapters',
     choices.cards && 'title and end cards',
+    choices.realtime && 'slides in real time',
+    choices.slideSeconds && `${choices.slideSeconds} s per slide`,
   ].filter(Boolean);
   return [what, choices.preset, ...extras].join(' · ');
 };
@@ -427,6 +503,14 @@ export const buildVideoExportArgs = (
   }
   if (choices.cards) {
     args.push('--cards');
+  }
+  if (choices.realtime) {
+    args.push('--realtime');
+  }
+  if (isValidSlideSeconds(choices.slideSeconds)) {
+    // The same shortest and longest time gives every slide exactly this time
+    const seconds = String(choices.slideSeconds);
+    args.push('--slide-min', seconds, '--slide-max', seconds);
   }
   if (context.vscodePath) {
     args.push('--vscode', context.vscodePath);

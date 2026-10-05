@@ -21,6 +21,8 @@ export interface ExportOptions {
   cardSeconds: number;
   strict: boolean;
   showNotes: boolean;
+  /** Record every slide in real time, instead of holding the frame of a static slide. */
+  realtime: boolean;
   /** Path to a VS Code executable or app bundle. */
   vscodePath?: string;
   /** Download this VS Code version (`stable`, `insiders` or `1.105.0`) instead of using an installed one. */
@@ -70,6 +72,8 @@ Options:
   --card-seconds <n>      How long each card shows (default 3)
   --strict                Fail when a move cannot be recorded instead of skipping it
   --show-notes            Keep scene notes that open on trigger in the video
+  --realtime              Record every slide for its full time, instead of holding the
+                          last frame of a slide that doesn't move (slower)
   --vscode <path>         VS Code executable or app to record in (default: the installed one)
   --vscode-version <v>    Download this VS Code version instead (stable, insiders, 1.105.0)
   --extension <id|vsix>   Demo Time to install (default eliostruyf.vscode-demo-time)
@@ -158,6 +162,7 @@ export const parseExportArgs = (
       'card-seconds': { type: 'string' },
       strict: { type: 'boolean' },
       'show-notes': { type: 'boolean' },
+      realtime: { type: 'boolean' },
       vscode: { type: 'string' },
       'vscode-version': { type: 'string' },
       extension: { type: 'string' },
@@ -232,6 +237,7 @@ export const parseExportArgs = (
     cardSeconds: toNumber(values['card-seconds'], 'card-seconds', 3),
     strict: !!values.strict,
     showNotes: !!values['show-notes'],
+    realtime: !!values.realtime,
     vscodePath: values.vscode ? abs(values.vscode) : undefined,
     vscodeVersion: values['vscode-version'],
     // The beta of this CLI (@demotime/video@next) goes with the pre-release of Demo Time

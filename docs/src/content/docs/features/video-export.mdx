@@ -16,11 +16,18 @@ Your play already describes the demo: what gets opened, typed, highlighted and r
    - **16:9**, 1920×1080, for talks and YouTube.
    - **1:1**, 1080×1080, for social feeds.
    - **9:16**, 1080×1920, for Shorts and Reels.
-4. Choose any extras:
+4. Choose how long each slide stays on screen:
+   - **Based on the text**: the time it takes to read the slide, between 3 and 12 seconds.
+   - **3 seconds**, **5 seconds** or **8 seconds**, or **Custom…** to enter your own number of seconds, for every slide.
+
+   A scene or slide with `autoAdvanceAfter` keeps its own time. See [How the play is timed](#how-the-play-is-timed).
+
+5. Choose any extras:
    - **GIF**: for a README or a Marketplace page.
    - **Captions from scene titles** or **Captions from scene notes**: an SRT subtitle file next to the video. See [Captions](#captions).
    - **Chapters**: one per scene, in the MP4 and as a list you can paste into a video description.
    - **Title and end cards**: the first and last slide, held for three seconds.
+   - **Record slides in real time**: record every slide for its full time. Slower; use it when a slide moves in a way Demo Time can't tell, see [Static slides](#static-slides).
 
 A **Export play as video** task opens a second VS Code window, plays the demo in it, and records it. Leave that window alone until it closes. When it is done, the files are in `.demo/exports` of your workspace:
 
@@ -55,12 +62,24 @@ The next time you run the command, **Export again** reuses your choices. They ar
 The moves run exactly as in a live talk. After a scene's moves finish, it stays on screen for:
 
 - the scene's `autoAdvanceAfter`, when it has one;
-- otherwise, for a slide: the slide's `autoAdvanceAfter`, or the time it takes to read it (between 3 and 12 seconds);
+- otherwise, for a slide: the slide's `autoAdvanceAfter`, or the time you chose for each slide when you started the export, or the time it takes to read it (between 3 and 12 seconds);
 - otherwise: 2 seconds.
 
 Terminal commands get up to 30 seconds to finish, so their output is in the video. This needs [shell integration](https://code.visualstudio.com/docs/terminal/shell-integration); without it, the export can't tell when a command finishes, and the event log warns about it. A command that keeps running, such as `npm start` for a dev server, holds its scene for those 30 seconds. Change the limit with `--terminal-timeout` on the command line.
 
 To give a scene more time, set `autoAdvanceAfter` on it. See [Auto-proceed and loop](/features/auto-proceed-looping).
+
+### Static slides
+
+A slide that doesn't move looks the same for its whole time on screen, so the export doesn't wait for it: it moves on as soon as the slide has rendered, and the video shows that frame for the slide's time. A deck of static slides records in seconds instead of minutes, and the video, its chapters and its captions look the same as a real-time recording.
+
+A slide is recorded in real time when it has:
+
+- a `transition`, `textTypeWriterEffect`, a `video` or an animated SVG (`layout: animated`);
+- click steps (`dt-show`, `dt-hide`, `dt-list`), animations (`fade-in`, `text-typewriter`, `text-highlight`), a Mermaid diagram, or any other custom element apart from `dt-arrow`, `dt-circle`, `dt-rectangle` and `dt-action`;
+- a `<video>`, `<iframe>`, `<audio>` or `<canvas>`, a GIF, or a CSS animation in its content.
+
+Demo Time can't see animations that come from a custom theme or a custom layout. When a slide moves that way, record every slide in real time: pick **Record slides in real time**, or pass `--realtime` on the command line.
 
 ## Captions
 
@@ -154,7 +173,7 @@ The [ship-it demo](https://github.com/estruyf/vscode-demo-time/tree/main/promo/d
 
 **Demo Time: Run play unattended for recording** plays the whole play, or one act, on its own in your current window, with the timing and move handling described on this page. It doesn't record anything, so you can record it with your own tool, such as OBS or QuickTime. **Demo Time: Stop unattended run** stops it.
 
-It writes the event log to `.demo/exports/video-<time>/events.jsonl`, with the time each scene and slide started.
+It writes the event log to `.demo/exports/video-<time>/events.jsonl`, with the time each scene and slide started. Every slide stays on screen for its full time, as your tool records in real time.
 
 ## Moves that run differently
 
@@ -223,6 +242,7 @@ All the options (`npx @demotime/video --help` lists them too):
 | `--cards`, `--card-seconds <n>`              | Add a title and end card from the first and last slide                                                                                                          |
 | `--strict`                                   | Fail when a move cannot be recorded, instead of skipping it                                                                                                     |
 | `--show-notes`                               | Keep notes that open with `showOnTrigger` in the video                                                                                                          |
+| `--realtime`                                 | Record every slide for its full time, instead of holding the frame of a [static slide](#static-slides)                                                          |
 | `--vscode <path>`                            | The VS Code to record in (default: the installed one)                                                                                                           |
 | `--vscode-version <v>`                       | Download this VS Code version instead: `stable`, `insiders` or `1.105.0`                                                                                        |
 | `--extension <id\|vsix>`                     | The Demo Time to install (default: the latest from the Marketplace)                                                                                             |
@@ -234,7 +254,7 @@ All the options (`npx @demotime/video --help` lists them too):
 | `--copy-node-modules`                        | Copy `node_modules` into the workspace copy instead of linking them                                                                                             |
 | `--keep-temp`                                | Keep the temporary profile, workspace copy and frames                                                                                                           |
 | `--scene-hold <s>`                           | Seconds a scene without slides stays on screen (default 2)                                                                                                      |
-| `--slide-min <s>`, `--slide-max <s>`         | The shortest and longest time a slide stays on screen (default 3 and 12)                                                                                        |
+| `--slide-min <s>`, `--slide-max <s>`         | The shortest and longest time a slide stays on screen (default 3 and 12). Give both the same value for a fixed time per slide                                   |
 | `--terminal-timeout <s>`                     | Seconds a terminal command gets to finish (default 30)                                                                                                          |
 | `--timeout <minutes>`                        | Give up after this long (default 60)                                                                                                                            |
 | `--ffmpeg <path>`                            | The ffmpeg to use (default: the bundled one, then `FFMPEG` or `PATH`)                                                                                           |
