@@ -5,6 +5,11 @@
   "main": "dist/index.js",
   "type": "module",
   "mcpName": "io.github.estruyf/vscode-demo-time",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/estruyf/vscode-demo-time.git",
+    "directory": "apps/mcp"
+  },
   "bin": {
     "demotime-mcp": "dist/index.js"
   },

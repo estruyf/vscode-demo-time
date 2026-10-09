@@ -1,12 +1,20 @@
 name: Publish MCP Package
 
+# Only publishes when the commit message contains #mcp, or when run by hand.
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 env:
   MCP_PATH: ./apps/mcp
+
+# Trusted publishing: npm checks the GitHub OIDC token of this workflow instead of an npm token.
+# The package's settings on npmjs.com name this repository and publish-mcp.yml as its publisher.
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   publish:
@@ -26,6 +34,10 @@ jobs:
           node-version: "24"
           registry-url: "https://registry.npmjs.org/"
 
+      # Trusted publishing needs npm 11.5.1 or later. Pinned, so every publish runs the same npm.
+      - name: Update npm
+        run: npm install -g npm@11.21.0
+
       - name: Install dependencies
         run: npm i
 
@@ -43,7 +55,6 @@ jobs:
       - name: Build search
         run: npm run search:build
 
+      # No token: npm authenticates with the workflow's OIDC token and adds provenance
       - name: Publish to npm
         run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
