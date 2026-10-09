@@ -30,21 +30,41 @@ export class FrontMatterParser {
       return result;
     }
 
-    try {
-      // Extract and parse the frontmatter
-      const [, yamlContent, remainingContent] = match;
+    const [, yamlContent, remainingContent] = match;
 
-      // Parse YAML content
-      const parsedFrontmatter = (yaml.load(yamlContent) as SlideMetadata) || {};
+    // An empty block (---\n---) is valid frontmatter without any properties
+    if (yamlContent.trim() === '') {
+      return { frontmatter: {}, remainingContent };
+    }
 
-      return {
-        frontmatter: parsedFrontmatter,
-        remainingContent: remainingContent,
-      };
-    } catch (error) {
-      console.error('Error parsing frontmatter:', error);
+    const parsedFrontmatter = FrontMatterParser.parseYamlMapping(yamlContent);
+    if (!parsedFrontmatter) {
       return result;
     }
+
+    return {
+      frontmatter: parsedFrontmatter,
+      remainingContent,
+    };
+  }
+
+  /**
+   * Parses YAML content and only returns it when it is a mapping (key/value object).
+   * Scalars, arrays and invalid YAML are not frontmatter.
+   *
+   * @param yamlContent The YAML content to parse
+   * @returns The parsed mapping, or undefined when the content is not a YAML mapping
+   */
+  public static parseYamlMapping(yamlContent: string): SlideMetadata | undefined {
+    try {
+      const parsed = yaml.load(yamlContent);
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        return parsed as SlideMetadata;
+      }
+    } catch {
+      // Not valid YAML
+    }
+    return undefined;
   }
 
   /**

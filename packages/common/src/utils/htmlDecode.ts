@@ -1,5 +1,6 @@
 export const htmlDecode = (input: string): string | undefined => {
-  const elm = document.createElement("div");
+  // A textarea only decodes the entities and does not parse tags like `<br/>` into elements
+  const elm = document.createElement('textarea');
   elm.innerHTML = input;
-  return elm.childNodes[0]?.textContent || undefined;
+  return elm.value || undefined;
 };

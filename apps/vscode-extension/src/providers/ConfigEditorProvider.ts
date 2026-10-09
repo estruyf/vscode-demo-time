@@ -9,6 +9,7 @@ import {
   window,
   workspace,
   WorkspaceEdit,
+  Position,
   Range,
 } from 'vscode';
 import { Subscription } from '../models';
@@ -19,6 +20,7 @@ import {
   Extension,
   Logger,
   Notifications,
+  PreflightService,
 } from '../services';
 import {
   checkSnippetArgs,
@@ -32,14 +34,41 @@ import {
   openFilePicker,
   writeFile,
 } from '../utils';
-import { ActionTreeItem } from './ActionTreeviewProvider';
 import { SettingsView } from '../settingsView/SettingsView';
 import { COMMAND, Config, WebViewMessages, demoConfigToActConfig } from '@demotime/common';
+
+/**
+ * The scene, and optionally the move, to show in the act editor
+ */
+export interface ActEditorTarget {
+  /**
+   * Zero-based index of the scene in the act
+   */
+  stepIndex?: number;
+  /**
+   * Zero-based index of the move in the scene
+   */
+  moveIndex?: number;
+}
+
+/**
+ * The location of a scene or move in an act file
+ */
+export interface ActMoveLocation {
+  filePath: string;
+  sceneIndex: number;
+  moveIndex?: number;
+  /**
+   * Zero-based position in the act file, for the text editor
+   */
+  line: number;
+  character: number;
+}
 
 export class ConfigEditorProvider implements CustomTextEditorProvider {
   private static readonly viewType = 'demoTime.configEditor';
   private static readonly fileViews: Map<string, WebviewPanel> = new Map();
-  private static pendingStepOpens: Map<string, ActionTreeItem> = new Map();
+  private static pendingStepOpens: Map<string, ActEditorTarget> = new Map();
   private static isManualSave = false;
   private static isDisposed = true;
 
@@ -70,6 +99,10 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
 
     subscriptions.push(
       commands.registerCommand(COMMAND.openConfigEditor, ConfigEditorProvider.openInConfigEditor),
+    );
+
+    subscriptions.push(
+      commands.registerCommand(COMMAND.openActMove, ConfigEditorProvider.openMove),
     );
   }
 
@@ -183,6 +216,12 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
           await handleRunDemoStep(payload, document, webviewPanel, requestId);
         } else if (command === WebViewMessages.toVscode.configEditor.checkStepQueue) {
           await handleCheckStepQueue(webviewPanel, requestId);
+        } else if (command === WebViewMessages.toVscode.configEditor.getPreflightProblems) {
+          webviewPanel.webview.postMessage({
+            command: WebViewMessages.toVscode.configEditor.getPreflightProblems,
+            requestId: requestId,
+            payload: await PreflightService.getActProblems(document.uri, payload),
+          });
         } else if (command === WebViewMessages.toVscode.configEditor.openSettings) {
           SettingsView.show();
         } else if (command === WebViewMessages.toVscode.openFile && payload) {
@@ -527,6 +566,17 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     }
   }
 
+  /**
+   * Lets the open act editors check their act again, as files they use might have changed
+   */
+  public static notifyPreflightChanged() {
+    for (const panel of ConfigEditorProvider.fileViews.values()) {
+      panel.webview.postMessage({
+        command: WebViewMessages.toWebview.configEditor.preflightChanged,
+      });
+    }
+  }
+
   public static openInConfigEditor(uri?: Uri) {
     uri = uri || window.activeTextEditor?.document.uri;
     commands.executeCommand('vscode.openWith', uri, ConfigEditorProvider.viewType);
@@ -537,23 +587,51 @@ export class ConfigEditorProvider implements CustomTextEditorProvider {
     commands.executeCommand('vscode.openWith', uri, 'default');
   }
 
-  public static openStepInEditor(fileUri: Uri, item: ActionTreeItem) {
+  /**
+   * Shows a scene or move of an act file, in the act editor or the text editor (when the act editor
+   * is turned off)
+   */
+  public static openMove(args: ActMoveLocation) {
+    if (!args?.filePath) {
+      return;
+    }
+
+    const fileUri = Uri.file(args.filePath);
+    const openInConfigEditor = Extension.getInstance().getSetting<boolean>(
+      Config.configEditor.openInConfigEditor,
+    );
+
+    if (openInConfigEditor) {
+      ConfigEditorProvider.openStepInEditor(fileUri, {
+        stepIndex: args.sceneIndex,
+        moveIndex: args.moveIndex,
+      });
+      return;
+    }
+
+    const position = new Position(args.line, args.character);
+    window.showTextDocument(fileUri, { selection: new Range(position, position) });
+  }
+
+  public static openStepInEditor(fileUri: Uri, item: ActEditorTarget) {
     if (!fileUri || !item) {
       return;
     }
+
+    const target: ActEditorTarget = { stepIndex: item.stepIndex, moveIndex: item.moveIndex };
 
     const panel = ConfigEditorProvider.fileViews.get(fileUri.toString());
     if (!ConfigEditorProvider.isDisposed && panel) {
       panel.reveal();
       panel.webview.postMessage({
         command: WebViewMessages.toWebview.configEditor.openStep,
-        payload: item,
+        payload: target,
       });
     } else {
       if (!ConfigEditorProvider.pendingStepOpens) {
-        ConfigEditorProvider.pendingStepOpens = new Map<string, ActionTreeItem>();
+        ConfigEditorProvider.pendingStepOpens = new Map<string, ActEditorTarget>();
       }
-      ConfigEditorProvider.pendingStepOpens.set(fileUri.toString(), item);
+      ConfigEditorProvider.pendingStepOpens.set(fileUri.toString(), target);
       ConfigEditorProvider.openInConfigEditor(fileUri);
     }
   }

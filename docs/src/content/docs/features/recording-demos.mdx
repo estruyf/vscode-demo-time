@@ -1,7 +1,7 @@
 ---
 title: Recording demos
 description: Record your actions in the editor — creating files, typing, saving and highlighting — and turn them into an act with scenes and moves automatically.
-lastmod: 2026-06-25T00:00:00.000Z
+lastmod: 2026-10-05T00:00:00.000Z
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
@@ -20,7 +20,9 @@ The recorder is controlled from the **Acts & Scenes** view in the Demo Time acti
 - Do your thing in the editor — create files, type, save, switch files.
 - Click **■ Stop** to finish. Demo Time asks for a title and creates a new act file in the `.demo` folder.
 
-You can also use the command palette: **`Demo Time: Record demo`** and **`Demo Time: Stop recording`**.
+You can also use the command palette: **`Demo Time: Record demo`** and **`Demo Time: Stop demo recording`**.
+
+When you press <kbd>Escape</kbd> at the title prompt, Demo Time asks whether to discard the recording. **Keep** creates the act with the suggested title. When an act file with the same name already exists, a number is added to the file name, like `my-demo-2.json`.
 
 ## What gets captured
 
@@ -28,9 +30,12 @@ You can also use the command palette: **`Demo Time: Record demo`** and **`Demo T
 | --- | --- |
 | Have a file open when you start recording | `open` |
 | Create a new file | `create` followed by `open` |
+| Create a file outside VS Code (terminal, git, a CLI) | `create`, `open` and an `applyPatch` with its content, once you open or edit it |
 | Type or edit a file | `applyPatch` (edits are coalesced — see [segmentation](#how-edits-become-moves)) |
-| Save a file | `save` (can be disabled, see [settings](#settings)) |
-| Switch to another file | flushes the pending edits into a move |
+| Save a file | `save` (can be disabled, see [settings](#settings)). Only manual saves are captured, auto save is ignored |
+| Switch to another file | flushes the pending edits into a move, and `open` for the file you switch to |
+
+Every move happens in the file that the replay shows: when you go back to a file you edited before, or a file changes in the background, the recording adds an `open` move for it first. Each scene starts with an `open` move, so it also works when you start the play from that scene.
 
 Highlights, move boundaries and new scenes are added on demand through the [recording actions](#recording-actions).
 
@@ -43,7 +48,7 @@ Only files inside your workspace are recorded. The `.demo` folder itself (act fi
 While recording, your edits to a file are **coalesced**: everything you type piles up and only becomes a single `applyPatch` move when a boundary is reached. The boundaries are:
 
 - Switching to another file
-- Saving the file
+- Saving the file manually (auto saves, like with `files.autoSave`, are not a boundary)
 - The **Split move** action (a manual boundary, see below)
 - The **New scene** action
 - Stopping the recording
@@ -52,14 +57,16 @@ This keeps the result clean — one move per meaningful chunk instead of one mov
 
 ## Recording actions
 
-While recording, **right-click in the editor** to open the **Demo Time** submenu. The same actions are available via the command palette and through keybindings. The menu only appears while a recording is active.
+While recording, **right-click in the editor** to open the **Demo Time** submenu, or run the actions from the command palette (`Demo Time: Mark highlight`, `Demo Time: Split move`, `Demo Time: New scene`). The menu and commands only appear while a recording is active.
 
-| Action | Keybinding | What it does |
-| --- | --- | --- |
-| **Mark highlight** | <kbd>Cmd/Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>H</kbd> | Capture the current selection as a `highlight` move. With no selection it highlights the current line. |
-| **Split move** | <kbd>Cmd/Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>M</kbd> | End the current move and start a new one — without leaving the file or saving. |
-| **New scene** | <kbd>Cmd/Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>N</kbd> | End the current scene and start a new one. You are prompted for the scene title. |
-| **Stop recording** | — | Finish recording and create the act file. |
+| Action | What it does |
+| --- | --- |
+| **Mark highlight** | Capture the current selection as a `highlight` move. With no selection it highlights the current line. A selection that ends at the start of a line, like after <kbd>Shift</kbd>+<kbd>Down</kbd> or a triple-click, does not include that line. |
+| **Split move** | End the current move and start a new one — without leaving the file or saving. |
+| **New scene** | End the current scene and start a new one. You are prompted for the scene title; leave it empty for `Scene N`, or press <kbd>Escape</kbd> to cancel. |
+| **Stop demo recording** | Finish recording and create the act file. |
+
+The actions have no default keyboard shortcuts. To add your own, search for the command in **Keyboard Shortcuts** and use `demo-time.isRecording` as the `when` clause.
 
 <Aside type="tip">
 **Split move** keeps you in the same scene and just starts a new move; **New scene** ends the whole scene (a group of moves) and begins a new section of your demo.
@@ -133,6 +140,17 @@ scenes:
 <Aside type="tip">
 After recording, open the act in the [Act Editor](/adding-moves/) to tweak titles, reorder moves, change the [typing mode](/actions/text/) of the `applyPatch` moves, or remove anything you do not need.
 </Aside>
+
+## Before you present
+
+- **Reset your workspace.** When you stop recording, your files are in their final state. Undo the changes before you present, for instance with `git restore` and by deleting the files you created (`git clean`), so the play starts from the same files as the recording.
+- **Choose a typing mode.** The recorded `applyPatch` moves have no `insertTypingMode`, so they replay with the [`demoTime.insertTypingMode`](/references/settings/) setting, which is `instant` by default. Set `insertTypingMode` to `character-by-character` or `line-by-line` on the moves, or change the setting, to type the code like you did while recording.
+
+## Limitations
+
+- Only files in the first workspace folder are recorded.
+- Terminal commands are not recorded. Add [`executeTerminalCommand`](/actions/terminal/#execute-a-terminal-command) moves in the Act Editor.
+- Renaming and deleting files is not recorded. Add [`rename`](/actions/file/#rename-file) and [`deleteFile`](/actions/file/#delete-file) moves in the Act Editor.
 
 ## Settings
 

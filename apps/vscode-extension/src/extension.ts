@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { clearVariablesState } from './utils';
 import {
+  AiSkillsService,
   AnalyticsCommands,
   DecoratorService,
   DemoApi,
@@ -13,7 +14,11 @@ import {
   ImportService,
   NotesService,
   PdfExportService,
+  PreflightService,
+  VideoExportCommand,
+  VideoExportService,
   Slides,
+  SlidePreviewSync,
   SponsorService,
   UriHandler,
   TextTypingService,
@@ -66,16 +71,21 @@ export async function activate(context: vscode.ExtensionContext) {
   DemoStatusBar.register();
   DemoFileProvider.register();
   Slides.register();
+  SlidePreviewSync.register();
   NotesService.registerCommands();
   TextTypingService.registerCommands();
   DemoApi.register();
   UriHandler.register();
   PdfExportService.register();
+  PreflightService.register();
+  VideoExportService.register();
+  VideoExportCommand.register();
   ImportService.register();
   TerminalService.register();
   InputService.registerCommands();
   AnalyticsCommands.registerCommands();
   RedactionService.register();
+  AiSkillsService.register();
   SponsorService.init(context);
 
   console.log(`${Config.title} is active!`);

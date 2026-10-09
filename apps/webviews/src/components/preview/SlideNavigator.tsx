@@ -1,11 +1,16 @@
 import * as React from 'react';
-import { Slide } from '@demotime/common';
+import { getSlideOverflowSize, isAutoFitEnabled, Slide, SlideOverflow } from '@demotime/common';
 import { Icon } from 'vscrui';
 import { SlideThumbnail } from './SlideThumbnail';
 
 export interface SlideOption {
   index: number;
   title: string;
+  hidden?: boolean;
+  /**
+   * How far the content reaches past the slide, when it doesn't fit
+   */
+  overflow?: SlideOverflow;
 }
 
 export interface ISlideNavigatorProps {
@@ -17,7 +22,6 @@ export interface ISlideNavigatorProps {
   isDarkTheme: boolean;
   webviewUrl: string | null;
   filePath?: string;
-  theme?: string;
   onNavigate: (index: number) => void;
   onOpenChange?: (isOpen: boolean) => void;
 }
@@ -31,7 +35,6 @@ export const SlideNavigator: React.FunctionComponent<ISlideNavigatorProps> = ({
   isDarkTheme,
   webviewUrl,
   filePath,
-  theme,
   onNavigate,
   onOpenChange,
 }) => {
@@ -50,10 +53,14 @@ export const SlideNavigator: React.FunctionComponent<ISlideNavigatorProps> = ({
 
   // Compute thumbnail scale based on container width
   React.useEffect(() => {
-    if (!isOpen || !containerRef.current) {return;}
+    if (!isOpen || !containerRef.current) {
+      return;
+    }
 
     const updateScale = () => {
-      if (!containerRef.current) {return;}
+      if (!containerRef.current) {
+        return;
+      }
       const containerWidth = containerRef.current.clientWidth;
       // 3 columns with gap (3 * 12px gap = 36px) and padding (2 * 16px = 32px)
       const cardWidth = (containerWidth - 36 - 32) / 3;
@@ -79,7 +86,9 @@ export const SlideNavigator: React.FunctionComponent<ISlideNavigatorProps> = ({
 
   // ESC to close (capture phase to intercept before presentation close)
   React.useEffect(() => {
-    if (!isOpen) {return;}
+    if (!isOpen) {
+      return;
+    }
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -143,7 +152,8 @@ export const SlideNavigator: React.FunctionComponent<ISlideNavigatorProps> = ({
             <div
               className="flex items-center justify-between px-4 py-3 shrink-0"
               style={{
-                borderBottom: '1px solid var(--vscode-editorWidget-border, var(--vscode-widget-border))',
+                borderBottom:
+                  '1px solid var(--vscode-editorWidget-border, var(--vscode-widget-border))',
               }}
             >
               <span className="text-sm font-medium text-(--vscode-editorWidget-foreground)">
@@ -164,45 +174,59 @@ export const SlideNavigator: React.FunctionComponent<ISlideNavigatorProps> = ({
                 {slideOptions.map((option) => {
                   const isActive = option.index === currentSlide;
                   const slide = slideData[option.index];
+                  const overflowMessage = option.overflow
+                    ? isAutoFitEnabled(slide?.frontmatter)
+                      ? `still ${getSlideOverflowSize(option.overflow)} with autoFit`
+                      : getSlideOverflowSize(option.overflow)
+                    : undefined;
+                  const tooltip = [option.hidden ? 'hidden' : undefined, overflowMessage]
+                    .filter(Boolean)
+                    .join(', ');
                   return (
                     <button
                       key={option.index}
                       data-active={isActive}
+                      data-hidden={option.hidden}
+                      data-overflow={!!option.overflow}
+                      title={tooltip ? `${option.title} (${tooltip})` : undefined}
                       onClick={() => handleSelect(option.index)}
-                      className={`relative rounded-sm overflow-hidden cursor-pointer transition-all duration-150 text-left group ${isActive
-                        ? 'ring-2 ring-(--vscode-focusBorder)'
-                        : 'hover:ring-1 hover:ring-(--vscode-focusBorder)'
-                        }`}
+                      className={`relative rounded-sm overflow-hidden cursor-pointer transition-all duration-150 text-left group ${
+                        isActive
+                          ? 'ring-2 ring-(--vscode-focusBorder)'
+                          : 'hover:ring-1 hover:ring-(--vscode-focusBorder)'
+                      }`}
                       style={{
-                        border: '1px solid var(--vscode-editorWidget-border, var(--vscode-widget-border))',
+                        border:
+                          '1px solid var(--vscode-editorWidget-border, var(--vscode-widget-border))',
                       }}
                     >
-                      {/* Slide thumbnail */}
-                      {slide ? (
-                        <SlideThumbnail
-                          slide={slide}
-                          vsCodeTheme={vsCodeTheme}
-                          isDarkTheme={isDarkTheme}
-                          webviewUrl={webviewUrl}
-                          filePath={filePath}
-                          theme={theme}
-                        />
-                      ) : (
-                        <div
-                          className="aspect-video flex items-center justify-center"
-                          style={{ backgroundColor: 'var(--vscode-editor-background)' }}
-                        >
-                          <span
-                            className="text-3xl font-light"
-                            style={{
-                              color: 'var(--vscode-editorWidget-foreground)',
-                              opacity: 0.3,
-                            }}
+                      {/* Slide thumbnail (hidden slides are dimmed, but can still be opened) */}
+                      <div style={{ opacity: option.hidden ? 0.4 : 1 }}>
+                        {slide ? (
+                          <SlideThumbnail
+                            slide={slide}
+                            vsCodeTheme={vsCodeTheme}
+                            isDarkTheme={isDarkTheme}
+                            webviewUrl={webviewUrl}
+                            filePath={filePath}
+                          />
+                        ) : (
+                          <div
+                            className="aspect-video flex items-center justify-center"
+                            style={{ backgroundColor: 'var(--vscode-editor-background)' }}
                           >
-                            {option.index + 1}
-                          </span>
-                        </div>
-                      )}
+                            <span
+                              className="text-3xl font-light"
+                              style={{
+                                color: 'var(--vscode-editorWidget-foreground)',
+                                opacity: 0.3,
+                              }}
+                            >
+                              {option.index + 1}
+                            </span>
+                          </div>
+                        )}
+                      </div>
 
                       {/* Title bar */}
                       <div
@@ -211,18 +235,39 @@ export const SlideNavigator: React.FunctionComponent<ISlideNavigatorProps> = ({
                           backgroundColor: isActive
                             ? 'var(--vscode-list-activeSelectionBackground)'
                             : 'var(--vscode-editorWidget-background)',
-                          borderTop: '1px solid var(--vscode-editorWidget-border, var(--vscode-widget-border))',
+                          borderTop:
+                            '1px solid var(--vscode-editorWidget-border, var(--vscode-widget-border))',
                         }}
                       >
                         <p
-                          className="text-xs truncate"
+                          className="flex items-center gap-1 text-xs"
                           style={{
                             color: isActive
                               ? 'var(--vscode-list-activeSelectionForeground)'
                               : 'var(--vscode-editorWidget-foreground)',
                           }}
                         >
-                          {option.title}
+                          {option.hidden && (
+                            <Icon
+                              name={'eye-closed' as never}
+                              className="inline-flex shrink-0 justify-center items-center"
+                              style={{ color: 'inherit', fontSize: '14px' }}
+                            />
+                          )}
+                          <span className="truncate" style={{ opacity: option.hidden ? 0.7 : 1 }}>
+                            {option.title}
+                          </span>
+                          {overflowMessage && (
+                            <Icon
+                              name={'warning' as never}
+                              className="inline-flex shrink-0 justify-center items-center ml-auto"
+                              style={{
+                                color: 'var(--vscode-editorWarning-foreground)',
+                                fontSize: '14px',
+                              }}
+                              aria-label={overflowMessage}
+                            />
+                          )}
                         </p>
                       </div>
                     </button>

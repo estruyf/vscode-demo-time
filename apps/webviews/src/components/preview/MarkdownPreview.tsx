@@ -5,16 +5,24 @@ import { EventData } from '@estruyf/vscode';
 import { SlideControls } from './SlideControls';
 import { LaserPointer } from './LaserPointer';
 import DOMPurify from 'dompurify';
-import { Config, convertTemplateToHtml, Slide, SlideLayout, SlideParser, SlideTheme, SlideTransition, WebViewMessages } from '@demotime/common';
-import { useFileContents, useCursor, useScale, useMousePosition, useTheme } from '../../hooks';
-import { extractFirstH1 } from '../../utils';
+import { Config, getNextSlideIdx, getPreviousSlideIdx, getProgressBarPosition, getProgressPercentage, getSlideBackgroundStyles, getSlideClassNames, getSlideHeading, getTemplateData, getTemplateErrorMessage, getVideoAutoplay, getVisibleSlideIdx, hasSlideOverflow, isAutoFitEnabled, isSlideHidden, ProgressBarPosition, renderTemplateError, tryConvertTemplateToHtml, Slide, SlideLayout, SlideOverflow, SlideOverflowEdges, SlideOverflowResult, SlideParser, SlidePlaceholders, SlideTheme, SlideTransition, TemplateErrorOptions, WebViewMessages } from '@demotime/common';
+import { Icon } from 'vscrui';
+import { useFileContents, useCursor, useScale, useMousePosition, useTheme, useClickSteps, usePresentationMode, useSlideOverflow, useReducedMotionPreference } from '../../hooks';
+import { extractFirstH1, getSlideTitle, transformImageUrl } from '../../utils';
 import { AnimatedSVGSlide } from '../slides/AnimatedSVGSlide';
+import { SlideOverflowScanner } from './SlideOverflowScanner';
+import { SlideFitBadge } from './SlideFitBadge';
+import { SlideOverflowMarker } from './SlideOverflowMarker';
+import { nextClickStep, previousClickStep, resetClickSteps } from '../../webcomponents/clickSteps';
 
 export interface IMarkdownPreviewProps {
   fileUri: string;
   slideIdx?: number;
   webviewUrl: string | null;
 }
+
+// Height of the bar above a hidden slide
+const HIDDEN_BAR_HEIGHT = 36;
 
 export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = ({
   fileUri,
@@ -33,18 +41,53 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const [transition, setTransition] = React.useState<SlideTransition | undefined>(undefined);
   const [header, setHeader] = React.useState<string | undefined>(undefined);
   const [footer, setFooter] = React.useState<string | undefined>(undefined);
+  const [progress, setProgress] = React.useState<{ position: ProgressBarPosition; crntSlideIdx: number; totalSlides: number; percentage: number } | undefined>(undefined);
   const [isZoomed, setIsZoomed] = React.useState(false);
   const [zoomLevel,] = React.useState(2.0); // 2x zoom by default
   const [panOffset, setPanOffset] = React.useState({ x: 0, y: 0 });
   const [svgContent, setSvgContent] = React.useState<string | null>(null);
+  // The overflow of every slide of the file, measured in the background
+  const [scannedOverflows, setScannedOverflows] = React.useState<SlideOverflow[]>([]);
 
   const { content, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();
   const ref = React.useRef<HTMLDivElement>(null);
   const slideRef = React.useRef<HTMLDivElement>(null);
   const { cursorVisible, resetCursorTimeout, hideCursor } = useCursor();
   const { vsCodeTheme, isDarkTheme } = useTheme();
-  const { scale } = useScale(ref, slideRef);
+  const isPresentationMode = usePresentationMode();
+  // Slides only render once this is known, so they don't start an animation they should skip
+  const reducedMotion = useReducedMotionPreference();
+  // Outside presentation mode, hidden slides are shown so you can edit them, with a bar above them
+  const showHiddenMarker = isPresentationMode === false && isSlideHidden(crntSlide ?? undefined);
+  const offsetTop = showHiddenMarker ? HIDDEN_BAR_HEIGHT : 0;
+  const { scale } = useScale(ref, slideRef, offsetTop);
   const { mousePosition, handleMouseMove, handleMouseLeave } = useMousePosition(slideRef, scale, resetCursorTimeout);
+  const clickStep = useClickSteps();
+  const autoFit = isAutoFitEnabled(crntSlide?.frontmatter);
+  // Outside presentation mode, a badge warns about content that doesn't fit on the slide
+  const showOverflowWarning = isPresentationMode === false;
+  const liveFit = useSlideOverflow(slideRef, {
+    enabled: showOverflowWarning || autoFit,
+    autoFit,
+    slideKey: `${crntFilePath}-${crntSlide?.index}-${layout}`,
+  });
+  // The background scan shows the slide with all its click steps, the live measurement the
+  // current click step
+  const overflow = React.useMemo<SlideOverflow>(() => {
+    const scanned = crntSlide ? scannedOverflows[crntSlide.index] : undefined;
+    const edge = (side: keyof SlideOverflowEdges) =>
+      Math.max(liveFit.overflow.edges?.[side] ?? 0, scanned?.edges?.[side] ?? 0);
+    return {
+      x: Math.max(liveFit.overflow.x, scanned?.x ?? 0),
+      y: Math.max(liveFit.overflow.y, scanned?.y ?? 0),
+      edges: { top: edge('top'), right: edge('right'), bottom: edge('bottom'), left: edge('left') },
+    };
+  }, [liveFit, scannedOverflows, crntSlide]);
+  // Hidden slides (`hide: true`) are only skipped while presenting
+  const skipHidden = !!isPresentationMode;
+  const skipHiddenRef = React.useRef(skipHidden);
+  // Going back to the previous slide shows it with all its click steps revealed
+  const revealClickStepsRef = React.useRef(false);
 
   const handleZoomedMouseMove = React.useCallback((event: React.MouseEvent) => {
     if (!isZoomed || !ref.current) {
@@ -94,77 +137,66 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     hideCursor();
   }, [hideCursor]);
 
-  const fetchTemplate = React.useCallback(
+  /**
+   * Gets the template of the header or footer: the `header`/`footer` front matter of the slide, or
+   * the file of the global setting. Returns an error block when the file can't be read.
+   */
+  const getTemplate = React.useCallback(
     async (
+      slideTemplate: string | undefined,
       configKey: string,
-      setter: React.Dispatch<React.SetStateAction<string | undefined>>
-    ) => {
-      try {
-        const templatePath = await messageHandler.request<string>(
-          WebViewMessages.toVscode.getSetting,
-          configKey
-        );
-        if (!templatePath) {
-          setter(undefined);
-          return;
-        }
-
-        const template = await messageHandler.request<string>(
-          WebViewMessages.toVscode.getFileContents,
-          templatePath
-        );
-        if (!template) {
-          setter(undefined);
-          return;
-        }
-
-        if (template && crntSlide?.frontmatter) {
-          if (template.includes(`{{crntSlideIdx}}`)) {
-            const crntSlideIdx = await messageHandler.request<number>(WebViewMessages.toVscode.preview.getGlobalSlideIndex, {
-              filePath: crntFilePath,
-              localSlideIdx: crntSlide.index
-            });
-            crntSlide.frontmatter.crntSlideIdx = crntSlideIdx;
-          }
-
-          if (template.includes(`{{totalSlides}}`)) {
-            const totalSlides = await messageHandler.request<number>(WebViewMessages.toVscode.preview.getTotalSlides);
-            crntSlide.frontmatter.totalSlides = totalSlides;
-          }
-
-          const processed = convertTemplateToHtml(template, crntSlide.frontmatter, webviewUrl);
-          setter(processed);
-        }
-      } catch {
-        setter(undefined);
+      title: string
+    ): Promise<{ template?: string; html?: string; isSlideTemplate?: boolean; errorOptions?: TemplateErrorOptions }> => {
+      if (slideTemplate) {
+        return { template: slideTemplate, isSlideTemplate: true, errorOptions: { title, compact: true } };
       }
+
+      const templatePath = await messageHandler.request<string>(WebViewMessages.toVscode.getSetting, configKey);
+      if (!templatePath) {
+        return {};
+      }
+
+      const errorOptions = { title, path: templatePath, compact: true };
+      const template = await messageHandler.request<string>(WebViewMessages.toVscode.getFileContents, templatePath);
+      if (!template) {
+        const message = 'The template file could not be found or is empty.';
+        messageHandler.send(WebViewMessages.toVscode.logError, getTemplateErrorMessage(errorOptions, message));
+        return { html: renderTemplateError(errorOptions, message) };
+      }
+
+      return { template, errorOptions };
     },
-    [crntFilePath, crntSlide?.frontmatter, crntSlide?.index, webviewUrl]
+    []
   );
 
-  const fetchHeader = React.useCallback(() => {
-    fetchTemplate(Config.slides.slideHeaderTemplate, setHeader);
-  }, [fetchTemplate]);
+  React.useEffect(() => {
+    skipHiddenRef.current = skipHidden;
+  }, [skipHidden]);
 
-  const fetchFooter = React.useCallback(() => {
-    fetchTemplate(Config.slides.slideFooterTemplate, setFooter);
-  }, [fetchTemplate]);
-
+  const isPresentationModeKnown = isPresentationMode !== undefined;
 
   // Load the correct slide based on slideIdx prop
+  // Runs again once the presentation mode is known, but not when it gets toggled, so toggling
+  // presentation mode doesn't move away from the current slide.
   React.useEffect(() => {
     if (Array.isArray(slides) && slides.length > 0) {
+      let targetIdx = 0;
       if (typeof slideIdx === 'number' && slideIdx >= 0 && slideIdx < slides.length) {
-        setCrntSlide(slides[slideIdx]);
+        targetIdx = slideIdx;
       } else if (typeof initialSlideIndex === 'number' && initialSlideIndex >= 0 && initialSlideIndex < slides.length) {
-        setCrntSlide(slides[initialSlideIndex]);
-      } else {
-        setCrntSlide(slides[0]);
+        targetIdx = initialSlideIndex;
+      }
+
+      // While presenting, a deck that opens on a hidden slide continues with the next visible slide
+      const visibleIdx = skipHiddenRef.current ? getVisibleSlideIdx(slides, targetIdx) : targetIdx;
+      setCrntSlide(slides[visibleIdx]);
+      if (visibleIdx !== targetIdx) {
+        messageHandler.send(WebViewMessages.toVscode.updateSlideIndex, visibleIdx);
       }
     } else {
       setCrntSlide(null);
     }
-  }, [slideIdx, initialSlideIndex, slides]);
+  }, [slideIdx, initialSlideIndex, slides, isPresentationModeKnown]);
 
   const updateSlideIdx = React.useCallback((slideIdx: number) => {
     if (slideIdx < 0 || slideIdx >= slides.length) {
@@ -189,8 +221,10 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     return slides.map((slide) => ({
       index: slide.index,
       title: extractFirstH1(slide.rawContent) || `Slide ${slide.index + 1}`,
+      hidden: isSlideHidden(slide),
+      overflow: hasSlideOverflow(scannedOverflows[slide.index]) ? scannedOverflows[slide.index] : undefined,
     }));
-  }, [slides]);
+  }, [slides, scannedOverflows]);
 
   const toggleZoom = React.useCallback(() => {
     setIsZoomed(prev => {
@@ -215,6 +249,11 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     // the event as consumed before we advance. If not consumed, fall back
     // to the async checkNext handshake.
     if (command === WebViewMessages.toWebview.nextSlide) {
+      // Reveal the remaining click steps of the slide first
+      if (nextClickStep()) {
+        return;
+      }
+
       // If a slide previously consumed a next and hasn't yet signalled completion,
       // ignore further next requests for that slide (they should be pressed again after completion).
       if (consumedSlideIndexRef.current !== null && consumedSlideIndexRef.current === crntSlide?.index) {
@@ -269,15 +308,30 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         return;
       }
 
-      const nextSlide = crntSlide ? crntSlide.index + 1 : 1;
+      const nextSlide = crntSlide ? (getNextSlideIdx(slides, crntSlide.index, skipHidden) ?? slides.length) : 1;
       updateSlideIdx(nextSlide);
       messageHandler.send(WebViewMessages.toVscode.updateSlideIndex, nextSlide);
+    } else if (command === WebViewMessages.toWebview.preview.goToSlide) {
+      // The editor cursor moved to another slide. The file can have more slides than the preview
+      // until it is saved.
+      if (typeof message.data.payload !== 'number' || slides.length === 0) {
+        return;
+      }
+      const slideIdx = Math.min(Math.max(message.data.payload, 0), slides.length - 1);
+      if (slideIdx !== crntSlide?.index) {
+        navigateToSlide(slideIdx);
+      }
     } else if (command === WebViewMessages.toWebview.previousSlide) {
-      const previousSlide = crntSlide ? crntSlide.index - 1 : 0;
+      if (previousClickStep()) {
+        return;
+      }
+
+      const previousSlide = crntSlide ? (getPreviousSlideIdx(slides, crntSlide.index, skipHidden) ?? -1) : 0;
+      revealClickStepsRef.current = previousSlide >= 0;
       updateSlideIdx(previousSlide);
       messageHandler.send(WebViewMessages.toVscode.updateSlideIndex, previousSlide);
     }
-  }, [crntSlide, updateSlideIdx]);
+  }, [crntSlide, slides, skipHidden, updateSlideIdx, navigateToSlide]);
 
   const getBgStyles = React.useCallback(() => {
     if (!layout || layout === SlideLayout.ImageLeft || layout === SlideLayout.ImageRight) {
@@ -286,6 +340,13 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
 
     return bgStyles;
   }, [bgStyles, layout]);
+
+  // The `background` and `class` front matter properties of the slide
+  const slideBgStyles = React.useMemo(
+    () => getSlideBackgroundStyles(crntSlide?.frontmatter, (path) => transformImageUrl(webviewUrl || "", path) || path),
+    [crntSlide?.frontmatter, webviewUrl]
+  );
+  const slideClassNames = React.useMemo(() => getSlideClassNames(crntSlide?.frontmatter), [crntSlide?.frontmatter]);
 
   // Track which slide (if any) consumed a 'next' request and is waiting to complete
   const consumedSlideIndexRef = React.useRef<number | null>(null);
@@ -318,6 +379,54 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     return crntFilePath ? crntFilePath.replace(webviewUrl || "", "") : undefined;
   }, [crntFilePath, webviewUrl]);
 
+  // The extension shows the slides that overflow in the Problems panel
+  const onSlidesScanned = React.useCallback((overflows: SlideOverflow[]) => {
+    setScannedOverflows(overflows);
+    if (!relativePath) {
+      return;
+    }
+
+    const results: SlideOverflowResult[] = overflows
+      .map((slideOverflow, slideIndex) => ({ slideIndex, ...slideOverflow }))
+      .filter((result) => hasSlideOverflow(result));
+    messageHandler.send(WebViewMessages.toVscode.preview.slideOverflow, {
+      path: relativePath,
+      overflows: results,
+    });
+  }, [relativePath]);
+
+  // Double-clicking the slide moves the editor cursor to its source, unless the sync is turned off
+  const revealSourceOnDoubleClick = React.useCallback(async (ev: React.MouseEvent<HTMLDivElement>) => {
+    if (isPresentationMode !== false || !relativePath || !crntSlide) {
+      return;
+    }
+
+    // Keep double-clicks on links, buttons and form fields for the element itself
+    const target = ev.target as HTMLElement | null;
+    if (target?.closest('a, button, input, textarea, select, video, audio, [contenteditable="true"]')) {
+      return;
+    }
+
+    const isSyncEnabled = await messageHandler.request<boolean>(WebViewMessages.toVscode.getSetting, Config.slides.previewSync);
+    if (isSyncEnabled === false) {
+      return;
+    }
+
+    window.getSelection()?.removeAllRanges();
+    messageHandler.send(WebViewMessages.toVscode.preview.revealSource, {
+      path: relativePath,
+      slideIndex: crntSlide.index,
+    });
+  }, [isPresentationMode, relativePath, crntSlide]);
+
+  // The presenter view and remote show the notes of the current slide
+  React.useEffect(() => {
+    messageHandler.send(
+      WebViewMessages.toVscode.preview.updateSlideNotes,
+      crntSlide ? { notes: crntSlide.notes, path: relativePath, slideIndex: crntSlide.index } : undefined
+    );
+  }, [crntSlide, relativePath]);
+
   const videoUrl = React.useMemo(() => {
     if (crntSlide?.frontmatter.video && webviewUrl) {
       const video = crntSlide.frontmatter.video;
@@ -341,13 +450,11 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       const parser = new SlideParser();
       const allSlides = parser.parseSlides(content);
       setSlides(allSlides);
+      setScannedOverflows([]);
       setCrntSlide(allSlides[0]);
       if (allSlides.length > 1) {
         messageHandler.send(WebViewMessages.toVscode.hasNextSlide, true);
-        const nextTitle = extractFirstH1(allSlides[1].content);
-        if (nextTitle) {
-          messageHandler.send(WebViewMessages.toVscode.nextSlideTitle, nextTitle);
-        }
+        messageHandler.send(WebViewMessages.toVscode.nextSlideTitle, getSlideTitle(allSlides[1]));
       }
     }
   }, [content]);
@@ -356,20 +463,6 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     setTheme(crntSlide?.frontmatter.theme || SlideTheme.default);
     setLayout(crntSlide?.frontmatter.layout || SlideLayout.Default);
     setTransition(crntSlide?.frontmatter.transition || undefined);
-
-    if (crntSlide && crntSlide.frontmatter.header) {
-      const html = convertTemplateToHtml(crntSlide.frontmatter.header, crntSlide.frontmatter, webviewUrl);
-      setHeader(DOMPurify.sanitize(html, { USE_PROFILES: { html: true } }));
-    } else {
-      fetchHeader();
-    }
-
-    if (crntSlide && crntSlide.frontmatter.footer) {
-      const html = convertTemplateToHtml(crntSlide.frontmatter.footer, crntSlide.frontmatter, webviewUrl);
-      setFooter(DOMPurify.sanitize(html, { USE_PROFILES: { html: true } }));
-    } else {
-      fetchFooter();
-    }
 
     // Load SVG content for animated layout
     if (crntSlide?.frontmatter.layout === SlideLayout.AnimatedSVG && crntSlide.frontmatter.svgFile) {
@@ -389,51 +482,126 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     } else {
       setSvgContent(null);
     }
-  }, [crntSlide, webviewUrl, fetchHeader, fetchFooter]);
+  }, [crntSlide]);
 
+
+  // Header, footer and progress bar of the slide
+  React.useEffect(() => {
+    let cancelled = false;
+
+    const update = async () => {
+      if (!crntSlide) {
+        setHeader(undefined);
+        setFooter(undefined);
+        setProgress(undefined);
+        return;
+      }
+
+      try {
+        const [headerTemplate, footerTemplate, progressSetting] = await Promise.all([
+          getTemplate(crntSlide.frontmatter.header, Config.slides.slideHeaderTemplate, 'Header template error'),
+          getTemplate(crntSlide.frontmatter.footer, Config.slides.slideFooterTemplate, 'Footer template error'),
+          messageHandler.request<string>(WebViewMessages.toVscode.getSetting, Config.slides.slideProgressBar),
+        ]);
+        const progressPosition = getProgressBarPosition(progressSetting, crntSlide.frontmatter.progress);
+
+        let placeholders: SlidePlaceholders = { slideTitle: getSlideHeading(crntSlide.content) };
+        if ((headerTemplate.template || footerTemplate.template || progressPosition) && crntFilePath) {
+          const slidePlaceholders = await messageHandler.request<SlidePlaceholders>(
+            WebViewMessages.toVscode.preview.getSlidePlaceholders,
+            { filePath: crntFilePath, localSlideIdx: crntSlide.index }
+          );
+          placeholders = { ...slidePlaceholders, ...placeholders };
+        }
+
+        if (cancelled) {
+          return;
+        }
+
+        const data = getTemplateData(crntSlide.frontmatter, placeholders);
+        const render = ({ template, html, isSlideTemplate, errorOptions }: Awaited<ReturnType<typeof getTemplate>>) => {
+          if (!template || !errorOptions) {
+            return html;
+          }
+
+          const result = tryConvertTemplateToHtml(template, data, { ...errorOptions, webviewUrl });
+          if (result.error) {
+            messageHandler.send(WebViewMessages.toVscode.logError, result.error);
+          }
+          return isSlideTemplate ? DOMPurify.sanitize(result.html, { USE_PROFILES: { html: true } }) : result.html;
+        };
+
+        setHeader(render(headerTemplate));
+        setFooter(render(footerTemplate));
+
+        const percentage = getProgressPercentage(placeholders.crntSlideIdx, placeholders.totalSlides);
+        setProgress(
+          progressPosition && percentage !== undefined
+            ? { position: progressPosition, crntSlideIdx: placeholders.crntSlideIdx as number, totalSlides: placeholders.totalSlides as number, percentage }
+            : undefined
+        );
+      } catch {
+        if (!cancelled) {
+          setHeader(undefined);
+          setFooter(undefined);
+          setProgress(undefined);
+        }
+      }
+    };
+
+    update();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [crntSlide, crntFilePath, webviewUrl, getTemplate]);
 
   React.useEffect(() => {
     Messenger.listen(slidesListener);
 
-    if (slides === null || slides.length === 0 || slides.length === 1) {
-      messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
-      messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, false);
-      messageHandler.send(WebViewMessages.toVscode.nextSlideTitle, undefined);
-    } else if (slides.length > 1 && crntSlide?.index === slides.length - 1) {
-      messageHandler.send(WebViewMessages.toVscode.hasNextSlide, false);
-      messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, true);
-      messageHandler.send(WebViewMessages.toVscode.nextSlideTitle, undefined);
-    } else if (slides.length > 1) {
-      messageHandler.send(WebViewMessages.toVscode.hasNextSlide, true);
-      messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, (crntSlide?.index !== undefined && crntSlide.index > 0));
+    const crntIdx = crntSlide?.index ?? 0;
+    const nextSlideIdx = slides?.length > 1 ? getNextSlideIdx(slides, crntIdx, skipHidden) : undefined;
+    const previousSlideIdx = slides?.length > 1 ? getPreviousSlideIdx(slides, crntIdx, skipHidden) : undefined;
 
-      const nextSlideIdx = crntSlide?.index !== undefined ? crntSlide.index + 1 : 0;
-      const nextTitle = extractFirstH1(slides[nextSlideIdx].content);
-      if (nextTitle) {
-        messageHandler.send(WebViewMessages.toVscode.nextSlideTitle, nextTitle);
-      }
-    }
+    messageHandler.send(WebViewMessages.toVscode.hasNextSlide, nextSlideIdx !== undefined);
+    messageHandler.send(WebViewMessages.toVscode.hasPreviousSlide, previousSlideIdx !== undefined);
+    messageHandler.send(
+      WebViewMessages.toVscode.nextSlideTitle,
+      nextSlideIdx !== undefined ? getSlideTitle(slides[nextSlideIdx]) : undefined
+    );
 
     return () => {
       Messenger.unlisten(slidesListener);
     };
-  }, [slides, crntSlide, slidesListener]);
+  }, [slides, crntSlide, skipHidden, slidesListener]);
 
   React.useEffect(() => {
     getFileContents(fileUri);
   }, [fileUri, getFileContents]);
 
-  // ESC key handler for zoom
+  // Every slide starts with its own click steps
   React.useEffect(() => {
+    resetClickSteps(revealClickStepsRef.current);
+    revealClickStepsRef.current = false;
+  }, [crntFilePath, crntSlide?.index]);
+
+  // ESC key handler for zoom (capture phase so it wins over the presentation view Escape handler)
+  React.useEffect(() => {
+    if (!isZoomed) {
+      return;
+    }
+
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isZoomed) {
+      if (event.key === 'Escape' && !event.defaultPrevented) {
+        event.preventDefault();
+        event.stopPropagation();
         toggleZoom();
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown, true);
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keydown', handleKeyDown, true);
     };
   }, [isZoomed, toggleZoom]);
 
@@ -490,13 +658,16 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       >
         <div
           className='slide__container absolute top-[50%] left-[50%] w-[960px] h-[540px] transition-transform duration-300'
+          onDoubleClick={revealSourceOnDoubleClick}
           style={{
+            // Center the slide below the bar of a hidden slide
+            top: offsetTop ? `calc(50% + ${offsetTop / 2}px)` : undefined,
             transform: `translate(-50%, -50%) scale(${isZoomed ? scale * zoomLevel : 'var(--demotime-scale, 1)'}) translate(${isZoomed ? panOffset.x / (scale * zoomLevel) : 0}px, ${isZoomed ? panOffset.y / (scale * zoomLevel) : 0}px)`
           }}>
           <div
             ref={slideRef}
-            className={`slide__layout ${layout || "default"} ${transition || ""}`}
-            style={getBgStyles()}>
+            className={`slide__layout ${layout || "default"} ${slideClassNames} ${transition || ""}`}
+            style={getBgStyles() || slideBgStyles}>
             {
               header && (
                 <header className={`slide__header z-20`} dangerouslySetInnerHTML={{ __html: header }}></header>
@@ -506,7 +677,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             {
               (layout === SlideLayout.Video && videoUrl && !crntSlide?.frontmatter.controls) && (
                 <div className="slide__video" aria-hidden="true">
-                  <video autoPlay loop muted playsInline preload="auto" src={videoUrl}></video>
+                  <video autoPlay={getVideoAutoplay(crntSlide?.frontmatter)} loop muted playsInline preload="auto" src={videoUrl}></video>
                 </div>
               )
             }
@@ -518,7 +689,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             }
 
             {
-              crntSlide && vsCodeTheme ? (
+              crntSlide && vsCodeTheme && reducedMotion !== undefined ? (
                 layout === SlideLayout.AnimatedSVG && svgContent ? (
                   <AnimatedSVGSlide
                     svgContent={svgContent}
@@ -526,7 +697,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
                     textTypeWriterEffect={crntSlide.frontmatter.textTypeWriterEffect}
                     textTypeWriterSpeed={crntSlide.frontmatter.textTypeWriterSpeed}
                     autoplay={crntSlide.frontmatter.autoplay}
-                    skipAnimation={crntSlide.frontmatter.skipAnimation}
+                    skipAnimation={crntSlide.frontmatter.skipAnimation || reducedMotion}
                     invertLightAndDarkColours={crntSlide.frontmatter.invertLightAndDarkColours}
                     controlsPosition={crntSlide.frontmatter.controlsPosition}
                     slideIndex={crntSlide.index}
@@ -564,6 +735,20 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
               )
             }
 
+            {
+              progress && (
+                <div
+                  className={`slide__progress slide__progress--${progress.position}`}
+                  role="progressbar"
+                  aria-valuemin={0}
+                  aria-valuemax={progress.totalSlides}
+                  aria-valuenow={progress.crntSlideIdx}
+                >
+                  <div className="slide__progress__bar" style={{ width: `${progress.percentage}%` }}></div>
+                </div>
+              )
+            }
+
             {/* Laser Pointer */}
             {mousePosition && laserPointerEnabled && (
               <LaserPointer
@@ -573,7 +758,48 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
               />
             )}
           </div>
+
+          {
+            // Marks the edges of a hidden slide without covering its content
+            showHiddenMarker && (
+              <div
+                className="slide__hidden pointer-events-none absolute inset-0 z-40"
+                style={{ border: '4px dashed var(--vscode-editorWarning-foreground)' }}
+              ></div>
+            )
+          }
+
+          {
+            // Shows where the slide ends and where its content is cut off
+            showOverflowWarning && hasSlideOverflow(overflow) && overflow.edges && (
+              <SlideOverflowMarker edges={overflow.edges} area={liveFit.area} />
+            )
+          }
         </div>
+
+        {
+          showHiddenMarker && (
+            <div
+              className="slide__hidden-bar absolute top-0 left-0 right-0 z-30 flex items-center justify-center gap-2 px-4 text-sm whitespace-nowrap overflow-hidden pointer-events-none"
+              style={{
+                height: HIDDEN_BAR_HEIGHT,
+                backgroundColor: 'var(--vscode-editorWarning-foreground)',
+                color: 'var(--vscode-editor-background)',
+              }}
+            >
+              {/* The icon has its own color, so it needs to inherit the label color */}
+              <Icon name={'eye-closed' as never} className="inline-flex justify-center items-center" style={{ color: 'inherit', fontSize: '16px' }} />
+              <span className="font-semibold">Hidden slide</span>
+              <span className="opacity-80 truncate">· skipped while presenting</span>
+            </div>
+          )
+        }
+
+        {
+          showOverflowWarning && (
+            <SlideFitBadge overflow={overflow} autoFit={autoFit} zoom={liveFit.zoom} top={offsetTop + 8} />
+          )
+        }
 
         <SlideControls
           show={showControls && cursorVisible}
@@ -586,7 +812,6 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           isDarkTheme={isDarkTheme}
           webviewUrl={webviewUrl}
           filePath={crntFilePath}
-          slideTheme={theme}
           updateSlideIdx={updateSlideIdx}
           onNavigateToSlide={navigateToSlide}
           triggerMouseMove={setIsMouseMoveEnabled}
@@ -597,6 +822,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           onZoomToggle={toggleZoom}
           style={{ cursor: 'default' }}
           matter={crntSlide?.frontmatter}
+          notes={crntSlide?.notes}
+          clickStep={clickStep}
         >
           {/* Mouse Position */}
           {mousePosition && showControls && cursorVisible && (
@@ -606,6 +833,20 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           )}
         </SlideControls>
       </div>
+
+      {
+        // Outside the slide, so the theme of the current slide doesn't style the measured slides
+        showOverflowWarning && (
+          <SlideOverflowScanner
+            slides={slides}
+            filePath={crntFilePath}
+            vsCodeTheme={vsCodeTheme as never}
+            isDarkTheme={isDarkTheme}
+            webviewUrl={webviewUrl}
+            onScanned={onSlidesScanned}
+          />
+        )
+      }
     </>
   );
 };

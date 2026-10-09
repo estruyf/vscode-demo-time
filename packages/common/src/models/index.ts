@@ -1,3 +1,4 @@
+export * from './ActProblem';
 export * from './Action';
 export * from './Analytics';
 export * from './DemoFileCache';
@@ -8,5 +9,9 @@ export * from './InsertTypingMode';
 export * from './InternalSlide';
 export * from './ParserOptions';
 export * from './Slide';
+export * from './SlideLocation';
 export * from './SlideMetadata';
+export * from './SlideNotes';
+export * from './SlideOverflow';
 export * from './Version';
+export * from './VideoExport';

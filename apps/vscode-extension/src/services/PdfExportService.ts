@@ -22,7 +22,7 @@ import {
   Action,
   COMMAND,
   Config,
-  convertTemplateToHtml,
+  tryConvertTemplateToHtml,
   SlideLayout,
   SlideParser,
   SlideTheme,
@@ -30,8 +30,25 @@ import {
   transformMarkdown,
   placeholderFormatting,
   getDemosFromConfig,
+  isSlideHidden,
+  getProgressBarPosition,
+  getSlideHeading,
+  getTemplateData,
+  renderProgressBar,
+  SlidePlaceholders,
+  AUTO_FIT_ATTRIBUTE,
+  getSlideAutoFitScript,
+  isAutoFitEnabled,
+  getSlideBackgroundStyles,
+  getSlideClassNames,
+  toStyleAttribute,
 } from '@demotime/common';
 import { ScreenshotService } from './ScreenshotService';
+
+/**
+ * Where the speaker notes of a slide go in the PDF
+ */
+type PdfNotesPlacement = 'none' | 'below' | 'page';
 
 export class PdfExportService {
   private static workspaceFolder: WorkspaceFolder | undefined;
@@ -93,14 +110,18 @@ export class PdfExportService {
             {} as typeof demoFiles,
           );
 
-          // Get all slide actions
-          const slideActions: Step[] = [];
+          // Get all slide actions, with the act and scene that open them
+          const slideActions: { step: Step; actTitle?: string; sceneTitle?: string }[] = [];
           for (const demoFile of Object.values(demoFiles)) {
             const demos = getDemosFromConfig(demoFile as any);
             for (const demo of demos) {
               for (const step of demo.steps) {
                 if (step.action === Action.OpenSlide && step.path) {
-                  slideActions.push(step);
+                  slideActions.push({
+                    step,
+                    actTitle: (demoFile as any)?.title,
+                    sceneTitle: demo.title,
+                  });
                 }
               }
             }
@@ -109,13 +130,13 @@ export class PdfExportService {
           // Retrieving slide contents
           progress.report({ message: 'Retrieving slide contents...' });
           const slideContents = [];
-          for (const slideAction of slideActions) {
+          for (const { step, actTitle, sceneTitle } of slideActions) {
             const slideUri = Uri.joinPath(
               PdfExportService.workspaceFolder?.uri as Uri,
-              slideAction.path as string,
+              step.path as string,
             );
             const content = await readFile(slideUri);
-            slideContents.push({ content });
+            slideContents.push({ content, actTitle, sceneTitle });
           }
 
           if (slideContents.length === 0) {
@@ -211,16 +232,26 @@ export class PdfExportService {
   /**
    * Generate HTML for slides using the existing markdown processing pipeline
    */
-  private static async generateSlidesHtml(slides: { content: string }[]): Promise<string> {
+  private static async generateSlidesHtml(
+    slides: { content: string; actTitle?: string; sceneTitle?: string }[],
+  ): Promise<string> {
     const theme = await getTheme(undefined);
     const ext = Extension.getInstance();
     const headerSetting = ext.getSetting<string>(Config.slides.slideHeaderTemplate);
     const footerSetting = ext.getSetting<string>(Config.slides.slideFooterTemplate);
+    const includeHidden = ext.getSetting<boolean>(Config.pdfExport.includeHiddenSlides) || false;
+    const notesPlacement = ext.getSetting<PdfNotesPlacement>(Config.pdfExport.notes) || 'none';
+    const progressSetting = ext.getSetting<string>(Config.slides.slideProgressBar);
+    const presentationTitle =
+      ext.getSetting<string>(Config.slides.presentationTitle) ||
+      PdfExportService.workspaceFolder?.name;
 
     // Generate slide content HTML
     const slideContents = [];
 
     let idx = 0;
+    // The slide number for `{{crntSlideIdx}}`, which doesn't count hidden slides
+    let slideNr = 0;
     const parser = new SlideParser();
     const totalSlides = await Slides.getTotalSlides();
 
@@ -228,6 +259,14 @@ export class PdfExportService {
       try {
         const allSlides = parser.parseSlides(slide.content);
         for (const crntSlide of allSlides) {
+          const isHidden = isSlideHidden(crntSlide);
+          if (isHidden && !includeHidden) {
+            continue;
+          }
+          if (!isHidden) {
+            slideNr++;
+          }
+
           const vfile = await transformMarkdown(
             placeholderFormatting(crntSlide.content),
             undefined,
@@ -237,6 +276,19 @@ export class PdfExportService {
             undefined,
           );
           let { reactContent } = vfile;
+
+          let notesHtml: string | undefined;
+          if (notesPlacement !== 'none' && crntSlide.notes) {
+            const notesFile = await transformMarkdown(
+              crntSlide.notes,
+              undefined,
+              undefined,
+              undefined,
+              [[rehypePrettyCode, { theme: theme ? theme : {} }]],
+              undefined,
+            );
+            notesHtml = renderToString(notesFile.reactContent);
+          }
 
           const slideTheme = crntSlide.frontmatter.theme || SlideTheme.default;
           const layout = crntSlide.frontmatter.customLayout
@@ -259,25 +311,48 @@ export class PdfExportService {
             footerTemplate = await readFile(abs);
           }
 
-          if (
-            headerTemplate?.includes(`{{crntSlideIdx}}`) ||
-            footerTemplate?.includes(`{{crntSlideIdx}}`)
-          ) {
-            crntSlide.frontmatter.crntSlideIdx = idx + 1;
-          }
-
-          if (
-            headerTemplate?.includes(`{{totalSlides}}`) ||
-            footerTemplate?.includes(`{{totalSlides}}`)
-          ) {
-            crntSlide.frontmatter.totalSlides = totalSlides;
-          }
+          const placeholders: SlidePlaceholders = {
+            crntSlideIdx: isHidden ? undefined : slideNr,
+            totalSlides,
+            slideTitle: getSlideHeading(crntSlide.content),
+            sceneTitle: slide.sceneTitle,
+            actTitle: slide.actTitle,
+            presentationTitle,
+          };
+          const templateData = getTemplateData(crntSlide.frontmatter, placeholders);
+          const progressHtml = renderProgressBar(
+            getProgressBarPosition(progressSetting, crntSlide.frontmatter.progress),
+            placeholders.crntSlideIdx,
+            totalSlides,
+          );
 
           if (headerTemplate) {
-            headerTemplate = convertTemplateToHtml(headerTemplate, crntSlide.frontmatter);
+            const { html: headerHtml, error } = tryConvertTemplateToHtml(
+              headerTemplate,
+              templateData,
+              {
+                title: 'Header template error',
+                compact: true,
+              },
+            );
+            if (error) {
+              Logger.error(error);
+            }
+            headerTemplate = headerHtml;
           }
           if (footerTemplate) {
-            footerTemplate = convertTemplateToHtml(footerTemplate, crntSlide.frontmatter);
+            const { html: footerHtml, error } = tryConvertTemplateToHtml(
+              footerTemplate,
+              templateData,
+              {
+                title: 'Footer template error',
+                compact: true,
+              },
+            );
+            if (error) {
+              Logger.error(error);
+            }
+            footerTemplate = footerHtml;
           }
 
           let html = renderToString(reactContent);
@@ -286,9 +361,7 @@ export class PdfExportService {
               PdfExportService.workspaceFolder?.uri as Uri,
               customLayout,
             );
-            const customLayoutContent = await readFile(customLayoutPath);
-
-            html = convertTemplateToHtml(customLayoutContent, {
+            html = await ScreenshotService.renderCustomLayout(customLayoutPath, customLayout, {
               metadata: { ...crntSlide.frontmatter },
               content: html,
             });
@@ -308,6 +381,11 @@ export class PdfExportService {
             customLayout,
             headerTemplate,
             footerTemplate,
+            progressHtml,
+            notesHtml,
+            autoFit: isAutoFitEnabled(crntSlide.frontmatter),
+            className: getSlideClassNames(crntSlide.frontmatter),
+            background: toStyleAttribute(getSlideBackgroundStyles(crntSlide.frontmatter)),
           });
 
           idx++;
@@ -406,7 +484,7 @@ export class PdfExportService {
   ${css}
   </style>
 </head>
-<body>
+<body data-demotime-static>
     `;
 
     // Add each slide as a div
@@ -432,7 +510,7 @@ export class PdfExportService {
           slide.layout !== SlideLayout.ImageLeft &&
           slide.layout !== SlideLayout.ImageRight
             ? `background-image: url(${slide.image});`
-            : ``;
+            : slide.background;
 
         if (slide.theme === SlideTheme.default) {
           slideThemes.default.push(index + 1);
@@ -450,13 +528,13 @@ export class PdfExportService {
           slideThemes.pixels.push(index + 1);
         }
 
-        html += `
+        const slideHtml = `
 <div class="w-full h-full flex items-center justify-center" id="slide-${index + 1}">
 ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` : ``}
 
-  <div class="slide ${slide.theme.toLowerCase()}" date-theme="${slide.theme.toLowerCase()}" data-layout="${slide.layout.toLowerCase()}" >
+  <div class="slide ${slide.theme.toLowerCase()}" data-theme="${slide.theme.toLowerCase()}" data-layout="${slide.layout.toLowerCase()}" >
     <div class="slide__container">
-      <div class="slide__layout ${slide.layout.toLowerCase()}" style="${slideBg}">
+      <div class="slide__layout ${slide.layout.toLowerCase()} ${slide.className}" style="${slideBg}">
         ${slide.headerTemplate ? `<header class="slide__header">${slide.headerTemplate}</header>` : ``}
 
         ${
@@ -465,7 +543,7 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
             : ``
         }
         
-        <div class="slide__content">
+        <div class="slide__content"${slide.autoFit ? ` ${AUTO_FIT_ATTRIBUTE}` : ``}>
           <div class="${slide.customLayout ? `slide__content__custom` : `slide__content__inner`}">
             ${slide.html}
           </div>
@@ -478,10 +556,21 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
         }
 
         ${slide.footerTemplate ? `<footer class="slide__footer">${slide.footerTemplate}</footer>` : ``}
+
+        ${slide.progressHtml || ``}
       </div>
     </div>
   </div>
 </div>`;
+
+        if (slide.notesHtml && notesPlacement === 'below') {
+          // The page gets the height of the slide and its notes in `generatePdfFromHtml`
+          html += `<div class="slide-with-notes">${slideHtml}<div class="slide-notes">${slide.notesHtml}</div></div>`;
+        } else if (slide.notesHtml && notesPlacement === 'page') {
+          html += `${slideHtml}<div class="slide-notes slide-notes-page">${slide.notesHtml}</div>`;
+        } else {
+          html += slideHtml;
+        }
       }
 
       index++;
@@ -541,6 +630,21 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
     await page.emulateMedia({ media: 'print' });
 
     await page.waitForTimeout(5000);
+
+    // Scales down the content of the slides with `autoFit: true` that don't fit
+    await page.evaluate(getSlideAutoFitScript());
+
+    // A slide with its notes below it gets a page with the height of both
+    await page.evaluate(`(() => {
+      const style = document.createElement('style');
+      document.querySelectorAll('.slide-with-notes').forEach((element, idx) => {
+        const name = 'slide-with-notes-' + idx;
+        const height = Math.ceil(element.getBoundingClientRect().height);
+        style.textContent += '@page ' + name + ' { size: 960px ' + height + 'px; margin: 0; }';
+        element.style.setProperty('page', name);
+      });
+      document.head.appendChild(style);
+    })()`);
 
     // Generate the PDF
     await page.pdf({

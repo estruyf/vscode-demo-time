@@ -2,28 +2,40 @@ import { Uri, workspace } from 'vscode';
 import { Extension } from './Extension';
 import { DemoStatusBar } from './DemoStatusBar';
 import { Logger } from './Logger';
-import { getAbsolutePath, getTheme, readFile, writeFile } from '../utils';
+import { getAbsolutePath, getNextSlideIndex, getTheme, readFile, writeFile } from '../utils';
 import {
   Action,
   Config,
   SlideLayout,
   SlideParser,
   SlideTheme,
-  convertTemplateToHtml,
+  getTemplateErrorMessage,
   placeholderFormatting,
+  renderTemplateError,
   transformMarkdown,
+  tryConvertTemplateToHtml,
+  getProgressBarPosition,
+  getSlideHeading,
+  getTemplateData,
+  renderProgressBar,
+  SlidePlaceholders,
+  AUTO_FIT_ATTRIBUTE,
+  getSlideAutoFitScript,
+  isAutoFitEnabled,
+  getSlideBackgroundStyles,
+  getSlideClassNames,
+  toStyleAttribute,
 } from '@demotime/common';
 import { renderToString } from 'react-dom/server';
 import rehypePrettyCode from 'rehype-pretty-code';
 import { resolve } from 'mlly';
 import { Preview } from '../preview/Preview';
 import { DemoRunner } from './DemoRunner';
+import { Slides } from './Slides';
 import type { BrowserType } from 'playwright-chromium';
 
 export class ScreenshotService {
-  private static cachedScreenshot: string | null = null;
-  private static cachedSlideIdx: number | undefined = undefined;
-  private static lastDemoId: string | undefined = undefined;
+  private static cachedScreenshot: { key: string; value: string } | null = null;
 
   public static async generate(): Promise<string | null> {
     try {
@@ -32,28 +44,13 @@ export class ScreenshotService {
         return null;
       }
 
-      const { targetSlide, demo, slideIndex } = slideData;
-
-      // Check cache validity
-      if (
-        demo?.id === ScreenshotService.lastDemoId &&
-        ScreenshotService.cachedSlideIdx === slideIndex &&
-        ScreenshotService.cachedScreenshot
-      ) {
-        Logger.info('Returning cached next slide screenshot');
-        return ScreenshotService.cachedScreenshot;
-      }
-
-      // Generate HTML for the slide
-      const html = await ScreenshotService.generateSlideHtml(targetSlide);
-
-      // Cache the result
-      ScreenshotService.lastDemoId = demo.id;
-      ScreenshotService.cachedSlideIdx = slideIndex;
-
-      return html;
+      // Always render fresh HTML, the screenshot cache only holds PNG data URLs
+      return await ScreenshotService.generateSlideHtml(
+        slideData.targetSlide,
+        slideData.placeholders,
+      );
     } catch (error) {
-      Logger.error(`Error generating next slide screenshot: ${(error as Error).message}`);
+      Logger.error(`Error generating next slide preview: ${(error as Error).message}`);
       return null;
     }
   }
@@ -75,25 +72,21 @@ export class ScreenshotService {
         return null;
       }
 
-      const { targetSlide, demo, slideIndex } = slideData;
+      const { targetSlide, cacheKey, placeholders } = slideData;
 
-      // Check cache validity
-      if (
-        demo?.id === ScreenshotService.lastDemoId &&
-        ScreenshotService.cachedSlideIdx === slideIndex &&
-        ScreenshotService.cachedScreenshot
-      ) {
+      if (ScreenshotService.cachedScreenshot?.key === cacheKey) {
         Logger.info('Returning cached next slide screenshot');
-        return ScreenshotService.cachedScreenshot;
+        return ScreenshotService.cachedScreenshot.value;
       }
 
       // Generate screenshot
-      const screenshot = await ScreenshotService.generateScreenshot(chromium, targetSlide);
+      const screenshot = await ScreenshotService.generateScreenshot(
+        chromium,
+        targetSlide,
+        placeholders,
+      );
 
-      // Cache the result
-      ScreenshotService.cachedScreenshot = screenshot;
-      ScreenshotService.lastDemoId = demo.id;
-      ScreenshotService.cachedSlideIdx = slideIndex;
+      ScreenshotService.cachedScreenshot = { key: cacheKey, value: screenshot };
 
       return screenshot;
     } catch (error) {
@@ -105,11 +98,14 @@ export class ScreenshotService {
   /**
    * Get the target slide for the next slide (either current demo's next slide or next demo's first slide)
    */
-  private static async getTargetSlide(): Promise<any | null> {
+  private static async getTargetSlide(): Promise<{
+    targetSlide: any;
+    cacheKey: string;
+    placeholders: SlidePlaceholders;
+  } | null> {
     const hasNextSlide = Preview.checkIfHasNextSlide();
     const crntSlideIdx = Preview.getCurrentSlideIndex();
     const demo = hasNextSlide ? DemoRunner.currentDemo : DemoStatusBar.getNextDemo();
-    const nextSlideIdx = hasNextSlide ? crntSlideIdx + 1 : 0;
 
     if (!demo) {
       Logger.info('No next demo available for screenshot');
@@ -148,15 +144,19 @@ export class ScreenshotService {
       return null;
     }
 
-    let slideIndex = 0;
-    if (nextSlideIdx !== null) {
-      slideIndex = nextSlideIdx;
-    } else if (typeof slideStep.slide === 'number') {
-      slideIndex = slideStep.slide;
-    }
-    const targetSlide = slides[slideIndex] || slides[0];
+    const slideIndex = getNextSlideIndex(
+      hasNextSlide,
+      crntSlideIdx,
+      slideStep.slide,
+      slides,
+      DemoRunner.getIsPresentationMode(),
+    );
+    const targetSlide = slides[slideIndex];
+    const placeholders = await Slides.getSlidePlaceholders(slideStep.path, slideIndex, demo);
+    // The placeholders are part of the key, so the screenshot updates when the slide number changes
+    const cacheKey = `${slideUri.toString()}#${slideIndex}#${JSON.stringify(placeholders)}`;
 
-    return { targetSlide, demo, slideIndex };
+    return { targetSlide, cacheKey, placeholders };
   }
 
   /**
@@ -164,8 +164,6 @@ export class ScreenshotService {
    */
   public static clearCache(): void {
     ScreenshotService.cachedScreenshot = null;
-    ScreenshotService.lastDemoId = undefined;
-    ScreenshotService.cachedSlideIdx = undefined;
   }
 
   /**
@@ -188,7 +186,11 @@ export class ScreenshotService {
   /**
    * Generate a screenshot from slide content
    */
-  private static async generateScreenshot(chromium: BrowserType<{}>, slide: any): Promise<string> {
+  private static async generateScreenshot(
+    chromium: BrowserType<{}>,
+    slide: any,
+    placeholders?: SlidePlaceholders,
+  ): Promise<string> {
     const browser = await chromium.launch({
       args: ['--allow-file-access-from-files', '--enable-local-file-accesses'],
     });
@@ -200,7 +202,7 @@ export class ScreenshotService {
       const page = await context.newPage();
 
       // Generate HTML for the slide
-      const html = await ScreenshotService.generateSlideHtml(slide);
+      const html = await ScreenshotService.generateSlideHtml(slide, placeholders);
 
       // Load the HTML
       const workspaceFolder = Extension.getInstance().workspaceFolder;
@@ -218,6 +220,9 @@ export class ScreenshotService {
       await page.setContent(html, { waitUntil: 'networkidle' });
       await page.waitForLoadState('networkidle');
       await page.emulateMedia({ media: 'print' });
+
+      // Scales down the content of a slide with `autoFit: true` that doesn't fit
+      await page.evaluate(getSlideAutoFitScript());
 
       // Take screenshot
       const screenshot = await page.screenshot({
@@ -237,6 +242,32 @@ export class ScreenshotService {
       await browser.close();
       throw error;
     }
+  }
+
+  /**
+   * Render a custom layout, or an error block when the layout is missing or invalid
+   */
+  public static async renderCustomLayout(
+    layoutUri: Uri,
+    layoutPath: string,
+    data: { metadata: any; content: string },
+  ): Promise<string> {
+    const errorOptions = { title: 'Custom layout error', path: layoutPath };
+
+    let layoutContent: string;
+    try {
+      layoutContent = await readFile(layoutUri);
+    } catch (e) {
+      const message = `The layout file could not be read: ${(e as Error).message}`;
+      Logger.error(getTemplateErrorMessage(errorOptions, message));
+      return renderTemplateError(errorOptions, message);
+    }
+
+    const { html, error } = tryConvertTemplateToHtml(layoutContent, data, errorOptions);
+    if (error) {
+      Logger.error(error);
+    }
+    return html;
   }
 
   public static async getThemeCss(slideTheme: SlideTheme): Promise<string> {
@@ -283,7 +314,10 @@ export class ScreenshotService {
   /**
    * Generate HTML for a single slide
    */
-  private static async generateSlideHtml(slide: any): Promise<string> {
+  private static async generateSlideHtml(
+    slide: any,
+    placeholders?: SlidePlaceholders,
+  ): Promise<string> {
     const extension = Extension.getInstance();
     const theme = await getTheme(undefined);
     const ext = Extension.getInstance();
@@ -321,25 +355,38 @@ export class ScreenshotService {
       footerTemplate = await readFile(abs);
     }
 
-    if (
-      headerTemplate?.includes(`{{crntSlideIdx}}`) ||
-      footerTemplate?.includes(`{{crntSlideIdx}}`)
-    ) {
-      slide.frontmatter.crntSlideIdx = 1; // For single slide screenshots, this is always 1
-    }
-
-    if (
-      headerTemplate?.includes(`{{totalSlides}}`) ||
-      footerTemplate?.includes(`{{totalSlides}}`)
-    ) {
-      slide.frontmatter.totalSlides = 1; // For single slide screenshots, this is always 1
-    }
+    const templateData = getTemplateData(slide.frontmatter, {
+      ...placeholders,
+      slideTitle: getSlideHeading(slide.content),
+    });
+    const progressHtml = renderProgressBar(
+      getProgressBarPosition(
+        ext.getSetting<string>(Config.slides.slideProgressBar),
+        slide.frontmatter.progress,
+      ),
+      placeholders?.crntSlideIdx,
+      placeholders?.totalSlides,
+    );
 
     if (headerTemplate) {
-      headerTemplate = convertTemplateToHtml(headerTemplate, slide.frontmatter);
+      const { html: headerHtml, error } = tryConvertTemplateToHtml(headerTemplate, templateData, {
+        title: 'Header template error',
+        compact: true,
+      });
+      if (error) {
+        Logger.error(error);
+      }
+      headerTemplate = headerHtml;
     }
     if (footerTemplate) {
-      footerTemplate = convertTemplateToHtml(footerTemplate, slide.frontmatter);
+      const { html: footerHtml, error } = tryConvertTemplateToHtml(footerTemplate, templateData, {
+        title: 'Footer template error',
+        compact: true,
+      });
+      if (error) {
+        Logger.error(error);
+      }
+      footerTemplate = footerHtml;
     }
 
     let html = renderToString(reactContent);
@@ -348,9 +395,7 @@ export class ScreenshotService {
       const wsFolder = extension.workspaceFolder;
       if (wsFolder) {
         const customLayoutPath = Uri.joinPath(wsFolder.uri, customLayout);
-        const customLayoutContent = await readFile(customLayoutPath);
-
-        html = convertTemplateToHtml(customLayoutContent, {
+        html = await ScreenshotService.renderCustomLayout(customLayoutPath, customLayout, {
           metadata: { ...slide.frontmatter },
           content: html,
         });
@@ -379,7 +424,7 @@ export class ScreenshotService {
     const slideBg =
       image && layout !== SlideLayout.ImageLeft && layout !== SlideLayout.ImageRight
         ? `background-image: url(${image});`
-        : ``;
+        : toStyleAttribute(getSlideBackgroundStyles(slide.frontmatter));
 
     // Custom themes on global level
     const customThemes = [];
@@ -418,7 +463,7 @@ export class ScreenshotService {
   <div class="w-full h-full flex items-center justify-center" id="slide-1">
     <div class="slide ${slideTheme.toLowerCase()}" data-theme="${slideTheme.toLowerCase()}" data-layout="${layout.toLowerCase()}">
       <div class="slide__container">
-        <div class="slide__layout ${layout.toLowerCase()}" style="${slideBg}">
+        <div class="slide__layout ${layout.toLowerCase()} ${getSlideClassNames(slide.frontmatter)}" style="${slideBg}">
           ${headerTemplate ? `<header class="slide__header">${headerTemplate}</header>` : ''}
 
           ${
@@ -427,7 +472,7 @@ export class ScreenshotService {
               : ``
           }
 
-          <div class="slide__content">
+          <div class="slide__content"${isAutoFitEnabled(slide.frontmatter) ? ` ${AUTO_FIT_ATTRIBUTE}` : ``}>
             <div class="${customLayout ? `slide__content__custom` : `slide__content__inner`}">
               ${html}
             </div>
@@ -440,6 +485,8 @@ export class ScreenshotService {
           }
 
           ${footerTemplate ? `<footer class="slide__footer">${footerTemplate}</footer>` : ''}
+
+          ${progressHtml}
         </div>
       </div>
     </div>

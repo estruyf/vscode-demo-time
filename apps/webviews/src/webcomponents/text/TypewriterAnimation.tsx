@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import { useState, useEffect, useRef } from 'react';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { isStaticElement } from '../clickSteps';
 
 // Typewriter Animation
 export interface TypewriterProps {
@@ -14,6 +16,10 @@ export interface TypewriterProps {
   cursorWidth?: number;
   cursorBlinkSpeed?: number;
   className?: string;
+  /**
+   * Shows the end state without animating, like in the slide thumbnails
+   */
+  isStatic?: boolean;
 }
 
 export const TypewriterAnimation: React.FC<TypewriterProps> = ({
@@ -27,8 +33,10 @@ export const TypewriterAnimation: React.FC<TypewriterProps> = ({
   cursorWidth = 2,
   cursorBlinkSpeed = 500,
   className = '',
+  isStatic = false,
 }) => {
-  const [displayedText, setDisplayedText] = useState('');
+  const skipAnimation = useReducedMotion() || isStatic;
+  const [displayedText, setDisplayedText] = useState(skipAnimation ? text : '');
   const [showCursor, setShowCursor] = useState(true);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -39,6 +47,13 @@ export const TypewriterAnimation: React.FC<TypewriterProps> = ({
     if (timeoutRef.current) { clearTimeout(timeoutRef.current); }
     if (intervalRef.current) { clearInterval(intervalRef.current); }
     if (cursorIntervalRef.current) { clearInterval(cursorIntervalRef.current); }
+
+    // With reduced motion or static rendering, show the whole text with a steady cursor
+    if (skipAnimation) {
+      setDisplayedText(text);
+      setShowCursor(true);
+      return;
+    }
 
     // Reset displayed text
     setDisplayedText('');
@@ -75,7 +90,7 @@ export const TypewriterAnimation: React.FC<TypewriterProps> = ({
       if (intervalRef.current) { clearInterval(intervalRef.current); }
       if (cursorIntervalRef.current) { clearInterval(cursorIntervalRef.current); }
     };
-  }, [text, delay, duration, repeat, cursor, cursorBlinkSpeed]);
+  }, [text, delay, duration, repeat, cursor, cursorBlinkSpeed, skipAnimation]);
 
   return (
     <div
@@ -133,6 +148,7 @@ export class TypewriterComponent extends HTMLElement {
         cursorColor: this.getAttribute('cursor-color') || '#000',
         cursorWidth: Number(this.getAttribute('cursor-width')) || 2,
         cursorBlinkSpeed: Number(this.getAttribute('cursor-blink-speed')) || 500,
+        isStatic: isStaticElement(this),
       };
 
       this.rootElm.render(

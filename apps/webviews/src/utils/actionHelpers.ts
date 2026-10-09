@@ -411,6 +411,7 @@ export const getFieldsForAction = (action: Action): string[] => {
       'insertTypingMode',
       'insertTypingSpeed',
       'insertTypingSpeedRandomness',
+      'waitTimeout',
     ],
     [Action.SendKeybinding]: ['keybinding'],
     [Action.ExecuteScript]: ['id', 'command', 'path', 'args', 'waitForMessage', 'showProgress'],

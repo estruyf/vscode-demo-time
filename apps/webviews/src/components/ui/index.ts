@@ -1,7 +1,7 @@
 export * from './Button';
 export * from './Card';
 export * from './Checkbox';
-export * from './ColorPicker';
+export * from './ColorValueInput';
 export * from './ComboBox';
 export * from './DemoIdPicker';
 export * from './EnhancedSelect';
@@ -10,6 +10,7 @@ export * from './InsertTypingModePicker';
 export * from './Label';
 export * from './Modal';
 export * from './PathInput';
+export * from './ProblemBadge';
 export * from './SearchableDropdown';
 export * from './Select';
 export * from './Switch';

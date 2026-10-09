@@ -1,0 +1,384 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://demotime.show/slide.schema.json",
+  "title": "Demo Time - Slide front matter",
+  "description": "The front matter properties of a Demo Time slide. Custom layouts, headers and footers can read other properties too. `x-demotime.inheritance` tells how a property in the document front matter applies to the other slides of the file: `always` (every slide), `fallback` (slides that do not set it) or `firstSlide` (only the first slide).",
+  "type": "object",
+  "properties": {
+    "theme": {
+      "type": "string",
+      "enum": ["default", "minimal", "monomi", "unnamed", "quantum", "frost", "pixels"],
+      "description": "The built-in theme of the slide.",
+      "markdownDescription": "The built-in theme of the slide.",
+      "default": "default",
+      "x-demotime": {
+        "inheritance": "always",
+        "docs": "https://demotime.show/slides/themes/"
+      }
+    },
+    "layout": {
+      "type": "string",
+      "enum": [
+        "default",
+        "center",
+        "intro",
+        "section",
+        "quote",
+        "image",
+        "video",
+        "image-right",
+        "image-left",
+        "two-columns",
+        "animated"
+      ],
+      "description": "The layout of the slide.",
+      "markdownDescription": "The layout of the slide.",
+      "default": "default",
+      "x-demotime": {
+        "inheritance": "firstSlide",
+        "docs": "https://demotime.show/slides/layouts/"
+      }
+    },
+    "transition": {
+      "type": "string",
+      "enum": [
+        "fadeIn",
+        "slideRight",
+        "slideLeft",
+        "slideUp",
+        "slideDown",
+        "zoomIn",
+        "zoomOut",
+        "rotateIn",
+        "rotateOut"
+      ],
+      "description": "The transition to show the slide with. Default: No transition.",
+      "markdownDescription": "The transition to show the slide with. Default: No transition.",
+      "x-demotime": {
+        "inheritance": "fallback",
+        "docs": "https://demotime.show/slides/transitions/"
+      }
+    },
+    "customTheme": {
+      "type": "string",
+      "format": "uri-reference",
+      "description": "Path (relative to the workspace folder) or URL of a CSS file with your own theme, which builds on the `theme`.",
+      "markdownDescription": "Path (relative to the workspace folder) or URL of a CSS file with your own theme, which builds on the `theme`.",
+      "x-demotime": {
+        "inheritance": "always",
+        "docs": "https://demotime.show/slides/themes/custom/"
+      }
+    },
+    "customLayout": {
+      "type": "string",
+      "description": "Path (relative to the workspace folder) of a Handlebars template with your own layout.",
+      "markdownDescription": "Path (relative to the workspace folder) of a Handlebars template with your own layout.",
+      "x-demotime": {
+        "inheritance": "firstSlide",
+        "docs": "https://demotime.show/slides/layouts/custom/"
+      }
+    },
+    "header": {
+      "type": "string",
+      "description": "Handlebars template for the header of the slide. It can use the front matter properties and the header and footer placeholders. Default: The `demoTime.slideHeaderTemplate` setting.",
+      "markdownDescription": "Handlebars template for the header of the slide. It can use the front matter properties and the header and footer placeholders. Default: The `demoTime.slideHeaderTemplate` setting.",
+      "x-demotime": {
+        "inheritance": "fallback",
+        "docs": "https://demotime.show/slides/layouts/header-footer/"
+      }
+    },
+    "footer": {
+      "type": "string",
+      "description": "Handlebars template for the footer of the slide. It can use the front matter properties and the header and footer placeholders. Default: The `demoTime.slideFooterTemplate` setting.",
+      "markdownDescription": "Handlebars template for the footer of the slide. It can use the front matter properties and the header and footer placeholders. Default: The `demoTime.slideFooterTemplate` setting.",
+      "x-demotime": {
+        "inheritance": "fallback",
+        "docs": "https://demotime.show/slides/layouts/header-footer/"
+      }
+    },
+    "progress": {
+      "enum": [true, false, "top", "bottom"],
+      "description": "Shows (`true`, `top` or `bottom`) or hides (`false`) the progress bar on the slide. `true` uses the position of the `demoTime.slideProgressBar` setting, or the bottom when the setting is `none`. Default: The `demoTime.slideProgressBar` setting.",
+      "markdownDescription": "Shows (`true`, `top` or `bottom`) or hides (`false`) the progress bar on the slide. `true` uses the position of the `demoTime.slideProgressBar` setting, or the bottom when the setting is `none`. Default: The `demoTime.slideProgressBar` setting.",
+      "x-demotime": {
+        "inheritance": "fallback",
+        "docs": "https://demotime.show/slides/layouts/header-footer/#progress-bar"
+      }
+    },
+    "title": {
+      "type": "string",
+      "description": "The title of the slide in the slide navigator and overview when the slide has no heading. Header and footer templates can read it with `{{title}}`.",
+      "markdownDescription": "The title of the slide in the slide navigator and overview when the slide has no heading. Header and footer templates can read it with `{{title}}`.",
+      "x-demotime": {
+        "inheritance": "fallback"
+      }
+    },
+    "date": {
+      "type": "string",
+      "description": "The date that the `{{date}}` placeholder of header and footer templates shows. Default: Today's date.",
+      "markdownDescription": "The date that the `{{date}}` placeholder of header and footer templates shows. Default: Today's date.",
+      "x-demotime": {
+        "inheritance": "fallback",
+        "docs": "https://demotime.show/slides/layouts/header-footer/#placeholders"
+      }
+    },
+    "slideTitle": {
+      "type": "string",
+      "description": "Overrides the `{{slideTitle}}` placeholder of header and footer templates. Default: The first heading of the slide.",
+      "markdownDescription": "Overrides the `{{slideTitle}}` placeholder of header and footer templates. Default: The first heading of the slide.",
+      "x-demotime": {
+        "inheritance": "fallback",
+        "docs": "https://demotime.show/slides/layouts/header-footer/#placeholders"
+      }
+    },
+    "sceneTitle": {
+      "type": "string",
+      "description": "Overrides the `{{sceneTitle}}` placeholder of header and footer templates. Default: The title of the scene that opens the slide.",
+      "markdownDescription": "Overrides the `{{sceneTitle}}` placeholder of header and footer templates. Default: The title of the scene that opens the slide.",
+      "x-demotime": {
+        "inheritance": "fallback",
+        "docs": "https://demotime.show/slides/layouts/header-footer/#placeholders"
+      }
+    },
+    "actTitle": {
+      "type": "string",
+      "description": "Overrides the `{{actTitle}}` placeholder of header and footer templates. Default: The title of the act that opens the slide.",
+      "markdownDescription": "Overrides the `{{actTitle}}` placeholder of header and footer templates. Default: The title of the act that opens the slide.",
+      "x-demotime": {
+        "inheritance": "fallback",
+        "docs": "https://demotime.show/slides/layouts/header-footer/#placeholders"
+      }
+    },
+    "presentationTitle": {
+      "type": "string",
+      "description": "Overrides the `{{presentationTitle}}` placeholder of header and footer templates. Default: The `demoTime.presentationTitle` setting, or the name of the workspace folder.",
+      "markdownDescription": "Overrides the `{{presentationTitle}}` placeholder of header and footer templates. Default: The `demoTime.presentationTitle` setting, or the name of the workspace folder.",
+      "x-demotime": {
+        "inheritance": "fallback",
+        "docs": "https://demotime.show/slides/layouts/header-footer/#placeholders"
+      }
+    },
+    "autoAdvanceAfter": {
+      "type": "number",
+      "description": "Goes to the next slide or scene after this number of seconds.",
+      "markdownDescription": "Goes to the next slide or scene after this number of seconds.",
+      "x-demotime": {
+        "inheritance": "firstSlide",
+        "docs": "https://demotime.show/slides/#auto-advancing-to-the-next-slide"
+      }
+    },
+    "hide": {
+      "type": "boolean",
+      "description": "Skips the slide while presenting. A hidden slide is not counted in the slide numbers.",
+      "markdownDescription": "Skips the slide while presenting. A hidden slide is not counted in the slide numbers.",
+      "default": false,
+      "x-demotime": {
+        "inheritance": "firstSlide",
+        "docs": "https://demotime.show/slides/#hiding-slides"
+      }
+    },
+    "autoFit": {
+      "type": "boolean",
+      "description": "Scales the content down, to at least 50%, when it doesn't fit on the slide.",
+      "markdownDescription": "Scales the content down, to at least 50%, when it doesn't fit on the slide.",
+      "default": false,
+      "x-demotime": {
+        "inheritance": "fallback",
+        "docs": "https://demotime.show/slides/#content-that-doesnt-fit"
+      }
+    },
+    "image": {
+      "type": "string",
+      "format": "uri-reference",
+      "description": "Path (relative to the workspace folder) or URL of an image. The `image-left` and `image-right` layouts show it next to the content, the other layouts as the background of the slide.",
+      "markdownDescription": "Path (relative to the workspace folder) or URL of an image. The `image-left` and `image-right` layouts show it next to the content, the other layouts as the background of the slide.",
+      "x-demotime": {
+        "inheritance": "firstSlide",
+        "docs": "https://demotime.show/slides/layouts/image/"
+      }
+    },
+    "background": {
+      "type": "string",
+      "description": "The background of the slide: a CSS colour (`\"#1e3a8a\"`), a gradient (`\"linear-gradient(135deg, #1e3a8a, #9333ea)\"`), or the path (relative to the workspace folder) or URL of an image. Put a value with a `#` between quotes. An `image` that the layout shows as the background takes precedence. Default: The background of the theme.",
+      "markdownDescription": "The background of the slide: a CSS colour (`\"#1e3a8a\"`), a gradient (`\"linear-gradient(135deg, #1e3a8a, #9333ea)\"`), or the path (relative to the workspace folder) or URL of an image. Put a value with a `#` between quotes. An `image` that the layout shows as the background takes precedence. Default: The background of the theme.",
+      "x-demotime": {
+        "inheritance": "fallback",
+        "docs": "https://demotime.show/slides/#slide-background-and-classes"
+      }
+    },
+    "class": {
+      "type": "string",
+      "description": "One or more CSS classes, separated by spaces, that are added to the `.slide__layout` element of the slide, so a custom theme can style it.",
+      "markdownDescription": "One or more CSS classes, separated by spaces, that are added to the `.slide__layout` element of the slide, so a custom theme can style it.",
+      "x-demotime": {
+        "inheritance": "fallback",
+        "docs": "https://demotime.show/slides/#slide-background-and-classes"
+      }
+    },
+    "video": {
+      "type": "string",
+      "format": "uri-reference",
+      "description": "Path (relative to the workspace folder) or URL of the video. A custom layout can use it too.",
+      "markdownDescription": "Path (relative to the workspace folder) or URL of the video. A custom layout can use it too.",
+      "x-demotime": {
+        "inheritance": "fallback",
+        "layouts": ["video"],
+        "docs": "https://demotime.show/slides/layouts/video/"
+      }
+    },
+    "controls": {
+      "type": "boolean",
+      "description": "Shows the video controls. Without controls, the video plays as a muted background that loops.",
+      "markdownDescription": "Shows the video controls. Without controls, the video plays as a muted background that loops.",
+      "default": false,
+      "x-demotime": {
+        "inheritance": "fallback",
+        "layouts": ["video"],
+        "docs": "https://demotime.show/slides/layouts/video/"
+      }
+    },
+    "autoplay": {
+      "type": "boolean",
+      "description": "Starts the video, or the drawing of the animated SVG, when the slide opens. A video that starts automatically is muted. Default: `true`, or `false` for a video with `controls`.",
+      "markdownDescription": "Starts the video, or the drawing of the animated SVG, when the slide opens. A video that starts automatically is muted. Default: `true`, or `false` for a video with `controls`.",
+      "x-demotime": {
+        "inheritance": "fallback",
+        "layouts": ["video", "animated"]
+      }
+    },
+    "autoPlay": {
+      "type": "boolean",
+      "description": "Another spelling of `autoplay` for the video layout.",
+      "markdownDescription": "Another spelling of `autoplay` for the video layout.",
+      "deprecated": true,
+      "x-demotime": {
+        "inheritance": "fallback",
+        "layouts": ["video"],
+        "aliasOf": "autoplay",
+        "docs": "https://demotime.show/slides/layouts/video/"
+      }
+    },
+    "loop": {
+      "type": "boolean",
+      "description": "Loops a video with `controls`. A video without controls always loops.",
+      "markdownDescription": "Loops a video with `controls`. A video without controls always loops.",
+      "default": false,
+      "x-demotime": {
+        "inheritance": "fallback",
+        "layouts": ["video"],
+        "docs": "https://demotime.show/slides/layouts/video/"
+      }
+    },
+    "muted": {
+      "type": "boolean",
+      "description": "Mutes a video with `controls` that doesn't start automatically. Other videos are always muted.",
+      "markdownDescription": "Mutes a video with `controls` that doesn't start automatically. Other videos are always muted.",
+      "default": false,
+      "x-demotime": {
+        "inheritance": "fallback",
+        "layouts": ["video"],
+        "docs": "https://demotime.show/slides/layouts/video/"
+      }
+    },
+    "playsInline": {
+      "type": "boolean",
+      "description": "Plays a video with `controls` inline on mobile devices instead of full screen. A video without controls always plays inline.",
+      "markdownDescription": "Plays a video with `controls` inline on mobile devices instead of full screen. A video without controls always plays inline.",
+      "default": false,
+      "x-demotime": {
+        "inheritance": "fallback",
+        "layouts": ["video"],
+        "docs": "https://demotime.show/slides/layouts/video/"
+      }
+    },
+    "playbackRate": {
+      "type": "number",
+      "description": "The playback speed of the video, like `0.5` or `2`.",
+      "markdownDescription": "The playback speed of the video, like `0.5` or `2`.",
+      "default": 1,
+      "x-demotime": {
+        "inheritance": "fallback",
+        "layouts": ["video"],
+        "docs": "https://demotime.show/slides/layouts/video/"
+      }
+    },
+    "svgFile": {
+      "type": "string",
+      "description": "Path (relative to the workspace folder) of the SVG file to draw. Required.",
+      "markdownDescription": "Path (relative to the workspace folder) of the SVG file to draw. Required.",
+      "x-demotime": {
+        "inheritance": "fallback",
+        "layouts": ["animated"],
+        "docs": "https://demotime.show/slides/layouts/animated/"
+      }
+    },
+    "animationSpeed": {
+      "type": "number",
+      "description": "Drawing speed in pixels per second. Higher values draw faster.",
+      "markdownDescription": "Drawing speed in pixels per second. Higher values draw faster.",
+      "default": 100,
+      "x-demotime": {
+        "inheritance": "fallback",
+        "layouts": ["animated"],
+        "docs": "https://demotime.show/slides/layouts/animated/"
+      }
+    },
+    "textTypeWriterEffect": {
+      "type": "boolean",
+      "description": "Types the text of the SVG character by character.",
+      "markdownDescription": "Types the text of the SVG character by character.",
+      "default": true,
+      "x-demotime": {
+        "inheritance": "fallback",
+        "layouts": ["animated"],
+        "docs": "https://demotime.show/slides/layouts/animated/"
+      }
+    },
+    "textTypeWriterSpeed": {
+      "type": "number",
+      "description": "Typing speed in milliseconds per character. Lower values type faster.",
+      "markdownDescription": "Typing speed in milliseconds per character. Lower values type faster.",
+      "default": 20,
+      "x-demotime": {
+        "inheritance": "fallback",
+        "layouts": ["animated"],
+        "docs": "https://demotime.show/slides/layouts/animated/"
+      }
+    },
+    "skipAnimation": {
+      "type": "boolean",
+      "description": "Shows the complete SVG right away, without drawing it.",
+      "markdownDescription": "Shows the complete SVG right away, without drawing it.",
+      "default": false,
+      "x-demotime": {
+        "inheritance": "fallback",
+        "layouts": ["animated"],
+        "docs": "https://demotime.show/slides/layouts/animated/"
+      }
+    },
+    "invertLightAndDarkColours": {
+      "type": "boolean",
+      "description": "Inverts the light and dark colours of the SVG, for contrast on a dark theme.",
+      "markdownDescription": "Inverts the light and dark colours of the SVG, for contrast on a dark theme.",
+      "default": false,
+      "x-demotime": {
+        "inheritance": "fallback",
+        "layouts": ["animated"],
+        "docs": "https://demotime.show/slides/layouts/animated/"
+      }
+    },
+    "controlsPosition": {
+      "type": "string",
+      "enum": ["topLeft", "topRight", "bottomLeft", "bottomRight", "none"],
+      "description": "The position of the play, reset and skip controls, or `none` to hide them.",
+      "markdownDescription": "The position of the play, reset and skip controls, or `none` to hide them.",
+      "default": "bottomRight",
+      "x-demotime": {
+        "inheritance": "fallback",
+        "layouts": ["animated"],
+        "docs": "https://demotime.show/slides/layouts/animated/"
+      }
+    }
+  },
+  "additionalProperties": true
+}

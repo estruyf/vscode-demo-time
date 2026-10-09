@@ -1,0 +1,7 @@
+src/
+tests/
+node_modules/
+tsconfig*.json
+jest.config.js
+eslint.config.mjs
+.DS_Store

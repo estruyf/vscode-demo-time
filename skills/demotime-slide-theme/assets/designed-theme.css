@@ -1,0 +1,237 @@
+/*
+  <Display name>: Demo Time slide theme for "<talk title>"
+
+  Usage:
+    - `theme: brand` in the document front matter of every slide file
+    - `"demoTime.customTheme": ".demo/theme/brand.css"` in .vscode/settings.json
+
+  Markdown in this theme:
+    - **strong**  highlighted in the accent colour
+    - *em*        the secondary colour
+    - <small>     source line at the bottom of the slide
+    - two-columns: set `--brand-label` on `.slide__left` / `.slide__right` in a <style> block to
+      label a column
+
+  Replace "brand" with the theme name everywhere: the class, the variable prefix and the keyframes.
+*/
+
+/* Fonts next to this file; url() resolves relative to the CSS file */
+@font-face {
+  font-family: 'Brand Sans';
+  src: url('BrandSans.woff2') format('woff2');
+  font-weight: 300 700;
+}
+
+@keyframes brand-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.slide.brand {
+  /* Design tokens */
+  --brand-background: #0f1117;
+  --brand-surface: #181b24;
+  --brand-line: #2a2f3d;
+  --brand-text: #e9ecf3;
+  --brand-muted: #8b93a7;
+  --brand-accent: #4f9dff;
+  --brand-secondary: #ff7a59;
+
+  --brand-font: 'Brand Sans', system-ui, sans-serif;
+  --brand-mono: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  /* Demo Time variables, so built-in parts and the Theme Builder pick up the palette */
+  --demotime-color: var(--brand-text);
+  --demotime-background: var(--brand-background);
+  --demotime-heading-color: var(--brand-text);
+  --demotime-heading-background: transparent;
+  --demotime-link-color: var(--brand-accent);
+  --demotime-link-active-color: var(--brand-secondary);
+  --demotime-blockquote-border: var(--brand-accent);
+  --demotime-blockquote-background: var(--brand-surface);
+  --demotime-accent: var(--brand-accent);
+
+  background: var(--brand-background);
+  color: var(--brand-text);
+  font-family: var(--brand-font);
+  font-size: 20px;
+
+  /* Canvas: background and decorations of every slide */
+  .slide__layout {
+    background-color: var(--brand-background);
+    background-image: radial-gradient(
+      ellipse 60% 60% at 100% 0%,
+      rgb(79 157 255 / 0.15),
+      transparent 70%
+    );
+  }
+
+  /* Flow: padding and spacing between blocks */
+  .slide__content__inner {
+    box-sizing: border-box;
+    height: 100%;
+    padding: 56px 72px;
+
+    > * + * {
+      margin-top: 0.9rem;
+    }
+  }
+
+  /* Typography */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--brand-font);
+    color: var(--brand-text);
+    background: none;
+    line-height: 1.1;
+  }
+
+  h1 {
+    position: relative;
+    font-size: 2.6rem;
+    padding-bottom: 0.4em;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 72px;
+      height: 4px;
+      background: var(--brand-accent);
+    }
+  }
+
+  p,
+  ul,
+  ol {
+    font-size: 1.3rem;
+    line-height: 1.5;
+  }
+
+  strong {
+    color: var(--brand-accent);
+  }
+
+  em {
+    color: var(--brand-secondary);
+  }
+
+  ul > li::marker {
+    color: var(--brand-accent);
+  }
+
+  small {
+    position: absolute;
+    left: 72px;
+    right: 72px;
+    bottom: 24px;
+    font-family: var(--brand-mono);
+    font-size: 0.6rem;
+    color: var(--brand-muted);
+  }
+
+  code,
+  pre {
+    font-family: var(--brand-mono);
+  }
+
+  /* Layout: intro */
+  .intro {
+    .slide__content__inner {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    h1 {
+      font-size: 4rem;
+      animation: brand-fade-in 0.6s ease both;
+    }
+  }
+
+  /* Layout: section */
+  .section {
+    .slide__content__inner {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    h1 {
+      font-size: 3.2rem;
+    }
+  }
+
+  /* Layout: quote */
+  .quote {
+    .slide__content__inner {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 500;
+
+      &::after {
+        display: none;
+      }
+    }
+
+    p {
+      color: var(--brand-muted);
+    }
+  }
+
+  /* Layout: two columns, with an optional label per column */
+  .two-columns {
+    .slide__left,
+    .slide__right {
+      position: relative;
+      padding: 40px 24px 24px;
+      border: 1px solid var(--brand-line);
+      border-radius: 12px;
+      background: var(--brand-surface);
+
+      &::after {
+        content: var(--brand-label, '');
+        position: absolute;
+        top: 12px;
+        right: 16px;
+        font-family: var(--brand-mono);
+        font-size: 0.55rem;
+        text-transform: uppercase;
+        color: var(--brand-muted);
+      }
+    }
+  }
+
+  /* Layouts: image-left / image-right; the image comes from the `image` front matter */
+  .image-left .slide__image_left,
+  .image-right .slide__image_right {
+    background-size: cover !important;
+    background-position: center !important;
+  }
+
+  /* Header and footer */
+  .slide__header,
+  .slide__footer {
+    font-family: var(--brand-mono);
+    font-size: 0.6rem;
+    color: var(--brand-muted);
+  }
+
+  /* Custom layout: about me (.demo/layouts/about-me.hbs) */
+  .slide__content__inner:has(> .about-me) {
+    padding: 0;
+  }
+}

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import rehypePrettyCode from 'rehype-pretty-code';
 import { messageHandler } from '@estruyf/vscode/dist/client/webview';
-import { convertTemplateToHtml, placeholderFormatting, SlideMetadata, WebViewMessages } from '@demotime/common';
+import { getTemplateErrorMessage, getVideoAutoplay, placeholderFormatting, renderTemplateError, SlideMetadata, tryConvertTemplateToHtml, WebViewMessages } from '@demotime/common';
 import { renderToString } from 'react-dom/server';
 import { usePrevious, useRemark } from '../../hooks';
 import { transformImageUrl } from '../../utils';
@@ -14,6 +14,11 @@ export interface IMarkdownProps {
   isDarkTheme: boolean;
   webviewUrl: string | null;
   videoUrl?: string;
+  /**
+   * Renders the slide for a thumbnail or a measurement: it doesn't reveal the preview or log
+   * errors
+   */
+  isStatic?: boolean;
   updateBgStyles: (styles: React.CSSProperties | undefined) => void;
 }
 
@@ -25,6 +30,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   isDarkTheme,
   webviewUrl,
   videoUrl,
+  isStatic = false,
   updateBgStyles
 }: React.PropsWithChildren<IMarkdownProps>) => {
   const prevContent = usePrevious(content);
@@ -42,13 +48,15 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     return transformImageUrl(webviewUrl || "", raw) || raw;
   }, [videoUrl, matter?.video, webviewUrl]);
 
+  const shouldAutoplay = React.useMemo(() => getVideoAutoplay(matter), [matter]);
+
   const computedMuted = React.useMemo(() => {
     // If user explicitly set muted (true or 'true'), respect it.
     const explicit = matter && (matter.muted === true || matter.muted === 'true');
     if (explicit) { return true; }
-    // Allow autoPlay by muting when autoPlay is requested or when controls are hidden.
-    return Boolean(matter?.autoPlay) || !matter?.controls;
-  }, [matter]);
+    // Allow autoplay by muting when autoplay is requested or when controls are hidden.
+    return shouldAutoplay || !matter?.controls;
+  }, [matter, shouldAutoplay]);
 
   const {
     markdown,
@@ -83,33 +91,49 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     }
 
     if (layout) {
-      messageHandler.request<string>(WebViewMessages.toVscode.getFileContents, layout).then(async (templateHtml) => {
-        if (templateHtml) {
-          let crntSlideContent: string;
-          if (content) {
-            const processedContent = await processMarkdown(content);
-            crntSlideContent = renderToString(processedContent.reactContent);
-          } else {
-            crntSlideContent = textContent;
-          }
-
-          const metadataWithUrl = { ...metadata, webViewUrl: webviewUrl || undefined };
-
-          const html = convertTemplateToHtml(templateHtml, {
-            metadata: metadataWithUrl,
-            content: crntSlideContent,
-          }, webviewUrl);
-
-          setTemplate(html);
-          setIsReady(true);
+      const errorOptions = { title: 'Custom layout error', path: layout };
+      const showError = (message: string) => {
+        if (!isStatic) {
+          messageHandler.send(WebViewMessages.toVscode.logError, getTemplateErrorMessage(errorOptions, message));
         }
-      }).catch(() => {
+        setTemplate(renderTemplateError(errorOptions, message));
         setIsReady(true);
+      };
+
+      messageHandler.request<string>(WebViewMessages.toVscode.getFileContents, layout).then(async (templateHtml) => {
+        if (!templateHtml) {
+          showError('The layout file could not be found or is empty.');
+          return;
+        }
+
+        let crntSlideContent: string;
+        if (content) {
+          const processedContent = await processMarkdown(content);
+          crntSlideContent = renderToString(processedContent.reactContent);
+        } else {
+          crntSlideContent = textContent;
+        }
+
+        const metadataWithUrl = { ...metadata, webViewUrl: webviewUrl || undefined };
+
+        const { html, error } = tryConvertTemplateToHtml(templateHtml, {
+          metadata: metadataWithUrl,
+          content: crntSlideContent,
+        }, { ...errorOptions, webviewUrl });
+
+        if (error && !isStatic) {
+          messageHandler.send(WebViewMessages.toVscode.logError, error);
+        }
+
+        setTemplate(html);
+        setIsReady(true);
+      }).catch((e) => {
+        showError(e instanceof Error ? e.message : String(e));
       });
     } else {
       setIsReady(true);
     }
-  }, [content, textContent, webviewUrl, processMarkdown]);
+  }, [content, textContent, webviewUrl, processMarkdown, isStatic]);
 
   const updateCustomThemePath = React.useCallback((customThemePath?: string) => {
     if (!customThemePath) {
@@ -204,7 +228,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
 
   React.useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
-    if (isReady) {
+    if (isReady && !isStatic) {
       // Sent a reveal message to the extension when the slide is ready.
       timeoutId = setTimeout(() => {
         messageHandler.send(WebViewMessages.toVscode.slideReady);
@@ -216,9 +240,9 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
         clearTimeout(timeoutId);
       }
     };
-  }, [isReady]);
+  }, [isReady, isStatic]);
 
-  // Ensure the browser picks up the dynamically rendered source and respects autoPlay.
+  // Ensure the browser picks up the dynamically rendered source and respects autoplay.
   React.useEffect(() => {
     const video = videoRef.current;
     if (!video || !resolvedVideoUrl) { return; }
@@ -235,7 +259,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
         }
       }
 
-      if (Boolean(matter?.autoPlay) && computedMuted) {
+      if (shouldAutoplay && computedMuted) {
         void video.play();
       }
     };
@@ -256,7 +280,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     return () => {
       video.removeEventListener('loadedmetadata', setRateAndPlay);
     };
-  }, [resolvedVideoUrl, isReady, computedMuted, matter?.autoPlay, matter?.playbackRate]);
+  }, [resolvedVideoUrl, isReady, computedMuted, shouldAutoplay, matter?.playbackRate]);
 
   if (!isReady) {
     return null;
@@ -284,7 +308,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
                   <video
                     ref={videoRef}
                     controls={matter?.controls}
-                    autoPlay={matter?.autoPlay || !matter?.controls}
+                    autoPlay={shouldAutoplay}
                     loop={matter?.loop || !matter?.controls}
                     muted={computedMuted}
                     playsInline={matter?.playsInline || !matter?.controls}

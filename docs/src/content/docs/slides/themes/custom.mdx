@@ -63,6 +63,34 @@ customTheme: .demo/slides/theme.css
 
 <Image class="mx-auto" src={customThemeImg} alt="Custom theming" />
 
+### Style a single slide
+
+Give a slide one or more CSS classes with the `class` front matter property, and style them in your custom theme. The classes are added to the `.slide__layout` element of the slide.
+
+```md title=".demo/slides/slides.md"
+---
+class: section-break
+---
+
+# Part 2: the demo
+```
+
+```css title=".demo/slides/theme.css"
+.slide .slide__layout.section-break {
+  background: #1e3a8a;
+  color: white;
+
+  h1 {
+    font-size: 4em;
+    text-transform: uppercase;
+  }
+}
+```
+
+<Aside type="tip">
+The built-in themes set the background and colour of each layout with a selector like `.slide.default .intro`. Start your selector with `.slide .slide__layout` so it takes precedence. To only change the background of a slide, the [`background` property](/slides/#slide-background-and-classes) doesn't need any CSS.
+</Aside>
+
 <Aside type="note">
 If you do not specify a `theme` in the front matter, the `default` theme will be used.
 </Aside>

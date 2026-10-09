@@ -1,6 +1,6 @@
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import * as React from 'react';
-import { COMMAND, Slide, SlideMetadata } from '@demotime/common';
+import { COMMAND, isSlideHidden, Slide, SlideMetadata } from '@demotime/common';
 import { SlideControl } from './SlideControl';
 import { WhiteboardIcon } from './WhiteboardIcon';
 import { ProjectorIcon } from './ProjectorIcon';
@@ -8,6 +8,7 @@ import { EventData } from '@estruyf/vscode';
 import { WebViewMessages } from '@demotime/common';
 import { SlideNavigator, SlideOption } from './SlideNavigator';
 import { SlideControlsMenu, ISlideMenuGroup, ISlideMenuItem } from './SlideControlsMenu';
+import { SlideNotesEditor } from './SlideNotesEditor';
 import { cn } from '../../utils/cn';
 
 export interface ISlideControlsProps {
@@ -21,7 +22,6 @@ export interface ISlideControlsProps {
   isDarkTheme?: boolean;
   webviewUrl?: string | null;
   filePath?: string;
-  slideTheme?: string;
   updateSlideIdx: (index: number) => void;
   onNavigateToSlide?: (index: number) => void;
   triggerMouseMove: (value: boolean) => void;
@@ -32,6 +32,8 @@ export interface ISlideControlsProps {
   onZoomToggle?: () => void;
   style?: React.CSSProperties;
   matter?: SlideMetadata;
+  notes?: string;
+  clickStep?: number;
 }
 
 const Divider: React.FunctionComponent = () => (
@@ -53,7 +55,6 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   isDarkTheme,
   webviewUrl,
   filePath,
-  slideTheme,
   updateSlideIdx,
   onNavigateToSlide,
   triggerMouseMove,
@@ -63,13 +64,16 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   isZoomed = false,
   onZoomToggle,
   style,
-  matter
+  matter,
+  notes,
+  clickStep = 0,
 }: React.PropsWithChildren<ISlideControlsProps>) => {
   const [previousEnabled, setPreviousEnabled] = React.useState(false);
   const [isPresentationMode, setIsPresentationMode] = React.useState(false);
   const [showPosition, setShowPosition] = React.useState(false);
   const [isNavigatorOpen, setIsNavigatorOpen] = React.useState(false);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [isNotesEditorOpen, setIsNotesEditorOpen] = React.useState(false);
   const [extensionAutoProceedManaged, setExtensionAutoProceedManaged] = React.useState(false);
 
 
@@ -119,9 +123,40 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
     messageHandler.send(WebViewMessages.toVscode.runCommand, "workbench.action.webview.reloadWebviewAction");
   }, []);
 
-  const openSlideSource = React.useCallback(() => {
-    messageHandler.send(WebViewMessages.toVscode.openFile, path);
-  }, [path]);
+  // Moves the editor cursor to the source of the current slide
+  const revealSlideSource = React.useCallback(() => {
+    messageHandler.send(WebViewMessages.toVscode.preview.revealSource, {
+      path,
+      slideIndex: currentSlide,
+    });
+  }, [path, currentSlide]);
+
+  const isHidden = isSlideHidden({ frontmatter: matter });
+  const toggleSlideHidden = React.useCallback(() => {
+    messageHandler.send(WebViewMessages.toVscode.preview.setSlideHidden, {
+      path,
+      slideIndex: currentSlide,
+      hidden: !isHidden,
+    });
+  }, [path, currentSlide, isHidden]);
+
+  const openNotesEditor = React.useCallback(() => {
+    setIsNotesEditorOpen(true);
+  }, []);
+
+  const closeNotesEditor = React.useCallback(() => {
+    setIsNotesEditorOpen(false);
+  }, []);
+
+  // Writes the notes to the `<!-- notes -->` block of the slide
+  const saveNotes = React.useCallback((value: string) => {
+    messageHandler.send(WebViewMessages.toVscode.preview.setSlideNotes, {
+      path,
+      slideIndex: currentSlide,
+      notes: value,
+    });
+    setIsNotesEditorOpen(false);
+  }, [path, currentSlide]);
 
   const toggleMousePosition = React.useCallback(() => {
     const nextValue = !showPosition;
@@ -150,7 +185,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
         clearTimeout(timer);
       }
     };
-  }, [extensionAutoProceedManaged, matter?.autoAdvanceAfter, currentSlide]);
+  }, [extensionAutoProceedManaged, matter?.autoAdvanceAfter, currentSlide, clickStep]);
 
   React.useEffect(() => {
     if (show) {
@@ -192,10 +227,23 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
       });
       if (path) {
         slideItems.push({
-          id: 'open-slide-source',
-          label: 'Open slide source',
+          id: 'reveal-slide-source',
+          label: 'Reveal slide source',
           iconName: 'file-code',
-          onSelect: openSlideSource,
+          onSelect: revealSlideSource,
+        });
+        // Adds or removes `hide: true` in the slide front matter
+        slideItems.push({
+          id: 'toggle-slide-hidden',
+          label: isHidden ? 'Show slide while presenting' : 'Hide slide while presenting',
+          iconName: isHidden ? 'eye' : 'eye-closed',
+          onSelect: toggleSlideHidden,
+        });
+        slideItems.push({
+          id: 'edit-slide-notes',
+          label: notes ? 'Edit speaker notes' : 'Add speaker notes',
+          iconName: 'note',
+          onSelect: openNotesEditor,
         });
       }
     }
@@ -226,13 +274,14 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
     });
 
     return groups;
-  }, [isPresentationMode, showPosition, path, toggleMousePosition, openSlideSource, focusPanel, closeSidebar, hideControls]);
+  }, [isPresentationMode, showPosition, path, isHidden, notes, toggleMousePosition, revealSlideSource, toggleSlideHidden, openNotesEditor, focusPanel, closeSidebar, hideControls]);
 
-  const isOverlayOpen = isNavigatorOpen || isMenuOpen;
+  const isOverlayOpen = isNavigatorOpen || isMenuOpen || isNotesEditorOpen;
   const visible = show || isOverlayOpen;
 
   return (
     <div
+      data-slide-controls
       className={cn(
         'absolute bottom-0 left-0 w-full flex justify-center px-4 pb-4 pointer-events-none transition-opacity duration-300',
         visible ? 'opacity-100' : 'opacity-0',
@@ -289,7 +338,6 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
               isDarkTheme={isDarkTheme || false}
               webviewUrl={webviewUrl || null}
               filePath={filePath}
-              theme={slideTheme}
               onNavigate={onNavigateToSlide || updateSlideIdx}
               onOpenChange={setIsNavigatorOpen}
             />
@@ -326,6 +374,15 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
 
           <SlideControlsMenu groups={menuGroups} onOpenChange={setIsMenuOpen} />
         </div>
+
+        {isNotesEditorOpen && (
+          <SlideNotesEditor
+            slideNr={currentSlide + 1}
+            notes={notes}
+            onSave={saveNotes}
+            onClose={closeNotesEditor}
+          />
+        )}
       </div>
     </div>
   );

@@ -3,6 +3,8 @@ import { Play, GripVertical, Trash2, Copy } from 'lucide-react';
 import { Demo } from '../../types/demo';
 import { cn } from '../../utils/cn';
 import { getActionDotColor } from '../../utils/actionHelpers';
+import { useActProblems } from '../../hooks/useActProblems';
+import { ProblemBadge } from '../ui/ProblemBadge';
 
 // Maximum number of move dots to render before collapsing into a "+N" label.
 const MAX_DOTS = 7;
@@ -32,6 +34,7 @@ export const DemoListItem: React.FC<DemoListItemProps> = ({
   draggingIndex,
   setDraggingIndex,
 }) => {
+  const problems = useActProblems(index);
   const rootRef = React.useRef<HTMLDivElement>(null);
   const [dropPosition, setDropPosition] = React.useState<'top' | 'bottom' | null>(null);
 
@@ -155,12 +158,15 @@ export const DemoListItem: React.FC<DemoListItemProps> = ({
           </span>
 
           <div className="min-w-0 flex-1">
-            <h4
-              className="font-semibold text-gray-900 dark:text-white truncate"
-              title={demo.title}
-            >
-              {demo.title || <span className="text-gray-400 dark:text-gray-500">Untitled scene</span>}
-            </h4>
+            <div className="flex items-center gap-2 min-w-0">
+              <h4
+                className="font-semibold text-gray-900 dark:text-white truncate"
+                title={demo.title}
+              >
+                {demo.title || <span className="text-gray-400 dark:text-gray-500">Untitled scene</span>}
+              </h4>
+              <ProblemBadge problems={problems} />
+            </div>
 
             <div className="flex items-center gap-2 mt-1">
               <span className="text-sm text-gray-500 dark:text-gray-400 shrink-0">

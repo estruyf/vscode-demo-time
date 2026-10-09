@@ -1,10 +1,15 @@
 import React from 'react';
+import { ActProblem } from '@demotime/common';
 import { ValidationResult } from '../../utils/validation';
 
 interface AppHeaderProps {
   title: string;
   subtitle?: string;
   validation?: ValidationResult;
+  /**
+   * The preflight problems, which add errors and warnings to the validation status
+   */
+  preflightProblems?: ActProblem[];
   showValidation: boolean;
   onToggleValidation: () => void;
   fileControls: React.ReactNode;
@@ -21,12 +26,18 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   title,
   subtitle,
   validation,
+  preflightProblems = [],
   onToggleValidation,
   fileControls,
   actionControls,
   autoSaveStatus,
   validationDetails,
 }) => {
+  const preflightErrors = preflightProblems.filter((problem) => problem.severity === 'error').length;
+  const errors = (validation?.errors.length || 0) + preflightErrors;
+  const warnings = preflightProblems.length - preflightErrors;
+  const plural = (count: number, word: string) => `${count} ${word}${count !== 1 ? 's' : ''}`;
+
   return (
     <div className="bg-white dark:bg-gray-900 shadow-xs border-b border-gray-200 dark:border-gray-700 sticky top-0 z-20">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
@@ -59,19 +70,23 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                 onClick={onToggleValidation}
                 className="flex items-center space-x-2 pr-2 sm:pr-3 py-1.5 sm:py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
-                <div className={`w-3 h-3 rounded-full ${validation.isValid
-                  ? 'bg-green-500'
-                  : 'bg-red-500'
+                <div className={`w-3 h-3 rounded-full ${errors
+                  ? 'bg-red-500'
+                  : warnings
+                    ? 'bg-amber-500'
+                    : 'bg-green-500'
                   }`} />
-                <span className={`text-xs sm:text-sm font-medium ${validation.isValid
-                  ? 'text-green-600'
-                  : 'text-red-600'
-                  }`}>
-                  {validation.isValid
-                    ? 'Valid Configuration'
-                    : `${validation.errors.length} error${validation.errors.length !== 1 ? 's' : ''}`
-                  }
-                </span>
+                {errors === 0 && warnings === 0 && (
+                  <span className="text-xs sm:text-sm font-medium text-green-600">Valid Configuration</span>
+                )}
+                {errors > 0 && (
+                  <span className="text-xs sm:text-sm font-medium text-red-600">{plural(errors, 'error')}</span>
+                )}
+                {warnings > 0 && (
+                  <span className="text-xs sm:text-sm font-medium text-amber-600 dark:text-amber-500">
+                    {plural(warnings, 'warning')}
+                  </span>
+                )}
               </button>
             )}
 

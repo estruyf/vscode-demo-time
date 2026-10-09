@@ -1,7 +1,7 @@
 ---
 title: Slide transitions
 description: Learn about the different slide transitions available in Demo Time
-lastmod: 2025-07-04T15:10:34.623Z
+lastmod: 2026-10-02T00:00:00.000Z
 ---
 
 import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
@@ -38,3 +38,37 @@ This will apply a fade-in transition to the slide when it is displayed.
   <source src="/videos/slide-transitions.mp4" type="video/mp4" />
   Your browser does not support the video tag.
 </video>
+
+## Reduced motion
+
+Big zoom and rotate transitions can be uncomfortable for people who are sensitive to motion. When
+reduced motion is on, Demo Time replaces every slide transition with a short crossfade, and the
+[animation components](/slides/animations/#reduced-motion) and
+[animated SVG slides](/slides/layouts/animated/) show their end state.
+
+The `demoTime.slideReducedMotion` setting controls it:
+
+- `auto` (default): follow the `workbench.reduceMotion` setting of VS Code. Its default `auto`
+  follows the reduced motion setting of your operating system.
+- `on`: always reduce motion on the slides.
+- `off`: always animate the slides, even when VS Code or your operating system reduces motion. Use
+  it when you want the transitions on the projector regardless of your own settings.
+
+```json title=".vscode/settings.json"
+{
+  "demoTime.slideReducedMotion": "off"
+}
+```
+
+Changes to the setting apply to the open slide preview right away.
+
+<Aside type="tip">
+While reduced motion is on, the slide preview has a `data-reduced-motion` attribute on its `<html>`
+element. Use it to turn off the animations in your own theme or [custom components](/slides/components/custom/#reduced-motion):
+
+```css
+:root[data-reduced-motion] .my-animation {
+  animation: none;
+}
+```
+</Aside>

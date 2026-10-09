@@ -6,6 +6,7 @@ node_modules
 .DS_STORE
 coverage
 webviews
+skills
 
 .nx/cache
 .nx/workspace-data

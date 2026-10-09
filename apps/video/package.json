@@ -1,0 +1,57 @@
+{
+  "name": "@demotime/video",
+  "version": "0.0.1",
+  "description": "Export a Demo Time play as a video: runs the play unattended in VS Code, records it, and encodes an MP4, a GIF, captions and chapters.",
+  "homepage": "https://demotime.show/features/video-export/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/estruyf/vscode-demo-time.git",
+    "directory": "apps/video"
+  },
+  "bugs": {
+    "url": "https://github.com/estruyf/vscode-demo-time/issues"
+  },
+  "main": "dist/cli.js",
+  "bin": {
+    "demotime-video": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "npm run clean && tsc -p tsconfig.build.json",
+    "watch": "tsc -p tsconfig.build.json -w",
+    "clean": "rimraf dist",
+    "start": "node dist/cli.js"
+  },
+  "keywords": [
+    "demo-time",
+    "vscode",
+    "video",
+    "screen-recording",
+    "demo"
+  ],
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "author": "Elio Struyf <elio@struyfconsulting.be>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@vscode/test-electron": "^2.5.2",
+    "jsonc-parser": "^3.3.1",
+    "playwright-core": "^1.60.0"
+  },
+  "optionalDependencies": {
+    "ffmpeg-static": "^5.2.0"
+  },
+  "devDependencies": {
+    "@demotime/common": "*",
+    "@types/node": "^22.15.21",
+    "jest": "^29.7.0",
+    "rimraf": "^6.0.1",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.9.2"
+  }
+}

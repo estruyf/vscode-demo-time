@@ -124,10 +124,85 @@ You can use either Markdown or HTML list syntax inside the `dt-list` component. 
 ### Properties
 
 - `type` (optional): Set to `ol` for an ordered (numbered) list. Defaults to unordered list if omitted.
+- `clicks` (optional): The click on which the first item appears (default is `1`). Use it to reveal the list after other [click steps](/slides/animations/#click-steps) on the slide.
+
+```html title="Show the list after a dt-show"
+<dt-show>The plan</dt-show>
+
+<dt-list clicks="2">
+- Appears on the second click
+- Appears on the third click
+</dt-list>
+```
 
 <Aside type="tip">
 You can mix Markdown and HTML list items, but for best results, use one style per list.
 </Aside>
+
+## Action
+
+The `dt-action` component adds a button to your slide that runs a scene by its `id`, the same way as the [API](/references/api/#apirunbyid) and the [URI handler](/features/uri-handler/). Use it for a "Run it" button next to a code sample, an "Open the terminal" button on an exercise slide, or an agenda slide where each item jumps to its act.
+
+```html title="Run a scene from a slide"
+<dt-action id="run-tests">Run the tests</dt-action>
+```
+
+The `id` refers to the `id` of a scene in one of your act files:
+
+```yaml title=".demo/tests.yaml"
+scenes:
+  - id: run-tests
+    title: Run the tests
+    moves:
+      - action: executeTerminalCommand
+        command: npm test
+```
+
+To jump to an act, use the `id` of its first scene. Use `variant="link"` to show the component as a link, for instance on an agenda slide:
+
+```html title="Agenda slide"
+1. <dt-action variant="link" id="intro">Introduction</dt-action>
+2. <dt-action variant="link" id="first-demo">The first demo</dt-action>
+3. <dt-action variant="link" id="wrap-up">Wrap-up</dt-action>
+```
+
+Clicking the button or link doesn't count as a [click step](/slides/animations/#click-steps). In the [PDF export](/slides/export/) and the next-slide preview of the presenter view, it shows as a static button or link.
+
+### Properties
+
+- `id`: The `id` of the scene to run. When no scene has this `id`, the slide file shows a warning in the **Problems** panel.
+- `variant` (optional): `button` (default) or `link`.
+
+The text between the tags is the label. Without a label, the component shows the `id`.
+
+### Styling
+
+The component uses the link color of the slide theme. You can change it with these CSS variables, on the slide or in a [custom theme](/slides/themes/custom/):
+
+| Variable | Description |
+| --- | --- |
+| `--demotime-action-background` | Background color of the button |
+| `--demotime-action-color` | Text color of the button |
+| `--demotime-action-border` | Border of the button |
+| `--demotime-action-radius` | Border radius of the button |
+| `--demotime-action-padding` | Padding of the button |
+| `--demotime-action-font-size` | Font size of the button |
+| `--demotime-action-font-weight` | Font weight of the button |
+| `--demotime-action-shadow` | Box shadow of the button |
+| `--demotime-action-hover-opacity` | Opacity of the button on hover |
+| `--demotime-action-link-color` | Text color of the link |
+| `--demotime-action-link-hover-color` | Text color of the link on hover |
+| `--demotime-action-focus-color` | Color of the focus outline |
+
+```css title="A rounded yellow button"
+dt-action {
+  --demotime-action-background: #ffd43b;
+  --demotime-action-color: #15181f;
+  --demotime-action-radius: 999px;
+}
+```
+
+For more control, style the inner element with the `::part(action)` selector, or `::part(button)` and `::part(link)` for one variant.
 
 ## Finding the right coordinates
 

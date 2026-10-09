@@ -13,6 +13,7 @@
     {
       "title": "What we'll build",
       "description": "The agenda",
+      "notes": { "path": ".demo/notes/agenda.md" },
       "moves": [{ "action": "openSlide", "path": ".demo/slides/agenda.md" }]
     }
   ]

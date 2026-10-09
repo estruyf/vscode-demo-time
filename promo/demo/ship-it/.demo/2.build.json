@@ -35,6 +35,7 @@
     {
       "title": "Try it",
       "description": "Shorten three links and follow them back",
+      "notes": { "path": ".demo/notes/try.md" },
       "moves": [
         { "action": "unselect", "path": "src/routes.ts" },
         { "action": "openTerminal", "terminalId": "try" },

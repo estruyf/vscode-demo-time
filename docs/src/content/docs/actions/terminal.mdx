@@ -1,7 +1,7 @@
 ---
 title: Terminal actions
 description: Perform terminal actions in your demos like running commands, clearing the terminal, and more.
-lastmod: 2025-11-04T00:00:00.000Z
+lastmod: 2026-10-02T00:00:00.000Z
 ---
 
 import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
@@ -76,7 +76,8 @@ Execute a terminal command in the terminal.
   "terminalId": "<terminal id (optional)>",
   "autoExecute": "<true/false (optional - default is true)>",
   "insertTypingMode": "<typing mode (optional - default is 'instant')>",
-  "insertTypingSpeed": "<speed in milliseconds (optional)>"
+  "insertTypingSpeed": "<speed in milliseconds (optional)>",
+  "waitTimeout": "<maximum wait in milliseconds (optional - default is 5000)>"
 }
 ```
 
@@ -90,6 +91,7 @@ terminalId: <terminal id (optional)>
 autoExecute: <true/false (optional - default is true)>
 insertTypingMode: <typing mode (optional - default is 'instant')>
 insertTypingSpeed: <speed in milliseconds (optional)>
+waitTimeout: <maximum wait in milliseconds (optional - default is 5000)>
 ```
 
 </TabItem>
@@ -105,6 +107,7 @@ insertTypingSpeed: <speed in milliseconds (optional)>
   - `character-by-character`: Types each character individually
 - **insertTypingSpeed**: Optional. Speed in milliseconds between each typing unit.
 - **insertTypingSpeedRandomness**: Optional. Adds a semi-random variation to the `character-by-character` typing speed so it feels less robotic. The value is the maximum percentage (`0`-`100`) of extra delay added on top of `insertTypingSpeed` for each character. Defaults to `0` (disabled).
+- **waitTimeout**: Optional. The maximum time in milliseconds to wait for the command to finish before the next move runs. Default is `5000`. See [Wait for a long-running command](#wait-for-a-long-running-command).
 
 ### Examples
 
@@ -208,6 +211,37 @@ terminalId: demo-terminal
 
 </TabItem>
 </Tabs>
+
+#### Wait for a long-running command
+
+When the terminal has shell integration, Demo Time waits for the command to finish before it runs the next move of the scene, but for at most 5 seconds. For a build, a test run or another command that takes longer, set `waitTimeout` to the maximum time to wait. The next move still runs as soon as the command finishes.
+
+<Tabs syncKey="execute-terminal-command-wait-timeout">
+<TabItem label="JSON">
+
+```json
+{
+  "action": "executeTerminalCommand",
+  "command": "npm run build",
+  "waitTimeout": 120000
+}
+```
+
+</TabItem>
+<TabItem label="YAML">
+
+```yaml
+action: executeTerminalCommand
+command: npm run build
+waitTimeout: 120000
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="note">
+  Demo Time only knows when a command finishes when the terminal has shell integration and `autoExecute` is not `false`. Without shell integration, it waits a short fixed delay instead, and `waitTimeout` has no effect. In that case, use a [`waitForTimeout`](/actions/time/) move after the command.
+</Aside>
 
 ## Send a keyboard shortcut to the terminal
 

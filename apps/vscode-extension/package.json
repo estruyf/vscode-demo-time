@@ -2,7 +2,7 @@
   "name": "vscode-demo-time",
   "displayName": "Demo Time — Presentations & Demos in VS Code",
   "description": "Script your coding demos and presentations to perfection and present slides — all within VS Code! No typos, no missteps—just flawless, stress-free presentations. Seamlessly execute each demo step and advance through slides like a pro, keeping your audience engaged without ever leaving your coding environment.",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "publisher": "eliostruyf",
   "keywords": [
     "demo",
@@ -78,6 +78,20 @@
   ],
   "main": "./out/extension/extension.js",
   "contributes": {
+    "chatSkills": [
+      {
+        "path": "./skills/demotime-talk-plan/SKILL.md"
+      },
+      {
+        "path": "./skills/demotime-slides/SKILL.md"
+      },
+      {
+        "path": "./skills/demotime-slide-theme/SKILL.md"
+      },
+      {
+        "path": "./skills/demotime-code-demo/SKILL.md"
+      }
+    ],
     "configurationDefaults": {
       "files.associations": {
         "**/.demo/*.json": "jsonc",
@@ -168,6 +182,64 @@
           "default": false,
           "description": "Enable the previous command when in presentation mode"
         },
+        "demoTime.videoExport.command": {
+          "type": "string",
+          "scope": "machine",
+          "default": "npx --yes @demotime/video@latest",
+          "description": "The command that runs the video export CLI. Point it at another build, for example `node /path/to/apps/video/dist/cli.js`. Only read from your user settings, so a workspace cannot run a command of its own."
+        },
+        "demoTime.videoExport.extension": {
+          "type": "string",
+          "scope": "machine",
+          "default": "",
+          "description": "The Demo Time build to record with: a Marketplace id (with @version) or a path to a VSIX. Empty uses the version you are running, from the Marketplace. Only read from your user settings."
+        },
+        "demoTime.videoExport.options": {
+          "type": "object",
+          "scope": "resource",
+          "description": "The choices of the last video export, so the next one can run without asking. Written by the \"Export play as video\" command.",
+          "properties": {
+            "range": {
+              "type": "string",
+              "description": "all, act:2, act:2/scenes:3-5 or act:2/scenes:3-"
+            },
+            "preset": {
+              "type": "string",
+              "enum": [
+                "16:9",
+                "1:1",
+                "9:16"
+              ]
+            },
+            "gif": {
+              "type": "boolean"
+            },
+            "captions": {
+              "type": "string",
+              "enum": [
+                "none",
+                "titles",
+                "notes"
+              ]
+            },
+            "chapters": {
+              "type": "boolean"
+            },
+            "cards": {
+              "type": "boolean"
+            },
+            "realtime": {
+              "type": "boolean",
+              "description": "Record every slide for its full time, instead of holding the last frame of a slide without animations."
+            },
+            "slideSeconds": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 600,
+              "description": "Seconds each slide stays on screen. Leave it out to use the time it takes to read the slide, between 3 and 12 seconds."
+            }
+          }
+        },
         "demoTime.presentationViewToggles": {
           "type": "array",
           "items": {
@@ -177,6 +249,7 @@
               "tabs",
               "activityBar",
               "sideBar",
+              "secondarySideBar",
               "panel"
             ]
           },
@@ -185,9 +258,10 @@
             "tabs",
             "activityBar",
             "sideBar",
+            "secondarySideBar",
             "panel"
           ],
-          "description": "Choose which UI areas to hide when toggling presentation view (status bar, tabs, activity bar, side bar, or panel)."
+          "description": "Choose which UI areas to hide when toggling presentation view (status bar, tabs, activity bar, side bar, secondary side bar such as Chat, or panel)."
         },
         "demoTime.highlightBorderColor": {
           "type": "string",
@@ -212,7 +286,7 @@
         "demoTime.zoom": {
           "type": "number",
           "default": 1,
-          "description": "Zoom level to apply when using the zoomIn and zoomOut actions. This sets the editor font size accordingly."
+          "description": "The number of steps the zoomIn and zoomOut actions zoom the VS Code window."
         },
         "demoTime.highlightZoomEnabled": {
           "type": [
@@ -231,6 +305,11 @@
           "type": "boolean",
           "default": true,
           "description": "Show a clock in the status bar"
+        },
+        "demoTime.nextSceneButtonText": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "The text of the next scene button in the status bar, like `Next`. Use a fixed text to keep the button the same width for every scene. You can use codicons, like `$(arrow-right) Next`. Leave empty to show the title of the next scene."
         },
         "demoTime.lineInsertionDelay": {
           "type": "number",
@@ -311,12 +390,72 @@
         "demoTime.slideHeaderTemplate": {
           "type": "string",
           "default": "",
-          "description": "HTML template for slide headers. Supports Handlebars syntax with frontmatter variables. Example: '<header><h1>{{title}}</h1> <span>{{date}}</span></header>'"
+          "markdownDescription": "Relative path to an HTML file with the template for slide headers. Supports Handlebars syntax with the front matter properties of the slide and the `{{crntSlideIdx}}`, `{{totalSlides}}`, `{{slideTitle}}`, `{{sceneTitle}}`, `{{actTitle}}`, `{{presentationTitle}}` and `{{date \"d MMM yyyy\"}}` placeholders. Example file content: `<header><span>{{actTitle}}</span> <span>{{slideTitle}}</span></header>`"
         },
         "demoTime.slideFooterTemplate": {
           "type": "string",
           "default": "",
-          "description": "HTML template for slide footers. Supports Handlebars syntax with frontmatter variables. Example: '<footer><span>{{name}}</span> <span>{{date}}</span></footer>'"
+          "markdownDescription": "Relative path to an HTML file with the template for slide footers. Supports Handlebars syntax with the front matter properties of the slide and the `{{crntSlideIdx}}`, `{{totalSlides}}`, `{{slideTitle}}`, `{{sceneTitle}}`, `{{actTitle}}`, `{{presentationTitle}}` and `{{date \"d MMM yyyy\"}}` placeholders. Example file content: `<footer><span>{{presentationTitle}}</span> <span>{{crntSlideIdx}} / {{totalSlides}}</span></footer>`"
+        },
+        "demoTime.slideProgressBar": {
+          "type": "string",
+          "enum": [
+            "none",
+            "top",
+            "bottom"
+          ],
+          "enumDescriptions": [
+            "Don't show a progress bar.",
+            "Show the progress bar at the top of the slides.",
+            "Show the progress bar at the bottom of the slides."
+          ],
+          "default": "none",
+          "markdownDescription": "Show a thin progress bar on the slides, based on the slide number and the total number of slides over all acts. Use `progress: true`, `false`, `top` or `bottom` in the slide front matter to change it for a slide."
+        },
+        "demoTime.presentationTitle": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Title of the presentation for the `{{presentationTitle}}` placeholder in slide header and footer templates. When empty, the name of the workspace folder is used."
+        },
+        "demoTime.slidePreviewSync": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Sync the slide preview with the markdown editor: moving the cursor to another slide shows that slide in the preview, `Open slide preview` opens at the slide under the cursor, and double-clicking a slide in the preview moves the cursor to its source. Never applies in presentation mode."
+        },
+        "demoTime.slideReducedMotion": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "on",
+            "off"
+          ],
+          "enumDescriptions": [
+            "Follow the `workbench.reduceMotion` setting of VS Code, which follows the reduced motion setting of your OS by default.",
+            "Always reduce motion on the slides.",
+            "Always animate the slides, even when VS Code or your OS reduces motion."
+          ],
+          "default": "auto",
+          "markdownDescription": "Reduce motion on the slides: slide transitions become a short crossfade, and `fade-in`, `text-typewriter`, `text-highlight` and animated SVG slides show their end state."
+        },
+        "demoTime.pdfExport.includeHiddenSlides": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Include hidden slides (`hide: true` in the slide frontmatter) when exporting the slides to PDF."
+        },
+        "demoTime.pdfExport.notes": {
+          "type": "string",
+          "default": "none",
+          "enum": [
+            "none",
+            "below",
+            "page"
+          ],
+          "enumDescriptions": [
+            "Leave the speaker notes out of the PDF.",
+            "Add the speaker notes below each slide, on the same page.",
+            "Add the speaker notes on a separate page after each slide."
+          ],
+          "markdownDescription": "Add the speaker notes of the slides (the `<!-- notes ... -->` blocks) to the PDF export."
         },
         "demoTime.defaultFileType": {
           "type": "string",
@@ -387,7 +526,7 @@
       },
       {
         "command": "demo-time.recording.stop",
-        "title": "Stop recording",
+        "title": "Stop demo recording",
         "category": "Demo Time",
         "icon": "$(debug-stop)"
       },
@@ -486,6 +625,12 @@
         "title": "Fix duplicate scene IDs",
         "category": "Demo Time",
         "icon": "$(warning)"
+      },
+      {
+        "command": "demo-time.runPreflightCheck",
+        "title": "Run preflight check",
+        "category": "Demo Time",
+        "icon": "$(checklist)"
       },
       {
         "command": "demo-time.reset",
@@ -587,6 +732,24 @@
         "icon": "$(file-pdf)"
       },
       {
+        "command": "demo-time.exportPlayAsVideo",
+        "title": "Export play as video",
+        "category": "Demo Time",
+        "icon": "$(device-camera-video)"
+      },
+      {
+        "command": "demo-time.runForVideoExport",
+        "title": "Run play unattended for recording",
+        "category": "Demo Time",
+        "icon": "$(device-camera-video)"
+      },
+      {
+        "command": "demo-time.stopVideoExport",
+        "title": "Stop unattended run",
+        "category": "Demo Time",
+        "icon": "$(debug-stop)"
+      },
+      {
         "command": "demo-time.importPowerPointImages",
         "title": "Import PowerPoint Images as Slides",
         "category": "Demo Time",
@@ -642,6 +805,12 @@
         "title": "Theme Builder (beta)",
         "category": "Demo Time",
         "icon": "$(symbol-color)"
+      },
+      {
+        "command": "demo-time.installAiSkills",
+        "title": "Install or update AI skills",
+        "category": "Demo Time",
+        "icon": "$(sparkle)"
       },
       {
         "command": "demo-time.continueDemo",
@@ -758,6 +927,10 @@
         }
       ],
       "commandPalette": [
+        {
+          "command": "demo-time.stopVideoExport",
+          "when": "demo-time.videoExportActive"
+        },
         {
           "command": "demo-time.addStepToDemo",
           "when": "((editorLangId == jsonc || editorLangId == json) || editorLangId == yaml) && resourceDirname =~ /\\.demo$/"
@@ -896,41 +1069,64 @@
           "group": "navigation@3"
         },
         {
+          "command": "demo-time.exportPlayAsVideo",
+          "when": "view == demo-time-scenes",
+          "group": "3_export@1"
+        },
+        {
           "command": "demo-time.treeviewFind",
           "when": "view == demo-time-scenes",
           "group": "navigation@4"
         },
         {
           "command": "demo-time.createDemoFile",
-          "when": "view == demo-time-scenes"
+          "when": "view == demo-time-scenes",
+          "group": "1_create@1"
+        },
+        {
+          "command": "demo-time.runPreflightCheck",
+          "when": "view == demo-time-scenes && demo-time.isInitialized",
+          "group": "2_check@2"
         },
         {
           "command": "demo-time.docs",
-          "when": "view == demo-time-scenes"
+          "when": "view == demo-time-scenes",
+          "group": "5_help@1"
         },
         {
           "command": "demo-time.showOverview",
-          "when": "view == demo-time-scenes"
+          "when": "view == demo-time-scenes",
+          "group": "2_check@1"
         },
         {
           "command": "demo-time.showSettings",
-          "when": "view == demo-time-scenes"
+          "when": "view == demo-time-scenes",
+          "group": "4_settings@1"
         },
         {
           "command": "demo-time.showProFeatures",
-          "when": "view == demo-time-scenes"
+          "when": "view == demo-time-scenes",
+          "group": "5_help@2"
         },
         {
           "command": "demo-time.showGallery",
-          "when": "view == demo-time-scenes"
+          "when": "view == demo-time-scenes",
+          "group": "1_create@2"
         },
         {
           "command": "demo-time.showThemeBuilder",
-          "when": "view == demo-time-scenes"
+          "when": "view == demo-time-scenes",
+          "group": "1_create@3"
+        },
+        {
+          "command": "demo-time.installAiSkills",
+          "when": "view == demo-time-scenes",
+          "group": "1_create@4"
         },
         {
           "command": "demo-time.openSupportTheProject",
-          "when": "view == demo-time-scenes"
+          "when": "view == demo-time-scenes",
+          "group": "5_help@3"
         }
       ],
       "view/item/context": [
@@ -1065,6 +1261,26 @@
         "when": "demo-time.presentation && demo-time.hasPreviousSlide == true"
       },
       {
+        "command": "demo-time.start",
+        "key": "pagedown",
+        "when": "demo-time.presentation && demo-time.isWaitingForNext != true"
+      },
+      {
+        "command": "demo-time.continueDemo",
+        "key": "pagedown",
+        "when": "demo-time.isWaitingForNext == true"
+      },
+      {
+        "command": "demo-time.previous",
+        "key": "pageup",
+        "when": "demo-time.presentation && demo-time.previousEnabled"
+      },
+      {
+        "command": "demo-time.previous",
+        "key": "pageup",
+        "when": "demo-time.presentation && demo-time.hasPreviousSlide == true"
+      },
+      {
         "command": "demo-time.toggleSelectionHighlight",
         "key": "alt+h"
       },
@@ -1083,24 +1299,6 @@
         "command": "demo-time.toggleAutoProceed",
         "key": "space",
         "when": "demo-time.presentation && demo-time.autoProceedActive == true"
-      },
-      {
-        "command": "demo-time.recording.splitMove",
-        "key": "ctrl+alt+m",
-        "mac": "cmd+alt+m",
-        "when": "demo-time.isRecording"
-      },
-      {
-        "command": "demo-time.recording.newScene",
-        "key": "ctrl+alt+n",
-        "mac": "cmd+alt+n",
-        "when": "demo-time.isRecording"
-      },
-      {
-        "command": "demo-time.recording.markHighlight",
-        "key": "ctrl+alt+h",
-        "mac": "cmd+alt+h",
-        "when": "demo-time.isRecording"
       }
     ],
     "viewsWelcome": [
@@ -1195,7 +1393,8 @@
         "options": {
           "commands": [
             "tsup --watch --sourcemap",
-            "tsup --watch --sourcemap --config tsup.wc.config.ts"
+            "tsup --watch --sourcemap --config tsup.wc.config.ts",
+            "node ../../scripts/skills/build-skills.mjs && node ../../scripts/skills/copy-skills.mjs"
           ],
           "cwd": "{projectRoot}"
         }
@@ -1203,7 +1402,7 @@
       "copy-assets": {
         "executor": "nx:run-commands",
         "options": {
-          "command": "node ./scripts/copy-webviews.js && node ./scripts/copy-assets.mjs"
+          "command": "node ./scripts/copy-webviews.js && node ./scripts/copy-assets.mjs && node ./scripts/skills/build-skills.mjs && node ./scripts/skills/copy-skills.mjs"
         },
         "dependsOn": [
           {

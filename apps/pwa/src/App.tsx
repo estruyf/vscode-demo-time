@@ -30,6 +30,7 @@ function App() {
     refreshData,
     fetchNotes,
     clearNotes,
+    showNotes,
     zoomIn,
     zoomOut,
   } = useApi();
@@ -48,6 +49,7 @@ function App() {
     isMobile,
     fetchNotes,
     clearNotes,
+    showNotes,
   });
 
   return (

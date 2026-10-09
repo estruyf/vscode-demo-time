@@ -2,7 +2,7 @@
 title: Highlighting code
 description: Learn how to highlight code in Demo Time to make it stand out in your demos.
 tableOfContents: false
-lastmod: 2025-07-04T14:53:50.803Z
+lastmod: 2026-10-02T00:00:00.000Z
 ---
 
 import { Code } from '@astrojs/starlight/components';
@@ -14,6 +14,7 @@ import customImage from "../../../assets/docs/custom-highlight.webp";
 import wholeLineImg from "../../../assets/docs/whole-line-highlight.webp";
 import areaHighlightImg from "../../../assets/docs/area-highlighting.webp";
 import highlightActionImg from "../../../assets/docs/toggle-highlight-action.webp";
+import settingsHighlightImg from "../../../assets/docs/settings-view-highlight.webp";
 
 Highlights are a great way to draw attention to specific code snippets during your presentation. To ensure a clean transition between moves, Demo Time now automatically clears any active highlight when you move to the next move in your scene.
 
@@ -30,6 +31,16 @@ You can also make use of the `Demo Time: Toggle highlight` command to toggle the
 </Aside>
 
 ## Customizing the highlight
+
+The `demoTime.highlightBorderColor` and `demoTime.highlightBackground` settings take one of these values:
+
+- **A theme color**: a VS Code theme color variable, like `var(--vscode-editor-selectionBackground)` (the default background), so the highlight matches the theme you present with.
+- **A custom color**: any CSS color, like `#ff000080`, `rgba(255, 0, 0, 0.5)` or `red`.
+- **No color**: `transparent`, for example to highlight without a border.
+
+The `Demo Time: Settings` command opens the [settings view](/references/settings/), where you pick **Theme color**, **Custom** or **None** for each color and see a preview of the highlight with the colors of your current theme.
+
+<Image class="mx-auto" src={settingsHighlightImg} alt="Highlight colors in the Demo Time settings view, with a preview of the highlight" width="600" />
 
 Here is an example where the highlight border and background color are customized. Besides these color changes, the text which is not highlighted is blurred and its opacity is reduced to have a better focus on the highlighted code.
 

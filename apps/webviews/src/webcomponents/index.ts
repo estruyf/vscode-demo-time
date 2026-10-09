@@ -1,3 +1,4 @@
+export * from './Action';
 export * from './Arrow';
 export * from './Circle';
 export * from './Mermaid';

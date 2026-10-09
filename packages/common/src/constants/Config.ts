@@ -11,7 +11,7 @@ export const Config = {
     previousEnabled: 'previousEnabled',
     viewToggles: 'presentationViewToggles',
   },
-  zoom: 'zoomLevel',
+  zoom: 'zoom',
   highlight: {
     borderColor: 'highlightBorderColor',
     background: 'highlightBackground',
@@ -22,6 +22,9 @@ export const Config = {
   clock: {
     show: 'showClock',
     timer: 'timer',
+  },
+  statusBar: {
+    nextSceneButtonText: 'nextSceneButtonText',
   },
   insert: {
     /**
@@ -44,6 +47,10 @@ export const Config = {
     customTheme: 'customTheme',
     slideHeaderTemplate: 'slideHeaderTemplate',
     slideFooterTemplate: 'slideFooterTemplate',
+    slideProgressBar: 'slideProgressBar',
+    presentationTitle: 'presentationTitle',
+    previewSync: 'slidePreviewSync',
+    reducedMotion: 'slideReducedMotion',
   },
   webcomponents: {
     scripts: 'customWebComponents',
@@ -68,5 +75,14 @@ export const Config = {
   },
   recording: {
     captureSaves: 'recording.captureSaves',
+  },
+  pdfExport: {
+    includeHiddenSlides: 'pdfExport.includeHiddenSlides',
+    notes: 'pdfExport.notes',
+  },
+  videoExport: {
+    command: 'videoExport.command',
+    extension: 'videoExport.extension',
+    options: 'videoExport.options',
   },
 };

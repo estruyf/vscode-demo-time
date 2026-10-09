@@ -1,6 +1,6 @@
 import { MessageHandlerData } from '@estruyf/vscode';
 import { commands, Uri, ViewColumn, WebviewPanel, window } from 'vscode';
-import { Extension, Notifications } from '../services';
+import { Extension, Logger, Notifications } from '../services';
 import { getAbsolutePath, getWebviewHtml, readFile } from '../utils';
 import { Config, EXTENSION_NAME, WebViewMessages } from '@demotime/common';
 import { WebviewType } from '../models';
@@ -103,6 +103,8 @@ export class BaseWebview {
       } catch (e) {
         this.postRequestMessage(command, requestId, null);
       }
+    } else if (command === WebViewMessages.toVscode.logError && payload) {
+      Logger.error(typeof payload === 'string' ? payload : JSON.stringify(payload));
     } else if (command === WebViewMessages.toVscode.runCommand && payload) {
       if (typeof payload === 'string') {
         await commands.executeCommand(payload);

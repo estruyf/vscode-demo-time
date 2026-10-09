@@ -3,7 +3,7 @@
   "$id": "https://demotime.show/demo-time.schema.json",
   "title": "Demo Time - Schema",
   "description": "The schema for the Demo Time - VSCode extension",
-  "lastModified": "2026-05-21",
+  "lastModified": "2026-10-01",
   "type": "object",
   "properties": {
     "title": {
@@ -308,7 +308,7 @@
                   "if": {
                     "properties": {
                       "action": {
-                        "enum": ["highlight", "positionCursor"]
+                        "enum": ["highlight"]
                       }
                     }
                   },
@@ -619,6 +619,9 @@
                       },
                       "insertTypingSpeedRandomness": {
                         "$ref": "#/definitions/insertTypingSpeedRandomness"
+                      },
+                      "waitTimeout": {
+                        "$ref": "#/definitions/waitTimeout"
                       }
                     }
                   }
@@ -1211,7 +1214,8 @@
       "if": {
         "properties": {
           "version": { "const": 3 }
-        }
+        },
+        "required": ["version"]
       },
       "then": {
         "required": ["title", "version", "scenes"]
@@ -1392,6 +1396,12 @@
     "timeout": {
       "type": "number",
       "title": "Timeout in milliseconds"
+    },
+    "waitTimeout": {
+      "type": "number",
+      "default": 5000,
+      "minimum": 1,
+      "title": "Maximum time in milliseconds to wait for shell integration to confirm command completion. Overrides the default 5000ms cap. Useful for long-running commands such as builds or test suites."
     },
     "url": {
       "type": "string",

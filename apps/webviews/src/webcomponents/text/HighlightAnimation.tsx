@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import { useState, useEffect, useRef, ReactNode } from 'react';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { isStaticElement } from '../clickSteps';
 
 // Highlight Animation
 export interface HighlightProps {
@@ -11,6 +13,10 @@ export interface HighlightProps {
   highlightColor?: string;
   direction?: 'left-to-right' | 'right-to-left' | 'center-out';
   className?: string;
+  /**
+   * Shows the end state without animating, like in the slide thumbnails
+   */
+  isStatic?: boolean;
 }
 
 export const HighlightAnimation: React.FC<HighlightProps> = ({
@@ -21,8 +27,10 @@ export const HighlightAnimation: React.FC<HighlightProps> = ({
   highlightColor = '#ffff00',
   direction = 'left-to-right',
   className = '',
+  isStatic = false,
 }) => {
-  const [isAnimating, setIsAnimating] = useState(false);
+  const skipAnimation = useReducedMotion() || isStatic;
+  const [isAnimating, setIsAnimating] = useState(skipAnimation);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -52,6 +60,12 @@ export const HighlightAnimation: React.FC<HighlightProps> = ({
       clearInterval(intervalRef.current);
     }
 
+    // With reduced motion or static rendering, show the whole highlight right away
+    if (skipAnimation) {
+      setIsAnimating(true);
+      return;
+    }
+
     // Reset animation state
     setIsAnimating(false);
 
@@ -78,7 +92,7 @@ export const HighlightAnimation: React.FC<HighlightProps> = ({
         clearInterval(intervalRef.current);
       }
     };
-  }, [delay, duration, repeat]);
+  }, [delay, duration, repeat, skipAnimation]);
 
   return (
     <div
@@ -108,7 +122,7 @@ export const HighlightAnimation: React.FC<HighlightProps> = ({
           backgroundColor: highlightColor,
           zIndex: 0,
           clipPath: isAnimating ? 'inset(0 0 0 0)' : clipPath,
-          transition: isAnimating ? `clip-path ${duration}ms ease-in-out` : 'none',
+          transition: isAnimating && !skipAnimation ? `clip-path ${duration}ms ease-in-out` : 'none',
         }}
       />
     </div>
@@ -141,6 +155,7 @@ export class HighlightComponent extends HTMLElement {
         repeat: this.hasAttribute('repeat'),
         highlightColor: this.getAttribute('highlight-color') || '#ffff00',
         direction: (this.getAttribute('direction') as 'left-to-right' | 'right-to-left' | 'center-out') || 'left-to-right',
+        isStatic: isStaticElement(this),
       };
 
       this.rootElm.render(

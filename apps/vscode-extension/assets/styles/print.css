@@ -9,6 +9,60 @@
     page-break-inside: avoid;
     overflow: hidden;
   }
+
+  /* The notes are on the same page as the slide */
+  .slide-with-notes .slide {
+    page-break-after: auto;
+  }
+
+  .slide-with-notes,
+  .slide-notes-page {
+    break-after: page;
+  }
+}
+
+.slide-notes {
+  box-sizing: border-box;
+  width: 960px;
+  padding: 24px 32px;
+  background-color: #fff;
+  color: #1f2328;
+  font-size: 16px;
+  line-height: 1.5;
+
+  > :first-child {
+    margin-top: 0;
+  }
+
+  p,
+  ul,
+  ol,
+  pre,
+  blockquote {
+    margin: 0 0 0.75em;
+  }
+
+  ul {
+    list-style: disc;
+    padding-left: 1.5em;
+  }
+
+  ol {
+    list-style: decimal;
+    padding-left: 1.5em;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 600;
+    margin: 0 0 0.5em;
+  }
+}
+
+.slide-notes-page {
+  min-height: 540px;
 }
 
 html,
@@ -101,6 +155,31 @@ pre code {
   box-sizing: border-box;
 }
 
+/* Progress bar, styled per theme with the --demotime-progress-* variables */
+.slide__progress {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: var(--demotime-progress-height, 4px);
+  background: var(--demotime-progress-background, transparent);
+  z-index: 30;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.slide__progress--top {
+  top: 0;
+}
+
+.slide__progress--bottom {
+  bottom: 0;
+}
+
+.slide__progress__bar {
+  height: 100%;
+  background: var(--demotime-progress-color, var(--demotime-link-color, currentColor));
+}
+
 .slide__image_left,
 .slide__image_right {
   @apply z-10;
@@ -139,4 +218,36 @@ div.image {
 dt-show,
 dt-hide {
   @apply block my-2;
+}
+
+/* dt-action without its web component (next slide preview): show it as a static button or link */
+dt-action:not(:defined) {
+  display: inline-block;
+  vertical-align: middle;
+  padding: var(--demotime-action-padding, 0.4em 1em);
+  font-size: var(--demotime-action-font-size, 0.9em);
+  font-weight: var(--demotime-action-font-weight, 600);
+  color: var(--demotime-action-color, var(--vscode-button-foreground, #ffffff));
+  background: var(
+    --demotime-action-background,
+    var(--demotime-link-color, var(--vscode-button-background, #0e639c))
+  );
+  border: var(--demotime-action-border, 1px solid transparent);
+  border-radius: var(--demotime-action-radius, 0.375em);
+  box-shadow: var(--demotime-action-shadow, none);
+}
+
+dt-action[variant='link']:not(:defined) {
+  padding: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  color: var(
+    --demotime-action-link-color,
+    var(--demotime-link-color, var(--vscode-textLink-foreground))
+  );
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  text-decoration: underline;
 }

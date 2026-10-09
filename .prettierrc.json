@@ -16,6 +16,12 @@
       "options": {
         "proseWrap": "always"
       }
+    },
+    {
+      "files": "skills/*/SKILL.md",
+      "options": {
+        "proseWrap": "preserve"
+      }
     }
   ]
 }

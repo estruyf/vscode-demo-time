@@ -8,6 +8,9 @@ export const COMMAND = {
   // Act file actions
   addStepToDemo: `${EXTENSION_NAME}.addStepToDemo`,
   fixDuplicateIds: `${EXTENSION_NAME}.fixDuplicateIds`,
+  runPreflightCheck: `${EXTENSION_NAME}.runPreflightCheck`,
+  openActMove: `${EXTENSION_NAME}.openActMove`,
+  createMissingFile: `${EXTENSION_NAME}.createMissingFile`,
   // Running the demo
   start: `${EXTENSION_NAME}.start`,
   previous: `${EXTENSION_NAME}.previous`,
@@ -72,6 +75,8 @@ export const COMMAND = {
   showGallery: `${EXTENSION_NAME}.showGallery`,
   // Theme Builder
   showThemeBuilder: `${EXTENSION_NAME}.showThemeBuilder`,
+  // AI skills
+  installAiSkills: `${EXTENSION_NAME}.installAiSkills`,
   // Resources
   openSupportTheProject: `${EXTENSION_NAME}.openSupportTheProject`,
   openRemoteControl: `${EXTENSION_NAME}.openRemoteControl`,
@@ -88,4 +93,8 @@ export const COMMAND = {
   toggleAutoProceed: `${EXTENSION_NAME}.toggleAutoProceed`,
   pauseAutoProceed: `${EXTENSION_NAME}.pauseAutoProceed`,
   resumeAutoProceed: `${EXTENSION_NAME}.resumeAutoProceed`,
+  // Video export
+  runForVideoExport: `${EXTENSION_NAME}.runForVideoExport`,
+  stopVideoExport: `${EXTENSION_NAME}.stopVideoExport`,
+  exportPlayAsVideo: `${EXTENSION_NAME}.exportPlayAsVideo`,
 };

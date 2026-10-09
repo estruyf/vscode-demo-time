@@ -10,6 +10,12 @@ packageJson.version = `${version[0]}.${version[1]}.${process.argv[
   process.argv.length - 1
 ].substring(0, 9)}`;
 
+// The beta records videos with the beta of the video CLI, which the dev branch publishes
+const videoCommand = packageJson.contributes?.configuration?.properties?.['demoTime.videoExport.command'];
+if (videoCommand) {
+  videoCommand.default = videoCommand.default.replace('@demotime/video@latest', '@demotime/video@next');
+}
+
 await core.summary.addHeading(`Version info`).addRaw(`Version: ${packageJson.version}`).write();
 
 await writeFile(

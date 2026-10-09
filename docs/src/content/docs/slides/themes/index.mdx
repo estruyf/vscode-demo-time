@@ -82,31 +82,16 @@ theme: default
 # Welcome to Demo Time!
 ```
 
-You can also use a custom theme by providing a CSS file in the slide action configuration:
+To use your own theme, create a CSS file and load it with the `customTheme` front matter property or the `demoTime.customTheme` setting. See [custom themes](/slides/themes/custom/) for more information.
 
-<Tabs syncKey="open-slide">
-<TabItem label="JSON">
+```md
+---
+theme: my-theme
+customTheme: .demo/theme/my-theme.css
+---
 
-```json
-{
-  "action": "openSlide",
-  "path": "<relative path to the file>",
-  "theme": "<relative path to the CSS file>"
-}
+# Welcome to Demo Time!
 ```
-
-</TabItem>
-<TabItem label="YAML">
-
-```yaml
-action: openSlide
-path: <relative path to the file>
-theme: <relative path to the CSS file>
-}
-```
-
-</TabItem>
-</Tabs>
 
 ## Built-in themes
 
@@ -116,6 +101,7 @@ theme: <relative path to the CSS file>
 - `unnamed`
 - `quantum`
 - `frost`
+- `pixels`
 
 ### Theme overview
 

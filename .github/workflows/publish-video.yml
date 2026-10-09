@@ -1,0 +1,83 @@
+name: Publish Video CLI
+
+# main publishes a release under the `latest` tag (npx @demotime/video);
+# dev publishes a beta under the `next` tag (npx @demotime/video@next).
+# Both only publish when the commit message contains #video, or when run by hand.
+on:
+  push:
+    branches:
+      - main
+      - dev
+  workflow_dispatch:
+
+env:
+  VIDEO_PATH: ./apps/video
+
+# Trusted publishing: npm checks the GitHub OIDC token of this workflow instead of an npm token.
+# The package's settings on npmjs.com name this repository and publish-video.yml as its publisher.
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '#video')
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'yarn'
+          registry-url: 'https://registry.npmjs.org/'
+
+      # Trusted publishing needs npm 11.5.1 or later. Pinned, so every publish runs the same npm.
+      - name: Update npm
+        run: npm install -g npm@11.21.0
+
+      - name: Install dependencies
+        run: yarn install --immutable
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+
+      # The CLI only imports types from @demotime/common, which need to be built first
+      - name: Build common
+        run: npx nx build common
+
+      # The run number is the patch, so every run publishes a new version. On main that is a
+      # release (0.1.42); anywhere else a beta of that version (0.1.42-beta.1, with the attempt
+      # number), which npm sorts before the release and never collides with it.
+      - name: Set the version
+        id: version
+        working-directory: ${{ env.VIDEO_PATH }}
+        env:
+          IS_RELEASE: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. -v p=${{ github.run_number }} '{print $1"."$2"."p}')
+          if [ "$IS_RELEASE" = "true" ]; then
+            echo "tag=latest" >> "$GITHUB_OUTPUT"
+          else
+            NEW_VERSION="$NEW_VERSION-beta.${{ github.run_attempt }}"
+            echo "tag=next" >> "$GITHUB_OUTPUT"
+          fi
+          npm version $NEW_VERSION --no-git-tag-version --allow-same-version
+          echo "Publishing $NEW_VERSION"
+
+      - name: Build and test
+        working-directory: ${{ env.VIDEO_PATH }}
+        run: |
+          npm run build
+          npx jest
+
+      - name: Publish to npm
+        working-directory: ${{ env.VIDEO_PATH }}
+        # No token: npm authenticates with the workflow's OIDC token and adds provenance
+        run: npm publish --access public --tag ${{ steps.version.outputs.tag }}

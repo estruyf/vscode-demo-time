@@ -10,5 +10,18 @@
   // everything around them blurs and dims.
   "demoTime.highlightBorderColor": "transparent",
   "demoTime.highlightBlur": 2,
-  "demoTime.highlightOpacity": 0.45
+  "demoTime.highlightOpacity": 0.45,
+  // The talk's own theme (the eliostruyf.vscode-demotime-theme extension), which the
+  // video export records with too.
+  "workbench.colorTheme": "Demo Time Dark",
+  // "Demo Time: Export play as video" with these choices: the whole play in 16:9, with
+  // captions made from the scene notes, chapters, and the first and last slide as cards.
+  "demoTime.videoExport.options": {
+    "range": "all",
+    "preset": "16:9",
+    "gif": false,
+    "captions": "notes",
+    "chapters": true,
+    "cards": true
+  }
 }

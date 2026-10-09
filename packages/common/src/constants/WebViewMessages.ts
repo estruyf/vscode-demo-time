@@ -87,6 +87,10 @@ export const WebViewMessages = {
      */
     getFileContents: 'getFileContents',
     /**
+     * logError
+     */
+    logError: 'logError',
+    /**
      * setHasClickListener
      */
     setHasClickListener: 'setHasClickListener',
@@ -149,6 +153,10 @@ export const WebViewMessages = {
        */
       checkStepQueue: 'checkConfigEditorStepQueue',
       /**
+       * getConfigEditorPreflightProblems
+       */
+      getPreflightProblems: 'getConfigEditorPreflightProblems',
+      /**
        * openSettings
        */
       openSettings: 'openSettings',
@@ -181,9 +189,21 @@ export const WebViewMessages = {
     },
     preview: {
       getSlide: 'getPreviewSlide',
-      getTotalSlides: 'getPreviewTotalSlides',
-      getGlobalSlideIndex: 'getPreviewGlobalSlideIndex',
+      getSlidePlaceholders: 'getPreviewSlidePlaceholders',
       recordOpenSlide: 'recordPreviewOpenSlide',
+      setSlideHidden: 'setPreviewSlideHidden',
+      setSlideNotes: 'setPreviewSlideNotes',
+      updateSlideNotes: 'updatePreviewSlideNotes',
+      runById: 'runPreviewById',
+      revealSource: 'revealPreviewSlideSource',
+      /**
+       * The reduced motion preference of the slides: `auto`, `on` or `off`
+       */
+      getReducedMotion: 'getPreviewReducedMotion',
+      /**
+       * The overflow of the slides in the file, for the diagnostics
+       */
+      slideOverflow: 'reportPreviewSlideOverflow',
     },
     settingsView: {
       /**
@@ -222,6 +242,7 @@ export const WebViewMessages = {
     },
     presenter: {
       checkNextDemo: 'checkPresenterNextDemo',
+      getSlideNotes: 'getPresenterSlideNotes',
     },
   },
   toWebview: {
@@ -298,11 +319,27 @@ export const WebViewMessages = {
      * nextSlide
      */
     nextSlide: 'nextSlide',
+    /**
+     * previousStep
+     */
+    previousStep: 'previousStep',
+    /**
+     * nextStep
+     */
+    nextStep: 'nextStep',
     preview: {
       /**
        * updateNextStep
        */
       updateNextStep: 'updateNextStep',
+      /**
+       * Shows the slide under the editor cursor
+       */
+      goToSlide: 'previewGoToSlide',
+      /**
+       * The reduced motion preference of the slides changed
+       */
+      updateReducedMotion: 'previewUpdateReducedMotion',
     },
     // Act Editor
     configEditor: {
@@ -318,6 +355,10 @@ export const WebViewMessages = {
        * openConfigEditorStep
        */
       openStep: 'openConfigEditorStep',
+      /**
+       * configEditorPreflightChanged
+       */
+      preflightChanged: 'configEditorPreflightChanged',
     },
     overview: {
       update: 'updateOverview',
@@ -328,6 +369,7 @@ export const WebViewMessages = {
     },
     presenter: {
       nextSlide: 'presenterNextSlide',
+      slideNotes: 'presenterSlideNotes',
     },
     // QR Code
     /**

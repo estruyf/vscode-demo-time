@@ -1,59 +1,32 @@
-import { messageHandler } from '@estruyf/vscode/dist/client/webview';
 import * as React from 'react';
 import { createRoot, Root } from 'react-dom/client';
-import { WebViewMessages } from '@demotime/common';
+import { isStaticElement, registerClickSteps } from './clickSteps';
 
 export interface IClickToHideProps {
   clicks?: number;
   content?: string;
   invert?: boolean;
+  /**
+   * Shows the final state without adding click steps, like in the slide thumbnails
+   */
+  isStatic?: boolean;
 }
 
 export const ClickToHide: React.FunctionComponent<React.PropsWithChildren<IClickToHideProps>> = ({
   clicks = 1,
   content = '',
   invert = false,
+  isStatic = false,
 }: React.PropsWithChildren<IClickToHideProps>) => {
-  const [, setCount] = React.useState<number>(0);
-  const [visible, setVisible] = React.useState(!!invert);
+  const [step, setStep] = React.useState<number>(isStatic ? Infinity : 0);
+  const clickNr = clicks && clicks > 0 ? clicks : 1;
 
-  const handleEvent = React.useCallback((event: KeyboardEvent | MouseEvent) => {
-    const isKeyPress = event instanceof KeyboardEvent && event.key === 'ArrowRight';
-    const isClick = event instanceof MouseEvent;
+  React.useLayoutEffect(
+    () => (isStatic ? undefined : registerClickSteps(clickNr, setStep)),
+    [clickNr, isStatic],
+  );
 
-    if (isKeyPress || isClick) {
-      setCount((prevCount) => {
-        const newCount = prevCount + 1;
-        if (newCount === clicks) {
-          event.preventDefault();
-          setVisible(invert ? false : true);
-        }
-
-        if (newCount >= clicks) {
-          window.removeEventListener('keydown', handleEvent);
-          window.removeEventListener('click', handleEvent);
-          messageHandler.send(WebViewMessages.toVscode.setHasClickListener, { listening: false });
-        } else {
-          messageHandler.send(WebViewMessages.toVscode.setHasClickListener, { listening: true });
-        }
-
-        return newCount;
-      });
-    }
-  }, [clicks, invert]);
-
-  React.useEffect(() => {
-    setCount(0);
-    messageHandler.send(WebViewMessages.toVscode.setHasClickListener, { listening: true });
-    window.addEventListener('keydown', handleEvent);
-    window.addEventListener('click', handleEvent);
-
-    return () => {
-      messageHandler.send(WebViewMessages.toVscode.setHasClickListener, { listening: false });
-      window.removeEventListener('keydown', handleEvent);
-      window.removeEventListener('click', handleEvent);
-    };
-  }, [clicks, invert]);
+  const visible = invert ? step < clickNr : step >= clickNr;
 
   if (!content) {
     return null;
@@ -111,13 +84,17 @@ abstract class BaseWebComponent extends HTMLElement {
     if (this.rootElm) {
       const parsedClicks = clicks ? parseInt(clicks, 10) : undefined;
       this.rootElm.render(
-        <ClickToHide clicks={parsedClicks} content={this.innerHTML} invert={this.invert} />
+        <ClickToHide
+          clicks={parsedClicks}
+          content={this.innerHTML}
+          invert={this.invert}
+          isStatic={isStaticElement(this)}
+        />
       );
     }
   }
 
   disconnectedCallback() {
-    messageHandler.send(WebViewMessages.toVscode.setHasClickListener, { listening: false });
     if (this.rootElm) {
       this.rootElm.unmount();
     }

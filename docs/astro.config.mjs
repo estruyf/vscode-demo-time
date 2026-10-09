@@ -118,6 +118,7 @@ export default defineConfig({
           collapsed: true,
           items: [
             { label: 'Getting started', slug: 'slides' },
+            { label: 'Front matter reference', slug: 'slides/front-matter', badge: { text: 'New', variant: 'tip' } },
             {
               label: 'Layouts',
               collapsed: true,
@@ -185,6 +186,8 @@ export default defineConfig({
           collapsed: true,
           items: [
             { label: 'Recording demos', slug: 'features/recording-demos', badge: { text: 'New', variant: 'tip' } },
+            { label: 'Export as video', slug: 'features/video-export', badge: { text: 'New', variant: 'tip' } },
+            { label: 'Preflight check', slug: 'features/preflight-check', badge: { text: 'New', variant: 'tip' } },
             { label: 'Overview Dashboard', slug: 'features/overview-dashboard' },
             { label: 'Presenter view', slug: 'features/presenter-view' },
             { label: 'Using notes', slug: 'features/using-notes' },
@@ -193,6 +196,7 @@ export default defineConfig({
             { label: 'Remote Control', slug: 'remote-control' },
             { label: 'Redaction mode', slug: 'features/redaction-mode' },
             { label: 'URI handler', slug: 'features/uri-handler' },
+            { label: 'AI skills', slug: 'features/ai-skills', badge: { text: 'New', variant: 'tip' } },
             { label: 'MCP server support', slug: 'features/mcp-server' },
           ],
         },

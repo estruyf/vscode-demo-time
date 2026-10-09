@@ -13,11 +13,16 @@ const DEFAULT_FONT_SIZE = 1;
 export interface INotesProps {
   content?: string;
   path?: string;
+  /**
+   * Where the notes come from, like the slide they belong to
+   */
+  label?: string;
 }
 
 export const Notes: React.FunctionComponent<INotesProps> = ({
   content,
-  path
+  path,
+  label
 }: React.PropsWithChildren<INotesProps>) => {
   const {
     markdown,
@@ -62,6 +67,9 @@ export const Notes: React.FunctionComponent<INotesProps> = ({
           </div>
           <h3 className="text-base font-semibold leading-none tracking-tight text-(--vscode-foreground)">
             Presenter Notes
+            {label && (
+              <span className="text-(--vscode-descriptionForeground) font-medium">: {label}</span>
+            )}
           </h3>
         </div>
 
@@ -97,7 +105,7 @@ export const Notes: React.FunctionComponent<INotesProps> = ({
       ) : (
         <div className="presenter-card-body px-5 py-8 text-center">
           <p className="text-(--vscode-descriptionForeground) text-sm italic">
-            No notes available for this demo
+            No notes available for this scene or slide
           </p>
         </div>
       )}

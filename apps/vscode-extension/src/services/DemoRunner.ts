@@ -275,8 +275,19 @@ export class DemoRunner {
    * @returns A promise that resolves when the presentation mode is toggled.
    */
   private static async togglePresentationMode(enable?: boolean): Promise<void> {
-    DemoRunner.isPresentationMode =
-      typeof enable !== 'undefined' ? enable : !DemoRunner.isPresentationMode;
+    await DemoRunner.setPresentationMode(
+      typeof enable !== 'undefined' ? !!enable : !DemoRunner.isPresentationMode,
+    );
+  }
+
+  /**
+   * Turns presentation mode on or off.
+   * @param enable - Whether presentation mode should be on.
+   * @param unattended - For a play that runs on its own, like the video export: doesn't ask about
+   *   analytics or start the first scene, which would block or disturb the run.
+   */
+  public static async setPresentationMode(enable: boolean, unattended = false): Promise<void> {
+    DemoRunner.isPresentationMode = enable;
     DemoStatusBar.setPresenting(DemoRunner.isPresentationMode);
     await setContext(ContextKeys.presentation, DemoRunner.isPresentationMode);
     PresenterView.postMessage(
@@ -285,13 +296,19 @@ export class DemoRunner {
     );
 
     if (DemoRunner.isPresentationMode) {
-      await AnalyticsCommands.startRecording();
+      if (!unattended) {
+        await AnalyticsCommands.startRecording();
+      }
       RedactionService.enable();
       DemoPanel.updateMessage('Presentation mode enabled');
-      await DemoRunner.getDemoFile(undefined, true);
+      if (!unattended) {
+        await DemoRunner.getDemoFile(undefined, true);
+      }
       Preview.postMessage(WebViewMessages.toWebview.updateIsInPresentationMode, true);
     } else {
-      await AnalyticsCommands.stopRecording();
+      if (!unattended) {
+        await AnalyticsCommands.stopRecording();
+      }
       RedactionService.disable();
       DemoPanel.updateMessage();
       Preview.postMessage(WebViewMessages.toWebview.updateIsInPresentationMode, false);
@@ -339,7 +356,11 @@ export class DemoRunner {
       return;
     }
 
+    // Reveal the next click step of the slide before moving on
     if (Preview.isListening()) {
+      await Preview.postMessage(WebViewMessages.toWebview.nextStep);
+      // Restart the auto-advance timer for the next step
+      await DemoRunner.syncAutoProceedForCurrentDemo();
       return;
     }
 
@@ -395,7 +416,12 @@ export class DemoRunner {
         const enabledDemos = demos.filter((d) => !d.disabled);
         const missingTimings: Demo[] = [];
         for (const demo of enabledDemos) {
-          if (!(await DemoAutoProceedService.hasSceneAutoLoopTiming(demo))) {
+          if (
+            !(await DemoAutoProceedService.hasSceneAutoLoopTiming(
+              demo,
+              DemoRunner.isPresentationMode,
+            ))
+          ) {
             missingTimings.push(demo);
           }
         }
@@ -500,6 +526,11 @@ export class DemoRunner {
   private static async previous(): Promise<void> {
     if (TextTypingService.IsTyping) {
       Logger.info('DemoRunner.previous called while typing. Ignoring.');
+      return;
+    }
+
+    if (Preview.checkIfHasPreviousClickStep()) {
+      await Preview.postMessage(WebViewMessages.toWebview.previousStep);
       return;
     }
 

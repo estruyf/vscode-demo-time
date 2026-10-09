@@ -12,3 +12,6 @@ public/clips/
 # The pinned VS Code build and the packaged extension. Both are downloaded or
 # rebuilt on demand and are hundreds of megabytes.
 .cache/
+
+# What exporting the demo as a video writes (`npm run video` in demo/ship-it)
+demo/ship-it/.demo/exports/

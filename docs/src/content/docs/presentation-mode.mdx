@@ -1,7 +1,7 @@
 ---
 title: Start Presenting with Demo Time
 description: Learn how to use Demo Time to present your demos like a pro.
-lastmod: 2025-07-23T09:15:10.517Z
+lastmod: 2026-10-02T00:00:00.000Z
 ---
 
 import { Image } from 'astro:assets';
@@ -34,7 +34,7 @@ Once you are in presentation mode, you will see a record icon in the status bar 
 
 <Image class="mx-auto" src={presentationModeOnImg} alt="Demo Time running in presentation mode" />
 
-You can now use your right arrow key `→` or right presenter/clicker button to navigate through the steps of your acts and scenes.
+You can now use your right arrow key `→`, `PageDown`, or the right presenter/clicker button to navigate through the steps of your acts and scenes. On slides, this also reveals the [click steps](/slides/animations/#click-steps) one by one.
 
 <Aside type="tip">
 If you want, you can override the default keybindings for the presenter/clicker buttons by updating the `demoTime.start` and `demo-time.previous` commands in the keybindings settings (use the `Preferences: Open Keyboard Shortcuts` command). 
@@ -42,9 +42,23 @@ If you want, you can override the default keybindings for the presenter/clicker 
 More information about it can be found in the [control the next demo shortcut](/tips/control-next-demo) section.
 </Aside>
 
+## Next scene button
+
+While you present, the status bar shows a button with the title of the next scene. Click it to run that scene. Hover over it to see the description of the scene.
+
+As scene titles differ in length, the button changes width with every scene, which moves the other status bar items. To show the same text for every scene, set the `demoTime.nextSceneButtonText` setting:
+
+```json title=".vscode/settings.json"
+{
+    "demoTime.nextSceneButtonText": "Next"
+}
+```
+
+You can use [codicons](https://code.visualstudio.com/api/references/icons-in-labels#icon-listing) in the text, like `$(arrow-right) Next`. The tooltip still shows the next scene, and the presenter view still shows its title. Leave the setting empty to show the title of the next scene again.
+
 ## Customize what gets hidden
 
-When you toggle presentation view, Demo Time hides a few VS Code UI areas so you can focus on presenting. You can choose exactly which areas to hide via the `demoTime.presentationViewToggles` setting. Allowed values: `statusBar`, `tabs`, `activityBar`, `sideBar`, `panel`.
+When you toggle presentation view, Demo Time hides a few VS Code UI areas so you can focus on presenting. You can choose exactly which areas to hide via the `demoTime.presentationViewToggles` setting. Allowed values: `statusBar`, `tabs`, `activityBar`, `sideBar`, `secondarySideBar` (where VS Code shows Chat), `panel`.
 
 ```json title=".vscode/settings.json"
 {
@@ -53,6 +67,7 @@ When you toggle presentation view, Demo Time hides a few VS Code UI areas so you
         "tabs",
         "activityBar",
         "sideBar",
+        "secondarySideBar",
         "panel"
     ]
 }
@@ -88,7 +103,7 @@ If you would like to enable the ability to go back to the previous step, you can
 }
 ```
 
-When you enabled this setting, you can use your left arrow key or left presenter/clicker button to navigate back to the previous step.
+When you enabled this setting, you can use your left arrow key, `PageUp`, or the left presenter/clicker button to navigate back to the previous step.
 
 <Aside type="caution">
 The ability to go back is disabled by default because some scenes may involve changes to content in previous steps. Re-running these steps could cause conflicts or errors.
