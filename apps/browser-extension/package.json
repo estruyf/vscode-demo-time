@@ -1,0 +1,23 @@
+{
+  "name": "demotime-browser-extension",
+  "version": "1.0.0",
+  "description": "A browser extension for Microsoft Edge and Google Chrome that allows users to quickly return to their DemoTime slides in Visual Studio Code.",
+  "scripts": {
+    "dev": "extension dev",
+    "build": "extension build",
+    "start": "extension start"
+  },
+  "keywords": [
+    "browser-extension",
+    "chrome-extension",
+    "edge-extension",
+    "demotime"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.18",
+    "extension": "^3.0.0",
+    "tailwindcss": "^4.1.18"
+  }
+}
