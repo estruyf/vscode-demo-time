@@ -1,6 +1,6 @@
 # Change Log
 
-## [2.4.0] - 2026-xx-xx
+## [2.4.0] - 2026-10-09
 
 - [#466](https://github.com/estruyf/vscode-demo-time/issues/466): Fix the demo recording not adding an `open` move when you go back to a file you recorded before, or when a file changes in the background, so the replay edits the file on screen instead of in a background tab. Each recorded scene starts with an `open` move
 - [#466](https://github.com/estruyf/vscode-demo-time/issues/466): Fix pressing `Escape` at the title prompt of `Demo Time: Stop demo recording` deleting the recording. Demo Time now asks to discard it, and **Keep** uses the suggested title. A title that is already used gets a number in its file name, like `my-demo-2.json`, instead of losing the recording
