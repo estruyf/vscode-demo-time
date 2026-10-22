@@ -419,6 +419,19 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     });
   }, [isPresentationMode, relativePath, crntSlide]);
 
+  // Adds the `Show slide contents` item to the context menu of the slide
+  const vscodeContext = React.useMemo(() => {
+    if (isPresentationMode !== false || !relativePath || !crntSlide) {
+      return undefined;
+    }
+
+    return JSON.stringify({
+      webviewSection: 'slide',
+      slidePath: relativePath,
+      slideIndex: crntSlide.index,
+    });
+  }, [isPresentationMode, relativePath, crntSlide]);
+
   // The presenter view and remote show the notes of the current slide
   React.useEffect(() => {
     messageHandler.send(
@@ -646,6 +659,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         key={`${crntFilePath}-${crntSlide?.index || 0}-${crntSlide?.frontmatter?.customLayout || 'standard'}`}
         ref={ref}
         className={`slide ${theme || "default"} relative w-full h-full overflow-hidden`}
+        data-vscode-context={vscodeContext}
         onMouseEnter={() => setShowControls(true)}
         onMouseLeave={() => {
           setShowControls(false);

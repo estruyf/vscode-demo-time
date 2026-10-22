@@ -720,6 +720,11 @@
         "icon": "$(preview)"
       },
       {
+        "command": "demo-time.showSlideContents",
+        "title": "Show slide contents",
+        "category": "Demo Time"
+      },
+      {
         "command": "demo-time.openSlidePreview",
         "title": "Open slide preview",
         "category": "Demo Time",
@@ -901,6 +906,13 @@
       }
     ],
     "menus": {
+      "webview/context": [
+        {
+          "command": "demo-time.showSlideContents",
+          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide'",
+          "group": "9_demotime@1"
+        }
+      ],
       "editor/context": [
         {
           "submenu": "demo-time.recording.submenu",
@@ -961,6 +973,10 @@
         },
         {
           "command": "demo-time.runById",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.showSlideContents",
           "when": "false"
         },
         {

@@ -52,6 +52,17 @@ export class Preview extends BaseWebview {
     subscriptions.push(
       commands.registerCommand(COMMAND.closePresentationView, () => togglePresentationView(false)),
     );
+    // Runs from the context menu of the slide preview, which passes the `data-vscode-context` of the slide
+    subscriptions.push(
+      commands.registerCommand(
+        COMMAND.showSlideContents,
+        async (context?: { slidePath?: string; slideIndex?: number }) => {
+          if (context?.slidePath) {
+            await SlidePreviewSync.revealSource(context.slidePath, context.slideIndex ?? 0);
+          }
+        },
+      ),
+    );
     subscriptions.push(
       workspace.onDidChangeConfiguration((e) => {
         if (
