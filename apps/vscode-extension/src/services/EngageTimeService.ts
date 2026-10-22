@@ -1,6 +1,7 @@
 import { Config, EngageTimeMessageType, Poll } from '@demotime/common';
 import { Extension, Logger, Notifications } from '.';
 import * as vscode from 'vscode';
+import { Preview } from '../preview/Preview';
 
 export class EngageTimeService {
   private static readonly API_URL = 'https://api.engagetime.live';
@@ -50,7 +51,7 @@ export class EngageTimeService {
       return;
     }
 
-    // No notification toast: the integrated browser pauses while a notification is visible
+    // No notification toast on top of the poll, which is shown full screen while presenting
     if (closeOnOpen) {
       await EngageTimeService.stopPoll(pollId, false);
     } else if (startOnOpen) {
@@ -63,12 +64,9 @@ export class EngageTimeService {
       params.set('controls', controls.toString());
     }
 
-    const queryString = params.toString();
-    const url = queryString
-      ? `https://engagetime.live/poll/${pollId}?${queryString}`
-      : `https://engagetime.live/poll/${pollId}`;
-
-    await vscode.commands.executeCommand('workbench.action.browser.open', url);
+    // Shown in the preview instead of the integrated browser, which keeps the keyboard focus
+    // and doesn't pass the arrow and page keys of the next and previous keybindings to VS Code
+    await Preview.showEmbed(`https://engagetime.live/poll/${pollId}?${params.toString()}`, 'Poll');
   }
 
   public static async startSession(sessionId?: string): Promise<void> {

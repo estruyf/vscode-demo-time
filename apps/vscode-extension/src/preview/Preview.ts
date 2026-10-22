@@ -41,6 +41,7 @@ export class Preview extends BaseWebview {
   private static nextSlideTitle: string | undefined = undefined;
   private static crntFile: string | null = null;
   private static crntCss: string | null = null;
+  private static crntEmbed: { url: string; title: string } | null = null;
   private static currentSlideIndex: number = 0;
 
   public static register() {
@@ -181,6 +182,7 @@ export class Preview extends BaseWebview {
 
     Preview.crntFile = fileUri ?? null;
     Preview.crntCss = css ?? null;
+    Preview.crntEmbed = null;
 
     if (Preview.isOpen) {
       // Use the fileUri argument for triggerUpdate, as it's the most current.
@@ -223,6 +225,8 @@ export class Preview extends BaseWebview {
     logo?: string;
     qrLayout?: 'default' | 'reversed' | 'minimal' | 'stacked' | 'text-left' | 'text-right';
   }) {
+    Preview.crntEmbed = null;
+
     // Ensure the preview is open (without showing a specific file)
     if (!Preview.isOpen) {
       const separator = url.includes('?') ? '&' : '?';
@@ -241,6 +245,30 @@ export class Preview extends BaseWebview {
       Preview.reveal();
     }
     return;
+  }
+
+  /**
+   * Shows a web page in the preview. Unlike the integrated browser, the preview keeps the
+   * keyboard focus in VS Code, so the next and previous keybindings (and clickers) keep working.
+   */
+  public static async showEmbed(url: string, title: string) {
+    Preview.crntFile = null;
+    Preview.crntEmbed = { url, title };
+    // The embed has no slides or click steps, so next and previous go to the scenes
+    Preview.hasClickListener = false;
+    Preview.hasPreviousClickStep = false;
+    Preview.hasPreviousSlide = false;
+    Preview.hasNextSlide = false;
+    Preview.updateHasPreviousContext();
+    Preview.updateSlideNotes(undefined);
+
+    if (Preview.isOpen) {
+      Preview.postMessage(WebViewMessages.toWebview.showEmbed, Preview.crntEmbed);
+      Preview.reveal();
+    } else {
+      // The webview requests the embed with `getSlide` once it is loaded
+      await Preview.create();
+    }
   }
 
   public static triggerUpdate(fileUri?: Uri | string, slide?: number, reset: boolean = false) {
@@ -307,6 +335,7 @@ export class Preview extends BaseWebview {
       Preview.postRequestMessage(command, requestId, {
         path,
         slideIndex: Preview.currentSlideIndex,
+        embed: Preview.crntEmbed,
       });
     } else if (command === WebViewMessages.toVscode.parseFileUri && requestId && payload) {
       const fileWebviewPath = getWebviewWorkspaceUrl(Preview.webview?.webview, payload);

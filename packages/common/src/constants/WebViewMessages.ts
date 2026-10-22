@@ -376,5 +376,9 @@ export const WebViewMessages = {
      * showQR
      */
     showQR: 'showQR',
+    /**
+     * showEmbed
+     */
+    showEmbed: 'showEmbed',
   },
 };

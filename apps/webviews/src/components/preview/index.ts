@@ -1,4 +1,5 @@
 export * from './DemoTimeLogo';
+export * from './EmbedPreview';
 export * from './ImagePreview';
 export * from './LaserPointer';
 export * from './Markdown';
