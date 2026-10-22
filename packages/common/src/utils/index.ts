@@ -1,3 +1,4 @@
+export * from './codeFence';
 export * from './convertTemplateToHtml';
 export * from './demoNormalizer';
 export * from './formatDate';

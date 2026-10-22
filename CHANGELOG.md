@@ -6,6 +6,7 @@
 - Fix the **Authenticate with GitHub** button on the **Pro Features** page staying on `Authenticating...` after a successful sign-in when the sponsor status didn't change or couldn't be verified
 - Fix the `showEngageTimePoll` move with `startOnOpen` or `closeOnOpen` pausing the poll in the integrated browser with **Paused due to Notification**. The poll started or stopped message now shows in the status bar instead of a notification
 - Added the `pollInPreview` property to the `showEngageTimePoll` move, to show the poll in the Demo Time preview instead of the integrated browser. The integrated browser keeps the keyboard focus, so the next and previous keys, and clickers, only work again after you close the poll. In the preview they keep working, but links in the poll can't be opened and its text can't be copied
+- Fix a `::right::` or `::section::` marker in a code block or inline code splitting the slide, which broke the code block and removed the columns when the slide also had a real `::right::` marker. The preview, PDF export and slide screenshots now only use the markers outside code
 
 ## [2.4.0] - 2026-10-09
 

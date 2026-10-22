@@ -2,6 +2,7 @@ import yaml from 'js-yaml';
 import { ParserOptions, Slide, InternalSlide, SlideLocation } from '../models';
 import { getSlidePropertyInheritance, SlideLayout } from '../constants';
 import { FrontMatterParser } from '.';
+import { getOpeningFence, isClosingFence } from '../utils/codeFence';
 
 // The opening line of a speaker notes block: `<!-- notes`
 const NOTES_START = /^<!--\s*notes(?=\s|-->|$)/i;
@@ -100,15 +101,15 @@ export class SlideParser {
 
       if (codeFence) {
         buffer.push(line);
-        if (SlideParser.isClosingFence(trimmed, codeFence)) {
+        if (isClosingFence(trimmed, codeFence)) {
           codeFence = undefined;
         }
         continue;
       }
 
-      const openingFence = /^(`{3,}|~{3,})/.exec(trimmed);
+      const openingFence = getOpeningFence(trimmed);
       if (openingFence) {
-        codeFence = openingFence[1];
+        codeFence = openingFence;
         buffer.push(line);
         continue;
       }
@@ -251,15 +252,15 @@ export class SlideParser {
 
       if (codeFence) {
         contentLines.push(line);
-        if (SlideParser.isClosingFence(trimmed, codeFence)) {
+        if (isClosingFence(trimmed, codeFence)) {
           codeFence = undefined;
         }
         continue;
       }
 
-      const openingFence = /^(`{3,}|~{3,})/.exec(trimmed);
+      const openingFence = getOpeningFence(trimmed);
       if (openingFence) {
-        codeFence = openingFence[1];
+        codeFence = openingFence;
         contentLines.push(line);
         continue;
       }
@@ -330,15 +331,6 @@ export class SlideParser {
     return [textLines[0].trim(), ...textLines.slice(1).map((line) => line.slice(indent).trimEnd())]
       .join('\n')
       .trim();
-  }
-
-  /**
-   * Checks if a line closes a code block: the same fence character, at least as long as the
-   * opening fence, and nothing after it.
-   */
-  private static isClosingFence(trimmed: string, openingFence: string): boolean {
-    const match = /^(`{3,}|~{3,})$/.exec(trimmed);
-    return !!match && match[1][0] === openingFence[0] && match[1].length >= openingFence.length;
   }
 
   /**
