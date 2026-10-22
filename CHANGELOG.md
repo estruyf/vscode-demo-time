@@ -3,6 +3,7 @@
 ## [2.5.0] - 2026-xx-xx
 
 - Added the **Show slide contents** item to the right-click menu of the slide preview, which opens the markdown of the slide in the editor with the cursor on the slide
+- Fix the **Authenticate with GitHub** button on the **Pro Features** page staying on `Authenticating...` after a successful sign-in when the sponsor status didn't change or couldn't be verified
 
 ## [2.4.0] - 2026-10-09
 
