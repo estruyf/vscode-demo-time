@@ -1,3 +1,7 @@
+## [2.5.0] - 2026-xx-xx
+
+- Added the **Show slide contents** item to the right-click menu of the slide preview, which opens the markdown of the slide in the editor with the cursor on the slide
+
 ## [2.4.0] - 2026-10-09
 
 - [#466](https://github.com/estruyf/vscode-demo-time/issues/466): Fix the demo recording not adding an `open` move when you go back to a file you recorded before, or when a file changes in the background, so the replay edits the file on screen instead of in a background tab. Each recorded scene starts with an `open` move
