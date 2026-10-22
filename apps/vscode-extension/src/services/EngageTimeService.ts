@@ -1,5 +1,5 @@
 import { Config, EngageTimeMessageType, Poll } from '@demotime/common';
-import { Extension, Notifications } from '.';
+import { Extension, Logger, Notifications } from '.';
 import * as vscode from 'vscode';
 
 export class EngageTimeService {
@@ -50,10 +50,11 @@ export class EngageTimeService {
       return;
     }
 
+    // No notification toast: the integrated browser pauses while a notification is visible
     if (closeOnOpen) {
-      await EngageTimeService.stopPoll(pollId);
+      await EngageTimeService.stopPoll(pollId, false);
     } else if (startOnOpen) {
-      await EngageTimeService.startPoll(pollId);
+      await EngageTimeService.startPoll(pollId, false);
     }
 
     const params = new URLSearchParams();
@@ -78,12 +79,12 @@ export class EngageTimeService {
     await EngageTimeService.updateSessionState(sessionId, 'closed');
   }
 
-  public static async startPoll(pollId?: string): Promise<void> {
-    await EngageTimeService.updatePollState(pollId, true);
+  public static async startPoll(pollId?: string, notify = true): Promise<void> {
+    await EngageTimeService.updatePollState(pollId, true, notify);
   }
 
-  public static async stopPoll(pollId?: string): Promise<void> {
-    await EngageTimeService.updatePollState(pollId, false);
+  public static async stopPoll(pollId?: string, notify = true): Promise<void> {
+    await EngageTimeService.updatePollState(pollId, false, notify);
   }
 
   public static async getPolls(sessionId?: string): Promise<Poll[]> {
@@ -223,6 +224,7 @@ export class EngageTimeService {
   private static async updatePollState(
     pollId: string | undefined,
     isActive: boolean,
+    notify = true,
   ): Promise<void> {
     if (!pollId) {
       Notifications.error(
@@ -257,9 +259,13 @@ export class EngageTimeService {
         return;
       }
 
-      Notifications.infoWithProgress(
-        `EngageTime poll ${isActive ? 'started' : 'stopped'} successfully.`,
-      );
+      const message = `EngageTime poll ${isActive ? 'started' : 'stopped'} successfully.`;
+      if (notify) {
+        Notifications.infoWithProgress(message);
+      } else {
+        Logger.info(message);
+        vscode.window.setStatusBarMessage(`$(check) ${message}`, 3000);
+      }
     } catch (error: any) {
       Notifications.error(
         `Error ${isActive ? 'starting' : 'stopping'} EngageTime poll: ${error.message}`,

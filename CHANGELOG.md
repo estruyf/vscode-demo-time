@@ -4,6 +4,7 @@
 
 - Added the **Show slide contents** item to the right-click menu of the slide preview, which opens the markdown of the slide in the editor with the cursor on the slide
 - Fix the **Authenticate with GitHub** button on the **Pro Features** page staying on `Authenticating...` after a successful sign-in when the sponsor status didn't change or couldn't be verified
+- Fix the `showEngageTimePoll` move with `startOnOpen` or `closeOnOpen` pausing the poll in the integrated browser with **Paused due to Notification**. The poll started or stopped message now shows in the status bar instead of a notification
 
 ## [2.4.0] - 2026-10-09
 
