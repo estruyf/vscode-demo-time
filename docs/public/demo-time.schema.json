@@ -963,6 +963,9 @@
                       },
                       "pollControls": {
                         "$ref": "#/definitions/pollControls"
+                      },
+                      "pollInPreview": {
+                        "$ref": "#/definitions/pollInPreview"
                       }
                     },
                     "not": {
@@ -1479,6 +1482,11 @@
       "type": "boolean",
       "description": "Whether to show the poll controls in the embed. Default is true.",
       "default": true
+    },
+    "pollInPreview": {
+      "type": "boolean",
+      "description": "Show the poll in the Demo Time preview instead of the integrated browser, so the next and previous keys keep working. Links in the poll can't be opened and its text can't be copied. Default is false.",
+      "default": false
     },
     "type": {
       "type": "string",

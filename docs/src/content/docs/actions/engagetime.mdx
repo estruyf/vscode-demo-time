@@ -169,12 +169,22 @@ pollId: poll-1
 
 ### Show poll results or UI
 
-Use `showEngageTimePoll` to display the poll in the Demo Time slide view, the same view that shows your slides. The keyboard focus stays in Visual Studio Code, so your next and previous keys, or clicker, keep moving through the scenes while the poll is on screen. You can set **either** `startOnOpen` to start the poll when shown, **or** `closeOnOpen` to close it immediately when shown (for quizzes or timed questions). These options are mutually exclusive.
+Use `showEngageTimePoll` to display the poll. By default, the poll opens in the Visual Studio Code integrated browser. Set `pollInPreview` to `true` to show it in the Demo Time preview instead, the same view that shows your slides. You can set **either** `startOnOpen` to start the poll when shown, **or** `closeOnOpen` to close it immediately when shown (for quizzes or timed questions). These options are mutually exclusive.
 
 The poll embed supports two additional appearance options:
 
 - `pollDarkTheme` — When `true`, opens the poll embed with the dark theme (`?theme=dark`). Defaults to the light theme.
 - `pollControls` — Controls whether the poll UI controls are shown in the embed. Defaults to `true`.
+
+Where the poll is shown:
+
+- `pollInPreview` — When `true`, shows the poll in the Demo Time preview instead of the integrated browser. Defaults to `false`.
+
+<Aside type="caution">
+**Integrated browser (default):** the browser keeps the keyboard focus and doesn't pass the arrow and page keys to Visual Studio Code. Your next and previous keys, or clicker, only work again after you close the browser tab or click outside of it.
+
+**Demo Time preview (`pollInPreview: true`):** the keyboard focus stays in Visual Studio Code, so your next and previous keys, or clicker, keep moving through the scenes while the poll is on screen, and the next slide replaces the poll. The limitation is that links in the poll, like the session link in the **Join the session** dialog, can't be opened, and the text of the poll can't be selected or copied.
+</Aside>
 
 <Tabs syncKey="show-engagetime-poll">
 <TabItem label="JSON">
@@ -186,7 +196,8 @@ The poll embed supports two additional appearance options:
   "startOnOpen": false,
   "closeOnOpen": true,
   "pollDarkTheme": true,
-  "pollControls": false
+  "pollControls": false,
+  "pollInPreview": true
 }
 ```
 
@@ -200,6 +211,7 @@ startOnOpen: false
 closeOnOpen: true
 pollDarkTheme: true
 pollControls: false
+pollInPreview: true
 ```
 
 </TabItem>

@@ -38,6 +38,7 @@ export class EngageTimeService {
     closeOnOpen?: boolean,
     darkTheme?: boolean,
     controls?: boolean,
+    inPreview?: boolean,
   ): Promise<void> {
     if (!pollId) {
       Notifications.error(`EngageTime poll ID is required to show a poll.`);
@@ -64,9 +65,17 @@ export class EngageTimeService {
       params.set('controls', controls.toString());
     }
 
-    // Shown in the preview instead of the integrated browser, which keeps the keyboard focus
-    // and doesn't pass the arrow and page keys of the next and previous keybindings to VS Code
-    await Preview.showEmbed(`https://engagetime.live/poll/${pollId}?${params.toString()}`, 'Poll');
+    const url = `https://engagetime.live/poll/${pollId}?${params.toString()}`;
+
+    // The integrated browser keeps the keyboard focus and doesn't pass the arrow and page keys of
+    // the next and previous keybindings to VS Code. The preview does, but links in the poll can't
+    // open and its text can't be copied.
+    if (inPreview) {
+      await Preview.showEmbed(url, 'Poll');
+      return;
+    }
+
+    await vscode.commands.executeCommand('workbench.action.browser.open', url);
   }
 
   public static async startSession(sessionId?: string): Promise<void> {
