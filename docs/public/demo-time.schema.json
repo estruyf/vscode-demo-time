@@ -25,6 +25,9 @@
     "loop": {
       "$ref": "#/definitions/loop"
     },
+    "sceneCheckpoints": {
+      "$ref": "#/definitions/sceneCheckpoints"
+    },
     "demos": {
       "type": "array",
       "description": "For version 1 & 2: Array of demo objects",
@@ -1298,6 +1301,11 @@
       "type": "boolean",
       "title": "Loop scenes",
       "description": "When enabled, the act restarts from the first scene after the last scene."
+    },
+    "sceneCheckpoints": {
+      "type": "boolean",
+      "title": "Scene checkpoints",
+      "description": "Snapshot the workspace files when a scene of this act starts, so going back to a scene restores them. Applies to all scenes of the act and overrides the `demoTime.sceneCheckpoints` setting. When on, going back to the previous scene is allowed unless the `demoTime.previousEnabled` setting is `false`."
     },
     "notificationMessage": {
       "type": "string",

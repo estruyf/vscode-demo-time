@@ -14,9 +14,10 @@ Here is a list of all the commands available in Demo Time.
 | `Demo Time: Open Demo Time documentation` | Open the documentation website. |
 | `Demo Time: Create a new act file` | Create a new act file. |
 | `Demo Time: Start` | Starts the scene or runs the next scene. |
-| `Demo Time: Previous` | Go back to the previous scene (only in presentation mode and when the `demoTime.previousEnabled` setting is enabled). |
+| `Demo Time: Previous` | Go back to the previous scene (only in presentation mode and when the `demoTime.previousEnabled` setting is enabled, or when it isn't set and [scene checkpoints](/features/scene-checkpoints/) are on). |
 | `Demo Time: Add move` | Add the current selection as a move to the act file. |
-| `Demo Time: Reset` | Reset the whole play (all acts and scenes will be reset). |
+| `Demo Time: Reset` | Reset the whole play (all acts and scenes will be reset). With [scene checkpoints](/features/scene-checkpoints/), the files go back to how they were before the first scene. |
+| `Demo Time: Reset to scene...` | Restore the files of a scene from its checkpoint and run the scene again. See [Scene checkpoints](/features/scene-checkpoints/). |
 | `Demo Time: Run preflight check` | Check all the moves in the play without running them, like missing files, patches that don't apply and missing properties, and report the problems in the **Problems** panel. See [Preflight check](/features/preflight-check/). |
 | `Demo Time: Start countdown` | Start the countdown clock (you need to define the time in the `demoTime.timer` setting). |
 | `Demo Time: Reset countdown` | Reset the countdown clock. |

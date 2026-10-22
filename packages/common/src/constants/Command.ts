@@ -19,6 +19,7 @@ export const COMMAND = {
   runSingleMove: `${EXTENSION_NAME}.runSingleMove`,
   togglePresentationMode: `${EXTENSION_NAME}.togglePresentationMode`,
   reset: `${EXTENSION_NAME}.reset`,
+  resetToScene: `${EXTENSION_NAME}.resetToScene`,
   toggleHighlight: `${EXTENSION_NAME}.toggleHighlight`,
   toggleSelectionHighlight: `${EXTENSION_NAME}.toggleSelectionHighlight`,
   continueDemo: `${EXTENSION_NAME}.continueDemo`,

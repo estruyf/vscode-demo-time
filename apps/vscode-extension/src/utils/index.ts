@@ -66,6 +66,7 @@ export * from './sanitizeFileName';
 export * from './saveFiles';
 export * from './resolveOpenWebsiteUrl';
 export * from './setContext';
+export * from './ShadowGit';
 export * from './sleep';
 export * from './slideSourceLines';
 export * from './sortFiles';

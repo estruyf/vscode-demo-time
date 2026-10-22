@@ -18,6 +18,7 @@ export interface ActConfig {
   timer?: number;
   engageTime?: EngageTimeConfig;
   loop?: boolean;
+  sceneCheckpoints?: boolean;
   scenes: Scene[];
 }
 
@@ -30,6 +31,7 @@ export interface DemoConfig {
   timer?: number;
   engageTime?: EngageTimeConfig;
   loop?: boolean;
+  sceneCheckpoints?: boolean;
   demos: Demo[];
 }
 

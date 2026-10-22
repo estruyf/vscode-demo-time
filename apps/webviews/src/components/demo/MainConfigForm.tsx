@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { validateConfig } from '../../utils/validation';
 import { messageHandler } from '@estruyf/vscode/dist/client/webview';
 import { DemoConfig, WebViewMessages } from '@demotime/common';
-import { Switch, Textarea } from '../ui';
+import { Select, Switch, Textarea } from '../ui';
 import { NoteBox } from '../ui/NoteBox';
 
 interface MainConfigFormProps {
@@ -86,6 +86,22 @@ export const MainConfigForm: React.FC<MainConfigFormProps> = ({ config, onChange
             onCheckedChange={(checked) => onChange({ loop: checked })}
           />
         </div>
+      </div>
+
+      <div>
+        <Select
+          label="Scene checkpoints"
+          value={typeof config.sceneCheckpoints === 'boolean' ? `${config.sceneCheckpoints}` : ''}
+          onChange={(value) =>
+            onChange({ sceneCheckpoints: value === '' ? undefined : value === 'true' })
+          }
+          placeholder="Follow the demoTime.sceneCheckpoints setting"
+          options={[
+            { value: 'true', label: 'On for every scene of this act' },
+            { value: 'false', label: 'Off for this act' },
+          ]}
+        />
+        <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">Snapshots the workspace files when a scene starts, so going back to a scene restores them. Applies to all scenes of this act.</p>
       </div>
 
       <div>

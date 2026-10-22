@@ -11,6 +11,7 @@ import {
   WorkspaceFolder,
   commands,
   window,
+  workspace,
 } from 'vscode';
 import { DemoPanel } from '../panels/DemoPanel';
 import {
@@ -24,6 +25,7 @@ import {
   setContext,
   removeDemosForCurrentPosition,
   parseSnippetContent,
+  sortFiles,
 } from '../utils';
 import { ActionTreeItem } from '../providers/ActionTreeviewProvider';
 import {
@@ -51,13 +53,16 @@ import {
   Action,
   Demo,
   DemoFileCache,
+  ActConfig,
   DemoConfig,
+  DemoFiles,
   Step,
   Version,
   getDemosFromConfig,
   normalizeDemoConfig,
 } from '@demotime/common';
 import { ScreenshotService } from './ScreenshotService';
+import { CheckpointService } from './CheckpointService';
 
 const DEFAULT_START_VALUE = {
   filePath: '',
@@ -91,6 +96,7 @@ export class DemoRunner {
     subscriptions.push(commands.registerCommand(COMMAND.runById, DemoRunner.runById));
     subscriptions.push(commands.registerCommand(COMMAND.runSingleMove, DemoRunner.runSingleMove));
     subscriptions.push(commands.registerCommand(COMMAND.reset, DemoRunner.reset));
+    subscriptions.push(commands.registerCommand(COMMAND.resetToScene, DemoRunner.resetToScene));
     subscriptions.push(
       commands.registerCommand(COMMAND.toggleHighlight, DemoRunner.toggleHighlight),
     );
@@ -161,15 +167,37 @@ export class DemoRunner {
   }
 
   /**
-   * Sets the context key for enabling or disabling the "previous" functionality
-   * based on the configuration setting.
+   * Sets the context key for enabling or disabling the "previous" functionality.
    *
-   * @returns {Promise<void>} A promise that resolves when the context key has been set.
+   * @returns {Promise<boolean>} Whether going back is allowed.
    */
-  public static async allowPrevious(): Promise<void> {
-    const previousEnabled =
-      Extension.getInstance().getSetting<boolean>(Config.presentationMode.previousEnabled) || false;
+  public static async allowPrevious(): Promise<boolean> {
+    const previousEnabled = await DemoRunner.isPreviousEnabled();
     await setContext(ContextKeys.previousEnabled, previousEnabled);
+    return previousEnabled;
+  }
+
+  /**
+   * Going back is allowed when the `demoTime.previousEnabled` setting is on. When the setting isn't
+   * set, it follows the scene checkpoints of the running act (its `sceneCheckpoints` property or
+   * the `demoTime.sceneCheckpoints` setting). Checkpoints restore the files before a scene
+   * runs again, which makes going back safe.
+   */
+  public static async isPreviousEnabled(): Promise<boolean> {
+    const setting = workspace
+      .getConfiguration(Config.root)
+      .inspect<boolean>(Config.presentationMode.previousEnabled);
+    const previousEnabled =
+      setting?.workspaceFolderValue ?? setting?.workspaceValue ?? setting?.globalValue;
+    if (typeof previousEnabled === 'boolean') {
+      return previousEnabled;
+    }
+
+    const filePath = Extension.getInstance().getState<DemoFileCache>(
+      StateKeys.executingDemoFile,
+    )?.filePath;
+    const act = filePath ? await DemoFileProvider.getFile(Uri.file(filePath)) : undefined;
+    return CheckpointService.isEnabled(act);
   }
 
   /**
@@ -178,8 +206,13 @@ export class DemoRunner {
    */
   private static async setExecutedDemoFile(demoFile: DemoFileCache) {
     const ext = Extension.getInstance();
+    const previousFilePath = ext.getState<DemoFileCache>(StateKeys.executingDemoFile)?.filePath;
     await ext.setState(StateKeys.executingDemoFile, demoFile);
     PresenterView.postMessage(WebViewMessages.toWebview.updateRunningDemos, demoFile);
+    // The act can turn on scene checkpoints, which allows going back
+    if (previousFilePath !== demoFile.filePath) {
+      await DemoRunner.allowPrevious();
+    }
   }
 
   /**
@@ -327,6 +360,7 @@ export class DemoRunner {
     }
 
     await DemoAutoProceedService.resetState();
+    await CheckpointService.reset();
 
     const ext = Extension.getInstance();
     const resetContent = Object.assign({}, DEFAULT_START_VALUE);
@@ -334,6 +368,7 @@ export class DemoRunner {
     await clearVariablesState();
     PresenterView.postMessage(WebViewMessages.toWebview.updateRunningDemos, resetContent);
     PresenterView.postMessage(WebViewMessages.toWebview.resetNotes, undefined);
+    await DemoRunner.allowPrevious();
     DemoRunner.currentDemo = undefined;
     DemoRunner.currentDemoIndex = 0;
     DemoRunner.currentStepIndex = 0;
@@ -433,6 +468,9 @@ export class DemoRunner {
         }
         executingFile.demo = [];
         await DemoRunner.setExecutedDemoFile(executingFile);
+        if (demoFile?.filePath) {
+          await CheckpointService.restore(demoFile.filePath, fileDemo, 0);
+        }
         DemoRunner.start(item);
         return;
       }
@@ -507,6 +545,11 @@ export class DemoRunner {
       followingDemoIdx++;
     }
 
+    await CheckpointService.save(
+      demoFile?.filePath || executingFile.filePath,
+      fileDemo,
+      nextDemoIdx,
+    );
     await DemoRunner.runSteps(demoSteps);
 
     DemoRunner.nextStepIsHighlight =
@@ -598,6 +641,10 @@ export class DemoRunner {
 
       await DemoRunner.setExecutedDemoFile(executingFile);
       DemoRunner.currentDemo = lastDemo;
+      // Without checkpoints in the previous act, use the one of the scene we're leaving
+      if (!(await CheckpointService.restore(previousFile.filePath, previousFile.demo, crntIdx))) {
+        await CheckpointService.restore(filePath, demoFile, demoIdxToRun);
+      }
       await DemoRunner.runSteps(lastDemo.steps);
       NotesService.showNotes(lastDemo);
       return;
@@ -620,6 +667,7 @@ export class DemoRunner {
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     DemoRunner.currentDemo = previousDemo;
+    await CheckpointService.restore(filePath, demoFile, previousDemoIdx);
     await DemoRunner.runSteps(demoSteps);
     NotesService.showNotes(previousDemo);
   }
@@ -629,11 +677,14 @@ export class DemoRunner {
    * @param demoToRun - The demo to run.
    * @returns A promise that resolves when the demo execution is complete.
    */
-  private static async startDemo(demoToRun: {
-    filePath: string;
-    idx: number;
-    demo: Demo;
-  }): Promise<void> {
+  private static async startDemo(
+    demoToRun: {
+      filePath: string;
+      idx: number;
+      demo: Demo;
+    },
+    skipCheckpoint = false,
+  ): Promise<void> {
     if (TextTypingService.IsTyping) {
       Logger.info('DemoRunner.startDemo called while typing. Ignoring.');
       return;
@@ -648,11 +699,19 @@ export class DemoRunner {
     }
 
     const executingFile = await DemoRunner.getExecutedDemoFile();
+    const demoFile = await DemoFileProvider.getFile(Uri.file(demoToRun.filePath));
+    if (!skipCheckpoint) {
+      await DemoRunner.checkpointBeforeJump(
+        executingFile,
+        demoToRun.filePath,
+        demoFile,
+        demoToRun.idx,
+      );
+    }
+
     if (executingFile.filePath !== demoToRun.filePath) {
       executingFile.filePath = demoToRun.filePath;
       executingFile.demo = [];
-
-      const demoFile = await DemoFileProvider.getFile(Uri.file(demoToRun.filePath));
       executingFile.version = demoFile?.version || 1;
     }
 
@@ -702,10 +761,6 @@ export class DemoRunner {
     }
 
     const executingFile = await DemoRunner.getExecutedDemoFile();
-    if (executingFile.filePath !== filePath) {
-      executingFile.filePath = filePath;
-      executingFile.demo = [];
-    }
 
     // Get the scene idx (normalize ActConfig or DemoConfig -> Demo[])
     const targetFile = demoFiles[filePath];
@@ -715,6 +770,13 @@ export class DemoRunner {
     if (demoIdx < 0) {
       Notifications.error('No scene found with the specified id');
       return;
+    }
+
+    await DemoRunner.checkpointBeforeJump(executingFile, filePath, targetFile, demoIdx, demoFiles);
+
+    if (executingFile.filePath !== filePath) {
+      executingFile.filePath = filePath;
+      executingFile.demo = [];
     }
     const demoToRun = targetDemos[demoIdx];
     DemoRunner.currentDemo = demoToRun;
@@ -743,6 +805,74 @@ export class DemoRunner {
     DemoRunner.currentDemo = demoToRun;
     await DemoRunner.runSteps(demoToRun.steps);
     NotesService.showNotes(demoToRun);
+  }
+
+  /**
+   * Before jumping to a scene: going back restores its checkpoint, going forward saves one.
+   */
+  private static async checkpointBeforeJump(
+    executingFile: DemoFileCache,
+    filePath: string,
+    act: DemoConfig | ActConfig | undefined,
+    idx: number,
+    demoFiles?: DemoFiles,
+  ): Promise<void> {
+    const lastDemo = executingFile.demo[executingFile.demo.length - 1];
+    let isGoingBack = false;
+    if (executingFile.filePath === filePath) {
+      isGoingBack = !!lastDemo && idx <= lastDemo.idx;
+    } else if (executingFile.filePath) {
+      const files = sortFiles(demoFiles || (await DemoFileProvider.getFiles()) || {});
+      isGoingBack = files.indexOf(filePath) < files.indexOf(executingFile.filePath);
+    }
+
+    if (isGoingBack) {
+      await CheckpointService.restore(filePath, act, idx);
+    } else {
+      await CheckpointService.save(filePath, act, idx);
+    }
+  }
+
+  /**
+   * Restores the checkpoint of a scene and runs the scene again.
+   * @param id - Optional id of the scene, otherwise a scene can be picked.
+   */
+  private static async resetToScene(id?: string): Promise<void> {
+    const demoFiles = await DemoFileProvider.getFiles();
+    if (!demoFiles) {
+      return;
+    }
+
+    const scenes = await CheckpointService.getScenesWithCheckpoint(demoFiles);
+    if (scenes.length === 0) {
+      Notifications.info(
+        'No scene checkpoints yet. Turn on the `demoTime.sceneCheckpoints` setting or the `sceneCheckpoints` property of the act, and run the scene first.',
+      );
+      return;
+    }
+
+    let scene = typeof id === 'string' ? scenes.find((s) => s.demo.id === id) : undefined;
+    if (!scene) {
+      const picked = await window.showQuickPick(
+        scenes.map((s) => ({
+          label: s.demo.title,
+          description: demoFiles[s.filePath]?.title,
+          scene: s,
+        })),
+        {
+          title: 'Reset to scene',
+          placeHolder: 'Restore the files of the scene and run it again',
+        },
+      );
+      scene = picked?.scene;
+    }
+    if (!scene) {
+      return;
+    }
+
+    if (await CheckpointService.restoreScene(scene.filePath, scene.demo, scene.idx)) {
+      await DemoRunner.startDemo(scene, true);
+    }
   }
 
   /**

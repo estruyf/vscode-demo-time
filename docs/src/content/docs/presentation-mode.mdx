@@ -91,6 +91,8 @@ Both of these actions will keep the current demo progress and allow you to conti
 
 In case you want to start from the beginning, you can use the **reset** action from the Demo Time panel view or use the `Demo Time: Reset` command from the command palette. This will reset the demo progress and allow you to start from the beginning.
 
+When you use [scene checkpoints](/features/scene-checkpoints/), the reset also puts your workspace files back to how they were before the first scene.
+
 <Image class="mx-auto" src={resetPresentationProgressImg} alt="Reset the presentation progress" width="500" />
 
 ## Enable "Go Back" Navigation
@@ -107,6 +109,8 @@ When you enabled this setting, you can use your left arrow key, `PageUp`, or the
 
 <Aside type="caution">
 The ability to go back is disabled by default because some scenes may involve changes to content in previous steps. Re-running these steps could cause conflicts or errors.
+
+Turn on [scene checkpoints](/features/scene-checkpoints/) to restore the files of a scene before it runs again. With scene checkpoints on, going back is allowed when you haven't set `demoTime.previousEnabled`.
 </Aside>
 
 ## Tips for presenting

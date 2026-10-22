@@ -180,7 +180,7 @@
         "demoTime.previousEnabled": {
           "type": "boolean",
           "default": false,
-          "description": "Enable the previous command when in presentation mode"
+          "markdownDescription": "Enable the previous command when in presentation mode. When not set, it is on when scene checkpoints are on (`#demoTime.sceneCheckpoints#` or the `sceneCheckpoints` property of the running act)."
         },
         "demoTime.videoExport.command": {
           "type": "string",
@@ -386,6 +386,11 @@
           ],
           "default": "lastExecuted",
           "description": "Define the behavior of the next action. Possible values are 'lastExecuted', or 'currentPosition'."
+        },
+        "demoTime.sceneCheckpoints": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Snapshot the workspace files when a scene starts. Going back to a scene restores its files, and resetting the play restores the files as they were before the first scene. Override it for an act with the `sceneCheckpoints` property of the act. When `#demoTime.previousEnabled#` isn't set, going back is allowed while checkpoints are on. Requires git; your own repository is never changed."
         },
         "demoTime.slideHeaderTemplate": {
           "type": "string",
@@ -637,6 +642,12 @@
         "title": "Reset",
         "category": "Demo Time",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "demo-time.resetToScene",
+        "title": "Reset to scene...",
+        "category": "Demo Time",
+        "icon": "$(history)"
       },
       {
         "command": "demo-time.stepMoveUp",

@@ -165,7 +165,8 @@ export const SETTINGS_CATALOG: SettingDefinition[] = [
   {
     key: 'previousEnabled',
     label: 'Enable the previous command',
-    description: 'Go back to the previous scene with the previous command in presentation mode.',
+    description:
+      'Go back to the previous scene with the previous command in presentation mode. When not set, it is on when scene checkpoints are on.',
     category: 'presenting',
     control: 'boolean',
   },
@@ -187,6 +188,14 @@ export const SETTINGS_CATALOG: SettingDefinition[] = [
         description: 'Continue after the scene selected in the Acts & Scenes view.',
       },
     ],
+  },
+  {
+    key: 'sceneCheckpoints',
+    label: 'Scene checkpoints',
+    description:
+      'Snapshot the workspace files when a scene starts. Going back to a scene restores its files, and resetting the play restores the files as they were before the first scene.',
+    category: 'presenting',
+    control: 'boolean',
   },
   {
     key: 'presentationViewToggles',
