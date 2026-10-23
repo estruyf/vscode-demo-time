@@ -74,6 +74,7 @@ const DOC_REFERENCES = {
     'custom-layouts.md': ['slides/layouts/custom.mdx', 'slides/layouts/header-footer.mdx'],
     'components.md': ['slides/components/index.mdx', 'slides/components/custom.mdx'],
     'animations.md': ['slides/animations.mdx', 'slides/transitions.mdx'],
+    'code-blocks.md': ['slides/code-blocks.mdx'],
     'mermaid.md': ['slides/mermaid.mdx'],
     'themes.md': ['slides/themes/index.mdx'],
     'notes.md': ['features/using-notes.mdx'],
@@ -85,6 +86,7 @@ const DOC_REFERENCES = {
     'layouts.md': LAYOUT_PAGES,
     'custom-layouts.md': ['slides/layouts/custom.mdx', 'slides/layouts/header-footer.mdx'],
     'components.md': ['slides/components/index.mdx', 'slides/components/custom.mdx'],
+    'code-blocks.md': ['slides/code-blocks.mdx'],
   },
   'demotime-code-demo': {
     'act-files.md': [

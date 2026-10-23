@@ -1,10 +1,16 @@
-import rehypePrettyCode from 'rehype-pretty-code';
 import { resolve } from 'mlly';
 import { Notifications } from './Notifications';
 import { Subscription } from '../models';
 import { Extension } from './Extension';
 import { DemoFileProvider, Logger, Slides } from '.';
-import { getAbsolutePath, getTheme, readFile, sortFiles, writeFile } from '../utils';
+import {
+  getAbsolutePath,
+  getTheme,
+  readFile,
+  resolveSlideCodeFiles,
+  sortFiles,
+  writeFile,
+} from '../utils';
 import {
   commands,
   Uri,
@@ -18,6 +24,7 @@ import {
 import { Page } from 'playwright-chromium';
 import { General } from '../constants';
 import { renderToString } from 'react-dom/server';
+import { getCodeHighlightPlugins } from '@demotime/common/out/codeHighlight';
 import {
   Action,
   COMMAND,
@@ -136,7 +143,7 @@ export class PdfExportService {
               step.path as string,
             );
             const content = await readFile(slideUri);
-            slideContents.push({ content, actTitle, sceneTitle });
+            slideContents.push({ content, actTitle, sceneTitle, slideUri });
           }
 
           if (slideContents.length === 0) {
@@ -233,7 +240,7 @@ export class PdfExportService {
    * Generate HTML for slides using the existing markdown processing pipeline
    */
   private static async generateSlidesHtml(
-    slides: { content: string; actTitle?: string; sceneTitle?: string }[],
+    slides: { content: string; actTitle?: string; sceneTitle?: string; slideUri?: Uri }[],
   ): Promise<string> {
     const theme = await getTheme(undefined);
     const ext = Extension.getInstance();
@@ -267,12 +274,16 @@ export class PdfExportService {
             slideNr++;
           }
 
+          const { markdown: slideMarkdown } = await resolveSlideCodeFiles(
+            crntSlide.content,
+            slide.slideUri,
+          );
           const vfile = await transformMarkdown(
-            placeholderFormatting(crntSlide.content),
+            placeholderFormatting(slideMarkdown),
             undefined,
             undefined,
             undefined,
-            [[rehypePrettyCode, { theme: theme ? theme : {} }]],
+            getCodeHighlightPlugins(theme),
             undefined,
           );
           let { reactContent } = vfile;
@@ -284,7 +295,7 @@ export class PdfExportService {
               undefined,
               undefined,
               undefined,
-              [[rehypePrettyCode, { theme: theme ? theme : {} }]],
+              getCodeHighlightPlugins(theme),
               undefined,
             );
             notesHtml = renderToString(notesFile.reactContent);

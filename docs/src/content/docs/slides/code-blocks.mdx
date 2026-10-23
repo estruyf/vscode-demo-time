@@ -1,0 +1,173 @@
+---
+title: Code blocks
+description: Show code on your slides with syntax highlighting, line highlights, titles, line numbers, click steps and code from your workspace files.
+lastmod: 2026-10-23T00:00:00.000Z
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Code blocks on your slides are highlighted with [Shiki](https://shiki.style/) and [rehype-pretty-code](https://rehype-pretty.pages.dev/), using the colors of your VS Code theme. The options on this page work the same in the slide preview, the [PDF export](/slides/export/) and the next slide preview in the [presenter view](/features/presenter-view/).
+
+## Highlight lines
+
+Add the line numbers between curly braces after the language to highlight lines. Separate the lines with commas, and use a dash for a range:
+
+````markdown title="Highlight lines 1, 3 to 5"
+```ts {1,3-5}
+import { createApp } from './app';
+
+const app = createApp();
+app.use(router);
+app.listen(3000);
+```
+````
+
+To highlight characters, put them between double quotes. Add a range after the quotes to only highlight some of the matches, like `"app"2-3` for the second and third match:
+
+````markdown
+```ts "createApp"
+const app = createApp();
+```
+````
+
+## Title, caption and line numbers
+
+- `title="app.ts"` shows a title above the code block, and a border in the color of the title around the code.
+- `caption="..."` shows a caption below the code block.
+- `showLineNumbers` shows the line numbers. Use `showLineNumbers{10}` to start at line 10.
+
+````markdown
+```ts title="src/app.ts" showLineNumbers {2}
+const app = createApp();
+app.listen(3000);
+```
+````
+
+## Notations in the code
+
+You can also mark lines with a comment in the code. The comment is removed from the slide.
+
+| Comment                                                     | Result                                                        |
+| ----------------------------------------------------------- | ------------------------------------------------------------- |
+| `// [!code highlight]` or `// [!code hl]`                   | Highlights the line                                           |
+| `// [!code ++]` and `// [!code --]`                         | Shows the line as added or removed                            |
+| `// [!code focus]`                                          | Dims the other lines                                          |
+| `// [!code error]`, `// [!code warning]`, `// [!code info]` | Highlights the line in red, yellow or blue                    |
+| `// [!code word:name]`                                      | Highlights `name` from this line to the end of the code block |
+
+Add a number to mark more lines, like `// [!code ++:3]` for this line and the next two, or `// [!code word:name:3]` to highlight `name` in three lines. Use the comment syntax of the language, like `# [!code ++]` in Python or YAML.
+
+````markdown
+```ts
+const app = createApp();
+app.use(logger); // [!code --]
+app.use(router); // [!code ++]
+```
+````
+
+## Step through lines
+
+Separate ranges with `|` to highlight them one click at a time. The slide starts with the first range, and every click moves to the next one. `all` shows the code without a highlight.
+
+````markdown title="Three click steps"
+```ts {1-2|4-6|all}
+import { createApp } from './app';
+import { router } from './router';
+
+const app = createApp();
+app.use(router);
+app.listen(3000);
+```
+````
+
+The lines outside the current range are dimmed. The steps are [click steps](/slides/animations/#click-steps), so they work with the arrow keys, presenter clickers, the **Next** button, the remote control and auto-advance. They share the click counter with `dt-show`, `dt-hide` and `dt-list`.
+
+Use `clicks` to move to the second range on a later click, like the `clicks` attribute of the other components. With `clicks=2`, the first range stays highlighted until the second click:
+
+````markdown
+```ts {1|3|all} clicks=2
+
+```
+````
+
+The PDF export and the slide thumbnails show the last step.
+
+## Code from workspace files
+
+Use the `file` option to show the code of a file in your workspace. The code on the slide stays the same as the code you demo, also after a last-minute refactor.
+
+````markdown title="The whole file"
+```ts file="src/app.ts"
+
+```
+````
+
+- The path is relative to the workspace folder. Paths that start with `./` or `../` are relative to the slide file.
+- Add `#L10-24` to show lines 10 to 24, or `#L10` to show one line.
+- Without a language, Demo Time uses the file extension.
+- The common indentation of the lines is removed.
+
+### Regions
+
+Line numbers change when you edit the file. A region keeps working: mark the code with `#region` and `#endregion` comments, and add `#region=` and the name to the path:
+
+```ts title="src/app.ts"
+export const start = () => {
+  // #region setup
+  const app = createApp();
+  app.use(router);
+  // #endregion
+  app.listen(3000);
+};
+```
+
+````markdown
+```ts file="src/app.ts#region=setup"
+
+```
+````
+
+The region markers aren't shown on the slide, also those of other regions inside the region. Any comment syntax works, like `# #region setup` or `<!-- #region setup -->`.
+
+### Combine with other options
+
+All the other options work with code from a file:
+
+````markdown
+```ts file="src/app.ts#L1-20" title="app.ts" showLineNumbers {2-4|10|all}
+
+```
+````
+
+The slide preview updates when you save the file. When the file, lines or region don't exist, the slide shows an error, and the **Problems** panel shows it on the `file` option.
+
+<Aside type="note">Demo Time only reads files inside your workspace folder.</Aside>
+
+## Style code blocks in your theme
+
+The built-in themes style the code blocks with these CSS variables. Set them in your [custom theme](/slides/themes/custom/) to change the colors:
+
+| Variable                                     | Used for                                           |
+| -------------------------------------------- | -------------------------------------------------- |
+| `--demotime-code-highlight-background`       | Highlighted lines                                  |
+| `--demotime-code-highlight-border`           | The left border of highlighted lines               |
+| `--demotime-code-highlight-chars-background` | Highlighted characters and words                   |
+| `--demotime-code-dim-opacity`                | Lines outside the focus or current step            |
+| `--demotime-code-title-background`           | The title                                          |
+| `--demotime-code-title-color`                | The title text                                     |
+| `--demotime-code-title-radius`               | The top corners of the title                       |
+| `--demotime-code-frame-width`                | The border around the code of a block with a title |
+| `--demotime-code-line-number-color`          | Line numbers                                       |
+| `--demotime-code-diff-add-background`        | Added lines, with `-border` for the border         |
+| `--demotime-code-diff-remove-background`     | Removed lines, with `-border` for the border       |
+| `--demotime-code-error-background`           | Error lines, with `-border` for the border         |
+| `--demotime-code-warning-background`         | Warning lines, with `-border` for the border       |
+| `--demotime-code-info-background`            | Info lines, with `-border` for the border          |
+
+```css title="Custom theme"
+.slide {
+  --demotime-code-highlight-background: rgba(255, 213, 0, 0.15);
+  --demotime-code-highlight-border: #ffd500;
+  --demotime-code-dim-opacity: 0.3;
+}
+```

@@ -1,4 +1,4 @@
-import { Uri, window, commands, workspace } from 'vscode';
+import { Uri, window, commands, workspace, FileSystemWatcher } from 'vscode';
 import { Extension } from '../services/Extension';
 import { ContextKeys } from '../constants';
 import {
@@ -6,6 +6,7 @@ import {
   getTheme,
   getWebviewWorkspaceUrl,
   parseWinPath,
+  resolveSlideCodeFiles,
   setContext,
   togglePresentationView,
 } from '../utils';
@@ -43,6 +44,12 @@ export class Preview extends BaseWebview {
   private static crntCss: string | null = null;
   private static crntEmbed: { url: string; title: string } | null = null;
   private static currentSlideIndex: number = 0;
+  /**
+   * The files that code blocks on the slides show, to update the preview when they change
+   */
+  private static codeFiles = new Set<string>();
+  private static codeFileWatcher: FileSystemWatcher | undefined;
+  private static codeFilesTimer: NodeJS.Timeout | undefined;
 
   public static register() {
     const subscriptions = Extension.getInstance().subscriptions;
@@ -299,6 +306,38 @@ export class Preview extends BaseWebview {
     Preview.hasPreviousSlide = false;
     Preview.hasNextSlide = false;
     Preview.updateSlideNotes(undefined);
+    Preview.codeFileWatcher?.dispose();
+    Preview.codeFileWatcher = undefined;
+    Preview.codeFiles.clear();
+    clearTimeout(Preview.codeFilesTimer);
+  }
+
+  /**
+   * Watches the files that code blocks on the slides show, and tells the preview to load them
+   * again when they change.
+   */
+  private static watchCodeFiles(uris: Uri[]) {
+    uris.forEach((uri) => Preview.codeFiles.add(parseWinPath(uri.fsPath)));
+    if (Preview.codeFileWatcher || Preview.codeFiles.size === 0) {
+      return;
+    }
+
+    const onChange = (uri: Uri) => {
+      if (!Preview.codeFiles.has(parseWinPath(uri.fsPath))) {
+        return;
+      }
+
+      clearTimeout(Preview.codeFilesTimer);
+      Preview.codeFilesTimer = setTimeout(() => {
+        Preview.postMessage(WebViewMessages.toWebview.preview.codeFilesChanged);
+      }, 200);
+    };
+
+    const watcher = workspace.createFileSystemWatcher('**/*');
+    watcher.onDidChange(onChange);
+    watcher.onDidCreate(onChange);
+    watcher.onDidDelete(onChange);
+    Preview.codeFileWatcher = watcher;
   }
 
   protected static async messageListener(message: any) {
@@ -337,6 +376,20 @@ export class Preview extends BaseWebview {
         slideIndex: Preview.currentSlideIndex,
         embed: Preview.crntEmbed,
       });
+    } else if (command === WebViewMessages.toVscode.preview.resolveCodeFiles && requestId) {
+      const content = typeof payload === 'string' ? payload : '';
+      const slideFile = Preview.crntFile;
+      const slideUri =
+        slideFile && !slideFile.startsWith('http')
+          ? getAbsolutePath(parseWinPath(slideFile))
+          : undefined;
+      try {
+        const { markdown, uris } = await resolveSlideCodeFiles(content, slideUri);
+        Preview.watchCodeFiles(uris);
+        Preview.postRequestMessage(command, requestId, markdown);
+      } catch {
+        Preview.postRequestMessage(command, requestId, content);
+      }
     } else if (command === WebViewMessages.toVscode.parseFileUri && requestId && payload) {
       const fileWebviewPath = getWebviewWorkspaceUrl(Preview.webview?.webview, payload);
       Preview.postRequestMessage(command, requestId, fileWebviewPath);

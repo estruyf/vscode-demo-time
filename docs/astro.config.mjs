@@ -174,6 +174,7 @@ export default defineConfig({
               label: 'Content',
               collapsed: true,
               items: [
+                { label: 'Code blocks', slug: 'slides/code-blocks', badge: { text: 'New', variant: 'tip' } },
                 { label: 'Mermaid diagrams', slug: 'slides/mermaid' },
                 { label: 'Import PowerPoint', slug: 'slides/powerpoint-import' },
                 { label: 'Export slides', slug: 'slides/export' },

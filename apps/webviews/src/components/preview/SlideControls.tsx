@@ -26,6 +26,15 @@ export interface ISlideControlsProps {
   onNavigateToSlide?: (index: number) => void;
   triggerMouseMove: (value: boolean) => void;
   hideControls: () => void;
+  /**
+   * Called when the pointer moves onto or off the toolbar, so the controls and cursor stay visible
+   * meanwhile
+   */
+  onHoverChange?: (hovered: boolean) => void;
+  /**
+   * Called when a menu or overlay of the controls opens or closes
+   */
+  onOverlayChange?: (open: boolean) => void;
   laserPointerEnabled?: boolean;
   onLaserPointerToggle?: (enabled: boolean) => void;
   isZoomed?: boolean;
@@ -59,6 +68,8 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   onNavigateToSlide,
   triggerMouseMove,
   hideControls,
+  onHoverChange,
+  onOverlayChange,
   laserPointerEnabled = false,
   onLaserPointerToggle,
   isZoomed = false,
@@ -279,6 +290,10 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   const isOverlayOpen = isNavigatorOpen || isMenuOpen || isNotesEditorOpen;
   const visible = show || isOverlayOpen;
 
+  React.useEffect(() => {
+    onOverlayChange?.(isOverlayOpen);
+  }, [isOverlayOpen, onOverlayChange]);
+
   return (
     <div
       data-slide-controls
@@ -291,6 +306,8 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
       <div
         role="toolbar"
         aria-label="Slide controls"
+        onMouseEnter={() => onHoverChange?.(true)}
+        onMouseLeave={() => onHoverChange?.(false)}
         className={cn(
           'inline-flex items-center gap-1 rounded-2xl px-2 py-1.5 max-w-full',
           'bg-(--vscode-editorWidget-background)',

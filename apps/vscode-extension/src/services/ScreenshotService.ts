@@ -2,7 +2,14 @@ import { Uri, workspace } from 'vscode';
 import { Extension } from './Extension';
 import { DemoStatusBar } from './DemoStatusBar';
 import { Logger } from './Logger';
-import { getAbsolutePath, getNextSlideIndex, getTheme, readFile, writeFile } from '../utils';
+import {
+  getAbsolutePath,
+  getNextSlideIndex,
+  getTheme,
+  readFile,
+  resolveSlideCodeFiles,
+  writeFile,
+} from '../utils';
 import {
   Action,
   Config,
@@ -27,7 +34,7 @@ import {
   toStyleAttribute,
 } from '@demotime/common';
 import { renderToString } from 'react-dom/server';
-import rehypePrettyCode from 'rehype-pretty-code';
+import { getCodeHighlightPlugins } from '@demotime/common/out/codeHighlight';
 import { resolve } from 'mlly';
 import { Preview } from '../preview/Preview';
 import { DemoRunner } from './DemoRunner';
@@ -151,10 +158,17 @@ export class ScreenshotService {
       slides,
       DemoRunner.getIsPresentationMode(),
     );
-    const targetSlide = slides[slideIndex];
+    let targetSlide = slides[slideIndex];
     const placeholders = await Slides.getSlidePlaceholders(slideStep.path, slideIndex, demo);
     // The placeholders are part of the key, so the screenshot updates when the slide number changes
-    const cacheKey = `${slideUri.toString()}#${slideIndex}#${JSON.stringify(placeholders)}`;
+    let cacheKey = `${slideUri.toString()}#${slideIndex}#${JSON.stringify(placeholders)}`;
+
+    // Code blocks can show code from other files, which can change without the slide changing
+    const codeFiles = await resolveSlideCodeFiles(targetSlide.content, slideUri);
+    if (codeFiles.files.length > 0) {
+      targetSlide = { ...targetSlide, content: codeFiles.markdown };
+      cacheKey += `#${codeFiles.markdown}`;
+    }
 
     return { targetSlide, cacheKey, placeholders };
   }
@@ -330,7 +344,7 @@ export class ScreenshotService {
       undefined,
       undefined,
       undefined,
-      [[rehypePrettyCode, { theme: theme ? theme : {} }]],
+      getCodeHighlightPlugins(theme),
       undefined,
     );
     let { reactContent } = vfile;

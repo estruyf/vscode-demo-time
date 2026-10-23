@@ -126,6 +126,163 @@ pre code {
   background: var(--vscode-editor-background);
 }
 
+/*
+ * Code blocks (rehype-pretty-code and the Shiki notations). Themes can change the colors with the
+ * `--demotime-code-*` variables.
+ */
+[data-rehype-pretty-code-figure] {
+  margin: 0 0 1em;
+
+  pre {
+    overflow-x: auto;
+  }
+
+  /* The border shows the highlight color, it's transparent so lines don't move */
+  [data-line] {
+    padding: 0 1ch;
+    border-left: 3px solid transparent;
+    transition:
+      opacity 0.2s ease-in-out,
+      background-color 0.2s ease-in-out,
+      border-color 0.2s ease-in-out;
+  }
+
+  /* Titles (title="app.ts") and captions (caption="...") */
+  [data-rehype-pretty-code-title] {
+    padding: 0.35em 1em;
+    font-family: var(--vscode-editor-font-family, monospace);
+    font-size: 0.75em;
+    color: var(--demotime-code-title-color, var(--vscode-tab-activeForeground, inherit));
+    background-color: var(
+      --demotime-code-title-background,
+      var(--vscode-editorGroupHeader-tabsBackground, rgba(127, 127, 127, 0.15))
+    );
+    border-top-left-radius: var(--demotime-code-title-radius, 6px);
+    border-top-right-radius: var(--demotime-code-title-radius, 6px);
+  }
+
+  /* With a title, the title and the code are one box: the code gets a border in the title color */
+  [data-rehype-pretty-code-title] + pre {
+    margin-top: 0;
+    border: var(--demotime-code-frame-width, 2px) solid
+      var(
+        --demotime-code-title-background,
+        var(--vscode-editorGroupHeader-tabsBackground, rgba(127, 127, 127, 0.15))
+      );
+    border-top: 0;
+    border-radius: 0 0 var(--demotime-code-title-radius, 6px) var(--demotime-code-title-radius, 6px);
+  }
+
+  /* Low specificity, so the padding of a theme wins */
+  :where([data-rehype-pretty-code-title] + pre) {
+    padding-block: 0.75em;
+  }
+
+  [data-rehype-pretty-code-caption] {
+    margin-top: 0.5em;
+    font-size: 0.75em;
+    opacity: 0.75;
+  }
+
+  /* Line numbers (showLineNumbers) */
+  code[data-line-numbers] {
+    counter-reset: line;
+  }
+
+  code[data-line-numbers] > [data-line]::before {
+    counter-increment: line;
+    content: counter(line);
+    display: inline-block;
+    width: 1ch;
+    margin-right: 1.5ch;
+    text-align: right;
+    color: var(
+      --demotime-code-line-number-color,
+      var(--vscode-editorLineNumber-foreground, rgba(127, 127, 127, 0.8))
+    );
+  }
+
+  code[data-line-numbers-max-digits='2'] > [data-line]::before {
+    width: 2ch;
+  }
+
+  code[data-line-numbers-max-digits='3'] > [data-line]::before {
+    width: 3ch;
+  }
+
+  code[data-line-numbers-max-digits='4'] > [data-line]::before {
+    width: 4ch;
+  }
+
+  /* Highlighted lines ({1-3} and // [!code highlight]) */
+  [data-highlighted-line],
+  [data-line].highlighted {
+    background-color: var(
+      --demotime-code-highlight-background,
+      var(--vscode-editor-lineHighlightBackground, rgba(127, 127, 127, 0.2))
+    );
+    border-left-color: var(
+      --demotime-code-highlight-border,
+      var(--vscode-focusBorder, rgba(127, 127, 127, 0.8))
+    );
+  }
+
+  /* Highlighted characters ("text" and // [!code word:text]) */
+  [data-highlighted-chars],
+  .highlighted-word {
+    padding: 0.1em 0.15em;
+    border-radius: 0.25em;
+    background-color: var(
+      --demotime-code-highlight-chars-background,
+      var(--vscode-editor-wordHighlightStrongBackground, rgba(127, 127, 127, 0.35))
+    );
+  }
+
+  /* Diff (// [!code ++] and // [!code --]) */
+  [data-line].diff.add {
+    background-color: var(
+      --demotime-code-diff-add-background,
+      var(--vscode-diffEditor-insertedLineBackground, rgba(16, 185, 129, 0.2))
+    );
+    border-left-color: var(--demotime-code-diff-add-border, rgba(16, 185, 129, 0.8));
+  }
+
+  [data-line].diff.remove {
+    background-color: var(
+      --demotime-code-diff-remove-background,
+      var(--vscode-diffEditor-removedLineBackground, rgba(244, 63, 94, 0.2))
+    );
+    border-left-color: var(--demotime-code-diff-remove-border, rgba(244, 63, 94, 0.8));
+    opacity: 0.7;
+  }
+
+  /* Error levels (// [!code error], // [!code warning] and // [!code info]) */
+  [data-line].highlighted.error {
+    background-color: var(--demotime-code-error-background, rgba(244, 63, 94, 0.2));
+    border-left-color: var(--demotime-code-error-border, rgba(244, 63, 94, 0.8));
+  }
+
+  [data-line].highlighted.warning {
+    background-color: var(--demotime-code-warning-background, rgba(234, 179, 8, 0.2));
+    border-left-color: var(--demotime-code-warning-border, rgba(234, 179, 8, 0.8));
+  }
+
+  [data-line].highlighted.info {
+    background-color: var(--demotime-code-info-background, rgba(59, 130, 246, 0.2));
+    border-left-color: var(--demotime-code-info-border, rgba(59, 130, 246, 0.8));
+  }
+
+  /* Focus (// [!code focus]) */
+  pre.has-focused [data-line]:not(.focused) {
+    opacity: var(--demotime-code-dim-opacity, 0.4);
+  }
+}
+
+/* Click steps through the line highlights ({1-2|4-6|all}) */
+dt-code-steps[data-focus] [data-line]:not([data-highlighted-line]) {
+  opacity: var(--demotime-code-dim-opacity, 0.4);
+}
+
 .slide__container,
 .slide__layout {
   @apply h-full w-full;

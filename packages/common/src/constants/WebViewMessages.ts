@@ -204,6 +204,10 @@ export const WebViewMessages = {
        * The overflow of the slides in the file, for the diagnostics
        */
       slideOverflow: 'reportPreviewSlideOverflow',
+      /**
+       * Replaces the code blocks with a `file` option by the code of that file
+       */
+      resolveCodeFiles: 'resolvePreviewCodeFiles',
     },
     settingsView: {
       /**
@@ -340,6 +344,10 @@ export const WebViewMessages = {
        * The reduced motion preference of the slides changed
        */
       updateReducedMotion: 'previewUpdateReducedMotion',
+      /**
+       * A file that a code block on the slides shows changed
+       */
+      codeFilesChanged: 'previewCodeFilesChanged',
     },
     // Act Editor
     configEditor: {

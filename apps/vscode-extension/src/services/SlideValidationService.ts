@@ -21,6 +21,7 @@ import {
   isPathInWorkspace,
   parseWinPath,
   readFile,
+  resolveSlideCodeFiles,
   SlideProblem,
   SlideProblemFix,
   SlideProblemSeverity,
@@ -47,8 +48,8 @@ interface ActInfo {
 
 /**
  * Reports problems in slide (markdown) files: a `dt-action` component that refers to a scene id
- * that doesn't exist in any act file, and problems in the front matter of the slide files under
- * `.demo/` or opened by an `openSlide` move.
+ * that doesn't exist in any act file, and problems in the front matter and code blocks with a
+ * `file` option of the slide files under `.demo/` or opened by an `openSlide` move.
  */
 export class SlideValidationService {
   private static diagnosticCollection: DiagnosticCollection;
@@ -260,6 +261,9 @@ export class SlideValidationService {
     }
 
     const problems = isSlideFile ? await SlideValidationService.getProblems(content) : [];
+    const codeFileDiagnostics = isSlideFile
+      ? await SlideValidationService.getCodeFileDiagnostics(content, document.uri)
+      : [];
 
     // The document could have changed or closed while the files were loading
     if (document.isClosed || document.getText() !== content) {
@@ -274,6 +278,8 @@ export class SlideValidationService {
         fixes.push({ diagnostic, fix: problem.fix });
       }
     }
+
+    diagnostics.push(...codeFileDiagnostics);
 
     SlideValidationService.fixes.set(document.uri.toString(), fixes);
     if (diagnostics.length === 0) {
@@ -318,6 +324,32 @@ export class SlideValidationService {
         },
         readFile: read,
         templates,
+      });
+    } catch {
+      return [];
+    }
+  }
+
+  /**
+   * Code blocks with a `file` option, like ` ```ts file="src/app.ts#L10-24" `, of which the file,
+   * lines or region don't exist.
+   */
+  private static async getCodeFileDiagnostics(content: string, uri: Uri): Promise<Diagnostic[]> {
+    if (!content.includes('file=')) {
+      return [];
+    }
+
+    try {
+      const { errors } = await resolveSlideCodeFiles(content, uri);
+      return errors.map(({ block, message }) => {
+        const diagnostic = new Diagnostic(
+          new Range(block.line, block.start, block.line, block.end),
+          message,
+          DiagnosticSeverity.Error,
+        );
+        diagnostic.source = DIAGNOSTIC_SOURCE;
+        diagnostic.code = 'slide-code-file';
+        return diagnostic;
       });
     } catch {
       return [];

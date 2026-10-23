@@ -1,6 +1,7 @@
 export * from './useActProblems';
 export * from './useAutoSave';
 export * from './useClickSteps';
+export * from './useCodeFiles';
 export * from './useCursor';
 export * from './useDemoConfig';
 export * from './useDemoConfigContext';

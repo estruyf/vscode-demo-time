@@ -1,7 +1,7 @@
 ---
 title: Present your slides
 description: From Markdown to slides - present your slides with Demo Time
-lastmod: 2026-10-02T00:00:00.000Z
+lastmod: 2026-10-23T00:00:00.000Z
 ---
 
 import { Code, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
@@ -29,6 +29,8 @@ theme: default
 
 Hello, **Demo Time**!
 ```
+
+Slides support all the markdown you know, like lists, tables, images and [code blocks](/slides/code-blocks/) with syntax highlighting. Code blocks can highlight lines step by step and show the code of a file in your workspace.
 
 You can also create multiple slides within the same Markdown file by separating them with three hyphens (`---`). This is useful for grouping related slides together. For example:
 
@@ -250,6 +252,8 @@ With this approach, you can seamlessly integrate slides into your demos, making 
 
 When previewing or presenting slides, a compact control bar appears at the bottom of the slide. It is organized into three sections — **view tools**, **slide navigation**, and **slide tools** — and tucks the less-common actions into a **More actions** (`…`) menu so the bar stays uncluttered and adapts to narrow windows.
 
+The control bar shows when you move the mouse over the slide. After 5 seconds without moving the mouse, the control bar and the mouse cursor hide. They stay visible while the mouse is on the control bar, also after you click **Next** or **Previous**, and while a menu or the slide overview is open.
+
 <Image class="mx-auto" src={slideControlsImg} alt="Slide controls" />
 
 <Aside type="note">
@@ -368,7 +372,7 @@ The quick fix of the warning (`Ctrl+.` or `Cmd+.` on the line in the editor, or 
 
 ## Problems in slide files
 
-Demo Time checks the front matter of your slide files while you edit them, and reports the problems in the **Problems** panel. It checks the markdown files in the `.demo` folder, and the files that an `openSlide` move opens.
+Demo Time checks the front matter and code blocks of your slide files while you edit them, and reports the problems in the **Problems** panel. It checks the markdown files in the `.demo` folder, and the files that an `openSlide` move opens.
 
 | Problem | Example | Severity |
 | --- | --- | --- |
@@ -379,10 +383,11 @@ Demo Time checks the front matter of your slide files while you edit them, and r
 | A file that doesn't exist for `image`, `video`, `svgFile`, `customTheme` or `customLayout`, or for a `background` image. Paths are relative to the workspace folder, the same way the slide preview loads them. `http(s)` URLs are not checked. | `image: .demo/assets/missing.png` | Warning, or Error for `customLayout` |
 | A custom layout, or an inline `header` or `footer` template, with invalid Handlebars | `{{#if title}}` without `{{/if}}` | Error |
 | A `---` followed by a line like `Note: text` (a capitalized word and a colon), which makes the lines up to the next `---` the front matter of the slide instead of its content | `Note: remember this` | Warning |
+| A [code block with a `file` option](/slides/code-blocks/#code-from-workspace-files) of which the file, lines or region don't exist | ```` ```ts file="src/missing.ts" ```` | Error |
 
 Properties that are only meant for your own templates don't get a problem as long as a [custom layout](/slides/layouts/custom/), the `header` or `footer` of the slide, or the `demoTime.slideHeaderTemplate` and `demoTime.slideFooterTemplate` templates use them.
 
-The problems update when you change the slide file, and when you add or remove a file that the slides refer to, like an image or a layout.
+The problems update when you change the slide file, when you add or remove a file that the slides refer to, like an image or a layout, and when you save a file that a code block shows.
 
 <Aside type="tip">
 A misspelled property or value, and a `---` that hides slide content, have a quick fix (`Ctrl+.` or `Cmd+.` on the line in the editor, or the light bulb in the **Problems** panel). For a `---`, the quick fix adds an empty line after it, so the lines are shown on the slide.

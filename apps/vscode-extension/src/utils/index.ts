@@ -65,6 +65,7 @@ export * from './restoreVSCodeSettings';
 export * from './sanitizeFileName';
 export * from './saveFiles';
 export * from './resolveOpenWebsiteUrl';
+export * from './resolveSlideCodeFiles';
 export * from './setContext';
 export * from './ShadowGit';
 export * from './sleep';

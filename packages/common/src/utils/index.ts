@@ -1,4 +1,6 @@
 export * from './codeFence';
+export * from './codeFiles';
+export * from './codeSteps';
 export * from './convertTemplateToHtml';
 export * from './demoNormalizer';
 export * from './formatDate';

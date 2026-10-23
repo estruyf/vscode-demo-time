@@ -52,7 +52,15 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const { content, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();
   const ref = React.useRef<HTMLDivElement>(null);
   const slideRef = React.useRef<HTMLDivElement>(null);
-  const { cursorVisible, resetCursorTimeout, hideCursor } = useCursor();
+  const { cursorVisible, resetCursorTimeout, pauseCursorTimeout, hideCursor } = useCursor();
+  // The slide controls remount on every slide, so their hover state lives here: when you click
+  // next, the pointer stays on the toolbar of the new slide
+  const [isControlsHovered, setIsControlsHovered] = React.useState(false);
+  const [isControlsOverlayOpen, setIsControlsOverlayOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    pauseCursorTimeout(isControlsHovered || isControlsOverlayOpen);
+  }, [isControlsHovered, isControlsOverlayOpen, pauseCursorTimeout]);
   const { vsCodeTheme, isDarkTheme } = useTheme();
   const isPresentationMode = usePresentationMode();
   // Slides only render once this is known, so they don't start an animation they should skip
@@ -134,8 +142,11 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
 
   const hidePreviewControls = React.useCallback(() => {
     setShowControls(false);
+    // The hidden toolbar doesn't get pointer events, so it won't get a mouseleave
+    setIsControlsHovered(false);
+    pauseCursorTimeout(false);
     hideCursor();
-  }, [hideCursor]);
+  }, [hideCursor, pauseCursorTimeout]);
 
   /**
    * Gets the template of the header or footer: the `header`/`footer` front matter of the slide, or
@@ -663,6 +674,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         onMouseEnter={() => setShowControls(true)}
         onMouseLeave={() => {
           setShowControls(false);
+          setIsControlsHovered(false);
           if (laserPointerEnabled) {
             handleMouseLeave();
           }
@@ -830,6 +842,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           onNavigateToSlide={navigateToSlide}
           triggerMouseMove={setIsMouseMoveEnabled}
           hideControls={hidePreviewControls}
+          onHoverChange={setIsControlsHovered}
+          onOverlayChange={setIsControlsOverlayOpen}
           laserPointerEnabled={laserPointerEnabled}
           onLaserPointerToggle={setLaserPointerEnabled}
           isZoomed={isZoomed}

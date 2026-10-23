@@ -20,6 +20,8 @@ front matter property.
 - [Layouts](references/layouts.md),
   [custom layouts, header and footer](references/custom-layouts.md) and
   [components](references/components.md)
+- [Code blocks](references/code-blocks.md): the `--demotime-code-*` variables for highlighted,
+  dimmed and diff lines, titles and line numbers
 - [Designed theme starter](assets/designed-theme.css): the structure of a hand-written theme
 
 ## 1. Gather the input

@@ -1,9 +1,9 @@
 import * as React from 'react';
-import rehypePrettyCode from 'rehype-pretty-code';
 import { messageHandler } from '@estruyf/vscode/dist/client/webview';
 import { getTemplateErrorMessage, getVideoAutoplay, placeholderFormatting, renderTemplateError, SlideMetadata, tryConvertTemplateToHtml, WebViewMessages } from '@demotime/common';
+import { getCodeHighlightPlugins } from '@demotime/common/out/codeHighlight';
 import { renderToString } from 'react-dom/server';
-import { usePrevious, useRemark } from '../../hooks';
+import { useCodeFiles, usePrevious, useRemark } from '../../hooks';
 import { transformImageUrl } from '../../utils';
 
 export interface IMarkdownProps {
@@ -24,7 +24,7 @@ export interface IMarkdownProps {
 
 export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   filePath,
-  content,
+  content: rawContent,
   matter,
   vsCodeTheme,
   isDarkTheme,
@@ -33,6 +33,8 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
   isStatic = false,
   updateBgStyles
 }: React.PropsWithChildren<IMarkdownProps>) => {
+  // Code blocks with a `file` option show the code of a workspace file
+  const content = useCodeFiles(rawContent);
   const prevContent = usePrevious(content);
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const [isReady, setIsReady] = React.useState(false);
@@ -108,7 +110,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
 
         let crntSlideContent: string;
         if (content) {
-          const processedContent = await processMarkdown(content);
+          const processedContent = await processMarkdown(content, getCodeHighlightPlugins(vsCodeTheme));
           crntSlideContent = renderToString(processedContent.reactContent);
         } else {
           crntSlideContent = textContent;
@@ -133,7 +135,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     } else {
       setIsReady(true);
     }
-  }, [content, textContent, webviewUrl, processMarkdown, isStatic]);
+  }, [content, textContent, webviewUrl, processMarkdown, isStatic, vsCodeTheme]);
 
   const updateCustomThemePath = React.useCallback((customThemePath?: string) => {
     if (!customThemePath) {
@@ -199,7 +201,7 @@ export const Markdown: React.FunctionComponent<IMarkdownProps> = ({
     } else {
       // Standard slides: process markdown (rehype). Skip for custom layouts since
       // the `markdown` output is never rendered when a `template` is active.
-      setMarkdown(placeholderFormatting(content), [[rehypePrettyCode, { theme: vsCodeTheme ? vsCodeTheme : {} }]], isDarkTheme);
+      setMarkdown(placeholderFormatting(content), getCodeHighlightPlugins(vsCodeTheme), isDarkTheme);
     }
   }, [content, vsCodeTheme, isDarkTheme, prevContent, prevMatter, setMarkdown, matter, updateCustomLayout]);
 

@@ -1684,6 +1684,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@demotime/common@workspace:packages/common"
   dependencies:
+    "@shikijs/transformers": "npm:^3.23.0"
     "@types/js-yaml": "npm:^4.0.9"
     "@types/react": "npm:^18.3.5"
     handlebars: "npm:^4.7.8"
@@ -1691,6 +1692,7 @@ __metadata:
     js-yaml: "npm:^4.1.0"
     mdast-util-to-hast: "npm:^13.2.0"
     react: "npm:^18.3.1"
+    rehype-pretty-code: "npm:^0.14.1"
     rehype-raw: "npm:^7.0.0"
     rehype-react: "npm:^8.0.0"
     remark-frontmatter: "npm:^5.0.0"
@@ -4887,6 +4889,16 @@ __metadata:
   dependencies:
     "@shikijs/types": "npm:3.23.0"
   checksum: 10c0/5c99036d4a765765018f9106a354ebe5ccac204c69f00e3cda265828d493f005412659213f6574fa0e187c7d4437b3327bd6dad2e2146b2c472d2bf493d790dd
+  languageName: node
+  linkType: hard
+
+"@shikijs/transformers@npm:^3.23.0":
+  version: 3.23.0
+  resolution: "@shikijs/transformers@npm:3.23.0"
+  dependencies:
+    "@shikijs/core": "npm:3.23.0"
+    "@shikijs/types": "npm:3.23.0"
+  checksum: 10c0/0e4d8d96f8c6013d0bc2237137c676d5a05e1a4047b81669e1aec8aa9e9619e141bb2a893c097ca0ae72d233d47b59da4249e2d5d4af53bec57115df84b27f6e
   languageName: node
   linkType: hard
 
