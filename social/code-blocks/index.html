@@ -4,40 +4,38 @@
 <meta charset="utf-8">
 <link rel="stylesheet" href="../shared/base.css">
 <style>
-  .slide { left: 20px; top: 0; width: 580px; }
-  .note { right: -4px; top: 452px; }
+  .card { width: 470px; }
 </style>
 </head>
 <body>
-  <div class="sun"></div>
+  <div class="glow"></div>
 
   <div class="copy">
-    <div class="eyebrow">New in Demo Time</div>
-    <h1>Code blocks that <span class="hl">walk through</span> your code</h1>
-    <p class="sub"><b>Highlight lines</b> one click at a time, show <b>diffs</b>, and pull code straight from your <b>workspace</b>.</p>
-    <div class="pills">
-      <span class="pill">Line steps</span>
-      <span class="pill">Diff and focus</span>
-      <span class="pill">Titles and line numbers</span>
-      <span class="pill">Code from your files</span>
+    <div class="brand">
+      <img src="../../docs/src/assets/demotime.svg" alt="">
+      <span>Demo Time</span>
+      <span class="beta">BETA</span>
     </div>
+    <div class="eyebrow">Code blocks on slides</div>
+    <h1>Walk through<br>your code.<br><em>One click at a time.</em></h1>
+    <p class="sub">Highlight the next lines on every click, show diffs and focus, and pull code straight from your workspace.</p>
+    <div class="url">Try it in the beta → <b>beta.demotime.show</b></div>
   </div>
 
-  <div class="brand">
-    <img src="../../docs/src/assets/demotime.svg" alt="">
-    demotime.show <span class="where">/ slides / code blocks</span>
-  </div>
-
-  <div class="stage">
-    <div class="slide">
-      <h2>Configure the app</h2>
+  <div class="card">
+    <div class="card-head">
+      <span class="dots"><i></i><i></i><i></i></span>
+      Configure the app
+      <span class="aside">Step 2 / 3</span>
+    </div>
+    <div class="card-body">
       <div class="code">
-        <div class="title mono"><span>src/app.ts</span><span class="aside">step 2 / 3</span></div>
+        <div class="title mono"><span>src/app.ts</span></div>
 <pre><div class="l dim"><span class="n">1</span><span><span class="k">import</span> <span class="p">{</span> <span class="v">createApp</span> <span class="p">}</span> <span class="k">from</span> <span class="s">"./app"</span><span class="p">;</span></span></div><div class="l dim"><span class="n">2</span><span><span class="k">import</span> <span class="p">{</span> <span class="v">slides</span> <span class="p">}</span> <span class="k">from</span> <span class="s">"./slides"</span><span class="p">;</span></span></div><div class="l dim"><span class="n">3</span><span> </span></div><div class="l hl"><span class="n">4</span><span><span class="k">const</span> <span class="v">app</span> <span class="p">=</span> <span class="f">createApp</span><span class="p">({</span></span></div><div class="l del"><span class="n">5</span><span>  <span class="pr">theme</span><span class="p">:</span> <span class="s">"default"</span><span class="p">,</span></span></div><div class="l add"><span class="n">6</span><span>  <span class="pr">theme</span><span class="p">:</span> <span class="s">"demotime"</span><span class="p">,</span></span></div><div class="l hl"><span class="n">7</span><span>  <span class="v">slides</span><span class="p">,</span></span></div><div class="l hl"><span class="n">8</span><span><span class="p">});</span></span></div><div class="l dim"><span class="n">9</span><span> </span></div><div class="l dim"><span class="n">10</span><span><span class="v">app</span><span class="p">.</span><span class="f">mount</span><span class="p">(</span><span class="s">"#slides"</span><span class="p">);</span></span></div></pre>
       </div>
       <div class="steps"><i></i><i class="on"></i><i></i><span>click to go to the next step</span></div>
     </div>
-    <div class="note mono">```ts <span class="m">title="src/app.ts" {1-2|4-8|all}</span></div>
+    <div class="toast">```ts <span class="y">title="src/app.ts" {1-2|4-8|all}</span></div>
   </div>
 </body>
 </html>

@@ -4,36 +4,37 @@
 <meta charset="utf-8">
 <link rel="stylesheet" href="../shared/base.css">
 <style>
-  /* The mockup's own styles. Position everything inside .stage (600×540). */
-  .slide { left: 20px; top: 0; width: 580px; }
+  /* The mockup's own styles. The .card sits on the right, centered; give it a width. */
+  .card { width: 470px; }
 </style>
 </head>
 <body>
-  <div class="sun"></div>
+  <div class="glow"></div>
 
   <div class="copy">
-    <div class="eyebrow">New in Demo Time</div>
-    <h1>A short headline about <span class="hl">the feature</span></h1>
-    <p class="sub">One or two sentences on what it does for you, with the <b>key words</b> in bold.</p>
-    <div class="pills">
-      <span class="pill">First thing</span>
-      <span class="pill">Second thing</span>
+    <div class="brand">
+      <img src="../../docs/src/assets/demotime.svg" alt="">
+      <span>Demo Time</span>
+      <span class="beta">BETA</span>
     </div>
+    <div class="eyebrow">The feature name</div>
+    <h1>A short first sentence.<br><em>What it does for you.</em></h1>
+    <p class="sub">One or two sentences on how it works and why it helps.</p>
+    <div class="url">Try it in the beta → <b>beta.demotime.show</b></div>
   </div>
 
-  <div class="brand">
-    <img src="../../docs/src/assets/demotime.svg" alt="">
-    demotime.show <span class="where">/ the docs page</span>
-  </div>
-
-  <div class="stage">
-    <div class="slide">
-      <h2>Slide title</h2>
+  <div class="card">
+    <div class="card-head">
+      <span class="dots"><i></i><i></i><i></i></span>
+      Card title
+    </div>
+    <div class="card-body">
       <div class="code">
         <div class="title mono"><span>src/app.ts</span></div>
 <pre><div class="l"><span class="n">1</span><span><span class="k">const</span> <span class="v">app</span> <span class="p">=</span> <span class="f">createApp</span><span class="p">();</span></span></div></pre>
       </div>
     </div>
+    <div class="toast"><span class="ok">✓</span> What happens, or the markdown that makes it</div>
   </div>
 </body>
 </html>

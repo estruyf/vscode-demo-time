@@ -20,12 +20,12 @@ Check what is released: the version in `apps/vscode-extension/package.json`, `gi
 ## 2. Make the image
 
 1. Copy `social/_template/` to `social/<slug>/` (a short kebab-case name for the feature).
-2. Left column: an eyebrow ("New in Demo Time", "New in the beta"), a headline of at most about eight words with one phrase in `<span class="hl">`, one or two sentences with the key words in `<b>`, and up to four `.pill`s. The `.brand` at the bottom says where to read more.
-3. Right column (`.stage`, 600×540): a small, made-up mockup of the feature at work, built in HTML and CSS, not a screenshot. Use the classes in `shared/base.css` (`.slide`, `.code` with `.l` lines, `.steps`, `.note` for the markdown that makes it) and add the rest in the page's `<style>`. Keep the mockup honest: the `.note` must be markdown that really produces what the slide shows.
+2. Left column (`.copy`): the `.brand` on top (logo, "Demo Time", and the `.beta` pill while the feature is only in the beta), a yellow `.eyebrow` with the feature name, a headline of two short sentences with the second in `<em>` (yellow), one or two plain sentences in `.sub`, and a `.url` line with where to try or read it ("Try it in the beta → **beta.demotime.show**"). No pills or bold words in the copy.
+3. Right column: one dark `.card` with window `.dots` and a title in `.card-head` (a `.aside` on the right for a status such as "Step 2 / 3"), the mockup in `.card-body`, and a `.toast` well under it for output or the markdown that makes it. It is a small, made-up mockup of the feature at work, built in HTML and CSS, not a screenshot. Use the classes in `shared/base.css` (`.code` with `.l` lines, `.steps`, `.toast`) and add the rest in the page's `<style>`. Mark the one thing that matters in yellow (an active row, a highlighted line) and dim the rest. Keep the mockup honest: markdown in the `.toast` must really produce what the card shows.
 4. Colours come from the tokens in `base.css`. Other apps in the mockup, such as VS Code, use their own colours, as page variables.
 5. Copy is plain, with short sentences and no em dashes.
 
-Give anything only this post needs to the page itself. When something is useful to more posts (an act editor row, a presenter view), move it to `shared/base.css`.
+Give anything only this post needs to the page itself. When something is useful to more posts (a scene list row, a presenter view), move it to `shared/base.css`.
 
 ## 3. Render and look
 
@@ -37,7 +37,7 @@ Then open `social/<slug>/image.png` with Read and check it, and render again aft
 
 - the fonts loaded (Hubot Sans italic headline, not a serif fallback);
 - nothing is clipped and no card runs off the edge;
-- the headline keeps a clear gap from the mockup;
+- the headline keeps a clear gap from the card and breaks at natural places;
 - the text in the mockup is large enough to read when the image is shown at half size.
 
 ## 4. Write the posts

@@ -13,7 +13,7 @@ Not released yet: everything here is in the `[2.5.0] - 2026-xx-xx` section of th
 
 ## Alt text
 
-New in Demo Time: "Code blocks that walk through your code". On the right, a slide titled "Configure the app" with a code block for src/app.ts at step 2 of 3. Lines 4 to 8 are highlighted and the rest is dimmed. Line 5, theme "default", is marked as removed in red, and line 6, theme "demotime", as added in green. A note below shows the markdown that makes it: ```ts title="src/app.ts" {1-2|4-8|all}. On the left: line steps, diff and focus, titles and line numbers, and code from your files.
+Demo Time beta, code blocks on slides: "Walk through your code. One click at a time." On the right, a card titled "Configure the app" at step 2 of 3 shows a code block for src/app.ts. Lines 4 to 8 are highlighted and the rest is dimmed. Line 5, theme "default", is marked as removed in red, and line 6, theme "demotime", as added in green. Below it is the markdown that makes it: ```ts title="src/app.ts" {1-2|4-8|all}. On the left: highlight the next lines on every click, show diffs and focus, and pull code straight from your workspace. Try it in the beta at beta.demotime.show.
 
 ## X (280 characters)
 

@@ -8,7 +8,7 @@ Images and texts for announcing Demo Time features on social media. Each post ha
 | `image.png` | The rendered image (2400×1260). |
 | `posts.md` | The texts for X, Bluesky, Mastodon and LinkedIn, the links and the alt text. |
 
-`shared/base.css` holds the look every image shares (the website's dark background, yellow and fonts, copy on the left, a slide mockup on the right in front of the logo's yellow circle). `_template/` is a starting point for a new post.
+`shared/base.css` holds the look every image shares (the website's dark background, yellow and fonts, the logo and copy on the left, a dark app card on the right in front of a soft yellow glow). `_template/` is a starting point for a new post.
 
 To render a post after changing its `index.html`:
 

@@ -1,17 +1,17 @@
 /*
   Shared look of Demo Time's social images: a 1200×630 card in the website's colors and fonts
-  (docs/src/styles), copy on the left and a mockup on the right, in front of the yellow circle
-  of the logo. Each post links this file and adds the styles of its own mockup.
+  (docs/src/styles). Copy on the left, under the logo; a dark app card on the right, in front of a
+  soft yellow glow. Each post links this file and adds the styles of its own mockup.
 */
 @import url('https://fonts.googleapis.com/css2?family=Hubot+Sans:ital,wght@0,600;1,900&family=Mona+Sans:ital,wght@0,400..900;1,400..900&family=JetBrains+Mono:wght@400;600&display=swap');
 
 :root {
-  --bg: #15181f; --card: #202736; --border: #313848; --edge: #505869;
-  --text: #eaeef6; --muted: #c4c8d3; --faint: #8a93a6;
+  --bg: #15181f; --card: #1d212b; --line: #2b303c; --well: #12151b;
+  --text: #fff; --body: #d3d7df; --muted: #9aa1b1;
   --accent: #ffd43b; --on-accent: #15181f;
-  --ok: #40c057; --error: #fa5252; --warning: #fab005; --info: #4dabf7;
+  --ok: #7ee2a8; --error: #fa5252; --warning: #fab005; --info: #4dabf7;
   /* Code, in a dark VS Code theme. */
-  --code-bg: #11111b; --slide-bg: #1e1e2e; --line-number: #585b70;
+  --code-bg: #11111b; --line-number: #585b70;
   --tk-keyword: #cba6f7; --tk-string: #a6e3a1; --tk-function: #89b4fa;
   --tk-punct: #9399b2; --tk-var: #cdd6f4; --tk-prop: #94e2d5; --tk-comment: #6c7086;
 }
@@ -20,67 +20,71 @@ html, body { width: 1200px; height: 630px; overflow: hidden; }
 body { font-family: 'Mona Sans', system-ui, sans-serif; color: var(--text); background: var(--bg); position: relative; }
 .mono { font-family: 'JetBrains Mono', 'SF Mono', ui-monospace, Menlo, monospace; }
 
-/* The yellow circle of the logo, behind the mockup. */
-.sun { position: absolute; width: 600px; height: 600px; border-radius: 50%; background: var(--accent); right: -110px; top: 30px; }
-
-/* Left column: eyebrow, headline, one or two lines of detail, feature pills. */
-.copy { position: absolute; left: 64px; top: 0; bottom: 96px; width: 450px; display: flex; flex-direction: column; justify-content: center; }
-.eyebrow {
-  align-self: flex-start; background: var(--accent); color: var(--on-accent);
-  font-size: 14px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase;
-  padding: 6px 12px; border-radius: 6px; margin-bottom: 20px;
+/* The soft yellow glow behind the card. */
+.glow {
+  position: absolute; right: -160px; top: 50%; width: 720px; height: 720px; transform: translateY(-50%);
+  border-radius: 50%; background: radial-gradient(circle, rgba(255, 212, 59, 0.16), transparent 65%);
 }
-h1 { font-family: 'Hubot Sans', sans-serif; font-style: italic; font-weight: 900; font-size: 48px; line-height: 1.04; letter-spacing: -0.5px; color: #fff; }
-h1 .hl { color: var(--accent); }
-.sub { margin-top: 18px; font-size: 18px; line-height: 1.45; color: var(--muted); }
-.sub b { color: #fff; font-weight: 600; }
-.pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
-.pill { height: 30px; padding: 0 12px; border-radius: 999px; display: inline-flex; align-items: center; font-size: 13.5px; font-weight: 600; color: var(--text); background: var(--card); box-shadow: inset 0 0 0 1.5px var(--border); }
 
-/* Bottom left: the logo and where to find it. */
-.brand { position: absolute; left: 64px; bottom: 40px; display: flex; align-items: center; gap: 12px; font-size: 17px; font-weight: 700; color: var(--text); }
-.brand img { width: 36px; height: 36px; }
-.brand .where { font-weight: 500; color: var(--faint); }
-
-/* Right: the mockup. Children are positioned inside it. */
-.stage { position: absolute; right: 44px; top: 46px; width: 600px; height: 540px; }
-
-/* A Demo Time slide, white frame like the screen in the logo. */
-.slide {
-  position: absolute; background: var(--slide-bg); border-radius: 14px; border: 6px solid #fff;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.45); padding: 24px 24px 20px;
+/* Left column: brand, eyebrow, headline, a few lines of detail, where to try it. */
+.copy { position: absolute; left: 72px; top: 0; bottom: 0; width: 560px; display: flex; flex-direction: column; justify-content: center; }
+.brand { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+.brand img { width: 52px; height: 52px; }
+.brand span { font-family: 'Hubot Sans', sans-serif; font-style: italic; font-weight: 900; font-size: 25px; }
+.brand .beta {
+  font-family: 'Mona Sans', sans-serif; font-style: normal; font-weight: 800; font-size: 14px;
+  letter-spacing: 0.12em; color: var(--on-accent); background: var(--accent); padding: 5px 12px; border-radius: 999px;
 }
-.slide h2 { font-family: 'Hubot Sans', sans-serif; font-style: italic; font-weight: 900; font-size: 25px; color: #fff; margin-bottom: 14px; }
+.eyebrow { color: var(--accent); font-weight: 700; font-size: 21px; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 14px; }
+h1 { font-family: 'Hubot Sans', sans-serif; font-style: italic; font-weight: 900; font-size: 54px; line-height: 1; letter-spacing: -0.01em; }
+h1 em { color: var(--accent); }
+.sub { margin-top: 24px; font-size: 21px; line-height: 1.45; color: var(--body); max-width: 520px; }
+.url { margin-top: 30px; font-size: 18px; font-weight: 600; color: var(--muted); }
+.url b { color: var(--text); }
+
+/* Right: a dark app card with window dots and a title. Position it in the page's <style>. */
+.card {
+  position: absolute; right: 72px; top: 50%; transform: translateY(-50%);
+  background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+}
+.card-head {
+  display: flex; align-items: center; gap: 8px; padding: 15px 20px; border-bottom: 1px solid var(--line);
+  font-size: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+}
+.card-head .aside { margin-left: auto; color: var(--accent); }
+.dots { display: flex; gap: 6px; margin-right: 8px; }
+.dots i { width: 11px; height: 11px; border-radius: 50%; background: #3a404d; }
+.card-body { padding: 16px; }
+
+/* A terminal-like well for output or the markdown that makes the mockup. */
+.toast {
+  margin: 0 16px 16px; padding: 13px 16px; border-radius: 12px; background: var(--well); border: 1px solid var(--line);
+  font-family: 'JetBrains Mono', 'SF Mono', Menlo, monospace; font-size: 14px; line-height: 1.6; color: var(--muted);
+}
+.toast .ok { color: var(--ok); }
+.toast .y { color: var(--accent); }
 
 /* A code block on a slide: title bar, line numbers, highlight, dim, diff and notation lines. */
-.code { border-radius: 8px; overflow: hidden; box-shadow: 0 0 0 1.5px var(--accent); }
-.code .title { background: var(--accent); color: var(--on-accent); font-size: 13px; font-weight: 600; padding: 6px 14px; display: flex; justify-content: space-between; }
+.code { border-radius: 10px; overflow: hidden; box-shadow: 0 0 0 1.5px #3a404d; }
+.code .title { background: #3a404d; color: var(--body); font-size: 13px; font-weight: 600; padding: 6px 14px; display: flex; justify-content: space-between; }
 .code .title .aside { opacity: 0.7; }
 .code pre { background: var(--code-bg); font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 14.5px; line-height: 1.7; padding: 8px 0; color: var(--tk-var); }
 .code .l { display: flex; padding-right: 14px; border-left: 3px solid transparent; white-space: pre; }
 .code .l .n { width: 42px; text-align: right; padding-right: 16px; color: var(--line-number); flex: none; }
 .code .l.dim { opacity: 0.3; }
-.code .l.hl { background: rgba(255,212,59,0.10); border-left-color: var(--accent); }
-.code .l.add { background: rgba(64,192,87,0.16); border-left-color: var(--ok); }
-.code .l.del { background: rgba(250,82,82,0.16); border-left-color: var(--error); }
-.code .l.add .n::before { content: '+'; color: var(--ok); margin-right: 6px; }
+.code .l.hl { background: rgba(255, 212, 59, 0.1); border-left-color: var(--accent); }
+.code .l.add { background: rgba(64, 192, 87, 0.16); border-left-color: #40c057; }
+.code .l.del { background: rgba(250, 82, 82, 0.16); border-left-color: var(--error); }
+.code .l.add .n::before { content: '+'; color: #40c057; margin-right: 6px; }
 .code .l.del .n::before { content: '−'; color: var(--error); margin-right: 6px; }
-.code .l.error { background: rgba(250,82,82,0.14); border-left-color: var(--error); }
-.code .l.warning { background: rgba(250,176,5,0.14); border-left-color: var(--warning); }
-.code .l.info { background: rgba(77,171,247,0.14); border-left-color: var(--info); }
+.code .l.error { background: rgba(250, 82, 82, 0.14); border-left-color: var(--error); }
+.code .l.warning { background: rgba(250, 176, 5, 0.14); border-left-color: var(--warning); }
+.code .l.info { background: rgba(77, 171, 247, 0.14); border-left-color: var(--info); }
 .k { color: var(--tk-keyword); } .s { color: var(--tk-string); } .f { color: var(--tk-function); }
 .p { color: var(--tk-punct); } .v { color: var(--tk-var); } .pr { color: var(--tk-prop); } .c { color: var(--tk-comment); font-style: italic; }
 
-/* Click steps under a slide: one dash per step, the current one in yellow. */
-.steps { display: flex; gap: 6px; align-items: center; margin-top: 12px; font-size: 12.5px; font-weight: 600; color: var(--faint); }
-.steps i { width: 26px; height: 6px; border-radius: 3px; background: var(--border); }
+/* Click steps: one dash per step, the current one in yellow. */
+.steps { display: flex; gap: 6px; align-items: center; margin-top: 14px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.steps i { width: 26px; height: 6px; border-radius: 3px; background: var(--line); }
 .steps i.on { background: var(--accent); }
 .steps span { margin-left: 6px; }
-
-/* A sticky note with the markdown that makes the mockup, slightly tilted. */
-.note {
-  position: absolute; background: #fff; color: var(--on-accent); font-size: 13.5px; font-weight: 600;
-  padding: 11px 15px; border-radius: 10px; border: 3px solid var(--on-accent);
-  box-shadow: 0 16px 34px rgba(0,0,0,0.35); transform: rotate(-2deg); white-space: pre;
-}
-.note .m { color: #8a5a00; }
