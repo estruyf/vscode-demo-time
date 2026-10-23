@@ -1093,12 +1093,12 @@
         {
           "command": "demo-time.exportToPdf",
           "when": "view == demo-time-scenes",
-          "group": "navigation@3"
+          "group": "3_export@1"
         },
         {
           "command": "demo-time.exportPlayAsVideo",
           "when": "view == demo-time-scenes",
-          "group": "3_export@1"
+          "group": "3_export@2"
         },
         {
           "command": "demo-time.treeviewFind",

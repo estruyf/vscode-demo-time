@@ -7,7 +7,6 @@ lastmod: 2025-03-20T14:06:09.052Z
 import { Code, Aside } from '@astrojs/starlight/components';
 import { Image } from 'astro:assets';
 
-import slidesToPdfImg from "../../../assets/docs/export-to-pdf.webp";
 import pdfSampleImg from "../../../assets/docs/pdf-export-sample.webp";
 
 When you are done with your slides, you can export them to PDF. This is useful for sharing your slides with others or for printing them.
@@ -25,9 +24,7 @@ If this package is not installed, the export command will not work and it will s
 
 ## Exporting slides
 
-As mentioned, you can run the `Demo Time: Export slides to PDF` command in Visual Studio Code or you can click on the PDF action in the Demo Time panel.
-
-<Image class="mx-auto" src={slidesToPdfImg} alt="Export slides to PDF" />
+As mentioned, you can run the `Demo Time: Export slides to PDF` command in Visual Studio Code or you can pick **Export slides to PDF** from the **...** menu of the Acts & Scenes view, next to [**Export play as video**](/features/video-export/).
 
 <Aside type="note">
 The export command will generate a PDF file in the root of your project with the name `demotime.export.pdf`.
