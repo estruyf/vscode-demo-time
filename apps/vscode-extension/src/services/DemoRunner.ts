@@ -80,6 +80,7 @@ export class DemoRunner {
   private static nextStepIsHighlight = false;
   private static currentDemoIndex: number = 0;
   private static currentStepIndex: number = 0;
+  private static isBusy = false;
 
   /**
    * Registers the commands for the demo runner.
@@ -87,16 +88,37 @@ export class DemoRunner {
   public static registerCommands() {
     const subscriptions: Subscription[] = Extension.getInstance().subscriptions;
 
-    subscriptions.push(commands.registerCommand(COMMAND.start, DemoRunner.start));
-    subscriptions.push(commands.registerCommand(COMMAND.previous, DemoRunner.previous));
+    // The clicker, keyboard, presenter view, remote control and auto-advance all use these commands
+    subscriptions.push(
+      commands.registerCommand(COMMAND.start, (item) =>
+        DemoRunner.whenIdle('next', () => DemoRunner.start(item)),
+      ),
+    );
+    subscriptions.push(
+      commands.registerCommand(COMMAND.previous, () =>
+        DemoRunner.whenIdle('previous', () => DemoRunner.previous()),
+      ),
+    );
     subscriptions.push(
       commands.registerCommand(COMMAND.togglePresentationMode, DemoRunner.togglePresentationMode),
     );
-    subscriptions.push(commands.registerCommand(COMMAND.runStep, DemoRunner.startDemo));
-    subscriptions.push(commands.registerCommand(COMMAND.runById, DemoRunner.runById));
+    subscriptions.push(
+      commands.registerCommand(COMMAND.runStep, (demoToRun) =>
+        DemoRunner.whenIdle('the scene', () => DemoRunner.startDemo(demoToRun)),
+      ),
+    );
+    subscriptions.push(
+      commands.registerCommand(COMMAND.runById, (...args: string[]) =>
+        DemoRunner.whenIdle('the scene', () => DemoRunner.runById(...args)),
+      ),
+    );
     subscriptions.push(commands.registerCommand(COMMAND.runSingleMove, DemoRunner.runSingleMove));
     subscriptions.push(commands.registerCommand(COMMAND.reset, DemoRunner.reset));
-    subscriptions.push(commands.registerCommand(COMMAND.resetToScene, DemoRunner.resetToScene));
+    subscriptions.push(
+      commands.registerCommand(COMMAND.resetToScene, (id?: string) =>
+        DemoRunner.whenIdle('reset to scene', () => DemoRunner.resetToScene(id)),
+      ),
+    );
     subscriptions.push(
       commands.registerCommand(COMMAND.toggleHighlight, DemoRunner.toggleHighlight),
     );
@@ -130,6 +152,9 @@ export class DemoRunner {
     });
 
     DemoRunner.allowPrevious();
+    CheckpointService.onDidChangeHealth(() => DemoRunner.allowPrevious());
+    // After the extension is up, so it doesn't slow down the start of VS Code
+    setTimeout(() => void DemoRunner.prepareCheckpoints(), 3000);
   }
 
   /**
@@ -180,7 +205,7 @@ export class DemoRunner {
   /**
    * Going back is allowed when the `demoTime.previousEnabled` setting is on. When the setting isn't
    * set, it follows the scene checkpoints of the running act (its `sceneCheckpoints` property or
-   * the `demoTime.sceneCheckpoints` setting). Checkpoints restore the files before a scene
+   * the `demoTime.sceneCheckpoints` setting), as long as they work. Checkpoints restore the files before a scene
    * runs again, which makes going back safe.
    */
   public static async isPreviousEnabled(): Promise<boolean> {
@@ -197,7 +222,8 @@ export class DemoRunner {
       StateKeys.executingDemoFile,
     )?.filePath;
     const act = filePath ? await DemoFileProvider.getFile(Uri.file(filePath)) : undefined;
-    return CheckpointService.isEnabled(act);
+    // Only while the checkpoints work: without them, going back runs moves on changed files
+    return CheckpointService.isEnabled(act) && CheckpointService.isHealthy();
   }
 
   /**
@@ -333,6 +359,7 @@ export class DemoRunner {
         await AnalyticsCommands.startRecording();
       }
       RedactionService.enable();
+      void DemoRunner.prepareCheckpoints();
       DemoPanel.updateMessage('Presentation mode enabled');
       if (!unattended) {
         await DemoRunner.getDemoFile(undefined, true);
@@ -360,7 +387,10 @@ export class DemoRunner {
     }
 
     await DemoAutoProceedService.resetState();
-    await CheckpointService.reset();
+    if (await CheckpointService.reset()) {
+      // The reset removed the checkpoints: get git ready for the next run
+      void DemoRunner.prepareCheckpoints();
+    }
 
     const ext = Extension.getInstance();
     const resetContent = Object.assign({}, DEFAULT_START_VALUE);
@@ -384,7 +414,7 @@ export class DemoRunner {
    * @returns {Promise<void>} A promise that resolves when the demo runner has started.
    */
   private static async start(
-    item: ActionTreeItem | { demoFilePath: string; description: string },
+    item?: ActionTreeItem | { demoFilePath: string; description: string },
   ): Promise<void> {
     if (TextTypingService.IsTyping) {
       Logger.info('DemoRunner.start called while typing. Ignoring.');
@@ -480,15 +510,17 @@ export class DemoRunner {
       // Check if there is a next act file
       const nextFile = await getNextDemoFile(demoFile);
       if (!nextFile) {
-        const yesOrNo = await Notifications.info(
-          'No next moves found. Do you want to reset?',
-          'Yes',
-          'No',
+        // Not awaited: an unanswered notification would keep the scene commands blocked
+        void Notifications.info('No next moves found. Do you want to reset?', 'Yes', 'No').then(
+          (yesOrNo) => {
+            if (yesOrNo === 'Yes') {
+              void DemoRunner.whenIdle('reset', async () => {
+                await DemoRunner.reset();
+                await DemoRunner.start();
+              });
+            }
+          },
         );
-        if (yesOrNo === 'Yes') {
-          await DemoRunner.reset();
-          await commands.executeCommand(COMMAND.start);
-        }
         return;
       }
 
@@ -700,19 +732,24 @@ export class DemoRunner {
 
     const executingFile = await DemoRunner.getExecutedDemoFile();
     const demoFile = await DemoFileProvider.getFile(Uri.file(demoToRun.filePath));
-    if (!skipCheckpoint) {
-      await DemoRunner.checkpointBeforeJump(
+    const restored =
+      skipCheckpoint ||
+      (await DemoRunner.checkpointBeforeJump(
         executingFile,
         demoToRun.filePath,
         demoFile,
         demoToRun.idx,
-      );
-    }
+      ));
 
     if (executingFile.filePath !== demoToRun.filePath) {
       executingFile.filePath = demoToRun.filePath;
       executingFile.demo = [];
       executingFile.version = demoFile?.version || 1;
+    }
+
+    // The files are back at the start of the scene: the scenes after it haven't run
+    if (restored) {
+      executingFile.demo = executingFile.demo.filter((d) => d.idx < demoToRun.idx);
     }
 
     executingFile.demo.push({
@@ -808,7 +845,37 @@ export class DemoRunner {
   }
 
   /**
+   * Runs a scene command only when no scene is running. A second press while the moves still run
+   * would start a scene next to it: both change the files, the checkpoints and the scene history.
+   */
+  private static async whenIdle(name: string, task: () => Promise<void>): Promise<void> {
+    if (DemoRunner.isBusy) {
+      Logger.info(`Ignored ${name}: the current scene is still running`);
+      window.setStatusBarMessage('$(loading~spin) Working', 1500);
+      return;
+    }
+
+    DemoRunner.isBusy = true;
+    try {
+      await task();
+    } finally {
+      DemoRunner.isBusy = false;
+    }
+  }
+
+  /**
+   * Gets the scene checkpoints ready in the background when an act of the play uses them.
+   */
+  private static async prepareCheckpoints(): Promise<void> {
+    const demoFiles = (await DemoFileProvider.getFiles()) || {};
+    if (Object.values(demoFiles).some((act) => CheckpointService.isEnabled(act))) {
+      CheckpointService.prepare();
+    }
+  }
+
+  /**
    * Before jumping to a scene: going back restores its checkpoint, going forward saves one.
+   * @returns true when the files were restored
    */
   private static async checkpointBeforeJump(
     executingFile: DemoFileCache,
@@ -816,7 +883,7 @@ export class DemoRunner {
     act: DemoConfig | ActConfig | undefined,
     idx: number,
     demoFiles?: DemoFiles,
-  ): Promise<void> {
+  ): Promise<boolean> {
     const lastDemo = executingFile.demo[executingFile.demo.length - 1];
     let isGoingBack = false;
     if (executingFile.filePath === filePath) {
@@ -827,10 +894,10 @@ export class DemoRunner {
     }
 
     if (isGoingBack) {
-      await CheckpointService.restore(filePath, act, idx);
-    } else {
-      await CheckpointService.save(filePath, act, idx);
+      return await CheckpointService.restore(filePath, act, idx);
     }
+    await CheckpointService.save(filePath, act, idx);
+    return false;
   }
 
   /**

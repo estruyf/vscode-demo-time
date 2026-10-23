@@ -620,12 +620,12 @@ export class DemoActionDispatcher {
     }
 
     if (step.action === Action.Copy) {
-      FileActionService.copy(workspaceFolder, fileUri, step);
+      await FileActionService.copy(workspaceFolder, fileUri, step);
       return;
     }
 
     if (step.action === Action.Move || step.action === Action.Rename) {
-      FileActionService.rename(workspaceFolder, fileUri, step);
+      await FileActionService.rename(workspaceFolder, fileUri, step);
       return;
     }
 

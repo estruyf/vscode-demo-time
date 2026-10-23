@@ -68,7 +68,7 @@ Restoring a checkpoint puts back changed and deleted files, and removes the file
 
 ## Going back
 
-Checkpoints make it safe to go back, so you don't need the `demoTime.previousEnabled` setting. When you haven't set it, going back to the previous scene with your clicker, the left arrow key or `PageUp`, the slide controls and the remote control is allowed when the act you're presenting has checkpoints: through the `demoTime.sceneCheckpoints` setting or its own `"sceneCheckpoints": true`.
+Checkpoints make it safe to go back, so you don't need the `demoTime.previousEnabled` setting. When you haven't set it, going back to the previous scene with your clicker, the left arrow key or `PageUp`, the slide controls and the remote control is allowed when the act you're presenting has checkpoints: through the `demoTime.sceneCheckpoints` setting or its own `"sceneCheckpoints": true`. This stops while the checkpoints fail, see [When git fails](#when-git-fails).
 
 When you set `demoTime.previousEnabled` yourself, its value wins. Set it to `false` to keep going back off.
 
@@ -82,5 +82,21 @@ The checkpoints are stored in a separate git repository in the storage folder th
 
 - [git](https://git-scm.com/) needs to be installed.
 - Files and folders that your `.gitignore` excludes, and `node_modules`, are not part of the checkpoints. Demo Time leaves them as they are.
+- The `.demo` folder is not part of the checkpoints either, so changes to your acts, slides and notes while you test are kept.
 - Only the first folder of a multi-root workspace is part of the checkpoints.
 - A checkpoint holds the files, not the state of VS Code: open editors, terminals and running processes stay as they are. The moves of the scene take care of those when it runs again.
+
+## When git fails
+
+Scene checkpoints need git. When git fails, or isn't installed, the scenes still run and Demo Time tells you what went wrong:
+
+- **Saving a checkpoint fails:** an error is shown once per session, and every failure is written to the **Demo Time** output channel. Going back and Reset then tell you that no checkpoints were saved, so the files can't be restored.
+- **Restoring a checkpoint fails:** an error is shown every time, and the scene runs on the files as they are.
+- **Reset can't restore your files:** an error with a **Retry** button is shown. The checkpoints are kept, so your files can still be restored. When you start the play again, Demo Time asks: _"The last reset couldn't restore your files. Restore them now?"_
+  - **Restore** puts the files back as they were before the play started.
+  - **Keep files** removes the checkpoints of the last run and starts from the files as they are now.
+  - When you close the question, the play goes on with the files as they are. The next reset tries to restore them again.
+
+While checkpoints fail, going back no longer turns on by itself: going back would run the moves on changed files. When you set `demoTime.previousEnabled` yourself, its value still wins.
+
+Open **View > Output** and pick **Demo Time** to see which checkpoints were saved and restored, which files a restore changed or removed, and how long it took. Every line starts with the time, so you can match it with a moment in your presentation.
