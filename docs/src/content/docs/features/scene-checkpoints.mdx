@@ -1,7 +1,7 @@
 ---
 title: Scene checkpoints
 description: Snapshot your workspace files at every scene, so you can go back to a scene and reset the play to how it started.
-lastmod: 2026-10-22T00:00:00.000Z
+lastmod: 2026-10-23T00:00:00.000Z
 ---
 
 import { Aside } from '@astrojs/starlight/components';
@@ -84,6 +84,7 @@ The checkpoints are stored in a separate git repository in the storage folder th
 - Files and folders that your `.gitignore` excludes, and `node_modules`, are not part of the checkpoints. Demo Time leaves them as they are.
 - The `.demo` folder is not part of the checkpoints either, so changes to your acts, slides and notes while you test are kept.
 - Only the first folder of a multi-root workspace is part of the checkpoints.
+- Git repositories inside your workspace folder, like a cloned project or a folder where a scene runs `git init`, are not supported. A checkpoint only holds the commit such a repository is on, not its files, so restoring doesn't undo the changes inside it.
 - A checkpoint holds the files, not the state of VS Code: open editors, terminals and running processes stay as they are. The moves of the scene take care of those when it runs again.
 
 ## When git fails

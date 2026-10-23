@@ -457,7 +457,9 @@ export class CheckpointService {
   }
 
   private static getRef(filePath: string, demo: Demo, idx: number): string {
-    return ShadowGit.sceneRef(`${getRelPath(filePath)}#${demo.id ?? idx}`);
+    // Separate prefixes, so a scene with id `1` and the second scene without an id don't share a ref
+    const key = demo.id !== undefined ? `id:${demo.id}` : `idx:${idx}`;
+    return ShadowGit.sceneRef(`${getRelPath(filePath)}#${key}`);
   }
 
   private static getShadowGit(): ShadowGit | null {

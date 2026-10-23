@@ -72,9 +72,37 @@ describe('ShadowGit', () => {
     expect(read('dist/out.js')).toBe('build 2');
   });
 
+  it('keeps files that were ignored when the snapshot was taken', async () => {
+    write('.gitignore', '.env\n');
+    write('.env', 'secret');
+    await shadow.snapshot(ShadowGit.sceneRef('scene-1'));
+
+    write('.gitignore', '');
+    write('created.ts', 'created during the demo');
+
+    const result = await shadow.restore(ShadowGit.sceneRef('scene-1'));
+    expect(result && result.removed).toEqual(['created.ts']);
+    expect(read('.gitignore')).toBe('.env\n');
+    expect(read('.env')).toBe('secret');
+  });
+
+  it('restores the line endings as they were', async () => {
+    write('.gitattributes', '* text eol=lf\n');
+    write('index.ts', 'line 1\r\nline 2\r\n');
+    await shadow.snapshot(ShadowGit.sceneRef('scene-1'));
+
+    write('index.ts', 'changed');
+    await shadow.restore(ShadowGit.sceneRef('scene-1'));
+    expect(read('index.ts')).toBe('line 1\r\nline 2\r\n');
+  });
+
   it("never touches the folder's own git repository", async () => {
+    // Git hooks set variables like `GIT_DIR`, which would point to the repository running the tests
+    const env = Object.fromEntries(
+      Object.entries(process.env).filter(([key]) => !key.startsWith('GIT_')),
+    );
     const git = (...args: string[]) =>
-      execFileSync('git', args, { cwd: workTree, encoding: 'utf8' }).trim();
+      execFileSync('git', args, { cwd: workTree, encoding: 'utf8', env }).trim();
     git('init', '--quiet');
     write('index.ts', 'committed');
     git('add', '.');

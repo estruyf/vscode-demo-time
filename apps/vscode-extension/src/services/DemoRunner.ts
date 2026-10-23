@@ -81,6 +81,8 @@ export class DemoRunner {
   private static currentDemoIndex: number = 0;
   private static currentStepIndex: number = 0;
   private static isBusy = false;
+  // The act for which the `previousEnabled` context was last set
+  private static previousCheckedFilePath: string | undefined;
 
   /**
    * Registers the commands for the demo runner.
@@ -232,11 +234,12 @@ export class DemoRunner {
    */
   private static async setExecutedDemoFile(demoFile: DemoFileCache) {
     const ext = Extension.getInstance();
-    const previousFilePath = ext.getState<DemoFileCache>(StateKeys.executingDemoFile)?.filePath;
     await ext.setState(StateKeys.executingDemoFile, demoFile);
     PresenterView.postMessage(WebViewMessages.toWebview.updateRunningDemos, demoFile);
-    // The act can turn on scene checkpoints, which allows going back
-    if (previousFilePath !== demoFile.filePath) {
+    // The act can turn on scene checkpoints, which allows going back. Not compared with the state:
+    // callers change the file path on the object the state returns before they store it.
+    if (DemoRunner.previousCheckedFilePath !== demoFile.filePath) {
+      DemoRunner.previousCheckedFilePath = demoFile.filePath;
       await DemoRunner.allowPrevious();
     }
   }
@@ -395,6 +398,7 @@ export class DemoRunner {
     const ext = Extension.getInstance();
     const resetContent = Object.assign({}, DEFAULT_START_VALUE);
     await ext.setState(StateKeys.executingDemoFile, resetContent);
+    DemoRunner.previousCheckedFilePath = undefined;
     await clearVariablesState();
     PresenterView.postMessage(WebViewMessages.toWebview.updateRunningDemos, resetContent);
     PresenterView.postMessage(WebViewMessages.toWebview.resetNotes, undefined);
@@ -905,6 +909,11 @@ export class DemoRunner {
    * @param id - Optional id of the scene, otherwise a scene can be picked.
    */
   private static async resetToScene(id?: string): Promise<void> {
+    if (TextTypingService.IsTyping) {
+      Logger.info('DemoRunner.resetToScene called while typing. Ignoring.');
+      return;
+    }
+
     const demoFiles = await DemoFileProvider.getFiles();
     if (!demoFiles) {
       return;
@@ -937,6 +946,8 @@ export class DemoRunner {
       return;
     }
 
+    // The timer would otherwise go to the next scene while this one runs again
+    await DemoAutoProceedService.deactivate();
     if (await CheckpointService.restoreScene(scene.filePath, scene.demo, scene.idx)) {
       await DemoRunner.startDemo(scene, true);
     }

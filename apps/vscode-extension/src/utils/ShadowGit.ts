@@ -10,6 +10,8 @@ const REF_PREFIX = 'refs/demotime';
 const BASELINE_REF = `${REF_PREFIX}/baseline`;
 // The `.demo` folder holds the play itself: acts, slides and notes edited while testing are kept
 const DEFAULT_EXCLUDES = ['/.demo/', 'node_modules/', '.DS_Store'];
+// Store the bytes as they are: the folder's `.gitattributes` could convert line endings or encodings
+const ATTRIBUTES = '* -text -ident -filter -working-tree-encoding\n';
 
 export interface RestoreResult {
   /** Files written from the snapshot */
@@ -110,13 +112,18 @@ export class ShadowGit {
       );
     }
 
-    const removed = changes.filter((c) => c.removed && !skip(c.path)).map((c) => c.path);
+    // A file that the ignore rules of the snapshot exclude was already there but not part of it, like
+    // a `.env` file whose ignore rule got removed since
+    const ignored = await this.ignored(changes.filter((c) => c.removed).map((c) => c.path));
+    const kept = changes.filter((c) => !(c.removed && ignored.has(c.path)));
+
+    const removed = kept.filter((c) => c.removed && !skip(c.path)).map((c) => c.path);
     for (const path of removed) {
       await this.removeFile(path);
     }
 
     const skipped: RestoredFile[] = [];
-    for (const change of changes.filter((c) => skip(c.path))) {
+    for (const change of kept.filter((c) => skip(c.path))) {
       skipped.push({
         path: change.path,
         content: change.removed
@@ -192,8 +199,33 @@ export class ShadowGit {
     return changes;
   }
 
+  /**
+   * The files that the ignore rules in the work tree exclude, also when they are in the index.
+   */
+  private async ignored(paths: string[]): Promise<Set<string>> {
+    if (paths.length === 0) {
+      return new Set();
+    }
+
+    try {
+      const output = await this.git(
+        ['check-ignore', '--no-index', '--stdin', '-z'],
+        paths.join('\0'),
+        true,
+        // Takes paths instead of pathspecs, and fails with the literal pathspecs variable
+        false,
+      );
+      return new Set(output.split('\0').filter(Boolean));
+    } catch (error) {
+      // Exits with 1 when none of the files are ignored
+      if ((error as GitError).exitCode === 1) {
+        return new Set();
+      }
+      throw error;
+    }
+  }
+
   private async init(): Promise<void> {
-    const excludeFile = join(this.gitDir, 'info', 'exclude');
     const excludes = `${DEFAULT_EXCLUDES.join('\n')}\n`;
     if (!this.exists()) {
       await mkdir(this.gitDir, { recursive: true });
@@ -205,18 +237,28 @@ export class ShadowGit {
       );
     }
 
-    // Also update the excludes of checkpoints made by an earlier version
-    const current = existsSync(excludeFile) ? await readFile(excludeFile, 'utf8') : '';
-    if (current !== excludes) {
-      await mkdir(dirname(excludeFile), { recursive: true });
-      await writeFile(excludeFile, excludes);
+    // Also update the files of checkpoints made by an earlier version
+    await this.writeInfoFile('exclude', excludes);
+    await this.writeInfoFile('attributes', ATTRIBUTES);
+  }
+
+  private async writeInfoFile(name: string, content: string): Promise<void> {
+    const file = join(this.gitDir, 'info', name);
+    const current = existsSync(file) ? await readFile(file, 'utf8') : '';
+    if (current !== content) {
+      await mkdir(dirname(file), { recursive: true });
+      await writeFile(file, content);
     }
   }
 
-  private git(args: string[], input = '', raw = false): Promise<string> {
+  private git(args: string[], input = '', raw = false, literalPathspecs = true): Promise<string> {
     return new Promise((resolve, reject) => {
+      // Variables like `GIT_INDEX_FILE` or `GIT_COMMON_DIR`, set when VS Code runs from a git hook,
+      // would point git to the folder's own repository
       const env: NodeJS.ProcessEnv = {
-        ...process.env,
+        ...Object.fromEntries(
+          Object.entries(process.env).filter(([key]) => !key.startsWith('GIT_')),
+        ),
         GIT_DIR: this.gitDir,
         GIT_WORK_TREE: this.workTree,
         // The user's config can sign commits, run an fsmonitor or point to hooks
@@ -229,12 +271,9 @@ export class ShadowGit {
         GIT_COMMITTER_EMAIL: 'checkpoints@demotime.show',
         GIT_TERMINAL_PROMPT: '0',
       };
-      // These would point git to the folder's own repository
-      delete env.GIT_INDEX_FILE;
-      delete env.GIT_OBJECT_DIRECTORY;
-      delete env.GIT_ALTERNATE_OBJECT_DIRECTORIES;
-      delete env.GIT_CONFIG_PARAMETERS;
-      delete env.GIT_CONFIG_COUNT;
+      if (!literalPathspecs) {
+        delete env.GIT_LITERAL_PATHSPECS;
+      }
 
       const child = spawn('git', args, { cwd: this.workTree, env });
       const stdout: Buffer[] = [];
