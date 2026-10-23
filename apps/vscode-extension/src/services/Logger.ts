@@ -26,7 +26,16 @@ export class Logger {
       Logger.getInstance();
     }
 
-    Logger.channel?.appendLine(`["${type}"]  ${message}`);
+    Logger.channel?.appendLine(`[${Logger.time()}] ["${type}"]  ${message}`);
+  }
+
+  /**
+   * The local time with milliseconds, to match a line with a moment in the presentation.
+   */
+  private static time(): string {
+    const now = new Date();
+    const pad = (value: number, length = 2) => `${value}`.padStart(length, '0');
+    return `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}.${pad(now.getMilliseconds(), 3)}`;
   }
 
   public static warning(message: string): void {

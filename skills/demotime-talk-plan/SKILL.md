@@ -63,7 +63,9 @@ Interview rules:
   running, a tool reacting. Put concepts, diagrams, comparisons and conclusions on slides.
 - **One key message per section.** When a section has no clear message, merge or drop it.
 - **Demo safety.** For every live demo, note the starting state (so it can be reset and rerun) and a
-  fallback (a slide with a screenshot, a recorded video or a finished branch).
+  fallback (a slide with a screenshot, a recorded video or a finished branch). Suggest the
+  `demoTime.sceneCheckpoints` setting, which restores the files when going back to a scene or
+  resetting the play.
 - **Map to Demo Time.** One act per section works well for longer talks; a short talk can use a
   single act. Each slide file and each demo step becomes a scene.
 

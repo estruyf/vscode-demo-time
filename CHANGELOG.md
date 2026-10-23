@@ -2,6 +2,11 @@
 
 ## [2.5.0] - 2026-xx-xx
 
+- [#460](https://github.com/estruyf/vscode-demo-time/issues/460): Added scene checkpoints. With the `demoTime.sceneCheckpoints` setting or the `sceneCheckpoints` property of an act, Demo Time snapshots the workspace files when a scene starts. Going back to a scene restores its files before it runs again, `Demo Time: Reset` restores the files as they were before the first scene, and the `Demo Time: Reset to scene...` command restores and reruns a scene of your choice. The checkpoints live in a separate git repository, so your own repository is never changed. When `demoTime.previousEnabled` isn't set, going back is allowed while scene checkpoints are on
+- Ignore next, previous and running another scene while the moves of a scene still run, so a quick second press can't start a scene next to it
+- Added the time to every line in the **Demo Time** output channel
+- Fix the `copy`, `move` and `rename` moves not waiting for the file operation, so the next move could start before the file was there
+- Fix the remote control showing the previous button and allowing `/api/previous` when the `demoTime.previousEnabled` setting is off
 - Added the **Show slide contents** item to the right-click menu of the slide preview, which opens the markdown of the slide in the editor with the cursor on the slide
 - Fix the **Authenticate with GitHub** button on the **Pro Features** page staying on `Authenticating...` after a successful sign-in when the sponsor status didn't change or couldn't be verified
 - Fix the `showEngageTimePoll` move with `startOnOpen` or `closeOnOpen` pausing the poll in the integrated browser with **Paused due to Notification**. The poll started or stopped message now shows in the status bar instead of a notification

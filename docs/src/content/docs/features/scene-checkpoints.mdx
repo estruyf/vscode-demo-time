@@ -1,0 +1,103 @@
+---
+title: Scene checkpoints
+description: Snapshot your workspace files at every scene, so you can go back to a scene and reset the play to how it started.
+lastmod: 2026-10-23T00:00:00.000Z
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+A scene types code, applies a patch or creates a file. When you go back to that scene, or a demo goes wrong halfway, Demo Time runs the moves again on top of the files as they are now. The result is code that is inserted twice, or a patch that no longer applies.
+
+**Scene checkpoints** fix this. Demo Time takes a snapshot of your workspace files when a scene starts. When you go back to the scene, it first puts the files back as they were in that snapshot, and then runs the scene again. When you reset the play, the files go back to how they were before the first scene.
+
+## Turn on scene checkpoints
+
+Checkpoints are on or off for all scenes of an act, so going back and forward always works the same way. You turn them on in one of two places.
+
+### For the whole play
+
+When your play has multiple act files, turn on the `demoTime.sceneCheckpoints` setting. All acts save a checkpoint for every scene:
+
+```json title=".vscode/settings.json"
+{
+  "demoTime.sceneCheckpoints": true
+}
+```
+
+You can also use the **Scene checkpoints** option in the Demo Time settings view.
+
+### For one act
+
+When your play has a single act, or only one act needs checkpoints, use the `sceneCheckpoints` property of the act. It overrides the setting for all scenes of the act:
+
+- `"sceneCheckpoints": true` saves a checkpoint for every scene of the act, also when the setting is off.
+- `"sceneCheckpoints": false` saves no checkpoints for the act, also when the setting is on.
+
+```json title=".demo/demo.json" {4}
+{
+  "$schema": "https://demotime.show/demo-time.schema.json",
+  "title": "Building the API",
+  "sceneCheckpoints": true,
+  "version": 3,
+  "scenes": []
+}
+```
+
+In the act editor, you find this as the **Scene checkpoints** option of the act. Leave it on **Follow the demoTime.sceneCheckpoints setting** to use the setting.
+
+## How it works
+
+| When you                                                                                                       | Demo Time                                                                                 |
+| -------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Start a scene with **Next**                                                                                    | Saves the checkpoint of the scene, then runs it.                                          |
+| Go back with **Previous**                                                                                      | Restores the checkpoint of the previous scene, then runs it again.                        |
+| Run an earlier scene, from the Demo Time panel, the presenter view, the remote control or a `runDemoById` move | Restores the checkpoint of that scene, then runs it again.                                |
+| Run a later scene                                                                                              | Saves the checkpoint of that scene, then runs it.                                         |
+| Run `Demo Time: Reset` or reset at the end of the play                                                         | Restores the files as they were before the first checkpoint, and removes all checkpoints. |
+| Loop the act with `"loop": true`                                                                               | Restores the checkpoint of the first scene before starting the act again.                 |
+
+When the scene you go back to has no checkpoint yet, because you skipped it, Demo Time uses the nearest later checkpoint in the act.
+
+Restoring a checkpoint puts back changed and deleted files, and removes the files that were created after the checkpoint. Before saving or restoring a checkpoint, Demo Time saves all open files.
+
+<Aside type="caution">
+  `Demo Time: Reset` also undoes the changes you made by hand after the first scene ran, like a fix
+  to the starting code of your demo while you test it. Reset first, then make the change, or turn
+  scene checkpoints off while you write your demo.
+</Aside>
+
+## Going back
+
+Checkpoints make it safe to go back, so you don't need the `demoTime.previousEnabled` setting. When you haven't set it, going back to the previous scene with your clicker, the left arrow key or `PageUp`, the slide controls and the remote control is allowed when the act you're presenting has checkpoints: through the `demoTime.sceneCheckpoints` setting or its own `"sceneCheckpoints": true`. This stops while the checkpoints fail, see [When git fails](#when-git-fails).
+
+When you set `demoTime.previousEnabled` yourself, its value wins. Set it to `false` to keep going back off.
+
+## Reset to a scene
+
+When something goes wrong during your talk, run the `Demo Time: Reset to scene...` command and pick a scene. Demo Time restores the checkpoint of the scene and runs the scene again. The list shows all scenes that have a checkpoint.
+
+## Your git repository stays untouched
+
+The checkpoints are stored in a separate git repository in the storage folder that VS Code gives Demo Time for your workspace. Demo Time never creates commits, branches or stashes in your own repository, and doesn't change its staged files. Your workspace doesn't need to be a git repository.
+
+- [git](https://git-scm.com/) needs to be installed.
+- Files and folders that your `.gitignore` excludes, and `node_modules`, are not part of the checkpoints. Demo Time leaves them as they are.
+- The `.demo` folder is not part of the checkpoints either, so changes to your acts, slides and notes while you test are kept.
+- Only the first folder of a multi-root workspace is part of the checkpoints.
+- Git repositories inside your workspace folder, like a cloned project or a folder where a scene runs `git init`, are not supported. A checkpoint only holds the commit such a repository is on, not its files, so restoring doesn't undo the changes inside it.
+- A checkpoint holds the files, not the state of VS Code: open editors, terminals and running processes stay as they are. The moves of the scene take care of those when it runs again.
+
+## When git fails
+
+Scene checkpoints need git. When git fails, or isn't installed, the scenes still run and Demo Time tells you what went wrong:
+
+- **Saving a checkpoint fails:** an error is shown once per session, and every failure is written to the **Demo Time** output channel. Going back and Reset then tell you that no checkpoints were saved, so the files can't be restored.
+- **Restoring a checkpoint fails:** an error is shown every time, and the scene runs on the files as they are.
+- **Reset can't restore your files:** an error with a **Retry** button is shown. The checkpoints are kept, so your files can still be restored. When you start the play again, Demo Time asks: _"The last reset couldn't restore your files. Restore them now?"_
+  - **Restore** puts the files back as they were before the play started.
+  - **Keep files** removes the checkpoints of the last run and starts from the files as they are now.
+  - When you close the question, the play goes on with the files as they are. The next reset tries to restore them again.
+
+While checkpoints fail, going back no longer turns on by itself: going back would run the moves on changed files. When you set `demoTime.previousEnabled` yourself, its value still wins.
+
+Open **View > Output** and pick **Demo Time** to see which checkpoints were saved and restored, which files a restore changed or removed, and how long it took. Every line starts with the time, so you can match it with a moment in your presentation.

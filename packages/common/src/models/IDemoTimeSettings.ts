@@ -5,6 +5,7 @@ export interface IDemoTimeSettings {
   debug: boolean;
   previousEnabled: boolean;
   nextActionBehaviour: string;
+  sceneCheckpoints: boolean;
   presentationViewToggles: string[];
   showClock: boolean;
   timer: number | null;

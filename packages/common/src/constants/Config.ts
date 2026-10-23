@@ -57,6 +57,7 @@ export const Config = {
   },
   demoRunner: {
     nextActionBehaviour: 'nextActionBehaviour',
+    sceneCheckpoints: 'sceneCheckpoints',
   },
   defaultFileType: 'defaultFileType',
   configEditor: {

@@ -36,6 +36,8 @@ Once you are in presentation mode, you will see a record icon in the status bar 
 
 You can now use your right arrow key `→`, `PageDown`, or the right presenter/clicker button to navigate through the steps of your acts and scenes. On slides, this also reveals the [click steps](/slides/animations/#click-steps) one by one.
 
+While the moves of a scene run, Demo Time ignores next, previous and running another scene, from the clicker, the keyboard, the presenter view or the remote control. A second press would start a scene while the first one still changes your files. The status bar shows **Working** when it ignores a press.
+
 <Aside type="tip">
 If you want, you can override the default keybindings for the presenter/clicker buttons by updating the `demoTime.start` and `demo-time.previous` commands in the keybindings settings (use the `Preferences: Open Keyboard Shortcuts` command). 
 
@@ -91,6 +93,8 @@ Both of these actions will keep the current demo progress and allow you to conti
 
 In case you want to start from the beginning, you can use the **reset** action from the Demo Time panel view or use the `Demo Time: Reset` command from the command palette. This will reset the demo progress and allow you to start from the beginning.
 
+When you use [scene checkpoints](/features/scene-checkpoints/), the reset also puts your workspace files back to how they were before the first scene.
+
 <Image class="mx-auto" src={resetPresentationProgressImg} alt="Reset the presentation progress" width="500" />
 
 ## Enable "Go Back" Navigation
@@ -107,6 +111,8 @@ When you enabled this setting, you can use your left arrow key, `PageUp`, or the
 
 <Aside type="caution">
 The ability to go back is disabled by default because some scenes may involve changes to content in previous steps. Re-running these steps could cause conflicts or errors.
+
+Turn on [scene checkpoints](/features/scene-checkpoints/) to restore the files of a scene before it runs again. With scene checkpoints on, going back is allowed when you haven't set `demoTime.previousEnabled`.
 </Aside>
 
 ## Tips for presenting

@@ -357,9 +357,7 @@ export class Preview extends BaseWebview {
     } else if (command === WebViewMessages.toVscode.updateTitle && payload) {
       Preview.webview.title = `${Config.title}: ${payload}`;
     } else if (command === WebViewMessages.toVscode.getPreviousEnabled && requestId) {
-      const previousEnabled =
-        Extension.getInstance().getSetting<boolean>(Config.presentationMode.previousEnabled) ||
-        false;
+      const previousEnabled = await DemoRunner.isPreviousEnabled();
       Preview.postRequestMessage(
         WebViewMessages.toVscode.getPreviousEnabled,
         requestId,
