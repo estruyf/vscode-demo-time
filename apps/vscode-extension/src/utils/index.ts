@@ -65,6 +65,7 @@ export * from './removeDemosForCurrentPosition';
 export * from './restoreVSCodeSettings';
 export * from './sanitizeFileName';
 export * from './saveFiles';
+export * from './scopeSlideStyles';
 export * from './resolveOpenWebsiteUrl';
 export * from './resolveSlideCodeFiles';
 export * from './setContext';

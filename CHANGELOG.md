@@ -18,6 +18,7 @@
 - Fix a `::right::` or `::section::` marker in a code block or inline code splitting the slide, which broke the code block and removed the columns when the slide also had a real `::right::` marker. The preview, PDF export and slide screenshots now only use the markers outside code
 - Fix the slide controls and the mouse cursor hiding after 5 seconds while the mouse is on the slide controls, also after clicking **Next** or **Previous**. They stay visible while the mouse is on the controls or a menu of the controls is open, and hide 5 seconds after the mouse moves off them
 - Moved the **Export slides to PDF** button from the Acts & Scenes view toolbar to its **...** menu, next to **Export play as video**
+- Fix the PDF export and slide screenshots losing all their styles when a `<style>` block on a slide contains quotes or a `>` selector, like `content: "✓"`. The fonts and images of a `demoTime.customTheme` or `customTheme` stylesheet that use a relative `url()` now load in the PDF and screenshots too
 
 ## [2.4.0] - 2026-10-09
 

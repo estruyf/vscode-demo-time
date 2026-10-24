@@ -7,7 +7,9 @@ import {
   getNextSlideIndex,
   getTheme,
   readFile,
+  rebaseCssUrls,
   resolveSlideCodeFiles,
+  scopeSlideStyles,
   writeFile,
 } from '../utils';
 import {
@@ -417,8 +419,7 @@ export class ScreenshotService {
     }
 
     // Isolate the styles for the custom layout to the slide
-    html = html.replace(/<style>/g, `<style type="text/tailwindcss">#slide-1 {`);
-    html = html.replace(/<\/style>/g, '}</style>');
+    html = scopeSlideStyles(html, '#slide-1');
 
     // Load the appropriate theme CSS
     const themeCss = await ScreenshotService.getThemeCss(slideTheme);
@@ -449,9 +450,10 @@ export class ScreenshotService {
       if (globalCustomTheme.startsWith('http')) {
         customThemeUrls.push(globalCustomTheme);
       } else if (workspaceFolder) {
-        const theme = await readFile(Uri.joinPath(workspaceFolder.uri, globalCustomTheme));
+        const themeUri = Uri.joinPath(workspaceFolder.uri, globalCustomTheme);
+        const theme = await readFile(themeUri);
         if (theme) {
-          customThemes.push(theme);
+          customThemes.push(rebaseCssUrls(theme, themeUri.toString()));
         }
       }
     }

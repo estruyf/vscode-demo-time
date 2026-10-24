@@ -7,7 +7,9 @@ import {
   getAbsolutePath,
   getTheme,
   readFile,
+  rebaseCssUrls,
   resolveSlideCodeFiles,
+  scopeSlideStyles,
   sortFiles,
   writeFile,
 } from '../utils';
@@ -379,8 +381,7 @@ export class PdfExportService {
           }
 
           // Isolate the styles for the custom layout to the slide
-          html = html.replace(/<style>/g, `<style type="text/tailwindcss">#slide-${idx + 1} {`);
-          html = html.replace(/<\/style>/g, '}</style>');
+          html = scopeSlideStyles(html, `#slide-${idx + 1}`);
 
           slideContents.push({
             html,
@@ -455,9 +456,10 @@ export class PdfExportService {
       if (customTheme.startsWith('http')) {
         customThemeUrls.push(customTheme);
       } else if (workspaceFolder) {
-        const theme = await readFile(Uri.joinPath(workspaceFolder.uri, customTheme));
+        const themeUri = Uri.joinPath(workspaceFolder.uri, customTheme);
+        const theme = await readFile(themeUri);
         if (theme) {
-          customThemes.push(theme);
+          customThemes.push(rebaseCssUrls(theme, themeUri.toString()));
         }
       }
     }
@@ -611,8 +613,8 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
     }
 
     html += `
-        ${customThemes ? `<style type="text/tailwindcss">${customThemes}</style>` : ``}
-        ${customThemeUrls ? `<link rel="stylesheet" href="${customThemeUrls}">` : ``}
+        ${customThemes.length ? `<style type="text/tailwindcss">${customThemes.join('\n')}</style>` : ``}
+        ${customThemeUrls.map((url) => `<link rel="stylesheet" href="${url}">`).join('\n')}
       </body>
       </html>
     `;
@@ -699,7 +701,7 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
       }
 
       const css = await response.text();
-      return css;
+      return rebaseCssUrls(css, themePath);
     }
 
     const uri = Uri.joinPath(PdfExportService.workspaceFolder?.uri as Uri, themePath);
@@ -708,7 +710,7 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
       Notifications.error(`Error reading theme file: ${themePath}`);
       return undefined;
     }
-    return fileContent;
+    return rebaseCssUrls(fileContent, uri.toString());
   }
 
   /**
