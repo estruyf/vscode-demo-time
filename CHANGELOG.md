@@ -9,6 +9,7 @@
 - Ignore next, previous and running another scene while the moves of a scene still run, so a quick second press can't start a scene next to it
 - Added the time to every line in the **Demo Time** output channel
 - Fix the `copy`, `move` and `rename` moves not waiting for the file operation, so the next move could start before the file was there
+- Fix going back to the previous scene opening its slides on the first slide instead of the last one, when your slides are split over multiple files
 - Fix the remote control showing the previous button and allowing `/api/previous` when the `demoTime.previousEnabled` setting is off
 - Added the **Show slide contents** item to the right-click menu of the slide preview, which opens the markdown of the slide in the editor with the cursor on the slide
 - Fix the **Authenticate with GitHub** button on the **Pro Features** page staying on `Authenticating...` after a successful sign-in when the sponsor status didn't change or couldn't be verified

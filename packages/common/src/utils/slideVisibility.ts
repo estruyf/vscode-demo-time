@@ -49,6 +49,14 @@ export const getPreviousSlideIdx = (
 };
 
 /**
+ * Returns the index of the last slide, skipping hidden slides when `skipHidden` is set.
+ *
+ * @returns The 0-based index, or `undefined` when there is no (visible) slide.
+ */
+export const getLastSlideIdx = (slides: SlideLike[], skipHidden = true): number | undefined =>
+  getPreviousSlideIdx(slides, slides.length, skipHidden);
+
+/**
  * Returns the slide to show when a deck opens at `targetIdx`: the target itself when it is
  * visible, otherwise the next visible slide, otherwise the previous visible slide. When every
  * slide is hidden, the target is returned as is.

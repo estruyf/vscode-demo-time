@@ -26,6 +26,7 @@ export * from './getDemoApiData';
 export * from './getFileContents';
 export * from './getFileName';
 export * from './getFileUri';
+export * from './getLastSlideNumber';
 export * from './getFrontmatterRange';
 export * from './getInsertionSpeed';
 export * from './getInsertionSpeedRandomness';

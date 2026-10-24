@@ -681,7 +681,7 @@ export class DemoRunner {
       if (!(await CheckpointService.restore(previousFile.filePath, previousFile.demo, crntIdx))) {
         await CheckpointService.restore(filePath, demoFile, demoIdxToRun);
       }
-      await DemoRunner.runSteps(lastDemo.steps);
+      await DemoRunner.runSteps(lastDemo.steps, true, undefined, true);
       NotesService.showNotes(lastDemo);
       return;
     }
@@ -704,7 +704,7 @@ export class DemoRunner {
     await DemoRunner.setExecutedDemoFile(executingFile);
     DemoRunner.currentDemo = previousDemo;
     await CheckpointService.restore(filePath, demoFile, previousDemoIdx);
-    await DemoRunner.runSteps(demoSteps);
+    await DemoRunner.runSteps(demoSteps, true, undefined, true);
     NotesService.showNotes(previousDemo);
   }
 
@@ -981,6 +981,7 @@ export class DemoRunner {
     demoSteps: Step[],
     needsUpdate: boolean = true,
     crntFilePath: string | undefined = undefined,
+    isGoingBack: boolean = false,
   ): Promise<void> {
     if (TextTypingService.IsTyping) {
       Logger.info('DemoRunner.runSteps called while typing. Ignoring.');
@@ -1058,7 +1059,7 @@ export class DemoRunner {
       }
 
       try {
-        await DemoRunner.runStep(step, variables, workspaceFolder, crntFilePath);
+        await DemoRunner.runStep(step, variables, workspaceFolder, crntFilePath, isGoingBack);
       } catch (error) {
         // Record error in analytics
         if (AnalyticsService.isRecording()) {
@@ -1083,6 +1084,7 @@ export class DemoRunner {
     variables: { [key: string]: any } | undefined,
     workspaceFolder: WorkspaceFolder,
     crntFilePath: string | undefined,
+    isGoingBack: boolean = false,
   ): Promise<void> {
     if (TextTypingService.IsTyping) {
       Logger.info('DemoRunner.runStep called while typing. Ignoring.');
@@ -1094,6 +1096,7 @@ export class DemoRunner {
       workspaceFolder,
       currentFilePath: crntFilePath,
       nextStepIsHighlight: DemoRunner.nextStepIsHighlight,
+      isGoingBack,
       runById: DemoRunner.runById,
       highlight: DemoRunner.highlight,
       unselect: DemoRunner.unselect,
