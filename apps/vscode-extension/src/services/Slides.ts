@@ -19,17 +19,21 @@ import { General } from '../constants';
 import {
   addStepsToDemo,
   chooseDemoFile,
+  deleteSlide,
+  duplicateSlide,
   fileExists,
   getAbsolutePath,
   getRelPath,
   getSlidePropertyAtLine,
   getSlidePropertyCompletions,
+  insertSlide,
   isPathInWorkspace,
   parseWinPath,
   readFile,
   sanitizeFileName,
   setSlideHidden,
   setSlideNotes,
+  setSlideProperty,
   upperCaseFirstLetter,
   writeFile,
 } from '../utils';
@@ -53,7 +57,27 @@ import {
   getSlidePropertyMarkdown,
   getSlidePropertyTypeName,
   getSlidePropertyValues,
+  WebViewMessages,
 } from '@demotime/common';
+
+/**
+ * The `data-vscode-context` of the slide that the context menu of the slide preview passes
+ */
+interface SlideMenuContext {
+  slidePath?: string;
+  slideIndex?: number;
+}
+
+/**
+ * Runs a context menu command for the slide it was opened on
+ */
+const forSlide =
+  (callback: (filePath: string, slideIndex: number) => Promise<unknown>) =>
+  async (context?: SlideMenuContext) => {
+    if (context?.slidePath) {
+      await callback(context.slidePath, context.slideIndex ?? 0);
+    }
+  };
 
 export class Slides {
   public static register() {
@@ -62,6 +86,39 @@ export class Slides {
     subscriptions.push(commands.registerCommand(COMMAND.createSlide, Slides.createSlide));
     subscriptions.push(commands.registerCommand(COMMAND.viewSlide, Slides.viewSlide));
     subscriptions.push(commands.registerCommand(COMMAND.openSlidePreview, Slides.openSlidePreview));
+
+    // The context menu of the slide preview
+    subscriptions.push(
+      commands.registerCommand(
+        COMMAND.hideSlide,
+        forSlide((filePath, slideIndex) => Slides.setSlideHidden(filePath, slideIndex, true)),
+      ),
+    );
+    subscriptions.push(
+      commands.registerCommand(
+        COMMAND.unhideSlide,
+        forSlide((filePath, slideIndex) => Slides.setSlideHidden(filePath, slideIndex, false)),
+      ),
+    );
+    for (const layout of Object.values(SlideLayout)) {
+      subscriptions.push(
+        commands.registerCommand(
+          `${COMMAND.setSlideLayout}.${layout}`,
+          forSlide((filePath, slideIndex) => Slides.setSlideLayout(filePath, slideIndex, layout)),
+        ),
+      );
+    }
+    subscriptions.push(
+      commands.registerCommand(
+        COMMAND.editSlideNotes,
+        forSlide(() => Preview.postMessage(WebViewMessages.toWebview.preview.editNotes)),
+      ),
+    );
+    subscriptions.push(commands.registerCommand(COMMAND.insertSlide, forSlide(Slides.insertSlide)));
+    subscriptions.push(
+      commands.registerCommand(COMMAND.duplicateSlide, forSlide(Slides.duplicateSlide)),
+    );
+    subscriptions.push(commands.registerCommand(COMMAND.deleteSlide, forSlide(Slides.deleteSlide)));
 
     subscriptions.push(Slides.registerCompletionProvider());
     subscriptions.push(Slides.registerHoverProvider());
@@ -359,22 +416,130 @@ layout: ${layout.toLowerCase()}
   }
 
   /**
+   * Sets the `layout` in the frontmatter of a slide and saves the file, which updates the slide
+   * preview.
+   * @param filePath Relative file path to the slide markdown file
+   * @param slideIndex Local slide index (0-based)
+   * @param layout The layout of the slide
+   */
+  public static async setSlideLayout(filePath: string, slideIndex: number, layout: SlideLayout) {
+    await Slides.updateSlideFile(filePath, (content) => {
+      const newContent = setSlideProperty(content, slideIndex, 'layout', layout);
+      if (newContent === undefined) {
+        Notifications.error(`Slide ${slideIndex + 1} was not found in "${filePath}".`);
+      }
+      return newContent;
+    });
+  }
+
+  /**
+   * Asks for a title and adds a slide with it after the given slide. The preview shows the new
+   * slide, and the editor opens on it to write its content.
+   * @param filePath Relative file path to the slide markdown file
+   * @param slideIndex Local slide index (0-based) of the slide to add the new slide after
+   */
+  public static async insertSlide(filePath: string, slideIndex: number) {
+    const title = await window.showInputBox({
+      title: Config.title,
+      placeHolder: 'What is the title of the slide?',
+      validateInput: (value) => (value.trim() ? null : 'The title is required'),
+    });
+    if (!title) {
+      return;
+    }
+
+    const isUpdated = await Slides.updateSlideFile(
+      filePath,
+      (content) => {
+        const newContent = insertSlide(content, slideIndex, `# ${title.trim()}`);
+        if (newContent === undefined) {
+          Notifications.error(`A slide could not be added after slide ${slideIndex + 1}.`);
+        }
+        return newContent;
+      },
+      slideIndex + 1,
+    );
+    if (isUpdated) {
+      await SlidePreviewSync.revealSource(filePath, slideIndex + 1);
+    }
+  }
+
+  /**
+   * Adds a copy of a slide after it, and shows the copy in the preview.
+   * @param filePath Relative file path to the slide markdown file
+   * @param slideIndex Local slide index (0-based)
+   */
+  public static async duplicateSlide(filePath: string, slideIndex: number) {
+    await Slides.updateSlideFile(
+      filePath,
+      (content) => {
+        const newContent = duplicateSlide(content, slideIndex);
+        if (newContent === undefined) {
+          Notifications.error(
+            `Slide ${slideIndex + 1} could not be duplicated. Copy it in the editor instead.`,
+          );
+        }
+        return newContent;
+      },
+      slideIndex + 1,
+    );
+  }
+
+  /**
+   * Removes a slide from its file, after asking for confirmation.
+   * @param filePath Relative file path to the slide markdown file
+   * @param slideIndex Local slide index (0-based)
+   */
+  public static async deleteSlide(filePath: string, slideIndex: number) {
+    const answer = await window.showWarningMessage(
+      `Are you sure you want to delete slide ${slideIndex + 1}?`,
+      { modal: true },
+      'Delete',
+    );
+    if (answer !== 'Delete') {
+      return;
+    }
+
+    await Slides.updateSlideFile(
+      filePath,
+      (content) => {
+        const newContent = deleteSlide(content, slideIndex);
+        if (newContent === undefined) {
+          Notifications.error(
+            `Slide ${slideIndex + 1} could not be deleted without changing the other slides. Remove it in the editor instead.`,
+          );
+        }
+        return newContent;
+      },
+      Math.max(slideIndex - 1, 0),
+    );
+  }
+
+  /**
    * Updates a slide file with the content returned by `update`, and saves it.
+   * @param showSlideIndex The slide to show in the preview once the file is saved
+   * @returns Whether the file changed
    */
   private static async updateSlideFile(
     filePath: string,
     update: (content: string) => string | undefined,
-  ) {
+    showSlideIndex?: number,
+  ): Promise<boolean> {
     const fileUri = getAbsolutePath(parseWinPath(filePath));
     const document = await workspace.openTextDocument(fileUri);
     const crntContent = document.getText();
     const newContent = update(crntContent);
     if (newContent === undefined) {
-      return;
+      return false;
     }
 
     if (newContent === crntContent) {
-      return;
+      return false;
+    }
+
+    // Saving the file updates the preview, which then opens this slide
+    if (showSlideIndex !== undefined && Preview.isShowingFile(fileUri)) {
+      Preview.setCurrentSlideIndex(showSlideIndex);
     }
 
     // Only replace the changed lines, so an open editor keeps its cursor and scroll position
@@ -420,6 +585,7 @@ layout: ${layout.toLowerCase()}
     }
     await workspace.applyEdit(edit);
     await document.save();
+    return true;
   }
 
   private static async viewSlide(item: ActionTreeItem) {

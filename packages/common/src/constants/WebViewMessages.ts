@@ -348,6 +348,10 @@ export const WebViewMessages = {
        * A file that a code block on the slides shows changed
        */
       codeFilesChanged: 'previewCodeFilesChanged',
+      /**
+       * Opens the speaker notes editor of the current slide
+       */
+      editNotes: 'previewEditSlideNotes',
     },
     // Act Editor
     configEditor: {

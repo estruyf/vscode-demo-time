@@ -217,6 +217,20 @@ Move the slide preview to an editor group next to your markdown file, so you see
 
 The sync never applies in [presentation mode](/presentation-mode/), so moving the cursor can't change slides during a talk. To turn it off, set `demoTime.slidePreviewSync` to `false`. **Reveal slide source** keeps working when the sync is off.
 
+### Slide context menu
+
+Outside [presentation mode](/presentation-mode/), right-click the slide in the preview to change it without leaving the preview. The actions update the markdown file of the slide and save it, so the preview updates right away. Use **Undo** in the editor of the file to revert a change.
+
+- **Show slide contents**: Opens the markdown of the slide in the editor, with the cursor on the slide. See [sync the preview with the editor](#sync-the-preview-with-the-editor).
+- **Edit speaker notes**: Opens the editor for the notes of the slide, and saves them in its `<!-- notes -->` block. See [notes in your slides](/features/using-notes/#notes-in-your-slides).
+- **Change layout**: Sets the `layout` in the front matter of the slide to one of the [built-in layouts](/slides/layouts/). The submenu leaves out the layout the slide already uses.
+- **Hide slide while presenting** / **Show slide while presenting**: Adds or removes `hide: true` in the front matter of the slide. See [hiding slides](#hiding-slides).
+- **Insert slide after**: Asks for a title, and adds a slide with that heading after the slide. The preview shows the new slide and the editor opens on it, so you can write its content.
+- **Duplicate slide**: Adds a copy of the slide, with its front matter and speaker notes, after it. The preview shows the copy.
+- **Delete slide**: Removes the slide from the file, after you confirm it. When you delete the first slide of a file, the front matter at the top of the file stays, without the properties that only apply to the first slide, like `layout`.
+
+When an action can't change the slide without changing the other slides of the file, for instance when deleting the first slide would give the next slide other front matter, Demo Time shows an error and doesn't change the file. Make the change in the editor instead.
+
 ## Presenting slides
 
 To incorporate slides into your workflow, add them as moves in your scene script or configuration files. This ensures you can control when and where your slides appear during the presentation.
@@ -333,7 +347,7 @@ Hidden slides are still in the **Go to slide** overview of the [slide controls](
 
 Outside presentation mode, the slide preview still shows hidden slides so you can navigate to them and edit them. A hidden slide gets a dashed frame, and a **Hidden slide** bar above it.
 
-To hide or show the current slide from the slide preview, open the **More actions** (`…`) menu of the [slide controls](#slide-controls) and select **Hide slide while presenting** or **Show slide while presenting**. This adds or removes `hide: true` in the front matter of the slide and saves the file.
+To hide or show the current slide from the slide preview, right-click the slide, or open the **More actions** (`…`) menu of the [slide controls](#slide-controls), and select **Hide slide while presenting** or **Show slide while presenting**. This adds or removes `hide: true` in the front matter of the slide and saves the file.
 
 <Image class="mx-auto" src={hiddenSlideImg} alt="A hidden slide in the slide preview, with the Hidden slide bar above it and the Show slide while presenting action in the More actions menu" />
 

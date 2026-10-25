@@ -57,6 +57,17 @@ export const COMMAND = {
   viewSlide: `${EXTENSION_NAME}.viewSlide`,
   openSlidePreview: `${EXTENSION_NAME}.openSlidePreview`,
   showSlideContents: `${EXTENSION_NAME}.showSlideContents`,
+  // Context menu of the slide preview
+  hideSlide: `${EXTENSION_NAME}.hideSlide`,
+  unhideSlide: `${EXTENSION_NAME}.unhideSlide`,
+  /**
+   * Followed by the layout, like `demo-time.setSlideLayout.intro`
+   */
+  setSlideLayout: `${EXTENSION_NAME}.setSlideLayout`,
+  editSlideNotes: `${EXTENSION_NAME}.editSlideNotes`,
+  insertSlide: `${EXTENSION_NAME}.insertSlide`,
+  duplicateSlide: `${EXTENSION_NAME}.duplicateSlide`,
+  deleteSlide: `${EXTENSION_NAME}.deleteSlide`,
   togglePresentationView: `${EXTENSION_NAME}.togglePresentationView`,
   closePresentationView: `${EXTENSION_NAME}.closePresentationView`,
   exportToPdf: `${EXTENSION_NAME}.exportToPdf`,

@@ -432,7 +432,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     });
   }, [isPresentationMode, relativePath, crntSlide]);
 
-  // Adds the `Show slide contents` item to the context menu of the slide
+  // Adds the slide items, like `Show slide contents` and `Change layout`, to the context menu of
+  // the slide. `slideHidden` and `slideLayout` decide which items it shows.
   const vscodeContext = React.useMemo(() => {
     if (isPresentationMode !== false || !relativePath || !crntSlide) {
       return undefined;
@@ -442,6 +443,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       webviewSection: 'slide',
       slidePath: relativePath,
       slideIndex: crntSlide.index,
+      slideHidden: isSlideHidden(crntSlide),
+      slideLayout: crntSlide.frontmatter.layout || SlideLayout.Default,
     });
   }, [isPresentationMode, relativePath, crntSlide]);
 

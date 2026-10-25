@@ -99,6 +99,9 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
       setIsPresentationMode(payload);
     } else if (command === WebViewMessages.toWebview.updateAutoProceedState) {
       setExtensionAutoProceedManaged(!!payload?.managedByExtension);
+    } else if (command === WebViewMessages.toWebview.preview.editNotes) {
+      // `Edit speaker notes` in the context menu of the slide
+      setIsNotesEditorOpen(true);
     }
   };
 
