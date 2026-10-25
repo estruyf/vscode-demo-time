@@ -72,6 +72,7 @@ export * from './setContext';
 export * from './ShadowGit';
 export * from './sleep';
 export * from './slideSourceLines';
+export * from './slideEdits';
 export * from './sortFiles';
 export * from './togglePresentationView';
 export * from './updateConfig';

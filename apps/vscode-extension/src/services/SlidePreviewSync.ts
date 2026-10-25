@@ -5,6 +5,7 @@ import {
   TextEditor,
   TextEditorRevealType,
   TextEditorSelectionChangeKind,
+  Uri,
   ViewColumn,
   window,
   workspace,
@@ -67,6 +68,30 @@ export class SlidePreviewSync {
       SlidePreviewSync.lastCursor = { uri: editor.document.uri.toString(), slideIndex };
     }
     return slideIndex;
+  }
+
+  /**
+   * Stores the slide under the cursor of the editor of a file that Demo Time just edited, so the
+   * selection change of the edit doesn't move the preview.
+   * @param uri The file that was edited
+   */
+  public static acceptCursor(uri: Uri): void {
+    if (SlidePreviewSync.timer) {
+      clearTimeout(SlidePreviewSync.timer);
+      SlidePreviewSync.timer = undefined;
+    }
+
+    const editor = window.visibleTextEditors.find(
+      (visibleEditor) => visibleEditor.document.uri.toString() === uri.toString(),
+    );
+    if (!editor) {
+      return;
+    }
+
+    const slideIndex = getSlideIndexAtLine(editor.document.getText(), editor.selection.active.line);
+    if (slideIndex !== undefined) {
+      SlidePreviewSync.lastCursor = { uri: uri.toString(), slideIndex };
+    }
   }
 
   /**

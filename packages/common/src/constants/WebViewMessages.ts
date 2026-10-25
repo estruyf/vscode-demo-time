@@ -208,6 +208,11 @@ export const WebViewMessages = {
        * Replaces the code blocks with a `file` option by the code of that file
        */
       resolveCodeFiles: 'resolvePreviewCodeFiles',
+      /**
+       * Moves a slide to another position in its file. Payload: `{ path, fromIndex, toIndex }`.
+       * Responds with whether the file changed
+       */
+      moveSlide: 'movePreviewSlide',
     },
     settingsView: {
       /**
@@ -348,6 +353,14 @@ export const WebViewMessages = {
        * A file that a code block on the slides shows changed
        */
       codeFilesChanged: 'previewCodeFilesChanged',
+      /**
+       * Opens the speaker notes editor of the current slide
+       */
+      editNotes: 'previewEditSlideNotes',
+      /**
+       * The `demoTime.slidePreviewThumbnails` setting changed. Payload: whether to show them
+       */
+      updateThumbnails: 'previewUpdateSlideThumbnails',
     },
     // Act Editor
     configEditor: {

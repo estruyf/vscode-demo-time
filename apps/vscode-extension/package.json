@@ -427,6 +427,11 @@
           "default": true,
           "markdownDescription": "Sync the slide preview with the markdown editor: moving the cursor to another slide shows that slide in the preview, `Open slide preview` opens at the slide under the cursor, and double-clicking a slide in the preview moves the cursor to its source. Never applies in presentation mode."
         },
+        "demoTime.slidePreviewThumbnails": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Show the slides of the file as thumbnails next to the slide preview when the file has more than one slide and you are not presenting. Click a thumbnail to open the slide, or drag it to change the order of the slides. The **Toggle slide thumbnails** button of the slide controls changes this setting."
+        },
         "demoTime.slideReducedMotion": {
           "type": "string",
           "enum": [
@@ -736,6 +741,107 @@
         "category": "Demo Time"
       },
       {
+        "command": "demo-time.hideSlide",
+        "title": "Hide slide while presenting",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.unhideSlide",
+        "title": "Show slide while presenting",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.setSlideLayout.default",
+        "title": "Default",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.setSlideLayout.center",
+        "title": "Center",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.setSlideLayout.intro",
+        "title": "Intro",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.setSlideLayout.section",
+        "title": "Section",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.setSlideLayout.quote",
+        "title": "Quote",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.setSlideLayout.image",
+        "title": "Image",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.setSlideLayout.video",
+        "title": "Video",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.setSlideLayout.image-right",
+        "title": "Image right",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.setSlideLayout.image-left",
+        "title": "Image left",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.setSlideLayout.two-columns",
+        "title": "Two columns",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.setSlideLayout.animated",
+        "title": "Animated SVG",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.editSlideNotes",
+        "title": "Edit speaker notes",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.insertSlide",
+        "title": "Insert slide after",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.duplicateSlide",
+        "title": "Duplicate slide",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.deleteSlide",
+        "title": "Delete slide",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.moveSlideUp",
+        "title": "Move slide up",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.moveSlideDown",
+        "title": "Move slide down",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.toggleSlideThumbnails",
+        "title": "Toggle slide thumbnails in the slide preview",
+        "category": "Demo Time",
+        "icon": "$(layout-sidebar-left)"
+      },
+      {
         "command": "demo-time.openSlidePreview",
         "title": "Open slide preview",
         "category": "Demo Time",
@@ -914,6 +1020,10 @@
         "id": "demo-time.recording.submenu",
         "label": "Demo Time",
         "icon": "$(record)"
+      },
+      {
+        "id": "demo-time.slideLayout.submenu",
+        "label": "Change layout"
       }
     ],
     "menus": {
@@ -922,6 +1032,108 @@
           "command": "demo-time.showSlideContents",
           "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide'",
           "group": "9_demotime@1"
+        },
+        {
+          "command": "demo-time.editSlideNotes",
+          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide'",
+          "group": "9_demotime@2"
+        },
+        {
+          "submenu": "demo-time.slideLayout.submenu",
+          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide'",
+          "group": "9_demotime_slide@1"
+        },
+        {
+          "command": "demo-time.hideSlide",
+          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide' && !slideHidden",
+          "group": "9_demotime_slide@2"
+        },
+        {
+          "command": "demo-time.unhideSlide",
+          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide' && slideHidden",
+          "group": "9_demotime_slide@2"
+        },
+        {
+          "command": "demo-time.insertSlide",
+          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide'",
+          "group": "9_demotime_manage@1"
+        },
+        {
+          "command": "demo-time.duplicateSlide",
+          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide'",
+          "group": "9_demotime_manage@2"
+        },
+        {
+          "command": "demo-time.deleteSlide",
+          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide'",
+          "group": "9_demotime_manage@3"
+        },
+        {
+          "command": "demo-time.moveSlideUp",
+          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide' && !slideIsFirst",
+          "group": "9_demotime_move@1"
+        },
+        {
+          "command": "demo-time.moveSlideDown",
+          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide' && !slideIsLast",
+          "group": "9_demotime_move@2"
+        }
+      ],
+      "demo-time.slideLayout.submenu": [
+        {
+          "command": "demo-time.setSlideLayout.default",
+          "when": "slideLayout != 'default'",
+          "group": "1_layout@1"
+        },
+        {
+          "command": "demo-time.setSlideLayout.center",
+          "when": "slideLayout != 'center'",
+          "group": "1_layout@2"
+        },
+        {
+          "command": "demo-time.setSlideLayout.intro",
+          "when": "slideLayout != 'intro'",
+          "group": "1_layout@3"
+        },
+        {
+          "command": "demo-time.setSlideLayout.section",
+          "when": "slideLayout != 'section'",
+          "group": "1_layout@4"
+        },
+        {
+          "command": "demo-time.setSlideLayout.quote",
+          "when": "slideLayout != 'quote'",
+          "group": "1_layout@5"
+        },
+        {
+          "command": "demo-time.setSlideLayout.image",
+          "when": "slideLayout != 'image'",
+          "group": "1_layout@6"
+        },
+        {
+          "command": "demo-time.setSlideLayout.video",
+          "when": "slideLayout != 'video'",
+          "group": "1_layout@7"
+        },
+        {
+          "command": "demo-time.setSlideLayout.image-right",
+          "when": "slideLayout != 'image-right'",
+          "group": "1_layout@8"
+        },
+        {
+          "command": "demo-time.setSlideLayout.image-left",
+          "when": "slideLayout != 'image-left'",
+          "group": "1_layout@9"
+        },
+        {
+          "command": "demo-time.setSlideLayout.two-columns",
+          "when": "slideLayout != 'two-columns'",
+          "group": "1_layout@10"
+        },
+        {
+          "command": "demo-time.setSlideLayout.animated",
+          "when": "slideLayout != 'animated'",
+          "group": "1_layout@11"
         }
       ],
       "editor/context": [
@@ -988,6 +1200,82 @@
         },
         {
           "command": "demo-time.showSlideContents",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.hideSlide",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.unhideSlide",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.setSlideLayout.default",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.setSlideLayout.center",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.setSlideLayout.intro",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.setSlideLayout.section",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.setSlideLayout.quote",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.setSlideLayout.image",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.setSlideLayout.video",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.setSlideLayout.image-right",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.setSlideLayout.image-left",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.setSlideLayout.two-columns",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.setSlideLayout.animated",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.editSlideNotes",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.insertSlide",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.duplicateSlide",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.deleteSlide",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.moveSlideUp",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.moveSlideDown",
           "when": "false"
         },
         {

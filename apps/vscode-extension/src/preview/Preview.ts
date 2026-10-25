@@ -1,4 +1,4 @@
-import { Uri, window, commands, workspace, FileSystemWatcher } from 'vscode';
+import { ConfigurationTarget, Uri, window, commands, workspace, FileSystemWatcher } from 'vscode';
 import { Extension } from '../services/Extension';
 import { ContextKeys } from '../constants';
 import {
@@ -72,7 +72,19 @@ export class Preview extends BaseWebview {
       ),
     );
     subscriptions.push(
+      commands.registerCommand(COMMAND.toggleSlideThumbnails, Preview.toggleThumbnails),
+    );
+    subscriptions.push(
       workspace.onDidChangeConfiguration((e) => {
+        if (
+          Preview.isOpen &&
+          e.affectsConfiguration(`${Config.root}.${Config.slides.previewThumbnails}`)
+        ) {
+          Preview.postMessage(
+            WebViewMessages.toWebview.preview.updateThumbnails,
+            Preview.areThumbnailsEnabled(),
+          );
+        }
         if (
           Preview.isOpen &&
           (e.affectsConfiguration(`${Config.root}.${Config.slides.reducedMotion}`) ||
@@ -85,6 +97,28 @@ export class Preview extends BaseWebview {
         }
       }),
     );
+  }
+
+  /**
+   * Whether the slide preview shows the slide thumbnails, according to the setting.
+   */
+  private static areThumbnailsEnabled(): boolean {
+    return Extension.getInstance().getSetting<boolean>(Config.slides.previewThumbnails) !== false;
+  }
+
+  /**
+   * Turns the slide thumbnails of the preview on or off, in the place where the setting is defined.
+   */
+  private static async toggleThumbnails() {
+    const key = Config.slides.previewThumbnails;
+    const inspected = workspace.getConfiguration(Config.root).inspect<boolean>(key);
+    let target = ConfigurationTarget.Global;
+    if (inspected?.workspaceFolderValue !== undefined) {
+      target = ConfigurationTarget.WorkspaceFolder;
+    } else if (inspected?.workspaceValue !== undefined) {
+      target = ConfigurationTarget.Workspace;
+    }
+    await Extension.getInstance().setSetting(key, !Preview.areThumbnailsEnabled(), target);
   }
 
   /**
@@ -445,6 +479,16 @@ export class Preview extends BaseWebview {
       await Slides.setSlideHidden(payload.path, payload.slideIndex, !!payload.hidden);
     } else if (command === WebViewMessages.toVscode.preview.setSlideNotes && payload?.path) {
       await Slides.setSlideNotes(payload.path, payload.slideIndex, payload.notes || '');
+    } else if (
+      command === WebViewMessages.toVscode.preview.moveSlide &&
+      payload?.path &&
+      typeof payload.fromIndex === 'number' &&
+      typeof payload.toIndex === 'number'
+    ) {
+      const moved = await Slides.moveSlide(payload.path, payload.fromIndex, payload.toIndex);
+      if (requestId) {
+        Preview.postRequestMessage(command, requestId, moved);
+      }
     } else if (command === WebViewMessages.toVscode.preview.revealSource && payload?.path) {
       await SlidePreviewSync.revealSource(payload.path, payload.slideIndex ?? 0);
     } else if (command === WebViewMessages.toVscode.preview.slideOverflow && payload?.path) {
