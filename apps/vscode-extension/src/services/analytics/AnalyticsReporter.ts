@@ -9,6 +9,9 @@ import {
   TimerStatus,
 } from '@demotime/common';
 
+/** Actions shorter than this (in ms) are left out of the scene timeline */
+const MIN_ACTION_DURATION = 100;
+
 /**
  * Service for generating analytics reports and summaries from session data.
  */
@@ -159,7 +162,14 @@ export class AnalyticsReporter {
         const actionDetails: DemoBreakdownItem['actionDetails'] = [];
         for (const segment of scene.segments) {
           if (segment.actionTimes && segment.actionTimes.length > 0) {
-            for (const action of segment.actionTimes) {
+            const lastIdx = segment.actionTimes.length - 1;
+            for (const [idx, action] of segment.actionTimes.entries()) {
+              // Slides that were replaced right away were never presented, like the slides of the
+              // previous scene that older versions recorded while the next slide file loaded
+              if (idx < lastIdx && (action.duration || 0) < MIN_ACTION_DURATION) {
+                continue;
+              }
+
               actionDetails.push({
                 type: action.type,
                 slideIdx: action.slideIdx,

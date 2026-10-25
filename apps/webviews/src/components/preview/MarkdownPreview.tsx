@@ -49,7 +49,9 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   // The overflow of every slide of the file, measured in the background
   const [scannedOverflows, setScannedOverflows] = React.useState<SlideOverflow[]>([]);
 
-  const { content, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();
+  const { content, contentFilePath, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();
+  // The file the current slides were parsed from
+  const slidesFilePathRef = React.useRef<string | undefined>(undefined);
   const ref = React.useRef<HTMLDivElement>(null);
   const slideRef = React.useRef<HTMLDivElement>(null);
   const { cursorVisible, resetCursorTimeout, pauseCursorTimeout, hideCursor } = useCursor();
@@ -473,6 +475,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     if (content) {
       const parser = new SlideParser();
       const allSlides = parser.parseSlides(content);
+      slidesFilePathRef.current = contentFilePath;
       setSlides(allSlides);
       setScannedOverflows([]);
       setCrntSlide(allSlides[0]);
@@ -481,7 +484,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         messageHandler.send(WebViewMessages.toVscode.nextSlideTitle, getSlideTitle(allSlides[1]));
       }
     }
-  }, [content]);
+  }, [content, contentFilePath]);
 
   React.useEffect(() => {
     setTheme(crntSlide?.frontmatter.theme || SlideTheme.default);
@@ -630,7 +633,9 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   }, [isZoomed, toggleZoom]);
 
   React.useEffect(() => {
-    if (crntSlide?.index !== undefined) {
+    // While the next file loads, the slides of the previous file are still shown: don't record
+    // those for the new file
+    if (crntSlide?.index !== undefined && slidesFilePathRef.current === crntFilePath) {
       messageHandler.send(WebViewMessages.toVscode.preview.recordOpenSlide, {
         slideIndex: crntSlide.index,
         filePath: crntFilePath,

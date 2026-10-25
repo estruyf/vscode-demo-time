@@ -677,6 +677,7 @@ export class DemoRunner {
 
       await DemoRunner.setExecutedDemoFile(executingFile);
       DemoRunner.currentDemo = lastDemo;
+      DemoRunner.currentDemoIndex = crntIdx;
       // Without checkpoints in the previous act, use the one of the scene we're leaving
       if (!(await CheckpointService.restore(previousFile.filePath, previousFile.demo, crntIdx))) {
         await CheckpointService.restore(filePath, demoFile, demoIdxToRun);
@@ -703,6 +704,7 @@ export class DemoRunner {
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     DemoRunner.currentDemo = previousDemo;
+    DemoRunner.currentDemoIndex = previousDemoIdx;
     await CheckpointService.restore(filePath, demoFile, previousDemoIdx);
     await DemoRunner.runSteps(demoSteps, true, undefined, true);
     NotesService.showNotes(previousDemo);
@@ -767,6 +769,7 @@ export class DemoRunner {
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     DemoRunner.currentDemo = demoToRun.demo;
+    DemoRunner.currentDemoIndex = demoToRun.idx;
     await DemoRunner.runSteps(demoToRun.demo.steps);
     NotesService.showNotes(demoToRun.demo);
   }
@@ -844,6 +847,7 @@ export class DemoRunner {
 
     await DemoRunner.setExecutedDemoFile(executingFile);
     DemoRunner.currentDemo = demoToRun;
+    DemoRunner.currentDemoIndex = demoIdx;
     await DemoRunner.runSteps(demoToRun.steps);
     NotesService.showNotes(demoToRun);
   }

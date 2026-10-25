@@ -6,6 +6,8 @@ import { WebViewMessages } from '@demotime/common';
 export const useFileContents = () => {
   const [content, setContent] = useState<string | undefined>(undefined);
   const [crntFilePath, setCrntFilePath] = useState<string | undefined>(undefined);
+  // The file of the content: the content of the previous file stays until the fetch is done
+  const [contentFilePath, setContentFilePath] = useState<string | undefined>(undefined);
   const [initialSlideIndex, setInitialSlideIndex] = useState<number | undefined>(0);
 
   const getFileContents = useCallback(async (fileUri: string) => {
@@ -20,6 +22,7 @@ export const useFileContents = () => {
       .then((response) => response.text())
       .then((text) => {
         setContent(text);
+        setContentFilePath(fileUri);
       });
   }, []);
 
@@ -46,5 +49,5 @@ export const useFileContents = () => {
     };
   }, [getFileContents]);
 
-  return { content, crntFilePath, initialSlideIndex, getFileContents };
+  return { content, contentFilePath, crntFilePath, initialSlideIndex, getFileContents };
 };
