@@ -4,6 +4,7 @@ import {
   deleteSlide,
   duplicateSlide,
   insertSlide,
+  moveSlide,
   setSlideProperty,
 } from '../src/utils/slideEdits';
 
@@ -153,5 +154,116 @@ describe('deleteSlide', () => {
 
   it('does not remove the only slide', () => {
     expect(deleteSlide('# One', 0)).toBeUndefined();
+  });
+});
+
+describe('moveSlide', () => {
+  const deck4 = `---
+theme: default
+---
+
+# One
+
+---
+
+# Two
+
+---
+
+# Three
+
+---
+layout: section
+---
+
+# Four
+`;
+
+  it('moves a slide in the middle and keeps the document frontmatter', () => {
+    const result = moveSlide(deck4, 1, 2)!;
+    expect(titles(result)).toEqual(['# One', '# Three', '# Two', '# Four']);
+    expect(result.startsWith('---\ntheme: default\n---\n\n# One')).toBe(true);
+    expect(layouts(result)).toEqual(['default', 'default', 'default', 'section']);
+  });
+
+  it('moves the last slide up with its own frontmatter and keeps the final newline', () => {
+    expect(moveSlide(deck4, 3, 1)).toBe(
+      '---\ntheme: default\n---\n\n# One\n\n---\nlayout: section\n---\n\n# Four\n\n---\n\n# Two\n\n---\n\n# Three\n',
+    );
+  });
+
+  it('moves the properties of the first slide along when it moves down', () => {
+    const markdown =
+      '---\ntheme: default\nlayout: intro\nhide: true\n---\n\n# One\n\n---\n\n# Two\n';
+    expect(moveSlide(markdown, 0, 1)).toBe(
+      '---\ntheme: default\n---\n\n# Two\n\n---\nlayout: intro\nhide: true\n---\n\n# One\n',
+    );
+  });
+
+  it('merges the frontmatter of a slide that moves to the top in the document frontmatter', () => {
+    const markdown =
+      '---\ntheme: default\nlayout: intro\n---\n\n# One\n\n---\nlayout: section\n---\n\n# Two';
+    expect(moveSlide(markdown, 1, 0)).toBe(
+      '---\ntheme: default\nlayout: section\n---\n\n# Two\n\n---\nlayout: intro\n---\n\n# One',
+    );
+  });
+
+  it('removes the document frontmatter when only first slide properties remain', () => {
+    const markdown = '---\nlayout: intro\n---\n\n# One\n\n---\n\n# Two';
+    expect(moveSlide(markdown, 0, 1)).toBe('# Two\n\n---\nlayout: intro\n---\n\n# One');
+  });
+
+  it('moves slides of a file without frontmatter', () => {
+    expect(moveSlide('# One\n\n---\n\n# Two', 0, 1)).toBe('# Two\n\n---\n\n# One');
+    expect(moveSlide('# One\n\n---\n\n# Two\n\n---\n\n# Three', 2, 0)).toBe(
+      '# Three\n\n---\n\n# One\n\n---\n\n# Two',
+    );
+  });
+
+  it('refuses a move that would apply the properties of a slide to all slides', () => {
+    const markdown =
+      '---\ntheme: default\n---\n\n# One\n\n---\ntransition: fadeIn\n---\n\n# Two\n\n---\n\n# Three';
+    expect(moveSlide(markdown, 1, 0)).toBeUndefined();
+  });
+
+  it('allows a move when the document frontmatter has the same value', () => {
+    const markdown =
+      '---\ntransition: fadeIn\n---\n\n# One\n\n---\ntransition: fadeIn\n---\n\n# Two';
+    expect(moveSlide(markdown, 1, 0)).toBe('---\ntransition: fadeIn\n---\n\n# Two\n\n---\n\n# One');
+  });
+
+  it('moves the speaker notes with the slide', () => {
+    const result = moveSlide('# One\n\n<!-- notes\nSay hi\n-->\n\n---\n\n# Two', 0, 1)!;
+    expect(parse(result).map((slide) => slide.notes)).toEqual([undefined, 'Say hi']);
+  });
+
+  it('does not split on a separator in a code block', () => {
+    const markdown = '# One\n\n```yaml\n---\nkey: value\n---\n```\n\n---\n\n# Two';
+    const result = moveSlide(markdown, 0, 1)!;
+    expect(titles(result)).toEqual(['# Two', '# One']);
+    expect(result).toContain('```yaml\n---\nkey: value\n---\n```');
+  });
+
+  it('keeps the spacing at the positions', () => {
+    expect(moveSlide('# One\n\n\n---\n\n# Two\n\n---\n\n# Three', 1, 2)).toBe(
+      '# One\n\n\n---\n\n# Three\n\n---\n\n# Two',
+    );
+  });
+
+  it('keeps the CRLF line endings', () => {
+    const result = moveSlide(deck4.replace(/\n/g, '\r\n'), 1, 2)!;
+    expect(result).toContain('\r\n');
+    expect(/[^\r]\n/.test(result)).toBe(false);
+    expect(titles(result)).toEqual(['# One', '# Three', '# Two', '# Four']);
+  });
+
+  it('returns the same content when the index does not change', () => {
+    expect(moveSlide(deck4, 1, 1)).toBe(deck4);
+  });
+
+  it('returns undefined for invalid indexes or a single slide', () => {
+    expect(moveSlide(deck4, 0, 5)).toBeUndefined();
+    expect(moveSlide(deck4, -1, 0)).toBeUndefined();
+    expect(moveSlide('# One', 0, 0)).toBeUndefined();
   });
 });

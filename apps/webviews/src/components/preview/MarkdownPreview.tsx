@@ -5,12 +5,13 @@ import { EventData } from '@estruyf/vscode';
 import { SlideControls } from './SlideControls';
 import { LaserPointer } from './LaserPointer';
 import DOMPurify from 'dompurify';
-import { Config, getNextSlideIdx, getPreviousSlideIdx, getProgressBarPosition, getProgressPercentage, getSlideBackgroundStyles, getSlideClassNames, getSlideHeading, getTemplateData, getTemplateErrorMessage, getVideoAutoplay, getVisibleSlideIdx, hasSlideOverflow, isAutoFitEnabled, isSlideHidden, ProgressBarPosition, renderTemplateError, tryConvertTemplateToHtml, Slide, SlideLayout, SlideOverflow, SlideOverflowEdges, SlideOverflowResult, SlideParser, SlidePlaceholders, SlideTheme, SlideTransition, TemplateErrorOptions, WebViewMessages } from '@demotime/common';
+import { COMMAND, Config, getNextSlideIdx, getPreviousSlideIdx, getProgressBarPosition, getProgressPercentage, getSlideBackgroundStyles, getSlideClassNames, getSlideHeading, getTemplateData, getTemplateErrorMessage, getVideoAutoplay, getVisibleSlideIdx, hasSlideOverflow, isAutoFitEnabled, isSlideHidden, ProgressBarPosition, renderTemplateError, tryConvertTemplateToHtml, Slide, SlideLayout, SlideOverflow, SlideOverflowEdges, SlideOverflowResult, SlideParser, SlidePlaceholders, SlideTheme, SlideTransition, TemplateErrorOptions, WebViewMessages } from '@demotime/common';
 import { Icon } from 'vscrui';
 import { useFileContents, useCursor, useScale, useMousePosition, useTheme, useClickSteps, usePresentationMode, useSlideOverflow, useReducedMotionPreference } from '../../hooks';
 import { extractFirstH1, getSlideTitle, transformImageUrl } from '../../utils';
 import { AnimatedSVGSlide } from '../slides/AnimatedSVGSlide';
 import { SlideOverflowScanner } from './SlideOverflowScanner';
+import { SlideThumbnailsPane } from './SlideThumbnailsPane';
 import { SlideFitBadge } from './SlideFitBadge';
 import { SlideOverflowMarker } from './SlideOverflowMarker';
 import { nextClickStep, previousClickStep, resetClickSteps } from '../../webcomponents/clickSteps';
@@ -445,8 +446,43 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       slideIndex: crntSlide.index,
       slideHidden: isSlideHidden(crntSlide),
       slideLayout: crntSlide.frontmatter.layout || SlideLayout.Default,
+      slideIsFirst: crntSlide.index === 0,
+      slideIsLast: crntSlide.index === slides.length - 1,
     });
-  }, [isPresentationMode, relativePath, crntSlide]);
+  }, [isPresentationMode, relativePath, crntSlide, slides.length]);
+
+  // The slide thumbnails on the left of the preview. They are not part of presentations.
+  const [thumbnailsSetting, setThumbnailsSetting] = React.useState<boolean | undefined>();
+  React.useEffect(() => {
+    messageHandler
+      .request<boolean>(WebViewMessages.toVscode.getSetting, Config.slides.previewThumbnails)
+      .then((value) => setThumbnailsSetting(value !== false));
+
+    const listener = (message: MessageEvent<EventData<boolean>>) => {
+      if (message.data.command === WebViewMessages.toWebview.preview.updateThumbnails) {
+        setThumbnailsSetting(message.data.payload !== false);
+      }
+    };
+    Messenger.listen(listener);
+    return () => Messenger.unlisten(listener);
+  }, []);
+
+  const canShowThumbnails = isPresentationMode === false && slides.length > 1 && !!relativePath;
+  const showThumbnails = canShowThumbnails && thumbnailsSetting === true;
+
+  const moveSlide = React.useCallback(
+    (fromIndex: number, toIndex: number) =>
+      messageHandler.request<boolean>(WebViewMessages.toVscode.preview.moveSlide, {
+        path: relativePath,
+        fromIndex,
+        toIndex,
+      }),
+    [relativePath],
+  );
+
+  const toggleThumbnails = React.useCallback(() => {
+    messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.toggleSlideThumbnails);
+  }, []);
 
   // The presenter view and remote show the notes of the current slide
   React.useEffect(() => {
@@ -674,10 +710,25 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
 
   return (
     <>
+      <div className="flex w-full h-full overflow-hidden">
+      {showThumbnails && relativePath && (
+        <SlideThumbnailsPane
+          slides={slides}
+          slideOptions={slideOptions}
+          currentSlide={crntSlide?.index ?? 0}
+          relativePath={relativePath}
+          filePath={crntFilePath}
+          vsCodeTheme={vsCodeTheme as never}
+          isDarkTheme={isDarkTheme}
+          webviewUrl={webviewUrl}
+          onNavigate={navigateToSlide}
+          onMoveSlide={moveSlide}
+        />
+      )}
       <div
         key={`${crntFilePath}-${crntSlide?.index || 0}-${crntSlide?.frontmatter?.customLayout || 'standard'}`}
         ref={ref}
-        className={`slide ${theme || "default"} relative w-full h-full overflow-hidden`}
+        className={`slide ${theme || "default"} relative flex-1 min-w-0 h-full overflow-hidden`}
         data-vscode-context={vscodeContext}
         onMouseEnter={() => setShowControls(true)}
         onMouseLeave={() => {
@@ -860,6 +911,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           matter={crntSlide?.frontmatter}
           notes={crntSlide?.notes}
           clickStep={clickStep}
+          thumbnailsOpen={showThumbnails}
+          onThumbnailsToggle={canShowThumbnails ? toggleThumbnails : undefined}
         >
           {/* Mouse Position */}
           {mousePosition && showControls && cursorVisible && (
@@ -868,6 +921,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             </div>
           )}
         </SlideControls>
+      </div>
       </div>
 
       {

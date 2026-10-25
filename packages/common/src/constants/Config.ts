@@ -50,6 +50,7 @@ export const Config = {
     slideProgressBar: 'slideProgressBar',
     presentationTitle: 'presentationTitle',
     previewSync: 'slidePreviewSync',
+    previewThumbnails: 'slidePreviewThumbnails',
     reducedMotion: 'slideReducedMotion',
   },
   webcomponents: {

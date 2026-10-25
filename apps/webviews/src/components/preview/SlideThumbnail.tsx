@@ -23,7 +23,7 @@ const SLIDE_WIDTH = 960;
 const SLIDE_HEIGHT = 540;
 const noop = () => {};
 
-export const SlideThumbnail: React.FunctionComponent<ISlideThumbnailProps> = ({
+const SlideThumbnailComponent: React.FunctionComponent<ISlideThumbnailProps> = ({
   slide,
   vsCodeTheme,
   isDarkTheme,
@@ -38,13 +38,18 @@ export const SlideThumbnail: React.FunctionComponent<ISlideThumbnailProps> = ({
     slide.frontmatter,
     (path) => transformImageUrl(webviewUrl || '', path) || path,
   );
+  // A video slide would play a video in the thumbnail
+  const matter = React.useMemo(
+    () => ({ ...slide.frontmatter, video: undefined }),
+    [slide.frontmatter],
+  );
   const layoutRef = React.useRef<HTMLDivElement>(null);
   const autoFit = isAutoFitEnabled(slide.frontmatter);
   // Scales down the content of a slide with `autoFit: true`, like the preview
   useSlideOverflow(layoutRef, {
     enabled: autoFit,
     autoFit,
-    slideKey: `${slide.index}-${slide.content}`,
+    slideKey: `${slide.content}-${JSON.stringify(slide.frontmatter)}`,
   });
 
   return (
@@ -76,7 +81,7 @@ export const SlideThumbnail: React.FunctionComponent<ISlideThumbnailProps> = ({
                 <Markdown
                   filePath={filePath}
                   content={slide.content}
-                  matter={slide.frontmatter}
+                  matter={matter}
                   vsCodeTheme={vsCodeTheme}
                   isDarkTheme={isDarkTheme}
                   webviewUrl={webviewUrl}
@@ -91,3 +96,14 @@ export const SlideThumbnail: React.FunctionComponent<ISlideThumbnailProps> = ({
     </div>
   );
 };
+
+// Every save parses the file into new slide objects, so compare what a thumbnail shows
+const areEqual = (prev: ISlideThumbnailProps, next: ISlideThumbnailProps) =>
+  prev.slide.content === next.slide.content &&
+  JSON.stringify(prev.slide.frontmatter) === JSON.stringify(next.slide.frontmatter) &&
+  prev.vsCodeTheme === next.vsCodeTheme &&
+  prev.isDarkTheme === next.isDarkTheme &&
+  prev.webviewUrl === next.webviewUrl &&
+  prev.filePath === next.filePath;
+
+export const SlideThumbnail = React.memo(SlideThumbnailComponent, areEqual);

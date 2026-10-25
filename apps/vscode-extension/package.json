@@ -427,6 +427,11 @@
           "default": true,
           "markdownDescription": "Sync the slide preview with the markdown editor: moving the cursor to another slide shows that slide in the preview, `Open slide preview` opens at the slide under the cursor, and double-clicking a slide in the preview moves the cursor to its source. Never applies in presentation mode."
         },
+        "demoTime.slidePreviewThumbnails": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Show the slides of the file as thumbnails next to the slide preview when the file has more than one slide and you are not presenting. Click a thumbnail to open the slide, or drag it to change the order of the slides. The **Toggle slide thumbnails** button of the slide controls changes this setting."
+        },
         "demoTime.slideReducedMotion": {
           "type": "string",
           "enum": [
@@ -821,6 +826,22 @@
         "category": "Demo Time"
       },
       {
+        "command": "demo-time.moveSlideUp",
+        "title": "Move slide up",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.moveSlideDown",
+        "title": "Move slide down",
+        "category": "Demo Time"
+      },
+      {
+        "command": "demo-time.toggleSlideThumbnails",
+        "title": "Toggle slide thumbnails in the slide preview",
+        "category": "Demo Time",
+        "icon": "$(layout-sidebar-left)"
+      },
+      {
         "command": "demo-time.openSlidePreview",
         "title": "Open slide preview",
         "category": "Demo Time",
@@ -1046,6 +1067,16 @@
           "command": "demo-time.deleteSlide",
           "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide'",
           "group": "9_demotime_manage@3"
+        },
+        {
+          "command": "demo-time.moveSlideUp",
+          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide' && !slideIsFirst",
+          "group": "9_demotime_move@1"
+        },
+        {
+          "command": "demo-time.moveSlideDown",
+          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide' && !slideIsLast",
+          "group": "9_demotime_move@2"
         }
       ],
       "demo-time.slideLayout.submenu": [
@@ -1237,6 +1268,14 @@
         },
         {
           "command": "demo-time.deleteSlide",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.moveSlideUp",
+          "when": "false"
+        },
+        {
+          "command": "demo-time.moveSlideDown",
           "when": "false"
         },
         {

@@ -196,7 +196,7 @@ class: section-break dark
 
 The `background` property of a slide, also one it gets from the document front matter, takes precedence over a background that a class sets in your theme. Add `!important` to the background of the class to use it on those slides.
 
-Both properties also apply in the **Go to slide** overview, the [PDF export](/slides/export/) and the next slide preview of the [presenter view](/features/presenter-view/). In the document front matter, they apply to every slide in the file that doesn't set its own value, so you can give a whole deck the same background.
+Both properties also apply in the [slide thumbnails](#slide-thumbnails), the **Go to slide** overview, the [PDF export](/slides/export/) and the next slide preview of the [presenter view](/features/presenter-view/). In the document front matter, they apply to every slide in the file that doesn't set its own value, so you can give a whole deck the same background.
 
 ## Slide preview
 
@@ -217,9 +217,29 @@ Move the slide preview to an editor group next to your markdown file, so you see
 
 The sync never applies in [presentation mode](/presentation-mode/), so moving the cursor can't change slides during a talk. To turn it off, set `demoTime.slidePreviewSync` to `false`. **Reveal slide source** keeps working when the sync is off.
 
+### Slide thumbnails
+
+When you are not presenting and the file has more than one slide, the slide preview shows the slides of the file as numbered thumbnails in a pane on the left, in the order of the file. The current slide is highlighted.
+
+- **Open a slide**: Click a thumbnail. When the pane has the focus, use `Up` and `Down` to go to the previous or next slide, and `Home` and `End` to go to the first or last slide. Hidden slides are not skipped.
+- **Change the order**: Drag a thumbnail to another position, or press `Alt+Up` or `Alt+Down` to move the current slide. A line shows where the slide lands. Demo Time updates the markdown file, saves it and shows the moved slide. Save the file first when it has unsaved changes. Use **Undo** in the editor of the file to revert a move.
+- **Hidden slides** are dimmed and have an eye icon. Slides with [content that doesn't fit](#content-that-doesnt-fit) get a warning icon.
+- **Slide actions**: Right-click a thumbnail to select that slide and open the same menu as the [slide context menu](#slide-context-menu).
+
+The thumbnails are never shown in [presentation mode](/presentation-mode/). Show or hide them with the **Toggle slide thumbnails** button in the [slide controls](#view-tools), or with the `demoTime.slidePreviewThumbnails` setting.
+
+Moving a slide changes the front matter at the top of the file when the first slide is involved:
+
+- When you move the first slide away, the properties that apply to every slide, like `theme`, `transition` and `class`, stay at the top of the file. The properties that only apply to the first slide, `layout`, `customLayout`, `image`, `autoAdvanceAfter` and `hide`, move with the slide.
+- When you move a slide to the first position, its front matter moves to the top of the file, where `transition`, `class`, `background` and similar properties apply to every slide. Demo Time shows an error and doesn't move the slide when that would change the other slides.
+
+<Aside type="caution">
+An `openSlide` move with `slide: N` keeps its number when you change the order of the slides. Check these moves after you reorder a file.
+</Aside>
+
 ### Slide context menu
 
-Outside [presentation mode](/presentation-mode/), right-click the slide in the preview to change it without leaving the preview. The actions update the markdown file of the slide and save it, so the preview updates right away. Use **Undo** in the editor of the file to revert a change.
+Outside [presentation mode](/presentation-mode/), right-click the slide in the preview, or a thumbnail in the [slide thumbnails](#slide-thumbnails), to change it without leaving the preview. The actions update the markdown file of the slide and save it, so the preview updates right away. Use **Undo** in the editor of the file to revert a change.
 
 - **Show slide contents**: Opens the markdown of the slide in the editor, with the cursor on the slide. See [sync the preview with the editor](#sync-the-preview-with-the-editor).
 - **Edit speaker notes**: Opens the editor for the notes of the slide, and saves them in its `<!-- notes -->` block. See [notes in your slides](/features/using-notes/#notes-in-your-slides).
@@ -227,9 +247,10 @@ Outside [presentation mode](/presentation-mode/), right-click the slide in the p
 - **Hide slide while presenting** / **Show slide while presenting**: Adds or removes `hide: true` in the front matter of the slide. See [hiding slides](#hiding-slides).
 - **Insert slide after**: Asks for a title, and adds a slide with that heading after the slide. The preview shows the new slide and the editor opens on it, so you can write its content.
 - **Duplicate slide**: Adds a copy of the slide, with its front matter and speaker notes, after it. The preview shows the copy.
+- **Move slide up** / **Move slide down**: Moves the slide one position up or down in the file. See [slide thumbnails](#slide-thumbnails).
 - **Delete slide**: Removes the slide from the file, after you confirm it. When you delete the first slide of a file, the front matter at the top of the file stays, without the properties that only apply to the first slide, like `layout`.
 
-When an action can't change the slide without changing the other slides of the file, for instance when deleting the first slide would give the next slide other front matter, Demo Time shows an error and doesn't change the file. Make the change in the editor instead.
+When an action can't change the slide without changing the other slides of the file, for instance when deleting the first slide would give the next slide other front matter, or when moving a slide to the first position would apply its `transition` to every slide, Demo Time shows an error and doesn't change the file. Make the change in the editor instead.
 
 ## Presenting slides
 
@@ -279,6 +300,7 @@ The control bar is keyboard and screen reader friendly. Every button is reachabl
 - **Toggle presentation mode**: Toggles presentation mode, which allows you to use your clicker or keyboard to navigate through your slides. The button is highlighted while presentation mode is active.
 - **Toggle presentation view**: Toggles the presentation view, which hides VS Code UI areas (status bar, tabs, activity bar, …) for a distraction-free experience. You can also use the `setPresentationView` and `unsetPresentationView` actions, or the `Demo Time: Toggle presentation view (hides status bar, tabs, and activity bar)` command.
 - **Toggle fullscreen**: Toggles Visual Studio Code's fullscreen mode.
+- **Toggle slide thumbnails**: Shows or hides the [slide thumbnails](#slide-thumbnails) next to the slide preview. It saves the choice in the `demoTime.slidePreviewThumbnails` setting. The button is not shown in presentation mode.
 
 ### Slide navigation
 
@@ -343,7 +365,7 @@ While [presentation mode](/presentation-mode/) is on, a hidden slide is:
 
 When an `openSlide` move opens a hidden slide, the slide view continues with the next visible slide.
 
-Hidden slides are still in the **Go to slide** overview of the [slide controls](#slide-controls), dimmed and with an eye icon. Open one from there to show it during your talk, for instance to answer a question.
+Hidden slides are also dimmed in the [slide thumbnails](#slide-thumbnails). They are still in the **Go to slide** overview of the [slide controls](#slide-controls), dimmed and with an eye icon. Open one from there to show it during your talk, for instance to answer a question.
 
 Outside presentation mode, the slide preview still shows hidden slides so you can navigate to them and edit them. A hidden slide gets a dashed frame, and a **Hidden slide** bar above it.
 
@@ -360,7 +382,7 @@ Hidden slides are left out of the [PDF export](/slides/export/) unless you enabl
 A slide is 960×540 pixels. When a slide has too much content, like a long code block or one bullet too many, the part that doesn't fit is cut off. How much fits depends on the theme and the fonts, so Demo Time measures the rendered slides in the slide preview and warns you:
 
 - The slide preview shows a **Content doesn't fit the slide** badge on a slide that doesn't fit, with how much it is too tall or too wide, like **84px too tall**. A frame marks the edges of the slide, so you can see where it ends when the slide has the same background as the preview, and a striped band with a label like **↓ 84px cut off** marks every edge where content is cut off. The badge and the marks are only shown outside [presentation mode](/presentation-mode/).
-- While the preview is open, it measures every slide of the file in the background, with all its [click steps](/slides/animations/#click-steps) revealed. The slides that don't fit get a warning in the **Problems** panel, on the first line of the slide, and a warning icon in the **Go to slide** overview of the [slide controls](#slide-controls). The warnings update when you save the file.
+- While the preview is open, it measures every slide of the file in the background, with all its [click steps](/slides/animations/#click-steps) revealed. The slides that don't fit get a warning in the **Problems** panel, on the first line of the slide, and a warning icon in the [slide thumbnails](#slide-thumbnails) and the **Go to slide** overview of the [slide controls](#slide-controls). The warnings update when you save the file.
 
 Content counts as overflowing when it reaches past the edges of the slide. Elements with `position: absolute` or `position: fixed`, like decorations in a [custom layout](/slides/layouts/custom/), are left out, and content inside an element that scrolls or clips its content counts up to the edges of that element.
 
@@ -378,7 +400,7 @@ autoFit: true
 
 With `autoFit`, the content of a slide that doesn't fit is scaled down until it fits, keeping the padding of the layout, to at most 50% of its size. The text wraps at the smaller size, so a long line can take less room. Slides that fit keep their size. Outside presentation mode, a **Scaled to 85% by autoFit** badge shows how much the content of the current slide was scaled down. When the content doesn't fit at 50% either, you still get the warning, which tells you that `autoFit` is on and how much is left.
 
-`autoFit` also applies in presentation mode, the **Go to slide** overview, the [PDF export](/slides/export/) and the next slide preview of the [presenter view](/features/presenter-view/). In the document front matter, it applies to every slide in the file that doesn't set its own value.
+`autoFit` also applies in presentation mode, the [slide thumbnails](#slide-thumbnails), the **Go to slide** overview, the [PDF export](/slides/export/) and the next slide preview of the [presenter view](/features/presenter-view/). In the document front matter, it applies to every slide in the file that doesn't set its own value.
 
 <Aside type="tip">
 The quick fix of the warning (`Ctrl+.` or `Cmd+.` on the line in the editor, or the light bulb in the **Problems** panel) adds `autoFit: true` to the front matter of the slide.

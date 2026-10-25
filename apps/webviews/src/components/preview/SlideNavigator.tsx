@@ -13,6 +13,21 @@ export interface SlideOption {
   overflow?: SlideOverflow;
 }
 
+/**
+ * The warning and tooltip text of a slide in the slide overviews.
+ */
+export const getSlideOptionLabels = (option: SlideOption, slide?: Slide) => {
+  const overflowMessage = option.overflow
+    ? isAutoFitEnabled(slide?.frontmatter)
+      ? `still ${getSlideOverflowSize(option.overflow)} with autoFit`
+      : getSlideOverflowSize(option.overflow)
+    : undefined;
+  const tooltip = [option.hidden ? 'hidden' : undefined, overflowMessage]
+    .filter(Boolean)
+    .join(', ');
+  return { overflowMessage, tooltip };
+};
+
 export interface ISlideNavigatorProps {
   slides: number;
   currentSlide: number;
@@ -174,14 +189,7 @@ export const SlideNavigator: React.FunctionComponent<ISlideNavigatorProps> = ({
                 {slideOptions.map((option) => {
                   const isActive = option.index === currentSlide;
                   const slide = slideData[option.index];
-                  const overflowMessage = option.overflow
-                    ? isAutoFitEnabled(slide?.frontmatter)
-                      ? `still ${getSlideOverflowSize(option.overflow)} with autoFit`
-                      : getSlideOverflowSize(option.overflow)
-                    : undefined;
-                  const tooltip = [option.hidden ? 'hidden' : undefined, overflowMessage]
-                    .filter(Boolean)
-                    .join(', ');
+                  const { overflowMessage, tooltip } = getSlideOptionLabels(option, slide);
                   return (
                     <button
                       key={option.index}

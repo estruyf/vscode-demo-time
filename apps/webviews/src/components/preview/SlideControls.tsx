@@ -43,6 +43,14 @@ export interface ISlideControlsProps {
   matter?: SlideMetadata;
   notes?: string;
   clickStep?: number;
+  /**
+   * Whether the slide thumbnails show next to the preview
+   */
+  thumbnailsOpen?: boolean;
+  /**
+   * Toggles the slide thumbnails. Without it, the button is not shown.
+   */
+  onThumbnailsToggle?: () => void;
 }
 
 const Divider: React.FunctionComponent = () => (
@@ -78,6 +86,8 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   matter,
   notes,
   clickStep = 0,
+  thumbnailsOpen = false,
+  onThumbnailsToggle,
 }: React.PropsWithChildren<ISlideControlsProps>) => {
   const [previousEnabled, setPreviousEnabled] = React.useState(false);
   const [isPresentationMode, setIsPresentationMode] = React.useState(false);
@@ -336,6 +346,15 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
             action={togglePresentationView}
           />
           <SlideControl title="Toggle fullscreen" iconName="screen-full" action={toggleFullscreen} />
+          {onThumbnailsToggle && !isPresentationMode && (
+            <SlideControl
+              title={thumbnailsOpen ? 'Hide slide thumbnails' : 'Show slide thumbnails'}
+              iconName="layout-sidebar-left"
+              active={thumbnailsOpen}
+              ariaPressed={thumbnailsOpen}
+              action={onThumbnailsToggle}
+            />
+          )}
         </div>
 
         <Divider />

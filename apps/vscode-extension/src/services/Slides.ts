@@ -28,6 +28,7 @@ import {
   getSlidePropertyCompletions,
   insertSlide,
   isPathInWorkspace,
+  moveSlide,
   parseWinPath,
   readFile,
   sanitizeFileName,
@@ -119,6 +120,18 @@ export class Slides {
       commands.registerCommand(COMMAND.duplicateSlide, forSlide(Slides.duplicateSlide)),
     );
     subscriptions.push(commands.registerCommand(COMMAND.deleteSlide, forSlide(Slides.deleteSlide)));
+    subscriptions.push(
+      commands.registerCommand(
+        COMMAND.moveSlideUp,
+        forSlide((filePath, slideIndex) => Slides.moveSlide(filePath, slideIndex, slideIndex - 1)),
+      ),
+    );
+    subscriptions.push(
+      commands.registerCommand(
+        COMMAND.moveSlideDown,
+        forSlide((filePath, slideIndex) => Slides.moveSlide(filePath, slideIndex, slideIndex + 1)),
+      ),
+    );
 
     subscriptions.push(Slides.registerCompletionProvider());
     subscriptions.push(Slides.registerHoverProvider());
@@ -516,6 +529,43 @@ layout: ${layout.toLowerCase()}
   }
 
   /**
+   * Moves a slide to another position in its file, saves it, and shows the moved slide.
+   * @param filePath Relative file path to the slide markdown file
+   * @param fromIndex Local slide index (0-based) of the slide to move
+   * @param toIndex Local slide index (0-based) the slide gets
+   * @returns Whether the file changed
+   */
+  public static async moveSlide(
+    filePath: string,
+    fromIndex: number,
+    toIndex: number,
+  ): Promise<boolean> {
+    if (fromIndex === toIndex) {
+      return false;
+    }
+
+    const document = await workspace.openTextDocument(getAbsolutePath(parseWinPath(filePath)));
+    if (document.isDirty) {
+      Notifications.warning(`Save "${filePath}" before you change the order of its slides.`);
+      return false;
+    }
+
+    return Slides.updateSlideFile(
+      filePath,
+      (content) => {
+        const newContent = moveSlide(content, fromIndex, toIndex);
+        if (newContent === undefined) {
+          Notifications.error(
+            `Slide ${fromIndex + 1} could not be moved without changing the other slides. Move it in the editor instead.`,
+          );
+        }
+        return newContent;
+      },
+      toIndex,
+    );
+  }
+
+  /**
    * Updates a slide file with the content returned by `update`, and saves it.
    * @param showSlideIndex The slide to show in the preview once the file is saved
    * @returns Whether the file changed
@@ -585,6 +635,8 @@ layout: ${layout.toLowerCase()}
     }
     await workspace.applyEdit(edit);
     await document.save();
+    // The selection change of the edit shouldn't move the preview to another slide
+    SlidePreviewSync.acceptCursor(fileUri);
     return true;
   }
 

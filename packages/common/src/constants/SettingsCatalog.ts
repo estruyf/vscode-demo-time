@@ -424,6 +424,14 @@ export const SETTINGS_CATALOG: SettingDefinition[] = [
     control: 'boolean',
   },
   {
+    key: 'slidePreviewThumbnails',
+    label: 'Slide thumbnails',
+    description:
+      'Show the slides of the file as thumbnails next to the slide preview, to open them and drag them to change their order. Never shown in presentation mode.',
+    category: 'slides',
+    control: 'boolean',
+  },
+  {
     key: 'slideReducedMotion',
     label: 'Reduced motion',
     description:
