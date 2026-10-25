@@ -1,0 +1,470 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hubot+Sans:ital,wght@0,600;1,900&family=Mona+Sans:ital,wght@0,400..900;1,400..900&family=JetBrains+Mono:wght@400;600&display=block">
+<style>
+  :root {
+    --bg: #15181f; --card: #1d212b; --line: #2b303c; --well: #12151b;
+    --text: #fff; --body: #d3d7df; --muted: #9aa1b1; --accent: #ffd43b; --on-accent: #15181f; --ok: #7ee2a8;
+    /* VS Code Dark Modern */
+    --vs-editor: #1f1f1f; --vs-side: #181818; --vs-border: #2b2b2b; --vs-fg: #cccccc; --vs-focus: #0078d4;
+    --vs-menu: #1f1f1f; --vs-menu-border: #454545; --vs-sel: #264f78;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); }
+  body { font-family: 'Mona Sans', system-ui, sans-serif; color: var(--text); }
+  .mono { font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace; }
+  #stage { position: absolute; inset: 0; overflow: hidden; }
+  .layer { position: absolute; inset: 0; will-change: opacity, transform; }
+  em { font-style: inherit; color: var(--accent); }
+
+  .glow { position: absolute; width: 1500px; height: 1500px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 212, 59, 0.15), transparent 62%); }
+
+  /* ---------- Hook: the markdown editor ---------- */
+  #hook { background: var(--vs-editor); }
+  #editor { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 50% 50%; }
+  .ln { position: absolute; left: 0; height: 44px; width: 1920px; display: flex; align-items: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 28px; white-space: pre; color: #cccccc; }
+  .ln .no { width: 150px; text-align: right; padding-right: 40px; color: #6e7681; }
+  .ln .sel { position: absolute; left: 150px; top: 0; bottom: 0; background: var(--vs-sel); z-index: -1; }
+  .ln.sep { color: #6e7681; } .ln.h { color: #569cd6; font-weight: 600; } .ln.fm { color: #9cdcfe; }
+  .ln.li { color: #cccccc; } .ln.li b { color: #6796e6; font-weight: 400; }
+  #hookShade { position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 55% at 50% 50%, rgba(21, 24, 31, 0.92), rgba(21, 24, 31, 0.55) 70%, rgba(21, 24, 31, 0.35)); }
+  #hookText { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center; }
+  .big { font-family: 'Hubot Sans', sans-serif; font-style: italic; font-weight: 900; letter-spacing: -0.01em; line-height: 1.02; }
+  #hookText .big { font-size: 128px; }
+  #hookKey { margin-top: 34px; display: inline-flex; gap: 16px; font-size: 30px; font-weight: 700; color: var(--body); }
+  #hookKey span { padding: 8px 18px; border-radius: 12px; background: #2a2f3a; border: 1px solid #3a404d; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+  /* ---------- Brand (reveal + outro) ---------- */
+  .center { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center; display: flex; flex-direction: column; align-items: center; }
+  .brand { display: flex; align-items: center; gap: 22px; }
+  .brand img { width: 92px; height: 92px; }
+  .brand span { font-family: 'Hubot Sans', sans-serif; font-style: italic; font-weight: 900; font-size: 46px; }
+  .eyebrow { color: var(--accent); font-weight: 700; font-size: 30px; letter-spacing: 0.06em; text-transform: uppercase; }
+  #reveal .eyebrow { margin-top: 56px; }
+  #reveal .big { font-size: 112px; margin-top: 22px; }
+  #outro .big { font-size: 100px; margin-top: 50px; }
+  #outro .sub { margin-top: 34px; font-size: 36px; color: var(--body); font-weight: 500; }
+  #outro .url { margin-top: 40px; display: inline-flex; align-items: center; gap: 18px; font-size: 30px; font-weight: 600; color: var(--muted); }
+  #outro .url b { color: var(--text); }
+  .pill { font-weight: 800; font-size: 22px; letter-spacing: 0.12em; color: var(--on-accent); background: var(--accent); padding: 8px 18px; border-radius: 999px; }
+
+  /* ---------- Captions next to the window ---------- */
+  .cap { position: absolute; left: 96px; width: 530px; top: 50%; transform: translateY(-50%); }
+  .cap .eyebrow { font-size: 24px; margin-bottom: 20px; }
+  .cap .big { font-size: 58px; }
+  .cap .sub { margin-top: 30px; font-size: 26px; line-height: 1.45; color: var(--body); }
+  .kbd { font-family: 'JetBrains Mono', monospace; font-size: 22px; padding: 2px 10px; border-radius: 8px; background: #2a2f3a; border: 1px solid #3a404d; white-space: nowrap; }
+
+  /* ---------- The VS Code slide preview ---------- */
+  #win { position: absolute; left: 640px; top: 150px; width: 1180px; height: 780px; border-radius: 14px; overflow: hidden;
+    background: var(--vs-editor); border: 1px solid #3a3a3a; box-shadow: 0 40px 120px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255,255,255,0.03); transform-origin: 50% 60%; }
+  #titlebar { height: 40px; background: #181818; border-bottom: 1px solid var(--vs-border); display: flex; align-items: center; padding: 0 16px; gap: 9px; font-size: 15px; color: #9d9d9d; }
+  #titlebar i { width: 13px; height: 13px; border-radius: 50%; background: #3c3c3c; }
+  #titlebar .t { margin-left: 18px; display: flex; align-items: center; gap: 10px; }
+  #titlebar .t img { width: 18px; height: 18px; }
+  #wbody { position: absolute; top: 40px; left: 0; right: 0; bottom: 0; }
+  #pane { position: absolute; left: 0; top: 0; bottom: 0; width: 232px; background: var(--vs-side); border-right: 1px solid var(--vs-border); }
+  .item { position: absolute; left: 0; width: 232px; height: 120px; display: flex; align-items: flex-start; gap: 6px; padding: 6px 8px; }
+  .item .num { width: 20px; flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; font-size: 14px; color: var(--vs-fg); font-variant-numeric: tabular-nums; }
+  .item .num svg { width: 18px; height: 18px; }
+  .thumb { position: relative; width: 188px; height: 108px; border: 1px solid #3c3c3c; border-radius: 2px; overflow: hidden; background: var(--vs-editor); }
+  .thumb .ring { position: absolute; inset: -1px; border: 2px solid var(--vs-focus); border-radius: 2px; pointer-events: none; }
+  .thumb .sl { position: absolute; left: 0; top: 0; transform: scale(0.19583); transform-origin: 0 0; }
+  .dropline { position: absolute; left: 0; width: 232px; height: 3px; background: var(--vs-focus); z-index: 5; }
+  #ghost { position: absolute; z-index: 20; opacity: 0; pointer-events: none; box-shadow: 0 14px 34px rgba(0,0,0,0.6); }
+  #ghost .thumb { border-color: var(--vs-focus); }
+
+  #preview { position: absolute; left: 232px; right: 0; top: 0; bottom: 0; }
+  #mainSlide { position: absolute; left: 32px; top: 112px; width: 884px; height: 497px; overflow: hidden; }
+  #mainSlide .sl { position: absolute; left: 0; top: 0; transform: scale(0.92083); transform-origin: 0 0; }
+  #controls { position: absolute; left: 50%; bottom: 46px; transform: translateX(-50%); display: flex; align-items: center; gap: 18px;
+    padding: 8px 18px; border-radius: 8px; background: #252526; border: 1px solid #3c3c3c; font-size: 16px; color: var(--vs-fg); font-variant-numeric: tabular-nums; }
+  #controls .ch { opacity: 0.7; font-size: 18px; }
+
+  .toast { position: absolute; right: 26px; bottom: 30px; padding: 14px 20px; border-radius: 12px; background: var(--well); border: 1px solid var(--line);
+    font-family: 'JetBrains Mono', monospace; font-size: 19px; line-height: 1.5; color: var(--muted); box-shadow: 0 16px 40px rgba(0,0,0,0.4); opacity: 0; white-space: nowrap; }
+  .toast .ok { color: var(--ok); } .toast .y { color: var(--accent); }
+
+  /* VS Code context menu, sized up for video */
+  .menu { position: absolute; z-index: 30; background: var(--vs-menu); border: 1px solid var(--vs-menu-border); border-radius: 7px; padding: 5px 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.55); font-size: 18px; color: var(--vs-fg); opacity: 0; transform-origin: 0 0; }
+  .menu .mi { height: 34px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px 0 28px; margin: 0 5px; border-radius: 4px; white-space: nowrap; }
+  .menu .mi.on { background: var(--vs-focus); color: #fff; }
+  .menu .ms { height: 1px; background: #454545; margin: 5px 0; }
+  .menu .chev { font-size: 18px; opacity: 0.9; margin-left: 30px; }
+
+  #cursor { position: absolute; z-index: 50; width: 34px; height: 34px; left: 0; top: 0; opacity: 0; }
+  .ripple { position: absolute; z-index: 49; width: 70px; height: 70px; border-radius: 50%; border: 3px solid rgba(255, 212, 59, 0.9); opacity: 0; }
+
+  /* ---------- Slides, in the default theme's layouts ---------- */
+  .sl { width: 960px; height: 540px; background: var(--vs-editor); color: var(--vs-fg); font-family: -apple-system, 'Segoe UI', system-ui, sans-serif; font-size: 24px; overflow: hidden; }
+  .sl .in { width: 100%; height: 100%; padding: 44px 52px; display: flex; flex-direction: column; gap: 20px; }
+  .sl h1 { font-size: 46px; font-weight: 700; color: #e6e6e6; line-height: 1.15; }
+  .sl p { line-height: 1.6; opacity: 0.8; }
+  .sl ul { margin-left: 30px; list-style: disc; } .sl li { margin-bottom: 10px; line-height: 1.5; }
+  .sl.intro .in, .sl.section .in { align-items: center; justify-content: center; text-align: center; }
+  .sl.intro h1, .sl.section h1 { font-size: 68px; }
+  .sl.intro p { opacity: 0.7; } .sl.section p { opacity: 0.75; }
+  .sl .code { margin-top: 4px; border-radius: 10px; background: #11111b; padding: 18px 22px; font-family: 'JetBrains Mono', monospace; font-size: 21px; line-height: 1.75; color: #cdd6f4; }
+  .sl .code .p { color: #9399b2; } .sl .code .k { color: #89b4fa; } .sl .code .s { color: #a6e3a1; }
+  .sl .bar { position: absolute; left: 0; bottom: 0; height: 5px; background: #4daafc; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="glow" id="glow"></div>
+
+  <section class="layer" id="hook">
+    <div id="editor"></div>
+    <div id="hookShade"></div>
+    <div id="hookText">
+      <div class="big">Reordering slides<br><em>like this?</em></div>
+      <div id="hookKey"><span id="kx">⌘X</span><span id="kv">⌘V</span></div>
+    </div>
+  </section>
+
+  <section class="layer" id="reveal">
+    <div class="center">
+      <div class="brand"><img src="demotime.svg" alt=""><span>Demo Time</span></div>
+      <div class="eyebrow">New in the slide preview</div>
+      <div class="big">Slide thumbnails<br><em>+ a slide menu.</em></div>
+    </div>
+  </section>
+
+  <div class="cap layer-cap" id="capA">
+    <div class="eyebrow">Slide thumbnails</div>
+    <div class="big">Click to open.<br><em>Drag to reorder.</em></div>
+    <div class="sub">Every slide of the file, next to the preview. Or press <span class="kbd">Alt+↑</span> <span class="kbd">Alt+↓</span>.</div>
+  </div>
+  <div class="cap layer-cap" id="capB">
+    <div class="eyebrow">Slide menu</div>
+    <div class="big">Right-click<br>any slide<br><em>to change it.</em></div>
+    <div class="sub">Layout, speaker notes, hide, insert, duplicate, delete, move. Saved straight to your markdown.</div>
+  </div>
+
+  <div id="win">
+    <div id="titlebar"><i></i><i></i><i></i><span class="t"><img src="demotime.svg" alt="">slides.md · Preview</span></div>
+    <div id="wbody">
+      <div id="pane"></div>
+      <div id="preview">
+        <div id="mainSlide"></div>
+        <div id="controls"><span class="ch">‹</span><span id="counter">01 / 06</span><span class="ch">›</span></div>
+        <div class="toast" id="toast1"><span class="ok">✓</span> Moved slide 4 to 2 · <span class="y">slides.md</span> saved</div>
+        <div class="toast" id="toast2"><span class="ok">✓</span> <span class="y">layout:</span> section</div>
+        <div class="toast" id="toast3"><span class="ok">✓</span> <span class="y">hide:</span> true</div>
+      </div>
+    </div>
+    <div class="menu" id="menu"></div>
+    <div class="menu" id="submenu"></div>
+    <div id="ghost"></div>
+  </div>
+
+  <section class="layer" id="outro">
+    <div class="center">
+      <div class="brand"><img src="demotime.svg" alt=""><span>Demo Time</span></div>
+      <div class="big">Edit your slides<br><em>right in the preview.</em></div>
+      <div class="sub">Slides and live demos in VS Code</div>
+      <div class="url"><span class="pill">NEXT BETA</span><b>demotime.show</b></div>
+    </div>
+  </section>
+
+  <div class="ripple" id="ripple"></div>
+  <svg id="cursor" viewBox="0 0 24 24"><path d="M4 2.5 L4 19.5 L8.6 15.4 L11.6 22 L14.6 20.7 L11.7 14.3 L18 14.3 Z" fill="#fff" stroke="#000" stroke-width="1.4" stroke-linejoin="round"/></svg>
+</div>
+
+<script>
+// ---------- helpers ----------
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, p) => a + (b - a) * p;
+const eOut = (p) => 1 - Math.pow(1 - p, 3);
+const eInOut = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+const eBack = (p) => { const c = 1.5; return 1 + (c + 1) * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2); };
+const $ = (id) => document.getElementById(id);
+const fadeIO = (t, a, b, c, d) => Math.min(seg(t, a, b), 1 - seg(t, c, d));
+const setStyle = (el, s) => { for (const k in s) el.style[k] = s[k]; };
+
+// ---------- the deck (fictional sample) ----------
+const EYE = '<svg viewBox="0 0 16 16" fill="none" stroke="#cccccc" stroke-width="1.3" stroke-linecap="round"><path d="M2 6.2c1.6 2.3 3.6 3.5 6 3.5s4.4-1.2 6-3.5"/><path d="M8 9.7v2.1M4.6 8.8l-1.1 1.8M11.4 8.8l1.1 1.8"/></svg>';
+const SLIDES = {
+  intro: { layout: 'intro', html: '<h1>Live demos,<br>minus the panic</h1><p>A talk about scripted live coding</p>' },
+  why: { layout: 'default', html: '<h1>Why demos fail</h1><ul><li>Typos under pressure</li><li>The Wi-Fi gives up</li><li>You forget step four</li></ul>' },
+  script: { layout: 'default', html: '<h1>Script every move</h1><div class="code"><span class="p">{</span> <span class="k">"action"</span><span class="p">:</span> <span class="s">"open"</span><span class="p">,</span> <span class="k">"path"</span><span class="p">:</span> <span class="s">"src/app.ts"</span> <span class="p">}</span><br><span class="p">{</span> <span class="k">"action"</span><span class="p">:</span> <span class="s">"highlight"</span><span class="p">,</span> <span class="k">"position"</span><span class="p">:</span> <span class="s">"4:8"</span> <span class="p">}</span><br><span class="p">{</span> <span class="k">"action"</span><span class="p">:</span> <span class="s">"typeText"</span><span class="p">,</span> <span class="k">"content"</span><span class="p">:</span> <span class="s">"hello"</span> <span class="p">}</span></div>' },
+  live: { layout: 'default', html: '<h1>Let\'s code it live</h1><p>Every move you are about to see is scripted.<br>Nothing can go wrong. Probably.</p>' },
+  recap: { layout: 'default', html: '<h1>Recap</h1><ul><li>Script it</li><li>Rehearse it</li><li>Present it, calmly</li></ul>' },
+  qa: { layout: 'intro', html: '<h1>Questions?</h1><p>Slides and demos made with Demo Time</p>' },
+};
+const slideMarkup = (id, layout) => `<div class="sl ${layout}"><div class="in">${SLIDES[id].html}</div></div>`;
+
+// ---------- timeline ----------
+const T = {
+  clickThumb: 5.5, dragStart: 6.0, drop: 7.5,
+  rc1: 11.0, layoutClick: 12.5,
+  rc2: 14.0, hideClick: 14.75,
+};
+const ORDER_A = ['intro', 'why', 'script', 'live', 'recap', 'qa'];
+const ORDER_B = ['intro', 'live', 'why', 'script', 'recap', 'qa'];
+
+// Stage coordinates of the window parts
+const WIN = { x: 640, y: 150 };
+const PANE_TOP = WIN.y + 40 + 4;
+const itemY = (pos) => 4 + pos * 120; // inside pane
+const thumbCenter = (pos) => ({ x: WIN.x + 8 + 20 + 6 + 94, y: PANE_TOP + pos * 120 + 60 });
+
+// Cursor keyframes [t, x, y]
+const CUR = [
+  [4.4, 1340, 700], [5.2, thumbCenter(3).x + 8, thumbCenter(3).y + 4], [5.5, thumbCenter(3).x + 8, thumbCenter(3).y + 4],
+  [6.0, thumbCenter(3).x + 8, thumbCenter(3).y + 4], [7.25, thumbCenter(1).x + 8, thumbCenter(1).y - 36], [7.5, thumbCenter(1).x + 8, thumbCenter(1).y - 36],
+  [8.2, thumbCenter(1).x + 70, thumbCenter(1).y + 30], [10.0, thumbCenter(1).x + 70, thumbCenter(1).y + 30],
+  [10.75, 1180, 470], [11.0, 1180, 470],
+  [11.45, 1240, 470 + 5 + 34 * 2 + 11 + 17], [11.8, 1300, 470 + 5 + 34 * 2 + 11 + 17],
+  [12.25, 1560, 470 + 5 + 34 * 2 + 11 - 5 + 5 + 34 * 2 + 17], [12.5, 1560, 470 + 5 + 34 * 2 + 11 - 5 + 5 + 34 * 2 + 17],
+  [13.2, 1500, 640], [13.75, thumbCenter(4).x + 20, thumbCenter(4).y + 10], [14.0, thumbCenter(4).x + 20, thumbCenter(4).y + 10],
+  [14.5, thumbCenter(4).x + 120, 0], [14.75, thumbCenter(4).x + 120, 0], [15.6, thumbCenter(4).x + 260, 0],
+];
+// Menu layout: rows, sizes in px
+const MENU_ROWS = ['Show slide contents', 'Edit speaker notes', '-', 'Change layout', 'Hide slide while presenting', '-', 'Insert slide after', 'Duplicate slide', 'Delete slide', '-', 'Move slide up', 'Move slide down'];
+const SUB_ROWS = ['Center', 'Intro', 'Section', 'Quote', 'Image', 'Video', 'Image right', 'Image left', 'Two columns', 'Animated SVG'];
+const rowTop = (rows, i) => { let y = 5; for (let k = 0; k < i; k++) y += rows[k] === '-' ? 11 : 34; return y; };
+const menuH = (rows) => rowTop(rows, rows.length) + 5;
+
+// Menu 1 at the right-click point; menu 2 flips up as it would at the bottom of the screen
+const M1 = { x: 1180, y: 470 };
+const M2 = { x: thumbCenter(4).x + 20, y: thumbCenter(4).y + 10 - menuH(MENU_ROWS) };
+const SUB = { x: M1.x + 312, y: M1.y + rowTop(MENU_ROWS, 3) - 5 };
+// Fill in the cursor y of the second menu's Hide row
+CUR[17][2] = M2.y + rowTop(MENU_ROWS, 4) + 17; CUR[18][2] = CUR[17][2]; CUR[19][2] = CUR[17][2] + 40;
+CUR[10][2] = M1.y + rowTop(MENU_ROWS, 3) + 17; CUR[11][2] = CUR[10][2];
+CUR[12][2] = SUB.y + rowTop(SUB_ROWS, 2) + 17; CUR[13][2] = CUR[12][2];
+
+function cursorAt(t) {
+  if (t <= CUR[0][0]) return { x: CUR[0][1], y: CUR[0][2] };
+  for (let i = 0; i < CUR.length - 1; i++) {
+    const [ta, xa, ya] = CUR[i], [tb, xb, yb] = CUR[i + 1];
+    if (t <= tb) { const p = eInOut(seg(t, ta, tb)); return { x: lerp(xa, xb, p), y: lerp(ya, yb, p) }; }
+  }
+  const l = CUR[CUR.length - 1]; return { x: l[1], y: l[2] };
+}
+
+// ---------- builders ----------
+function buildMenu(el, rows, x, y, onIndex, chevIndex) {
+  el.innerHTML = rows.map((r, i) => r === '-' ? '<div class="ms"></div>' :
+    `<div class="mi${i === onIndex ? ' on' : ''}"><span>${r}</span>${i === chevIndex ? '<span class="chev">›</span>' : ''}</div>`).join('');
+  el.style.left = x - WIN.x + 'px'; el.style.top = y - WIN.y + 'px';
+}
+
+// Hook editor lines
+const MD = [
+  ['sep', '---'], ['fm', 'theme: default'], ['sep', '---'], ['', ''], ['h', '# Live demos, minus the panic'], ['', ''],
+  ['sep', '---', 'A'], ['', '', 'A'], ['h', '# Why demos fail', 'A'], ['', '', 'A'], ['li', '<b>-</b> Typos under pressure', 'A'], ['li', '<b>-</b> The Wi-Fi gives up', 'A'], ['li', '<b>-</b> You forget step four', 'A'], ['', '', 'A'],
+  ['sep', '---'], ['', ''], ['h', '# Script every move'], ['', ''], ['li', '```json'], ['li', '{ "action": "open", "path": "src/app.ts" }'], ['li', '```'], ['', ''],
+  ['sep', '---'], ['', ''], ['h', "# Let's code it live"], ['', ''], ['li', 'Every move you are about to see is scripted.'], ['', ''],
+  ['sep', '---'], ['', ''], ['h', '# Recap'],
+];
+const editor = $('editor');
+const lineEls = MD.map(([cls, txt, grp]) => {
+  const d = document.createElement('div'); d.className = 'ln ' + cls;
+  d.innerHTML = `<span class="sel"></span><span class="no"></span><span>${txt}</span>`; d.dataset.grp = grp || ''; editor.appendChild(d); return d;
+});
+const blockIdx = MD.map((m, i) => (m[2] === 'A' ? i : -1)).filter((i) => i >= 0);
+const PASTE_AFTER = 27; // the block lands below "Let's code it live"
+
+function renderHook(t) {
+  const LH = 44, top0 = 60;
+  // Order before cut, after cut, after paste
+  const rest = MD.map((_, i) => i).filter((i) => !blockIdx.includes(i));
+  const pasted = [...rest.slice(0, rest.indexOf(PASTE_AFTER) + 1), ...blockIdx, ...rest.slice(rest.indexOf(PASTE_AFTER) + 1)];
+  const scroll = 160 * eInOut(seg(t, 0.9, 1.8));
+  const pCut = eOut(seg(t, 1.0, 1.2)), pPaste = eOut(seg(t, 1.5, 1.7));
+  lineEls.forEach((el, i) => {
+    const inBlock = blockIdx.includes(i);
+    const yA = i, yCut = inBlock ? i : rest.indexOf(i), yP = pasted.indexOf(i);
+    let y = lerp(yA, yCut, pCut); y = lerp(y, yP, pPaste);
+    let op = 1;
+    if (inBlock) { op = 1 - seg(t, 1.0, 1.1) + seg(t, 1.5, 1.62); y = t < 1.5 ? yA : yP; }
+    el.style.top = top0 + y * LH - scroll + 'px'; el.style.opacity = op;
+    const lineNo = Math.round(y) + 1; el.querySelector('.no').textContent = lineNo;
+    // Selection grows over the block, then flashes on paste
+    const sel = el.querySelector('.sel');
+    if (inBlock) {
+      const k = blockIdx.indexOf(i), grow = seg(t, 0.1 + k * 0.07, 0.17 + k * 0.07);
+      const on = t < 1.0 ? grow : t >= 1.5 ? 1 - seg(t, 1.75, 2.0) : 0;
+      sel.style.width = 1300 * on + 'px'; sel.style.opacity = on > 0 ? 1 : 0;
+    } else sel.style.width = '0px';
+  });
+  editor.style.transform = `scale(${lerp(1.02, 1.08, t / 2)})`;
+  $('hook').style.opacity = 1 - seg(t, 1.85, 2.0);
+  const ht = eOut(seg(t, 0.25, 0.5));
+  $('hookText').style.opacity = ht; $('hookText').style.transform = `translateY(calc(-50% + ${(1 - ht) * 30}px))`;
+  $('kx').style.background = t >= 1.0 && t < 1.25 ? '#ffd43b' : ''; $('kx').style.color = t >= 1.0 && t < 1.25 ? '#15181f' : '';
+  $('kv').style.background = t >= 1.5 && t < 1.75 ? '#ffd43b' : ''; $('kv').style.color = t >= 1.5 && t < 1.75 ? '#15181f' : '';
+}
+
+// ---------- pane + preview ----------
+let paneKey = '', mainKey = '';
+function renderPane(t) {
+  const reordered = t >= T.drop;
+  const order = reordered ? ORDER_B : ORDER_A;
+  const liveLayout = t >= T.layoutClick + 0.1 ? 'section' : 'default';
+  const hidden = t >= T.hideClick + 0.05;
+  // Current slide
+  let current = 'intro';
+  if (t >= T.clickThumb) current = 'live';
+  if (t >= T.rc2) current = 'recap';
+
+  const key = [order.join(), liveLayout, hidden].join('|');
+  const pane = $('pane');
+  if (key !== paneKey) {
+    paneKey = key;
+    pane.innerHTML = ORDER_A.map((id) => {
+      const layout = id === 'live' ? liveLayout : SLIDES[id].layout;
+      const isHidden = id === 'recap' && hidden;
+      return `<div class="item" data-id="${id}"><div class="num"><span></span>${isHidden ? EYE : ''}</div>
+        <div class="thumb"><div style="opacity:${isHidden ? 0.4 : 1}">${slideMarkup(id, layout)}</div><div class="ring"></div></div></div>`;
+    }).join('') + '<div class="dropline" id="dropline"></div>';
+  }
+  const pReflow = eOut(seg(t, T.drop, T.drop + 0.3));
+  const dragging = t >= T.dragStart + 0.05 && t < T.drop;
+  pane.querySelectorAll('.item').forEach((el) => {
+    const id = el.dataset.id;
+    const a = ORDER_A.indexOf(id), b = ORDER_B.indexOf(id);
+    const pos = reordered ? lerp(a, b, pReflow) : a;
+    el.style.top = 4 + pos * 120 + 'px';
+    el.querySelector('.num span').textContent = (reordered ? b : a) + 1;
+    el.style.opacity = dragging && id === 'live' ? 0.4 : 1;
+    el.querySelector('.ring').style.opacity = id === current ? 1 : 0;
+  });
+
+  // Drop line from the cursor position, like handleItemDragOver
+  const dl = $('dropline');
+  if (dragging) {
+    const c = cursorAt(t), rel = c.y - PANE_TOP - 4;
+    const p = Math.floor(rel / 120), ins = rel - p * 120 < 60 ? p : p + 1;
+    const show = ins !== 3 && ins !== 4 && ins >= 0;
+    dl.style.opacity = show ? 1 : 0; dl.style.top = 4 + ins * 120 - 2 + 'px';
+  } else dl.style.opacity = 0;
+
+  // Ghost drag image
+  const g = $('ghost');
+  if (dragging) {
+    if (!g.innerHTML) g.innerHTML = `<div class="thumb">${slideMarkup('live', 'default')}</div>`;
+    const c = cursorAt(t);
+    g.style.left = c.x - WIN.x - 100 + 'px'; g.style.top = c.y - WIN.y - 58 + 'px'; g.style.opacity = 0.9;
+  } else g.style.opacity = 0;
+
+  // Main slide with a quick crossfade on change
+  const mk = current + ':' + (current === 'live' ? liveLayout : '');
+  const ms = $('mainSlide');
+  if (mk !== mainKey) {
+    mainKey = mk;
+    ms.innerHTML = slideMarkup(current, current === 'live' ? liveLayout : SLIDES[current].layout);
+  }
+  let fade = 1;
+  [T.clickThumb, T.rc2].forEach((tc) => { if (t >= tc && t < tc + 0.15) fade = Math.min(fade, seg(t, tc, tc + 0.15)); });
+  if (t >= T.layoutClick && t < T.layoutClick + 0.1) fade = 1 - seg(t, T.layoutClick, T.layoutClick + 0.1);
+  if (t >= T.layoutClick + 0.1 && t < T.layoutClick + 0.4) fade = eOut(seg(t, T.layoutClick + 0.1, T.layoutClick + 0.4));
+  ms.style.opacity = fade;
+  const sc = t >= T.layoutClick + 0.1 && t < T.layoutClick + 0.4 ? lerp(0.97, 1, fade) : 1;
+  ms.style.transform = `scale(${sc})`;
+  const pos = ORDER_A.indexOf(current), posB = ORDER_B.indexOf(current);
+  $('counter').textContent = String((reordered ? posB : pos) + 1).padStart(2, '0') + ' / 06';
+
+  // Toasts
+  [['toast1', T.drop + 0.1, 9.6], ['toast2', T.layoutClick + 0.15, 13.6], ['toast3', T.hideClick + 0.1, 15.85]].forEach(([id, a, b]) => {
+    const o = fadeIO(t, a, a + 0.2, b, b + 0.2); const el = $(id);
+    el.style.opacity = o; el.style.transform = `translateY(${(1 - eOut(seg(t, a, a + 0.25))) * 16}px)`;
+  });
+
+  // Menus
+  const menu = $('menu'), sub = $('submenu');
+  const m1 = t >= T.rc1 && t < T.layoutClick, m2 = t >= T.rc2 && t < T.hideClick;
+  if (m1) {
+    const hoverRow = t >= 11.35 ? 3 : -1;
+    buildMenu(menu, MENU_ROWS, M1.x, M1.y, hoverRow, 3);
+  } else if (m2) {
+    buildMenu(menu, MENU_ROWS, M2.x, M2.y, t >= 14.4 ? 4 : -1, 3);
+  }
+  const mOpen = m1 ? seg(t, T.rc1, T.rc1 + 0.12) : m2 ? seg(t, T.rc2, T.rc2 + 0.12) : 0;
+  menu.style.opacity = mOpen; menu.style.transform = `scale(${lerp(0.97, 1, eOut(mOpen))})`;
+  if (m2) menu.style.transformOrigin = '0 100%'; else menu.style.transformOrigin = '0 0';
+  const subOn = t >= 11.75 && t < T.layoutClick;
+  if (subOn) buildMenu(sub, SUB_ROWS, SUB.x, SUB.y, t >= 12.1 ? 2 : -1, -1);
+  sub.style.opacity = subOn ? seg(t, 11.75, 11.85) : 0;
+}
+
+// ---------- main render ----------
+function render(t) {
+  // Hook 0-2
+  renderHook(Math.min(t, 2));
+  $('hook').style.display = t < 2.05 ? '' : 'none';
+
+  // Reveal 2-4
+  const rv = $('reveal');
+  const rIn = eOut(seg(t, 2.05, 2.35)), rOut = seg(t, 3.85, 4.0);
+  rv.style.opacity = rIn * (1 - rOut); rv.style.transform = `scale(${lerp(0.96, 1, rIn) + rOut * 0.03})`;
+  rv.style.display = t >= 2 && t < 4.05 ? '' : 'none';
+
+  // Window 4-16
+  const w = $('win');
+  const wIn = eOut(seg(t, 4.0, 4.5)), wOut = eInOut(seg(t, 15.85, 16.1));
+  w.style.display = t >= 3.95 && t < 16.15 ? '' : 'none';
+  w.style.opacity = Math.min(1, wIn * 1.3) * (1 - wOut);
+  w.style.transform = `translateY(${(1 - wIn) * 140}px) scale(${lerp(0.94, 1, wIn) - wOut * 0.05})`;
+  if (t >= 3.95 && t < 16.15) renderPane(t);
+
+  // Captions
+  const a = $('capA'), b = $('capB');
+  const aO = fadeIO(t, 4.1, 4.45, 9.8, 10.0), bO = fadeIO(t, 10.0, 10.3, 15.8, 16.0);
+  a.style.opacity = aO; a.style.transform = `translateY(calc(-50% + ${(1 - eOut(seg(t, 4.1, 4.45))) * 30}px))`;
+  b.style.opacity = bO; b.style.transform = `translateY(calc(-50% + ${(1 - eOut(seg(t, 10.0, 10.3))) * 30}px))`;
+
+  // Outro 16-20
+  const o = $('outro');
+  const oIn = eOut(seg(t, 16.1, 16.5));
+  o.style.display = t >= 16 ? '' : 'none';
+  o.style.opacity = oIn; o.style.transform = `scale(${lerp(0.96, 1, oIn)})`;
+  const big = o.querySelector('.big'), subl = o.querySelector('.sub'), url = o.querySelector('.url');
+  big.style.opacity = eOut(seg(t, 16.25, 16.6)); big.style.transform = `translateY(${(1 - eOut(seg(t, 16.25, 16.6))) * 24}px)`;
+  subl.style.opacity = eOut(seg(t, 16.5, 16.8)); url.style.opacity = eOut(seg(t, 16.75, 17.05));
+  url.style.transform = `translateY(${(1 - eOut(seg(t, 16.75, 17.05))) * 16}px)`;
+
+  // Glow follows the window, centers for brand scenes
+  const g = $('glow');
+  const gx = t < 4 ? 960 : t < 16 ? lerp(960, 1230, eOut(seg(t, 4, 4.5))) - lerp(0, 270, eInOut(seg(t, 15.85, 16.3))) : 960;
+  g.style.left = gx - 750 + 'px'; g.style.top = 540 - 750 + 'px';
+  g.style.opacity = t < 2 ? 0 : seg(t, 2.0, 2.4);
+
+  // Cursor
+  const c = $('cursor'), cp = cursorAt(t);
+  const cOn = fadeIO(t, 4.45, 4.7, 15.6, 15.85);
+  c.style.opacity = cOn; c.style.transform = `translate(${cp.x - 6}px, ${cp.y - 4}px) scale(${isPressed(t) ? 0.88 : 1})`;
+  // Ripple on each click
+  const r = $('ripple');
+  let rp = -1;
+  [T.clickThumb, T.dragStart, T.drop, T.rc1, T.layoutClick, T.rc2, T.hideClick].forEach((tc) => { if (t >= tc && t < tc + 0.35) rp = seg(t, tc, tc + 0.35); });
+  if (rp >= 0) { r.style.opacity = (1 - rp) * cOn; r.style.transform = `translate(${cp.x - 35}px, ${cp.y - 35}px) scale(${lerp(0.3, 1.1, eOut(rp))})`; }
+  else r.style.opacity = 0;
+}
+function isPressed(t) {
+  if (t >= T.dragStart && t < T.drop) return true;
+  return [T.clickThumb, T.rc1, T.layoutClick, T.rc2, T.hideClick, T.drop].some((tc) => t >= tc && t < tc + 0.1);
+}
+window.render = render;
+window.ready = async () => {
+  await document.fonts.load('900 italic 80px "Hubot Sans"');
+  await document.fonts.load('700 30px "Mona Sans"');
+  await document.fonts.load('400 20px "JetBrains Mono"');
+  await document.fonts.ready;
+  await Promise.all([...document.images].map((i) => (i.complete ? 1 : new Promise((r) => (i.onload = r)))));
+  return document.fonts.check('900 italic 80px "Hubot Sans"');
+};
+render(new URLSearchParams(location.search).has('t') ? +new URLSearchParams(location.search).get('t') : 0);
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+# Regenerable check frames and intermediates (node work/render.mjs, node work/audio.mjs)
+work/stills/
+work/vchk/
+work/*.png
+work/video.mp4
+work/audio.wav

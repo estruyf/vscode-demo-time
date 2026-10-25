@@ -1,0 +1,1 @@
+Still reordering markdown slides with cut & paste between `---` lines? The Demo Time slide preview now has slide thumbnails you can drag to reorder, and a right-click menu to change the layout, hide, duplicate, insert or delete a slide. Every change is saved straight to your markdown. Coming in the next beta: https://demotime.show
