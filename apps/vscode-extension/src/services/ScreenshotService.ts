@@ -412,7 +412,7 @@ export class ScreenshotService {
       if (wsFolder) {
         const customLayoutPath = Uri.joinPath(wsFolder.uri, customLayout);
         html = await ScreenshotService.renderCustomLayout(customLayoutPath, customLayout, {
-          metadata: { ...slide.frontmatter },
+          metadata: { ...slide.frontmatter, webViewUrl: wsFolder.uri.toString() },
           content: html,
         });
       }

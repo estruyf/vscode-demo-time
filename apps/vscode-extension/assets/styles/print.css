@@ -8,6 +8,9 @@
     page-break-after: always;
     page-break-inside: avoid;
     overflow: hidden;
+    /* Keeps the slide in one piece; otherwise an element that crosses the bottom of the slide
+       before its transform (like a card centered with translateY(-50%)) gets split over pages */
+    contain: strict;
   }
 
   /* The notes are on the same page as the slide */

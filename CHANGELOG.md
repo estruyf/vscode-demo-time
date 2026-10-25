@@ -19,6 +19,7 @@
 - Fix the slide controls and the mouse cursor hiding after 5 seconds while the mouse is on the slide controls, also after clicking **Next** or **Previous**. They stay visible while the mouse is on the controls or a menu of the controls is open, and hide 5 seconds after the mouse moves off them
 - Moved the **Export slides to PDF** button from the Acts & Scenes view toolbar to its **...** menu, next to **Export play as video**
 - Fix the PDF export and slide screenshots losing all their styles when a `<style>` block on a slide contains quotes or a `>` selector, like `content: "✓"`. The fonts and images of a `demoTime.customTheme` or `customTheme` stylesheet that use a relative `url()` now load in the PDF and screenshots too
+- Fix images of a custom layout that use `{{metadata.webViewUrl}}` missing in the PDF export and slide screenshots, and an element that is centered with a `transform`, like a QR code card, being split over two pages in the PDF export
 - Fix the analytics adding the last slides of the previous scene to the slide timeline of the next scene, when the scenes use different slide files. These slides showed with a time in `ms` and the wrong slide number, also in sessions you recorded before. The analytics also show the right scene number for scenes you went back to or started from the Acts & Scenes view or with `runDemoById`
 - Fix the **No Timer** status in the analytics dashboard being unreadable in themes with a bright badge color
 

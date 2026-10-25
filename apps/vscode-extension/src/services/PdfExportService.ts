@@ -375,7 +375,10 @@ export class PdfExportService {
               customLayout,
             );
             html = await ScreenshotService.renderCustomLayout(customLayoutPath, customLayout, {
-              metadata: { ...crntSlide.frontmatter },
+              metadata: {
+                ...crntSlide.frontmatter,
+                webViewUrl: PdfExportService.workspaceFolder?.uri.toString(),
+              },
               content: html,
             });
           }
