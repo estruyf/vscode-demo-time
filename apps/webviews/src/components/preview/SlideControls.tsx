@@ -287,8 +287,8 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
       id: 'workspace',
       label: 'Workspace',
       items: [
-        { id: 'show-demos', label: 'Show demos', iconName: 'list-unordered', onSelect: focusPanel },
-        { id: 'close-sidebar', label: 'Close sidebar', iconName: 'layout-sidebar-left', onSelect: closeSidebar },
+        { id: 'show-scenes', label: 'Show scenes', iconName: 'list-unordered', onSelect: focusPanel },
+        { id: 'hide-scenes', label: 'Hide scenes', iconName: 'layout-sidebar-left', onSelect: closeSidebar },
       ],
     });
 

@@ -24,6 +24,7 @@
 - Fix images of a custom layout that use `{{metadata.webViewUrl}}` missing in the PDF export and slide screenshots, and an element that is centered with a `transform`, like a QR code card, being split over two pages in the PDF export
 - Fix the analytics adding the last slides of the previous scene to the slide timeline of the next scene, when the scenes use different slide files. These slides showed with a time in `ms` and the wrong slide number, also in sessions you recorded before. The analytics also show the right scene number for scenes you went back to or started from the Acts & Scenes view or with `runDemoById`
 - Fix the **No Timer** status in the analytics dashboard being unreadable in themes with a bright badge color
+- Renamed the **Show demos** and **Close sidebar** actions in the **More actions** menu of the slide controls to **Show scenes** and **Hide scenes**
 
 ## [2.4.0] - 2026-10-09
 
