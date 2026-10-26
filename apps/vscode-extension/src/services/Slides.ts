@@ -688,6 +688,7 @@ layout: ${layout.toLowerCase()}
       getRelPath(parseWinPath(path)),
       undefined,
       slideIndex !== undefined ? slideIndex + 1 : undefined,
+      { beside: true },
     );
   }
 

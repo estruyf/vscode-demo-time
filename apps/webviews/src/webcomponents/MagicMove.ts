@@ -25,6 +25,10 @@ class MagicMoveWebComponent extends HTMLElement {
   private steps: KeyedTokensInfo[] = [];
   private crntClick = 0;
   private crntIndex: number | undefined;
+  /**
+   * Increases on every step change, so an earlier animation that ends doesn't end the current one
+   */
+  private animation = 0;
 
   connectedCallback() {
     this.style.display = 'block';
@@ -67,6 +71,7 @@ class MagicMoveWebComponent extends HTMLElement {
     this.renderer = undefined;
     this.crntIndex = undefined;
     this.removeAttribute('data-live');
+    this.removeAttribute('data-animating');
 
     this.steps = this.getSteps();
     const pre = this.querySelector('pre');
@@ -146,10 +151,18 @@ class MagicMoveWebComponent extends HTMLElement {
       renderer.options.duration > 0 &&
       !getReducedMotion();
 
+    const animation = ++this.animation;
     if (animate) {
       renderer.options.globalScale = this.getScale();
-      void renderer.render(step);
+      // The moving tokens and the container size can overflow the `pre` while they animate
+      this.setAttribute('data-animating', '');
+      void renderer.render(step).then(() => {
+        if (animation === this.animation) {
+          this.removeAttribute('data-animating');
+        }
+      });
     } else {
+      this.removeAttribute('data-animating');
       renderer.replace(step);
     }
   }

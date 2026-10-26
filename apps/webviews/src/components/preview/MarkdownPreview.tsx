@@ -73,7 +73,28 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const offsetTop = showHiddenMarker ? HIDDEN_BAR_HEIGHT : 0;
   const { scale } = useScale(ref, slideRef, offsetTop);
   const { mousePosition, handleMouseMove, handleMouseLeave } = useMousePosition(slideRef, scale, resetCursorTimeout);
-  const clickStep = useClickSteps();
+  // Outside presentation mode, the arrow and page keys do the same as the next and previous buttons
+  // of the slide controls once the slide has no click steps left
+  const clickStepsNavigation = React.useMemo(() => ({
+    next: () => {
+      messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.start);
+    },
+    previous: () => {
+      const hasPreviousSlide = !!crntSlide && getPreviousSlideIdx(slides, crntSlide.index, !!isPresentationMode) !== undefined;
+      if (hasPreviousSlide) {
+        messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.previous);
+        return;
+      }
+
+      // Going back to the previous scene, like the `left` keybinding in presentation mode
+      messageHandler.request<boolean>(WebViewMessages.toVscode.getPreviousEnabled).then((previousEnabled) => {
+        if (previousEnabled) {
+          messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.previous);
+        }
+      }).catch(() => undefined);
+    },
+  }), [crntSlide, slides, isPresentationMode]);
+  const clickStep = useClickSteps(clickStepsNavigation);
   const autoFit = isAutoFitEnabled(crntSlide?.frontmatter);
   // Outside presentation mode, a badge warns about content that doesn't fit on the slide
   const showOverflowWarning = isPresentationMode === false;

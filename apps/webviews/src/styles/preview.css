@@ -201,6 +201,11 @@ dt-magic-move[data-live] pre > code:not(.dt-magic-move__code) {
   display: none !important;
 }
 
+/* The renderer sets the size of the code and moves the tokens, which shows scrollbars meanwhile */
+dt-magic-move[data-animating] pre {
+  overflow: hidden !important;
+}
+
 .dt-magic-move__code {
   display: block;
   /* The same space as the border and padding of the lines of other code blocks */

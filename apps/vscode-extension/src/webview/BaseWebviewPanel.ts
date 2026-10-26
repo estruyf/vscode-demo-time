@@ -15,9 +15,9 @@ export class BaseWebview {
     return !this.isDisposed;
   }
 
-  protected static reveal(preserveFocus: boolean = false) {
+  protected static reveal(preserveFocus: boolean = false, viewColumn?: ViewColumn) {
     if (this.webview) {
-      this.webview.reveal(undefined, preserveFocus);
+      this.webview.reveal(viewColumn, preserveFocus);
     }
   }
 
@@ -45,7 +45,9 @@ export class BaseWebview {
     return [];
   }
 
-  protected static async create() {
+  protected static async create(
+    showOptions: ViewColumn | { viewColumn: ViewColumn; preserveFocus?: boolean } = ViewColumn.One,
+  ) {
     if (!this.id) {
       Notifications.error('Webview ID is not set. Cannot create webview panel.');
       return;
@@ -57,7 +59,7 @@ export class BaseWebview {
     this.webview = window.createWebviewPanel(
       `demoTime:${this.id}`,
       this.title || Config.title,
-      ViewColumn.One,
+      showOptions,
       {
         enableScripts: true,
         retainContextWhenHidden: true,

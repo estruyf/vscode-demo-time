@@ -29,6 +29,34 @@ const SLIDE_WIDTH = 960;
 const SCROLL_EDGE = 48;
 const MAX_SCROLL_STEP = 24;
 const DRAG_TYPE = 'application/x-demotime-slide';
+// The width of the pane, changed by dragging its right edge
+const WIDTH_KEY = 'slideThumbnailsWidth';
+const MIN_WIDTH = 120;
+const MAX_WIDTH = 640;
+const RESIZE_STEP = 16;
+
+const clampWidth = (width: number) => Math.round(Math.min(Math.max(width, MIN_WIDTH), MAX_WIDTH));
+
+const getStoredWidth = (): number | undefined => {
+  try {
+    const stored = Number(localStorage.getItem(WIDTH_KEY));
+    return stored > 0 ? clampWidth(stored) : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+const storeWidth = (width: number | undefined) => {
+  try {
+    if (width === undefined) {
+      localStorage.removeItem(WIDTH_KEY);
+    } else {
+      localStorage.setItem(WIDTH_KEY, String(width));
+    }
+  } catch {
+    // The width is only kept for this session
+  }
+};
 
 interface ILazySlideThumbnailProps {
   slide: Slide;
@@ -272,6 +300,10 @@ export const SlideThumbnailsPane: React.FunctionComponent<ISlideThumbnailsPanePr
   onMoveSlide,
 }) => {
   const listRef = React.useRef<HTMLDivElement>(null);
+  const paneRef = React.useRef<HTMLDivElement>(null);
+  // Without a width of its own, the pane follows the width of the preview
+  const [width, setWidth] = React.useState<number | undefined>(getStoredWidth);
+  const [isResizing, setIsResizing] = React.useState(false);
   const [pendingMove, setPendingMove] = React.useState<{ from: number; to: number } | null>(null);
   const [draggingIndex, setDraggingIndex] = React.useState<number | null>(null);
   const [insertionIndex, setInsertionIndex] = React.useState<number | null>(null);
@@ -433,6 +465,56 @@ export const SlideThumbnailsPane: React.FunctionComponent<ISlideThumbnailsPanePr
     }
   };
 
+  const handleResizeStart = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.button !== 0 || !paneRef.current) {
+      return;
+    }
+    e.preventDefault();
+    e.currentTarget.setPointerCapture(e.pointerId);
+    const startX = e.clientX;
+    const startWidth = paneRef.current.getBoundingClientRect().width;
+    const handle = e.currentTarget;
+    setIsResizing(true);
+
+    const onMove = (event: PointerEvent) => {
+      setWidth(clampWidth(startWidth + event.clientX - startX));
+    };
+    const onEnd = (event: PointerEvent) => {
+      handle.releasePointerCapture(event.pointerId);
+      handle.removeEventListener('pointermove', onMove);
+      handle.removeEventListener('pointerup', onEnd);
+      handle.removeEventListener('pointercancel', onEnd);
+      setIsResizing(false);
+      setWidth((value) => {
+        storeWidth(value);
+        return value;
+      });
+    };
+
+    handle.addEventListener('pointermove', onMove);
+    handle.addEventListener('pointerup', onEnd);
+    handle.addEventListener('pointercancel', onEnd);
+  };
+
+  const handleResizeKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
+      return;
+    }
+    // Don't move to another slide
+    e.preventDefault();
+    e.stopPropagation();
+    const crntWidth = width ?? paneRef.current?.getBoundingClientRect().width ?? MIN_WIDTH;
+    const next = clampWidth(crntWidth + (e.key === 'ArrowRight' ? RESIZE_STEP : -RESIZE_STEP));
+    setWidth(next);
+    storeWidth(next);
+  };
+
+  // A double-click on the edge goes back to the default width
+  const resetWidth = () => {
+    setWidth(undefined);
+    storeWidth(undefined);
+  };
+
   // A drop next to the slide itself doesn't change the order
   const lineIndex =
     draggingIndex !== null &&
@@ -443,52 +525,77 @@ export const SlideThumbnailsPane: React.FunctionComponent<ISlideThumbnailsPanePr
       : null;
 
   return (
-    <aside
-      aria-label="Slides"
-      className="shrink-0 h-full overflow-y-auto w-[clamp(140px,18vw,220px)]"
-      style={{
-        backgroundColor: 'var(--vscode-sideBar-background, var(--vscode-editor-background))',
-        borderRight: '1px solid var(--vscode-sideBar-border, var(--vscode-widget-border))',
-      }}
-      onDragOver={handleAutoScroll}
+    <div
+      ref={paneRef}
+      data-slide-thumbnails
+      className={`relative shrink-0 h-full max-w-[50vw] ${
+        width === undefined ? 'w-[clamp(140px,18vw,220px)]' : ''
+      } ${isResizing ? 'select-none' : ''}`}
+      style={width === undefined ? undefined : { width }}
     >
-      <div
-        ref={listRef}
-        role="listbox"
-        aria-label="Slide thumbnails"
-        tabIndex={0}
-        aria-activedescendant={`slide-thumb-${currentSlide}`}
-        className="min-h-full py-1 focus-visible:outline-none"
-        onKeyDown={handleKeyDown}
-        onDragOver={handleListDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
+      <aside
+        aria-label="Slides"
+        className="h-full w-full overflow-y-auto"
+        style={{
+          backgroundColor: 'var(--vscode-sideBar-background, var(--vscode-editor-background))',
+          borderRight: '1px solid var(--vscode-sideBar-border, var(--vscode-widget-border))',
+        }}
+        onDragOver={handleAutoScroll}
       >
-        {displayed.map((index, position) => (
-          <SlideThumbnailsPaneItem
-            key={keys[index]}
-            slide={slides[index]}
-            option={slideOptions[index] ?? { index, title: `Slide ${index + 1}` }}
-            position={position}
-            index={index}
-            total={total}
-            isActive={pendingMove ? index === pendingMove.from : index === currentSlide}
-            isDragging={draggingIndex === index}
-            isBusy={isBusy}
-            showLineBefore={lineIndex === position}
-            showLineAfter={lineIndex === total && position === total - 1}
-            relativePath={relativePath}
-            filePath={filePath}
-            vsCodeTheme={vsCodeTheme}
-            isDarkTheme={isDarkTheme}
-            webviewUrl={webviewUrl}
-            onSelect={onNavigate}
-            onDragStart={setDraggingIndex}
-            onDragEnd={resetDrag}
-            onDragOver={handleItemDragOver}
-          />
-        ))}
-      </div>
-    </aside>
+        <div
+          ref={listRef}
+          role="listbox"
+          aria-label="Slide thumbnails"
+          tabIndex={0}
+          aria-activedescendant={`slide-thumb-${currentSlide}`}
+          className="min-h-full py-1 focus-visible:outline-none"
+          onKeyDown={handleKeyDown}
+          onDragOver={handleListDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
+          {displayed.map((index, position) => (
+            <SlideThumbnailsPaneItem
+              key={keys[index]}
+              slide={slides[index]}
+              option={slideOptions[index] ?? { index, title: `Slide ${index + 1}` }}
+              position={position}
+              index={index}
+              total={total}
+              isActive={pendingMove ? index === pendingMove.from : index === currentSlide}
+              isDragging={draggingIndex === index}
+              isBusy={isBusy}
+              showLineBefore={lineIndex === position}
+              showLineAfter={lineIndex === total && position === total - 1}
+              relativePath={relativePath}
+              filePath={filePath}
+              vsCodeTheme={vsCodeTheme}
+              isDarkTheme={isDarkTheme}
+              webviewUrl={webviewUrl}
+              onSelect={onNavigate}
+              onDragStart={setDraggingIndex}
+              onDragEnd={resetDrag}
+              onDragOver={handleItemDragOver}
+            />
+          ))}
+        </div>
+      </aside>
+      <div
+        role="separator"
+        aria-label="Resize slide thumbnails"
+        aria-orientation="vertical"
+        aria-valuemin={MIN_WIDTH}
+        aria-valuemax={MAX_WIDTH}
+        aria-valuenow={width}
+        title="Drag to resize, double-click to reset"
+        tabIndex={0}
+        className={`absolute top-0 -right-0.5 z-20 w-1 h-full cursor-col-resize transition-colors hover:bg-(--vscode-focusBorder) focus-visible:outline-none focus-visible:bg-(--vscode-focusBorder) ${
+          isResizing ? 'bg-(--vscode-focusBorder)' : ''
+        }`}
+        onPointerDown={handleResizeStart}
+        onKeyDown={handleResizeKeyDown}
+        onDoubleClick={resetWidth}
+      />
+    </div>
   );
 };

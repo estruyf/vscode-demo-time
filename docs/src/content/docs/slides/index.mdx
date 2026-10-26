@@ -1,7 +1,7 @@
 ---
 title: Present your slides
 description: From Markdown to slides - present your slides with Demo Time
-lastmod: 2026-10-25T00:00:00.000Z
+lastmod: 2026-10-26T00:00:00.000Z
 ---
 
 import { Code, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
@@ -200,7 +200,7 @@ Both properties also apply in the [slide thumbnails](#slide-thumbnails), the **G
 
 ## Slide preview
 
-When you create a slide, you can preview it by running the `Demo Time: Open slide preview` command or by clicking on the open preview (eye) action from the editor title bar.
+When you create a slide, you can preview it by running the `Demo Time: Open slide preview` command or by clicking on the open preview (eye) action from the editor title bar. The preview opens next to the markdown file and the focus stays in the editor, so you see your changes while you type. When the preview is already open in the same editor group as the markdown file, it moves next to it.
 
 <Image class="mx-auto" src={slidePreviewImg} alt="Slide preview action" width="400" />
 
@@ -225,6 +225,7 @@ When you are not presenting and the file has more than one slide, the slide prev
 - **Change the order**: Drag a thumbnail to another position, or press `Alt+Up` or `Alt+Down` to move the current slide. A line shows where the slide lands. Demo Time updates the markdown file, saves it and shows the moved slide. Save the file first when it has unsaved changes. Use **Undo** in the editor of the file to revert a move.
 - **Hidden slides** are dimmed and have an eye icon. Slides with [content that doesn't fit](#content-that-doesnt-fit) get a warning icon.
 - **Slide actions**: Right-click a thumbnail to select that slide and open the same menu as the [slide context menu](#slide-context-menu).
+- **Resize the pane**: Drag the right edge of the pane to change its width, or focus the edge with `Tab` and use `Left` and `Right`. Double-click the edge to go back to the default width. The preview remembers the width.
 
 The thumbnails are never shown in [presentation mode](/presentation-mode/). Show or hide them with the **Toggle slide thumbnails** button in the [slide controls](#view-tools), or with the `demoTime.slidePreviewThumbnails` setting.
 
@@ -307,6 +308,8 @@ The control bar is keyboard and screen reader friendly. Every button is reachabl
 - **Previous**: Triggers the previous move (only if the `demo-time.previousEnabled` setting is enabled or when using grouped slides).
 - **Slide counter**: Shows the current slide and total (for example `01 / 05`). When slide thumbnails are available, selecting it opens the **Go to slide** overview so you can jump straight to any slide. [Hidden slides](#hiding-slides) are dimmed in the overview, but you can still open them. Slides with [content that doesn't fit](#content-that-doesnt-fit) get a warning icon.
 - **Next**: Triggers the next move.
+
+When the slide preview has focus, the right arrow key and `PageDown` do the same as **Next**, and the left arrow key and `PageUp` the same as **Previous**, also outside presentation mode.
 
 ### Slide tools
 

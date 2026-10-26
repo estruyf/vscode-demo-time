@@ -1,7 +1,7 @@
 ---
 title: Animations
 description: Learn how to use animation components in your slides.
-lastmod: 2026-10-25T00:00:00.000Z
+lastmod: 2026-10-26T00:00:00.000Z
 ---
 
 import { Code, Aside } from '@astrojs/starlight/components';
@@ -23,7 +23,7 @@ Every "next" input reveals the next click step:
 Once all click steps are revealed, the next input moves to the next slide. The left arrow key or `PageUp` hides the last revealed step again, and when you go back to a previous slide, it shows with all its steps revealed.
 
 <Aside type="note">
-In [presentation mode](/presentation-mode/), the keys use the `Demo Time: Start` and `Demo Time: Previous` keybindings, so they work wherever the focus is. Outside presentation mode, the keys only step through the slide when the preview has focus.
+In [presentation mode](/presentation-mode/), the keys use the `Demo Time: Start` and `Demo Time: Previous` keybindings, so they work wherever the focus is. Outside presentation mode, the keys work when the slide preview has focus, and do the same as the **Next** and **Previous** buttons of the slide controls: after the last click step, the right arrow key moves to the next slide, and after the last slide to the next scene.
 </Aside>
 
 ## Show Content

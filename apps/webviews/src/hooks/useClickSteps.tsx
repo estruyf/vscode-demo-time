@@ -9,12 +9,23 @@ const PREVIOUS_KEYS = ['ArrowLeft', 'PageUp'];
 
 // Clicks on these elements (like the slide controls) don't count as a click step
 const IGNORED_CLICK_TARGETS =
-  'a, button, input, select, textarea, label, summary, video, audio, [role="button"], [contenteditable], [data-slide-controls]';
+  'a, button, input, select, textarea, label, summary, video, audio, [role="button"], [contenteditable], [data-slide-controls], [data-slide-thumbnails]';
 // Keys typed in these elements don't count as a click step
 const IGNORED_KEY_TARGETS = 'input, select, textarea, [contenteditable]';
 
 const hasTarget = (event: Event, selector: string) =>
   event.composedPath().some((target) => target instanceof Element && target.matches(selector));
+
+export interface ClickStepsNavigation {
+  /**
+   * Called when a next key has no click step left to reveal
+   */
+  next: () => void;
+  /**
+   * Called when a previous key has no click step to go back to
+   */
+  previous: () => void;
+}
 
 /**
  * Connects the inputs of the slide preview to the shared click step counter.
@@ -22,13 +33,16 @@ const hasTarget = (event: Event, selector: string) =>
  * - `nextStep`/`previousStep` messages from the extension (keybindings, remote, auto-advance, ...)
  * - Mouse clicks on the slide
  * - Arrow and page keys when presentation mode is off (in presentation mode, the extension
- *   keybindings handle these keys and send the messages)
+ *   keybindings handle these keys and send the messages). Without a click step left, the keys
+ *   call `navigation`, so they move through the slides like in presentation mode.
  *
  * @returns The current click step.
  */
-export const useClickSteps = () => {
+export const useClickSteps = (navigation?: ClickStepsNavigation) => {
   const [clickStep, setClickStep] = React.useState(0);
   const isPresentationModeRef = React.useRef(false);
+  const navigationRef = React.useRef(navigation);
+  navigationRef.current = navigation;
 
   React.useEffect(() => subscribeClickSteps(setClickStep), []);
 
@@ -67,16 +81,28 @@ export const useClickSteps = () => {
         return;
       }
 
-      let handled = false;
-      if (NEXT_KEYS.includes(event.key)) {
-        handled = nextClickStep();
-      } else if (PREVIOUS_KEYS.includes(event.key)) {
-        handled = previousClickStep();
+      const isNext = NEXT_KEYS.includes(event.key);
+      if (!isNext && !PREVIOUS_KEYS.includes(event.key)) {
+        return;
       }
 
-      if (handled) {
+      if (isNext ? nextClickStep() : previousClickStep()) {
         event.preventDefault();
+        return;
       }
+
+      // Move to the next or previous slide, unless a listener after this one handles the key (like
+      // a paused animated SVG slide)
+      setTimeout(() => {
+        const navigation = navigationRef.current;
+        if (!event.defaultPrevented && navigation) {
+          if (isNext) {
+            navigation.next();
+          } else {
+            navigation.previous();
+          }
+        }
+      });
     };
 
     const onClick = (event: MouseEvent) => {

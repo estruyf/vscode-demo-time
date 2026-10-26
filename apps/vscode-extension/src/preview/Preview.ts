@@ -1,4 +1,12 @@
-import { ConfigurationTarget, Uri, window, commands, workspace, FileSystemWatcher } from 'vscode';
+import {
+  ConfigurationTarget,
+  Uri,
+  window,
+  commands,
+  workspace,
+  FileSystemWatcher,
+  ViewColumn,
+} from 'vscode';
 import { Extension } from '../services/Extension';
 import { ContextKeys } from '../constants';
 import {
@@ -212,7 +220,17 @@ export class Preview extends BaseWebview {
     return Preview.hasPreviousSlide;
   }
 
-  public static async show(fileUri: string, css?: string, slide?: number) {
+  /**
+   * @param options.beside Opens the preview next to the active editor and keeps the focus there,
+   * so you see the slides while you edit them. A preview that is already open in another editor
+   * group stays there.
+   */
+  public static async show(
+    fileUri: string,
+    css?: string,
+    slide?: number,
+    options?: { beside?: boolean },
+  ) {
     if (Preview.crntFile !== fileUri) {
       Preview.currentSlideIndex = 0;
     }
@@ -238,10 +256,12 @@ export class Preview extends BaseWebview {
           Preview.postMessage(WebViewMessages.toWebview.updateStyles, undefined);
         }
 
-        Preview.reveal();
+        Preview.revealForShow(options?.beside);
       }
     } else {
-      await Preview.create();
+      await Preview.create(
+        options?.beside ? { viewColumn: ViewColumn.Beside, preserveFocus: true } : undefined,
+      );
       // After creating, if fileUri is available, trigger update
       if (fileUri && Preview.webview?.webview) {
         // Use fileUri from argument
@@ -249,6 +269,18 @@ export class Preview extends BaseWebview {
         Preview.triggerUpdate(fileWebviewPath, slide); // Convert string to Uri
       }
     }
+  }
+
+  private static revealForShow(beside?: boolean) {
+    if (!beside) {
+      Preview.reveal();
+      return;
+    }
+
+    // Move the preview out of the group of the active editor, so it doesn't cover the editor
+    const activeColumn = window.activeTextEditor?.viewColumn;
+    const isInActiveGroup = !!activeColumn && Preview.webview?.viewColumn === activeColumn;
+    Preview.reveal(true, isInActiveGroup ? ViewColumn.Beside : undefined);
   }
 
   public static async showQr({
