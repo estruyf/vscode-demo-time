@@ -19,6 +19,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "rehype-pretty-code": "^0.14.1",
+    "shiki-magic-move": "~1.3.0",
     "tailwind-merge": "^3.3.1",
     "vscrui": "^0.2.2"
   },

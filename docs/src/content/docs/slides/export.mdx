@@ -1,7 +1,7 @@
 ---
 title: Exporting your slides
 description: Export your slides to PDF
-lastmod: 2026-10-23T00:00:00.000Z
+lastmod: 2026-10-25T00:00:00.000Z
 ---
 
 import { Code, Aside } from '@astrojs/starlight/components';
@@ -32,7 +32,7 @@ The export command will generate a PDF file in the root of your project with the
 
 Each slide is exported in its final state: all `dt-list` items and `dt-show` content are visible, and `dt-hide` content is hidden. A [`dt-action`](/slides/components/#action) shows as a static button or link.
 
-[Code blocks](/slides/code-blocks/) look the same as in the slide preview. A code block with [line steps](/slides/code-blocks/#step-through-lines) shows its last step, and a code block with a [`file` option](/slides/code-blocks/#code-from-workspace-files) shows the code of the file at the time of the export.
+[Code blocks](/slides/code-blocks/) look the same as in the slide preview. A code block with [line steps](/slides/code-blocks/#step-through-lines) and a [`magic-move` block](/slides/code-blocks/#animate-code-changes) show their last step, and a code block with a [`file` option](/slides/code-blocks/#code-from-workspace-files) shows the code of the file at the time of the export.
 
 [Hidden slides](/slides/#hiding-slides) (`hide: true`) are left out of the export. To include them, enable the `demoTime.pdfExport.includeHiddenSlides` setting.
 

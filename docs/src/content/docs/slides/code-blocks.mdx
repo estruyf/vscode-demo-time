@@ -1,7 +1,7 @@
 ---
 title: Code blocks
-description: Show code on your slides with syntax highlighting, line highlights, titles, line numbers, click steps and code from your workspace files.
-lastmod: 2026-10-23T00:00:00.000Z
+description: Show code on your slides with syntax highlighting, line highlights, titles, line numbers, click steps, animated code changes and code from your workspace files.
+lastmod: 2026-10-25T00:00:00.000Z
 ---
 
 import { Aside } from '@astrojs/starlight/components';
@@ -91,6 +91,57 @@ Use `clicks` to move to the second range on a later click, like the `clicks` att
 ````
 
 The PDF export and the slide thumbnails show the last step.
+
+## Animate code changes
+
+To show how code changes, put a code block for every step in a ` ````md magic-move ` block. Every click moves to the next code block: the code that stays moves to its new place, new code fades in, and removed code fades out. The audience sees what changed, instead of a new code block.
+
+`````markdown title="Three steps"
+````md magic-move
+```ts
+const add = (a, b) => a + b;
+```
+
+```ts
+const add = (a: number, b: number): number => a + b;
+```
+
+```ts
+/** Adds two numbers */
+export const add = (a: number, b: number): number => {
+  return a + b;
+};
+```
+````
+`````
+
+The outer block needs one backtick more than the code blocks inside it. Each code block inside it needs a language for the colors, and the steps can use different languages. Text between the code blocks is ignored.
+
+The steps are [click steps](/slides/animations/#click-steps), so they work with the arrow keys, presenter clickers, the **Next** button, the remote control and auto-advance. Going back moves the code back one step.
+
+Add the options to the ` ````md magic-move ` line:
+
+| Option            | Description                                                                         |
+| ----------------- | ----------------------------------------------------------------------------------- |
+| `title="app.ts"`  | Shows a title above the code, like other code blocks                                |
+| `caption="..."`   | Shows a caption below the code                                                      |
+| `showLineNumbers` | Shows the line numbers                                                              |
+| `clicks=2`        | Moves to the second step on a later click, like the `clicks` attribute of `dt-list` |
+| `duration=500`    | The duration of the animation in milliseconds. The default is `800`                 |
+
+`````markdown
+````md magic-move title="src/math.ts" showLineNumbers duration=500
+```ts
+const total = items.length;
+```
+
+```ts
+const total = items.filter((item) => item.done).length;
+```
+````
+`````
+
+The options of the code blocks inside, like line highlights (`{1-2}`) and `file`, are not used. The PDF export and the slide thumbnails show the last step. With [reduced motion](/slides/transitions/#reduced-motion), the code changes without an animation.
 
 ## Code from workspace files
 
