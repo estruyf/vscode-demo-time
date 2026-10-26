@@ -15,6 +15,11 @@ export interface ISlideNotesPaneProps {
    * The 0-based index of the slide in its file
    */
   slideIndex: number;
+  /**
+   * The 1-based number of the slide in the preview, which differs from its index in the file
+   * for a slide of a file that the file includes with `src`
+   */
+  slideNumber?: number;
 }
 
 interface IPendingNotes {
@@ -66,6 +71,7 @@ export const SlideNotesPane: React.FunctionComponent<ISlideNotesPaneProps> = ({
   notes,
   path,
   slideIndex,
+  slideNumber,
 }) => {
   const paneRef = React.useRef<HTMLDivElement>(null);
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
@@ -199,7 +205,7 @@ export const SlideNotesPane: React.FunctionComponent<ISlideNotesPaneProps> = ({
         onBlur={onBlur}
         onKeyDown={onKeyDown}
         placeholder="Click to add speaker notes. Markdown is supported."
-        aria-label={`Speaker notes of slide ${slideIndex + 1}`}
+        aria-label={`Speaker notes of slide ${slideNumber ?? slideIndex + 1}`}
         spellCheck
         className="block w-full h-full resize-none px-4 py-3 text-sm leading-relaxed focus:outline-none placeholder:text-(--vscode-input-placeholderForeground)"
         style={{

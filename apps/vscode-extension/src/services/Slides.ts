@@ -36,6 +36,7 @@ import {
   setSlideHidden,
   setSlideNotes,
   setSlideProperty,
+  sortFiles,
   upperCaseFirstLetter,
   writeFile,
 } from '../utils';
@@ -295,7 +296,10 @@ layout: ${layout.toLowerCase()}
     let isNumbered = false;
     let match: { actTitle?: string; sceneTitle?: string; isScene: boolean } | undefined;
 
-    for (const demoFile of Object.values(demoFiles || {})) {
+    // The slides are numbered in the order of the act files, like the Acts & Scenes view shows them
+    const files = demoFiles || {};
+    for (const actPath of sortFiles(files)) {
+      const demoFile = files[actPath];
       const demos = getDemosFromConfig(demoFile as any);
       for (const demo of demos) {
         for (const step of demo.steps) {

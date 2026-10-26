@@ -235,7 +235,7 @@ When you are not presenting and the file has more than one slide, the slide prev
 
 - **Open a slide**: Click a thumbnail. When the pane has the focus, use `Up` and `Down` to go to the previous or next slide, and `Home` and `End` to go to the first or last slide. Hidden slides are not skipped.
 - **Change the order**: Drag a thumbnail to another position, or press `Alt+Up` or `Alt+Down` to move the current slide. A line shows where the slide lands. Demo Time updates the markdown file, saves it and shows the moved slide. Save the file first when it has unsaved changes. Use **Undo** in the editor of the file to revert a move.
-- **Hidden slides** are dimmed and have an eye icon. Slides with [content that doesn't fit](#content-that-doesnt-fit) get a warning icon.
+- **Hidden slides** are dimmed and have an eye icon. Slides that the file [includes from another file](/slides/include-slides/) have a link icon. Slides with [content that doesn't fit](#content-that-doesnt-fit) get a warning icon.
 - **Slide actions**: Right-click a thumbnail to select that slide and open the same menu as the [slide context menu](#slide-context-menu).
 - **Resize the pane**: Drag the right edge of the pane to change its width, or focus the edge with `Tab` and use `Left` and `Right`. Double-click the edge to go back to the default width. The preview remembers the width.
 
@@ -433,7 +433,7 @@ The quick fix of the warning (`Ctrl+.` or `Cmd+.` on the line in the editor, or 
 
 ## Problems in slide files
 
-Demo Time checks the front matter and code blocks of your slide files while you edit them, and reports the problems in the **Problems** panel. It checks the markdown files in the `.demo` folder, and the files that an `openSlide` move opens.
+Demo Time checks the front matter and code blocks of your slide files while you edit them, and reports the problems in the **Problems** panel. It checks the markdown files in the `.demo` folder, the files that an `openSlide` move opens, and the files that these files [include with `src`](/slides/include-slides/).
 
 | Problem | Example | Severity |
 | --- | --- | --- |

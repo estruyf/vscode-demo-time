@@ -213,10 +213,13 @@ const SlideThumbnailsPaneItem: React.FunctionComponent<IItemProps> = ({
       id={`slide-thumb-${index}`}
       role="option"
       aria-selected={isActive}
-      aria-label={`Slide ${position + 1}: ${option.title}`}
+      aria-label={`Slide ${position + 1}: ${option.title}${
+        isIncluded ? `, included from ${slide.source?.path}` : ''
+      }`}
       title={title}
       data-active={isActive}
       data-hidden={option.hidden}
+      data-included={isIncluded}
       data-overflow={!!option.overflow}
       data-vscode-context={vscodeContext}
       draggable={!isBusy && !isIncluded}
@@ -247,6 +250,14 @@ const SlideThumbnailsPaneItem: React.FunctionComponent<IItemProps> = ({
         {option.hidden && (
           <Icon
             name={'eye-closed' as never}
+            className="inline-flex justify-center items-center"
+            style={{ color: 'inherit', fontSize: '12px' }}
+          />
+        )}
+        {/* The slide comes from a file that the file includes with `src` */}
+        {isIncluded && (
+          <Icon
+            name={'link' as never}
             className="inline-flex justify-center items-center"
             style={{ color: 'inherit', fontSize: '12px' }}
           />

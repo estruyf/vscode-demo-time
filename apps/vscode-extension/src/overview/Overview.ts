@@ -107,7 +107,8 @@ export class Overview extends BaseWebview {
         return;
       }
 
-      Preview.show(parseWinPath(payload.filePath), undefined, payload.slideIndex || 0);
+      // `show` takes a 1-based slide number
+      Preview.show(parseWinPath(payload.filePath), undefined, (payload.slideIndex || 0) + 1);
     }
   }
 }

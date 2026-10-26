@@ -161,8 +161,10 @@ export class ScreenshotService {
     );
     let targetSlide = slides[slideIndex];
     const placeholders = await Slides.getSlidePlaceholders(slideStep.path, slideIndex, demo);
-    // The placeholders are part of the key, so the screenshot updates when the slide number changes
-    let cacheKey = `${slideUri.toString()}#${slideIndex}#${JSON.stringify(placeholders)}`;
+    // The placeholders are part of the key, so the screenshot updates when the slide number changes.
+    // The content too, so it updates when the slide or a file it includes with `src` changes.
+    const slideKey = JSON.stringify([targetSlide.content, targetSlide.frontmatter]);
+    let cacheKey = `${slideUri.toString()}#${slideIndex}#${JSON.stringify(placeholders)}#${slideKey}`;
 
     // Code blocks can show code from other files, which can change without the slide changing
     const codeFiles = await resolveSlideCodeFiles(targetSlide.content, slideUri);

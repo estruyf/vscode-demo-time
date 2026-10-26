@@ -1012,6 +1012,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           notes={crntSlide.notes}
           path={crntSlideSource?.path ?? relativePath}
           slideIndex={crntSlideSource?.index ?? crntSlide.index}
+          slideNumber={crntSlide.index + 1}
         />
       )}
       </div>

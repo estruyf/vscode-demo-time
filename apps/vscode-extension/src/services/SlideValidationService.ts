@@ -18,6 +18,7 @@ import { General } from '../constants';
 import {
   getRelPath,
   getSlideActionTags,
+  getSlideIncludes,
   getSlideProblems,
   isPathInWorkspace,
   parseWinPath,
@@ -42,7 +43,8 @@ const SEVERITIES: Record<SlideProblemSeverity, DiagnosticSeverity> = {
 interface ActInfo {
   sceneIds: Set<string>;
   /**
-   * The workspace-relative paths of the slide files that `openSlide` moves open
+   * The workspace-relative paths of the slide files that `openSlide` moves open, and of the files
+   * that slide files include with `src`
    */
   slidePaths: Set<string>;
 }
@@ -132,7 +134,8 @@ export class SlideValidationService {
       return;
     }
 
-    if (SlideValidationService.isActFile(uri)) {
+    // A markdown file can start or stop including other files with `src`
+    if (SlideValidationService.isActFile(uri) || /\.md$/i.test(filePath)) {
       SlideValidationService.actInfo = undefined;
     }
     SlideValidationService.scheduleRevalidation();
@@ -152,7 +155,7 @@ export class SlideValidationService {
   private static getActInfo(): Promise<ActInfo> {
     if (!SlideValidationService.actInfo) {
       SlideValidationService.actInfo = DemoFileProvider.getFiles()
-        .then((files) => {
+        .then(async (files) => {
           const info: ActInfo = { sceneIds: new Set<string>(), slidePaths: new Set<string>() };
           Object.values(files || {}).forEach((config) => {
             getDemosFromConfig(config).forEach((demo) => {
@@ -166,6 +169,7 @@ export class SlideValidationService {
               });
             });
           });
+          await SlideValidationService.addSlideFileIncludes(info);
           return info;
         })
         .catch(() => ({ sceneIds: new Set<string>(), slidePaths: new Set<string>() }));
@@ -174,12 +178,65 @@ export class SlideValidationService {
     return SlideValidationService.actInfo;
   }
 
+  /**
+   * Adds the files that the slide files include with `src` to the slide files, so they are
+   * checked too, also when they are outside of the `.demo` folder.
+   */
+  private static async addSlideFileIncludes(info: ActInfo): Promise<void> {
+    const wsFolder = Extension.getInstance().workspaceFolder;
+    if (!wsFolder) {
+      return;
+    }
+
+    const demoFiles = await workspace.findFiles(
+      `${General.demoFolder}/**/*.md`,
+      '**/node_modules/**',
+    );
+    const uris = [
+      ...Array.from(info.slidePaths).map((slidePath) => Uri.joinPath(wsFolder.uri, slidePath)),
+      ...demoFiles,
+    ];
+    for (const uri of uris) {
+      try {
+        await SlideValidationService.addIncludedSlidePaths(await readFile(uri), uri, info);
+      } catch {
+        // The file doesn't exist
+      }
+    }
+  }
+
+  /**
+   * Adds the files that a slide file includes with `src` to the slide files.
+   * @returns Whether it added a file that wasn't a slide file yet
+   */
+  private static async addIncludedSlidePaths(
+    content: string,
+    uri: Uri,
+    info: ActInfo,
+  ): Promise<boolean> {
+    if (!content.includes('src')) {
+      return false;
+    }
+
+    const includes = await getSlideIncludes(content, uri).catch(() => undefined);
+    let isAdded = false;
+    for (const filePath of Object.keys(includes?.files || {})) {
+      const slidePath = SlideValidationService.normalizePath(filePath);
+      if (!info.slidePaths.has(slidePath)) {
+        info.slidePaths.add(slidePath);
+        isAdded = true;
+      }
+    }
+    return isAdded;
+  }
+
   private static normalizePath(filePath: string) {
     return parseWinPath(filePath).replace(/^\.?\//, '');
   }
 
   /**
-   * A slide file is a markdown file in the `.demo` folder, or one that an `openSlide` move opens.
+   * A slide file is a markdown file in the `.demo` folder, one that an `openSlide` move opens, or
+   * one that a slide file includes with `src`.
    */
   private static isSlideFile(document: TextDocument, actInfo: ActInfo): boolean {
     // Skip other versions of the file, like the one of a git diff
@@ -254,6 +311,14 @@ export class SlideValidationService {
         diagnostic.source = DIAGNOSTIC_SOURCE;
         diagnostics.push(diagnostic);
       }
+    }
+
+    // A file that this file includes with `src` for the first time gets checked too
+    if (
+      isSlideFile &&
+      (await SlideValidationService.addIncludedSlidePaths(content, document.uri, actInfo))
+    ) {
+      SlideValidationService.scheduleRevalidation();
     }
 
     const problems = isSlideFile
