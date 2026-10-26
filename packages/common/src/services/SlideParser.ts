@@ -1,8 +1,15 @@
 import yaml from 'js-yaml';
-import { ParserOptions, Slide, InternalSlide, SlideLocation } from '../models';
+import { ParserOptions, Slide, InternalSlide, SlideLocation, SlideMetadata } from '../models';
 import { getSlidePropertyInheritance, SlideLayout } from '../constants';
 import { FrontMatterParser } from '.';
 import { getOpeningFence, isClosingFence } from '../utils/codeFence';
+import {
+  getSlideIncludeSrc,
+  normalizeSlidePath,
+  renderSlideIncludeError,
+  resolveIncludedCodeFilePaths,
+  resolveSlideIncludePath,
+} from '../utils/slideIncludes';
 
 // The opening line of a speaker notes block: `<!-- notes`
 const NOTES_START = /^<!--\s*notes(?=\s|-->|$)/i;
@@ -10,8 +17,15 @@ const NOTES_START = /^<!--\s*notes(?=\s|-->|$)/i;
 // A slide without a value, or with an empty one, uses the value of the document front matter
 const isUnset = (value: unknown) => value === undefined || value === null || value === '';
 
+// The front matter without the `src` of an included file
+const withoutSrc = (frontmatter: SlideMetadata): SlideMetadata => {
+  const result = { ...frontmatter };
+  delete result.src;
+  return result;
+};
+
 export class SlideParser {
-  private defaultOptions: Required<ParserOptions> = {
+  private defaultOptions: Required<Omit<ParserOptions, 'includes'>> = {
     delimiterPattern: /^---(?:\s*|\s+(.+?)\s*)---$/gm,
     includeEmpty: false,
     trimContent: true,
@@ -20,13 +34,14 @@ export class SlideParser {
   constructor(private options: ParserOptions = {}) {}
 
   /**
-   * Parses markdown content into an array of slides
+   * Parses markdown content into an array of slides. With the `includes` option, a slide with a
+   * `src` is replaced by the slides of that file.
    *
    * @param markdown The markdown content to parse
    * @returns Array of parsed slides
    */
   public parseSlides(markdown: string): Slide[] {
-    return this.parse(markdown).slides;
+    return this.parse(markdown, true).slides;
   }
 
   /**
@@ -36,11 +51,19 @@ export class SlideParser {
    * @returns The location of each slide
    */
   public getSlideLocations(markdown: string): SlideLocation[] {
-    return this.parse(markdown).locations;
+    return this.parse(markdown, false).locations;
   }
 
-  private parse(markdown: string): { slides: Slide[]; locations: SlideLocation[] } {
-    const mergedOptions: Required<ParserOptions> = {
+  /**
+   * @param withIncludes Replaces the slides with a `src` by the slides of that file
+   * @param includeStack The files that include this file, to detect include cycles
+   */
+  private parse(
+    markdown: string,
+    withIncludes: boolean,
+    includeStack: string[] = [],
+  ): { slides: Slide[]; locations: SlideLocation[] } {
+    const mergedOptions: Required<Omit<ParserOptions, 'includes'>> = {
       ...this.defaultOptions,
       ...this.options,
     };
@@ -198,8 +221,13 @@ export class SlideParser {
       });
     }
 
+    const allSlides =
+      withIncludes && this.options.includes ? this.expandIncludes(slides, includeStack) : slides;
+
     // Apply default layout where not specified
-    const parsedSlides = slides.map((slide, idx) => {
+    const parsedSlides = allSlides.map((slide, idx) => {
+      slide.index = idx;
+
       if (idx === 0) {
         slide.frontmatter = {
           ...slide.frontmatter,
@@ -230,6 +258,95 @@ export class SlideParser {
     });
 
     return { slides: parsedSlides, locations };
+  }
+
+  /**
+   * Replaces the slides with a `src` by the slides of that file, and adds the file and index
+   * each slide comes from.
+   *
+   * @param slides The slides of the file, before the document front matter is applied
+   * @param includeStack The files that include this file
+   */
+  private expandIncludes(slides: InternalSlide[], includeStack: string[]): InternalSlide[] {
+    const { filePath: crntPath, files } = this.options.includes!;
+    const filePath = normalizeSlidePath(crntPath) ?? crntPath;
+    const stack = includeStack.length > 0 ? includeStack : [filePath];
+    const result: InternalSlide[] = [];
+    let isFirstIncluded = false;
+
+    slides.forEach((slide, idx) => {
+      // The first slide also has the properties of the document front matter
+      const frontmatter =
+        idx === 0 ? { ...slide.frontmatter, ...slide.docFrontMatter } : slide.frontmatter;
+      const src = getSlideIncludeSrc(frontmatter);
+      if (!src) {
+        result.push({ ...slide, source: { path: filePath, index: idx } });
+        return;
+      }
+
+      isFirstIncluded = isFirstIncluded || idx === 0;
+      // The other properties of the slide apply to every included slide
+      const overrides = withoutSrc(frontmatter);
+      const errorSlide = (message: string): InternalSlide => {
+        const content = renderSlideIncludeError(src, message);
+        return {
+          content,
+          rawContent: content,
+          docFrontMatter: slide.docFrontMatter,
+          frontmatter: overrides,
+          index: idx,
+          source: { path: filePath, index: idx },
+        };
+      };
+
+      const includePath = resolveSlideIncludePath(filePath, src);
+      if (!includePath) {
+        result.push(errorSlide('Only files in the workspace folder can be included.'));
+        return;
+      }
+
+      if (stack.includes(includePath)) {
+        result.push(
+          errorSlide(`The files include each other: ${[...stack, includePath].join(' → ')}`),
+        );
+        return;
+      }
+
+      const content = files[includePath];
+      if (content === undefined) {
+        result.push(errorSlide(`File not found: ${includePath}`));
+        return;
+      }
+
+      const parser = new SlideParser({
+        ...this.options,
+        includes: { filePath: includePath, files },
+      });
+      const included = parser.parse(content, true, [...stack, includePath]).slides;
+      for (const includedSlide of included) {
+        result.push({
+          ...includedSlide,
+          content: resolveIncludedCodeFilePaths(includedSlide.content, includePath),
+          rawContent: resolveIncludedCodeFilePaths(includedSlide.rawContent, includePath),
+          frontmatter: { ...includedSlide.frontmatter, ...overrides },
+          docFrontMatter: slide.docFrontMatter,
+          source: {
+            path: includedSlide.source?.path ?? includePath,
+            index: includedSlide.source?.index ?? includedSlide.index,
+            srcIndex: idx,
+          },
+        });
+      }
+    });
+
+    // The `src` of the document front matter only replaces the first slide
+    if (isFirstIncluded) {
+      result.forEach((slide) => {
+        slide.docFrontMatter = withoutSrc(slide.docFrontMatter);
+      });
+    }
+
+    return result;
   }
 
   /**

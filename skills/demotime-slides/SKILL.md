@@ -145,6 +145,11 @@ Content:
   workspace root (for example `.demo/assets/architecture.png`). When an image is missing, don't
   invent one: use a placeholder path, describe in the speaker notes what the image should show, and
   list the missing images in your summary.
+- **Reused slides:** when the workspace already has a file with slides that every talk uses, like
+  an "about me", sponsor or "thank you" slide, include it with a slide that only has
+  `src: ../shared/about-me.md` in its front matter (relative to the slide file, or to the
+  workspace folder when it starts with `/`) instead of copying the slides. Follow it with a `---`
+  separator before the next slide, as the content of a `src` slide isn't shown.
 - **Facts:** don't make up numbers, quotes or claims. Use the material, or mark the spot with a TODO
   in the speaker notes.
 

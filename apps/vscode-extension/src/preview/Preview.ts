@@ -11,6 +11,7 @@ import { Extension } from '../services/Extension';
 import { ContextKeys } from '../constants';
 import {
   getAbsolutePath,
+  getRelPath,
   getTheme,
   getWebviewWorkspaceUrl,
   parseWinPath,
@@ -34,7 +35,11 @@ import {
   Action,
   SlideNotes,
   getReducedMotionPreference,
+  getSlideIndexForSource,
   ReducedMotionPreference,
+  Slide,
+  SlideIncludes,
+  SlideParser,
 } from '@demotime/common';
 import { BaseWebview } from '../webview/BaseWebviewPanel';
 import { WebviewType } from '../models';
@@ -56,8 +61,17 @@ export class Preview extends BaseWebview {
    * The files that code blocks on the slides show, to update the preview when they change
    */
   private static codeFiles = new Set<string>();
-  private static codeFileWatcher: FileSystemWatcher | undefined;
   private static codeFilesTimer: NodeJS.Timeout | undefined;
+  /**
+   * The files that the current slide file includes with `src`, to reload the preview when they change
+   */
+  private static includeFiles = new Set<string>();
+  private static includeFilesTimer: NodeJS.Timeout | undefined;
+  private static fileWatcher: FileSystemWatcher | undefined;
+  /**
+   * The slides of the current file with the file they come from, when it includes other files
+   */
+  private static deck: { rootPath: string; slides: Pick<Slide, 'source'>[] } | undefined;
 
   public static register() {
     const subscriptions = Extension.getInstance().subscriptions;
@@ -195,6 +209,43 @@ export class Preview extends BaseWebview {
   }
 
   /**
+   * Whether the preview shows the slides of a file: the current file, or a file it includes with
+   * `src`.
+   */
+  public static hasSlidesOf(fileUri: Uri): boolean {
+    if (Preview.isShowingFile(fileUri)) {
+      return true;
+    }
+
+    const path = getRelPath(parseWinPath(fileUri.fsPath));
+    return !!Preview.deck?.slides.some(({ source }) => source?.path === path);
+  }
+
+  /**
+   * Gets the slide of the preview for a slide of the current file, or of a file it includes with
+   * `src`.
+   * @param fileUri The file of the slide
+   * @param slideIndex The 0-based index of the slide in its file
+   * @param last For a slide with a `src`, gets its last included slide instead of the first one
+   * @returns The 0-based slide index in the preview, or `undefined` when the preview doesn't show
+   * the slide
+   */
+  public static getPreviewSlideIndex(
+    fileUri: Uri,
+    slideIndex: number,
+    last = false,
+  ): number | undefined {
+    const isCrntFile = Preview.isShowingFile(fileUri);
+    if (!Preview.deck) {
+      return isCrntFile ? slideIndex : undefined;
+    }
+
+    const rootPath = Preview.deck.rootPath;
+    const path = isCrntFile ? rootPath : getRelPath(parseWinPath(fileUri.fsPath));
+    return getSlideIndexForSource(Preview.deck.slides, rootPath, { path, index: slideIndex }, last);
+  }
+
+  /**
    * Shows another slide of the current file, without loading the file again.
    * @param slideIndex The 0-based slide index
    */
@@ -250,6 +301,8 @@ export class Preview extends BaseWebview {
   ) {
     if (Preview.crntFile !== fileUri) {
       Preview.currentSlideIndex = 0;
+      Preview.deck = undefined;
+      Preview.includeFiles.clear();
     }
 
     if (slide !== undefined && typeof slide === 'number') {
@@ -344,6 +397,8 @@ export class Preview extends BaseWebview {
   public static async showEmbed(url: string, title: string) {
     Preview.crntFile = null;
     Preview.crntEmbed = { url, title };
+    Preview.deck = undefined;
+    Preview.includeFiles.clear();
     // The embed has no slides or click steps, so next and previous go to the scenes
     Preview.hasClickListener = false;
     Preview.hasPreviousClickStep = false;
@@ -389,10 +444,13 @@ export class Preview extends BaseWebview {
     Preview.hasPreviousSlide = false;
     Preview.hasNextSlide = false;
     Preview.updateSlideNotes(undefined);
-    Preview.codeFileWatcher?.dispose();
-    Preview.codeFileWatcher = undefined;
+    Preview.fileWatcher?.dispose();
+    Preview.fileWatcher = undefined;
     Preview.codeFiles.clear();
+    Preview.includeFiles.clear();
+    Preview.deck = undefined;
     clearTimeout(Preview.codeFilesTimer);
+    clearTimeout(Preview.includeFilesTimer);
   }
 
   /**
@@ -401,26 +459,80 @@ export class Preview extends BaseWebview {
    */
   private static watchCodeFiles(uris: Uri[]) {
     uris.forEach((uri) => Preview.codeFiles.add(parseWinPath(uri.fsPath)));
-    if (Preview.codeFileWatcher || Preview.codeFiles.size === 0) {
+    if (Preview.codeFiles.size > 0) {
+      Preview.watchFiles();
+    }
+  }
+
+  /**
+   * Reads the files that the slides include with `src`. The preview reloads when they change, and
+   * keeps the file and index of its slides to sync with the editor.
+   */
+  protected static async resolveSlideIncludes(
+    payload: unknown,
+  ): Promise<SlideIncludes | undefined> {
+    const includes = await super.resolveSlideIncludes(payload);
+    const content = (payload as { content?: unknown } | undefined)?.content;
+    const isCrntFile =
+      !!includes && Preview.isShowingFile(getAbsolutePath(parseWinPath(includes.filePath)));
+    if (!includes || !isCrntFile || typeof content !== 'string') {
+      return includes;
+    }
+
+    Preview.deck = {
+      rootPath: includes.filePath,
+      slides: new SlideParser({ includes }).parseSlides(content).map(({ source }) => ({ source })),
+    };
+
+    const wsFolder = Extension.getInstance().workspaceFolder;
+    Preview.includeFiles = new Set(
+      wsFolder
+        ? Object.keys(includes.files).map((filePath) =>
+            parseWinPath(Uri.joinPath(wsFolder.uri, filePath).fsPath),
+          )
+        : [],
+    );
+    if (Preview.includeFiles.size > 0) {
+      Preview.watchFiles();
+    }
+    return includes;
+  }
+
+  /**
+   * Watches the files of the code blocks and slide includes of the slides.
+   */
+  private static watchFiles() {
+    if (Preview.fileWatcher) {
       return;
     }
 
     const onChange = (uri: Uri) => {
-      if (!Preview.codeFiles.has(parseWinPath(uri.fsPath))) {
-        return;
+      const filePath = parseWinPath(uri.fsPath);
+      if (Preview.codeFiles.has(filePath)) {
+        clearTimeout(Preview.codeFilesTimer);
+        Preview.codeFilesTimer = setTimeout(() => {
+          Preview.postMessage(WebViewMessages.toWebview.preview.codeFilesChanged);
+        }, 200);
       }
 
-      clearTimeout(Preview.codeFilesTimer);
-      Preview.codeFilesTimer = setTimeout(() => {
-        Preview.postMessage(WebViewMessages.toWebview.preview.codeFilesChanged);
-      }, 200);
+      // Loads the slides again, which reads the included files
+      if (Preview.includeFiles.has(filePath)) {
+        clearTimeout(Preview.includeFilesTimer);
+        Preview.includeFilesTimer = setTimeout(() => {
+          if (Preview.crntFile && Preview.webview?.webview) {
+            Preview.triggerUpdate(
+              getWebviewWorkspaceUrl(Preview.webview.webview, Preview.crntFile),
+            );
+          }
+        }, 200);
+      }
     };
 
     const watcher = workspace.createFileSystemWatcher('**/*');
     watcher.onDidChange(onChange);
     watcher.onDidCreate(onChange);
     watcher.onDidDelete(onChange);
-    Preview.codeFileWatcher = watcher;
+    Preview.fileWatcher = watcher;
   }
 
   protected static async messageListener(message: any) {

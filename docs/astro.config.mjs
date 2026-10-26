@@ -119,6 +119,7 @@ export default defineConfig({
           items: [
             { label: 'Getting started', slug: 'slides' },
             { label: 'Front matter reference', slug: 'slides/front-matter', badge: { text: 'New', variant: 'tip' } },
+            { label: 'Include slides', slug: 'slides/include-slides', badge: { text: 'New', variant: 'tip' } },
             {
               label: 'Layouts',
               collapsed: true,

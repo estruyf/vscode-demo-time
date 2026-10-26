@@ -2,7 +2,14 @@ import { posix } from 'path';
 import yaml from 'js-yaml';
 import { applyPatch } from 'diff';
 import { findNodeAtLocation, parse as jsonParse, parseTree, JSONPath } from 'jsonc-parser';
-import { Action, ActProblem, isSnippetFileFormat, SlideParser, Step } from '@demotime/common';
+import {
+  Action,
+  ActProblem,
+  collectSlideIncludes,
+  isSnippetFileFormat,
+  SlideParser,
+  Step,
+} from '@demotime/common';
 import { General, StateKeys } from '../constants';
 import { insertVariables } from './insertVariables';
 import { parseSnippetContent } from './parseSnippetContent';
@@ -626,7 +633,13 @@ const checkSlideNumber = async (
     return [];
   }
 
-  const count = new SlideParser().parseSlides(markdown).length;
+  // The slides of the files that the slides include with `src` count too
+  const includes = host.isInWorkspace(path)
+    ? await collectSlideIncludes(markdown, normalizePath(path), (filePath) =>
+        host.isInWorkspace(filePath) ? host.readFile(filePath) : Promise.resolve(undefined),
+      )
+    : undefined;
+  const count = new SlideParser({ includes }).parseSlides(markdown).length;
   if (slide <= count) {
     return [];
   }

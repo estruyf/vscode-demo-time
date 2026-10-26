@@ -92,6 +92,18 @@ transition: slideLeft
 
 Both slides use the `frost` theme. The first slide uses the `fadeIn` transition, the second slide its own `slideLeft` transition.
 
+### Include slides from other files
+
+Reuse slides, like an "about me" or "thank you" slide, in every talk by including them from another markdown file with `src`. The slide is replaced by all the slides of that file:
+
+```md
+---
+src: ../shared/about-me.md
+---
+```
+
+See [include slides from other files](/slides/include-slides/) for the paths, the front matter rules and how the included slides are numbered.
+
 <Aside type="tip">
 To make the process easier, you can use the `Demo Time: Create a slide` command. This command will start the slide creation process where you will be asked for a title and if you want to add it to any of your demos.
 </Aside>
@@ -258,6 +270,8 @@ Outside [presentation mode](/presentation-mode/), right-click the slide in the p
 - **Duplicate slide**: Adds a copy of the slide, with its front matter and speaker notes, after it. The preview shows the copy.
 - **Move slide up** / **Move slide down**: Moves the slide one position up or down in the file. See [slide thumbnails](#slide-thumbnails).
 - **Delete slide**: Removes the slide from the file, after you confirm it. When you delete the first slide of a file, the front matter at the top of the file stays, without the properties that only apply to the first slide, like `layout`.
+
+A slide that the file [includes from another file](/slides/include-slides/) with `src` only has **Show slide contents**, which opens the included file.
 
 When an action can't change the slide without changing the other slides of the file, for instance when deleting the first slide would give the next slide other front matter, or when moving a slide to the first position would apply its `transition` to every slide, Demo Time shows an error and doesn't change the file. Make the change in the editor instead.
 
@@ -431,10 +445,11 @@ Demo Time checks the front matter and code blocks of your slide files while you 
 | A custom layout, or an inline `header` or `footer` template, with invalid Handlebars | `{{#if title}}` without `{{/if}}` | Error |
 | A `---` followed by a line like `Note: text` (a capitalized word and a colon), which makes the lines up to the next `---` the front matter of the slide instead of its content | `Note: remember this` | Warning |
 | A [code block with a `file` option](/slides/code-blocks/#code-from-workspace-files) of which the file, lines or region don't exist | ```` ```ts file="src/missing.ts" ```` | Error |
+| A [`src`](/slides/include-slides/) file that doesn't exist or is outside the workspace folder, or files that include each other | `src: ../shared/missing.md` | Error |
 
 Properties that are only meant for your own templates don't get a problem as long as a [custom layout](/slides/layouts/custom/), the `header` or `footer` of the slide, or the `demoTime.slideHeaderTemplate` and `demoTime.slideFooterTemplate` templates use them.
 
-The problems update when you change the slide file, when you add or remove a file that the slides refer to, like an image or a layout, and when you save a file that a code block shows.
+The problems update when you change the slide file, when you add or remove a file that the slides refer to, like an image or a layout, and when you save a file that a code block shows or a slide includes.
 
 <Aside type="tip">
 A misspelled property or value, and a `---` that hides slide content, have a quick fix (`Ctrl+.` or `Cmd+.` on the line in the editor, or the light bulb in the **Problems** panel). For a `---`, the quick fix adds an empty line after it, so the lines are shown on the slide.

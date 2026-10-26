@@ -9,6 +9,9 @@ export const useFileContents = () => {
   // The file of the content: the content of the previous file stays until the fetch is done
   const [contentFilePath, setContentFilePath] = useState<string | undefined>(undefined);
   const [initialSlideIndex, setInitialSlideIndex] = useState<number | undefined>(0);
+  // Changes on every load, as the slides can change without the content of the file changing,
+  // like when a file that it includes with `src` changes
+  const [contentVersion, setContentVersion] = useState(0);
 
   const getFileContents = useCallback(async (fileUri: string) => {
     if (!fileUri) {
@@ -23,6 +26,7 @@ export const useFileContents = () => {
       .then((text) => {
         setContent(text);
         setContentFilePath(fileUri);
+        setContentVersion((version) => version + 1);
       });
   }, []);
 
@@ -49,5 +53,5 @@ export const useFileContents = () => {
     };
   }, [getFileContents]);
 
-  return { content, contentFilePath, crntFilePath, initialSlideIndex, getFileContents };
+  return { content, contentFilePath, contentVersion, crntFilePath, initialSlideIndex, getFileContents };
 };

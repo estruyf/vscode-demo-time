@@ -174,6 +174,13 @@ export const SLIDE_PROPERTIES: Record<string, SlideProperty> = {
     inheritance: 'fallback',
     docs: PLACEHOLDER_DOCS,
   },
+  src: {
+    type: 'file',
+    description:
+      'Path of a markdown file of which the slides replace this slide, relative to this file. A path that starts with `/` is relative to the workspace folder. The other properties of this slide apply to every included slide.',
+    inheritance: 'firstSlide',
+    docs: '/slides/include-slides/',
+  },
   autoAdvanceAfter: {
     type: 'number',
     description: 'Goes to the next slide or scene after this number of seconds.',

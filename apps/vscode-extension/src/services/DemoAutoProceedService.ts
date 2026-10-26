@@ -1,7 +1,7 @@
 import { ContextKeys, StateKeys } from '../constants';
 import { Preview } from '../preview/Preview';
-import { getFileContents, setContext } from '../utils';
-import { Action, COMMAND, Demo, getVisibleSlides, SlideParser } from '@demotime/common';
+import { readSlideFile, setContext } from '../utils';
+import { Action, COMMAND, Demo, getVisibleSlides } from '@demotime/common';
 import { commands } from 'vscode';
 import { DemoPanel } from '../panels/DemoPanel';
 import { DemoStatusBar } from './DemoStatusBar';
@@ -81,14 +81,8 @@ export class DemoAutoProceedService {
       return false;
     }
 
-    const slideContent = await getFileContents(workspaceFolder, slideStep.path);
-    if (!slideContent) {
-      return false;
-    }
-
-    const parser = new SlideParser();
-    const slides = parser.parseSlides(slideContent);
-    if (slides.length <= 0) {
+    const slides = await readSlideFile(workspaceFolder, slideStep.path);
+    if (!slides || slides.length <= 0) {
       return false;
     }
 
@@ -226,14 +220,8 @@ export class DemoAutoProceedService {
       return undefined;
     }
 
-    const slideContent = await getFileContents(workspaceFolder, slideStep.path);
-    if (!slideContent) {
-      return undefined;
-    }
-
-    const parser = new SlideParser();
-    const slides = parser.parseSlides(slideContent);
-    if (slides.length <= 0) {
+    const slides = await readSlideFile(workspaceFolder, slideStep.path);
+    if (!slides || slides.length <= 0) {
       return undefined;
     }
 

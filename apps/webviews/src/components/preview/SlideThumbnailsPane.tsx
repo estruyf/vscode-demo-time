@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { getDropIndex, moveArrayItem, Slide, SlideLayout } from '@demotime/common';
+import { getDropIndex, isIncludedSlide, moveArrayItem, Slide } from '@demotime/common';
 import { Icon } from 'vscrui';
 import { SlideThumbnail } from './SlideThumbnail';
 import { getSlideOptionLabels, SlideOption } from './SlideNavigator';
+import { getSlideMenuContext } from '../../utils';
 
 export interface ISlideThumbnailsPaneProps {
   slides: Slide[];
@@ -131,7 +132,10 @@ interface IItemProps {
    * The index of the slide in the file
    */
   index: number;
-  total: number;
+  /**
+   * All slides of the file, for the context menu
+   */
+  slides: Slide[];
   isActive: boolean;
   isDragging: boolean;
   isBusy: boolean;
@@ -165,7 +169,7 @@ const SlideThumbnailsPaneItem: React.FunctionComponent<IItemProps> = ({
   option,
   position,
   index,
-  total,
+  slides,
   isActive,
   isDragging,
   isBusy,
@@ -184,18 +188,18 @@ const SlideThumbnailsPaneItem: React.FunctionComponent<IItemProps> = ({
   const { overflowMessage, tooltip } = getSlideOptionLabels(option, slide);
 
   const vscodeContext = React.useMemo(
-    () =>
-      JSON.stringify({
-        webviewSection: 'slide',
-        slidePath: relativePath,
-        slideIndex: index,
-        slideHidden: !!option.hidden,
-        slideLayout: slide.frontmatter.layout || SlideLayout.Default,
-        slideIsFirst: index === 0,
-        slideIsLast: index === total - 1,
-      }),
-    [relativePath, index, option.hidden, slide.frontmatter.layout, total],
+    () => getSlideMenuContext(slide, slides, relativePath),
+    [slide, slides, relativePath],
   );
+  // A slide of a file that the file includes with `src` can't be moved on its own
+  const isIncluded = isIncludedSlide(slide);
+  const title = [
+    option.title,
+    tooltip ? `(${tooltip})` : '',
+    isIncluded ? `(from ${slide.source?.path})` : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
     e.dataTransfer.setData(DRAG_TYPE, String(index));
@@ -210,12 +214,12 @@ const SlideThumbnailsPaneItem: React.FunctionComponent<IItemProps> = ({
       role="option"
       aria-selected={isActive}
       aria-label={`Slide ${position + 1}: ${option.title}`}
-      title={tooltip ? `${option.title} (${tooltip})` : option.title}
+      title={title}
       data-active={isActive}
       data-hidden={option.hidden}
       data-overflow={!!option.overflow}
       data-vscode-context={vscodeContext}
-      draggable={!isBusy}
+      draggable={!isBusy && !isIncluded}
       className={`relative flex items-start gap-1.5 px-2 py-1.5 cursor-pointer ${
         isDragging ? 'opacity-40' : ''
       }`}
@@ -562,7 +566,7 @@ export const SlideThumbnailsPane: React.FunctionComponent<ISlideThumbnailsPanePr
               option={slideOptions[index] ?? { index, title: `Slide ${index + 1}` }}
               position={position}
               index={index}
-              total={total}
+              slides={slides}
               isActive={pendingMove ? index === pendingMove.from : index === currentSlide}
               isDragging={draggingIndex === index}
               isBusy={isBusy}

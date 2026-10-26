@@ -29,6 +29,7 @@ import {
   insertSlide,
   isPathInWorkspace,
   moveSlide,
+  parseSlideFile,
   parseWinPath,
   readFile,
   sanitizeFileName,
@@ -49,7 +50,6 @@ import {
   SlideLayout,
   Action,
   Step,
-  SlideParser,
   getDemosFromConfig,
   getVisibleSlides,
   isSlideHidden,
@@ -58,6 +58,7 @@ import {
   getSlidePropertyMarkdown,
   getSlidePropertyTypeName,
   getSlidePropertyValues,
+  getSlideIndexForSource,
 } from '@demotime/common';
 
 /**
@@ -248,8 +249,7 @@ layout: ${layout.toLowerCase()}
                 const fileContent = await readFile(fileUri);
                 if (fileContent) {
                   // Parse slides from markdown content
-                  const parser = new SlideParser();
-                  const slides = parser.parseSlides(fileContent);
+                  const slides = await parseSlideFile(fileContent, fileUri);
                   totalSlides += getVisibleSlides(slides).length;
                 }
               } catch {
@@ -379,7 +379,7 @@ layout: ${layout.toLowerCase()}
       if (!fileContent) {
         return undefined;
       }
-      return new SlideParser().parseSlides(fileContent);
+      return await parseSlideFile(fileContent, fileUri);
     } catch {
       return undefined;
     }
@@ -555,18 +555,22 @@ layout: ${layout.toLowerCase()}
         return newContent;
       },
       toIndex,
+      // A slide that moves down ends up after the slides that a `src` includes
+      fromIndex < toIndex,
     );
   }
 
   /**
    * Updates a slide file with the content returned by `update`, and saves it.
    * @param showSlideIndex The slide to show in the preview once the file is saved
+   * @param showLast When the slide to show has a `src`, show its last included slide
    * @returns Whether the file changed
    */
   private static async updateSlideFile(
     filePath: string,
     update: (content: string) => string | undefined,
     showSlideIndex?: number,
+    showLast = false,
   ): Promise<boolean> {
     const fileUri = getAbsolutePath(parseWinPath(filePath));
     const document = await workspace.openTextDocument(fileUri);
@@ -580,9 +584,14 @@ layout: ${layout.toLowerCase()}
       return false;
     }
 
-    // Saving the file updates the preview, which then opens this slide
-    if (showSlideIndex !== undefined && Preview.isShowingFile(fileUri)) {
-      Preview.setCurrentSlideIndex(showSlideIndex);
+    // Saving the file updates the preview, which then opens this slide. With included slides
+    // (`src`), the slides of the preview don't match the slides of the file.
+    const previewSlideIndex =
+      showSlideIndex !== undefined && Preview.isShowingFile(fileUri)
+        ? Preview.getPreviewSlideIndex(fileUri, showSlideIndex, showLast)
+        : undefined;
+    if (previewSlideIndex !== undefined) {
+      Preview.setCurrentSlideIndex(previewSlideIndex);
     }
 
     // Only replace the changed lines, so an open editor keeps its cursor and scroll position
@@ -674,15 +683,18 @@ layout: ${layout.toLowerCase()}
       return;
     }
 
-    const path = editor.document.uri.fsPath;
+    const { document } = editor;
+    const relPath = getRelPath(parseWinPath(document.uri.fsPath));
     // Opens at the slide under the cursor; `show` takes a 1-based slide number
-    const slideIndex = SlidePreviewSync.getCursorSlideIndex(editor);
-    Preview.show(
-      getRelPath(parseWinPath(path)),
-      undefined,
-      slideIndex !== undefined ? slideIndex + 1 : undefined,
-      { beside: true },
-    );
+    let slideIndex = SlidePreviewSync.getCursorSlideIndex(editor);
+    if (slideIndex !== undefined) {
+      // Slides of other files (`src`) come before it in the preview
+      const slides = await parseSlideFile(document.getText(), document.uri);
+      slideIndex = getSlideIndexForSource(slides, relPath, { path: relPath, index: slideIndex });
+    }
+    Preview.show(relPath, undefined, slideIndex !== undefined ? slideIndex + 1 : undefined, {
+      beside: true,
+    });
   }
 
   private static registerHoverProvider() {

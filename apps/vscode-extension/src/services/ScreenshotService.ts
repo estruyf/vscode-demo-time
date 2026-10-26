@@ -6,6 +6,7 @@ import {
   getAbsolutePath,
   getNextSlideIndex,
   getTheme,
+  parseSlideFile,
   readFile,
   rebaseCssUrls,
   resolveSlideCodeFiles,
@@ -16,7 +17,6 @@ import {
   Action,
   Config,
   SlideLayout,
-  SlideParser,
   SlideTheme,
   getTemplateErrorMessage,
   placeholderFormatting,
@@ -145,8 +145,7 @@ export class ScreenshotService {
     }
 
     // Parse and get the first slide (or specific slide index if specified)
-    const parser = new SlideParser();
-    const slides = parser.parseSlides(slideContent);
+    const slides = await parseSlideFile(slideContent, slideUri);
 
     if (slides.length === 0) {
       Logger.error('No slides parsed from content');

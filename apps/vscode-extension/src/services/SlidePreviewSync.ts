@@ -147,13 +147,14 @@ export class SlidePreviewSync {
   }
 
   /**
-   * Shows the slide under the cursor in the preview, when the preview shows the file of the editor.
+   * Shows the slide under the cursor in the preview, when the preview shows the file of the editor,
+   * or a file that includes it with `src`.
    */
   private static sync(editor: TextEditor, kind?: TextEditorSelectionChangeKind) {
     if (
       !Preview.isOpen ||
       editor.document.languageId !== 'markdown' ||
-      !Preview.isShowingFile(editor.document.uri)
+      !Preview.hasSlidesOf(editor.document.uri)
     ) {
       return;
     }
@@ -173,8 +174,9 @@ export class SlidePreviewSync {
       return;
     }
 
-    if (slideIndex !== Preview.getCurrentSlideIndex()) {
-      Preview.goToSlide(slideIndex);
+    const previewSlideIndex = Preview.getPreviewSlideIndex(editor.document.uri, slideIndex);
+    if (previewSlideIndex !== undefined && previewSlideIndex !== Preview.getCurrentSlideIndex()) {
+      Preview.goToSlide(previewSlideIndex);
     }
   }
 }

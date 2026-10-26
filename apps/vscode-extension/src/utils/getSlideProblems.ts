@@ -1,8 +1,12 @@
 import yaml from 'js-yaml';
 import {
+  collectSlideIncludes,
+  getSlideIncludeCycle,
   getTemplateSyntaxError,
   isSlideBackgroundImage,
+  resolveSlideIncludePath,
   SLIDE_PROPERTIES,
+  SlideIncludes,
   SlideMetadata,
   SlideParser,
   toBoolean,
@@ -14,7 +18,8 @@ export type SlideProblemCode =
   | 'slide-invalid-value'
   | 'slide-missing-file'
   | 'slide-template-error'
-  | 'slide-ambiguous-separator';
+  | 'slide-ambiguous-separator'
+  | 'slide-include-cycle';
 
 export type SlideProblemSeverity = 'error' | 'warning' | 'information';
 
@@ -55,6 +60,10 @@ export interface SlideProblemsHost {
    * The header and footer templates of the settings, which can read any front matter property
    */
   templates?: string[];
+  /**
+   * The workspace-relative path of the slide file, which the `src` paths are relative to
+   */
+  filePath?: string;
 }
 
 interface FrontmatterBlock {
@@ -126,6 +135,12 @@ export const getSlideProblems = async (
     }
   });
 
+  // The files that the slides include with `src`, to find include cycles
+  const includes =
+    host.filePath && markdown.includes('src')
+      ? await collectSlideIncludes(markdown, host.filePath, readFile)
+      : undefined;
+
   const problems: SlideProblem[] = [];
   const acceptedLines = new Set<number>();
 
@@ -141,7 +156,7 @@ export const getSlideProblems = async (
       readFile,
     );
 
-    problems.push(...(await getBlockProblems(lines, block, templates, host, readFile)));
+    problems.push(...(await getBlockProblems(lines, block, templates, host, readFile, includes)));
   }
 
   problems.push(...getYamlProblems(lines, acceptedLines));
@@ -276,6 +291,7 @@ const getBlockProblems = async (
   templates: string[],
   host: SlideProblemsHost,
   readFile: (path: string) => Promise<string | undefined>,
+  includes?: SlideIncludes,
 ): Promise<SlideProblem[]> => {
   let data: SlideMetadata = {};
   try {
@@ -353,7 +369,10 @@ const getBlockProblems = async (
     }
 
     const range = valueRange || keyRange;
-    const problem = await getValueProblem(key, value, range, host, readFile);
+    const problem =
+      key === 'src'
+        ? await getIncludeProblem(value, range, host, includes)
+        : await getValueProblem(key, value, range, host, readFile);
     if (problem) {
       problems.push(problem);
     }
@@ -496,6 +515,60 @@ const getValueProblem = async (
     default:
       return undefined;
   }
+};
+
+/**
+ * Checks the `src` of a slide that includes the slides of another file: the file has to exist in
+ * the workspace folder, and can't include the slide file again.
+ */
+const getIncludeProblem = async (
+  value: unknown,
+  range: SlideTextRange,
+  host: SlideProblemsHost,
+  includes?: SlideIncludes,
+): Promise<SlideProblem | undefined> => {
+  if (typeof value !== 'string') {
+    return {
+      code: 'slide-invalid-value',
+      severity: 'warning',
+      message: `"src" expects the path of a markdown file, but got "${String(value)}".`,
+      range,
+    };
+  }
+
+  const src = value.trim();
+  if (!src || !host.filePath) {
+    return undefined;
+  }
+
+  const path = resolveSlideIncludePath(host.filePath, src);
+  if (!path) {
+    return {
+      code: 'slide-missing-file',
+      severity: 'error',
+      message: `The slides of "${src}" can't be included. Only files in the workspace folder can be included.`,
+      range,
+    };
+  }
+
+  if (!(await fileExists(path, host))) {
+    return {
+      code: 'slide-missing-file',
+      severity: 'error',
+      message: `The slide file "${src}" doesn't exist. Paths are relative to this file, or to the workspace folder when they start with "/".`,
+      range,
+    };
+  }
+
+  const cycle = includes ? getSlideIncludeCycle(includes, path) : undefined;
+  return cycle
+    ? {
+        code: 'slide-include-cycle',
+        severity: 'error',
+        message: `The files include each other: ${cycle.join(' → ')}. The slide shows an error instead of the slides of "${src}".`,
+        range,
+      }
+    : undefined;
 };
 
 const fileExists = async (path: string, host: SlideProblemsHost): Promise<boolean> => {

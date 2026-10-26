@@ -5,7 +5,7 @@ import { Card } from '../ui/Card';
 import { DemoFileSection } from './DemoFileSection';
 import { DemoFileData, OverviewGridItem } from '../../types/demoOverview';
 import { messageHandler } from '@estruyf/vscode/dist/client';
-import { SlideParser, WebViewMessages } from '@demotime/common';
+import { SlideIncludes, SlideParser, WebViewMessages } from '@demotime/common';
 
 interface DemoOverviewContainerProps {
   demoFiles: DemoFileData[];
@@ -88,8 +88,12 @@ export const DemoOverviewContainer: React.FC<DemoOverviewContainerProps> = ({
               );
 
               if (fileContent) {
-                // Parse slides from markdown content
-                const parser = new SlideParser();
+                // Parse slides from markdown content, with the slides it includes with `src`
+                const includes = await messageHandler.request<SlideIncludes | null>(
+                  WebViewMessages.toVscode.getSlideIncludes,
+                  { path: openSlideStep.path, content: fileContent }
+                ).catch(() => null);
+                const parser = new SlideParser({ includes: includes ?? undefined });
                 const slides = parser.parseSlides(fileContent);
 
                 // Add each slide as a grid item

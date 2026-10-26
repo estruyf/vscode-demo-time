@@ -1,8 +1,14 @@
 import { MessageHandlerData } from '@estruyf/vscode';
 import { commands, Uri, ViewColumn, WebviewPanel, window } from 'vscode';
 import { Extension, Logger, Notifications } from '../services';
-import { getAbsolutePath, getWebviewHtml, readFile } from '../utils';
-import { Config, EXTENSION_NAME, WebViewMessages } from '@demotime/common';
+import {
+  getAbsolutePath,
+  getSlideIncludes,
+  getWebviewHtml,
+  parseWinPath,
+  readFile,
+} from '../utils';
+import { Config, EXTENSION_NAME, SlideIncludes, WebViewMessages } from '@demotime/common';
 import { WebviewType } from '../models';
 
 export class BaseWebview {
@@ -105,6 +111,9 @@ export class BaseWebview {
       } catch (e) {
         this.postRequestMessage(command, requestId, null);
       }
+    } else if (command === WebViewMessages.toVscode.getSlideIncludes && requestId) {
+      const includes = await this.resolveSlideIncludes(payload);
+      this.postRequestMessage(command, requestId, includes ?? null);
     } else if (command === WebViewMessages.toVscode.logError && payload) {
       Logger.error(typeof payload === 'string' ? payload : JSON.stringify(payload));
     } else if (command === WebViewMessages.toVscode.runCommand && payload) {
@@ -127,6 +136,34 @@ export class BaseWebview {
       } else {
         commands.executeCommand(cmd);
       }
+    }
+  }
+
+  /**
+   * Reads the files that the slides of a slide file include with `src`.
+   * @param payload The `path` of the slide file, relative to the workspace folder or a webview URL
+   * path, and its `content`
+   */
+  protected static async resolveSlideIncludes(
+    payload: unknown,
+  ): Promise<SlideIncludes | undefined> {
+    const { path, content } = (payload || {}) as { path?: unknown; content?: unknown };
+    if (typeof path !== 'string' || !path || typeof content !== 'string') {
+      return undefined;
+    }
+
+    // The preview sends a webview URL path, which can have encoded characters like `%20`
+    let filePath = path;
+    try {
+      filePath = decodeURIComponent(path);
+    } catch {
+      // Keep the path as is
+    }
+
+    try {
+      return await getSlideIncludes(content, getAbsolutePath(parseWinPath(filePath)));
+    } catch {
+      return undefined;
     }
   }
 

@@ -282,3 +282,61 @@ Note: not a slide
     expect(await problems(markdown)).toEqual([]);
   });
 });
+
+describe('getSlideProblems for slide includes', () => {
+  const includeProblems = async (markdown: string, files: Record<string, string>) =>
+    (
+      await getSlideProblems(markdown, {
+        ...host(files),
+        filePath: '.demo/slides/main.md',
+      })
+    ).map(({ code, severity, range, message }) => ({
+      code,
+      severity,
+      line: range.line,
+      message,
+    }));
+
+  it('accepts a file that exists', async () => {
+    const markdown = `# One
+
+---
+src: ../shared/about.md
+---
+`;
+    expect(await includeProblems(markdown, { '.demo/shared/about.md': '# About' })).toEqual([]);
+  });
+
+  it('reports a missing file and a path outside the workspace folder', async () => {
+    const markdown = `---
+src: /shared/missing.md
+---
+
+---
+src: ../../../outside.md
+---
+`;
+    expect(await includeProblems(markdown, {})).toEqual([
+      expect.objectContaining({ code: 'slide-missing-file', severity: 'error', line: 1 }),
+      expect.objectContaining({ code: 'slide-missing-file', severity: 'error', line: 5 }),
+    ]);
+  });
+
+  it('reports files that include each other', async () => {
+    const markdown = `# One
+
+---
+src: a.md
+---
+`;
+    const result = await includeProblems(markdown, {
+      '.demo/slides/a.md': '---\nsrc: ./main.md\n---\n',
+    });
+    expect(result).toEqual([
+      expect.objectContaining({ code: 'slide-include-cycle', severity: 'error', line: 3 }),
+    ]);
+    expect(result[0].message).toContain(
+      '.demo/slides/main.md → .demo/slides/a.md → .demo/slides/main.md',
+    );
+  });
+});

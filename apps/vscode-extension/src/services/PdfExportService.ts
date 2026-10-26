@@ -6,6 +6,7 @@ import { DemoFileProvider, Logger, Slides } from '.';
 import {
   getAbsolutePath,
   getTheme,
+  parseSlideFile,
   readFile,
   rebaseCssUrls,
   resolveSlideCodeFiles,
@@ -33,7 +34,6 @@ import {
   Config,
   tryConvertTemplateToHtml,
   SlideLayout,
-  SlideParser,
   SlideTheme,
   Step,
   transformMarkdown,
@@ -261,12 +261,11 @@ export class PdfExportService {
     let idx = 0;
     // The slide number for `{{crntSlideIdx}}`, which doesn't count hidden slides
     let slideNr = 0;
-    const parser = new SlideParser();
     const totalSlides = await Slides.getTotalSlides();
 
     for (const slide of slides) {
       try {
-        const allSlides = parser.parseSlides(slide.content);
+        const allSlides = await parseSlideFile(slide.content, slide.slideUri);
         for (const crntSlide of allSlides) {
           const isHidden = isSlideHidden(crntSlide);
           if (isHidden && !includeHidden) {

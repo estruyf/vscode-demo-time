@@ -16,6 +16,7 @@ import {
 import { Action, Config, getDemosFromConfig } from '@demotime/common';
 import { General } from '../constants';
 import {
+  getRelPath,
   getSlideActionTags,
   getSlideProblems,
   isPathInWorkspace,
@@ -122,17 +123,12 @@ export class SlideValidationService {
 
   /**
    * A file got added, removed or saved. It can be an act file, or a file that a slide refers to,
-   * like an image or a custom layout.
+   * like an image, a custom layout, or a slide file that other slide files include with `src`.
    */
   private static onFileChanged(fileOrDocument: Uri | TextDocument) {
     const uri = fileOrDocument instanceof Uri ? fileOrDocument : fileOrDocument.uri;
     const filePath = parseWinPath(uri.fsPath);
     if (uri.scheme !== 'file' || /\/(\.git|node_modules)\//.test(filePath)) {
-      return;
-    }
-
-    // Saving a slide file validates it through its change events
-    if (!(fileOrDocument instanceof Uri) && fileOrDocument.languageId === 'markdown') {
       return;
     }
 
@@ -260,7 +256,9 @@ export class SlideValidationService {
       }
     }
 
-    const problems = isSlideFile ? await SlideValidationService.getProblems(content) : [];
+    const problems = isSlideFile
+      ? await SlideValidationService.getProblems(content, document.uri)
+      : [];
     const codeFileDiagnostics = isSlideFile
       ? await SlideValidationService.getCodeFileDiagnostics(content, document.uri)
       : [];
@@ -289,7 +287,7 @@ export class SlideValidationService {
     }
   }
 
-  private static async getProblems(content: string): Promise<SlideProblem[]> {
+  private static async getProblems(content: string, uri: Uri): Promise<SlideProblem[]> {
     const wsFolder = Extension.getInstance().workspaceFolder;
     if (!wsFolder) {
       return [];
@@ -324,6 +322,7 @@ export class SlideValidationService {
         },
         readFile: read,
         templates,
+        filePath: getRelPath(parseWinPath(uri.fsPath)),
       });
     } catch {
       return [];

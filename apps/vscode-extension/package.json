@@ -1041,42 +1041,42 @@
         },
         {
           "submenu": "demo-time.slideLayout.submenu",
-          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide'",
+          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide' && !slideIncluded",
           "group": "9_demotime_slide@1"
         },
         {
           "command": "demo-time.hideSlide",
-          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide' && !slideHidden",
+          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide' && !slideHidden && !slideIncluded",
           "group": "9_demotime_slide@2"
         },
         {
           "command": "demo-time.unhideSlide",
-          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide' && slideHidden",
+          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide' && slideHidden && !slideIncluded",
           "group": "9_demotime_slide@2"
         },
         {
           "command": "demo-time.insertSlide",
-          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide'",
+          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide' && !slideIncluded",
           "group": "9_demotime_manage@1"
         },
         {
           "command": "demo-time.duplicateSlide",
-          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide'",
+          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide' && !slideIncluded",
           "group": "9_demotime_manage@2"
         },
         {
           "command": "demo-time.deleteSlide",
-          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide'",
+          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide' && !slideIncluded",
           "group": "9_demotime_manage@3"
         },
         {
           "command": "demo-time.moveSlideUp",
-          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide' && !slideIsFirst",
+          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide' && !slideIsFirst && !slideIncluded",
           "group": "9_demotime_move@1"
         },
         {
           "command": "demo-time.moveSlideDown",
-          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide' && !slideIsLast",
+          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide' && !slideIsLast && !slideIncluded",
           "group": "9_demotime_move@2"
         }
       ],

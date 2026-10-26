@@ -1,0 +1,82 @@
+---
+title: Include slides from other files
+description: Reuse slides like "about me", agenda, sponsor and "thank you" slides in all your talks, by including them from another markdown file
+lastmod: 2026-10-26T00:00:00.000Z
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Many speakers use the same slides in every talk: an "about me" slide, an agenda template, sponsor slides or a "thank you" slide. Instead of copying them into every slide file, keep them in a markdown file of their own and include that file with the `src` property:
+
+{/* prettier-ignore */}
+```md title=".demo/slides/talk.md"
+---
+theme: frost
+---
+
+# My talk
+
+---
+src: ../shared/about-me.md
+---
+
+---
+
+# Let's get started
+```
+
+The slide with `src` is replaced by all the slides of `about-me.md`. When you update `about-me.md`, every talk that includes it shows the new version. The `src` property uses the same syntax as [Slidev](https://sli.dev).
+
+## Paths
+
+- A path is relative to the file with the `src`: `../shared/about-me.md` or `./agenda.md`.
+- A path that starts with `/` is relative to the workspace folder: `/.demo/shared/about-me.md`.
+- Only files in the workspace folder can be included.
+
+An included file can include other files too. Its paths are relative to the included file.
+
+<Aside type="caution">
+  Files that include each other, like `talk.md` including `about-me.md` which includes `talk.md`
+  again, are reported in the **Problems** panel. The slide with `src` shows an error instead of the
+  slides.
+</Aside>
+
+## Front matter
+
+The included slides keep their own front matter, including the [document front matter](/slides/#front-matter-for-all-slides) of the included file. The document front matter of the file that includes them applies on top of it, with the usual rules:
+
+- `theme` and `customTheme` of the including file win, so the included slides look like the rest of your deck.
+- `transition`, `header`, `footer`, `background`, `class` and the other properties only apply to the included slides that don't set their own value.
+
+The other properties next to `src` apply to every included slide. This hides all the slides of the sponsor file in this talk:
+
+```md
+---
+src: ../shared/sponsors.md
+hide: true
+---
+```
+
+The content of a slide with `src` is not shown, as the slide is replaced by the included slides.
+
+## Slide numbers, the navigator and the export
+
+The included slides are part of the deck, the same as slides of the file itself:
+
+- Slide numbers, `{{crntSlideIdx}}` and `{{totalSlides}}` in the [header and footer](/slides/layouts/header-footer/), and the progress bar count them.
+- The `slide` property of the `openSlide` move counts them.
+- The slide navigator, the [slide thumbnails](/slides/#slide-thumbnails), the next slide in the [presenter view](/features/presenter-view/), and the [PDF export](/slides/export/) show them.
+
+## Edit included slides
+
+The slide preview loads the slides again when you save an included file.
+
+- **Show slide contents** and a double-click on the slide open the included file at the slide.
+- When the cursor moves to a slide in the editor of an included file, the preview shows that slide when the file is part of the deck.
+- The [speaker notes pane](/slides/#speaker-notes-pane) saves the notes in the included file.
+- The [slide context menu](/slides/#slide-context-menu) of an included slide only has **Show slide contents**, as the other actions would change the slides of every talk that includes the file. Included slides can't be dragged in the slide thumbnails. Drag a slide of the file onto them to move it before or after all of them.
+
+<Aside type="tip">
+  A code block with a [`file` option](/slides/code-blocks/#code-from-workspace-files) of `./` or
+  `../` on an included slide is relative to the included file.
+</Aside>

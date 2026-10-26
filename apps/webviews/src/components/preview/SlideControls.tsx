@@ -13,6 +13,11 @@ import { cn } from '../../utils/cn';
 export interface ISlideControlsProps {
   show: boolean;
   path?: string;
+  /**
+   * The file and index of the current slide, which can come from a file that the file includes
+   * with `src`
+   */
+  slideSource?: { path: string; index: number; isIncluded: boolean };
   slides: number;
   currentSlide?: number;
   slideOptions?: SlideOption[];
@@ -69,6 +74,7 @@ const Divider: React.FunctionComponent = () => (
 export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISlideControlsProps>> = ({
   show,
   path,
+  slideSource,
   children,
   slides,
   currentSlide = 0,
@@ -153,19 +159,19 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   // Moves the editor cursor to the source of the current slide
   const revealSlideSource = React.useCallback(() => {
     messageHandler.send(WebViewMessages.toVscode.preview.revealSource, {
-      path,
-      slideIndex: currentSlide,
+      path: slideSource?.path ?? path,
+      slideIndex: slideSource?.index ?? currentSlide,
     });
-  }, [path, currentSlide]);
+  }, [path, currentSlide, slideSource]);
 
   const isHidden = isSlideHidden({ frontmatter: matter });
   const toggleSlideHidden = React.useCallback(() => {
     messageHandler.send(WebViewMessages.toVscode.preview.setSlideHidden, {
-      path,
-      slideIndex: currentSlide,
+      path: slideSource?.path ?? path,
+      slideIndex: slideSource?.index ?? currentSlide,
       hidden: !isHidden,
     });
-  }, [path, currentSlide, isHidden]);
+  }, [path, currentSlide, slideSource, isHidden]);
 
   const toggleMousePosition = React.useCallback(() => {
     const nextValue = !showPosition;
@@ -241,13 +247,16 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
           iconName: 'file-code',
           onSelect: revealSlideSource,
         });
-        // Adds or removes `hide: true` in the slide front matter
-        slideItems.push({
-          id: 'toggle-slide-hidden',
-          label: isHidden ? 'Show slide while presenting' : 'Hide slide while presenting',
-          iconName: isHidden ? 'eye' : 'eye-closed',
-          onSelect: toggleSlideHidden,
-        });
+        // Adds or removes `hide: true` in the slide front matter. A slide of an included file
+        // (`src`) is hidden with `hide: true` next to its `src`.
+        if (!slideSource?.isIncluded) {
+          slideItems.push({
+            id: 'toggle-slide-hidden',
+            label: isHidden ? 'Show slide while presenting' : 'Hide slide while presenting',
+            iconName: isHidden ? 'eye' : 'eye-closed',
+            onSelect: toggleSlideHidden,
+          });
+        }
       }
     }
 
@@ -277,7 +286,7 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
     });
 
     return groups;
-  }, [isPresentationMode, showPosition, path, isHidden, toggleMousePosition, revealSlideSource, toggleSlideHidden, focusPanel, closeSidebar, hideControls]);
+  }, [isPresentationMode, showPosition, path, slideSource?.isIncluded, isHidden, toggleMousePosition, revealSlideSource, toggleSlideHidden, focusPanel, closeSidebar, hideControls]);
 
   const isOverlayOpen = isNavigatorOpen || isMenuOpen;
   const visible = show || isOverlayOpen;

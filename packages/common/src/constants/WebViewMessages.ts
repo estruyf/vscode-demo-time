@@ -87,6 +87,11 @@ export const WebViewMessages = {
      */
     getFileContents: 'getFileContents',
     /**
+     * Reads the files that the slides of a slide file include with `src`. Payload:
+     * `{ path, content }`. Responds with the `SlideIncludes` for the `SlideParser`
+     */
+    getSlideIncludes: 'getSlideIncludes',
+    /**
      * logError
      */
     logError: 'logError',

@@ -5,10 +5,10 @@ import { EventData } from '@estruyf/vscode';
 import { SlideControls } from './SlideControls';
 import { LaserPointer } from './LaserPointer';
 import DOMPurify from 'dompurify';
-import { COMMAND, Config, getNextSlideIdx, getPreviousSlideIdx, getProgressBarPosition, getProgressPercentage, getSlideBackgroundStyles, getSlideClassNames, getSlideHeading, getTemplateData, getTemplateErrorMessage, getVideoAutoplay, getVisibleSlideIdx, hasSlideOverflow, isAutoFitEnabled, isSlideHidden, ProgressBarPosition, renderTemplateError, tryConvertTemplateToHtml, Slide, SlideLayout, SlideOverflow, SlideOverflowEdges, SlideOverflowResult, SlideParser, SlidePlaceholders, SlideTheme, SlideTransition, TemplateErrorOptions, WebViewMessages } from '@demotime/common';
+import { COMMAND, Config, getNextSlideIdx, getPreviousSlideIdx, getProgressBarPosition, getProgressPercentage, getSlideBackgroundStyles, getSlideClassNames, getSlideHeading, getTemplateData, getTemplateErrorMessage, getVideoAutoplay, getVisibleSlideIdx, hasSlideOverflow, isAutoFitEnabled, isIncludedSlide, getSlideFileIndex, isSlideHidden, ProgressBarPosition, renderTemplateError, tryConvertTemplateToHtml, Slide, SlideLayout, SlideOverflow, SlideOverflowEdges, SlideOverflowResult, SlideIncludes, SlideParser, SlidePlaceholders, SlideTheme, SlideTransition, TemplateErrorOptions, WebViewMessages } from '@demotime/common';
 import { Icon } from 'vscrui';
 import { useFileContents, useCursor, useScale, useMousePosition, useTheme, useClickSteps, usePresentationMode, useSlideOverflow, useReducedMotionPreference } from '../../hooks';
-import { extractFirstH1, getSlideTitle, transformImageUrl } from '../../utils';
+import { extractFirstH1, getSlideEditSource, getSlideMenuContext, getSlideTitle, transformImageUrl } from '../../utils';
 import { AnimatedSVGSlide } from '../slides/AnimatedSVGSlide';
 import { SlideOverflowScanner } from './SlideOverflowScanner';
 import { SlideThumbnailsPane } from './SlideThumbnailsPane';
@@ -51,7 +51,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   // The overflow of every slide of the file, measured in the background
   const [scannedOverflows, setScannedOverflows] = React.useState<SlideOverflow[]>([]);
 
-  const { content, contentFilePath, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();
+  const { content, contentFilePath, contentVersion, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();
   // The file the current slides were parsed from
   const slidesFilePathRef = React.useRef<string | undefined>(undefined);
   const ref = React.useRef<HTMLDivElement>(null);
@@ -422,14 +422,16 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       return;
     }
 
+    // The slides that the file includes with `src` are not part of its diagnostics
     const results: SlideOverflowResult[] = overflows
-      .map((slideOverflow, slideIndex) => ({ slideIndex, ...slideOverflow }))
-      .filter((result) => hasSlideOverflow(result));
+      .map((slideOverflow, idx) => ({ slide: slides[idx], slideOverflow }))
+      .filter(({ slide, slideOverflow }) => slide && !isIncludedSlide(slide) && hasSlideOverflow(slideOverflow))
+      .map(({ slide, slideOverflow }) => ({ slideIndex: getSlideFileIndex(slide), ...slideOverflow }));
     messageHandler.send(WebViewMessages.toVscode.preview.slideOverflow, {
       path: relativePath,
       overflows: results,
     });
-  }, [relativePath]);
+  }, [relativePath, slides]);
 
   // Double-clicking the slide moves the editor cursor to its source, unless the sync is turned off
   const revealSourceOnDoubleClick = React.useCallback(async (ev: React.MouseEvent<HTMLDivElement>) => {
@@ -449,9 +451,10 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     }
 
     window.getSelection()?.removeAllRanges();
+    const { path, index } = getSlideEditSource(crntSlide, relativePath);
     messageHandler.send(WebViewMessages.toVscode.preview.revealSource, {
-      path: relativePath,
-      slideIndex: crntSlide.index,
+      path,
+      slideIndex: index,
     });
   }, [isPresentationMode, relativePath, crntSlide]);
 
@@ -462,16 +465,14 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       return undefined;
     }
 
-    return JSON.stringify({
-      webviewSection: 'slide',
-      slidePath: relativePath,
-      slideIndex: crntSlide.index,
-      slideHidden: isSlideHidden(crntSlide),
-      slideLayout: crntSlide.frontmatter.layout || SlideLayout.Default,
-      slideIsFirst: crntSlide.index === 0,
-      slideIsLast: crntSlide.index === slides.length - 1,
-    });
-  }, [isPresentationMode, relativePath, crntSlide, slides.length]);
+    return getSlideMenuContext(crntSlide, slides, relativePath);
+  }, [isPresentationMode, relativePath, crntSlide, slides]);
+
+  // The file and index of the current slide, which can come from a file it includes with `src`
+  const crntSlideSource = React.useMemo(
+    () => (crntSlide && relativePath ? getSlideEditSource(crntSlide, relativePath) : undefined),
+    [crntSlide, relativePath]
+  );
 
   // The slide thumbnails on the left of the preview. They are not part of presentations.
   const [thumbnailsSetting, setThumbnailsSetting] = React.useState<boolean | undefined>();
@@ -492,14 +493,23 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const canShowThumbnails = isPresentationMode === false && slides.length > 1 && !!relativePath;
   const showThumbnails = canShowThumbnails && thumbnailsSetting === true;
 
+  // Moves a slide of the file. A slide moved onto the slides of an included file (`src`) moves
+  // before or after all of them, and included slides can't be moved.
   const moveSlide = React.useCallback(
-    (fromIndex: number, toIndex: number) =>
-      messageHandler.request<boolean>(WebViewMessages.toVscode.preview.moveSlide, {
+    async (fromIndex: number, toIndex: number) => {
+      const from = slides[fromIndex];
+      const to = slides[toIndex];
+      if (!from || !to || isIncludedSlide(from) || getSlideFileIndex(from) === getSlideFileIndex(to)) {
+        return false;
+      }
+
+      return messageHandler.request<boolean>(WebViewMessages.toVscode.preview.moveSlide, {
         path: relativePath,
-        fromIndex,
-        toIndex,
-      }),
-    [relativePath],
+        fromIndex: getSlideFileIndex(from),
+        toIndex: getSlideFileIndex(to),
+      });
+    },
+    [relativePath, slides],
   );
 
   const toggleThumbnails = React.useCallback(() => {
@@ -533,9 +543,9 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   React.useEffect(() => {
     messageHandler.send(
       WebViewMessages.toVscode.preview.updateSlideNotes,
-      crntSlide ? { notes: crntSlide.notes, path: relativePath, slideIndex: crntSlide.index } : undefined
+      crntSlide ? { notes: crntSlide.notes, path: crntSlideSource?.path ?? relativePath, slideIndex: crntSlideSource?.index ?? crntSlide.index } : undefined
     );
-  }, [crntSlide, relativePath]);
+  }, [crntSlide, crntSlideSource, relativePath]);
 
   const videoUrl = React.useMemo(() => {
     if (crntSlide?.frontmatter.video && webviewUrl) {
@@ -556,8 +566,26 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   }, [crntSlide?.frontmatter.video, webviewUrl]);
 
   React.useEffect(() => {
-    if (content) {
-      const parser = new SlideParser();
+    if (!content) {
+      return;
+    }
+
+    let cancelled = false;
+    const loadSlides = async () => {
+      // The extension reads the files that the slides include with `src`
+      const includes = contentFilePath
+        ? await messageHandler
+          .request<SlideIncludes | null>(WebViewMessages.toVscode.getSlideIncludes, {
+            path: contentFilePath.replace(webviewUrl || "", ""),
+            content,
+          })
+          .catch(() => null)
+        : null;
+      if (cancelled) {
+        return;
+      }
+
+      const parser = new SlideParser({ includes: includes ?? undefined });
       const allSlides = parser.parseSlides(content);
       const isSameFile = slidesFilePathRef.current === contentFilePath;
       slidesFilePathRef.current = contentFilePath;
@@ -570,8 +598,14 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         messageHandler.send(WebViewMessages.toVscode.hasNextSlide, true);
         messageHandler.send(WebViewMessages.toVscode.nextSlideTitle, getSlideTitle(allSlides[1]));
       }
-    }
-  }, [content, contentFilePath]);
+    };
+
+    loadSlides();
+    return () => {
+      cancelled = true;
+    };
+    // `contentVersion` loads the slides again when the content didn't change, but an included file did
+  }, [content, contentFilePath, contentVersion, webviewUrl]);
 
   React.useEffect(() => {
     setTheme(crntSlide?.frontmatter.theme || SlideTheme.default);
@@ -938,6 +972,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
         <SlideControls
           show={showControls && cursorVisible}
           path={relativePath}
+          slideSource={crntSlideSource}
           slides={slides.length}
           currentSlide={crntSlide?.index}
           slideOptions={slideOptions}
@@ -975,8 +1010,8 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       {showNotes && relativePath && crntSlide && (
         <SlideNotesPane
           notes={crntSlide.notes}
-          path={relativePath}
-          slideIndex={crntSlide.index}
+          path={crntSlideSource?.path ?? relativePath}
+          slideIndex={crntSlideSource?.index ?? crntSlide.index}
         />
       )}
       </div>
