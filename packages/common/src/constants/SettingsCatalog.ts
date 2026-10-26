@@ -432,6 +432,14 @@ export const SETTINGS_CATALOG: SettingDefinition[] = [
     control: 'boolean',
   },
   {
+    key: 'slidePreviewNotes',
+    label: 'Speaker notes pane',
+    description:
+      'Show the speaker notes of the current slide in a pane below the slide preview, where you can write and edit them. Never shown in presentation mode.',
+    category: 'slides',
+    control: 'boolean',
+  },
+  {
     key: 'slideReducedMotion',
     label: 'Reduced motion',
     description:

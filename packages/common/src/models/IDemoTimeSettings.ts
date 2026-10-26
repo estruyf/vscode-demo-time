@@ -29,6 +29,7 @@ export interface IDemoTimeSettings {
   slideProgressBar: string;
   slidePreviewSync: boolean;
   slidePreviewThumbnails: boolean;
+  slidePreviewNotes: boolean;
   slideReducedMotion: string;
   'pdfExport.notes': string;
   'pdfExport.includeHiddenSlides': boolean;

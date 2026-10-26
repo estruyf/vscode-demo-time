@@ -322,11 +322,12 @@ export const SlideThumbnailsPane: React.FunctionComponent<ISlideThumbnailsPanePr
     return pendingMove ? moveArrayItem(indices, pendingMove.from, pendingMove.to) : indices;
   }, [slides, pendingMove]);
 
-  // The key follows the slide, so React moves the thumbnail on a reorder instead of rendering it again
+  // The key follows the slide, so React moves the thumbnail on a reorder instead of rendering it again.
+  // The notes are not on the thumbnail, so editing them doesn't render it again either.
   const keys = React.useMemo(() => {
     const occurrences = new Map<string, number>();
     return slides.map((slide) => {
-      const base = JSON.stringify([slide.content, slide.frontmatter, slide.notes]);
+      const base = JSON.stringify([slide.content, slide.frontmatter]);
       const occurrence = occurrences.get(base) ?? 0;
       occurrences.set(base, occurrence + 1);
       return `${base}#${occurrence}`;

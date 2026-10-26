@@ -58,7 +58,6 @@ import {
   getSlidePropertyMarkdown,
   getSlidePropertyTypeName,
   getSlidePropertyValues,
-  WebViewMessages,
 } from '@demotime/common';
 
 /**
@@ -109,12 +108,6 @@ export class Slides {
         ),
       );
     }
-    subscriptions.push(
-      commands.registerCommand(
-        COMMAND.editSlideNotes,
-        forSlide(() => Preview.postMessage(WebViewMessages.toWebview.preview.editNotes)),
-      ),
-    );
     subscriptions.push(commands.registerCommand(COMMAND.insertSlide, forSlide(Slides.insertSlide)));
     subscriptions.push(
       commands.registerCommand(COMMAND.duplicateSlide, forSlide(Slides.duplicateSlide)),

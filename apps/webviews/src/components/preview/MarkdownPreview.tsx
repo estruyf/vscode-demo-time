@@ -12,6 +12,7 @@ import { extractFirstH1, getSlideTitle, transformImageUrl } from '../../utils';
 import { AnimatedSVGSlide } from '../slides/AnimatedSVGSlide';
 import { SlideOverflowScanner } from './SlideOverflowScanner';
 import { SlideThumbnailsPane } from './SlideThumbnailsPane';
+import { SlideNotesPane } from './SlideNotesPane';
 import { SlideFitBadge } from './SlideFitBadge';
 import { SlideOverflowMarker } from './SlideOverflowMarker';
 import { nextClickStep, previousClickStep, resetClickSteps } from '../../webcomponents/clickSteps';
@@ -505,6 +506,29 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.toggleSlideThumbnails);
   }, []);
 
+  // The speaker notes below the preview, to write and edit them. They are not part of presentations.
+  const [notesSetting, setNotesSetting] = React.useState<boolean | undefined>();
+  React.useEffect(() => {
+    messageHandler
+      .request<boolean>(WebViewMessages.toVscode.getSetting, Config.slides.previewNotes)
+      .then((value) => setNotesSetting(value !== false));
+
+    const listener = (message: MessageEvent<EventData<boolean>>) => {
+      if (message.data.command === WebViewMessages.toWebview.preview.updateNotesPane) {
+        setNotesSetting(message.data.payload !== false);
+      }
+    };
+    Messenger.listen(listener);
+    return () => Messenger.unlisten(listener);
+  }, []);
+
+  const canShowNotes = isPresentationMode === false && !!relativePath && !!crntSlide;
+  const showNotes = canShowNotes && notesSetting === true;
+
+  const toggleNotes = React.useCallback(() => {
+    messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.toggleSlideNotes);
+  }, []);
+
   // The presenter view and remote show the notes of the current slide
   React.useEffect(() => {
     messageHandler.send(
@@ -535,10 +559,13 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     if (content) {
       const parser = new SlideParser();
       const allSlides = parser.parseSlides(content);
+      const isSameFile = slidesFilePathRef.current === contentFilePath;
       slidesFilePathRef.current = contentFilePath;
       setSlides(allSlides);
       setScannedOverflows([]);
-      setCrntSlide(allSlides[0]);
+      // A saved file stays on its slide, instead of showing the first slide until the slide index
+      // is applied
+      setCrntSlide((prev) => (isSameFile && prev && allSlides[prev.index]) || allSlides[0]);
       if (allSlides.length > 1) {
         messageHandler.send(WebViewMessages.toVscode.hasNextSlide, true);
         messageHandler.send(WebViewMessages.toVscode.nextSlideTitle, getSlideTitle(allSlides[1]));
@@ -746,10 +773,11 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           onMoveSlide={moveSlide}
         />
       )}
+      <div className="flex flex-col flex-1 min-w-0 h-full overflow-hidden">
       <div
         key={`${crntFilePath}-${crntSlide?.index || 0}-${crntSlide?.frontmatter?.customLayout || 'standard'}`}
         ref={ref}
-        className={`slide ${theme || "default"} relative flex-1 min-w-0 h-full overflow-hidden`}
+        className={`slide ${theme || "default"} relative flex-1 min-w-0 min-h-0 overflow-hidden`}
         data-vscode-context={vscodeContext}
         onMouseEnter={() => setShowControls(true)}
         onMouseLeave={() => {
@@ -930,10 +958,11 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           onZoomToggle={toggleZoom}
           style={{ cursor: 'default' }}
           matter={crntSlide?.frontmatter}
-          notes={crntSlide?.notes}
           clickStep={clickStep}
           thumbnailsOpen={showThumbnails}
           onThumbnailsToggle={canShowThumbnails ? toggleThumbnails : undefined}
+          notesOpen={showNotes}
+          onNotesToggle={canShowNotes ? toggleNotes : undefined}
         >
           {/* Mouse Position */}
           {mousePosition && showControls && cursorVisible && (
@@ -942,6 +971,14 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             </div>
           )}
         </SlideControls>
+      </div>
+      {showNotes && relativePath && crntSlide && (
+        <SlideNotesPane
+          notes={crntSlide.notes}
+          path={relativePath}
+          slideIndex={crntSlide.index}
+        />
+      )}
       </div>
       </div>
 

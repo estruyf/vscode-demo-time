@@ -354,13 +354,13 @@ export const WebViewMessages = {
        */
       codeFilesChanged: 'previewCodeFilesChanged',
       /**
-       * Opens the speaker notes editor of the current slide
-       */
-      editNotes: 'previewEditSlideNotes',
-      /**
        * The `demoTime.slidePreviewThumbnails` setting changed. Payload: whether to show them
        */
       updateThumbnails: 'previewUpdateSlideThumbnails',
+      /**
+       * The `demoTime.slidePreviewNotes` setting changed. Payload: whether to show the notes pane
+       */
+      updateNotesPane: 'previewUpdateSlideNotesPane',
     },
     // Act Editor
     configEditor: {

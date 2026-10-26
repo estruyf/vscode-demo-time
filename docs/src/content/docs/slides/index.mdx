@@ -229,6 +229,15 @@ When you are not presenting and the file has more than one slide, the slide prev
 
 The thumbnails are never shown in [presentation mode](/presentation-mode/). Show or hide them with the **Toggle slide thumbnails** button in the [slide controls](#view-tools), or with the `demoTime.slidePreviewThumbnails` setting.
 
+### Speaker notes pane
+
+When you are not presenting, the slide preview shows the [speaker notes](/features/using-notes/#notes-in-your-slides) of the current slide in a pane below the slide, like the notes pane in PowerPoint. Click in the pane and type to add or change the notes. Demo Time saves them in the `<!-- notes -->` block of the slide a second after you stop typing, when you click outside the pane, and when you go to another slide. Clear the pane to remove the block.
+
+- **Resize the pane**: Drag the top edge of the pane to change its height, or focus the edge with `Tab` and use `Up` and `Down`. Double-click the edge to go back to the default height. The preview remembers the height.
+- **Leave the pane**: Press `Escape`. The arrow keys move the cursor in the notes, and only move to another slide when the focus is on the slide.
+
+The pane is never shown in [presentation mode](/presentation-mode/). Show or hide it with the **Toggle speaker notes** button in the [slide controls](#view-tools), or with the `demoTime.slidePreviewNotes` setting.
+
 Moving a slide changes the front matter at the top of the file when the first slide is involved:
 
 - When you move the first slide away, the properties that apply to every slide, like `theme`, `transition` and `class`, stay at the top of the file. The properties that only apply to the first slide, `layout`, `customLayout`, `image`, `autoAdvanceAfter` and `hide`, move with the slide.
@@ -243,7 +252,6 @@ An `openSlide` move with `slide: N` keeps its number when you change the order o
 Outside [presentation mode](/presentation-mode/), right-click the slide in the preview, or a thumbnail in the [slide thumbnails](#slide-thumbnails), to change it without leaving the preview. The actions update the markdown file of the slide and save it, so the preview updates right away. Use **Undo** in the editor of the file to revert a change.
 
 - **Show slide contents**: Opens the markdown of the slide in the editor, with the cursor on the slide. See [sync the preview with the editor](#sync-the-preview-with-the-editor).
-- **Edit speaker notes**: Opens the editor for the notes of the slide, and saves them in its `<!-- notes -->` block. See [notes in your slides](/features/using-notes/#notes-in-your-slides).
 - **Change layout**: Sets the `layout` in the front matter of the slide to one of the [built-in layouts](/slides/layouts/). The submenu leaves out the layout the slide already uses.
 - **Hide slide while presenting** / **Show slide while presenting**: Adds or removes `hide: true` in the front matter of the slide. See [hiding slides](#hiding-slides).
 - **Insert slide after**: Asks for a title, and adds a slide with that heading after the slide. The preview shows the new slide and the editor opens on it, so you can write its content.
@@ -302,6 +310,7 @@ The control bar is keyboard and screen reader friendly. Every button is reachabl
 - **Toggle presentation view**: Toggles the presentation view, which hides VS Code UI areas (status bar, tabs, activity bar, …) for a distraction-free experience. You can also use the `setPresentationView` and `unsetPresentationView` actions, or the `Demo Time: Toggle presentation view (hides status bar, tabs, and activity bar)` command.
 - **Toggle fullscreen**: Toggles Visual Studio Code's fullscreen mode.
 - **Toggle slide thumbnails**: Shows or hides the [slide thumbnails](#slide-thumbnails) next to the slide preview. It saves the choice in the `demoTime.slidePreviewThumbnails` setting. The button is not shown in presentation mode.
+- **Toggle speaker notes**: Shows or hides the [speaker notes pane](#speaker-notes-pane) below the slide preview. It saves the choice in the `demoTime.slidePreviewNotes` setting. The button is not shown in presentation mode.
 
 ### Slide navigation
 
@@ -320,7 +329,6 @@ When the slide preview has focus, the right arrow key and `PageDown` do the same
     - **Mouse position**: Toggles the mouse position overlay on the slide, which can be useful to position elements on your slides.
     - **Reveal slide source**: Opens the source file of the slide in the editor, with the cursor on the current slide, so you can edit it directly. You can also double-click the slide, or right-click it and select **Show slide contents**. See [sync the preview with the editor](#sync-the-preview-with-the-editor).
     - **Hide slide while presenting** / **Show slide while presenting**: Adds or removes `hide: true` in the front matter of the current slide. See [hiding slides](#hiding-slides).
-    - **Add speaker notes** / **Edit speaker notes**: Opens an editor for the notes of the current slide, and saves them in its `<!-- notes -->` block. See [notes in your slides](/features/using-notes/#notes-in-your-slides).
   - **Workspace**
     - **Show demos**: Opens the Demo Time panel to access your demos and slides.
     - **Close sidebar**: Closes the side bar to provide more space for your slides.

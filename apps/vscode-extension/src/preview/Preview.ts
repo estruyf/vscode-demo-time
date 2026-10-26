@@ -80,7 +80,14 @@ export class Preview extends BaseWebview {
       ),
     );
     subscriptions.push(
-      commands.registerCommand(COMMAND.toggleSlideThumbnails, Preview.toggleThumbnails),
+      commands.registerCommand(COMMAND.toggleSlideThumbnails, () =>
+        Preview.toggleSetting(Config.slides.previewThumbnails),
+      ),
+    );
+    subscriptions.push(
+      commands.registerCommand(COMMAND.toggleSlideNotes, () =>
+        Preview.toggleSetting(Config.slides.previewNotes),
+      ),
     );
     subscriptions.push(
       workspace.onDidChangeConfiguration((e) => {
@@ -90,7 +97,16 @@ export class Preview extends BaseWebview {
         ) {
           Preview.postMessage(
             WebViewMessages.toWebview.preview.updateThumbnails,
-            Preview.areThumbnailsEnabled(),
+            Preview.isSettingEnabled(Config.slides.previewThumbnails),
+          );
+        }
+        if (
+          Preview.isOpen &&
+          e.affectsConfiguration(`${Config.root}.${Config.slides.previewNotes}`)
+        ) {
+          Preview.postMessage(
+            WebViewMessages.toWebview.preview.updateNotesPane,
+            Preview.isSettingEnabled(Config.slides.previewNotes),
           );
         }
         if (
@@ -108,17 +124,18 @@ export class Preview extends BaseWebview {
   }
 
   /**
-   * Whether the slide preview shows the slide thumbnails, according to the setting.
+   * Whether a pane of the slide preview, like the slide thumbnails, is turned on in the settings.
+   * @param key The setting of the pane, which is on by default
    */
-  private static areThumbnailsEnabled(): boolean {
-    return Extension.getInstance().getSetting<boolean>(Config.slides.previewThumbnails) !== false;
+  private static isSettingEnabled(key: string): boolean {
+    return Extension.getInstance().getSetting<boolean>(key) !== false;
   }
 
   /**
-   * Turns the slide thumbnails of the preview on or off, in the place where the setting is defined.
+   * Turns a pane of the preview on or off, in the place where its setting is defined.
+   * @param key The setting of the pane
    */
-  private static async toggleThumbnails() {
-    const key = Config.slides.previewThumbnails;
+  private static async toggleSetting(key: string) {
     const inspected = workspace.getConfiguration(Config.root).inspect<boolean>(key);
     let target = ConfigurationTarget.Global;
     if (inspected?.workspaceFolderValue !== undefined) {
@@ -126,7 +143,7 @@ export class Preview extends BaseWebview {
     } else if (inspected?.workspaceValue !== undefined) {
       target = ConfigurationTarget.Workspace;
     }
-    await Extension.getInstance().setSetting(key, !Preview.areThumbnailsEnabled(), target);
+    await Extension.getInstance().setSetting(key, !Preview.isSettingEnabled(key), target);
   }
 
   /**

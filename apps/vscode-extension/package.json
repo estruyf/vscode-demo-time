@@ -432,6 +432,11 @@
           "default": true,
           "markdownDescription": "Show the slides of the file as thumbnails next to the slide preview when the file has more than one slide and you are not presenting. Click a thumbnail to open the slide, or drag it to change the order of the slides. The **Toggle slide thumbnails** button of the slide controls changes this setting."
         },
+        "demoTime.slidePreviewNotes": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Show the speaker notes of the current slide in a pane below the slide preview when you are not presenting. Type in the pane to write or edit the notes, which are saved in the `<!-- notes -->` block of the slide. Drag the top edge of the pane to change its height. The **Toggle speaker notes** button of the slide controls changes this setting."
+        },
         "demoTime.slideReducedMotion": {
           "type": "string",
           "enum": [
@@ -806,11 +811,6 @@
         "category": "Demo Time"
       },
       {
-        "command": "demo-time.editSlideNotes",
-        "title": "Edit speaker notes",
-        "category": "Demo Time"
-      },
-      {
         "command": "demo-time.insertSlide",
         "title": "Insert slide after",
         "category": "Demo Time"
@@ -840,6 +840,12 @@
         "title": "Toggle slide thumbnails in the slide preview",
         "category": "Demo Time",
         "icon": "$(layout-sidebar-left)"
+      },
+      {
+        "command": "demo-time.toggleSlideNotes",
+        "title": "Toggle speaker notes in the slide preview",
+        "category": "Demo Time",
+        "icon": "$(layout-panel)"
       },
       {
         "command": "demo-time.openSlidePreview",
@@ -1032,11 +1038,6 @@
           "command": "demo-time.showSlideContents",
           "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide'",
           "group": "9_demotime@1"
-        },
-        {
-          "command": "demo-time.editSlideNotes",
-          "when": "webviewId == 'demoTime:preview' && webviewSection == 'slide'",
-          "group": "9_demotime@2"
         },
         {
           "submenu": "demo-time.slideLayout.submenu",
@@ -1252,10 +1253,6 @@
         },
         {
           "command": "demo-time.setSlideLayout.animated",
-          "when": "false"
-        },
-        {
-          "command": "demo-time.editSlideNotes",
           "when": "false"
         },
         {

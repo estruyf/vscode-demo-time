@@ -64,13 +64,13 @@ export const COMMAND = {
    * Followed by the layout, like `demo-time.setSlideLayout.intro`
    */
   setSlideLayout: `${EXTENSION_NAME}.setSlideLayout`,
-  editSlideNotes: `${EXTENSION_NAME}.editSlideNotes`,
   insertSlide: `${EXTENSION_NAME}.insertSlide`,
   duplicateSlide: `${EXTENSION_NAME}.duplicateSlide`,
   deleteSlide: `${EXTENSION_NAME}.deleteSlide`,
   moveSlideUp: `${EXTENSION_NAME}.moveSlideUp`,
   moveSlideDown: `${EXTENSION_NAME}.moveSlideDown`,
   toggleSlideThumbnails: `${EXTENSION_NAME}.toggleSlideThumbnails`,
+  toggleSlideNotes: `${EXTENSION_NAME}.toggleSlideNotes`,
   togglePresentationView: `${EXTENSION_NAME}.togglePresentationView`,
   closePresentationView: `${EXTENSION_NAME}.closePresentationView`,
   exportToPdf: `${EXTENSION_NAME}.exportToPdf`,

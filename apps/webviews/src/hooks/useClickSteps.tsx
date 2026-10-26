@@ -9,7 +9,7 @@ const PREVIOUS_KEYS = ['ArrowLeft', 'PageUp'];
 
 // Clicks on these elements (like the slide controls) don't count as a click step
 const IGNORED_CLICK_TARGETS =
-  'a, button, input, select, textarea, label, summary, video, audio, [role="button"], [contenteditable], [data-slide-controls], [data-slide-thumbnails]';
+  'a, button, input, select, textarea, label, summary, video, audio, [role="button"], [contenteditable], [data-slide-controls], [data-slide-thumbnails], [data-slide-notes]';
 // Keys typed in these elements don't count as a click step
 const IGNORED_KEY_TARGETS = 'input, select, textarea, [contenteditable]';
 

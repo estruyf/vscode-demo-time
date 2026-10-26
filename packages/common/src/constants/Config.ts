@@ -51,6 +51,7 @@ export const Config = {
     presentationTitle: 'presentationTitle',
     previewSync: 'slidePreviewSync',
     previewThumbnails: 'slidePreviewThumbnails',
+    previewNotes: 'slidePreviewNotes',
     reducedMotion: 'slideReducedMotion',
   },
   webcomponents: {

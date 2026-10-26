@@ -31,6 +31,7 @@ const defaultDemoTimeSettings: IDemoTimeSettings = {
   slideProgressBar: 'none',
   slidePreviewSync: true,
   slidePreviewThumbnails: true,
+  slidePreviewNotes: true,
   'pdfExport.notes': 'none',
   'pdfExport.includeHiddenSlides': false,
   'videoExport.command': 'npx --yes @demotime/video@latest',

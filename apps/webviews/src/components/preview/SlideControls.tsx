@@ -8,7 +8,6 @@ import { EventData } from '@estruyf/vscode';
 import { WebViewMessages } from '@demotime/common';
 import { SlideNavigator, SlideOption } from './SlideNavigator';
 import { SlideControlsMenu, ISlideMenuGroup, ISlideMenuItem } from './SlideControlsMenu';
-import { SlideNotesEditor } from './SlideNotesEditor';
 import { cn } from '../../utils/cn';
 
 export interface ISlideControlsProps {
@@ -41,7 +40,6 @@ export interface ISlideControlsProps {
   onZoomToggle?: () => void;
   style?: React.CSSProperties;
   matter?: SlideMetadata;
-  notes?: string;
   clickStep?: number;
   /**
    * Whether the slide thumbnails show next to the preview
@@ -51,6 +49,14 @@ export interface ISlideControlsProps {
    * Toggles the slide thumbnails. Without it, the button is not shown.
    */
   onThumbnailsToggle?: () => void;
+  /**
+   * Whether the speaker notes show below the preview
+   */
+  notesOpen?: boolean;
+  /**
+   * Toggles the speaker notes. Without it, the button is not shown.
+   */
+  onNotesToggle?: () => void;
 }
 
 const Divider: React.FunctionComponent = () => (
@@ -84,17 +90,17 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   onZoomToggle,
   style,
   matter,
-  notes,
   clickStep = 0,
   thumbnailsOpen = false,
   onThumbnailsToggle,
+  notesOpen = false,
+  onNotesToggle,
 }: React.PropsWithChildren<ISlideControlsProps>) => {
   const [previousEnabled, setPreviousEnabled] = React.useState(false);
   const [isPresentationMode, setIsPresentationMode] = React.useState(false);
   const [showPosition, setShowPosition] = React.useState(false);
   const [isNavigatorOpen, setIsNavigatorOpen] = React.useState(false);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const [isNotesEditorOpen, setIsNotesEditorOpen] = React.useState(false);
   const [extensionAutoProceedManaged, setExtensionAutoProceedManaged] = React.useState(false);
 
 
@@ -109,9 +115,6 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
       setIsPresentationMode(payload);
     } else if (command === WebViewMessages.toWebview.updateAutoProceedState) {
       setExtensionAutoProceedManaged(!!payload?.managedByExtension);
-    } else if (command === WebViewMessages.toWebview.preview.editNotes) {
-      // `Edit speaker notes` in the context menu of the slide
-      setIsNotesEditorOpen(true);
     }
   };
 
@@ -163,24 +166,6 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
       hidden: !isHidden,
     });
   }, [path, currentSlide, isHidden]);
-
-  const openNotesEditor = React.useCallback(() => {
-    setIsNotesEditorOpen(true);
-  }, []);
-
-  const closeNotesEditor = React.useCallback(() => {
-    setIsNotesEditorOpen(false);
-  }, []);
-
-  // Writes the notes to the `<!-- notes -->` block of the slide
-  const saveNotes = React.useCallback((value: string) => {
-    messageHandler.send(WebViewMessages.toVscode.preview.setSlideNotes, {
-      path,
-      slideIndex: currentSlide,
-      notes: value,
-    });
-    setIsNotesEditorOpen(false);
-  }, [path, currentSlide]);
 
   const toggleMousePosition = React.useCallback(() => {
     const nextValue = !showPosition;
@@ -263,12 +248,6 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
           iconName: isHidden ? 'eye' : 'eye-closed',
           onSelect: toggleSlideHidden,
         });
-        slideItems.push({
-          id: 'edit-slide-notes',
-          label: notes ? 'Edit speaker notes' : 'Add speaker notes',
-          iconName: 'note',
-          onSelect: openNotesEditor,
-        });
       }
     }
 
@@ -298,9 +277,9 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
     });
 
     return groups;
-  }, [isPresentationMode, showPosition, path, isHidden, notes, toggleMousePosition, revealSlideSource, toggleSlideHidden, openNotesEditor, focusPanel, closeSidebar, hideControls]);
+  }, [isPresentationMode, showPosition, path, isHidden, toggleMousePosition, revealSlideSource, toggleSlideHidden, focusPanel, closeSidebar, hideControls]);
 
-  const isOverlayOpen = isNavigatorOpen || isMenuOpen || isNotesEditorOpen;
+  const isOverlayOpen = isNavigatorOpen || isMenuOpen;
   const visible = show || isOverlayOpen;
 
   React.useEffect(() => {
@@ -353,6 +332,15 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
               active={thumbnailsOpen}
               ariaPressed={thumbnailsOpen}
               action={onThumbnailsToggle}
+            />
+          )}
+          {onNotesToggle && !isPresentationMode && (
+            <SlideControl
+              title={notesOpen ? 'Hide speaker notes' : 'Show speaker notes'}
+              iconName="layout-panel"
+              active={notesOpen}
+              ariaPressed={notesOpen}
+              action={onNotesToggle}
             />
           )}
         </div>
@@ -414,14 +402,6 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
           <SlideControlsMenu groups={menuGroups} onOpenChange={setIsMenuOpen} />
         </div>
 
-        {isNotesEditorOpen && (
-          <SlideNotesEditor
-            slideNr={currentSlide + 1}
-            notes={notes}
-            onSave={saveNotes}
-            onClose={closeNotesEditor}
-          />
-        )}
       </div>
     </div>
   );
