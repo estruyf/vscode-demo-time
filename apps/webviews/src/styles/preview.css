@@ -192,6 +192,84 @@ dt-code-steps[data-focus] [data-line]:not([data-highlighted-line]) {
   opacity: var(--demotime-code-dim-opacity, 0.4);
 }
 
+/*
+ * Animated code changes (magic-move). The rules of `shiki-magic-move/style.css`, with the line
+ * numbers in the same color as the line numbers of other code blocks.
+ */
+/* `rehype-pretty-code` sets `display: grid` on the code element */
+dt-magic-move[data-live] pre > code:not(.dt-magic-move__code) {
+  display: none !important;
+}
+
+.dt-magic-move__code {
+  display: block;
+  /* The same space as the border and padding of the lines of other code blocks */
+  margin: 0 1ch 0 calc(1ch + 3px);
+  white-space: pre;
+  background: transparent;
+
+  .shiki-magic-move-line-number {
+    color: var(
+      --demotime-code-line-number-color,
+      var(--vscode-editorLineNumber-foreground, rgba(127, 127, 127, 0.8))
+    );
+    user-select: none;
+    /* The number ends with two spaces, other code blocks have 1.5ch between number and code */
+    margin-right: -0.5ch;
+  }
+}
+
+.shiki-magic-move-container {
+  position: relative;
+  white-space: pre;
+}
+
+.shiki-magic-move-item {
+  display: inline-block;
+  transition: color var(--smm-duration, 0.5s) var(--smm-easing, ease);
+}
+
+.shiki-magic-move-move,
+.shiki-magic-move-enter-active,
+.shiki-magic-move-leave-active {
+  transition: all var(--smm-duration, 0.5s) var(--smm-easing, ease);
+}
+
+.shiki-magic-move-container-resize,
+.shiki-magic-move-container-restyle {
+  transition: all var(--smm-duration, 0.5s) var(--smm-easing, ease);
+  transition-delay: calc(var(--smm-duration, 0.5s) * var(--smm-delay-container, 1));
+}
+
+.shiki-magic-move-move {
+  transition-delay: calc(
+    var(--smm-duration, 0.5s) * var(--smm-delay-move, 1) + var(--smm-stagger, 0)
+  );
+  z-index: 1;
+}
+
+.shiki-magic-move-enter-active {
+  transition-delay: calc(
+    var(--smm-duration, 0.5s) * var(--smm-delay-enter, 1) + var(--smm-stagger, 0)
+  );
+  z-index: 1;
+}
+
+.shiki-magic-move-leave-active {
+  transition-delay: calc(
+    var(--smm-duration, 0.5s) * var(--smm-delay-leave, 1) + var(--smm-stagger, 0)
+  );
+}
+
+.shiki-magic-move-enter-from,
+.shiki-magic-move-leave-to {
+  opacity: 0;
+}
+
+br.shiki-magic-move-leave-active {
+  display: none;
+}
+
 /* Table styling */
 table {
   @apply w-full border-collapse my-4;

@@ -7,6 +7,7 @@ export * from './formatDate';
 export * from './getVideoAutoplay';
 export * from './htmlDecode';
 export * from './htmlEncode';
+export * from './magicMove';
 export * from './placeholderFormatting';
 export * from './reducedMotion';
 export * from './sectionFormatting';
