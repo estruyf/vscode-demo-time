@@ -350,6 +350,8 @@ export class DemoRunner {
    */
   public static async setPresentationMode(enable: boolean, unattended = false): Promise<void> {
     DemoRunner.isPresentationMode = enable;
+    // A presentation starts with empty slides, and its drawings go away when it ends
+    Preview.clearDrawings();
     DemoStatusBar.setPresenting(DemoRunner.isPresentationMode);
     await setContext(ContextKeys.presentation, DemoRunner.isPresentationMode);
     PresenterView.postMessage(

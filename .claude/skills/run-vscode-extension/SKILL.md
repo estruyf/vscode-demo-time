@@ -86,6 +86,7 @@ curl -s "http://localhost:3710/api/demos"
 | `eval <js>`                                       | evaluate in the workbench, print JSON                                                                                            |
 | `fe <frame selector> ;; <js>`                     | evaluate in the webview that contains the selector                                                                               |
 | `fclick` / `fright <frame selector> ;; <element>` | click / right-click in a webview                                                                                                 |
+| `fdrag <frame selector> ;; <element> ;; <x,y> ...` | drag the mouse through points given as fractions (0-1) of the element box, like drawing on `.slide__drawing` |
 | `pv <js>`                                         | evaluate in the slide preview webview                                                                                            |
 | `slides` / `thumb <n>`                            | list / click the preview thumbnails (1-based)                                                                                    |
 | `menu` / `menuclick <label>`                      | list / click the items of the open context menu                                                                                  |

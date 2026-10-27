@@ -4,10 +4,12 @@ import { Markdown } from './Markdown';
 import { EventData } from '@estruyf/vscode';
 import { SlideControls } from './SlideControls';
 import { LaserPointer } from './LaserPointer';
+import { SlideDrawingLayer } from './SlideDrawingLayer';
+import { SlideDrawingToolbar } from './SlideDrawingToolbar';
 import DOMPurify from 'dompurify';
-import { COMMAND, Config, getNextSlideIdx, getPreviousSlideIdx, getProgressBarPosition, getProgressPercentage, getSlideBackgroundStyles, getSlideClassNames, getSlideHeading, getTemplateData, getTemplateErrorMessage, getVideoAutoplay, getVisibleSlideIdx, hasSlideOverflow, isAutoFitEnabled, isIncludedSlide, getSlideFileIndex, isSlideHidden, ProgressBarPosition, renderTemplateError, tryConvertTemplateToHtml, Slide, SlideLayout, SlideOverflow, SlideOverflowEdges, SlideOverflowResult, SlideIncludes, SlideParser, SlidePlaceholders, SlideTheme, SlideTransition, TemplateErrorOptions, WebViewMessages } from '@demotime/common';
+import { COMMAND, Config, getNextSlideIdx, getPreviousSlideIdx, getProgressBarPosition, getProgressPercentage, getSlideBackgroundStyles, getSlideClassNames, getSlideHeading, getTemplateData, getTemplateErrorMessage, getVideoAutoplay, getVisibleSlideIdx, hasSlideOverflow, isAutoFitEnabled, isIncludedSlide, getSlideDrawingKey, getSlideFileIndex, isSlideHidden, ProgressBarPosition, renderTemplateError, tryConvertTemplateToHtml, Slide, SlideLayout, SlideOverflow, SlideOverflowEdges, SlideOverflowResult, SlideDrawingStroke, SlideDrawingTool, SlideIncludes, SlideParser, SlidePlaceholders, SlideTheme, SlideTransition, TemplateErrorOptions, WebViewMessages } from '@demotime/common';
 import { Icon } from 'vscrui';
-import { useFileContents, useCursor, useScale, useMousePosition, useTheme, useClickSteps, usePresentationMode, useSlideOverflow, useReducedMotionPreference } from '../../hooks';
+import { useFileContents, useCursor, useScale, useMousePosition, useTheme, useClickSteps, usePresentationMode, useSlideDrawing, useSlideOverflow, useReducedMotionPreference } from '../../hooks';
 import { extractFirstH1, getSlideEditSource, getSlideMenuContext, getSlideTitle, transformImageUrl } from '../../utils';
 import { AnimatedSVGSlide } from '../slides/AnimatedSVGSlide';
 import { SlideOverflowScanner } from './SlideOverflowScanner';
@@ -26,6 +28,15 @@ export interface IMarkdownPreviewProps {
 // Height of the bar above a hidden slide
 const HIDDEN_BAR_HEIGHT = 36;
 
+// Keys typed in these elements don't toggle drawing
+const TYPING_TARGETS = 'input, select, textarea, [contenteditable]';
+
+// The color that each drawing tool starts with
+const DEFAULT_DRAWING_COLORS: Record<SlideDrawingStroke['tool'], string> = {
+  pen: '#ef4444',
+  highlighter: '#facc15',
+};
+
 export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = ({
   fileUri,
   slideIdx,
@@ -40,6 +51,9 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const [crntSlide, setCrntSlide] = React.useState<Slide | null>(null);
   const [isMouseMoveEnabled, setIsMouseMoveEnabled] = React.useState(false);
   const [laserPointerEnabled, setLaserPointerEnabled] = React.useState(false);
+  const [drawingEnabled, setDrawingEnabled] = React.useState(false);
+  const [drawingTool, setDrawingTool] = React.useState<SlideDrawingTool>('pen');
+  const [drawingColors, setDrawingColors] = React.useState(DEFAULT_DRAWING_COLORS);
   const [transition, setTransition] = React.useState<SlideTransition | undefined>(undefined);
   const [header, setHeader] = React.useState<string | undefined>(undefined);
   const [footer, setFooter] = React.useState<string | undefined>(undefined);
@@ -441,7 +455,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
 
     // Keep double-clicks on links, buttons and form fields for the element itself
     const target = ev.target as HTMLElement | null;
-    if (target?.closest('a, button, input, textarea, select, video, audio, [contenteditable="true"]')) {
+    if (target?.closest('a, button, input, textarea, select, video, audio, [contenteditable="true"], [data-slide-drawing]')) {
       return;
     }
 
@@ -473,6 +487,64 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     () => (crntSlide && relativePath ? getSlideEditSource(crntSlide, relativePath) : undefined),
     [crntSlide, relativePath]
   );
+
+  // The drawings belong to the slide. While the next file loads, the slides of the previous file
+  // are still shown, so they don't get the drawings of the new file.
+  const drawingKey = React.useMemo(
+    () =>
+      crntSlide && crntFilePath && slidesFilePathRef.current === crntFilePath
+        ? getSlideDrawingKey(relativePath || crntFilePath, crntSlide.index)
+        : undefined,
+    [crntSlide, crntFilePath, relativePath]
+  );
+  const { strokes: drawingStrokes, updateStrokes: updateDrawingStrokes, clearStrokes: clearDrawingStrokes } = useSlideDrawing(drawingKey);
+
+  // Drawing and the laser pointer both follow the pointer, so only one of them is on
+  const toggleDrawing = React.useCallback((enabled: boolean) => {
+    setDrawingEnabled(enabled);
+    if (enabled) {
+      setLaserPointerEnabled(false);
+    }
+  }, []);
+
+  const toggleLaserPointer = React.useCallback((enabled: boolean) => {
+    setLaserPointerEnabled(enabled);
+    if (enabled) {
+      setDrawingEnabled(false);
+    }
+  }, []);
+
+  const changeDrawingColor = React.useCallback((color: string) => {
+    setDrawingColors((prev) => ({ ...prev, [drawingTool === 'highlighter' ? 'highlighter' : 'pen']: color }));
+  }, [drawingTool]);
+
+  // `D` toggles drawing and `Escape` stops it (capture phase, so it wins over the presentation view
+  // Escape handler)
+  React.useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) {
+        return;
+      }
+
+      if (event.key === 'Escape' && drawingEnabled) {
+        event.preventDefault();
+        event.stopPropagation();
+        setDrawingEnabled(false);
+        return;
+      }
+
+      const isTyping = event.composedPath().some((target) => target instanceof Element && target.matches(TYPING_TARGETS));
+      if (event.key.toLowerCase() === 'd' && !event.repeat && !isTyping) {
+        event.preventDefault();
+        toggleDrawing(!drawingEnabled);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown, true);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown, true);
+    };
+  }, [drawingEnabled, toggleDrawing]);
 
   // The slide thumbnails on the left of the preview. They are not part of presentations.
   const [thumbnailsSetting, setThumbnailsSetting] = React.useState<boolean | undefined>();
@@ -927,6 +999,14 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             )}
           </div>
 
+          <SlideDrawingLayer
+            strokes={drawingStrokes}
+            enabled={drawingEnabled}
+            tool={drawingTool}
+            color={drawingTool === 'highlighter' ? drawingColors.highlighter : drawingColors.pen}
+            onStrokesChange={updateDrawingStrokes}
+          />
+
           {
             // Marks the edges of a hidden slide without covering its content
             showHiddenMarker && (
@@ -969,6 +1049,20 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           )
         }
 
+        {
+          drawingEnabled && (
+            <SlideDrawingToolbar
+              tool={drawingTool}
+              color={drawingTool === 'highlighter' ? drawingColors.highlighter : drawingColors.pen}
+              canClear={drawingStrokes.length > 0}
+              onToolChange={setDrawingTool}
+              onColorChange={changeDrawingColor}
+              onClear={clearDrawingStrokes}
+              onClose={() => setDrawingEnabled(false)}
+            />
+          )
+        }
+
         <SlideControls
           show={showControls && cursorVisible}
           path={relativePath}
@@ -988,7 +1082,9 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           onHoverChange={setIsControlsHovered}
           onOverlayChange={setIsControlsOverlayOpen}
           laserPointerEnabled={laserPointerEnabled}
-          onLaserPointerToggle={setLaserPointerEnabled}
+          onLaserPointerToggle={toggleLaserPointer}
+          drawingEnabled={drawingEnabled}
+          onDrawingToggle={toggleDrawing}
           isZoomed={isZoomed}
           onZoomToggle={toggleZoom}
           style={{ cursor: 'default' }}

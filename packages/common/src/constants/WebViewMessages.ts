@@ -218,6 +218,14 @@ export const WebViewMessages = {
        * Responds with whether the file changed
        */
       moveSlide: 'movePreviewSlide',
+      /**
+       * The drawings of a slide. Payload: the key of the slide. Responds with its strokes
+       */
+      getSlideDrawing: 'getPreviewSlideDrawing',
+      /**
+       * Keeps the drawings of a slide until the presentation ends. Payload: `SlideDrawing`
+       */
+      saveSlideDrawing: 'savePreviewSlideDrawing',
     },
     settingsView: {
       /**

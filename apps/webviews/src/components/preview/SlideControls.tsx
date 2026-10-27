@@ -41,6 +41,8 @@ export interface ISlideControlsProps {
   onOverlayChange?: (open: boolean) => void;
   laserPointerEnabled?: boolean;
   onLaserPointerToggle?: (enabled: boolean) => void;
+  drawingEnabled?: boolean;
+  onDrawingToggle?: (enabled: boolean) => void;
   isZoomed?: boolean;
   onZoomToggle?: () => void;
   style?: React.CSSProperties;
@@ -92,6 +94,8 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   onOverlayChange,
   laserPointerEnabled = false,
   onLaserPointerToggle,
+  drawingEnabled = false,
+  onDrawingToggle,
   isZoomed = false,
   onZoomToggle,
   style,
@@ -182,6 +186,10 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   const toggleLaserPointer = React.useCallback(() => {
     onLaserPointerToggle?.(!laserPointerEnabled);
   }, [laserPointerEnabled, onLaserPointerToggle]);
+
+  const toggleDrawing = React.useCallback(() => {
+    onDrawingToggle?.(!drawingEnabled);
+  }, [drawingEnabled, onDrawingToggle]);
 
   const toggleZoom = React.useCallback(() => {
     onZoomToggle?.();
@@ -400,6 +408,15 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
             ariaPressed={laserPointerEnabled}
             action={toggleLaserPointer}
           />
+          {onDrawingToggle && (
+            <SlideControl
+              title="Toggle drawing (D)"
+              iconName="edit"
+              active={drawingEnabled}
+              ariaPressed={drawingEnabled}
+              action={toggleDrawing}
+            />
+          )}
           <SlideControl
             title={isZoomed ? 'Exit zoom' : 'Zoom in'}
             iconName={isZoomed ? 'zoom-out' : 'zoom-in'}

@@ -288,6 +288,39 @@ const COMMANDS = {
     log('right-clicked', rest);
   },
 
+  /**
+   * fdrag <frame selector> ;; <element selector> ;; <x,y> <x,y> ... - drag the mouse through the
+   * points, as fractions (0-1) of the element box, like drawing on the slide
+   */
+  async fdrag(arg) {
+    const [selector, element, points] = arg.split(' ;; ').map((part) => part?.trim());
+    const frame = await frameWith(selector);
+    if (!frame) {
+      return log('NO FRAME with', selector);
+    }
+    const box = await frame.locator(element).first().boundingBox({ timeout: 5000 });
+    if (!box) {
+      return log('NO BOX for', element);
+    }
+    const coords = (points || '')
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((point) => {
+        const [x, y] = point.split(',').map(Number);
+        return { x: box.x + x * box.width, y: box.y + y * box.height };
+      });
+    if (coords.length === 0) {
+      return log('NO POINTS');
+    }
+    await page.mouse.move(coords[0].x, coords[0].y);
+    await page.mouse.down();
+    for (const { x, y } of coords.slice(1)) {
+      await page.mouse.move(x, y, { steps: 8 });
+    }
+    await page.mouse.up();
+    log('dragged through', coords.length, 'points');
+  },
+
   /** pv <js> - evaluate in the slide preview webview */
   async pv(expr) {
     await COMMANDS.fe(`${PREVIEW} ;; ${expr}`);

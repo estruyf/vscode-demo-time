@@ -337,6 +337,7 @@ When the slide preview has focus, the right arrow key and `PageDown` do the same
 ### Slide tools
 
 - **Toggle laser pointer**: Toggles the laser pointer to highlight specific areas on your slides. The button is highlighted while the laser pointer is active.
+- **Toggle drawing**: Turns [drawing on slides](#drawing-on-slides) on or off, to mark up the slide with a pen or highlighter. Press `D` to do the same. The button is highlighted while drawing is on.
 - **Toggle zoom**: Toggles the zoom feature to zoom in on parts of your slides. The button is highlighted while zoom is active. Press `Escape` to leave zoom; this does not turn off presentation view.
 - **More actions** (`…`): Opens a menu with the remaining actions, grouped for discoverability:
   - **Slide** _(only available when you are not in presentation mode)_
@@ -347,6 +348,26 @@ When the slide preview has focus, the right arrow key and `PageDown` do the same
     - **Show scenes**: Opens the **Acts & Scenes** view of Demo Time to access your acts, scenes and slides.
     - **Hide scenes**: Closes the side bar to provide more space for your slides.
   - **Hide controls**: Hides the slide controls and mouse, allowing you to focus on your presentation without distractions.
+
+### Drawing on slides
+
+To circle part of a diagram, underline a line of code or sketch an arrow while you answer a question, turn on drawing with the **Toggle drawing** button of the slide controls, or press `D` while the slide preview has the focus. It works with a mouse, a pen and touch, like an iPad in Sidecar.
+
+While drawing is on, the drawing tools show on the left of the slide:
+
+- **Pen** and **Highlighter**: draw a line in the selected color. The highlighter draws a wide, see-through line. Each tool remembers its own color.
+- **Colors**: red, yellow, green, blue, white and black.
+- **Eraser**: removes every line it touches.
+- **Clear drawings**: removes all lines from the current slide.
+- **Stop drawing**: turns drawing off. You can also press `Escape` or `D`.
+
+The drawings belong to the slide: they stay when you go to another slide and come back, also when the slide preview closed in between. Drawing turns off the laser pointer, and the other way around.
+
+Drawing doesn't count as a [click step](/slides/animations/#click-steps) and doesn't move to the next slide. The drawings are removed when presentation mode turns on or off, and they are not part of the [PDF export](/slides/export/).
+
+:::tip
+For annotations that you prepare up front, use the [`dt-arrow`, `dt-circle` and `dt-rectangle` components](/slides/components/).
+:::
 
 ## Auto-advancing to the next slide
 

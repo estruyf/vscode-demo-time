@@ -9,6 +9,7 @@ export * from './InsertTypingMode';
 export * from './InternalSlide';
 export * from './ParserOptions';
 export * from './Slide';
+export * from './SlideDrawing';
 export * from './SlideLocation';
 export * from './SlideMetadata';
 export * from './SlideNotes';

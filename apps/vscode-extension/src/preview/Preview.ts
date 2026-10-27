@@ -38,6 +38,7 @@ import {
   getSlideIndexForSource,
   ReducedMotionPreference,
   Slide,
+  SlideDrawingStroke,
   SlideIncludes,
   SlideParser,
 } from '@demotime/common';
@@ -72,6 +73,18 @@ export class Preview extends BaseWebview {
    * The slides of the current file with the file they come from, when it includes other files
    */
   private static deck: { rootPath: string; slides: Pick<Slide, 'source'>[] } | undefined;
+  /**
+   * The drawings on the slides, by slide key. They stay when the preview closes, until the
+   * presentation ends.
+   */
+  private static drawings = new Map<string, SlideDrawingStroke[]>();
+
+  /**
+   * Removes the drawings from all slides, when the presentation ends.
+   */
+  public static clearDrawings() {
+    Preview.drawings.clear();
+  }
 
   public static register() {
     const subscriptions = Extension.getInstance().subscriptions;
@@ -649,6 +662,18 @@ export class Preview extends BaseWebview {
       const moved = await Slides.moveSlide(payload.path, payload.fromIndex, payload.toIndex);
       if (requestId) {
         Preview.postRequestMessage(command, requestId, moved);
+      }
+    } else if (command === WebViewMessages.toVscode.preview.getSlideDrawing && requestId) {
+      const strokes = typeof payload === 'string' ? Preview.drawings.get(payload) : undefined;
+      Preview.postRequestMessage(command, requestId, strokes ?? []);
+    } else if (
+      command === WebViewMessages.toVscode.preview.saveSlideDrawing &&
+      typeof payload?.key === 'string'
+    ) {
+      if (Array.isArray(payload.strokes) && payload.strokes.length > 0) {
+        Preview.drawings.set(payload.key, payload.strokes);
+      } else {
+        Preview.drawings.delete(payload.key);
       }
     } else if (command === WebViewMessages.toVscode.preview.revealSource && payload?.path) {
       await SlidePreviewSync.revealSource(payload.path, payload.slideIndex ?? 0);

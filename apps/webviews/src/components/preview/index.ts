@@ -9,4 +9,6 @@ export * from './QRPreview';
 export * from './SlideControl';
 export * from './SlideControls';
 export * from './SlideControlsMenu';
+export * from './SlideDrawingLayer';
+export * from './SlideDrawingToolbar';
 export * from './WhiteboardIcon';

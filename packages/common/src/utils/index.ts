@@ -12,6 +12,7 @@ export * from './placeholderFormatting';
 export * from './reducedMotion';
 export * from './sectionFormatting';
 export * from './slideFrontmatterSchema';
+export * from './slideDrawing';
 export * from './slideIncludes';
 export * from './slideOrder';
 export * from './slideOverflow';

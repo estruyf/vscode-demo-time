@@ -14,6 +14,7 @@ export * from './usePrevious';
 export * from './useReducedMotion';
 export * from './useRemark';
 export * from './useScale';
+export * from './useSlideDrawing';
 export * from './useSlideOverflow';
 export * from './useTheme';
 export * from './useRecentFiles';
