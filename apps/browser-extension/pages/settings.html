@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DemoTime - Settings</title>
+  <link rel="stylesheet" href="../styles/main.css">
+  <script type="module" src="../scripts/theme.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="../assets/demotime.png" alt="DemoTime Logo" class="logo">
+      <nav class="navbar">
+        <a href="home.html" class="nav-icon" title="Home" aria-label="Home">
+          <img src="../assets/icon-house.svg" alt="Home" width="16" height="16">
+        </a>
+        <a href="scenes.html" class="nav-icon" title="See all scenes" aria-label="See all scenes">
+          <img src="../assets/icon-layout-grid.svg" alt="All scenes" width="16" height="16">
+        </a>
+        <a href="settings.html" class="nav-icon active" title="Settings" aria-label="Settings">
+          <img src="../assets/icon-settings.svg" alt="Settings" width="16" height="16">
+        </a>
+      </nav>
+    </div>
+    
+    <div class="content settings-content">
+      <div class="form-group">
+        <label for="urlInput" class="label">DemoTime API URL</label>
+        <input 
+          type="url" 
+          id="urlInput" 
+          class="url-input" 
+          placeholder="http://localhost:3710"
+          pattern="https?://.*"
+          value="http://localhost:3710"
+        >
+        <div id="errorMsg" class="error-msg"></div>
+      </div>
+      
+      <div class="form-group">
+        <label for="themeSelect" class="label">Theme</label>
+        <select id="themeSelect" class="theme-select">
+          <option value="system">System (Default)</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </div>
+      
+      <button id="saveBtn" class="save-btn btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/>
+          <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/>
+          <path d="M7 3v4a1 1 0 0 0 1 1h7"/>
+        </svg>
+        <span>Save</span>
+      </button>
+    </div>
+  </div>
+  
+  <script type="module" src="../scripts/settings.js"></script>
+</body>
+</html>
