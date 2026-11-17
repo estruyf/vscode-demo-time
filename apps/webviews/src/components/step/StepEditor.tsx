@@ -350,6 +350,8 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, problems = [], onC
       label = 'Use dark theme';
     } else if (field === 'pollControls') {
       label = 'Show poll controls';
+    } else if (field === 'pollInPreview') {
+      label = 'Show in the Demo Time preview instead of the browser';
     }
 
     switch (field) {
@@ -576,6 +578,23 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, problems = [], onC
                 type="checkbox"
                 checked={typeof step.pollControls === 'undefined' ? true : step.pollControls}
                 onChange={(e) => handleChange('pollControls', e.target.checked)}
+                className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                {label} {isRequired && <span className="text-red-500">*</span>}
+              </span>
+            </label>
+          </div>
+        );
+
+      case 'pollInPreview':
+        return (
+          <div key={field}>
+            <label className="h-full flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={!!step.pollInPreview}
+                onChange={(e) => handleChange('pollInPreview', e.target.checked)}
                 className="rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500"
               />
               <span className="text-sm font-medium text-gray-600 dark:text-gray-300">

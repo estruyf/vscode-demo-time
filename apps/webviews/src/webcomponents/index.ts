@@ -7,3 +7,5 @@ export * from './Show';
 export * from './animations';
 export * from './text';
 export * from './List';
+export * from './CodeSteps';
+export * from './MagicMove';

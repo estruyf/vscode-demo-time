@@ -1,0 +1,306 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Hubot+Sans:ital,wght@0,600;1,900&family=Mona+Sans:ital,wght@0,400..900;1,400..900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #15181f;
+        --card: #1d212b;
+        --line: #2b303c;
+        --yellow: #ffd43b;
+        --muted: #9aa1b1;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      body {
+        width: 1200px;
+        height: 675px;
+        background: var(--bg);
+        color: #fff;
+        font-family: 'Mona Sans', sans-serif;
+        overflow: hidden;
+        position: relative;
+      }
+      .glow {
+        position: absolute;
+        right: -160px;
+        top: 50%;
+        width: 720px;
+        height: 720px;
+        transform: translateY(-50%);
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 212, 59, 0.16), transparent 65%);
+      }
+      .left {
+        position: absolute;
+        left: 72px;
+        top: 0;
+        bottom: 0;
+        width: 560px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 32px;
+      }
+      .brand img {
+        width: 56px;
+        height: 56px;
+      }
+      .brand span {
+        font-family: 'Hubot Sans', sans-serif;
+        font-style: italic;
+        font-weight: 900;
+        font-size: 26px;
+      }
+      .pill {
+        font-family: 'Mona Sans', sans-serif;
+        font-style: normal !important;
+        font-weight: 800 !important;
+        font-size: 14px !important;
+        letter-spacing: 0.12em;
+        color: var(--bg);
+        background: var(--yellow);
+        padding: 5px 12px;
+        border-radius: 999px;
+      }
+      .eyebrow {
+        color: var(--yellow);
+        font-weight: 700;
+        font-size: 22px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+      h1 {
+        font-family: 'Hubot Sans', sans-serif;
+        font-style: italic;
+        font-weight: 900;
+        font-size: 60px;
+        line-height: 1;
+        letter-spacing: -0.01em;
+      }
+      h1 em {
+        color: var(--yellow);
+      }
+      p {
+        margin-top: 26px;
+        font-size: 23px;
+        line-height: 1.45;
+        color: #d3d7df;
+        max-width: 520px;
+      }
+      .url {
+        margin-top: 36px;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--muted);
+      }
+      .url b {
+        color: #fff;
+      }
+
+      /* Scene list card */
+      .card {
+        position: absolute;
+        right: 72px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 440px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+        overflow: visible;
+      }
+      .card-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--line);
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .dots {
+        display: flex;
+        gap: 6px;
+        margin-right: 8px;
+      }
+      .dots i {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: #3a404d;
+      }
+      .scenes {
+        position: relative;
+        padding: 14px 14px 18px;
+      }
+      .scene {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 14px;
+        border-radius: 12px;
+        font-size: 20px;
+        font-weight: 600;
+        border: 2px solid transparent;
+      }
+      .scene + .scene {
+        margin-top: 6px;
+      }
+      .num {
+        width: 32px;
+        height: 32px;
+        flex: none;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-size: 15px;
+        font-weight: 800;
+        background: #2b303c;
+        color: #cfd3dc;
+      }
+      .title {
+        flex: 1;
+      }
+      .flag {
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .flag svg {
+        width: 15px;
+        height: 15px;
+      }
+      .scene.active {
+        border-color: var(--yellow);
+        background: rgba(255, 212, 59, 0.08);
+      }
+      .scene.active .num {
+        background: var(--yellow);
+        color: var(--bg);
+      }
+      .scene.active .flag {
+        color: var(--yellow);
+      }
+      .scene.dim {
+        opacity: 0.4;
+      }
+      .rewind {
+        position: absolute;
+        right: -58px;
+        top: 96px;
+        width: 70px;
+        height: 150px;
+      }
+      .toast {
+        margin: 0 14px 16px;
+        padding: 14px 16px;
+        border-radius: 12px;
+        background: #12151b;
+        border: 1px solid var(--line);
+        font-family: 'SF Mono', Menlo, monospace;
+        font-size: 14.5px;
+        line-height: 1.6;
+        color: var(--muted);
+      }
+      .toast .ok {
+        color: #7ee2a8;
+      }
+      .toast .y {
+        color: var(--yellow);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="glow"></div>
+
+    <div class="left">
+      <div class="brand">
+        <img src="../../docs/src/assets/demotime.svg" alt="" />
+        <span>Demo Time</span>
+        <span class="pill">BETA</span>
+      </div>
+      <div class="eyebrow">Scene checkpoints</div>
+      <h1>Go back to any scene.<br /><em>Your code goes<br />back too.</em></h1>
+      <p>
+        Demo Time snapshots your files when a scene starts. Go back, reset, or jump to a scene
+        without duplicated code or broken patches.
+      </p>
+      <div class="url">Try it in the beta → <b>beta.demotime.show</b></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <span class="dots"><i></i><i></i><i></i></span>
+        Building the API
+      </div>
+      <div class="scenes">
+        <div class="scene">
+          <span class="num">1</span>
+          <span class="title">Create the project</span>
+          <span class="flag">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h1.5v14H3zM5 2h8l-2 3 2 3H5z" /></svg>
+            CHECKPOINT
+          </span>
+        </div>
+        <div class="scene active">
+          <span class="num">2</span>
+          <span class="title">Add the route</span>
+          <span class="flag">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h1.5v14H3zM5 2h8l-2 3 2 3H5z" /></svg>
+            RESTORED
+          </span>
+        </div>
+        <div class="scene dim">
+          <span class="num">3</span>
+          <span class="title">Call the endpoint</span>
+          <span class="flag">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h1.5v14H3zM5 2h8l-2 3 2 3H5z" /></svg>
+            CHECKPOINT
+          </span>
+        </div>
+
+        <svg class="rewind" viewBox="0 0 70 150" fill="none">
+          <path
+            d="M6 128 C 62 128, 62 22, 14 22"
+            stroke="#ffd43b"
+            stroke-width="5"
+            stroke-linecap="round"
+          />
+          <path
+            d="M24 8 L 8 22 L 24 36"
+            stroke="#ffd43b"
+            stroke-width="5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </div>
+      <div class="toast">
+        <span class="y">↺</span> Restoring checkpoint of Scene 2<br />
+        <span class="ok">✓</span> 3 files restored, 1 removed<br />
+        <span class="ok">✓</span> Running Scene 2 again
+      </div>
+    </div>
+  </body>
+</html>

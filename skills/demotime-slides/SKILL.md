@@ -22,6 +22,9 @@ others when you use what they cover:
 - [Components](references/components.md): `dt-arrow`, `dt-rectangle`, `dt-circle`, `dt-list`, ...
 - [Animations and transitions](references/animations.md): click steps (`dt-show`, `dt-hide`),
   `fade-in`, ...
+- [Code blocks](references/code-blocks.md): line highlights, titles, line numbers, `// [!code ++]`
+  notations, line steps (`{1-2|4|all}`), animated code changes (` ````md magic-move `) and code
+  from workspace files (`file="src/app.ts#L10-24"`)
 - [Mermaid diagrams](references/mermaid.md)
 - [Custom layouts, header and footer](references/custom-layouts.md)
 - [Themes](references/themes.md): built-in theme names
@@ -119,6 +122,13 @@ Content:
 - **Active voice and short lines.** Cut filler words.
 - **Code on slides stays short:** at most about 12 lines, always with a language on the code fence.
   Longer code belongs in a live demo (see the `demotime-code-demo` skill).
+- **Code from the demo project:** when the slide shows code that exists in the workspace, use
+  `file="path#L10-24"` or a `#region=name` instead of copying it, so the slide stays in sync with
+  the demo. Only reference files and lines that exist.
+- **Walk through code** with line steps (`{1-2|4-6|all}`) instead of repeating the same code block
+  on several slides, and with `{2}` or `// [!code ++]` to point at the lines that matter.
+- **Show how code evolves** (before and after, or building up a function) with a ` ````md magic-move `
+  block that holds a code block per step, on one slide, instead of one slide per version.
 - **Fit on the slide.** A slide is 960×540 pixels and content past its edges is cut off. When a
   slide has too much content, split it into two slides. Only add `autoFit: true` to the front matter
   of a slide that can't be split, like one code sample: it scales the content down, to at most 50%.
@@ -135,6 +145,11 @@ Content:
   workspace root (for example `.demo/assets/architecture.png`). When an image is missing, don't
   invent one: use a placeholder path, describe in the speaker notes what the image should show, and
   list the missing images in your summary.
+- **Reused slides:** when the workspace already has a file with slides that every talk uses, like
+  an "about me", sponsor or "thank you" slide, include it with a slide that only has
+  `src: ../shared/about-me.md` in its front matter (relative to the slide file, or to the
+  workspace folder when it starts with `/`) instead of copying the slides. Follow it with a `---`
+  separator before the next slide, as the content of a `src` slide isn't shown.
 - **Facts:** don't make up numbers, quotes or claims. Use the material, or mark the spot with a TODO
   in the speaker notes.
 

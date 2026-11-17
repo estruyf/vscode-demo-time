@@ -5,6 +5,7 @@ import {
   TextEditor,
   TextEditorRevealType,
   TextEditorSelectionChangeKind,
+  Uri,
   ViewColumn,
   window,
   workspace,
@@ -70,6 +71,30 @@ export class SlidePreviewSync {
   }
 
   /**
+   * Stores the slide under the cursor of the editor of a file that Demo Time just edited, so the
+   * selection change of the edit doesn't move the preview.
+   * @param uri The file that was edited
+   */
+  public static acceptCursor(uri: Uri): void {
+    if (SlidePreviewSync.timer) {
+      clearTimeout(SlidePreviewSync.timer);
+      SlidePreviewSync.timer = undefined;
+    }
+
+    const editor = window.visibleTextEditors.find(
+      (visibleEditor) => visibleEditor.document.uri.toString() === uri.toString(),
+    );
+    if (!editor) {
+      return;
+    }
+
+    const slideIndex = getSlideIndexAtLine(editor.document.getText(), editor.selection.active.line);
+    if (slideIndex !== undefined) {
+      SlidePreviewSync.lastCursor = { uri: uri.toString(), slideIndex };
+    }
+  }
+
+  /**
    * Moves the cursor to the source of a slide, in the editor that shows the file, or in a new
    * editor next to the preview.
    * @param filePath The workspace-relative path of the slide file
@@ -122,13 +147,14 @@ export class SlidePreviewSync {
   }
 
   /**
-   * Shows the slide under the cursor in the preview, when the preview shows the file of the editor.
+   * Shows the slide under the cursor in the preview, when the preview shows the file of the editor,
+   * or a file that includes it with `src`.
    */
   private static sync(editor: TextEditor, kind?: TextEditorSelectionChangeKind) {
     if (
       !Preview.isOpen ||
       editor.document.languageId !== 'markdown' ||
-      !Preview.isShowingFile(editor.document.uri)
+      !Preview.hasSlidesOf(editor.document.uri)
     ) {
       return;
     }
@@ -148,8 +174,9 @@ export class SlidePreviewSync {
       return;
     }
 
-    if (slideIndex !== Preview.getCurrentSlideIndex()) {
-      Preview.goToSlide(slideIndex);
+    const previewSlideIndex = Preview.getPreviewSlideIndex(editor.document.uri, slideIndex);
+    if (previewSlideIndex !== undefined && previewSlideIndex !== Preview.getCurrentSlideIndex()) {
+      Preview.goToSlide(previewSlideIndex);
     }
   }
 }

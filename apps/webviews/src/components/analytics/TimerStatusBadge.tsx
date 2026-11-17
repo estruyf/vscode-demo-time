@@ -48,7 +48,7 @@ export const TimerStatusBadge: React.FC<TimerStatusBadgeProps> = ({
         return {
           icon: Clock,
           color: 'text-[var(--vscode-descriptionForeground)]',
-          bgColor: 'bg-[var(--vscode-badge-background)]',
+          bgColor: 'bg-gray-500/10',
           borderColor: 'border-[var(--vscode-panel-border)]',
           label: 'No Timer',
           description: 'No timer was configured for this presentation',
@@ -57,7 +57,7 @@ export const TimerStatusBadge: React.FC<TimerStatusBadgeProps> = ({
         return {
           icon: AlertCircle,
           color: 'text-[var(--vscode-descriptionForeground)]',
-          bgColor: 'bg-[var(--vscode-badge-background)]',
+          bgColor: 'bg-gray-500/10',
           borderColor: 'border-[var(--vscode-panel-border)]',
           label: 'Unknown Status',
           description: 'Timer status is unknown',

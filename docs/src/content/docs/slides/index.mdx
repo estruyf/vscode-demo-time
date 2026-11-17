@@ -1,7 +1,7 @@
 ---
 title: Present your slides
 description: From Markdown to slides - present your slides with Demo Time
-lastmod: 2026-10-02T00:00:00.000Z
+lastmod: 2026-10-26T00:00:00.000Z
 ---
 
 import { Code, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
@@ -29,6 +29,8 @@ theme: default
 
 Hello, **Demo Time**!
 ```
+
+Slides support all the markdown you know, like lists, tables, images and [code blocks](/slides/code-blocks/) with syntax highlighting. Code blocks can highlight lines step by step, animate the changes between versions of your code, and show the code of a file in your workspace.
 
 You can also create multiple slides within the same Markdown file by separating them with three hyphens (`---`). This is useful for grouping related slides together. For example:
 
@@ -89,6 +91,18 @@ transition: slideLeft
 ```
 
 Both slides use the `frost` theme. The first slide uses the `fadeIn` transition, the second slide its own `slideLeft` transition.
+
+### Include slides from other files
+
+Reuse slides, like an "about me" or "thank you" slide, in every talk by including them from another markdown file with `src`. The slide is replaced by all the slides of that file:
+
+```md
+---
+src: ../shared/about-me.md
+---
+```
+
+See [include slides from other files](/slides/include-slides/) for the paths, the front matter rules and how the included slides are numbered.
 
 <Aside type="tip">
 To make the process easier, you can use the `Demo Time: Create a slide` command. This command will start the slide creation process where you will be asked for a title and if you want to add it to any of your demos.
@@ -194,11 +208,11 @@ class: section-break dark
 
 The `background` property of a slide, also one it gets from the document front matter, takes precedence over a background that a class sets in your theme. Add `!important` to the background of the class to use it on those slides.
 
-Both properties also apply in the **Go to slide** overview, the [PDF export](/slides/export/) and the next slide preview of the [presenter view](/features/presenter-view/). In the document front matter, they apply to every slide in the file that doesn't set its own value, so you can give a whole deck the same background.
+Both properties also apply in the [slide thumbnails](#slide-thumbnails), the **Go to slide** overview, the [PDF export](/slides/export/) and the next slide preview of the [presenter view](/features/presenter-view/). In the document front matter, they apply to every slide in the file that doesn't set its own value, so you can give a whole deck the same background.
 
 ## Slide preview
 
-When you create a slide, you can preview it by running the `Demo Time: Open slide preview` command or by clicking on the open preview (eye) action from the editor title bar.
+When you create a slide, you can preview it by running the `Demo Time: Open slide preview` command or by clicking on the open preview (eye) action from the editor title bar. The preview opens next to the markdown file and the focus stays in the editor, so you see your changes while you type. When the preview is already open in the same editor group as the markdown file, it moves next to it.
 
 <Image class="mx-auto" src={slidePreviewImg} alt="Slide preview action" width="400" />
 
@@ -207,13 +221,59 @@ When you create a slide, you can preview it by running the `Demo Time: Open slid
 While you write your slides, the slide preview follows the cursor in the markdown editor:
 
 - **Editor to preview**: when the preview shows the file of the active editor, moving the cursor to another slide shows that slide in the preview. `Demo Time: Open slide preview` opens the preview at the slide under the cursor. Typing in a slide doesn't move the preview away from a slide you navigated to; clicking in the editor does.
-- **Preview to editor**: double-click the slide, or select **Reveal slide source** in the **More actions** (`…`) menu of the [slide controls](#slide-controls), to move the cursor to the source of the slide. When the file isn't open in a visible editor, it opens next to the preview.
+- **Preview to editor**: double-click the slide, right-click it and select **Show slide contents**, or select **Reveal slide source** in the **More actions** (`…`) menu of the [slide controls](#slide-controls), to move the cursor to the source of the slide. When the file isn't open in a visible editor, it opens next to the preview.
 
 <Aside type="tip">
 Move the slide preview to an editor group next to your markdown file, so you see both while you write.
 </Aside>
 
 The sync never applies in [presentation mode](/presentation-mode/), so moving the cursor can't change slides during a talk. To turn it off, set `demoTime.slidePreviewSync` to `false`. **Reveal slide source** keeps working when the sync is off.
+
+### Slide thumbnails
+
+When you are not presenting and the file has more than one slide, the slide preview shows the slides of the file as numbered thumbnails in a pane on the left, in the order of the file. The current slide is highlighted.
+
+- **Open a slide**: Click a thumbnail. When the pane has the focus, use `Up` and `Down` to go to the previous or next slide, and `Home` and `End` to go to the first or last slide. Hidden slides are not skipped.
+- **Change the order**: Drag a thumbnail to another position, or press `Alt+Up` or `Alt+Down` to move the current slide. A line shows where the slide lands. Demo Time updates the markdown file, saves it and shows the moved slide. Save the file first when it has unsaved changes. Use **Undo** in the editor of the file to revert a move.
+- **Hidden slides** are dimmed and have an eye icon. Slides that the file [includes from another file](/slides/include-slides/) have a link icon. Slides with [content that doesn't fit](#content-that-doesnt-fit) get a warning icon.
+- **Slide actions**: Right-click a thumbnail to select that slide and open the same menu as the [slide context menu](#slide-context-menu).
+- **Resize the pane**: Drag the right edge of the pane to change its width, or focus the edge with `Tab` and use `Left` and `Right`. Double-click the edge to go back to the default width. The preview remembers the width.
+
+The thumbnails are never shown in [presentation mode](/presentation-mode/). Show or hide them with the **Toggle slide thumbnails** button in the [slide controls](#view-tools), or with the `demoTime.slidePreviewThumbnails` setting.
+
+### Speaker notes pane
+
+When you are not presenting, the slide preview shows the [speaker notes](/features/using-notes/#notes-in-your-slides) of the current slide in a pane below the slide, like the notes pane in PowerPoint. Click in the pane and type to add or change the notes. Demo Time saves them in the `<!-- notes -->` block of the slide a second after you stop typing, when you click outside the pane, and when you go to another slide. Clear the pane to remove the block.
+
+- **Resize the pane**: Drag the top edge of the pane to change its height, or focus the edge with `Tab` and use `Up` and `Down`. Double-click the edge to go back to the default height. The preview remembers the height.
+- **Leave the pane**: Press `Escape`. The arrow keys move the cursor in the notes, and only move to another slide when the focus is on the slide.
+
+The pane is never shown in [presentation mode](/presentation-mode/). Show or hide it with the **Toggle speaker notes** button in the [slide controls](#view-tools), or with the `demoTime.slidePreviewNotes` setting.
+
+Moving a slide changes the front matter at the top of the file when the first slide is involved:
+
+- When you move the first slide away, the properties that apply to every slide, like `theme`, `transition` and `class`, stay at the top of the file. The properties that only apply to the first slide, `layout`, `customLayout`, `image`, `autoAdvanceAfter` and `hide`, move with the slide.
+- When you move a slide to the first position, its front matter moves to the top of the file, where `transition`, `class`, `background` and similar properties apply to every slide. Demo Time shows an error and doesn't move the slide when that would change the other slides.
+
+<Aside type="caution">
+An `openSlide` move with `slide: N` keeps its number when you change the order of the slides. Check these moves after you reorder a file.
+</Aside>
+
+### Slide context menu
+
+Outside [presentation mode](/presentation-mode/), right-click the slide in the preview, or a thumbnail in the [slide thumbnails](#slide-thumbnails), to change it without leaving the preview. The actions update the markdown file of the slide and save it, so the preview updates right away. Use **Undo** in the editor of the file to revert a change.
+
+- **Show slide contents**: Opens the markdown of the slide in the editor, with the cursor on the slide. See [sync the preview with the editor](#sync-the-preview-with-the-editor).
+- **Change layout**: Sets the `layout` in the front matter of the slide to one of the [built-in layouts](/slides/layouts/). The submenu leaves out the layout the slide already uses.
+- **Hide slide while presenting** / **Show slide while presenting**: Adds or removes `hide: true` in the front matter of the slide. See [hiding slides](#hiding-slides).
+- **Insert slide after**: Asks for a title, and adds a slide with that heading after the slide. The preview shows the new slide and the editor opens on it, so you can write its content.
+- **Duplicate slide**: Adds a copy of the slide, with its front matter and speaker notes, after it. The preview shows the copy.
+- **Move slide up** / **Move slide down**: Moves the slide one position up or down in the file. See [slide thumbnails](#slide-thumbnails).
+- **Delete slide**: Removes the slide from the file, after you confirm it. When you delete the first slide of a file, the front matter at the top of the file stays, without the properties that only apply to the first slide, like `layout`.
+
+A slide that the file [includes from another file](/slides/include-slides/) with `src` only has **Show slide contents**, which opens the included file.
+
+When an action can't change the slide without changing the other slides of the file, for instance when deleting the first slide would give the next slide other front matter, or when moving a slide to the first position would apply its `transition` to every slide, Demo Time shows an error and doesn't change the file. Make the change in the editor instead.
 
 ## Presenting slides
 
@@ -250,6 +310,8 @@ With this approach, you can seamlessly integrate slides into your demos, making 
 
 When previewing or presenting slides, a compact control bar appears at the bottom of the slide. It is organized into three sections — **view tools**, **slide navigation**, and **slide tools** — and tucks the less-common actions into a **More actions** (`…`) menu so the bar stays uncluttered and adapts to narrow windows.
 
+The control bar shows when you move the mouse over the slide. After 5 seconds without moving the mouse, the control bar and the mouse cursor hide. They stay visible while the mouse is on the control bar, also after you click **Next** or **Previous**, and while a menu or the slide overview is open.
+
 <Image class="mx-auto" src={slideControlsImg} alt="Slide controls" />
 
 <Aside type="note">
@@ -261,6 +323,8 @@ The control bar is keyboard and screen reader friendly. Every button is reachabl
 - **Toggle presentation mode**: Toggles presentation mode, which allows you to use your clicker or keyboard to navigate through your slides. The button is highlighted while presentation mode is active.
 - **Toggle presentation view**: Toggles the presentation view, which hides VS Code UI areas (status bar, tabs, activity bar, …) for a distraction-free experience. You can also use the `setPresentationView` and `unsetPresentationView` actions, or the `Demo Time: Toggle presentation view (hides status bar, tabs, and activity bar)` command.
 - **Toggle fullscreen**: Toggles Visual Studio Code's fullscreen mode.
+- **Toggle slide thumbnails**: Shows or hides the [slide thumbnails](#slide-thumbnails) next to the slide preview. It saves the choice in the `demoTime.slidePreviewThumbnails` setting. The button is not shown in presentation mode.
+- **Toggle speaker notes**: Shows or hides the [speaker notes pane](#speaker-notes-pane) below the slide preview. It saves the choice in the `demoTime.slidePreviewNotes` setting. The button is not shown in presentation mode.
 
 ### Slide navigation
 
@@ -268,20 +332,42 @@ The control bar is keyboard and screen reader friendly. Every button is reachabl
 - **Slide counter**: Shows the current slide and total (for example `01 / 05`). When slide thumbnails are available, selecting it opens the **Go to slide** overview so you can jump straight to any slide. [Hidden slides](#hiding-slides) are dimmed in the overview, but you can still open them. Slides with [content that doesn't fit](#content-that-doesnt-fit) get a warning icon.
 - **Next**: Triggers the next move.
 
+When the slide preview has focus, the right arrow key and `PageDown` do the same as **Next**, and the left arrow key and `PageUp` the same as **Previous**, also outside presentation mode.
+
 ### Slide tools
 
 - **Toggle laser pointer**: Toggles the laser pointer to highlight specific areas on your slides. The button is highlighted while the laser pointer is active.
+- **Toggle drawing**: Turns [drawing on slides](#drawing-on-slides) on or off, to mark up the slide with a pen or highlighter. Press `D` to do the same. The button is highlighted while drawing is on.
 - **Toggle zoom**: Toggles the zoom feature to zoom in on parts of your slides. The button is highlighted while zoom is active. Press `Escape` to leave zoom; this does not turn off presentation view.
 - **More actions** (`…`): Opens a menu with the remaining actions, grouped for discoverability:
   - **Slide** _(only available when you are not in presentation mode)_
     - **Mouse position**: Toggles the mouse position overlay on the slide, which can be useful to position elements on your slides.
-    - **Reveal slide source**: Opens the source file of the slide in the editor, with the cursor on the current slide, so you can edit it directly. You can also double-click the slide. See [sync the preview with the editor](#sync-the-preview-with-the-editor).
+    - **Reveal slide source**: Opens the source file of the slide in the editor, with the cursor on the current slide, so you can edit it directly. You can also double-click the slide, or right-click it and select **Show slide contents**. See [sync the preview with the editor](#sync-the-preview-with-the-editor).
     - **Hide slide while presenting** / **Show slide while presenting**: Adds or removes `hide: true` in the front matter of the current slide. See [hiding slides](#hiding-slides).
-    - **Add speaker notes** / **Edit speaker notes**: Opens an editor for the notes of the current slide, and saves them in its `<!-- notes -->` block. See [notes in your slides](/features/using-notes/#notes-in-your-slides).
   - **Workspace**
-    - **Show demos**: Opens the Demo Time panel to access your demos and slides.
-    - **Close sidebar**: Closes the side bar to provide more space for your slides.
+    - **Show scenes**: Opens the **Acts & Scenes** view of Demo Time to access your acts, scenes and slides.
+    - **Hide scenes**: Closes the side bar to provide more space for your slides.
   - **Hide controls**: Hides the slide controls and mouse, allowing you to focus on your presentation without distractions.
+
+### Drawing on slides
+
+To circle part of a diagram, underline a line of code or sketch an arrow while you answer a question, turn on drawing with the **Toggle drawing** button of the slide controls, or press `D` while the slide preview has the focus. It works with a mouse, a pen and touch, like an iPad in Sidecar.
+
+While drawing is on, the drawing tools show on the left of the slide:
+
+- **Pen** and **Highlighter**: draw a line in the selected color. The highlighter draws a wide, see-through line. Each tool remembers its own color.
+- **Colors**: red, yellow, green, blue, white and black.
+- **Eraser**: removes every line it touches.
+- **Clear drawings**: removes all lines from the current slide.
+- **Stop drawing**: turns drawing off. You can also press `Escape` or `D`.
+
+The drawings belong to the slide: they stay when you go to another slide and come back, also when the slide preview closed in between. Drawing turns off the laser pointer, and the other way around.
+
+Drawing doesn't count as a [click step](/slides/animations/#click-steps) and doesn't move to the next slide. The drawings are removed when presentation mode turns on or off, and they are not part of the [PDF export](/slides/export/).
+
+:::tip
+For annotations that you prepare up front, use the [`dt-arrow`, `dt-circle` and `dt-rectangle` components](/slides/components/).
+:::
 
 ## Auto-advancing to the next slide
 
@@ -325,11 +411,11 @@ While [presentation mode](/presentation-mode/) is on, a hidden slide is:
 
 When an `openSlide` move opens a hidden slide, the slide view continues with the next visible slide.
 
-Hidden slides are still in the **Go to slide** overview of the [slide controls](#slide-controls), dimmed and with an eye icon. Open one from there to show it during your talk, for instance to answer a question.
+Hidden slides are also dimmed in the [slide thumbnails](#slide-thumbnails). They are still in the **Go to slide** overview of the [slide controls](#slide-controls), dimmed and with an eye icon. Open one from there to show it during your talk, for instance to answer a question.
 
 Outside presentation mode, the slide preview still shows hidden slides so you can navigate to them and edit them. A hidden slide gets a dashed frame, and a **Hidden slide** bar above it.
 
-To hide or show the current slide from the slide preview, open the **More actions** (`…`) menu of the [slide controls](#slide-controls) and select **Hide slide while presenting** or **Show slide while presenting**. This adds or removes `hide: true` in the front matter of the slide and saves the file.
+To hide or show the current slide from the slide preview, right-click the slide, or open the **More actions** (`…`) menu of the [slide controls](#slide-controls), and select **Hide slide while presenting** or **Show slide while presenting**. This adds or removes `hide: true` in the front matter of the slide and saves the file.
 
 <Image class="mx-auto" src={hiddenSlideImg} alt="A hidden slide in the slide preview, with the Hidden slide bar above it and the Show slide while presenting action in the More actions menu" />
 
@@ -342,7 +428,7 @@ Hidden slides are left out of the [PDF export](/slides/export/) unless you enabl
 A slide is 960×540 pixels. When a slide has too much content, like a long code block or one bullet too many, the part that doesn't fit is cut off. How much fits depends on the theme and the fonts, so Demo Time measures the rendered slides in the slide preview and warns you:
 
 - The slide preview shows a **Content doesn't fit the slide** badge on a slide that doesn't fit, with how much it is too tall or too wide, like **84px too tall**. A frame marks the edges of the slide, so you can see where it ends when the slide has the same background as the preview, and a striped band with a label like **↓ 84px cut off** marks every edge where content is cut off. The badge and the marks are only shown outside [presentation mode](/presentation-mode/).
-- While the preview is open, it measures every slide of the file in the background, with all its [click steps](/slides/animations/#click-steps) revealed. The slides that don't fit get a warning in the **Problems** panel, on the first line of the slide, and a warning icon in the **Go to slide** overview of the [slide controls](#slide-controls). The warnings update when you save the file.
+- While the preview is open, it measures every slide of the file in the background, with all its [click steps](/slides/animations/#click-steps) revealed. The slides that don't fit get a warning in the **Problems** panel, on the first line of the slide, and a warning icon in the [slide thumbnails](#slide-thumbnails) and the **Go to slide** overview of the [slide controls](#slide-controls). The warnings update when you save the file.
 
 Content counts as overflowing when it reaches past the edges of the slide. Elements with `position: absolute` or `position: fixed`, like decorations in a [custom layout](/slides/layouts/custom/), are left out, and content inside an element that scrolls or clips its content counts up to the edges of that element.
 
@@ -360,7 +446,7 @@ autoFit: true
 
 With `autoFit`, the content of a slide that doesn't fit is scaled down until it fits, keeping the padding of the layout, to at most 50% of its size. The text wraps at the smaller size, so a long line can take less room. Slides that fit keep their size. Outside presentation mode, a **Scaled to 85% by autoFit** badge shows how much the content of the current slide was scaled down. When the content doesn't fit at 50% either, you still get the warning, which tells you that `autoFit` is on and how much is left.
 
-`autoFit` also applies in presentation mode, the **Go to slide** overview, the [PDF export](/slides/export/) and the next slide preview of the [presenter view](/features/presenter-view/). In the document front matter, it applies to every slide in the file that doesn't set its own value.
+`autoFit` also applies in presentation mode, the [slide thumbnails](#slide-thumbnails), the **Go to slide** overview, the [PDF export](/slides/export/) and the next slide preview of the [presenter view](/features/presenter-view/). In the document front matter, it applies to every slide in the file that doesn't set its own value.
 
 <Aside type="tip">
 The quick fix of the warning (`Ctrl+.` or `Cmd+.` on the line in the editor, or the light bulb in the **Problems** panel) adds `autoFit: true` to the front matter of the slide.
@@ -368,7 +454,7 @@ The quick fix of the warning (`Ctrl+.` or `Cmd+.` on the line in the editor, or 
 
 ## Problems in slide files
 
-Demo Time checks the front matter of your slide files while you edit them, and reports the problems in the **Problems** panel. It checks the markdown files in the `.demo` folder, and the files that an `openSlide` move opens.
+Demo Time checks the front matter and code blocks of your slide files while you edit them, and reports the problems in the **Problems** panel. It checks the markdown files in the `.demo` folder, the files that an `openSlide` move opens, and the files that these files [include with `src`](/slides/include-slides/).
 
 | Problem | Example | Severity |
 | --- | --- | --- |
@@ -379,10 +465,12 @@ Demo Time checks the front matter of your slide files while you edit them, and r
 | A file that doesn't exist for `image`, `video`, `svgFile`, `customTheme` or `customLayout`, or for a `background` image. Paths are relative to the workspace folder, the same way the slide preview loads them. `http(s)` URLs are not checked. | `image: .demo/assets/missing.png` | Warning, or Error for `customLayout` |
 | A custom layout, or an inline `header` or `footer` template, with invalid Handlebars | `{{#if title}}` without `{{/if}}` | Error |
 | A `---` followed by a line like `Note: text` (a capitalized word and a colon), which makes the lines up to the next `---` the front matter of the slide instead of its content | `Note: remember this` | Warning |
+| A [code block with a `file` option](/slides/code-blocks/#code-from-workspace-files) of which the file, lines or region don't exist | ```` ```ts file="src/missing.ts" ```` | Error |
+| A [`src`](/slides/include-slides/) file that doesn't exist or is outside the workspace folder, or files that include each other | `src: ../shared/missing.md` | Error |
 
 Properties that are only meant for your own templates don't get a problem as long as a [custom layout](/slides/layouts/custom/), the `header` or `footer` of the slide, or the `demoTime.slideHeaderTemplate` and `demoTime.slideFooterTemplate` templates use them.
 
-The problems update when you change the slide file, and when you add or remove a file that the slides refer to, like an image or a layout.
+The problems update when you change the slide file, when you add or remove a file that the slides refer to, like an image or a layout, and when you save a file that a code block shows or a slide includes.
 
 <Aside type="tip">
 A misspelled property or value, and a `---` that hides slide content, have a quick fix (`Ctrl+.` or `Cmd+.` on the line in the editor, or the light bulb in the **Problems** panel). For a `---`, the quick fix adds an empty line after it, so the lines are shown on the slide.

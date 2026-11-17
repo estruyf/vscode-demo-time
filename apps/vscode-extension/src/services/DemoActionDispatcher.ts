@@ -3,6 +3,7 @@ import { Preview } from '../preview/Preview';
 import {
   getFileContents,
   getInsertionSpeedRandomness,
+  getLastSlideNumber,
   getPositionAndRange,
   getUserInput,
   insertVariables,
@@ -62,6 +63,10 @@ export interface DemoStepExecutionContext {
   workspaceFolder: WorkspaceFolder;
   currentFilePath: string | undefined;
   nextStepIsHighlight: boolean;
+  /**
+   * Going back to the previous scene, which continues on the last slide of its slides
+   */
+  isGoingBack?: boolean;
   runById: (id: string) => Promise<void>;
   highlight: (
     textEditor: TextEditor,
@@ -567,7 +572,14 @@ export class DemoActionDispatcher {
       }
 
       if (step.action === Action.ShowEngageTimePoll) {
-        await EngageTimeService.showPoll(step.pollId, step.startOnOpen, step.closeOnOpen, step.pollDarkTheme, step.pollControls);
+        await EngageTimeService.showPoll(
+          step.pollId,
+          step.startOnOpen,
+          step.closeOnOpen,
+          step.pollDarkTheme,
+          step.pollControls,
+          step.pollInPreview,
+        );
         return;
       }
 
@@ -597,8 +609,12 @@ export class DemoActionDispatcher {
 
     if (step.action === Action.OpenSlide) {
       const { path } = step as ISlidePreview;
+      // Going back from the next scene continues on the last slide instead of the first one
+      const slide = context.isGoingBack
+        ? ((await getLastSlideNumber(workspaceFolder, path)) ?? step.slide)
+        : step.slide;
       Preview.setCurrentSlideIndex(0); // Reset the slide index
-      Preview.show(path as string, undefined, step.slide);
+      Preview.show(path as string, undefined, slide);
       return;
     }
 
@@ -613,12 +629,12 @@ export class DemoActionDispatcher {
     }
 
     if (step.action === Action.Copy) {
-      FileActionService.copy(workspaceFolder, fileUri, step);
+      await FileActionService.copy(workspaceFolder, fileUri, step);
       return;
     }
 
     if (step.action === Action.Move || step.action === Action.Rename) {
-      FileActionService.rename(workspaceFolder, fileUri, step);
+      await FileActionService.rename(workspaceFolder, fileUri, step);
       return;
     }
 

@@ -119,6 +119,7 @@ export default defineConfig({
           items: [
             { label: 'Getting started', slug: 'slides' },
             { label: 'Front matter reference', slug: 'slides/front-matter', badge: { text: 'New', variant: 'tip' } },
+            { label: 'Include slides', slug: 'slides/include-slides', badge: { text: 'New', variant: 'tip' } },
             {
               label: 'Layouts',
               collapsed: true,
@@ -174,6 +175,7 @@ export default defineConfig({
               label: 'Content',
               collapsed: true,
               items: [
+                { label: 'Code blocks', slug: 'slides/code-blocks', badge: { text: 'New', variant: 'tip' } },
                 { label: 'Mermaid diagrams', slug: 'slides/mermaid' },
                 { label: 'Import PowerPoint', slug: 'slides/powerpoint-import' },
                 { label: 'Export slides', slug: 'slides/export' },
@@ -188,6 +190,7 @@ export default defineConfig({
             { label: 'Recording demos', slug: 'features/recording-demos', badge: { text: 'New', variant: 'tip' } },
             { label: 'Export as video', slug: 'features/video-export', badge: { text: 'New', variant: 'tip' } },
             { label: 'Preflight check', slug: 'features/preflight-check', badge: { text: 'New', variant: 'tip' } },
+            { label: 'Scene checkpoints', slug: 'features/scene-checkpoints', badge: { text: 'New', variant: 'tip' } },
             { label: 'Overview Dashboard', slug: 'features/overview-dashboard' },
             { label: 'Presenter view', slug: 'features/presenter-view' },
             { label: 'Using notes', slug: 'features/using-notes' },

@@ -1,4 +1,4 @@
-import { SlideMetadata } from '.';
+import { SlideMetadata, SlideSource } from '.';
 
 export interface InternalSlide {
   content: string;
@@ -7,4 +7,5 @@ export interface InternalSlide {
   frontmatter: SlideMetadata;
   index: number;
   notes?: string;
+  source?: SlideSource;
 }

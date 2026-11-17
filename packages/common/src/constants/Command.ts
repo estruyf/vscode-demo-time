@@ -19,6 +19,7 @@ export const COMMAND = {
   runSingleMove: `${EXTENSION_NAME}.runSingleMove`,
   togglePresentationMode: `${EXTENSION_NAME}.togglePresentationMode`,
   reset: `${EXTENSION_NAME}.reset`,
+  resetToScene: `${EXTENSION_NAME}.resetToScene`,
   toggleHighlight: `${EXTENSION_NAME}.toggleHighlight`,
   toggleSelectionHighlight: `${EXTENSION_NAME}.toggleSelectionHighlight`,
   continueDemo: `${EXTENSION_NAME}.continueDemo`,
@@ -55,6 +56,21 @@ export const COMMAND = {
   createSlide: `${EXTENSION_NAME}.createSlide`,
   viewSlide: `${EXTENSION_NAME}.viewSlide`,
   openSlidePreview: `${EXTENSION_NAME}.openSlidePreview`,
+  showSlideContents: `${EXTENSION_NAME}.showSlideContents`,
+  // Context menu of the slide preview
+  hideSlide: `${EXTENSION_NAME}.hideSlide`,
+  unhideSlide: `${EXTENSION_NAME}.unhideSlide`,
+  /**
+   * Followed by the layout, like `demo-time.setSlideLayout.intro`
+   */
+  setSlideLayout: `${EXTENSION_NAME}.setSlideLayout`,
+  insertSlide: `${EXTENSION_NAME}.insertSlide`,
+  duplicateSlide: `${EXTENSION_NAME}.duplicateSlide`,
+  deleteSlide: `${EXTENSION_NAME}.deleteSlide`,
+  moveSlideUp: `${EXTENSION_NAME}.moveSlideUp`,
+  moveSlideDown: `${EXTENSION_NAME}.moveSlideDown`,
+  toggleSlideThumbnails: `${EXTENSION_NAME}.toggleSlideThumbnails`,
+  toggleSlideNotes: `${EXTENSION_NAME}.toggleSlideNotes`,
   togglePresentationView: `${EXTENSION_NAME}.togglePresentationView`,
   closePresentationView: `${EXTENSION_NAME}.closePresentationView`,
   exportToPdf: `${EXTENSION_NAME}.exportToPdf`,

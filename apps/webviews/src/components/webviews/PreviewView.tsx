@@ -2,7 +2,7 @@ import { EventData } from '@estruyf/vscode';
 import { messageHandler, Messenger } from '@estruyf/vscode/dist/client/webview';
 import * as React from 'react';
 import { COMMAND, WebViewMessages } from '@demotime/common';
-import { ImagePreview, MarkdownPreview, QRPreview } from '../preview';
+import { EmbedPreview, ImagePreview, MarkdownPreview, QRPreview } from '../preview';
 
 import '../../styles/preview.css';
 import '../../themes/default.css';
@@ -28,6 +28,7 @@ const PreviewView = () => {
     logo?: string;
     qrLayout?: 'default' | 'reversed' | 'minimal' | 'stacked' | 'text-left' | 'text-right';
   } | null>(null);
+  const [embed, setEmbed] = React.useState<{ url: string; title: string } | null>(null);
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Escape') {
@@ -54,15 +55,27 @@ const PreviewView = () => {
       };
       if (qrPayload?.url) {
         // Replace current preview with QR preview
+        setEmbed(null);
         setQrData(qrPayload);
         setFileUri(undefined);
         setSlideIdx(undefined);
         messageHandler.send(WebViewMessages.toVscode.updateTitle, 'QR Code');
       }
+    } else if (command === WebViewMessages.toWebview.showEmbed) {
+      const embedPayload = payload as { url: string; title: string };
+      if (embedPayload?.url) {
+        // Replace current preview with the embedded page
+        setQrData(null);
+        setFileUri(undefined);
+        setSlideIdx(undefined);
+        setEmbed(embedPayload);
+      }
     } else if (command === WebViewMessages.toWebview.updateFileUri) {
       setFileUri(payload as string);
     } else if (command === WebViewMessages.toWebview.triggerUpdate) {
-      setQrData(null); // Clear QR data on update trigger to allow switching back to file previews
+      // Clear QR and embed data on update trigger to allow switching back to file previews
+      setQrData(null);
+      setEmbed(null);
       type UpdatePayload = { fileUriString: string; slideIndex: number };
       const updatePayload = payload as UpdatePayload;
       if (
@@ -144,7 +157,12 @@ const PreviewView = () => {
       messageHandler.request<{
         path: string,
         slideIndex: number,
+        embed: { url: string; title: string } | null,
       }>(WebViewMessages.toVscode.preview.getSlide).then((data) => {
+        if (data.embed) {
+          setEmbed(data.embed);
+          return;
+        }
         setFileUri(data.path);
         setSlideIdx(data.slideIndex);
       });
@@ -155,6 +173,15 @@ const PreviewView = () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [messageListener]);
+
+  if (embed) {
+    return (
+      <>
+        {customTheme && <link href={customTheme} rel="stylesheet" />}
+        <EmbedPreview url={embed.url} title={embed.title} />
+      </>
+    );
+  }
 
   if (!qrData && (!fileUri || typeof slideIdx === 'undefined')) {
     return null;

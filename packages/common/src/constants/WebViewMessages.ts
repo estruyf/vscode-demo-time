@@ -87,6 +87,11 @@ export const WebViewMessages = {
      */
     getFileContents: 'getFileContents',
     /**
+     * Reads the files that the slides of a slide file include with `src`. Payload:
+     * `{ path, content }`. Responds with the `SlideIncludes` for the `SlideParser`
+     */
+    getSlideIncludes: 'getSlideIncludes',
+    /**
      * logError
      */
     logError: 'logError',
@@ -204,6 +209,23 @@ export const WebViewMessages = {
        * The overflow of the slides in the file, for the diagnostics
        */
       slideOverflow: 'reportPreviewSlideOverflow',
+      /**
+       * Replaces the code blocks with a `file` option by the code of that file
+       */
+      resolveCodeFiles: 'resolvePreviewCodeFiles',
+      /**
+       * Moves a slide to another position in its file. Payload: `{ path, fromIndex, toIndex }`.
+       * Responds with whether the file changed
+       */
+      moveSlide: 'movePreviewSlide',
+      /**
+       * The drawings of a slide. Payload: the key of the slide. Responds with its strokes
+       */
+      getSlideDrawing: 'getPreviewSlideDrawing',
+      /**
+       * Keeps the drawings of a slide until the presentation ends. Payload: `SlideDrawing`
+       */
+      saveSlideDrawing: 'savePreviewSlideDrawing',
     },
     settingsView: {
       /**
@@ -340,6 +362,18 @@ export const WebViewMessages = {
        * The reduced motion preference of the slides changed
        */
       updateReducedMotion: 'previewUpdateReducedMotion',
+      /**
+       * A file that a code block on the slides shows changed
+       */
+      codeFilesChanged: 'previewCodeFilesChanged',
+      /**
+       * The `demoTime.slidePreviewThumbnails` setting changed. Payload: whether to show them
+       */
+      updateThumbnails: 'previewUpdateSlideThumbnails',
+      /**
+       * The `demoTime.slidePreviewNotes` setting changed. Payload: whether to show the notes pane
+       */
+      updateNotesPane: 'previewUpdateSlideNotesPane',
     },
     // Act Editor
     configEditor: {
@@ -376,5 +410,9 @@ export const WebViewMessages = {
      * showQR
      */
     showQR: 'showQR',
+    /**
+     * showEmbed
+     */
+    showEmbed: 'showEmbed',
   },
 };

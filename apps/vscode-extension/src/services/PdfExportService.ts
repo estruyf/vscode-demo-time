@@ -1,10 +1,19 @@
-import rehypePrettyCode from 'rehype-pretty-code';
 import { resolve } from 'mlly';
 import { Notifications } from './Notifications';
 import { Subscription } from '../models';
 import { Extension } from './Extension';
 import { DemoFileProvider, Logger, Slides } from '.';
-import { getAbsolutePath, getTheme, readFile, sortFiles, writeFile } from '../utils';
+import {
+  getAbsolutePath,
+  getTheme,
+  parseSlideFile,
+  readFile,
+  rebaseCssUrls,
+  resolveSlideCodeFiles,
+  scopeSlideStyles,
+  sortFiles,
+  writeFile,
+} from '../utils';
 import {
   commands,
   Uri,
@@ -18,13 +27,13 @@ import {
 import { Page } from 'playwright-chromium';
 import { General } from '../constants';
 import { renderToString } from 'react-dom/server';
+import { getCodeHighlightPlugins } from '@demotime/common/out/codeHighlight';
 import {
   Action,
   COMMAND,
   Config,
   tryConvertTemplateToHtml,
   SlideLayout,
-  SlideParser,
   SlideTheme,
   Step,
   transformMarkdown,
@@ -136,7 +145,7 @@ export class PdfExportService {
               step.path as string,
             );
             const content = await readFile(slideUri);
-            slideContents.push({ content, actTitle, sceneTitle });
+            slideContents.push({ content, actTitle, sceneTitle, slideUri });
           }
 
           if (slideContents.length === 0) {
@@ -233,7 +242,7 @@ export class PdfExportService {
    * Generate HTML for slides using the existing markdown processing pipeline
    */
   private static async generateSlidesHtml(
-    slides: { content: string; actTitle?: string; sceneTitle?: string }[],
+    slides: { content: string; actTitle?: string; sceneTitle?: string; slideUri?: Uri }[],
   ): Promise<string> {
     const theme = await getTheme(undefined);
     const ext = Extension.getInstance();
@@ -252,12 +261,11 @@ export class PdfExportService {
     let idx = 0;
     // The slide number for `{{crntSlideIdx}}`, which doesn't count hidden slides
     let slideNr = 0;
-    const parser = new SlideParser();
     const totalSlides = await Slides.getTotalSlides();
 
     for (const slide of slides) {
       try {
-        const allSlides = parser.parseSlides(slide.content);
+        const allSlides = await parseSlideFile(slide.content, slide.slideUri);
         for (const crntSlide of allSlides) {
           const isHidden = isSlideHidden(crntSlide);
           if (isHidden && !includeHidden) {
@@ -267,12 +275,16 @@ export class PdfExportService {
             slideNr++;
           }
 
+          const { markdown: slideMarkdown } = await resolveSlideCodeFiles(
+            crntSlide.content,
+            slide.slideUri,
+          );
           const vfile = await transformMarkdown(
-            placeholderFormatting(crntSlide.content),
+            placeholderFormatting(slideMarkdown),
             undefined,
             undefined,
             undefined,
-            [[rehypePrettyCode, { theme: theme ? theme : {} }]],
+            getCodeHighlightPlugins(theme),
             undefined,
           );
           let { reactContent } = vfile;
@@ -284,7 +296,7 @@ export class PdfExportService {
               undefined,
               undefined,
               undefined,
-              [[rehypePrettyCode, { theme: theme ? theme : {} }]],
+              getCodeHighlightPlugins(theme),
               undefined,
             );
             notesHtml = renderToString(notesFile.reactContent);
@@ -362,14 +374,16 @@ export class PdfExportService {
               customLayout,
             );
             html = await ScreenshotService.renderCustomLayout(customLayoutPath, customLayout, {
-              metadata: { ...crntSlide.frontmatter },
+              metadata: {
+                ...crntSlide.frontmatter,
+                webViewUrl: PdfExportService.workspaceFolder?.uri.toString(),
+              },
               content: html,
             });
           }
 
           // Isolate the styles for the custom layout to the slide
-          html = html.replace(/<style>/g, `<style type="text/tailwindcss">#slide-${idx + 1} {`);
-          html = html.replace(/<\/style>/g, '}</style>');
+          html = scopeSlideStyles(html, `#slide-${idx + 1}`);
 
           slideContents.push({
             html,
@@ -444,9 +458,10 @@ export class PdfExportService {
       if (customTheme.startsWith('http')) {
         customThemeUrls.push(customTheme);
       } else if (workspaceFolder) {
-        const theme = await readFile(Uri.joinPath(workspaceFolder.uri, customTheme));
+        const themeUri = Uri.joinPath(workspaceFolder.uri, customTheme);
+        const theme = await readFile(themeUri);
         if (theme) {
-          customThemes.push(theme);
+          customThemes.push(rebaseCssUrls(theme, themeUri.toString()));
         }
       }
     }
@@ -600,8 +615,8 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
     }
 
     html += `
-        ${customThemes ? `<style type="text/tailwindcss">${customThemes}</style>` : ``}
-        ${customThemeUrls ? `<link rel="stylesheet" href="${customThemeUrls}">` : ``}
+        ${customThemes.length ? `<style type="text/tailwindcss">${customThemes.join('\n')}</style>` : ``}
+        ${customThemeUrls.map((url) => `<link rel="stylesheet" href="${url}">`).join('\n')}
       </body>
       </html>
     `;
@@ -688,7 +703,7 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
       }
 
       const css = await response.text();
-      return css;
+      return rebaseCssUrls(css, themePath);
     }
 
     const uri = Uri.joinPath(PdfExportService.workspaceFolder?.uri as Uri, themePath);
@@ -697,7 +712,7 @@ ${css ? `<style type="text/tailwindcss">#slide-${index + 1} { ${css} }</style>` 
       Notifications.error(`Error reading theme file: ${themePath}`);
       return undefined;
     }
-    return fileContent;
+    return rebaseCssUrls(fileContent, uri.toString());
   }
 
   /**

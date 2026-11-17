@@ -1,6 +1,7 @@
 import { Config, EngageTimeMessageType, Poll } from '@demotime/common';
-import { Extension, Notifications } from '.';
+import { Extension, Logger, Notifications } from '.';
 import * as vscode from 'vscode';
+import { Preview } from '../preview/Preview';
 
 export class EngageTimeService {
   private static readonly API_URL = 'https://api.engagetime.live';
@@ -37,6 +38,7 @@ export class EngageTimeService {
     closeOnOpen?: boolean,
     darkTheme?: boolean,
     controls?: boolean,
+    inPreview?: boolean,
   ): Promise<void> {
     if (!pollId) {
       Notifications.error(`EngageTime poll ID is required to show a poll.`);
@@ -50,10 +52,11 @@ export class EngageTimeService {
       return;
     }
 
+    // No notification toast on top of the poll, which is shown full screen while presenting
     if (closeOnOpen) {
-      await EngageTimeService.stopPoll(pollId);
+      await EngageTimeService.stopPoll(pollId, false);
     } else if (startOnOpen) {
-      await EngageTimeService.startPoll(pollId);
+      await EngageTimeService.startPoll(pollId, false);
     }
 
     const params = new URLSearchParams();
@@ -62,10 +65,15 @@ export class EngageTimeService {
       params.set('controls', controls.toString());
     }
 
-    const queryString = params.toString();
-    const url = queryString
-      ? `https://engagetime.live/poll/${pollId}?${queryString}`
-      : `https://engagetime.live/poll/${pollId}`;
+    const url = `https://engagetime.live/poll/${pollId}?${params.toString()}`;
+
+    // The integrated browser keeps the keyboard focus and doesn't pass the arrow and page keys of
+    // the next and previous keybindings to VS Code. The preview does, but links in the poll can't
+    // open and its text can't be copied.
+    if (inPreview) {
+      await Preview.showEmbed(url, 'Poll');
+      return;
+    }
 
     await vscode.commands.executeCommand('workbench.action.browser.open', url);
   }
@@ -78,12 +86,12 @@ export class EngageTimeService {
     await EngageTimeService.updateSessionState(sessionId, 'closed');
   }
 
-  public static async startPoll(pollId?: string): Promise<void> {
-    await EngageTimeService.updatePollState(pollId, true);
+  public static async startPoll(pollId?: string, notify = true): Promise<void> {
+    await EngageTimeService.updatePollState(pollId, true, notify);
   }
 
-  public static async stopPoll(pollId?: string): Promise<void> {
-    await EngageTimeService.updatePollState(pollId, false);
+  public static async stopPoll(pollId?: string, notify = true): Promise<void> {
+    await EngageTimeService.updatePollState(pollId, false, notify);
   }
 
   public static async getPolls(sessionId?: string): Promise<Poll[]> {
@@ -223,6 +231,7 @@ export class EngageTimeService {
   private static async updatePollState(
     pollId: string | undefined,
     isActive: boolean,
+    notify = true,
   ): Promise<void> {
     if (!pollId) {
       Notifications.error(
@@ -257,9 +266,13 @@ export class EngageTimeService {
         return;
       }
 
-      Notifications.infoWithProgress(
-        `EngageTime poll ${isActive ? 'started' : 'stopped'} successfully.`,
-      );
+      const message = `EngageTime poll ${isActive ? 'started' : 'stopped'} successfully.`;
+      if (notify) {
+        Notifications.infoWithProgress(message);
+      } else {
+        Logger.info(message);
+        vscode.window.setStatusBarMessage(`$(check) ${message}`, 3000);
+      }
     } catch (error: any) {
       Notifications.error(
         `Error ${isActive ? 'starting' : 'stopping'} EngageTime poll: ${error.message}`,

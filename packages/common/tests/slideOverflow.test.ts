@@ -6,6 +6,7 @@ import {
   getSlideOverflowSize,
   hasSlideOverflow,
   isAutoFitEnabled,
+  SLIDE_ANIMATING_ATTRIBUTE,
 } from '../src/utils/slideOverflow';
 import { SlideMetadata } from '../src/models';
 
@@ -20,6 +21,7 @@ interface FakeElement {
     removeProperty: (name: string) => void;
   };
   offsetWidth: number;
+  hasAttribute: (name: string) => boolean;
   computed: {
     display: string;
     position: string;
@@ -41,6 +43,7 @@ const element = (
   options: {
     children?: FakeElement[];
     className?: string;
+    attributes?: string[];
     position?: string;
     overflow?: string;
     padding?: number;
@@ -64,6 +67,7 @@ const element = (
       },
     },
     offsetWidth: options.offsetWidth ?? (typeof rect === 'function' ? rect(1).width : rect.width),
+    hasAttribute: (name) => (options.attributes || []).includes(name),
     computed: {
       display: 'block',
       position: options.position || 'static',
@@ -190,6 +194,22 @@ describe('fitSlideContent', () => {
     const inner = element(SLIDE, {
       className: 'slide__content__inner',
       children: [decoration, scroller],
+    });
+    const box = element(SLIDE, { children: [inner], overflow: 'hidden' });
+
+    expect(fit(box).overflow).toMatchObject({ x: 0, y: 0 });
+  });
+
+  it('leaves out the content of an element that is still animating', () => {
+    // A fade-in that is still moving its content onto the slide
+    const moving = element({ top: 32, left: 1200, width: 896, height: 200 });
+    const animation = element(
+      { top: 32, left: 32, width: 896, height: 200 },
+      { attributes: [SLIDE_ANIMATING_ATTRIBUTE], children: [moving] },
+    );
+    const inner = element(SLIDE, {
+      className: 'slide__content__inner',
+      children: [animation],
     });
     const box = element(SLIDE, { children: [inner], overflow: 'hidden' });
 

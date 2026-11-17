@@ -8,9 +8,9 @@ import cors from 'cors';
 import { Logger } from './Logger';
 import { bringToFront, readFile, getDemoApiData, isPathInWorkspace } from '../utils';
 import { COMMAND } from '@demotime/common';
-import { DemoRunner } from './DemoRunner';
 import { ScreenshotService } from './ScreenshotService';
 import { NotesService } from './NotesService';
+import { DemoRunner } from './DemoRunner';
 
 export class DemoApi {
   private static statusBarItem: StatusBarItem;
@@ -158,7 +158,7 @@ export class DemoApi {
    *          demo has been started.
    */
   private static async previous(req: Request, res: Response) {
-    const isAllowed = DemoRunner.allowPrevious();
+    const isAllowed = await DemoRunner.isPreviousEnabled();
     if (!isAllowed) {
       res.status(403).send('Previous demo is not allowed at this time');
       return;

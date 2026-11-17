@@ -43,7 +43,7 @@ export async function getDemoApiData() {
   }
 
   const demos = DemoPanel.getDemos();
-  const previousEnabled = DemoRunner.allowPrevious();
+  const previousEnabled = await DemoRunner.isPreviousEnabled();
 
   const crntFile = DemoPanel.crntExecutingDemoFile;
   let currentDemoFile: string | undefined = undefined;

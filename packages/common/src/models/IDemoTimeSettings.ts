@@ -5,6 +5,7 @@ export interface IDemoTimeSettings {
   debug: boolean;
   previousEnabled: boolean;
   nextActionBehaviour: string;
+  sceneCheckpoints: boolean;
   presentationViewToggles: string[];
   showClock: boolean;
   timer: number | null;
@@ -27,6 +28,8 @@ export interface IDemoTimeSettings {
   presentationTitle: string;
   slideProgressBar: string;
   slidePreviewSync: boolean;
+  slidePreviewThumbnails: boolean;
+  slidePreviewNotes: boolean;
   slideReducedMotion: string;
   'pdfExport.notes': string;
   'pdfExport.includeHiddenSlides': boolean;

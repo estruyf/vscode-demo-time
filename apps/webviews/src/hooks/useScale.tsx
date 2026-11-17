@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useRef, useState } from 'react';
 
 const Slide_Width = 960;
 const Slide_Height = 540;
@@ -78,6 +78,39 @@ export const useScale = (
       observer.disconnect();
     };
   }, [slideRef, ref, updateScale]);
+
+  // The container changes size without a window resize when, for example, a side pane opens. The
+  // container is a new element for every slide, so check after each render which one to observe.
+  const updateScaleRef = useRef(updateScale);
+  updateScaleRef.current = updateScale;
+  const resizeObserverRef = useRef<{ element: Element; observer: ResizeObserver } | null>(null);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (resizeObserverRef.current?.element === element) {
+      return;
+    }
+
+    resizeObserverRef.current?.observer.disconnect();
+    resizeObserverRef.current = null;
+    if (!element || typeof ResizeObserver === 'undefined') {
+      return;
+    }
+
+    const observer = new ResizeObserver(() => {
+      updateScaleRef.current();
+    });
+    observer.observe(element);
+    resizeObserverRef.current = { element, observer };
+  });
+
+  useEffect(
+    () => () => {
+      resizeObserverRef.current?.observer.disconnect();
+      resizeObserverRef.current = null;
+    },
+    [],
+  );
 
   return {
     scale: value,

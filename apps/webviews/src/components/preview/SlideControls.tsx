@@ -8,12 +8,16 @@ import { EventData } from '@estruyf/vscode';
 import { WebViewMessages } from '@demotime/common';
 import { SlideNavigator, SlideOption } from './SlideNavigator';
 import { SlideControlsMenu, ISlideMenuGroup, ISlideMenuItem } from './SlideControlsMenu';
-import { SlideNotesEditor } from './SlideNotesEditor';
 import { cn } from '../../utils/cn';
 
 export interface ISlideControlsProps {
   show: boolean;
   path?: string;
+  /**
+   * The file and index of the current slide, which can come from a file that the file includes
+   * with `src`
+   */
+  slideSource?: { path: string; index: number; isIncluded: boolean };
   slides: number;
   currentSlide?: number;
   slideOptions?: SlideOption[];
@@ -26,14 +30,40 @@ export interface ISlideControlsProps {
   onNavigateToSlide?: (index: number) => void;
   triggerMouseMove: (value: boolean) => void;
   hideControls: () => void;
+  /**
+   * Called when the pointer moves onto or off the toolbar, so the controls and cursor stay visible
+   * meanwhile
+   */
+  onHoverChange?: (hovered: boolean) => void;
+  /**
+   * Called when a menu or overlay of the controls opens or closes
+   */
+  onOverlayChange?: (open: boolean) => void;
   laserPointerEnabled?: boolean;
   onLaserPointerToggle?: (enabled: boolean) => void;
+  drawingEnabled?: boolean;
+  onDrawingToggle?: (enabled: boolean) => void;
   isZoomed?: boolean;
   onZoomToggle?: () => void;
   style?: React.CSSProperties;
   matter?: SlideMetadata;
-  notes?: string;
   clickStep?: number;
+  /**
+   * Whether the slide thumbnails show next to the preview
+   */
+  thumbnailsOpen?: boolean;
+  /**
+   * Toggles the slide thumbnails. Without it, the button is not shown.
+   */
+  onThumbnailsToggle?: () => void;
+  /**
+   * Whether the speaker notes show below the preview
+   */
+  notesOpen?: boolean;
+  /**
+   * Toggles the speaker notes. Without it, the button is not shown.
+   */
+  onNotesToggle?: () => void;
 }
 
 const Divider: React.FunctionComponent = () => (
@@ -46,6 +76,7 @@ const Divider: React.FunctionComponent = () => (
 export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISlideControlsProps>> = ({
   show,
   path,
+  slideSource,
   children,
   slides,
   currentSlide = 0,
@@ -59,21 +90,27 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   onNavigateToSlide,
   triggerMouseMove,
   hideControls,
+  onHoverChange,
+  onOverlayChange,
   laserPointerEnabled = false,
   onLaserPointerToggle,
+  drawingEnabled = false,
+  onDrawingToggle,
   isZoomed = false,
   onZoomToggle,
   style,
   matter,
-  notes,
   clickStep = 0,
+  thumbnailsOpen = false,
+  onThumbnailsToggle,
+  notesOpen = false,
+  onNotesToggle,
 }: React.PropsWithChildren<ISlideControlsProps>) => {
   const [previousEnabled, setPreviousEnabled] = React.useState(false);
   const [isPresentationMode, setIsPresentationMode] = React.useState(false);
   const [showPosition, setShowPosition] = React.useState(false);
   const [isNavigatorOpen, setIsNavigatorOpen] = React.useState(false);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const [isNotesEditorOpen, setIsNotesEditorOpen] = React.useState(false);
   const [extensionAutoProceedManaged, setExtensionAutoProceedManaged] = React.useState(false);
 
 
@@ -126,37 +163,19 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   // Moves the editor cursor to the source of the current slide
   const revealSlideSource = React.useCallback(() => {
     messageHandler.send(WebViewMessages.toVscode.preview.revealSource, {
-      path,
-      slideIndex: currentSlide,
+      path: slideSource?.path ?? path,
+      slideIndex: slideSource?.index ?? currentSlide,
     });
-  }, [path, currentSlide]);
+  }, [path, currentSlide, slideSource]);
 
   const isHidden = isSlideHidden({ frontmatter: matter });
   const toggleSlideHidden = React.useCallback(() => {
     messageHandler.send(WebViewMessages.toVscode.preview.setSlideHidden, {
-      path,
-      slideIndex: currentSlide,
+      path: slideSource?.path ?? path,
+      slideIndex: slideSource?.index ?? currentSlide,
       hidden: !isHidden,
     });
-  }, [path, currentSlide, isHidden]);
-
-  const openNotesEditor = React.useCallback(() => {
-    setIsNotesEditorOpen(true);
-  }, []);
-
-  const closeNotesEditor = React.useCallback(() => {
-    setIsNotesEditorOpen(false);
-  }, []);
-
-  // Writes the notes to the `<!-- notes -->` block of the slide
-  const saveNotes = React.useCallback((value: string) => {
-    messageHandler.send(WebViewMessages.toVscode.preview.setSlideNotes, {
-      path,
-      slideIndex: currentSlide,
-      notes: value,
-    });
-    setIsNotesEditorOpen(false);
-  }, [path, currentSlide]);
+  }, [path, currentSlide, slideSource, isHidden]);
 
   const toggleMousePosition = React.useCallback(() => {
     const nextValue = !showPosition;
@@ -167,6 +186,10 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
   const toggleLaserPointer = React.useCallback(() => {
     onLaserPointerToggle?.(!laserPointerEnabled);
   }, [laserPointerEnabled, onLaserPointerToggle]);
+
+  const toggleDrawing = React.useCallback(() => {
+    onDrawingToggle?.(!drawingEnabled);
+  }, [drawingEnabled, onDrawingToggle]);
 
   const toggleZoom = React.useCallback(() => {
     onZoomToggle?.();
@@ -232,19 +255,16 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
           iconName: 'file-code',
           onSelect: revealSlideSource,
         });
-        // Adds or removes `hide: true` in the slide front matter
-        slideItems.push({
-          id: 'toggle-slide-hidden',
-          label: isHidden ? 'Show slide while presenting' : 'Hide slide while presenting',
-          iconName: isHidden ? 'eye' : 'eye-closed',
-          onSelect: toggleSlideHidden,
-        });
-        slideItems.push({
-          id: 'edit-slide-notes',
-          label: notes ? 'Edit speaker notes' : 'Add speaker notes',
-          iconName: 'note',
-          onSelect: openNotesEditor,
-        });
+        // Adds or removes `hide: true` in the slide front matter. A slide of an included file
+        // (`src`) is hidden with `hide: true` next to its `src`.
+        if (!slideSource?.isIncluded) {
+          slideItems.push({
+            id: 'toggle-slide-hidden',
+            label: isHidden ? 'Show slide while presenting' : 'Hide slide while presenting',
+            iconName: isHidden ? 'eye' : 'eye-closed',
+            onSelect: toggleSlideHidden,
+          });
+        }
       }
     }
 
@@ -263,8 +283,8 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
       id: 'workspace',
       label: 'Workspace',
       items: [
-        { id: 'show-demos', label: 'Show demos', iconName: 'list-unordered', onSelect: focusPanel },
-        { id: 'close-sidebar', label: 'Close sidebar', iconName: 'layout-sidebar-left', onSelect: closeSidebar },
+        { id: 'show-scenes', label: 'Show scenes', iconName: 'list-unordered', onSelect: focusPanel },
+        { id: 'hide-scenes', label: 'Hide scenes', iconName: 'layout-sidebar-left', onSelect: closeSidebar },
       ],
     });
 
@@ -274,10 +294,14 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
     });
 
     return groups;
-  }, [isPresentationMode, showPosition, path, isHidden, notes, toggleMousePosition, revealSlideSource, toggleSlideHidden, openNotesEditor, focusPanel, closeSidebar, hideControls]);
+  }, [isPresentationMode, showPosition, path, slideSource?.isIncluded, isHidden, toggleMousePosition, revealSlideSource, toggleSlideHidden, focusPanel, closeSidebar, hideControls]);
 
-  const isOverlayOpen = isNavigatorOpen || isMenuOpen || isNotesEditorOpen;
+  const isOverlayOpen = isNavigatorOpen || isMenuOpen;
   const visible = show || isOverlayOpen;
+
+  React.useEffect(() => {
+    onOverlayChange?.(isOverlayOpen);
+  }, [isOverlayOpen, onOverlayChange]);
 
   return (
     <div
@@ -291,6 +315,8 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
       <div
         role="toolbar"
         aria-label="Slide controls"
+        onMouseEnter={() => onHoverChange?.(true)}
+        onMouseLeave={() => onHoverChange?.(false)}
         className={cn(
           'inline-flex items-center gap-1 rounded-2xl px-2 py-1.5 max-w-full',
           'bg-(--vscode-editorWidget-background)',
@@ -316,6 +342,24 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
             action={togglePresentationView}
           />
           <SlideControl title="Toggle fullscreen" iconName="screen-full" action={toggleFullscreen} />
+          {onThumbnailsToggle && !isPresentationMode && (
+            <SlideControl
+              title={thumbnailsOpen ? 'Hide slide thumbnails' : 'Show slide thumbnails'}
+              iconName="layout-sidebar-left"
+              active={thumbnailsOpen}
+              ariaPressed={thumbnailsOpen}
+              action={onThumbnailsToggle}
+            />
+          )}
+          {onNotesToggle && !isPresentationMode && (
+            <SlideControl
+              title={notesOpen ? 'Hide speaker notes' : 'Show speaker notes'}
+              iconName="layout-panel"
+              active={notesOpen}
+              ariaPressed={notesOpen}
+              action={onNotesToggle}
+            />
+          )}
         </div>
 
         <Divider />
@@ -364,6 +408,15 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
             ariaPressed={laserPointerEnabled}
             action={toggleLaserPointer}
           />
+          {onDrawingToggle && (
+            <SlideControl
+              title="Toggle drawing (D)"
+              iconName="edit"
+              active={drawingEnabled}
+              ariaPressed={drawingEnabled}
+              action={toggleDrawing}
+            />
+          )}
           <SlideControl
             title={isZoomed ? 'Exit zoom' : 'Zoom in'}
             iconName={isZoomed ? 'zoom-out' : 'zoom-in'}
@@ -375,14 +428,6 @@ export const SlideControls: React.FunctionComponent<React.PropsWithChildren<ISli
           <SlideControlsMenu groups={menuGroups} onOpenChange={setIsMenuOpen} />
         </div>
 
-        {isNotesEditorOpen && (
-          <SlideNotesEditor
-            slideNr={currentSlide + 1}
-            notes={notes}
-            onSave={saveNotes}
-            onClose={closeNotesEditor}
-          />
-        )}
       </div>
     </div>
   );

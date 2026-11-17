@@ -661,6 +661,7 @@ export const getActionTemplate = (selectedAction: QuickPickItem): any => {
       closeOnOpen: false,
       pollDarkTheme: false,
       pollControls: true,
+      pollInPreview: false,
     };
   }
 

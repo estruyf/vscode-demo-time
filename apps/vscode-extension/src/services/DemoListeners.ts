@@ -65,6 +65,7 @@ export class DemoListeners {
     if (fileName.includes(General.demoFolder)) {
       DemoPanel.update();
       Overview.update();
+      DemoRunner.allowPrevious();
     }
   }
 }

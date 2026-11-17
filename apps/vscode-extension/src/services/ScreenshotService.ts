@@ -2,12 +2,21 @@ import { Uri, workspace } from 'vscode';
 import { Extension } from './Extension';
 import { DemoStatusBar } from './DemoStatusBar';
 import { Logger } from './Logger';
-import { getAbsolutePath, getNextSlideIndex, getTheme, readFile, writeFile } from '../utils';
+import {
+  getAbsolutePath,
+  getNextSlideIndex,
+  getTheme,
+  parseSlideFile,
+  readFile,
+  rebaseCssUrls,
+  resolveSlideCodeFiles,
+  scopeSlideStyles,
+  writeFile,
+} from '../utils';
 import {
   Action,
   Config,
   SlideLayout,
-  SlideParser,
   SlideTheme,
   getTemplateErrorMessage,
   placeholderFormatting,
@@ -27,7 +36,7 @@ import {
   toStyleAttribute,
 } from '@demotime/common';
 import { renderToString } from 'react-dom/server';
-import rehypePrettyCode from 'rehype-pretty-code';
+import { getCodeHighlightPlugins } from '@demotime/common/out/codeHighlight';
 import { resolve } from 'mlly';
 import { Preview } from '../preview/Preview';
 import { DemoRunner } from './DemoRunner';
@@ -136,8 +145,7 @@ export class ScreenshotService {
     }
 
     // Parse and get the first slide (or specific slide index if specified)
-    const parser = new SlideParser();
-    const slides = parser.parseSlides(slideContent);
+    const slides = await parseSlideFile(slideContent, slideUri);
 
     if (slides.length === 0) {
       Logger.error('No slides parsed from content');
@@ -151,10 +159,19 @@ export class ScreenshotService {
       slides,
       DemoRunner.getIsPresentationMode(),
     );
-    const targetSlide = slides[slideIndex];
+    let targetSlide = slides[slideIndex];
     const placeholders = await Slides.getSlidePlaceholders(slideStep.path, slideIndex, demo);
-    // The placeholders are part of the key, so the screenshot updates when the slide number changes
-    const cacheKey = `${slideUri.toString()}#${slideIndex}#${JSON.stringify(placeholders)}`;
+    // The placeholders are part of the key, so the screenshot updates when the slide number changes.
+    // The content too, so it updates when the slide or a file it includes with `src` changes.
+    const slideKey = JSON.stringify([targetSlide.content, targetSlide.frontmatter]);
+    let cacheKey = `${slideUri.toString()}#${slideIndex}#${JSON.stringify(placeholders)}#${slideKey}`;
+
+    // Code blocks can show code from other files, which can change without the slide changing
+    const codeFiles = await resolveSlideCodeFiles(targetSlide.content, slideUri);
+    if (codeFiles.files.length > 0) {
+      targetSlide = { ...targetSlide, content: codeFiles.markdown };
+      cacheKey += `#${codeFiles.markdown}`;
+    }
 
     return { targetSlide, cacheKey, placeholders };
   }
@@ -330,7 +347,7 @@ export class ScreenshotService {
       undefined,
       undefined,
       undefined,
-      [[rehypePrettyCode, { theme: theme ? theme : {} }]],
+      getCodeHighlightPlugins(theme),
       undefined,
     );
     let { reactContent } = vfile;
@@ -396,15 +413,14 @@ export class ScreenshotService {
       if (wsFolder) {
         const customLayoutPath = Uri.joinPath(wsFolder.uri, customLayout);
         html = await ScreenshotService.renderCustomLayout(customLayoutPath, customLayout, {
-          metadata: { ...slide.frontmatter },
+          metadata: { ...slide.frontmatter, webViewUrl: wsFolder.uri.toString() },
           content: html,
         });
       }
     }
 
     // Isolate the styles for the custom layout to the slide
-    html = html.replace(/<style>/g, `<style type="text/tailwindcss">#slide-1 {`);
-    html = html.replace(/<\/style>/g, '}</style>');
+    html = scopeSlideStyles(html, '#slide-1');
 
     // Load the appropriate theme CSS
     const themeCss = await ScreenshotService.getThemeCss(slideTheme);
@@ -435,9 +451,10 @@ export class ScreenshotService {
       if (globalCustomTheme.startsWith('http')) {
         customThemeUrls.push(globalCustomTheme);
       } else if (workspaceFolder) {
-        const theme = await readFile(Uri.joinPath(workspaceFolder.uri, globalCustomTheme));
+        const themeUri = Uri.joinPath(workspaceFolder.uri, globalCustomTheme);
+        const theme = await readFile(themeUri);
         if (theme) {
-          customThemes.push(theme);
+          customThemes.push(rebaseCssUrls(theme, themeUri.toString()));
         }
       }
     }

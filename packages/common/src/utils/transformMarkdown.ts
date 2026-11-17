@@ -43,6 +43,13 @@ export const transformMarkdown = async (
           node.value = mermaidOptions?.isWebComponent
             ? `<dt-mermaid id="d${randomId}" code="${code}" ${mermaidOptions.isDark ? 'dark' : ''}></dt-mermaid>`
             : `<pre class="mermaid">${code}</pre>`;
+        } else if (node.type === 'code' && node.meta) {
+          // rehype-raw drops the `data.meta` of the code element, so keep the meta (like
+          // `{1-3} title="app.ts"`) as a property, which rehype-pretty-code also reads
+          node.data = {
+            ...node.data,
+            hProperties: { ...node.data?.hProperties, metastring: node.meta },
+          };
         }
       });
     })

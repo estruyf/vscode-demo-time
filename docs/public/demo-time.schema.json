@@ -25,6 +25,9 @@
     "loop": {
       "$ref": "#/definitions/loop"
     },
+    "sceneCheckpoints": {
+      "$ref": "#/definitions/sceneCheckpoints"
+    },
     "demos": {
       "type": "array",
       "description": "For version 1 & 2: Array of demo objects",
@@ -963,6 +966,9 @@
                       },
                       "pollControls": {
                         "$ref": "#/definitions/pollControls"
+                      },
+                      "pollInPreview": {
+                        "$ref": "#/definitions/pollInPreview"
                       }
                     },
                     "not": {
@@ -1296,6 +1302,11 @@
       "title": "Loop scenes",
       "description": "When enabled, the act restarts from the first scene after the last scene."
     },
+    "sceneCheckpoints": {
+      "type": "boolean",
+      "title": "Scene checkpoints",
+      "description": "Snapshot the workspace files when a scene of this act starts, so going back to a scene restores them. Applies to all scenes of the act and overrides the `demoTime.sceneCheckpoints` setting. When on, going back to the previous scene is allowed unless the `demoTime.previousEnabled` setting is `false`."
+    },
     "notificationMessage": {
       "type": "string",
       "title": "The message for the notification"
@@ -1479,6 +1490,11 @@
       "type": "boolean",
       "description": "Whether to show the poll controls in the embed. Default is true.",
       "default": true
+    },
+    "pollInPreview": {
+      "type": "boolean",
+      "description": "Show the poll in the Demo Time preview instead of the integrated browser, so the next and previous keys keep working. Links in the poll can't be opened and its text can't be copied. Default is false.",
+      "default": false
     },
     "type": {
       "type": "string",

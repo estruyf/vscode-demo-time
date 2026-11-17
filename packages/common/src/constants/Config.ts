@@ -50,6 +50,8 @@ export const Config = {
     slideProgressBar: 'slideProgressBar',
     presentationTitle: 'presentationTitle',
     previewSync: 'slidePreviewSync',
+    previewThumbnails: 'slidePreviewThumbnails',
+    previewNotes: 'slidePreviewNotes',
     reducedMotion: 'slideReducedMotion',
   },
   webcomponents: {
@@ -57,6 +59,7 @@ export const Config = {
   },
   demoRunner: {
     nextActionBehaviour: 'nextActionBehaviour',
+    sceneCheckpoints: 'sceneCheckpoints',
   },
   defaultFileType: 'defaultFileType',
   configEditor: {

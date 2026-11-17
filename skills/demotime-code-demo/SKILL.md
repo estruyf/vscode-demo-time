@@ -139,4 +139,6 @@ and read every file and placeholder the moves reference.
 
 Summarize the scenes, the files you added (act, snapshots, patches, notes), and how to rehearse:
 open the **Demo Time** view and run the scenes in order, or use the play button in the act editor.
-Mention that the setup scene resets the demo between rehearsals.
+Mention that the setup scene resets the demo between rehearsals, and that the
+`demoTime.sceneCheckpoints` setting restores the files when going back to a scene or resetting the
+play.

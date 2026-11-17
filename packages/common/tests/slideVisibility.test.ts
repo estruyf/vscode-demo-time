@@ -1,5 +1,6 @@
 import { describe, it, expect } from '@jest/globals';
 import {
+  getLastSlideIdx,
   getNextSlideIdx,
   getPreviousSlideIdx,
   getVisibleSlideIdx,
@@ -54,6 +55,14 @@ layout: default
     expect(getPreviousSlideIdx(slides, 3, false)).toBe(2);
     expect(getPreviousSlideIdx(slides, 0)).toBeUndefined();
     expect(getPreviousSlideIdx([slide(true), slide()], 1)).toBeUndefined();
+  });
+
+  it('skips hidden slides when getting the last slide', () => {
+    expect(getLastSlideIdx([slide(), slide(), slide()])).toBe(2);
+    expect(getLastSlideIdx([slide(), slide(true), slide(true)])).toBe(0);
+    expect(getLastSlideIdx([slide(), slide(true)], false)).toBe(1);
+    expect(getLastSlideIdx([slide(true)])).toBeUndefined();
+    expect(getLastSlideIdx([])).toBeUndefined();
   });
 
   it('opens a deck on a visible slide', () => {

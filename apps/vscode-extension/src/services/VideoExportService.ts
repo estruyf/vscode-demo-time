@@ -9,7 +9,6 @@ import {
   getDemosFromConfig,
   InsertTypingMode,
   Slide,
-  SlideParser,
   Step,
   VideoExportEvent,
   VideoExportIssue,
@@ -29,6 +28,7 @@ import {
   isStaticSlide,
   parseVideoExportRange,
   preflightVideoExport,
+  readSlideFile,
   selectVideoExportScenes,
   setContext,
   sleep,
@@ -554,8 +554,7 @@ export class VideoExportService {
     if (!workspaceFolder) {
       return [];
     }
-    const content = await getFileContents(workspaceFolder, slidePath);
-    return content ? new SlideParser().parseSlides(content) : [];
+    return (await readSlideFile(workspaceFolder, slidePath)) || [];
   }
 
   private static async getNotesReadingSeconds(notesPath: string): Promise<number> {

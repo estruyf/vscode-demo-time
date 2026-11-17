@@ -1,6 +1,7 @@
 export * from './AiSkillsService';
 export * from './analytics';
 export * from './ChatActionsService';
+export * from './CheckpointService';
 export * from './DecoratorService';
 export * from './DemoApi';
 export * from './DemoActionDispatcher';

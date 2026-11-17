@@ -35,6 +35,9 @@ export class SponsorService {
           ResourcesPanel.update();
         } catch (err) {
           Notifications.error(`GitHub authentication error: ${(err as Error).message}`);
+        } finally {
+          // Always report back, as checkSponsor only notifies the webview when the status changes
+          ProFeaturesView.notifySponsorStatusChange(SponsorService.getSponsorStatus());
         }
       }),
     );

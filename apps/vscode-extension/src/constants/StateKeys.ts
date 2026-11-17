@@ -10,4 +10,5 @@ export const StateKeys = {
   presentationView: 'presentationView',
   sponsor: 'sponsor',
   aiSkillsUpdateDismissed: 'aiSkillsUpdateDismissed',
+  checkpointResetPending: 'checkpointResetPending',
 };

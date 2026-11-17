@@ -4,13 +4,17 @@ import { Markdown } from './Markdown';
 import { EventData } from '@estruyf/vscode';
 import { SlideControls } from './SlideControls';
 import { LaserPointer } from './LaserPointer';
+import { SlideDrawingLayer } from './SlideDrawingLayer';
+import { SlideDrawingToolbar } from './SlideDrawingToolbar';
 import DOMPurify from 'dompurify';
-import { Config, getNextSlideIdx, getPreviousSlideIdx, getProgressBarPosition, getProgressPercentage, getSlideBackgroundStyles, getSlideClassNames, getSlideHeading, getTemplateData, getTemplateErrorMessage, getVideoAutoplay, getVisibleSlideIdx, hasSlideOverflow, isAutoFitEnabled, isSlideHidden, ProgressBarPosition, renderTemplateError, tryConvertTemplateToHtml, Slide, SlideLayout, SlideOverflow, SlideOverflowEdges, SlideOverflowResult, SlideParser, SlidePlaceholders, SlideTheme, SlideTransition, TemplateErrorOptions, WebViewMessages } from '@demotime/common';
+import { COMMAND, Config, getNextSlideIdx, getPreviousSlideIdx, getProgressBarPosition, getProgressPercentage, getSlideBackgroundStyles, getSlideClassNames, getSlideHeading, getTemplateData, getTemplateErrorMessage, getVideoAutoplay, getVisibleSlideIdx, hasSlideOverflow, isAutoFitEnabled, isIncludedSlide, getSlideDrawingKey, getSlideFileIndex, isSlideHidden, ProgressBarPosition, renderTemplateError, tryConvertTemplateToHtml, Slide, SlideLayout, SlideOverflow, SlideOverflowEdges, SlideOverflowResult, SlideDrawingStroke, SlideDrawingTool, SlideIncludes, SlideParser, SlidePlaceholders, SlideTheme, SlideTransition, TemplateErrorOptions, WebViewMessages } from '@demotime/common';
 import { Icon } from 'vscrui';
-import { useFileContents, useCursor, useScale, useMousePosition, useTheme, useClickSteps, usePresentationMode, useSlideOverflow, useReducedMotionPreference } from '../../hooks';
-import { extractFirstH1, getSlideTitle, transformImageUrl } from '../../utils';
+import { useFileContents, useCursor, useScale, useMousePosition, useTheme, useClickSteps, usePresentationMode, useSlideDrawing, useSlideOverflow, useReducedMotionPreference } from '../../hooks';
+import { extractFirstH1, getSlideEditSource, getSlideMenuContext, getSlideTitle, transformImageUrl } from '../../utils';
 import { AnimatedSVGSlide } from '../slides/AnimatedSVGSlide';
 import { SlideOverflowScanner } from './SlideOverflowScanner';
+import { SlideThumbnailsPane } from './SlideThumbnailsPane';
+import { SlideNotesPane } from './SlideNotesPane';
 import { SlideFitBadge } from './SlideFitBadge';
 import { SlideOverflowMarker } from './SlideOverflowMarker';
 import { nextClickStep, previousClickStep, resetClickSteps } from '../../webcomponents/clickSteps';
@@ -23,6 +27,15 @@ export interface IMarkdownPreviewProps {
 
 // Height of the bar above a hidden slide
 const HIDDEN_BAR_HEIGHT = 36;
+
+// Keys typed in these elements don't toggle drawing
+const TYPING_TARGETS = 'input, select, textarea, [contenteditable]';
+
+// The color that each drawing tool starts with
+const DEFAULT_DRAWING_COLORS: Record<SlideDrawingStroke['tool'], string> = {
+  pen: '#ef4444',
+  highlighter: '#facc15',
+};
 
 export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = ({
   fileUri,
@@ -38,6 +51,9 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const [crntSlide, setCrntSlide] = React.useState<Slide | null>(null);
   const [isMouseMoveEnabled, setIsMouseMoveEnabled] = React.useState(false);
   const [laserPointerEnabled, setLaserPointerEnabled] = React.useState(false);
+  const [drawingEnabled, setDrawingEnabled] = React.useState(false);
+  const [drawingTool, setDrawingTool] = React.useState<SlideDrawingTool>('pen');
+  const [drawingColors, setDrawingColors] = React.useState(DEFAULT_DRAWING_COLORS);
   const [transition, setTransition] = React.useState<SlideTransition | undefined>(undefined);
   const [header, setHeader] = React.useState<string | undefined>(undefined);
   const [footer, setFooter] = React.useState<string | undefined>(undefined);
@@ -49,10 +65,20 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   // The overflow of every slide of the file, measured in the background
   const [scannedOverflows, setScannedOverflows] = React.useState<SlideOverflow[]>([]);
 
-  const { content, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();
+  const { content, contentFilePath, contentVersion, crntFilePath, initialSlideIndex, getFileContents } = useFileContents();
+  // The file the current slides were parsed from
+  const slidesFilePathRef = React.useRef<string | undefined>(undefined);
   const ref = React.useRef<HTMLDivElement>(null);
   const slideRef = React.useRef<HTMLDivElement>(null);
-  const { cursorVisible, resetCursorTimeout, hideCursor } = useCursor();
+  const { cursorVisible, resetCursorTimeout, pauseCursorTimeout, hideCursor } = useCursor();
+  // The slide controls remount on every slide, so their hover state lives here: when you click
+  // next, the pointer stays on the toolbar of the new slide
+  const [isControlsHovered, setIsControlsHovered] = React.useState(false);
+  const [isControlsOverlayOpen, setIsControlsOverlayOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    pauseCursorTimeout(isControlsHovered || isControlsOverlayOpen);
+  }, [isControlsHovered, isControlsOverlayOpen, pauseCursorTimeout]);
   const { vsCodeTheme, isDarkTheme } = useTheme();
   const isPresentationMode = usePresentationMode();
   // Slides only render once this is known, so they don't start an animation they should skip
@@ -62,7 +88,28 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   const offsetTop = showHiddenMarker ? HIDDEN_BAR_HEIGHT : 0;
   const { scale } = useScale(ref, slideRef, offsetTop);
   const { mousePosition, handleMouseMove, handleMouseLeave } = useMousePosition(slideRef, scale, resetCursorTimeout);
-  const clickStep = useClickSteps();
+  // Outside presentation mode, the arrow and page keys do the same as the next and previous buttons
+  // of the slide controls once the slide has no click steps left
+  const clickStepsNavigation = React.useMemo(() => ({
+    next: () => {
+      messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.start);
+    },
+    previous: () => {
+      const hasPreviousSlide = !!crntSlide && getPreviousSlideIdx(slides, crntSlide.index, !!isPresentationMode) !== undefined;
+      if (hasPreviousSlide) {
+        messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.previous);
+        return;
+      }
+
+      // Going back to the previous scene, like the `left` keybinding in presentation mode
+      messageHandler.request<boolean>(WebViewMessages.toVscode.getPreviousEnabled).then((previousEnabled) => {
+        if (previousEnabled) {
+          messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.previous);
+        }
+      }).catch(() => undefined);
+    },
+  }), [crntSlide, slides, isPresentationMode]);
+  const clickStep = useClickSteps(clickStepsNavigation);
   const autoFit = isAutoFitEnabled(crntSlide?.frontmatter);
   // Outside presentation mode, a badge warns about content that doesn't fit on the slide
   const showOverflowWarning = isPresentationMode === false;
@@ -134,8 +181,11 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
 
   const hidePreviewControls = React.useCallback(() => {
     setShowControls(false);
+    // The hidden toolbar doesn't get pointer events, so it won't get a mouseleave
+    setIsControlsHovered(false);
+    pauseCursorTimeout(false);
     hideCursor();
-  }, [hideCursor]);
+  }, [hideCursor, pauseCursorTimeout]);
 
   /**
    * Gets the template of the header or footer: the `header`/`footer` front matter of the slide, or
@@ -386,14 +436,16 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
       return;
     }
 
+    // The slides that the file includes with `src` are not part of its diagnostics
     const results: SlideOverflowResult[] = overflows
-      .map((slideOverflow, slideIndex) => ({ slideIndex, ...slideOverflow }))
-      .filter((result) => hasSlideOverflow(result));
+      .map((slideOverflow, idx) => ({ slide: slides[idx], slideOverflow }))
+      .filter(({ slide, slideOverflow }) => slide && !isIncludedSlide(slide) && hasSlideOverflow(slideOverflow))
+      .map(({ slide, slideOverflow }) => ({ slideIndex: getSlideFileIndex(slide), ...slideOverflow }));
     messageHandler.send(WebViewMessages.toVscode.preview.slideOverflow, {
       path: relativePath,
       overflows: results,
     });
-  }, [relativePath]);
+  }, [relativePath, slides]);
 
   // Double-clicking the slide moves the editor cursor to its source, unless the sync is turned off
   const revealSourceOnDoubleClick = React.useCallback(async (ev: React.MouseEvent<HTMLDivElement>) => {
@@ -403,7 +455,7 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
 
     // Keep double-clicks on links, buttons and form fields for the element itself
     const target = ev.target as HTMLElement | null;
-    if (target?.closest('a, button, input, textarea, select, video, audio, [contenteditable="true"]')) {
+    if (target?.closest('a, button, input, textarea, select, video, audio, [contenteditable="true"], [data-slide-drawing]')) {
       return;
     }
 
@@ -413,19 +465,159 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
     }
 
     window.getSelection()?.removeAllRanges();
+    const { path, index } = getSlideEditSource(crntSlide, relativePath);
     messageHandler.send(WebViewMessages.toVscode.preview.revealSource, {
-      path: relativePath,
-      slideIndex: crntSlide.index,
+      path,
+      slideIndex: index,
     });
   }, [isPresentationMode, relativePath, crntSlide]);
+
+  // Adds the slide items, like `Show slide contents` and `Change layout`, to the context menu of
+  // the slide. `slideHidden` and `slideLayout` decide which items it shows.
+  const vscodeContext = React.useMemo(() => {
+    if (isPresentationMode !== false || !relativePath || !crntSlide) {
+      return undefined;
+    }
+
+    return getSlideMenuContext(crntSlide, slides, relativePath);
+  }, [isPresentationMode, relativePath, crntSlide, slides]);
+
+  // The file and index of the current slide, which can come from a file it includes with `src`
+  const crntSlideSource = React.useMemo(
+    () => (crntSlide && relativePath ? getSlideEditSource(crntSlide, relativePath) : undefined),
+    [crntSlide, relativePath]
+  );
+
+  // The drawings belong to the slide. While the next file loads, the slides of the previous file
+  // are still shown, so they don't get the drawings of the new file.
+  const drawingKey = React.useMemo(
+    () =>
+      crntSlide && crntFilePath && slidesFilePathRef.current === crntFilePath
+        ? getSlideDrawingKey(relativePath || crntFilePath, crntSlide.index)
+        : undefined,
+    [crntSlide, crntFilePath, relativePath]
+  );
+  const { strokes: drawingStrokes, updateStrokes: updateDrawingStrokes, clearStrokes: clearDrawingStrokes } = useSlideDrawing(drawingKey);
+
+  // Drawing and the laser pointer both follow the pointer, so only one of them is on
+  const toggleDrawing = React.useCallback((enabled: boolean) => {
+    setDrawingEnabled(enabled);
+    if (enabled) {
+      setLaserPointerEnabled(false);
+    }
+  }, []);
+
+  const toggleLaserPointer = React.useCallback((enabled: boolean) => {
+    setLaserPointerEnabled(enabled);
+    if (enabled) {
+      setDrawingEnabled(false);
+    }
+  }, []);
+
+  const changeDrawingColor = React.useCallback((color: string) => {
+    setDrawingColors((prev) => ({ ...prev, [drawingTool === 'highlighter' ? 'highlighter' : 'pen']: color }));
+  }, [drawingTool]);
+
+  // `D` toggles drawing and `Escape` stops it (capture phase, so it wins over the presentation view
+  // Escape handler)
+  React.useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) {
+        return;
+      }
+
+      if (event.key === 'Escape' && drawingEnabled) {
+        event.preventDefault();
+        event.stopPropagation();
+        setDrawingEnabled(false);
+        return;
+      }
+
+      const isTyping = event.composedPath().some((target) => target instanceof Element && target.matches(TYPING_TARGETS));
+      if (event.key.toLowerCase() === 'd' && !event.repeat && !isTyping) {
+        event.preventDefault();
+        toggleDrawing(!drawingEnabled);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown, true);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown, true);
+    };
+  }, [drawingEnabled, toggleDrawing]);
+
+  // The slide thumbnails on the left of the preview. They are not part of presentations.
+  const [thumbnailsSetting, setThumbnailsSetting] = React.useState<boolean | undefined>();
+  React.useEffect(() => {
+    messageHandler
+      .request<boolean>(WebViewMessages.toVscode.getSetting, Config.slides.previewThumbnails)
+      .then((value) => setThumbnailsSetting(value !== false));
+
+    const listener = (message: MessageEvent<EventData<boolean>>) => {
+      if (message.data.command === WebViewMessages.toWebview.preview.updateThumbnails) {
+        setThumbnailsSetting(message.data.payload !== false);
+      }
+    };
+    Messenger.listen(listener);
+    return () => Messenger.unlisten(listener);
+  }, []);
+
+  const canShowThumbnails = isPresentationMode === false && slides.length > 1 && !!relativePath;
+  const showThumbnails = canShowThumbnails && thumbnailsSetting === true;
+
+  // Moves a slide of the file. A slide moved onto the slides of an included file (`src`) moves
+  // before or after all of them, and included slides can't be moved.
+  const moveSlide = React.useCallback(
+    async (fromIndex: number, toIndex: number) => {
+      const from = slides[fromIndex];
+      const to = slides[toIndex];
+      if (!from || !to || isIncludedSlide(from) || getSlideFileIndex(from) === getSlideFileIndex(to)) {
+        return false;
+      }
+
+      return messageHandler.request<boolean>(WebViewMessages.toVscode.preview.moveSlide, {
+        path: relativePath,
+        fromIndex: getSlideFileIndex(from),
+        toIndex: getSlideFileIndex(to),
+      });
+    },
+    [relativePath, slides],
+  );
+
+  const toggleThumbnails = React.useCallback(() => {
+    messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.toggleSlideThumbnails);
+  }, []);
+
+  // The speaker notes below the preview, to write and edit them. They are not part of presentations.
+  const [notesSetting, setNotesSetting] = React.useState<boolean | undefined>();
+  React.useEffect(() => {
+    messageHandler
+      .request<boolean>(WebViewMessages.toVscode.getSetting, Config.slides.previewNotes)
+      .then((value) => setNotesSetting(value !== false));
+
+    const listener = (message: MessageEvent<EventData<boolean>>) => {
+      if (message.data.command === WebViewMessages.toWebview.preview.updateNotesPane) {
+        setNotesSetting(message.data.payload !== false);
+      }
+    };
+    Messenger.listen(listener);
+    return () => Messenger.unlisten(listener);
+  }, []);
+
+  const canShowNotes = isPresentationMode === false && !!relativePath && !!crntSlide;
+  const showNotes = canShowNotes && notesSetting === true;
+
+  const toggleNotes = React.useCallback(() => {
+    messageHandler.send(WebViewMessages.toVscode.runCommand, COMMAND.toggleSlideNotes);
+  }, []);
 
   // The presenter view and remote show the notes of the current slide
   React.useEffect(() => {
     messageHandler.send(
       WebViewMessages.toVscode.preview.updateSlideNotes,
-      crntSlide ? { notes: crntSlide.notes, path: relativePath, slideIndex: crntSlide.index } : undefined
+      crntSlide ? { notes: crntSlide.notes, path: crntSlideSource?.path ?? relativePath, slideIndex: crntSlideSource?.index ?? crntSlide.index } : undefined
     );
-  }, [crntSlide, relativePath]);
+  }, [crntSlide, crntSlideSource, relativePath]);
 
   const videoUrl = React.useMemo(() => {
     if (crntSlide?.frontmatter.video && webviewUrl) {
@@ -446,18 +638,46 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   }, [crntSlide?.frontmatter.video, webviewUrl]);
 
   React.useEffect(() => {
-    if (content) {
-      const parser = new SlideParser();
+    if (!content) {
+      return;
+    }
+
+    let cancelled = false;
+    const loadSlides = async () => {
+      // The extension reads the files that the slides include with `src`
+      const includes = contentFilePath
+        ? await messageHandler
+          .request<SlideIncludes | null>(WebViewMessages.toVscode.getSlideIncludes, {
+            path: contentFilePath.replace(webviewUrl || "", ""),
+            content,
+          })
+          .catch(() => null)
+        : null;
+      if (cancelled) {
+        return;
+      }
+
+      const parser = new SlideParser({ includes: includes ?? undefined });
       const allSlides = parser.parseSlides(content);
+      const isSameFile = slidesFilePathRef.current === contentFilePath;
+      slidesFilePathRef.current = contentFilePath;
       setSlides(allSlides);
       setScannedOverflows([]);
-      setCrntSlide(allSlides[0]);
+      // A saved file stays on its slide, instead of showing the first slide until the slide index
+      // is applied
+      setCrntSlide((prev) => (isSameFile && prev && allSlides[prev.index]) || allSlides[0]);
       if (allSlides.length > 1) {
         messageHandler.send(WebViewMessages.toVscode.hasNextSlide, true);
         messageHandler.send(WebViewMessages.toVscode.nextSlideTitle, getSlideTitle(allSlides[1]));
       }
-    }
-  }, [content]);
+    };
+
+    loadSlides();
+    return () => {
+      cancelled = true;
+    };
+    // `contentVersion` loads the slides again when the content didn't change, but an included file did
+  }, [content, contentFilePath, contentVersion, webviewUrl]);
 
   React.useEffect(() => {
     setTheme(crntSlide?.frontmatter.theme || SlideTheme.default);
@@ -606,7 +826,9 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
   }, [isZoomed, toggleZoom]);
 
   React.useEffect(() => {
-    if (crntSlide?.index !== undefined) {
+    // While the next file loads, the slides of the previous file are still shown: don't record
+    // those for the new file
+    if (crntSlide?.index !== undefined && slidesFilePathRef.current === crntFilePath) {
       messageHandler.send(WebViewMessages.toVscode.preview.recordOpenSlide, {
         slideIndex: crntSlide.index,
         filePath: crntFilePath,
@@ -642,13 +864,31 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
 
   return (
     <>
+      <div className="flex w-full h-full overflow-hidden">
+      {showThumbnails && relativePath && (
+        <SlideThumbnailsPane
+          slides={slides}
+          slideOptions={slideOptions}
+          currentSlide={crntSlide?.index ?? 0}
+          relativePath={relativePath}
+          filePath={crntFilePath}
+          vsCodeTheme={vsCodeTheme as never}
+          isDarkTheme={isDarkTheme}
+          webviewUrl={webviewUrl}
+          onNavigate={navigateToSlide}
+          onMoveSlide={moveSlide}
+        />
+      )}
+      <div className="flex flex-col flex-1 min-w-0 h-full overflow-hidden">
       <div
         key={`${crntFilePath}-${crntSlide?.index || 0}-${crntSlide?.frontmatter?.customLayout || 'standard'}`}
         ref={ref}
-        className={`slide ${theme || "default"} relative w-full h-full overflow-hidden`}
+        className={`slide ${theme || "default"} relative flex-1 min-w-0 min-h-0 overflow-hidden`}
+        data-vscode-context={vscodeContext}
         onMouseEnter={() => setShowControls(true)}
         onMouseLeave={() => {
           setShowControls(false);
+          setIsControlsHovered(false);
           if (laserPointerEnabled) {
             handleMouseLeave();
           }
@@ -759,6 +999,14 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             )}
           </div>
 
+          <SlideDrawingLayer
+            strokes={drawingStrokes}
+            enabled={drawingEnabled}
+            tool={drawingTool}
+            color={drawingTool === 'highlighter' ? drawingColors.highlighter : drawingColors.pen}
+            onStrokesChange={updateDrawingStrokes}
+          />
+
           {
             // Marks the edges of a hidden slide without covering its content
             showHiddenMarker && (
@@ -801,9 +1049,24 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           )
         }
 
+        {
+          drawingEnabled && (
+            <SlideDrawingToolbar
+              tool={drawingTool}
+              color={drawingTool === 'highlighter' ? drawingColors.highlighter : drawingColors.pen}
+              canClear={drawingStrokes.length > 0}
+              onToolChange={setDrawingTool}
+              onColorChange={changeDrawingColor}
+              onClear={clearDrawingStrokes}
+              onClose={() => setDrawingEnabled(false)}
+            />
+          )
+        }
+
         <SlideControls
           show={showControls && cursorVisible}
           path={relativePath}
+          slideSource={crntSlideSource}
           slides={slides.length}
           currentSlide={crntSlide?.index}
           slideOptions={slideOptions}
@@ -816,14 +1079,21 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
           onNavigateToSlide={navigateToSlide}
           triggerMouseMove={setIsMouseMoveEnabled}
           hideControls={hidePreviewControls}
+          onHoverChange={setIsControlsHovered}
+          onOverlayChange={setIsControlsOverlayOpen}
           laserPointerEnabled={laserPointerEnabled}
-          onLaserPointerToggle={setLaserPointerEnabled}
+          onLaserPointerToggle={toggleLaserPointer}
+          drawingEnabled={drawingEnabled}
+          onDrawingToggle={toggleDrawing}
           isZoomed={isZoomed}
           onZoomToggle={toggleZoom}
           style={{ cursor: 'default' }}
           matter={crntSlide?.frontmatter}
-          notes={crntSlide?.notes}
           clickStep={clickStep}
+          thumbnailsOpen={showThumbnails}
+          onThumbnailsToggle={canShowThumbnails ? toggleThumbnails : undefined}
+          notesOpen={showNotes}
+          onNotesToggle={canShowNotes ? toggleNotes : undefined}
         >
           {/* Mouse Position */}
           {mousePosition && showControls && cursorVisible && (
@@ -832,6 +1102,16 @@ export const MarkdownPreview: React.FunctionComponent<IMarkdownPreviewProps> = (
             </div>
           )}
         </SlideControls>
+      </div>
+      {showNotes && relativePath && crntSlide && (
+        <SlideNotesPane
+          notes={crntSlide.notes}
+          path={crntSlideSource?.path ?? relativePath}
+          slideIndex={crntSlideSource?.index ?? crntSlide.index}
+          slideNumber={crntSlide.index + 1}
+        />
+      )}
+      </div>
       </div>
 
       {

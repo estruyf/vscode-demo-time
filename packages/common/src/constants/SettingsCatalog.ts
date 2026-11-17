@@ -165,7 +165,8 @@ export const SETTINGS_CATALOG: SettingDefinition[] = [
   {
     key: 'previousEnabled',
     label: 'Enable the previous command',
-    description: 'Go back to the previous scene with the previous command in presentation mode.',
+    description:
+      'Go back to the previous scene with the previous command in presentation mode. When not set, it is on when scene checkpoints are on.',
     category: 'presenting',
     control: 'boolean',
   },
@@ -187,6 +188,14 @@ export const SETTINGS_CATALOG: SettingDefinition[] = [
         description: 'Continue after the scene selected in the Acts & Scenes view.',
       },
     ],
+  },
+  {
+    key: 'sceneCheckpoints',
+    label: 'Scene checkpoints',
+    description:
+      'Snapshot the workspace files when a scene starts. Going back to a scene restores its files, and resetting the play restores the files as they were before the first scene.',
+    category: 'presenting',
+    control: 'boolean',
   },
   {
     key: 'presentationViewToggles',
@@ -411,6 +420,22 @@ export const SETTINGS_CATALOG: SettingDefinition[] = [
     label: 'Sync the slide preview with the editor',
     description:
       'Show the slide under the editor cursor in the slide preview, and double-click a slide to reveal its source. Never applies in presentation mode.',
+    category: 'slides',
+    control: 'boolean',
+  },
+  {
+    key: 'slidePreviewThumbnails',
+    label: 'Slide thumbnails',
+    description:
+      'Show the slides of the file as thumbnails next to the slide preview, to open them and drag them to change their order. Never shown in presentation mode.',
+    category: 'slides',
+    control: 'boolean',
+  },
+  {
+    key: 'slidePreviewNotes',
+    label: 'Speaker notes pane',
+    description:
+      'Show the speaker notes of the current slide in a pane below the slide preview, where you can write and edit them. Never shown in presentation mode.',
     category: 'slides',
     control: 'boolean',
   },

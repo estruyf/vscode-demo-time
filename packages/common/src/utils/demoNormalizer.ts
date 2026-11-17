@@ -13,6 +13,7 @@ export function normalizeActConfig(config: ActConfig): DemoConfig {
     timer: config.timer,
     engageTime: config.engageTime,
     loop: config.loop,
+    sceneCheckpoints: config.sceneCheckpoints,
     demos: (config.scenes || []).map((scene) => sceneToDemo(scene)),
   };
 }
@@ -75,6 +76,7 @@ export function demoConfigToActConfig(config: DemoConfig): ActConfig {
     timer: config.timer,
     engageTime: config.engageTime,
     loop: config.loop,
+    sceneCheckpoints: config.sceneCheckpoints,
     scenes: config.demos.map((demo) => demoToScene(demo)),
   };
 }
